@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Script to run GUI TRACER
+
+if [ -z $TRACER_PATH ]; then
+    echo "Environment variable TRACER_PATH unspecified: Using current path"
+    export TRACER_PATH="."
+fi
+
+if [ -f $TRACER_PATH/src/compiler/GUIFrontEnd/tracer-nb/dist/tracer-nb.jar ]
+then
+    java -jar $TRACER_PATH/src/compiler/GUIFrontEnd/tracer-nb/dist/tracer-nb.jar
+else
+    echo "File tracer-nb.jar does not exist."
+    echo "Execute \"cd $TRACER && ant gcompile\""
+fi
+

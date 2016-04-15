@@ -1,0 +1,73 @@
+% % for (i=0;i< N;i++)
+% loop3([I,I,N], 0) :- I>N, !.
+% loop3([I,I,N], 0).
+% loop3([I,If,N], T+1) :- loop3([I+1,If,N], T).
+
+% for (i=0;i< N;i++)
+loop3([I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0) :- I>= N, !. % it should log(N)/log(2.0)
+loop3([I,J,K,N,XP,XP2,Iff,Jff,Kff,Nff,XPff,XP2ff], T+U) :- 
+	straightline11(0,[I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],U),
+	loop3([If+1,Jf,Kf,Nf,XPf,XP2f,Iff,Jff,Kff,Nff,XPff,XP2ff], T).
+
+% for (j=0;j< xp2;j++)
+loop2([I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0) :- J>=XP2, !.
+loop2([I,J,K,N,XP,XP2,Iff,Jff,Kff,Nff,XPff,XP2ff], T+U) :- 
+	straightline22(0,[I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],U),
+	loop2([If,Jf+1,Kf,Nf,XPf,XP2f,Iff,Jff,Kff,Nff,XPff,XP2ff], T).
+
+% for (k=xp;k<= N;k +=xp)
+loop1([I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0) :- K>N, !.
+loop1([I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f], T+1) :- 
+	loop1([I,J,K+XP,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f], T).
+
+straightline0(0, [I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f], T+1) :-
+	N < 2,
+	straightline0(1, [I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f], T).
+straightline0(0,[I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f] , T+1) :-
+	N >= 2,
+	straightline0(2, [I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f], T).
+%% exit
+straightline0(1, [I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0).
+straightline0(2,[I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f] , T+1):-
+	% Xp2 = n
+	straightline0(3,[I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],T).
+straightline0(3,[_I,J,K,N,XP,XP2,Iff,Jff,Kff,Nff,XPff,XP2ff] , T+U):-  
+	% i = 0
+	loop3([0,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],U),
+	straightline0(4,[If,Jf,Kf,Nf,XPf,XP2f,Iff,Jff,Kff,Nff,XPff,XP2ff],T).
+%% exit
+straightline0(4, [I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0).
+
+straightline11(0,[I,J,K,N,_XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],T+1):-	
+	% xp = xp2
+	straightline11(1,[I,J,K,N,XP2,XP2,If,Jf,Kf,Nf,XPf,XP2f],T).
+straightline11(1,[I,J,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],T+1):-	
+	% xp2 /= 2
+	straightline11(2,[I,J,K,N,XP,XP2/2,If,Jf,Kf,Nf,XPf,XP2f],T).
+straightline11(2,[I,_J,K,N,XP,XP2,Iff,Jff,Kff,Nff,XPff,XP2ff],T+U):-
+	% j = 0
+	loop2([I,0,K,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],U),
+	straightline11(3,[If,Jf,Kf,Nf,XPf,XP2f,Iff,Jff,Kff,Nff,XPff,XP2ff],T).
+%% exit
+straightline11(3, [I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0).
+
+straightline22(0,[I,J,_K,N,XP,XP2,Iff,Jff,Kff,Nff,XPff,XP2ff],T+U):-
+	% k = xp
+	loop1([I,J,XP,N,XP,XP2,If,Jf,Kf,Nf,XPf,XP2f],U),
+	straightline22(1,[If,Jf,Kf,Nf,XPf,XP2f,Iff,Jff,Kff,Nff,XPff,XP2ff],T).
+%% exit
+straightline22(1, [I,J,K,N,XP,XP2,I,J,K,N,XP,XP2], 0).
+	
+
+run :- 
+       straightline0(0, [_I,_J,_K,5,_XP,_XP2,_If,_Jf,_Kf,_Nf,_XPf,_XP2f], T),
+       printf("Found answer: %\n", [T]),
+       store_max(T), fail.
+run.
+
+:- dynamic(max, 1).
+
+store_max(X) :- X > Y, max(Y), !, retract(max(Y)), assert(max(X)).
+store_max(_).
+
+

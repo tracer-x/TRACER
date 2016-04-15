@@ -1,0 +1,22 @@
+(1) Non-rectangular loops: it may occur that the maximum number of
+iterations of an inner loop depends on the iteration number of an
+outer loop.
+
+(2) Down-sampling: execute one part of the body of a loop less thatn
+the rest.
+
+(3) Mutually exclusive paths: the execution of one piece of code
+forbids the execution of another.
+
+(4) Data-dependency: it may happen that the execution time of a piece
+of code depends on the input data of the program.
+
+(5) Closed-forms are not always possible.
+
+             Non-rect.   Down-samp.  Mutual exc. Unk. Input Closed-forms
+-------------------------------------------------------------------------
+bubblesort        YES       NOT          NOT        YES         NOT
+fft1              YES       NOT          NOT        NOT         YES
+calc_center       YES       YES          YES        YES         NOT
+expint            NOT       YES          NOT        NOT         YES  
+-------------------------------------------------------------------------

@@ -1,0 +1,24 @@
+/* For copyright information, see olden_v1.0/COPYRIGHT */
+******************
+olden_v1.0/benchmarks/bh/README
+January 3, 1995
+Martin C. Carlisle
+
+This directory contains the Olden version of the Barnes-Hut benchmark
+
+J. Barnes and P. Hut "A hierarchical o(NlogN) force-calculation algorithm".
+Nature, 324:446-449, Dec. 1986
+
+as implemented for Olden by Martin C. Carlisle
+*******************
+
+Makefile - compiles with "make bh"
+
+args.c - process command line arguments
+newbh.c - all routines
+util.c - some utilities (random numbers and errors)
+vectmath.h - #defines for vector math
+defs.h - main definitions
+code.h - various global consts
+stdinc.h, stdio.h - versions of the system include files
+

@@ -1,0 +1,173 @@
+#!/bin/bash
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+TRACER_HOME=/home/jorge/SvnReps/Systems/TRACER/trunk/src/clpr
+stat=regrtest-BLAST__$(date +%Y-%h-%d__%k-%M).stat
+BLAST_CMMD="time -p pblast.opt"
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+
+NTDRIVERS=${TRACER_HOME}/tests/SAFETY/MACRO/ntdrivers
+LINUXDRIVERS=${TRACER_HOME}/tests/SAFETY/MACRO/linuxdrivers
+KBFILTR_DIR=${NTDRIVERS}/kbfiltr
+CDAUDIO_DIR=${NTDRIVERS}/cdaudio
+DISKPERF_DIR=${NTDRIVERS}/diskperf
+FLOPPY_DIR=${NTDRIVERS}/floppy
+SERIAL_DIR=${NTDRIVERS}/serial
+QPMOUSE_DIR=${LINUXDRIVERS}/qpmouse
+TLAN_DIR=${LINUXDRIVERS}/tlan
+TCAS_DIR=${TRACER_HOME}/tests/SAFETY/MACRO/tcas
+
+currtest=""
+counter=0
+
+getstatsSAFE() {
+if grep ":-)" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK"
+    
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "Number of predicates" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "real "  test_${currtest}_${counter}.out` | sed -e 's@real@Time:@g' >> $stat
+else 
+    if grep ":-(" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED"
+    fi
+fi
+}
+
+getstatsUNSAFE() {
+if grep ":-(" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK"
+    
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program UNSAFE" >> $stat
+    echo `grep "Number of predicates" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "real "  test_${currtest}_${counter}.out` | sed -e 's@real@Time:@g' >> $stat
+else 
+    if grep ":-)" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED"
+    fi
+fi
+}
+
+####################################################################################
+# NTWINDOWS DRIVERS
+####################################################################################
+
+
+currtest="kbfiltr-safe"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD} -dfs -predH 7 ${KBFILTR_DIR}/kbfiltr-BLAST.c > test_${currtest}_${counter}.out) 2>> test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+# currtest="kbfiltr-unsafe-1"
+# echo "[${counter}] ${currtest}.c"
+# (${BLAST_CMMD} -dfs -predH 7 ${KBFILTR_DIR}/kbfiltr-BLAST-unsafe-1.c > test_${currtest}_${counter}.out) 2>> test_${currtest}_${counter}.out
+# getstatsUNSAFE
+# counter=$[ ${counter} + 1]
+
+# currtest="kbfiltr-unsafe-2"
+# echo "[${counter}] ${currtest}.c"
+# (${BLAST_CMMD} -dfs -predH 7 ${KBFILTR_DIR}/kbfiltr-BLAST-unsafe-2.c > test_${currtest}_${counter}.out) 2>> test_${currtest}_${counter}.out
+# getstatsUNSAFE
+# counter=$[ ${counter} + 1]
+
+currtest="diskperf"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD} -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ./ntdrivers/irpMaf.preds ${DISKPERF_DIR}/diskperf-BLAST.c -incref -bfs > test_${currtest}_${counter}.out) 2>> test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+####################################################################################
+# LINUX DRIVERS
+####################################################################################
+
+currtest="qpmouse"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD} ${QPMOUSE_DIR}/qpmouse-BLAST.c > test_${currtest}_${counter}.out) 2>> test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tlan"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD} -incref -tproj -msvc -bfs -bddmin -predH 7 ${TLAN_DIR}/tlan-BLAST.c > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+####################################################################################
+# TCAS
+####################################################################################
+
+currtest="tcas_1a"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY1A > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_1b"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY1B > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_2a"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY2A > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_2b"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY2B > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_3a"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY3A > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_3b"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY3B > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_4a"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY4A > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_4b"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY4B > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_5a"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY5A > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_5b"
+echo "[${counter}] ${currtest}.c"
+(${BLAST_CMMD}  -craig 2 -dfs -nolattice  ${TCAS_DIR}/tcas.i -L PROPERTY5B > test_${currtest}_${counter}.out) 2>>  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+# Clean temporary files
+rm -f *.bdd
+rm -f *.abs
+rm -f *.btr
+rm -f *.out
+
+

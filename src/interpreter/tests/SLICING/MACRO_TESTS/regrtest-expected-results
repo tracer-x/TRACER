@@ -1,0 +1,118 @@
+function showAllVars(){
+    echo "Slice size            : $slice_size" >> $log
+    echo "Total size            : $total_size" >> $log       
+    echo "Reduction             : $reduc"      >> $log
+    echo "Total states          : $states"     >> $log
+    echo "Analysis time         : $time"       >> $log
+    echo "Num of subsumptions   : $subsumed"   >> $log
+    echo "Num of unsat witnesses: $unsat"      >> $log
+}
+
+function myeval {
+# if [ $s_size -eq $2 ] && [ $t_size -eq $3 ] && [ $states -eq $4 ] && [ $unsat -eq $5 ]; then 
+
+ s_size_int="${s_size%\.*}"
+ t_size_int="${t_size%\.*}"
+ unsat_int="${unsat%\.*}"
+
+ if [ $s_size_int -eq $2 ] && [ $t_size_int -eq $3 ] && [ $unsat_int -eq $5 ]; then 
+    echo "$1 OK" >> $log
+ else
+    echo "$1 FAILED" >> $log
+    showAllVars
+ fi	  
+}
+
+function checkstats {
+ case "$1"   in
+   "witness")
+      checkstats_witnesses $2
+      ;;
+   "nowitness")
+      checkstats_nowitnesses $2
+      ;;
+   "pathins")
+      checkstats_path_insensitive $2
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+function checkstats_witnesses {
+ case "$1"   in
+   "mpeg")
+      myeval "$1" 931  1659 15778 405
+      ;;
+   "kbfiltr")
+      myeval "$1" 234  550 1291 0 
+      ;;
+   "cdaudio")
+      myeval "$1" 1296  2725 13508 0 
+      ;;
+   "floppy")
+      myeval "$1" 647  1221 16305 5 
+      ;;
+   "diskperf")
+      myeval "$1" 286  676 5278 0 
+      ;;
+   "serial")
+      myeval "$1" 2104  2488 12511 0 
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+
+function checkstats_nowitnesses {
+ case "$1"   in
+   "mpeg")
+      myeval "$1" 931  1659 15473 0 
+      ;;
+   "kbfiltr")
+      myeval "$1" 234  550 1291 0 
+      ;;
+   "cdaudio")
+      myeval "$1" 1296  2725 13508 0 
+      ;;
+   "floppy")
+      myeval "$1" 647  1221 16304 0
+      ;;
+   "diskperf")
+      myeval "$1" 286  676 5278 0 
+      ;;
+   "serial")
+      myeval "$1" 2104  2458 12510 0 
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+function checkstats_path_insensitive {
+ case "$1"   in
+   "mpeg")
+      myeval "$1" 1589  1659 17482 0 
+      ;;
+   "kbfiltr")
+      myeval "$1" 273 550 849 0 
+      ;;
+   "cdaudio")
+      myeval "$1" 2080  2725 8938 0 
+      ;;
+   "floppy")
+      myeval "$1" 771  1221 11079 0 
+      ;;
+   "diskperf")
+      myeval "$1" 452  676 2342 0 
+      ;;
+   "serial")
+      myeval "$1" 2259  2488 10479 0 
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+

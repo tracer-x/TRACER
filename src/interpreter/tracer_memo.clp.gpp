@@ -1,0 +1,1374 @@
+% tracer_memo.clp.gpp
+
+%=============================================================================%
+% This file contains operations to store/lookup in the memo table.
+%
+% Note: minmax uses its own implementations for
+% create_subsumed_interpolant/13 and store/17.  See
+% mm_create_subsumed_interpolant/12 and table$memo/12 in
+% tracer_safety_minmax.clp.gpp
+%
+%=============================================================================%
+% export
+%
+% initialize the memo table
+% declare_memo_table/0
+% to speed up memo lookup      
+% gen_static_check_t/0
+% to speed up memo store
+% gen_static_store_t/0        
+%
+% lookup operation
+% lookup_memo_table/10
+% subsumption test
+% wrapper_subsumed_profiled/15 
+% subsumed_profiled/15          % used w/  profiling mode
+% subsumed/15                   % used w/o profiling mode
+% create interpolant to be stored in the memo
+% create_memo_interpolant/12
+#ifdef MINMAX
+% create interpolant for a loop header
+% create_memo_loopheader_interpolant/9
+#endif
+%
+#ifndef MINMAX
+% create an interpolant from a subsumed path
+% create_subsumed_interpolant/13
+% store operation
+% store/17
+#endif
+%
+% cleanup memo table
+% cleanup_memotable/0         
+% clear_function_memo_table/2
+%
+% sanity check
+% count_memo_entries/2        
+%=============================================================================%
+
+declare_memo_table :-
+ 	program_point(PP),
+ 	printf_to_atom(PName, "t%", [PP]),
+#ifdef  PIPEMEMO
+ 	dynamic(PName, 8),
+#elif   defined(ENCODE_MEMO)	
+ 	dynamic(PName, 7),
+#elif   defined(MINMAX)
+        dynamic(PName, 13),
+#else
+ 	dynamic(PName, 10),
+#endif	
+ 	fail.
+declare_memo_table.
+
+%--------------------------------------------------------------------------%
+% Generating specialized predicate check_t for table access. This method
+% seems to be faster. check_t(%d, ...) would call t%d.
+%--------------------------------------------------------------------------%
+% Static version of gen_check_t
+%--------------------------------------------------------------------------%
+gen_static_check_t:-
+	telling(Old),
+	tell('check_t.clp'),
+#if     (CLP_SYS==SWI)
+        format(":- style_check(-singleton).\n",[]),
+#endif		
+	gen_static_check_t_aux,
+	told,
+	tell(Old),
+	reconsult('check_t.clp').
+
+%--------------------------------------------------------------------------%
+% NOTE: about check_t arity
+%--------------------------------------------------------------------------%
+% Depending on some Makefile options the arity of check_t is
+% different:
+% if PIPEMEMO and !MINMAX then check_t/12
+% else if !MINMAX then check_t/11
+% if MINMAX then check_t/14
+%--------------------------------------------------------------------------%
+
+%--------------------------------------------------------------------------%
+#if defined(PIPEMEMO) && (!defined(MINMAX))
+%--------------------------------------------------------------------------%
+gen_static_check_t_aux :-	
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+        T =.. [PName, FName, Index, PP, IpIdx, PPContext, CallStack,
+	       L, Answer],
+%%%
+%       Don't decode anything. 
+%%%	
+	print_file("check_t(%,%,%,%,%,%,%,%,%,%,%,%):-% .\n",
+	       [% head of check_t/12
+		Index, PP, IpIdx, FName,  PPContext, CallStack,
+		_GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+		L, Answer,
+		% t_pp arguments		
+		T]),
+	fail.
+gen_static_check_t_aux.
+%--------------------------------------------------------------------------%
+#elif defined(ENCODE_MEMO) && (!defined(MINMAX))
+/* defined(PIPEMEMO) && (!defined(MINMAX)) */
+%--------------------------------------------------------------------------%
+gen_static_check_t_aux :-	
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+#ifdef  ENCODE_MEMO_OPT
+%%      LATEST OPTIMIZATION: don't decode anything yet.
+
+	% tpX/7
+        T =.. [PName, FName, PP, IpIdx, PPContext, CallStack,
+	       L, Answer],  
+	print_file("check_t(%,%,%,%,%,%,%,%,%,%,%):- % , ",	
+  	          [% head of check_t/11
+		   PP, IpIdx, FName,  PPContext, CallStack,
+		   GlobalArr, GlobalVar,LocalArr, LocalVar,
+		   L, Answer,
+		   % t_pp arguments		
+		   T]),
+	print_file("freshglobalarrays(%),"    ,[GlobalArr]),
+	print_file("freshglobalvars(%),"      ,[GlobalVar]),
+	print_file("freshlocalarrays(%,%),"   ,[FName,LocalArr]),
+	print_file("freshlocalvars(%,%) . \n" ,[FName,LocalVar]),
+#else /* defined(ENCODE_MEMO_OPT) */
+%%      Decode only the interpolant for now. The answer will be decoded
+%%      on demand only if the interpolant holds.
+	% tpX/7
+        T =.. [PName, FName, PP, IpIdx, PPContext, CallStack,
+	       LX, Answer],
+	print_file("check_t(%,%,%,%,%,%,%,%,%,%,%):-%,decode_constraints_list(%,%,%,%,%,%,%).\n",
+		   [% head of check_t/11
+		    PP, IpIdx, FName,  PPContext, CallStack,
+		    GlobalArr, GlobalVar, LocalArr, LocalVar,
+		    L, Answer,
+		    % t_pp arguments		
+		    T,
+		    % decode_constraints_list/7 arguments
+		    FName,GlobalArr,GlobalVar,LocalArr,LocalVar,LX,L]),
+#endif /* defined(ENCODE_MEMO_OPT) */
+	fail.
+gen_static_check_t_aux.
+%--------------------------------------------------------------------------%
+#else /* defined(PIPEMEMO) && (!defined(MINMAX)) */
+%--------------------------------------------------------------------------%
+gen_static_check_t_aux :-	
+	% IMPORTANT for efficiency: the predicate name (PName)
+	% contains the program point and the first argument is the
+	% function name (FName).
+	%
+	% Assume that CLP(R) employs first argument indexing.
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+	% tpX/10
+        T =.. [PName,
+#ifdef  MINMAX
+	       NodeId,
+#endif  /*MINMAX*/
+	       FName, IpIdx,   PPContext, CallStack,
+	       GlobalArr, GlobalVar, LocalArr, LocalVar,
+	       L,
+#ifdef  MINMAX
+               LoopContext,
+	       LockedIndexes,
+#endif  /*MINMAX*/
+	       Answer],
+#ifdef  MINMAX
+        % check_t/14
+	print_file("check_t(%,%,%,%,%,%,%,%,%,%,%,%,%,%) :- % . \n",
+#else   /*MINMAX*/
+	% check_t/11 	  
+	print_file("check_t(%,%,%,%,%,%,%,%,%,%,%) :- % . \n",
+#endif  /*MINMAX*/
+	       [
+#ifdef  MINMAX
+		NodeId,
+#endif  /*MINMAX*/
+		PP, IpIdx, FName,  PPContext, CallStack,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		% head variables for check_t
+		L,           
+#ifdef  MINMAX
+ 	        % The LoopContext for Minmax algorithm
+		LoopContext, 
+		LockedIndexes,
+#endif  /*MINMAX*/
+		Answer,
+		% query for the memo table
+		T]),         
+	fail.
+gen_static_check_t_aux.
+%--------------------------------------------------------------------------%
+#endif /* defined(PIPEMEMO) && (!defined(MINMAX)) */
+%--------------------------------------------------------------------------%
+
+%--------------------------------------------------------------------------%
+% Generating specialized predicate store_t for storing. store_t(%d, ...)
+% would execute assert(t%d(...))
+%--------------------------------------------------------------------------%
+% Static version of gen_store_t
+%--------------------------------------------------------------------------%
+gen_static_store_t:-
+	telling(Old),
+	tell('store_t.clp'),
+#if     (CLP_SYS==SWI)
+        format(":- style_check(-singleton).\n",[]),
+#endif
+	gen_static_store_t_aux,
+	told,
+	tell(Old),
+	reconsult('store_t.clp').
+
+%--------------------------------------------------------------------------%
+% NOTE: about store_t arity
+%--------------------------------------------------------------------------%
+% Depending on some Makefile options the arity of store_t is
+% different:
+% if   PIPEMEMO then store_t/12
+% else store_t/11
+%
+% MINMAX does not call to store_t.
+%--------------------------------------------------------------------------%
+
+%---------------------------------------------------------------------------
+#ifdef  PIPEMEMO
+%---------------------------------------------------------------------------
+gen_static_store_t_aux :-
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+	% tpX/8
+	T =.. [PName,FName,Index,PP,IpIdx,PPContext,CallStack,
+	       L,Answer],
+        %%%
+        % L and Answer are already in encoded form
+        %%% 
+	print_file("store_t(%,%,%,%,%,%,%,%,%,%,%,%) :-  fassert(%).\n",
+		   [% head of store_t/12
+		    Index,PP, IpIdx, FName, PPContext, CallStack,
+		    _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+		    % head variables for store_t
+		    L, Answer,	
+		    % fassert/1
+		    % assert argument
+		    T]),	
+	fail.
+gen_static_store_t_aux.
+%---------------------------------------------------------------------------
+#elif   defined(ENCODE_MEMO)
+%---------------------------------------------------------------------------
+gen_static_store_t_aux :-
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+	% tpX/7
+	T =.. [PName,FName,PP,IpIdx,PPContext,CallStack,
+	       LX,AnswerX],
+#ifdef  ENCODE_CHILD_PARENT 
+        %%%
+        % Answer is already in encoded form
+	% TODO: I think that encode_constraints/7 can be avoided if
+	% make_negated_projected_interpolant does it.
+	%%%
+	print_file("store_t(%,%,%,%,%,%,%,%,%,%,%):-encode_constraints_list(%,%,%,%,%,%,%),fassert(%) . \n",
+	       [% head of store_t/11
+		PP,IpIdx,FName,PPContext,CallStack,
+		GlobalArr,GlobalVar,LocalArr,LocalVar,
+		L,AnswerX,
+		% encode_constraints_list/9 
+		FName,GlobalArr,GlobalVar,LocalArr,LocalVar,
+		L,LX,
+		% fassert/1
+		T]),
+#else
+        %%%
+        % This case is expensive because witnesses will be encoded
+        % without using a slave.
+        %%%
+	print_file("store_t(%,%,%,%,%,%,%,%,%,%,%):-encode_memo(%,%,%,%,%,%,%,%,%),fassert(%) . \n",
+	       [% head of store_t/11
+		PP,IpIdx,FName,PPContext,CallStack,
+		GlobalArr,GlobalVar,LocalArr,LocalVar,
+		L,Answer,
+		% encode_memo/9 
+		FName,GlobalArr,GlobalVar,LocalArr,LocalVar,
+		L,Answer,LX,AnswerX,
+		% fassert/1
+		T]),
+#endif  /*ENCODE_CHILD_PARENT*/	
+	fail.
+gen_static_store_t_aux.
+%---------------------------------------------------------------------------
+#else
+%---------------------------------------------------------------------------
+%%%
+%  Here, no optimization done.
+%%%
+gen_static_store_t_aux :-
+	% IMPORTANT for efficiency: the predicate name (PName)
+	% contains the program point and the first argument is the
+	% function name (FName).
+	%
+	% Assume that CLP(R) employs first argument indexing.	
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+	% tpX/10	
+        T =.. [PName, FName, IpIdx, PPContext, CallStack,
+	       GlobalArr, GlobalVar, LocalArr, LocalVar,
+	       L, Answer],
+	gen_static_store_t_aux2(PP, IpIdx, FName, PPContext, CallStack,
+				GlobalArr, GlobalVar, LocalArr, LocalVar,
+				L, Answer, T ),	
+	fail.
+gen_static_store_t_aux.
+gen_static_store_t_aux2(PP, IpIdx, FName, PPContext, CallStack,
+			GlobalArr, GlobalVar, LocalArr, LocalVar,
+			L, Answer, T ):-
+	%--------------------------------------------------------------%
+	% If not witnesses, we can use fassert/1 rather than assert/1
+	% for inserting in the memo table.	
+	current_tracer_flag(witnesses,n),!,
+	%--------------------------------------------------------------%	
+	print_file("store_t(%,%,%,%,%,%,%,%,%,%,%) :-  fassert(%).\n",
+	       [PP, IpIdx, FName, PPContext, CallStack,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		% head variables for store_t
+		L, Answer,
+		% assert argument
+		T]).            
+gen_static_store_t_aux2(PP, IpIdx, FName, PPContext, CallStack,
+			GlobalArr, GlobalVar, LocalArr, LocalVar,
+			L, Answer, T ):- !,
+	print_file("store_t(%,%,%,%,%,%,%,%,%,%,%) :-  assert(%).\n",
+	       [PP, IpIdx, FName, PPContext, CallStack,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		% head variables for store_t
+		L, Answer,
+		% assert argument
+		T]).            
+#endif /*ENCODE_MEMO*/
+
+%-----------------------------------------------------------------------------
+#ifdef  PIPEMEMO
+%-----------------------------------------------------------------------------
+pipe_master_store_t([PP], TableId,PPIdx,FName,PPContext,CallStack,		    
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    CList, Answer):-
+        % Here Answer is already encoded.
+	encode_interpolant(FName,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   CList, CListX),
+	% Here CListX and Answer are in encoded form.
+
+	% This auxiliary code is to be able to enumerate all memotable
+	% entries corresponding to the same program point.	
+	% We get the current value of the counter (EntryIndex) and
+	% increment it by one.
+	memo_entry_add_counter_value(FName,PP,EntryIndex),	
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),
+	write_memo_slave("store_memo(%,%,%,%,%,%,%,%,%) .\n",
+			 [EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+			  CListX,Answer,
+			  MsgTimeStamp1]),
+#else /* PROFILE */
+	write_memo_slave("store_memo(%,%,%,%,%,%,%,%) .\n",
+			 [EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+			  CListX,Answer]),
+#endif /* PROFILE */
+	%flush,
+	read_from_memo_slave(_X).
+
+%--------------------------------------------------------------------------------%
+% Wrapper to distinghish whether if the interpolant is just a list of
+% constraints or a list of conjunctions of constraints.
+%--------------------------------------------------------------------------------%
+encode_interpolant(FName,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   CList,
+		   CListX):-	
+	current_tracer_flag(other_interp, n),
+	encode_constraints_list(FName,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				CList,
+				CListX),
+	!.	
+encode_interpolant(FName,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   CList,
+		   CListX):-
+	current_tracer_flag(other_interp, y),	
+	encode_interp_conjunct_list(CList,
+				    FName, SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    CListX),
+	!.
+	
+/*
+ * For simplicity, the counters are not initialized in
+ * init_routines/0. By the default, counter_value/3 returns 0 if the
+ * counter was not initialized before.
+ */
+
+% memo_entry_start_counter(-I)
+memo_entry_start_counter(0).
+% memo_entry_reset_counter(+FName,+PP)
+memo_entry_reset_counter(FName,PP):-
+	printf_to_atom(Counter,"%_%",[FName,PP]),
+	memo_entry_start_counter(Start),
+	set_counter(Counter,Start).
+% memo_entry_counter_value(+FName,+PP,-Val)
+memo_entry_counter_value(FName,PP,Val):-
+	printf_to_atom(Counter,"%_%",[FName,PP]),
+	counter_value(Counter,Val).
+% memo_entry_add_counter_value(+FName,+PP,-OldVal)
+memo_entry_add_counter_value(FName,PP,OldVal):-
+	printf_to_atom(Counter,"%_%",[FName,PP]),
+	counter_value(Counter,OldVal),
+	set_counter(Counter,1+OldVal).
+
+%------------------------------------------------------------------------------
+#endif  /*PIPEMEMO*/
+%------------------------------------------------------------------------------
+
+
+%------------------------------------------------------------------------------
+% Factorize the action of indexing an entry from the memo
+%------------------------------------------------------------------------------
+lookup_memo_table(FName,PP,CallStack, PPContextSubsumer,
+		  TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+		  NegInterp,AnswerX):-
+
+	config_to_index(PP, PPIdx),         
+	which_table(PP, TableId),	
+	simplify_stack(CallStack, SimpleCallStack), 
+	%----------------------------------------------------------------------
+	% Search for an entry in the memo table with same program
+	% point Note: AnswerX means here that the Answer (ie.,
+	% witnesses + WCET  or markings) may be encoded (ground
+	% representation).
+	%----------------------------------------------------------------------
+#ifdef  PROFILE
+	check_t_profiled(_, PP, TableId, PPIdx, FName, PPContextSubsumer, 
+			 [sinfo(FName, PP)|SimpleCallStack], 
+			 TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			 NegInterp,_,_,AnswerX).
+#else   
+#ifdef  PIPEMEMO
+	pipe_master_check_t(PP,TableId, PPIdx, FName, PPContextSubsumer,
+	                    [sinfo(FName, PP)|SimpleCallStack], 
+			    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			    NegInterp, AnswerX).
+#else
+	check_t(TableId, PPIdx, FName, PPContextSubsumer,
+		[sinfo(FName, PP)|SimpleCallStack], 
+		TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		NegInterp, AnswerX).
+#endif  /*PIPEMEMO*/	
+#endif  /*PROFILE*/
+
+
+#ifdef  PROFILE
+%------------------------------------------------------------------------------
+% check_t_profiled: check_t with profiling
+%------------------------------------------------------------------------------
+check_t_profiled(% (optional, only for minmax)
+                 NodeId,
+		 % (optional, only if PIPEMEMO is on)
+                 PP,
+		 TableId, PPIdx, FName, PPContext, CallStack, 
+	         TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		 NegConstraints,
+                 % (optional, only for minmax)
+                 LoopContext,LoopIndexes,
+		 Answer) :-
+	ctime(T0),
+	check_t_profiled_aux(NodeId, PP,
+			     TableId, PPIdx, FName, PPContext, CallStack, 
+	                     TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			     NegConstraints,
+			     LoopContext,LoopIndexes,
+			     Answer, T0).
+check_t_profiled_aux(NodeId, PP,
+		     TableId, PPIdx, FName, PPContext, CallStack, 
+	             TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		     NegConstraints,
+		     LoopContext,LoopIndexes,
+		     Answer, T0) :- 
+
+	%----------------------------------------------------------------------
+	% Query in the memo table succeed. I.e., there is an entry for PPIdx.
+	%----------------------------------------------------------------------
+#ifdef  PIPEMEMO
+	pipe_master_check_t(PP,TableId, PPIdx, FName, PPContext, CallStack, 
+			    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			    NegConstraints,Answer),			    
+#elif   (!defined(MINMAX))
+	check_t(TableId, PPIdx, FName, PPContext, CallStack,
+		TGlobalArr,TGlobalVar, TLocalArr, TLocalVar,
+		NegConstraints, Answer),
+#else   
+	check_t(NodeId,TableId, PPIdx, FName, PPContext, CallStack,
+		TGlobalArr,TGlobalVar, TLocalArr, TLocalVar,
+		NegConstraints, LoopContext, LoopIndexes, Answer),
+#endif	/*PIPEMEMO*/
+#ifndef MINMAX
+        % To avoid warnings
+        NodeId=_,LoopContext=_,LoopIndexes=_,
+#endif  /*MINMAX*/
+#ifndef PIPEMEMO
+        % To avoid warnings
+        PP=_,
+#endif  /*PIPEMEMO*/
+	%----------------------------------------------------------------------
+	% Problems to catch query_memo_timing_ok and query_memo_ok
+	% counters due to backtracking.
+	%----------------------------------------------------------------------
+ 	ctime(T1) ,
+        add_counter(query_memo_timing_ok,T1-T0) ,
+	add_counter(query_memo_ok,1) .
+check_t_profiled_aux(_,_,_, _, _, _, _, _, _, _, _,_,_,_,_, T0) :-
+	%----------------------------------------------------------------------
+	% Query in the memo table failed. I.e, there is no entry for PPIdx.
+	%----------------------------------------------------------------------
+	ctime(T1),	
+        add_counter(query_memo_timing_failed,T1-T0),
+	add_counter(query_memo_failed,1),
+	!,
+	fail.	
+#endif
+
+#ifdef  PIPEMEMO
+pipe_master_check_t([PP],TableId,PPIdx,FName,PPContext,CallStack,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    NegConstraints,Answer):-
+	%%%
+	% First we get the number of entries corresponding to the same
+	% program point.
+	%%%
+	memo_entry_counter_value(FName,PP,N),!,
+	% Obtain the init value of the counter
+	memo_entry_start_counter(I),
+	%%%%
+	% pipe_master_check_t_backtracking/3 forces backtracking to
+	% return all memo table entries (one by one) corresponding to
+	% a program point
+        %%%%
+	pipe_master_check_t_backtracking(I,N,
+	                      memo_entry(TableId,PPIdx,FName,PPContext,CallStack,
+					 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					 NegConstraints,Answer)).
+	
+pipe_master_check_t_backtracking(I,N,_MemoEntry):- I > N, !, fail.		
+pipe_master_check_t_backtracking(EntryIndex,_,
+				 memo_entry(TableId,PPIdx,FName,PPContext,CallStack,
+			         SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			         NegConstraints,Answer)):-
+	pipe_master_check_t_one_entry(EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      NegConstraints,Answer).
+pipe_master_check_t_backtracking(I,N,MemoEntry):-
+	pipe_master_check_t_backtracking(1+I,N,MemoEntry).
+	
+	
+pipe_master_check_t_one_entry(EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      NegConstraints,Answer):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),
+	write_memo_slave("check_memo(%,%,%,%,%,%,%) .\n",
+			 [EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+			  MsgTimeStamp1]),
+#else   /* PROFILE */
+	write_memo_slave("check_memo(%,%,%,%,%,%) .\n",
+			 [EntryIndex,TableId,PPIdx,FName,PPContext,CallStack]),
+#endif  /* PROFILE */
+        %flush,
+        read_from_memo_slave(X),
+	process_slave_output(X,Reply),
+	!,
+	pipe_master_check_t_one_entry_aux(Reply,
+					  NegConstraintsX,Answer),
+	freshglobalarrays(SGlobalArr),
+	freshglobalvars(SGlobalVar),
+	freshlocalarrays(FName,SLocalArr),
+	freshlocalvars(FName,SLocalVar),
+#ifdef  ENCODE_MEMO_OPT
+        /*	  
+         * To decode here may be expensive because the call frequency
+         * is very high. Instead, we can decode at the same time we
+         * evaluate constraints in subsumed/9.	    
+        */	
+	 NegConstraintsX=NegConstraints.
+#else
+	% The interpolant is decoded now. Answer will be decoded only
+	% if the interpolant subsumes the context.	
+	decode_constraints_list(FName,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				NegConstraintsX,NegConstraints).
+#endif  /*ENCODE_MEMO_OPT*/
+	
+			       	
+pipe_master_check_t_one_entry_aux(reply_args(fail),_,_):- !, fail.
+pipe_master_check_t_one_entry_aux(reply_args(NegConstraints,Answer),
+				  NegConstraints,Answer):- !.
+#endif  /*PIPEMEMO*/
+
+
+#ifndef MINMAX
+%==============================================================================
+% store/17: Storing into the memo table
+%==============================================================================
+store(FName, Id, PP, GlobalArr, GlobalVar, LocalArr, LocalVar,
+      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+      _ArrRef, CL, ML,WP,CallStack, Answer,
+#ifdef  OPTIMIZED_FIXPO
+      Interp,
+#endif 	           
+      TableSpace) :-	
+	current_tracer_flag(interpolation,y), ! ,
+	store_interp(FName, Id, PP, 
+	             GlobalArr, GlobalVar, LocalArr, LocalVar,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     CL, ML, WP, CallStack, Answer,
+#ifdef  OPTIMIZED_FIXPO
+ 		     Interp,
+#endif 	           		     
+		     TableSpace).       	
+store(_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+#ifdef  OPTIMIZED_FIXPO
+      _,
+#endif 	           
+      _) :- !.
+
+%------------------------------------------------------------------------------
+% store_interp(+FName, +Id, +PP, 
+%	       +GlobalArr, +GlobalVar, +LocalArr, +LocalVar,	     
+%	       +SGlobalArr, +SGlobalVar, +SLocalArr, +SLocalVar,
+%	       +CL, +ML, +WP,
+%	       +CallStack, +Answer, +TableSpace)
+%------------------------------------------------------------------------------	    
+% GlobalArr,...  : evaluated variables (with constraints)
+% SGlobalArr,... : variables of the symbolic constraints
+% CL: List of symbolic constraints
+% ML: bitvector with interpolant
+% Answer : the solution (in case of analysis)
+%------------------------------------------------------------------------------
+% Store interpolant plus other stuff (e.g. analysis answer) in the memo table. 
+%------------------------------------------------------------------------------
+store_interp(FName, _Id, PP, 
+	     GlobalArr, GlobalVar, LocalArr, LocalVar,	     
+	     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	     CL, ML, WP, CallStack, Answer,
+#ifdef  OPTIMIZED_FIXPO
+	     interp(SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		    CList),
+#endif 	/*OPTIMIZED_FIXPO*/           	     
+	     TableSpace) :-
+	config_to_index(PP, PPIdx),
+#ifdef  STORE_DEBUG
+        print_message("Storing in memo table 1 CL %\n",[CL]),
+	dump([SGlobalArr]),dump([SGlobalVar]),dump([SLocalArr]),dump([SLocalVar]),
+	dump([GlobalArr]) ,dump([GlobalVar]) ,dump([LocalArr]) ,dump([LocalVar]),
+#else
+        % To prevent warnings
+        GlobalArr=_, GlobalVar=_, LocalArr=_, LocalVar=_,	             
+#endif
+        %---------------------------------------------------------------------
+        % Step 1: produce the negated interpolant to be stored
+        %---------------------------------------------------------------------
+        create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				CL, ML, WP,
+				SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				CList),
+#ifdef  STORE_DEBUG
+        print_message("Storing in memo table 3 (Negated) <%:%>: %\nState:%\n",
+		      [FName,PP,CList,
+		       state(SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1)]),
+#endif	/*STORE_DEBUG*/				
+#ifdef  PROFILE
+	ctime(Time4),
+#endif  /*PROFILE*/
+	which_table(PP, TableId),
+	simplify_stack(CallStack, SimpleCallStack),
+#ifdef  STORE_DEBUG
+        print_message("Storing in memo table 4\n",[]),
+#endif	/*STORE_DEBUG*/				
+#ifdef  GRAPHVIZ_USE
+        %---------------------------------------------------------------------
+        % We get the current context value to store in the memo
+        % table. By doing this, if a node is subsumed we can now the
+        % context of the subsumer.
+        %---------------------------------------------------------------------
+	top_context_stack(PPContext),
+#else
+        % To prevent warnings
+        PPContext=_,
+#endif  /*GRAPHVIZ_USE*/
+#ifdef  PROFILE
+        % Sanity check if the analysis is monovariant (i.e.,
+        % path-insensitive)
+        sanityCheckMonovariance(FName,PP),
+#endif  /*PROFILE*/
+        %---------------------------------------------------------------------
+        % Step 2: store in memo table
+        %---------------------------------------------------------------------
+#ifdef  PROFILE
+	interp_size(CList, N),
+	add_counter(totalwpsize, N),
+#endif  /*PROFILE*/
+#ifdef  PIPEMEMO
+        pipe_master_store_t(PP,TableId,PPIdx,FName,PPContext,
+			    [sinfo(FName, PP)|SimpleCallStack],
+			    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			    CList, Answer),
+#else
+        store_t(TableId,  PPIdx, FName, PPContext,
+		[sinfo(FName, PP)|SimpleCallStack],
+	        SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		CList, Answer),
+#endif  /*PIPEMEMO*/
+        debug_store_memo(FName, PP,
+			 SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			 CList,Answer),
+#ifdef  PROFILE
+        ctime(Time5),
+	add_counter(store_timing_3,Time5-Time4),
+#endif  /*PROFILE*/	
+#ifdef  STORE_DEBUG
+        print_message("Storing in memo table 5\n",[]),
+#endif  /*STORE_DEBUG*/
+#if     ((UNFOLD_OPT==SLICING  && defined(PROFILE)) || UNFOLD_OPT==LIVE)
+        % Record some stats
+        calculate_marked_variables(FName,PP),
+#endif  /*(UNFOLD_OPT==SLICING)*/
+        %----------------------------------------------------------------------
+        % Step 3: after the analysis of the function has been
+        % finished, we need to cleanup its memo table. Otherwise,
+        % subsumption may not be sound (see e.g. funcall-14.c).
+        %----------------------------------------------------------------------
+        clear_function_memo_table(FName,PP),	
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        record_tablespace_content(TableSpace, FName, TableId),
+#ifdef  OPTIMIZED_FIXPO	
+	record_tablespace_loop(TableSpace, FName, TableId),
+#endif	/*OPTIMIZED_FIXPO*/	
+#else
+        % To prevent warnings
+        TableSpace=_,
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+        %debug_message("End store_interp: % \n",[Id]),
+	!. % we don't want backtracking here
+#endif  /*!MINMAX*/
+
+%------------------------------------------------------------------------------
+% usage 1: create_memo_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+%			           +CL,+ML, _,
+%			           SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+%			           -NegIntp)
+% usage 2: create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+%			           _,_,WPIn,
+%			           SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+%			           WPOut)
+%------------------------------------------------------------------------------
+% Produce the form to store an interpolant in the memo.
+%
+% Wrapper to make decision between basic interpolants or other
+% interpolants (e.g., wp's)
+%------------------------------------------------------------------------------
+create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			CL, ML, _,
+			SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			NegIntp):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	%===================================================================%
+	% Note: it's very important that SGlobalArr,... must be left symbolic!
+	% make_negated_projected_interpolant/11 DOES NOT preserve that!
+	% make_negated_projected_interpolant(SGlobalArr, SGlobalVar,
+	% 				   SLocalArr, SLocalVar,
+	% 				   CL, ML,
+	% 				   SGlobalArr1, SGlobalVar1,
+	% 				   SLocalArr1, SLocalVar1,
+	% 				   NegIntp).	
+	%===================================================================%	
+	current_tracer_flag(other_interp, n),
+	!,
+	make_negated_projected_interpolant_catch_errors(SGlobalArr, SGlobalVar,
+							SLocalArr, SLocalVar,
+							CL, ML, NegIntp),	
+	SGlobalArr1 = SGlobalArr,
+	SGlobalVar1 = SGlobalVar,
+	SLocalArr1  = SLocalArr ,
+	SLocalVar1  = SLocalVar,
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(store_timing_2,Time1-Time0),
+#endif  /*PROFILE*/
+        true.	
+create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			CL, ML, WP,
+			SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			WPOut):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/	
+        interp_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				       CL, ML, WP,
+				       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				       WPOut),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(store_timing_2,Time1-Time0),
+#endif  /*PROFILE*/
+        true.	
+
+#ifdef  MINMAX
+%------------------------------------------------------------------------------
+% Special case: produce the interpolant to store in the memo
+% corresponding to a loop header.
+%------------------------------------------------------------------------------
+create_memo_loopheader_interpolant(_FName,
+				   _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+				   LoopCL,LoopML, _OtherIntp, NegDisjunct):-
+	% LoopCL is already in projected form so no need of projecting
+	% again.
+	current_tracer_flag(other_interp, n),
+	!,
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	select_marked_constraints_path(LoopCL, LoopML, LoopInterp, o),
+	negate_numerical_list(LoopInterp, NegDisjunct),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(store_timing_2,Time1-Time0),
+#endif  /*PROFILE*/
+        true.	
+create_memo_loopheader_interpolant(FName,
+				   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				   LoopCL, LoopML, Intp, OutIntp):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/	
+        interp_create_memo_loopheader_interpolant(FName,
+						  SGlobalArr, SGlobalVar,
+						  SLocalArr, SLocalVar,
+						  LoopCL, LoopML,
+						  Intp, OutIntp),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(store_timing_2,Time1-Time0),
+#endif  /*PROFILE*/
+        true.		
+#endif  /*MINMAX*/
+
+%-----------------------------------------------------------------------------
+% This predicate is not used -- In case you want to use it keep in
+% mind it's outdated!
+%-----------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+% store_no_interp(Ip, EV, V, CL, ML, A):
+%     Ip: List of program points
+%     EV: Evaluated variables (with constraints)
+%     V: Variables of the symbolic constraints
+%     CL: List of symbolic constraints
+%     ML: Mark list of important constraints
+%     A : Answer 
+%------------------------------------------------------------------------------
+% Storing exact constraints into the table, not summarization
+% ie. not call to evaluate_selectively_constraints_path
+%------------------------------------------------------------------------------
+% store_no_interp(FName, Id, PP, 
+% 	        GlobalArr, GlobalVar, LocalArr, LocalVar,
+% 	        _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+% 	        ArrRef, _CL, _ML, CallStack, Answer,TableSpace) :-
+% 	config_to_index(PP, PPIdx),
+
+% 	project_and_negate(state(GlobalArr, GlobalVar,
+% 				 LocalArr, LocalVar,ArrRef),
+% 			   state(GlobalArr1, GlobalVar1,
+% 				 LocalArr1, LocalVar1,CList)),
+% #ifdef  PROFILE
+%         % Sanity check if the analysis is monovariant (i.e.,
+%         % path-insensitive)
+%         sanityCheckMonovariance(FName,PP),
+% #endif  /*PROFILE*/
+% 	which_table(PP, TableId),
+% #if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+% #ifdef  PIPEMEMO
+% 	pipe_master_store_t(PP, TableId, PPIdx, FName, _PPContext,
+% 			    [sinfo(FName, PP)|CallStack],
+% 			    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+% 			    CList, Answer),
+% #else
+% 	store_t(TableId, PPIdx, FName, _PPContext, [sinfo(FName, PP)|CallStack],
+% 	        GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+% 		CList, Answer),
+% #endif 	/*PIPEMEMO*/
+%         record_tablespace_content(TableSpace, FName, TableId),
+% #ifdef  OPTIMIZED_FIXPO	
+% 	record_tablespace_loop(TableSpace, FName, TableId),
+% #endif	/*OPTIMIZED_FIXPO*/ 
+%         % To prevent warnings
+%         Id=_,
+% #else
+%         % To prevent warnings
+%         TableSpace=_,
+
+% #ifdef  PIPEMEMO
+% 	pipe_master_store_t(PP,TableId, PPIdx, FName, Id,
+% 			    [sinfo(FName, PP)|CallStack],
+% 			    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+% 			    CList, Answer),
+% #else
+% 	store_t(TableId, PPIdx, FName, Id, [sinfo(FName, PP)|CallStack],
+% 	        GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+% 		CList, Answer),
+% #endif 	/*PIPEMEMO*/	
+% #endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%         %----------------------------------------------------------------------
+%         % Important step: after the analysis of the function has been
+%         % finished, we need to cleanup its memo table. Otherwise,
+%         % subsumption may not be sound.
+%         %----------------------------------------------------------------------
+%         clear_function_memo_table(FName,PP),
+% #ifdef  DEBUG_USE
+%         noise_store(FName, PP, CList, Answer),
+% #endif
+%         !. % we don't want backtracking here
+
+
+%-----------------------------------------------------------------------------%
+% Wrapper to decide if we are using basic interpolants or other
+% interpolation methods (e.g., wp's)
+%-----------------------------------------------------------------------------%
+wrapper_subsumed_profiled(FName,
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			  GlobalArr , GlobalVar , LocalArr , LocalVar, ArrRef,
+			  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			  NegIntp):-
+	current_tracer_flag(other_interp,n),
+	!,
+	subsumed_profiled(FName,
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	                  GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+			  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			  NegIntp).
+wrapper_subsumed_profiled(FName,
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			  GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+			  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			  NegIntp):-
+	interp_subsumed(FName,
+			SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			GlobalArr , GlobalVar , LocalArr , LocalVar , ArrRef,
+			TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, NegIntp).
+	
+%#ifdef  PROFILE
+%------------------------------------------------------------------------------
+% subsumed_profiled: Profiled version of subsumed.
+%------------------------------------------------------------------------------
+subsumed_profiled(FName,
+		  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		  GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		  NegCond):-
+	ctime(T0),
+	subsumed_profiled_aux(FName,
+			      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			      GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+	                      TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			      NegCond, T0).
+subsumed_profiled_aux(FName,
+		      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		      GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+	              TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		      NegCond, T0):-
+	subsumed(FName,
+		 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		 GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		 TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		 NegCond),	
+	ctime(T1),
+	add_counter(subsumed_timing_ok,T1-T0),
+	add_counter(subsumed_ok,1).
+subsumed_profiled_aux(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,T0):-	
+	ctime(T1),
+	add_counter(subsumed_timing_failed,T1-T0),
+        %----------------------------------------------------------------------
+	% Problems to catch this profiling info
+	% (subsumed_failed). Perhaps due to backtracking.
+        %----------------------------------------------------------------------
+	add_counter(subsumed_failed,1),
+	!, fail.
+%#endif  /*PROFILE*/
+
+%-----------------------------------------------------------------------------%
+% subsumed(+FName, +SGlobalArr,..., +GlobalArr,... +TGlobalArr,...,+NegCond)
+%-----------------------------------------------------------------------------%
+% Subsumption test: A |= B if A and not B is unsatisfiable.
+% The purpose of this predicate is to provide an implementation of
+% success w/o binding (a.k.a. "not not")
+%
+% SGlobalArr,... is the symbolic variables of the current state
+% GlobalArr ,... is the evaluated variables of the current state
+% TGlobalArr,... is the symbolic variables of NegCond.
+%-----------------------------------------------------------------------------%
+subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_) :-
+        %----------------------------------------------------------------------
+	% If path-insensitive then subsumption should hold always.
+	% Note that if path-insensitive then we always store true in
+	% the memo table. Hence, normal subsumption test should hold
+	% always. However, we have noticed that in presence of
+	% nonlinear constraints this test fails. Therefore, to avoid
+	% problems we simply force the subsumption here.
+        %----------------------------------------------------------------------	
+	current_tracer_flag(path_sensitive,n),!.	
+subsumed(FName,
+	 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	 GlobalArr, GlobalVar, LocalArr, LocalVar, InArrRef,
+	 TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, NegCond) :-
+	subsumption_unsatisfiability(FName,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     GlobalArr,GlobalVar,LocalArr,LocalVar,InArrRef,
+				     TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,NegCond),
+	!,
+	fail.
+subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_).
+
+%-----------------------------------------------------------------------------%
+% Core of subsumption test
+%
+% subsumption_unsatisfiability(+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+% Succeed if subsumption does not hold, or cannot be decided to hold.
+%-----------------------------------------------------------------------------%
+subsumption_unsatisfiability(FName,
+			     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,			     
+			     GlobalArr, GlobalVar, LocalArr, LocalVar, InArrRef,
+			     TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, NegCond) :-
+	%---------------------------------------------------------------------
+        % Key step: unify set of variables before the unsatisfiability test
+	%---------------------------------------------------------------------	
+#ifdef  EXTERNAL_SOLVER
+        SGlobalArr=TGlobalArr,SGlobalVar=TGlobalVar,
+	SLocalArr =TLocalArr ,SLocalVar =TLocalVar,
+	% To avoid warnings
+	GlobalArr=_,GlobalVar=_,LocalArr=_,LocalVar=_,
+	SymVars=state(FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	debug_message("\tAdding constraints into the solver for subsumption test \n",
+		      []),
+#else
+        GlobalArr=TGlobalArr,GlobalVar=TGlobalVar,
+	LocalArr =TLocalArr ,LocalVar =TLocalVar,
+	% To avoid warnings
+	SGlobalArr=_,SGlobalVar=_,SLocalArr=_,SLocalVar=_,
+#endif  /*EXTERNAL_SOLVER*/
+#ifdef  ENCODE_MEMO_OPT
+	varlist2varterm(global, array, GlobalArr, EncGlobalArr),
+	varlist2varterm(global, var  , GlobalVar, EncGlobalVar),
+	varlist2varterm(FName , array, LocalArr , EncLocalArr),
+	varlist2varterm(FName , var  , LocalVar , EncLocalVar),
+	SymVars=state(FName,EncGlobalArr,EncGlobalVar,EncLocalArr,EncLocalVar),
+#else
+        % To avoid warnings
+        FName=_,SymVars=_,
+#endif  /*ENCODE_MEMO_OPT*/
+        %------------------------------------------------------------------
+        % If subsumption holds then this call should fail.
+        %------------------------------------------------------------------
+        subsumption_satisfiable(NegCond,SymVars,InArrRef).
+ 			        
+%------------------------------------------------------------------------------%
+% subsumption_satisfiable(+NegConstraints,+SymVars,+InArrRef)
+%------------------------------------------------------------------------------%
+% Succeed iff the evaluation of NegConstraints (interpreted as a
+% disjunction of negated constraints) plus initial array references
+% InArrRef is satisfiable.
+%
+% Note that SymVars is used only if ENCODE_MEMO_OPT or EXTERNAL_SOLVER
+%------------------------------------------------------------------------------%
+subsumption_satisfiable(NegDisj,SymVars,ArrRef) :-
+	unsatisfiable_disjunction(NegDisj,SymVars,ArrRef),
+	!,
+	fail.
+subsumption_satisfiable(_,_,_).
+		        
+%------------------------------------------------------------------------------%
+% unsatisfiable_disjunction: Test if a list of constraints interpreted
+% as a disjunction is satisfiable or not, without propagating
+% evaluation of constraints. Assume that array constraints have been
+% previously treated to avoid constraint_symbolic/3 failing.
+%------------------------------------------------------------------------------%
+unsatisfiable_disjunction(NegDisj,SymVars,ArrRef) :-
+	satisfiable_disjunct(NegDisj,SymVars,ArrRef),
+	!,
+	fail.
+unsatisfiable_disjunction(_,_,_).
+
+satisfiable_disjunct([C|_],SymVars,ArrRef) :-
+#ifndef EXTERNAL_SOLVER	
+#ifndef ENCODE_MEMO_OPT
+	constraint_symbolic(C, ArrRef, ArrRef1),
+	% To avoid warnings
+	SymVars=_,
+#else
+        constraint_symbolic_encoded(C, SymVars, ArrRef, ArrRef1),
+#endif  /*ENCODE_MEMO_OPT*/
+	satisfiable_array_references(ArrRef1),
+#else
+        %-----------------------------------------------------------------------%
+        % Here we test if the external solver context in conjunction
+        % with C is consistent. If it's inconsistent the solver
+        % context remains as before the test.
+        %-----------------------------------------------------------------------%
+        append([C],ArrRef,CL),
+        extern_solver_add_cnstr_and_check_sat_and_undo(CL,SymVars),
+#endif  /*EXTERNAL_SOLVER*/
+        !.
+satisfiable_disjunct([_|R],SymVars,ArrRef) :-
+	satisfiable_disjunct(R,SymVars,ArrRef).
+
+#ifndef MINMAX
+%-------------------------------------------------------------------------------%
+% usage 1: create_subsumed_interpolant(+FName,
+%		 		   ?TGlobalArr,?TGlobalVar,?TLocalArr,?TLocalVar,
+%				   +CL, -ML,
+%				   ?TGlobalArr,?TGlobalVar,?TLocalArr,?TLocalVar,
+%				   +NegIntp,_)
+% usage 2: create_subsumed_interpolant(+FName,
+%		 		   ?TGlobalArr,?TGlobalVar,?TLocalArr,?TLocalVar,
+%				   +CL, -ML,
+%				   ?TGlobalArr,?TGlobalVar,?TLocalArr,?TLocalVar,
+%				   +NegWPIn,-WPOut)
+%-------------------------------------------------------------------------------%
+% Wrapper to decide whether we are using only basic interpolants or
+% other interpolation methods (e.g., wp)
+%-------------------------------------------------------------------------------%
+create_subsumed_interpolant(FName,
+			    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			    CL, ML,
+			    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			    NegIntp,_):-
+	current_tracer_flag(other_interp, n), !,
+#ifdef  ENCODE_MEMO_OPT
+        % Note: predicate subsumed understands the encoded interpolant
+        % and will return yes/no as usual. However, if it says yes,
+        % interpolate_constraints_path needs the decoded form. Thus,
+        % either we can make subsumed to return an extra argument with
+        % the decoded interpolant or make interpolate_constraints_path
+        % also to understand the encoded form.
+        decode_constraints_list(FName,
+				TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				NegIntp, NegIntpDecoded),
+	make_dnf(NegIntpDecoded, NegIntp1),
+#else
+        % To avoid warnings
+        FName=_,
+	make_dnf(NegIntp, NegIntp1),
+#endif  /*ENCODE_MEMO_OPT*/
+        %-----------------------------------------------------------------------%
+        % The use of make_dnf/2 is vital so that
+        % interpolate_constraints_path interprets the retrieved
+        % interpolant (NegIntp) from the subsuming node as a
+        % disjunction of negated literals. Then, the final interpolant
+        % returned will be those constraints from CL which in
+        % conjunction with **each** single disjunction is
+        % unsatisfiable.
+        %-----------------------------------------------------------------------%
+	interpolate_constraints_path(NegIntp1, CL, ML, no_check).
+create_subsumed_interpolant(FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    CL, ML,
+			    TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+			    NegWP, WPOut):-
+	current_tracer_flag(other_interp, y),
+#ifdef  ENCODE_MEMO_OPT
+        decode_interp_conjunct_list(NegWP,
+				    FName,
+				    TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				    NegWPDecoded),
+	NegWP1=NegWPDecoded,
+#else
+        % To avoid warnings
+        FName=_,
+	NegWP1=NegWP,
+#endif  /*ENCODE_MEMO_OPT*/
+	interp_create_subsumed_interpolant(FName,
+					   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   CL, ML,
+					   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					   NegWP1, WPOut).
+%-----------------------------------------------------------------------------%
+#endif  /*!MINMAX*/
+%-----------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------------
+% Cleanup all memo table entries stored during the analysis of the
+% function FName.
+%------------------------------------------------------------------------------
+clear_function_memo_table(FName,PP):-
+	start(FName,PP),	
+	!,
+#ifdef  MINI_DEBUG_USE
+	print_message("\tCleanup memo table of % ... ",[FName],yellow),
+#endif	
+#ifdef  PROFILE	
+	set_counter(deleted_memo_entries,0),
+#endif        
+#ifdef  PIPEMEMO
+        %pipe_master_print_memo_table,
+        pipe_master_clear_function_memo_table(FName),
+#else
+	clear_function_memo_table_aux(FName),
+#endif 	/*PIPEMEMO*/
+#ifdef  DEBUG_USE
+        counter_value(deleted_memo_entries,DeletedEntries),
+	print_message("\tDeleted % memo table entries.\n",[DeletedEntries],yellow),
+#endif  /*DEBUG_USE*/      
+        true.	
+clear_function_memo_table(_,_).
+        % Here it's not a function then do nothing
+        % or path-insensitive analysis
+
+#ifdef  PIPEMEMO
+% Clean memo entries of the function FName
+pipe_master_clear_function_memo_table(FName):-
+	func_program_point(FName,PP),
+	printf_to_atom(PName, "t%", [PP]),
+	%%%
+	% We get the number of entries corresponding to the same
+	% program point.
+	%%%
+	memo_entry_counter_value(FName,PP,N),
+	% Reset the counter value 
+	memo_entry_reset_counter(FName,PP),
+	% Get the init value of the counter 
+	memo_entry_start_counter(I),	
+	pipe_master_clear_tablespace_memo_backtrack(I,N,
+						    PName,FName,PP),	
+	fail.
+pipe_master_clear_function_memo_table(_).
+
+pipe_master_clear_tablespace_memo_backtrack(I,N,_,_,_):- I > N, !, fail.
+pipe_master_clear_tablespace_memo_backtrack(Index,_,PName,FName,TableId):-
+	%-----------------------------------------------------------
+	% We fix the index of the entry to be deleted.
+	%-----------------------------------------------------------
+        % tpX/8
+	T =.. [PName, FName, Index, TableId, _IpIdx, _ContextId,
+ 	       [sinfo(FName, _)|_],_L, _Answer],
+	
+	pipe_master_retract_memo(T),
+#ifdef  PROFILE	
+        add_counter(deleted_memo_entries,1).
+#else
+        true.
+#endif
+pipe_master_clear_tablespace_memo_backtrack(I,N,PName,FName,TableId):-
+	pipe_master_clear_tablespace_memo_backtrack(1+I,N,
+						    PName,FName,TableId).
+pipe_master_retract_memo(T):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_memo_slave("retract_memo(%,%) .\n",[T,MsgTimeStamp1]),			 
+#else
+	write_memo_slave("retract_memo(%) .\n",[T]),
+#endif /*PROFILE*/
+	read_from_memo_slave(X),
+	process_slave_output(X,Reply),
+	!,
+	pipe_master_retract_memo_aux(Reply).
+
+pipe_master_retract_memo_aux(reply_args(fail)):- !, fail.
+pipe_master_retract_memo_aux(_):- !.	
+#endif  /*PIPEMEMO*/
+
+
+% TODO: If the memo table is stored in another process, the master
+% must send the request to clean the memo table in the slave.
+cleanup_memo_table :-
+	program_point(PP),
+	printf_to_atom(PName, "t%", [PP]),
+#ifdef  PIPEMEMO
+        functor(T, PName, 8),
+#elif   defined(ENCODE_MEMO)
+	functor(T, PName, 7),
+#elif   defined(MINMAX)
+        functor(T, PName, 13),
+#else
+	functor(T, PName, 10),
+#endif	
+	retractall(T),
+	fail.
+cleanup_memo_table.
+
+clear_function_memo_table_aux(FName):-
+	func_program_point(FName,PP),
+	printf_to_atom(PName, "t%", [PP]),
+#ifdef  ENCODE_MEMO
+	% tpX/7
+        T =.. [PName,FName,_,_,_,_,_,_],
+#else
+#ifdef  MINMAX
+        % tpX/13
+        T =.. [PName, _, FName, _, _, _, _, _, _, _, _, _, _,_],
+#else   /*MINMAX*/
+	% tpX/10
+        T =.. [PName,FName,_,_,_,_,_,_,_,_,_],
+#endif  /*MINMAX*/
+#endif	/*ENCODE_MEMO*/	
+#if     (UNFOLD_OPT == SAFETY || defined(ENCODE_MEMO))
+        retract(T),
+#else
+        robust_retract(T),
+#endif	/*(UNFOLD_OPT == SAFETY || defined(ENCODE_MEMO))*/
+#ifdef  PROFILE	
+	add_counter(deleted_memo_entries,1),
+#endif 		
+	fail.
+clear_function_memo_table_aux(_).
+
+#ifdef  DEBUG_USE
+debug_store_memo(FName, PP,
+		 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		 CL,Answer):-
+       debug_message("\tSTORED MEMOTABLE at %@%  \n", [FName,PP],yellow),
+       debug_message("\t",[]),
+       debug_store_memo_aux(CL, FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#if    (UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE)
+       print_message("\tAnswer:% \n",[Answer]),
+#else
+       % To avoid warnings 
+       Answer=_,
+#endif /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE)*/
+       true.
+debug_store_memo_aux(CL,_,_,_,_,_):-
+	CL == [],!,
+	print_message("true\n",[]).
+debug_store_memo_aux(CL, FName,
+		     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+       pretty_printer_constraints_list(FName,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       CL).
+#else
+debug_store_memo(_,_,_,_,_,_,_,_).
+#endif  /*DEBUG_USE*/
+
+%-------------------------------------------------------------------------%
+% For sanity checks
+%-------------------------------------------------------------------------%
+count_memo_entries(TableId,PPIdx,FName):-
+#if     defined(PIPEMEMO) && (!defined(MINMAX))
+        % check_t/12
+	check_t(_,TableId,PPIdx,FName,_,_,_,_,_,_,_,_),
+#elif   (!defined(MINMAX))
+        % check_t/11
+	check_t(TableId,PPIdx,FName,_,_,_,_,_,_,_,_),
+#else   /* MINMAX */
+        % check_t/14
+	check_t(_,TableId,PPIdx,FName,_,_,_,_,_,_,_,_,_,_),
+#endif  
+	add_counter(num_memo_entries,1),
+	fail.
+count_memo_entries(_TableId,_PPIdX,_FName).

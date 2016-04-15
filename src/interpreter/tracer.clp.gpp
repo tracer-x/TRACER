@@ -1,0 +1,3451 @@
+%============================================================================%
+%                TRACER: Interpolation-Based Symbolic Execution
+%============================================================================%
+
+%----------------------------------------------------------------------------%
+% WARNINGS
+%----------------------------------------------------------------------------%
+% In order to reduce significantly memory consumption we have modified
+% CLP(R) by adding the -D flags to the Makefile:
+% - FREE_PTERMS
+% - CLEAR_PTERM_BUFFER
+% - FREE_HASHBUILTINA_PTERM
+%
+% In addition to them, the interpreter may call set_cs_mark/0 and
+% pop_cs_mark/0 to reuse code space whenever possible, and
+% clear_pterm_buffer/0 to have even more control to free memory. Keep
+% in mind these options and system predicates are not completely
+% tested. They just seem to solve our problems, in particular, for
+% analyses which consumes a huge amount of memory due to the
+% witnesses. However, in Linux you may see some error message like:
+% *** glibc detected ***
+% /home/jorge/SvnReps/Systems/CLPR/clpr-1.2b/clpr: malloc(): memory
+% corruption: 0x29ba3998 *** In this is the case, here it could be the
+% reason.
+% Alternatively, you may see a CLP(R) error:
+% Fatal Error: Zero opcode
+%
+% FLOATING POINT CONVERSION
+%
+% CLP(R) performs floating point conversion (e.g., 3221225490 ->
+% 3.22123e+09) at least when dump is called. This may produce
+% unexpected results (at least in diskperf and kbfiltr).
+%
+% We have experimented two kind of behaviours:
+% 
+%  - extension of witnesses from a child to its parent could fail. E.g., 
+%    going forward we may encounter 
+%      X>3221225490,X>3221225492,X>2147483670, X>3221225491,X<3221225634,
+%      X<3221225653,X<3221225635, which is satisfiable.
+%    Then, that extension consists basically of executing those
+%    constraints BUT in its symbolic form:
+%      gt(SX, 3.22123e+09), gt(SX,3.22123e+09), gt(SX, 2.14748e+09),
+%      gt(SX, 3.22123e+09), gt(3.22123e+09, SX), gt(3.22123e+09, SX),
+%      gt(3.22123e+09, SX) which is unsatisfiable!
+% - subsumption test may fail. The interpolant is stored in symbolic
+%   form and hence, floating point conversion is done. When the test is
+%   performed, we check satisfiability wrt to the current constraints
+%   which are not yet converted. E.g., this is an old bug report:
+%     "Bug#4 [23/08/2010]: If PIPEDUMP_AND_ANSWERS subsumption test
+%      seems to fail in case it should not. Go to
+%      tests/WCET/MACRO_TESTS/kbfiltr-mod.c. The third time the
+%      transition i293 is traversed should be subsumed. However, the
+%      call unsubsumed_constraint(gt(3.22123e+09, 3.22123e+09),[],,_)
+%      amazingly succeeds. I have not been able to reproduce this
+%      behavior in isolation."
+% 
+% We solve these problems by adding the -D flag -DDUMP_FIXED_POINT to
+% the CLP(R) Makefile to force fixed-point representation.
+%---------------------------------------------------------------------------%
+% KNOWN BUGS
+%---------------------------------------------------------------------------%
+% Bug#0: crazy profiled timings for memo table lookup and subsumption
+% test. Very old bug but not fixed yet!. Backtracking has something to
+% do.
+%
+% Bug#1: TRACER can become buggy in presence of nonlinear
+% constraints. Neither dump nor assert, which does also dump
+% internally, can eliminate nonlinear constraints even if they are not
+% connected to the variables of interest. Hence, zombie constraints
+% can exist. So far, this may raise an error if witnesses are used due
+% to their sizes which may be exponentially large if too many
+% nonlinears in the program. If you see the error:
+%
+% "Fatal Error: Run out of registers during compilation"
+%
+% and ran with witnesses, try to uncomment the line:
+%
+% %#define ONLY_LINEAR_WITNESSES
+%
+% By the way, e.g.., it is unclear how compute_unsat_core/4 generates
+% interpolants with nonlinear constraints.
+%
+% Bug#2: (Old, probably it's gone) Look at nsichneu_prep.c running
+% WCET and array solver. "ERROR: pre_op_checkpoint did not finished
+% properly" after 2600 visited states and more than 30 minutes
+% running.
+%
+% Bug#3: Option ENCODE_MEMO and ENCODE_CHILD_PARENT fails in presence
+% of array constraints. The problem raises when
+% construct_aref_substitutes/4 is used to make symbolic array
+% constraints because extra variables are considered. The grounding
+% encode/decode scheme used assume that all variables are fixed from
+% the beginning and this is not the case with those extra variables.
+%
+%-------------------------------------------------------------------------%
+% TRACER assumes that the C program is translated into CLP rules as
+% follows:
+%-------------------------------------------------------------------------%
+% trans(FName,                          % Function name
+%       Id                              % unique transition identifier 
+% 	[p0],                           % PC (from) 
+% 	[H],                            % Global array - H is always there
+% 	[],                             % Global variables
+% 	[SH],                           % Symbolic global array
+% 	[],                             % Symbolic global variables
+% 	[A],                            % Local array
+% 	[ReturnValue,_I,J,Tmp],         % Local variables
+% 	[SA],                           % Symbolic local array
+% 	[SReturnValue,_SI,SJ,STmp],     % Symbolic local variables
+% 	[p1],                           % PC (to)
+% 	[H],                            % Global next state array
+% 	[],                             % Global next state variables
+% 	[SH],                           % Symbolic global next state array
+% 	[],                             % Symbolic global next state variables
+% 	[A],                            % Local next state array
+% 	[ReturnValue,_INext,J,Tmp],     % Local next state variables
+% 	[SA],                           % Symbolic local next state array
+% 	[SReturnValue,_SINext,SJ,STmp], % Symbolic local next state variables
+% 	XCL,                            % Symbolic constraints attached to transition
+% 	FunctionCall,                   % if transition is a function call
+% 	ArrRef,                         % Array references ([ref(H,X,RefX)], and RefX is
+%                                         used in the body.
+%       Statement).                     % Type of statement: branch or not_branch         
+%
+% where FunctionCall = [call(CalleeFName,FormalLocalPars,SFormalLocalPars,CCL]]
+%       CCL is the constraints to match formal and actual parameters.
+% To provide initial state:
+% init_goal(FName, PP, Id, GlobalArr, GlobalVar, SGlobalArr, SGlobalVar,
+%           LocalArr, LocalVar, SLocalArr, SLocalVar, CL).
+%
+% freshlocalarrays(FName,LArray). freshlocalvars(FName,LVars).
+% freshglobalarrays(GArray). freshglobalvars(GVars).
+% start(FName,PC). bottom(FName,PC).
+%
+% For structured loops:
+% block(BlockId,FName,PC,ExitPC,NoIter,Flag (l or nl),
+%       [Id0,...,IdN],
+%       UpdGlobalArr,UpdGlobalVar,UpdLocalArr,UpdLocalVar)
+% For providing loop invariants:
+% loopinv(FName,PP,GlobalArr,GlobalVar,LocalArr,LocalVar)
+% For goto's:
+% ancestor_pp(FName,PP)
+%
+% If slicing to provide slicing criteria:
+% init_slicing_goal(FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+%                   GlobalArrTarget,GlobalVarTarget,
+%                   LocalArrTarget, LocalVarTarget)
+%----------------------------------------------------------------------------%
+%             NOTES about VERIFICATION and TESTING IN TRACER
+%----------------------------------------------------------------------------%
+% - tracer_safety.clp.gpp proves safety conditions but using external
+% loop invariants (see "An Interpolation Method for CLP traversal",
+% CP'09). Whenever a loop is encountered, a loop invariant is
+% generated automatically and the symbolic execution of the loop is
+% performed with that loop invariant. The clear disadvantage is the
+% potential high false alarms rate (if loop invariants are not strong
+% enough to prove the safety condition).
+%
+% - tracer_safety_minmax.clp.gpp proves safety condition based on the
+% ideas of the paper "Symbolic Execution for Unbounded Verification,
+% RV'11". This version does not produce false alarms by attempting
+% loop invariants on the fly and refine them if they are not strong
+% enough (but, of course, it can run forever).
+%
+% FIXME: we currently show the real counterexample only for minmax. It
+% is straightforward for non-minmax and needed.
+%
+% - (Obsolete) tracer_tester_clp.gpp tests a program until a given
+% depth. This tester follows tracer_safety_clp.gpp with the main
+% feature that it uses concrete inputs to decide whether a guard is
+% satisfiable or not. The implementation is UNTESTED and INCOMPLETE
+% but not too far from getting something working.
+%
+% - TRACER can be executed in parallel with CREST (a concolic
+% tester). The idea is that the symbolic paths are stored by TRACER
+% which also generates interpolants in order to prune paths later on
+% by telling CREST not to execute a particular path.
+% FIXME: instructions how to do are not clear since we cannot use the
+% script "tracer".
+%----------------------------------------------------------------------------%
+%             NOTES FOR IMPLEMENTING A NEW ANALYSIS IN TRACER
+%----------------------------------------------------------------------------%
+% TRACER (tracer.clp.gpp and tracer_loops.clp.gpp) performs basically
+% interpolation-based symbolic execution with automatic loop invariant
+% generation. TRACER can be seen as a generic framework which provides
+% path-sensitiveness to some program analyses. A new program analysis
+% ANALYSIS_NAME must implement in a new file called
+% tracer_ANALYSIS_NAME.clp.gpp a set of generic operations following
+% interface:
+%
+% - cleanup_ANALYSIS_NAME        : cleanup all internal data structures.
+% - ANALYSIS_NAME_bound_reached  : search depth reached (if any). Note
+%                                  that if used the analysis will be
+%                                  incomplete.
+% - ANALYSIS_NAME_success_path   : terminal node has been reached (end
+%                                  of the path)
+% - ANALYSIS_NAME_fail_path      : infeasible node has been reached.
+% - ANALYSIS_NAME_loop_back_edge : back-edge transition has been found.
+% - ANALYSIS_NAME_loop_exit      : exit transition of a loop has been found.
+% - ANALYSIS_NAME_subsumed_answer: check satisfiability of witnesses
+% - ANALYSIS_NAME_reuse_answer   : after a node is subsumed, answers
+%                                  must be reused.
+% - ANALYSIS_NAME_combine_answers: combine answers at the parent after
+%                                  child's answers have been computed.
+% - ANALYSIS_NAME_pre_operator   : compute pre-state from a post-state
+% - unfold_ANALYSIS_NAME_loop_until_fixpoint: to analyze a loop with
+%                                  fixpoint (e.g., slicing)
+% - unfold_ANALYSIS_NAME_loop    : to analyze a loop without fixpoint
+%                                  (e.g., wcet)
+%
+% IMPORTANT: Not any program analysis can be implemented in
+% TRACER. The main condition that the analysis must fulfill is that it
+% can be stated in a backward manner. For instance, backward
+% dependencies wrt to a program point and a set of variables. Recall,
+% another important issue is how to define witnesses efficiently.
+%
+% Some important common operations are implemented in
+% tracer_analysis.clp.gpp
+%----------------------------------------------------------------------------%
+
+#include "tracer_declarations.clp.gpp"
+
+%----------------------------------------------------------------------------%
+% Wrapper to allow external programs running with tracer options
+%----------------------------------------------------------------------------%
+run_with_user_options(Program,Options):-
+	% User options	
+	set_user_options(Options),
+        % TRACER default options which overwrite user options because
+        % these options are mandatory
+	set_unfolder_options,       
+	execute(Program).      
+
+%----------------------------------------------------------------------------%
+% execute(+Program)
+% Program is the file name of the program to be executed.
+%----------------------------------------------------------------------------%	
+run(Program):-
+	% TRACER default options
+	set_unfolder_options,        
+	execute(Program).
+
+%----------------------------------------------------------------------------%	
+% Main predicate
+%----------------------------------------------------------------------------%	
+execute(Program) :-
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+	%----------------------------------------------------------------------
+	% We first set pipe_init_flag to 0, to denote the region where we are
+	% not initializing the pipe
+	%----------------------------------------------------------------------
+	set_counter(pipe_init_flag, 0),	
+#endif  /* PIPEDUMP || PIPEDUMP_AND_ANSWERS */
+#ifdef  REDUNDANT_MARKINGS_PROFILE
+	init_redundant_markings_profile,
+#endif  /* REDUNDANT_MARKINGS_PROFILE */
+#ifndef  TESTING_CREST
+	% Load the program
+	load_program(Program),
+        % Run initialization routines
+	init_routines,
+	% Initialize counters for profiling
+	init_profiling_counters,
+	% Init CLP-Prover (rybalchenko's interpolation)
+	rybal_init,
+#ifdef  PROFILE	
+	% Initialize counters used for sanity checks
+	init_sanitization_counters,
+#endif  /*PROFILE*/	
+#ifdef  STSDOT
+	% Output the State Transition System of the CLP program
+        atom_concat(Program,'.STS.dot',STS),	
+        graphviz_STS(STS),
+#endif	/*STSDOT*/
+#else
+	% to avoid warnings
+        Program=_, 
+#endif /*TESTING_CREST*/
+	% Taking initial state
+	init_goal(FName, PP, Id, 
+	          GlobalArr, GlobalVar, SGlobalArr, SGlobalVar,
+                  LocalArr, LocalVar, SLocalArr, SLocalVar, XCL),
+#ifdef  GRAPHVIZ_USE
+        % Initialize counters for distinguishing different calls to
+        % the same function.
+        % init_call_context_counters,
+        get_next_pp_context(FName,PP,[],PPContext),
+        push_context_stack(FName,PPContext),
+#endif
+#ifdef  EXTERNAL_SOLVER
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+        extern_solver_add_choice_point,
+#endif  /*EXTERNAL_SOLVER*/
+	% Initialize the path formula
+	init_constraints_path(XCL,CL,ML),
+	ztime,
+        zmem_usage,
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO))
+	%----------------------------------------------------------------------
+	% To initialize pipe and fork a new process
+	%----------------------------------------------------------------------
+	set_counter(pipe_init_flag, 1),
+	pipe_init,
+	set_counter(pipe_init_flag, 0),
+#ifdef  PROFILE	
+	%----------------------------------------------------------------------
+	% Very useful info for debugging
+	print_slaves_pid,
+	%----------------------------------------------------------------------
+#endif 	/*PROFILE*/
+#endif  /* PIPEDUMP || PIPEDUMP_AND_ANSWERS || PIPEMEMO */
+#ifdef  PIPEDUMP_AND_ANSWERS
+        % Here we start measuring memory usage of the slave that
+        % stores answers.
+        pipe_master_zmem_usage(answers_slave),
+#ifdef  PIPEMEMO
+        pipe_master_zmem_usage(memo_slave),
+#endif  /*PIPEMEMO*/
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+        pipe_master_zmem_usage(dump_slave),
+#endif 
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        %----------------------------------------------------------------------
+        % We note that the current tablespace id is set to 0, which
+        % must match current_tablespace counter above
+        %----------------------------------------------------------------------
+        TableSpace=0,
+#else   
+        % To prevent warnings
+        TableSpace=_,
+#endif  /* (UNFOLD_OPT == SLICING || UNFOLD_OPT==LIVE) */
+
+%#ifdef  DIDODEBUG
+%	reset_trace_info,
+%#endif
+#if     (UNFOLD_OPT == TESTING)
+        init_tester(UnknownVars),
+#else
+        UnknownVars = _,
+#endif  /*(UNFOLD_OPT == TESTING)*/
+        interp_init_datastructures,
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+        atom_concat(Program,'.TRACES',TracesProg),
+	record_sym_graph_filename(TracesProg),
+#endif	/*RECORD_SYM_GRAPH_ON_FILE*/
+        /* The initial state is not an abstraction point */
+        AbsPtFlag = 0,
+#ifdef  GROUND_EXPLANATION
+    collect_ground_trace(0, Id, FName, PP, 
+               GlobalArr   ,GlobalVar   ,LocalArr   ,LocalVar,	  
+ 	       SGlobalArr  ,SGlobalVar  ,SLocalArr  ,SLocalVar,	       
+ 	       CL, ML, [], [], [], UnknownVars, AbsPtFlag, TableSpace
+	      ,[],[]),
+#endif
+ 	unfold(0, Id, FName, PP, 
+               GlobalArr   ,GlobalVar   ,LocalArr   ,LocalVar,	  
+ 	       SGlobalArr  ,SGlobalVar  ,SLocalArr  ,SLocalVar,	       
+ 	       CL, ML, [], [], [], UnknownVars, AbsPtFlag, TableSpace
+#ifdef  MINMAX
+	      ,[],[]),
+#else   
+              ),
+#endif  /*MINMAX*/
+#if     (UNFOLD_OPT == SAFETY) || (UNFOLD_OPT == TESTING)
+        ctime(Seconds),
+#endif 	
+#ifdef  TREEDOT 
+        % Output the symbolic execution graph of the program:
+        atom_concat(Program,'.GRAPH.dot',SymGraph),
+	graphviz_sym_graph(SymGraph),
+#endif  /*TREEDOT*/
+	%% Here uncomment to see the memo table after the whole
+	%% execution
+%#ifdef  PIPEMEMO	
+%       pipe_master_print_memo_table,
+%       print_memo_table,
+%#endif
+	cleanup,
+	% Kill CLP-Prover (rybalchenko's interpolation)
+	rybal_end,
+#if     (UNFOLD_OPT == SAFETY) || (UNFOLD_OPT == TESTING)
+	!,
+	%----------------------------------------------------------------------
+	% if unfold/23 succeed, then the property was violated.
+	%----------------------------------------------------------------------
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	%----------------------------------------------------------------------
+	% Send a "kill" signal to the child
+	%----------------------------------------------------------------------
+	pipe_terminate,
+#endif	/* PIPEDUMP || PIPEDUMP_AND_ANSWERS */
+        counter_value(node_id, NumOfStates),
+	% counter_value(states_visited,NumOfStates),
+	report_unsafe_program(NumOfStates,Seconds).
+#else
+        !,
+	error_message("TRACER: SOMETHING WAS WRONG ;-( \n",[]).
+#endif  /*UNFOLD_OPT == SAFETY || UNFOLD_OPT == TESTING */
+
+%------------------------------------------------------------------------------
+#ifdef  PIPEDUMP
+%------------------------------------------------------------------------------
+% Pipe initialization fails, in which case we assume we are the slave, and
+% loop forever waiting for input.
+%------------------------------------------------------------------------------
+execute(_Program) :-
+	counter_value(pipe_init_flag, X), X>0, !,     
+	%----------------------------------------------------------------------
+	% Just for sanity
+	%----------------------------------------------------------------------
+	set_counter(pipe_init_flag, 0), !,
+	pipe_dump_slave_loop.
+%------------------------------------------------------------------------------
+#elif   defined(PIPEDUMP_AND_ANSWERS)
+%------------------------------------------------------------------------------
+execute(_Program) :-
+	counter_value(pipe_init_flag, X), X=1, !,     
+	pipe_dump_slave_loop.
+execute(_Program) :-
+	counter_value(pipe_init_flag, X), X=2, !,     
+	pipe_store_answers_slave_loop.
+#ifdef  PIPEMEMO
+execute(_Program) :-
+	counter_value(pipe_init_flag, X), X=3, !,     
+	pipe_memo_slave_loop.
+#endif
+%------------------------------------------------------------------------------
+#endif /* PIPEDUMP*/
+%------------------------------------------------------------------------------
+execute(Program) :-
+	%----------------------------------------------------------------------
+	% If first clause of run/1 failed then it means success.	
+	%----------------------------------------------------------------------
+	ctime(Seconds),
+	gather_mem_stats(MemWaterMark,MemUsage
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))       		 
+			,DumpSlaveWaterMark,DumpSlaveMemUsage
+#endif 		 
+#ifdef  PIPEDUMP_AND_ANSWERS
+			,AnsSlaveWaterMark,AnsSlaveMemUsage
+#endif
+#ifdef  PIPEMEMO
+			,MemoSlaveWaterMark,MemoSlaveMemUsage
+#endif                 
+		        ),	
+#if     (UNFOLD_OPT == SLICING)
+        slice_post_processing,
+%%%
+%       print_trans_in_slice,
+%%%
+	% findall_trans_in_slice/1 retracts all trans_in_slice/2 facts
+	% from the db.
+	findall_trans_in_slice(SliceTrans),
+#elif   (UNFOLD_OPT == WCET)
+        get_wcet_total(WCET),
+#endif
+
+#if     (defined(PROFILE)&&(defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)))
+        getall_counter_values_from_dump_slave(SlaveCounters),
+#endif  		   	
+%% Here uncomment to see the memo table after the whole
+%% execution
+%#ifdef  PIPEMEMO	
+%        pipe_master_print_memo_table,
+%        print_memo_table,
+%#endif
+#if     defined(PRINT_SYM_GRAPH) && (!defined(RECORD_SYM_GRAPH_ON_FILE))
+        atom_concat(Program,'.TRACES',TracesProg),
+        print_sym_graph(TracesProg),
+#endif  /*defined(PRINT_SYM_GRAPH) && (!defined(RECORD_SYM_GRAPH_ON_FILE))*/
+#ifdef  TREEDOT 
+        % Output the symbolic execution graph of the program
+        atom_concat(Program,'.GRAPH.dot',SymGraph),
+	graphviz_sym_graph(SymGraph),
+#endif  /*TREEDOT*/
+        output_stats(Program,Seconds,MemUsage,MemWaterMark
+#ifdef  PIPEDUMP_AND_ANSWERS
+		    ,AnsSlaveMemUsage,AnsSlaveWaterMark
+#endif
+#ifdef  PIPEMEMO
+		    ,MemoSlaveMemUsage,MemoSlaveWaterMark
+#endif
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+		    ,DumpSlaveMemUsage,DumpSlaveWaterMark
+#endif 		    
+#if     (UNFOLD_OPT == SLICING)
+                    ,SliceTrans
+#elif   (UNFOLD_OPT == WCET)
+		    , WCET
+#endif
+#if     (defined(PROFILE)&&(defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)))
+                    ,SlaveCounters
+#endif		    
+		    ),
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))       		 
+	%----------------------------------------------------------------------
+	% Send a "kill" signal to the child
+	%----------------------------------------------------------------------
+	pipe_terminate,
+#endif  /* PIPEDUMP || PIPEDUMP_AND_ANSWERS */
+	% Kill CLP-Prover (rybalchenko's interpolation)
+	rybal_end,
+#if     (UNFOLD_OPT==SAFETY)
+	report_safe_program,
+#endif  /*(UNFOLD_OPT==SAFETY)*/	
+	cleanup.
+
+#if     (UNFOLD_OPT==SAFETY)
+% FIXME: should be in tracer_safety or tracer_minmax_safety
+report_unsafe_program(NumStates,Seconds):-
+	current_tracer_flag(states_bound,X),
+	X > 0,
+	NumStates==X,
+	!,
+	print_message("\nTRACER: the search is INCOMPLETE but bug NOT found.\n\n", []),
+	print_message("States visited: %\nAnalysis time: % seconds\n",
+		      [NumStates,Seconds]).
+report_unsafe_program(NumStates,Seconds):-
+	print_message("TRACER: the program is UNSAFE \n",[]),
+	print_message("States visited: %\nAnalysis time: % seconds\n",
+		      [NumStates,Seconds]).
+report_safe_program:-
+	print_message("\nTRACER: the program is SAFE ;-)\n\n", []).
+#endif  /*(UNFOLD_OPT==SAFETY)*/	
+
+%------------------------------------------------------------------------------
+% Load the program as part of initialization
+%------------------------------------------------------------------------------
+load_program(Program):-
+#if     (CLP_SYS == CLPR)		
+        no_style_check(all),
+#endif
+	ztime,
+	reconsult(Program),
+	ctime(Time),
+#if     (CLP_SYS == CLPR)		
+%        style_check(all),
+#endif	
+	print_message("\nTRACER: loaded program % in % seconds\n\n",[Program,Time]).
+
+% if cleanup/0 is not used unpredictable behavior when re-running unless
+% the CLP(R) engine has been re-initialized.
+#ifdef  TESTING_CREST
+cleanup:-!.
+#endif  /*TESTING_CREST*/
+cleanup:-
+#ifdef  GRAPHVIZ_USE
+        cleanup_graphviz,
+#endif
+	retractall(processnum(_)),
+	interp_cleanup_datastructures,	
+#if     (UNFOLD_OPT == SAFETY)
+#ifdef  MINMAX
+        mm_cleanup,
+#else
+        cleanup_safety,
+#endif  /*MINMAX*/	
+#elif   (UNFOLD_OPT == WCET)
+        cleanup_wcet,
+#elif   (UNFOLD_OPT == SLICING)
+        cleanup_slice,
+	cleanup_program_database,
+#elif   (UNFOLD_OPT == LIVE)
+        cleanup_live,	
+#elif   (UNFOLD_OPT == TESTING)
+        cleanup_tester,
+#endif
+#ifdef  PROFILE
+	cleanup_stats,
+#endif
+#ifndef MINMAX
+#if     (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==WCET) 
+	retractall(exit_interp(_,_,_,_)),
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+	retractall(exit_interp(_,_,_)),
+#endif  /*UNFOLD_OPT==SAFETY*/
+#endif  /*MINMAX*/
+#if     UNFOLD_OPT==WCET
+#ifdef  UNUSED_CODE
+	% Obsolete and unused predicate (for old compositional)
+	retractall(copy_constraint_symbolic_to_evaluated_memo(
+	           _,_,_,_,_,_,_,_,_)),
+#endif  /*UNUSED_CODE*/	
+#endif  /*UNFOLD_OPT==WCET*/	
+	cleanup_memo_table,  
+	cleanup_program_point,
+	cleanup_function_program_point,
+	!.
+
+cleanup_stats:-
+	retractall(infeasible_paths(_,_)),
+	retractall(feasible_paths(_,_)).
+
+add_node_id_gc:-
+    in_gc_mode, !.
+add_node_id_gc:-
+    add_counter(node_id, 1).
+
+%==============================================================================
+% unfold: main predicate
+%==============================================================================
+% Case: record debugging information
+unfold(Depth, _Id, _FName, _PP, 
+       _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,	
+       _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+       _CL, _ML, _CallStack, _ArrRef, _Loops, _UnknownVars, _AbsPtFlag,
+       _TableSpace
+#ifdef  MINMAX
+       , _LoopStack
+       , _PathStack) :-
+#else  
+        ) :-
+#endif /*MINMAX*/
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+#ifndef  GC_INTP_INFEASIBLE
+	%----------------------------------------------------------------------
+	% Debugging info: report we visit this node when necessary
+	%----------------------------------------------------------------------
+        add_counter(node_id, 1),
+#endif  /*!GC_INTP_INFEASIBLE*/
+%	add_counter(states_visited, 1),
+#ifdef  PROFILE
+	report_number_states(500),
+	update_max_depth(Depth),
+#else
+        % To avoid warnings
+        Depth=_,
+#endif
+#ifdef  GC_INTP_INFEASIBLE
+    add_node_id_gc,
+#endif  /*GC_INTP_INFEASIBLE*/
+	fail.
+%------------------------------------------------------------------------------
+% Case: number of states bound reached
+% For debugging purposes.
+%------------------------------------------------------------------------------
+unfold(_Depth, _Id, _FName, _PP,
+       _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,	
+       _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+       _CL, _ML, _CallStack, _ArrRef, _Loops, _UnknownVars, _AbsPtFlag, _TableSpace
+#ifdef  MINMAX
+       , _LoopStack
+       , _PathStack
+#endif
+       ) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	current_tracer_flag(states_bound,Bound),
+	counter_value(node_id, NumOfStates),
+%	counter_value(states_visited,NumOfStates),
+	Bound>0,
+	NumOfStates>=Bound,
+	ctime(Seconds),
+	gather_mem_stats(MemWaterMark,MemUsage
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))       		 
+		 ,DumpSlaveWaterMark,DumpSlaveMemUsage
+#endif 		 
+#ifdef  PIPEDUMP_AND_ANSWERS
+		 ,AnsSlaveWaterMark,AnsSlaveMemUsage
+#endif
+#ifdef  PIPEMEMO
+		 ,MemoSlaveWaterMark,MemoSlaveMemUsage
+#endif                 
+		        ),		
+#if     (UNFOLD_OPT == SLICING)
+        slice_post_processing,
+%%%
+%        print_trans_in_slice,
+%%%
+	% findall_trans_in_slice/1 retracts all trans_in_slice/2 facts
+	% from the db.
+	findall_trans_in_slice(SliceTrans),
+#endif
+#if     (defined(PROFILE)&&(defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)))	
+        getall_counter_values_from_dump_slave(SlaveCounters),
+#endif
+%% Here uncomment to see the memo table after the whole
+%% execution
+% #ifdef  PIPEMEMO
+%       print_message("SLAVE  MEMOTABLE CONTENT: \n",[]),
+%       pipe_master_print_memo_table,
+% 	print_message("MASTER MEMOTABLE CONTENT: \n",[]),
+% 	print_memo_table,
+% #else
+% 	print_message("MEMOTABLE CONTENT: \n",[]),
+% 	print_memo_table,
+% #endif
+	output_stats(program_name,Seconds,MemUsage,MemWaterMark
+#ifdef  PIPEDUMP_AND_ANSWERS
+		    ,AnsSlaveMemUsage,AnsSlaveWaterMark
+#endif
+#ifdef  PIPEMEMO
+		    ,MemoSlaveMemUsage,MemoSlaveWaterMark
+#endif
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+		    ,DumpSlaveMemUsage,DumpSlaveWaterMark
+#endif	    		    		    		    
+#if     (UNFOLD_OPT == SLICING)
+                    ,SliceTrans
+#elif  	(UNFOLD_OPT == WCET)
+		    ,0
+#endif
+#if     (defined(PROFILE)&& (defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)))	
+                    ,SlaveCounters
+#endif		    		    
+		    ),
+#if     defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)
+	%----------------------------------------------------------------------
+	% Send a "kill" signal to the child
+	%----------------------------------------------------------------------
+        pipe_terminate,
+#endif  /* PIPEDUMP || PIPEDUMP_AND_ANSWERS */
+        cleanup.          
+#if     (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==TESTING)
+%------------------------------------------------------------------------------
+% Case: error path found.
+% This clause is only for safety verification or testing
+%------------------------------------------------------------------------------
+unfold(_Depth, Id, FName, PP,
+	GlobalArr, GlobalVar, LocalArr, LocalVar,
+	SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	CL, ML, _CallStack, ArrRef, _Loops,
+       _UnknownVars, _AbsPtFlag, _TableSpace
+#ifdef  MINMAX
+	, LoopStack
+        , PathStack      
+#endif  /*MINMAX*/
+      ) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+#endif /*GROUND_EXPLANATION*/
+#ifdef  MINMAX
+	mm_check_error_path(FName, PP, Id,
+			    GlobalArr , GlobalVar , LocalArr , LocalVar ,ArrRef,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    CL, ML, LoopStack, PathStack).
+#else
+        % To avoid warnings
+        ML=_,
+        safety_check_error_path(FName, PP, Id,
+				GlobalArr , GlobalVar , LocalArr , LocalVar ,ArrRef,
+				SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				CL).
+#endif  /*MINMAX*/
+#endif  /*UNFOLD_OPT == SAFETY || TESTING*/
+
+#ifdef  GC_INTP_INFEASIBLE
+% ----------------------------------------------------------------
+% In-between case: after executing previous case (error path), if
+% error path was reached in GC mode, then GC failed. So just fail
+% w/o executing any subsequent cases.
+% ----------------------------------------------------------------
+unfold(_, _, _, _,
+	_, _, _, _,
+	_, _, _, _,
+	_, _, _, _, _,
+       _, _, _
+#ifdef  MINMAX
+	, _
+        , _      
+#endif  /*MINMAX*/
+      ) :-
+    in_gc_mode, counter_value(gc_status,0), !,
+    fail.
+#endif
+
+%------------------------------------------------------------------------------
+% Case: search depth bound reached
+%------------------------------------------------------------------------------
+unfold(Depth, Id, FName, PP,
+       _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, _CallStack, _ArrRef, _Loops, _UnknownVars, _AbsPtFlag, _TableSpace
+#ifdef MINMAX
+       , LoopStack
+       , PathStack      
+#endif /*MINMAX*/
+       ) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	current_tracer_flag(depth_bound,Bound),
+	Bound>0,  Depth>=Bound,
+#if     (UNFOLD_OPT == TESTING)
+        tester_bound_reached(FName,Depth,PP,CL,ML,			     
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+        % To prevent warnings	
+	Id=_,
+#else
+        % To prevent warnings
+        PP=_,
+#if     (UNFOLD_OPT==SLICING)
+        slice_bound_reached(FName,Depth,Id,CL,ML,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==LIVE)
+        live_bound_reached(FName,Depth,Id,CL,ML,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==WCET)
+        wcet_bound_reached(FName,Depth,Id,CL,ML,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==SAFETY)
+#ifdef  MINMAX
+#ifdef  TESTING_CREST
+        get_unique_context_num(PathStack,NodeId),
+#else
+        PathStack=_, % to avoid warnings
+        counter_value(node_id, NodeId),
+#endif  /*TESTING_CREST*/
+        mm_bound_reached(FName,Depth,CL,ML,
+			 NodeId, LoopStack, [],
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#else
+        safety_bound_reached(FName,Depth,CL,ML,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#endif  /*MINMAX*/
+        % To prevent warnings
+        Id=_,	
+#endif  /*(UNFOLD_OPT==SLICING)*/
+#endif  /*(UNFOLD_OPT==TESTING)*/
+ 	print_message("TRACER: DEPTH BOUND REACHED %\n", [Bound]),
+	!, 
+	fail.
+#ifdef  GROUND_EXPLANATION
+%------------------------------------------------------------------------------
+% Case: safe path reached
+% with GROUND_EXPLANATION: don't do anything when collecting ground path
+%------------------------------------------------------------------------------
+unfold(_, _, FName, PP,
+       _, _, _, _,	
+       _, _, _, _,
+       _, _, [], _, _, _, _, _
+       , _
+       , _      
+       ) :-
+       counter_value(ground_trace_collection_mode, 1),
+       bottom(FName, PP), !.
+%------------------------------------------------------------------------------
+% Case: safe path reached
+% with GROUND_EXPLANATION: record path is safe when pushing invariant along path
+%------------------------------------------------------------------------------
+unfold(_, _, FName, PP,
+       _, _, _, _,	
+       _, _, _, _,
+       _, _, [], _, _, _, _, _
+       , _
+       , _      
+       ) :-
+       counter_value(follow_ground_trace, 2),
+       % If we are pushing invariant to bottom and it's safe, just record it
+       bottom(FName, PP), !,
+       set_counter(ground_safe_invariant, 1).
+#endif  /*GROUND_EXPLANATION*/
+%------------------------------------------------------------------------------
+% Case: safe path reached
+%------------------------------------------------------------------------------
+unfold(Depth, Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, [], ArrRef, _Loops, _UnknownVars, _AbsPtFlag, _TableSpace
+#ifdef MINMAX
+       , LoopStack
+       , PathStack      
+#endif /*MINMAX*/
+       ) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	bottom(FName, PP),
+#ifdef  PROFILE	
+        trace_feasible_paths(Depth),
+#endif  /*PROFILE*/
+#ifdef  MINI_DEBUG_USE	
+	print_message("TERMINAL: end path found at %@% \n",[FName,PP],blue),
+#endif  /*MINI_DEBUG_USE*/
+#ifdef  GROUND_EXPLANATION
+	    print_message("TERMINAL: end path found at %@% \n",[FName,PP],blue),
+        counter_value(n_nontrivial_triples, NNTriples),
+        counter_value(n_triples, NTriples),
+        counter_value(compressed_trace_length,CTraceLen),
+        print_message("Non-trivial triples: %/%\n",[NNTriples,NTriples], blue),
+        print_message("Compressed trace length: %\n",[CTraceLen], blue),
+        set_counter(explanation_success, 1),
+        %!, fail,
+#endif  /*GROUND_EXPLANATION*/
+#if     (UNFOLD_OPT==WCET)
+        wcet_success_path(FName,Depth, Id, PP,CL,ML,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+#elif   (UNFOLD_OPT == TESTING)
+        tester_success_path(FName,Depth,PP,CL,ML,	
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    ArrRef),
+        % To prevent warnings
+	Id=_,	
+#elif   (UNFOLD_OPT==SAFETY)
+#ifdef  MINMAX
+#ifdef  TESTING_CREST
+        get_unique_context_num(PathStack,NodeId),
+#else
+        PathStack=_, % to avoid warnings
+        counter_value(node_id, NodeId),
+#endif  /*TESTING_CREST*/
+        mm_success_path(FName,Depth,PP,CL,ML,
+			NodeId, LoopStack, [],
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			GlobalArr,GlobalVar,LocalArr,LocalVar,
+			ArrRef),
+#else
+        safety_success_path(FName,Depth,PP,CL,ML,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    ArrRef),
+#endif  /*MINMAX*/
+        % To prevent warnings
+        Id=_,
+#elif   (UNFOLD_OPT==SLICING)
+        slice_success_path(FName,Depth,Id,PP,CL,ML,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+#elif   (UNFOLD_OPT==LIVE)
+        live_success_path(FName,Depth,Id,PP,CL,ML,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),	
+#endif  /*UNFOLD_OPT==WCET*/
+	!,
+	fail.
+%% NOTE: code to handle abstraction was here but it should be after
+%% subsumption. Otherwise, we may do unnecessarily subtrees which
+%% would be subsumed
+#ifndef MINMAX
+%------------------------------------------------------------------------------
+% Case: Loop back-edge 
+%------------------------------------------------------------------------------
+unfold( Depth, Id, FName, PP, _GlobalArr, _GlobalVar, _LocalArr,
+	_LocalVar, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	CL, ML, _CallStack,_ArrRef, [LoopStackTop|_],
+	_UnknownVars, _AbsPtFlag, _TableSpace) :-       
+	%--------------------------------------------------------%
+	% Execute only when we want embedded loop.
+	%--------------------------------------------------------%
+	current_tracer_flag(unroll_loop,n),
+	
+	loopstack$point(LoopStackTop,FName,PP),	
+	debug_message("TERMINAL: back-edge found at %@% \n",[FName,PP],green),
+	%------------------------------------------------------------------%
+	% The interpolant returned is from the exit condition of the
+	% loop
+	%------------------------------------------------------------------%
+	get_interpolant_from_loop_exit(FName, PP, LoopStackTop,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       CL, ML, WP),
+#ifdef  DEBUG_USE
+        print_op_debugging(back_edge_interpolant,
+			   FName,PP,_,
+			   CL,ML,WP,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),	
+#endif  /*DEBUG_USE*/
+#if     (UNFOLD_OPT==WCET)
+        wcet_loop_back_edge(FName,Depth,Id,PP, CL, ML, WP,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        % To prevent warnings
+        Id=_,WP=_,
+        analysis_loop_back_edge(FName,Depth,PP,CL,ML, 
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==SAFETY)
+        % To prevent warnings
+        Id=_,
+        safety_loop_back_edge(FName,Depth,PP, CL, ML, WP,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==TESTING)
+        % This point should not be reached in testing.
+        % To prevent warnings
+        Depth=_, Id=_,
+	SGlobalArr=_, SGlobalVar=_, SLocalArr=_, SLocalVar=_,
+	CL=_,ML=_,WP=_,
+#endif  /* UNFOLD_OPT==WCET */
+        !,
+	fail.        
+#endif  /*!MINMAX*/
+#ifndef MINMAX
+%------------------------------------------------------------------------------
+% Case: Loop exit found inside a loop
+%------------------------------------------------------------------------------
+% This clause added to support break's and some other kind of
+% unstructured loop exits.
+%------------------------------------------------------------------------------
+unfold( Depth, Id, FName, ExitPP, _GlobalArr, _GlobalVar, _LocalArr,
+	_LocalVar, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	CL, ML, _CallStack, _ArrRef, [LoopStackTop|_],
+	_UnknownVars, _AbsPtFlag, _TableSpace) :-
+	% Execute only if embedded loop.
+	current_tracer_flag(unroll_loop,n),
+	
+	loopstack$point(LoopStackTop,FName,EntryPP),	
+        block(_,FName,EntryPP,ExitPP,_,l,_,_,_,_,_),	
+	debug_message("FOUND an unstructured exit for the loop %: % - % \n",
+		      [FName,EntryPP,ExitPP]),
+#ifdef  GRAPHVIZ_USE
+        record_sym_graph_unstructured_loop_exit(Id),
+#endif  /*GRAPHVIZ_USE*/
+	%------------------------------------------------------------------%
+	% The interpolant returned is from the exit condition of the
+	% loop
+	%------------------------------------------------------------------%
+	get_interpolant_from_loop_exit(FName, EntryPP, LoopStackTop,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       CL, ML, WP),
+#if     (UNFOLD_OPT==WCET)
+        wcet_loop_back_edge(FName,Depth,Id,EntryPP,CL,ML,WP,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        % To prevent warnings
+        Id=_,WP=_,
+	analysis_loop_back_edge(FName,Depth,EntryPP,CL,ML,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==SAFETY)
+        % To prevent warnings
+        Id=_,
+	safety_loop_back_edge(FName,Depth,EntryPP,CL,ML,WP,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==TESTING)
+	% This point should not be reached in testing.
+        % To prevent warnings
+        Depth=_, Id=_,WP=_,
+	SGlobalArr=_, SGlobalVar=_, SLocalArr=_, SLocalVar=_,
+#endif  /* UNFOLD_OPT == WCET */
+        !,
+	fail.
+#endif  /*!MINMAX*/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#ifndef MINMAX
+%------------------------------------------------------------------------------
+% Case: subsumption test w/o MINMAX
+%------------------------------------------------------------------------------
+unfold(Depth, Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,       
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, _Loops,_UnknownVars,_AbsPtFlag,_TableSpace) :-
+	tabled(Depth,Id, FName, PP,
+	       GlobalArr, GlobalVar, LocalArr, LocalVar,
+ 	       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+ 	       CL, ML, WP, CallStack, ArrRef, Answer),	       
+	add_counter(tabled_count,1),
+#ifdef  PROFILE
+        ctime(Time0),
+#endif
+#if     (UNFOLD_OPT == SAFETY) || (UNFOLD_OPT == TESTING)
+        % To prevent warnings
+        Answer=_,
+#endif
+#if     (UNFOLD_OPT != SAFETY) || (UNFOLD_OPT != WCET)
+        % To prevent warnings
+        WP=_,
+#endif
+#if     (UNFOLD_OPT==SAFETY)
+        safety_reuse_answer(FName,Depth,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    CL,ML,WP),
+#elif   (UNFOLD_OPT==TESTING)
+        tester_reuse_answer(FName,Depth,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    CL,ML),	
+#elif   (UNFOLD_OPT==SLICING)
+        slice_reuse_answer(FName,Depth,CL,ML,Answer),
+#elif   (UNFOLD_OPT==LIVE)
+        live_reuse_answer(FName,Depth,CL,ML,Answer),
+#elif   (UNFOLD_OPT==WCET)
+        wcet_reuse_answer(FName,Depth,Id,CL,ML,WP,Answer),
+#endif  /*UNFOLD_OPT == SAFETY*/
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(reuse_timing,Time1-Time0),
+#endif
+	!, 
+	fail.
+#else   
+%------------------------------------------------------------------------------
+% Case: subsumption test w/ MINMAX
+%------------------------------------------------------------------------------
+unfold(Depth, _Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,       
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, _Loops, _UnknownVars, _AbsPtFlag, _TableSpace,
+       LoopStack, PathStack) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+#ifdef  TESTING_CREST
+        get_unique_context_num(PathStack,NodeId),
+#else
+	counter_value(node_id, NodeId),
+#endif  /*TESTING_CREST*/
+	%----------------------------------------------------------------------
+	% Subsumption test
+	%----------------------------------------------------------------------
+	mm_subsumed(FName, PP, 
+	            GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	            CL, ML, InterpCond, CallStack, LoopStack, LoopContext),
+#ifdef  TESTING_CREST
+        mark_child_as_visited(FName,PP,PathStack),
+	store_subsumed_crest_prefix,
+#else
+	% to avoid warnings
+        PathStack=_,			
+#endif  /*TESTING_CREST*/
+	%----------------------------------------------------------------------
+	% run profiling information
+	%----------------------------------------------------------------------
+	add_counter(tabled_count, 1),
+#ifdef  MINI_DEBUG_USE
+	print_message("TERMINAL: subsumed state at %@%. \n",[FName,PP],green),
+#endif 	/*MINI_DEBUG_USE*/
+        !,
+	%----------------------------------------------------------------------
+	% Create interpolant for the subsumed node using the
+	% subsuming's interpolant
+	%----------------------------------------------------------------------
+	mm_create_subsumed_interpolant(FName, NodeId, Depth,
+				       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				       CL, ML, InterpCond, LoopStack, LoopContext),
+	!,
+	fail.
+#endif  /*!MINMAX*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifndef MINMAX
+%------------------------------------------------------------------------------	
+% Case: **user** abstractions
+%------------------------------------------------------------------------------	
+unfold(Depth, Id, FName, PP, 
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, AbsPtFlag, TableSpace) :-
+	
+	get_user_abstraction(FName, PP, 
+			     GlobalArr , GlobalVar , LocalArr  , LocalVar ,
+			     SGlobalArr, SGlobalVar, SLocalArr , SLocalVar, 
+			     MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+			     XCL),		 
+	%----------------------------------------------------------------------
+	% To avoid infinite calls to unfold:
+	% Only do it if AbsPtFlag <= 0 (abstraction not done previously)
+	%----------------------------------------------------------------------
+	AbsPtFlag <= 0,
+	!,
+	generate_abstract_state(FName, PP, Depth,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, 
+				GlobalArr,GlobalVar,LocalArr,LocalVar, 
+				MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+				XCL, 
+				AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar, 
+				AbsGlobalArr ,AbsGlobalVar ,AbsLocalArr ,AbsLocalVar,
+				CL, ML, CL1, ML1, ArrRef, ArrRef1),	
+	print_message("Abstracted symbolic state by user at %@% \n",
+		      [FName,PP],magenta),	
+	%----------------------------------------------------------------------
+	% We mark abstraction as already been done.
+	%----------------------------------------------------------------------
+	AbsPtFlag1 = 1,	
+	unfold_abstraction(Depth, Id, FName, PP,
+			   SGlobalArr   ,SGlobalVar   ,SLocalArr   ,SLocalVar, 
+			   AbsGlobalArr ,AbsGlobalVar ,AbsLocalArr ,AbsLocalVar,
+			   AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar,
+			   CL, ML, CL1, ML1, CallStack, ArrRef1,
+			   Loops, UnknownVars, AbsPtFlag1,TableSpace).
+%=============================================================================
+% NOTE: we also accept abstractions from abstract interpretation or
+% other invariant generators. This is done in
+% generate_loop_invariant/30 in the tracer_loops.clp.gpp file.
+%=============================================================================
+#else
+%------------------------------------------------------------------------------	
+% Case: **user** abstractions
+%------------------------------------------------------------------------------	
+unfold(Depth, Id, FName, PP, 
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, _UnknownVars,
+       AbsPtFlag, TableSpace, LoopStack, PathStack) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	get_user_abstraction(FName, PP, 
+			     GlobalArr    , GlobalVar    , LocalArr    , LocalVar ,
+			     SGlobalArr   , SGlobalVar   , SLocalArr   , SLocalVar, 
+			     MarkGlobalArr, MarkGlobalVar, MarkLocalArr, MarkLocalVar,
+			     XCL),		 
+	%----------------------------------------------------------------------
+	% To avoid infinite calls to unfold:
+	% Only do it if AbsPtFlag <= 0 (abstraction not done previously)
+	%----------------------------------------------------------------------
+	AbsPtFlag <= 0,
+	!,
+#ifdef  TESTING_CREST
+        get_unique_context_num(PathStack,NodeId),
+#else
+	counter_value(node_id, NodeId),	
+#endif  /*TESTING_CREST*/
+	mm_unfold_abstract(user,
+			   NodeId, Depth, Id, FName, PP,
+			   GlobalArr , GlobalVar , LocalArr , LocalVar,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, CallStack, ArrRef,
+			   Loops, TableSpace, LoopStack, PathStack, AbsPtFlag,
+			   MarkGlobalArr, MarkGlobalVar,
+			   MarkLocalArr , MarkLocalVar , XCL).
+%------------------------------------------------------------------------------	
+% Case: abstractions provided by invariant generators
+%------------------------------------------------------------------------------	
+unfold(Depth, Id, FName, PP, 
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, _UnknownVars,
+       AbsPtFlag, TableSpace, LoopStack, PathStack) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	
+	fail_if_not_external_invariants(FName,PP,_,_,_,_),
+	
+        warning(warning_off),				
+	not(disable_inductive_invariants(FName,PP)),	
+        warning(warning_on),					
+	%----------------------------------------------------------------------
+	% To avoid infinite calls to unfold:
+	% Only do it if AbsPtFlag <= 0 (abstraction not done previously)
+	%----------------------------------------------------------------------
+	AbsPtFlag <= 0,
+	!,
+#ifdef  TESTING_CREST
+        get_unique_context_num(PathStack,NodeId),
+#else
+	counter_value(node_id, NodeId),
+#endif  /*TESTING_CREST*/
+	mm_unfold_abstract(invgen,
+			   NodeId, Depth, Id, FName, PP,
+			   GlobalArr , GlobalVar , LocalArr , LocalVar,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, CallStack, ArrRef,
+			   Loops, TableSpace, LoopStack, PathStack, AbsPtFlag,
+			   _,_,_,_,_).
+#endif  /*!MINMAX*/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#if     (UNFOLD_OPT==TESTING)
+%% No code for loops needed. 
+#else
+#ifndef MINMAX
+%------------------------------------------------------------------------------
+% Case: Loop start point. Generation of static loop invariant and loop
+% interpolant and take exit transition (non-MINMAX algorithm).
+%------------------------------------------------------------------------------
+unfold( Depth, Id, FName, PP,
+	GlobalArr, GlobalVar, LocalArr, LocalVar,	
+	SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	CL, ML, CallStack, ArrRef, Loops, _UnknownVars,_AbsPtFlag, TableSpace) :-
+	% Execute only when we want embedded loop.
+	current_tracer_flag(unroll_loop,n),
+	
+        block(_,FName,PP,ExitPP,_,l,_,
+              UpdGlobalArr,UpdGlobalVar,UpdLocalArr,UpdLocalVar),
+	debug_message("LOOP HEADER FOUND at %@% \n",[FName,PP],magenta),
+	!, 
+	generate_loop_invariant(Depth, Id, FName, PP,
+				GlobalArr, GlobalVar, LocalArr, LocalVar,	
+				SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				UpdGlobalArr, UpdGlobalVar, UpdLocalArr, UpdLocalVar,
+				AbsGlobalArr, AbsGlobalVar, AbsLocalArr, AbsLocalVar,
+				AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,
+				CL, ML, CL1, ML1, ArrRef, ArrRef1),
+#ifdef  GRAPHVIZ_USE
+        %-------------------------------------------------------------------
+	% We get the current context value for storing it in the loop
+        % stack
+        %-------------------------------------------------------------------
+        context_value(FName,PP,PPContext),
+#else
+        PPContext=_,
+#endif  /*GRAPHVIZ_USE*/
+        loopstack$point_with_context(NewLoop,FName,PP,PPContext),
+#ifdef  PROFILE
+        record_loop_stack_length([NewLoop|Loops]),
+#endif
+#ifdef  EXTERNAL_SOLVER
+        %------------------------------------------------------------------%
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+        %------------------------------------------------------------------%
+	debug_message("[EXTERNAL SOLVER] BEGIN: adding constraints after loop abstraction \n",
+		      []),
+        extern_solver_add_choice_point,	
+        extern_solver_add_cnstr_path(CL1,
+				     state(FName,
+					   AbsSGlobalArr, AbsSGlobalVar,
+					   AbsSLocalArr , AbsSLocalVar)),
+        debug_message("[EXTERNAL SOLVER] END \n\n",[]),
+	
+#endif  /*EXTERNAL_SOLVER*/
+	unfold_loop(Depth, Id, FName, PP, ExitPP,
+		    UpdGlobalArr , UpdGlobalVar , UpdLocalArr , UpdLocalVar,
+		    SGlobalArr   , SGlobalVar   , SLocalArr   , SLocalVar,		    		    
+		    AbsGlobalArr , AbsGlobalVar , AbsLocalArr , AbsLocalVar,
+		    AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,
+		    CL, ML, CL1, ML1, CallStack, ArrRef1,
+		    [NewLoop|Loops],TableSpace).		    
+#else   /*!MINMAX*/
+%------------------------------------------------------------------------------
+% Minmax section of loop handling
+%------------------------------------------------------------------------------
+unfold( Depth, Id, FName, PP,
+	GlobalArr, GlobalVar, LocalArr, LocalVar,	
+	SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	CL, ML, CallStack, ArrRef, Loops,
+	_UnknownVars, AbsPtFlag,TableSpace, LoopStack, PathStack) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	is_ancestor_pp(FName,PP),
+#ifdef  GROUND_EXPLANATION
+    check_level_zero_and_assert(Depth, FName, PP),
+#endif  /*GROUND_EXPLANATION*/
+	!,
+	debug_message("LOOP HEADER FOUND at %@% \n",[FName,PP],magenta),
+#ifdef  GC_INTP_INFEASIBLE
+    fail_if_in_gc_mode,
+#endif
+#ifdef  TESTING_CREST
+        get_unique_context_num(PathStack,NodeId),
+#else
+	counter_value(node_id, NodeId),	
+#endif  /*TESTING_CREST*/
+	% minmax uses LoopStack to record the current path with
+	% (possible) loop abstractions in the middle. So LoopStack is
+	% actually the symbolic path.
+	%
+	% non-minmax (and graphviz) uses Loops which a stack that
+	% records simply loop pc's
+	%
+	% minmax also uses PathStack which contains the pp's of the
+	% current path. It is used to display the counterexample in
+	% case the program is unsafe. FIXME: Safety w/o minmax should
+	% also use it.	
+	mm_unfold_loop(NodeId, Depth, Id, FName, PP, 
+	               GlobalArr, GlobalVar, LocalArr, LocalVar,
+		       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		       CL, ML, CallStack, ArrRef,
+		       Loops,TableSpace, LoopStack, PathStack, AbsPtFlag).
+#endif  /*!MINMAX*/
+#endif  /*(!UNFOLD_OPT==TESTING)*/
+%------------------------------------------------------------------------------
+% Case: function return. Note that function return cannot fail, we
+% simply pass return value of a function to its caller
+%------------------------------------------------------------------------------
+#ifndef MINMAX
+unfold(Depth, Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, AbsPtFlag,
+       TableSpace) :-	
+       bottom(FName, PP),
+
+       unfold_inlined_function_return(Depth,Id,FName,PP,
+				      GlobalArr, GlobalVar, LocalArr,LocalVar,
+				      SGlobalArr, SGlobalVar, SLocalArr,SLocalVar,
+				      CL, ML, CallStack, ArrRef, Loops,
+				      UnknownVars, AbsPtFlag, TableSpace).
+#else  /*!MINMAX*/
+unfold(Depth, Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, AbsPtFlag,
+       TableSpace, LoopStack, PathStack) :-	
+       bottom(FName, PP),
+       
+       mm_unfold_inlined_function_return(Depth,Id,FName,PP,
+					 GlobalArr, GlobalVar, LocalArr,LocalVar,
+					 SGlobalArr, SGlobalVar, SLocalArr,SLocalVar,
+					 CL, ML, CallStack, ArrRef, Loops,
+					 UnknownVars, AbsPtFlag, TableSpace,
+					 LoopStack, PathStack).
+unfold(Depth, _Id, FName, PP,
+       GlobalArr , GlobalVar , LocalArr , LocalVar,
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, _UnknownVars, _AbsPtFlag,
+       TableSpace, LoopStack, PathStack) :-
+#ifdef  GROUND_EXPLANATION
+        counter_value(ground_trace_collection_mode, 0),
+        counter_value(follow_ground_trace, GT), GT<2, % should not be following STRICTLY
+#endif /*GROUND_EXPLANATION*/
+	
+       bottom(FName, PP),
+
+       %----------------------------------------------------------------------
+       % We should only memo when there is no conflict detected
+       %----------------------------------------------------------------------
+       no_conflict2(Depth),
+       
+#ifdef TESTING_CREST
+       get_unique_context_num(PathStack,NodeId),
+#else
+       NodeId=_, % to avoid warnings
+#endif /*TESTING_CREST*/
+       mm_unfold_combine(NodeId, Depth, FName, PP,
+			 GlobalArr , GlobalVar,  LocalArr,  LocalVar,
+			 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 CL, ML, CallStack, ArrRef, Loops, TableSpace, LoopStack,
+             PathStack),
+       !,
+       fail.
+#endif /*!MINMAX*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#if     (UNFOLD_OPT==WCET)
+#ifdef  UNUSED_CODE
+% Case: function return with compositional (for now, only for WCET).
+% Here, stores the child's answer for the caller, and fail.
+/* OUTDATED! */
+% unfold(Depth, _Id, FName, PP, 
+%        _GlobalArr, _GlobalVar, _LocalArr, [RV|_Args], 	
+%        SGlobalArr, SGlobalVar, SLocalArr, [SRV|SArgs],
+%        _GndGlobalArr,_GndGlobalVar,_GndLocalArr,_GndLocalVar,
+%        CL, ML, [sinfo(ParFName, _ParPP1, 
+% 		      _ParLocalArr   , _ParLocalVar,
+% 		      _ParSLocalArr  , _ParSLocalVar,
+% 		      _Id1,
+% 		      _ParLocalArr1  , _ParLocalVar1,
+% 		      _ParSLocalArr1 , _ParSLocalVar1,
+% 		      [RV|_], [SRV|SInitArgs], 
+% 		      _XCL, ParPP0,
+% 		      SInitGlobalArr, SInitGlobalVar)|_],
+%        _ArrRef, _Loops, _AbsPtFlag, _TableSpace) :-       
+%        %----------------------------------------------------------------------%
+%        % COMPOSITIONAL
+%        %----------------------------------------------------------------------%
+%        current_tracer_flag(compositional,y),
+%        bottom(FName, PP),
+%        debug_message("FUNCTION RETURN (%): backtracking ... \n",[FName]),
+% 	%----------------------------------------------------------------------
+% 	% We first compute an interpolant
+% 	%----------------------------------------------------------------------
+% #ifdef GRAPHVIZ_USE
+%        attach_context_to_pc(FName,PP,PPP),
+%        % ParPP0 is also updated with the context.
+%        fassert(sym_graph(FName,ParFName,return,PPP,ParPP0,_,_,_,_,_,_,_,_,_,_,_)),
+% #else
+%        %-----------------------------------------------------------------------
+%        % To prevent warnings
+%        %-----------------------------------------------------------------------
+%        ParPP0=_, ParFName=_,
+% #endif
+%        negated_return_value(RV, SRV, RVNegProj),
+%        make_dnf(RVNegProj, RVNegProj1),
+%        interpolate_constraints_path(RVNegProj1, CL, ML, check),
+%  	 %---------------------------------------------------------------------%
+%        % Store the (normal) answer first 
+%        %---------------------------------------------------------------------%
+% #ifdef USEWP
+% 	 %----------------------------------------------------------------------
+%        % Here we compute the empty ("true") weakest precondition
+% 	 %----------------------------------------------------------------------
+% 	fcopy_term(t(SGlobalArr, SGlobalVar, SLocalArr, [SRV|SArgs]),
+% 	           t(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar)),
+% 	WP = state(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, []),
+% #endif
+% 	SArrRef = [],
+% 	assert(wcet_answer(Depth, FName, ML, 
+% #ifdef USEWP
+%                            WP,
+% #endif
+% 	                   0,
+% 			   SGlobalArr, SGlobalVar, SLocalArr, [SRV|SArgs],
+% 			   SArrRef)),
+%    	  %---------------------------------------------------------------------%
+%         % Store the path
+%         %---------------------------------------------------------------------%
+%        %----------------------------------------------------------------------%
+%        % Based on the interpolation above, copy the important constraints in
+%        % CL into Proj (based on ML).
+%        %
+%        % IMPORTANT: If the formula path (CL) is represented with
+%        % something different from a list, e.g., the data structure for
+%        % partitioning the following line needs to be updated.
+%        %----------------------------------------------------------------------%
+%        get_answer_copy(CL, ML, Proj),
+%        %----------------------------------------------------------------------%
+%        % Here Proj is a disjunct representing important constraints along
+%        % the path from function call to the function return relating function
+%        % parameters (SInitArgs) and initial globals (SInitGlobalArr and
+%        % SInitLocalArr) to the return value (SRV). Note that wcet_answer_ext
+%        % has no array references since the state variables are on symbolic
+%        % constraints
+%        %----------------------------------------------------------------------%
+%        assert(wcet_answer_ext(FName,Depth,Proj,
+% 			      SInitGlobalArr, SInitGlobalVar,
+% 			      [], [SRV|SInitArgs])),
+%        debug_message("RETURN: storing % \n",
+%                     [wcet_answer(FName,Depth,Proj,
+% 				 0, SGlobalArr, SGlobalVar, SLocalArr, [SRV|SArgs],
+%                                  SArrRef)]),
+%        !,
+%        fail.
+#endif   /*UNUSED_CODE*/
+#endif   /*UNFOLD_OPT*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#ifndef  MINMAX
+%------------------------------------------------------------------------------
+% Case: jump to next transition
+%------------------------------------------------------------------------------
+unfold(Depth, _Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar, 	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, _AbsPtFlag, TableSpace) :-
+#if     (UNFOLD_OPT==SLICING)
+#ifdef  SLICE_FOOTPRINT_OPT
+       clear_dependencies_at_endif(FName,PP),
+#endif
+#endif
+       %-----------------------------------------------------------------------
+       % Run the transition with the symbolic state
+       %-----------------------------------------------------------------------
+       trans(FName, Id1, PP,
+	     GlobalArrX, GlobalVarX, SGlobalArr, SGlobalVar,
+             LocalArrX, LocalVarX, SLocalArr, SLocalVar,
+	     PP1,
+	     GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+	     LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	     XCL, [], ArrRefX, Statement),
+#if     (UNFOLD_OPT==SLICING)
+#ifdef  SLICE_FOOTPRINT_OPT
+       check_footprint_in_dependencies(FName,PP,Id1,Statement),
+#endif
+#endif
+       %          /\
+       %          |  Empty list here means that this is not a function call
+#ifdef MINI_DEBUG_USE       
+       print_message("---- Transition depth % in % from % to % with id %\n",
+		     [Depth,FName,PP,PP1,Id1]),
+#ifndef EXTERNAL_SOLVER        
+%       pretty_printer_path(CL,
+%			   FName,
+%			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+        pretty_printer_solver_state(FName,
+			    GlobalArr, GlobalVar, LocalArr, LocalVar,
+			    ArrRef),
+#endif /*EXTERNAL_SOLVER*/               
+#endif /*MINI_DEBUG_USE*/
+#ifdef  GRAPHVIZ_USE
+       get_next_pp_context(FName,PP1,Loops,PP1Context),
+       push_context_stack(FName,PP1Context),
+#endif /*(defined(GRAPHVIZ_USE))*/
+       unfold_aux2(Depth, Id1,
+                   GlobalArr, GlobalVar, LocalArr, LocalVar, 
+		   GlobalArrX, GlobalVarX, LocalArrX, LocalVarX,
+		   FName, PP, PP1, Statement,
+		   GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		   SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		   CL, XCL, ML, CallStack, ArrRefX, ArrRef, Loops,
+		   UnknownVars, TableSpace).
+#else  /*!defined(MINMAX)*/
+%------------------------------------------------------------------------------
+% Transition taking for minmax algorithm
+% This is the last clause of unfold for minmax algorithm
+%-----------------------------------------------------------------------------
+unfold(Depth, _Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar, 	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, _UnknownVars, AbsPtFlag, TableSpace,
+       LoopStack, PathStack) :-	
+#ifdef TESTING_CREST
+       get_unique_context_num(PathStack,NodeId),
+#else
+       counter_value(node_id, NodeId),
+#endif /*TESTING_CREST*/
+       mm_unfold_trans(NodeId, Depth, FName, PP,
+		       GlobalArr, GlobalVar, LocalArr, LocalVar,
+		       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		       CL, ML, CallStack, ArrRef,
+		       Loops, TableSpace, LoopStack, PathStack, AbsPtFlag).
+#endif /*!MINMAX*/
+
+#ifndef  MINMAX
+%------------------------------------------------------------------------------
+% Case: Jump to callee. Note that function calls also cannot fail
+%------------------------------------------------------------------------------
+unfold(Depth, Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, AbsPtFlag, TableSpace) :-
+	
+	unfold_inlined_function_call(Depth, Id, FName, PP,
+				     GlobalArr, GlobalVar, LocalArr, LocalVar,	
+				     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				     CL, ML, CallStack, ArrRef, Loops,
+				     UnknownVars, AbsPtFlag, TableSpace).
+#endif  /*!MINMAX*/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#if      UNFOLD_OPT==WCET
+#ifdef   UNUSED_CODE
+% Case: jump to callee with compositional reasoning
+% unfold(Depth, Id, FName, PP, 
+%        GlobalArr, GlobalVar, LocalArr, LocalVar,	
+%        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+%        _GndGlobalArr,_GndGlobalVar,_GndLocalArr,_GndLocalVar,
+%        CL, ML, CallStack, ArrRef, Loops, _AbsPtFlag, TableSpace) :-
+%        %----------------------------------------------------------------------%
+%        % COMPOSITIONAL
+%        %----------------------------------------------------------------------%	
+%        current_tracer_flag(compositional,y),       
+%        trans(FName, _Id1, PP,
+% 	      _GlobalArr, _GlobalVar, _SGlobalArr, _SGlobalVar,
+% 	      _LocalArr, _LocalVar, _SLocalArr, _SLocalVar,
+% 	      _PP1, 
+% 	      _GlobalArr1, _GlobalVar1, _SGlobalArr1, _SGlobalVar1,
+% 	      _LocalArr1, _LocalVar1, _SLocalArr1, _SLocalVar1,
+% 	      _XCL, [call(_, _, _ , _)], _ArrRefX, _Statement),       
+%        unfold_compositional_call(Depth, Id, FName,
+% 	                         PP,
+% 	                         GlobalArr, GlobalVar, LocalArr, LocalVar,
+% 				 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+% 				 CL, ML, CallStack, ArrRef, Loops,
+% 				 TableSpace).
+#endif   /*UNUSED_CODE*/
+#endif   /*UNFOLD_OPT==WCET*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#ifndef  MINMAX
+%-----------------------------------------------------------------------------
+% Case:  COMBINE operation
+%------------------------------------------------------------------------------
+% Collate answers from each transition taken in the recursive case,
+% produce an answer, and store the summarization in the table.
+%------------------------------------------------------------------------------
+unfold(Depth, Id, FName, PP,
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, _Loops, _UnknownVars, AbsPtFlag, TableSpace) :-
+	%----------------------------------------------------------------------
+	% This handles the case when this is not an abstraction point
+	%----------------------------------------------------------------------
+	AbsPtFlag <= 0,
+        debug_begin_combine_operator(FName,PP),
+#ifdef  PROFILE	
+	ctime(Time0),
+        sanityCheckOpSucceed(open,combine_op_checkpoint),
+#endif	
+#if     (UNFOLD_OPT==WCET)
+        wcet_combine_answers(FName, Id, Depth, CL, ML, WP, Answer,
+			     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+#elif   (UNFOLD_OPT==SLICING)
+        slice_combine_answers(FName, Id, PP, Depth, CL, ML, Answer),
+	WP=_,
+#elif   (UNFOLD_OPT==LIVE)
+        live_combine_answers(FName , Id, PP, Depth, CL, ML, Answer),
+	WP=_,
+#elif   (UNFOLD_OPT==TESTING)
+        tester_combine_answers(FName, PP, Id, Depth, CL, ML,
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+	Answer=_,WP=_,
+#elif   (UNFOLD_OPT==SAFETY)
+        safety_combine_answers(FName, PP, Id, Depth, CL, ML, Answer,WP,
+	                       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+#endif  /*(UNFOLD_OPT == WCET)*/
+
+#ifdef  PROFILE
+        sanityCheckOpSucceed(close,combine_op_checkpoint),
+        ctime(Time1),
+	add_counter(combine_timing,Time1-Time0),
+#endif
+#ifdef  PROFILE
+        sanityCheckOpSucceed(open,store_op_checkpoint),
+#endif
+	store(FName, Id, PP, 
+	      GlobalArr, GlobalVar, LocalArr, LocalVar,
+	      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	      ArrRef, CL, ML, WP, CallStack, Answer,
+#ifdef  OPTIMIZED_FIXPO
+              _,
+#endif 	     
+	      TableSpace),
+#ifdef  PROFILE	
+	sanityCheckOpSucceed(close,store_op_checkpoint),
+#endif	
+        debug_end_combine_operator,
+	!,
+	fail.
+#endif  /*!defined(MINMAX)*/
+
+#ifndef MINMAX
+%==============================================================================
+% unfold_aux2: Evaluate if the next transition is feasible or not
+% before returning the control to the unfold predicate.
+%
+% If the flag "path_sensitive" is "y" then test if last transition is
+% infeasible, in which case compute an interpolant.  Otherwise (if
+% it's feasible), calls to unfold_aux3 which will further call unfold.
+%
+% If the flag "infeasible paths" is "n", calls directly to unfold_aux3
+%==============================================================================
+%------------------------------------------------------------------------------
+% Case: feasible transition
+%------------------------------------------------------------------------------
+unfold_aux2(Depth, Id,
+	    % parent's evaluated
+	    GlobalArr, GlobalVar, LocalArr, LocalVar,
+	    % parent's evaluated from trans
+	    GlobalArrX, GlobalVarX, LocalArrX, LocalVarX,
+	    FName, PP, PP1, Statement,
+	    % child's evaluated
+	    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+	    % parent's symbolic
+	    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	    % child's symbolic
+	    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	    CL, XCL, ML, CallStack, ArrRefX, ArrRef, Loops, UnknownVars, TableSpace) :-
+	
+	path_feasibility_test(Statement,FName,PP,PP1,
+			      GlobalArr,GlobalVar,LocalArr,LocalVar,
+			      GlobalArrX,GlobalVarX,LocalArrX,LocalVarX,
+			      % symbolic post-state for external solver
+			      state(FName,SGlobalArr1,SGlobalVar1,
+				    SLocalArr1,SLocalVar1),
+			      CL, XCL, ML, CL1, ML1,ArrRef, ArrRefX, ArrRef1),
+%#ifdef  EXTERNAL_SOLVER
+%       print_message("SOLVER STORE (FEASIBLE) : \n",[]),
+	%-----------------------------------------------------------------% 
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	%-----------------------------------------------------------------% 	
+%	display_model_extern_solver,
+%#endif 	
+	!,
+#if     (UNFOLD_OPT == TESTING)
+        update_unknownness(FName,XCL,
+			   SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			   UnknownVars),
+	% This predicate narrows the symbolic state using concrete
+	% inputs (created on-the-fly) in case the symbolic state
+	% cannot decide whether a guard is satisfiable or not. After
+	% this point, if narrowing has been applied then the search is
+	% not complete anymore.	
+        narrowing(Statement, Depth, FName, PP1, Id,
+		  XCL,UnknownVars,
+		  /* state before abstraction (narrowing) */
+		  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+		  GlobalArr1 ,GlobalVar1 ,LocalArr1 ,LocalVar1,
+		  /* state after abstraction  (narrowing) */
+		  TunnelSGlobalArr,TunnelSGlobalVar ,TunnelSLocalArr,TunnelSLocalVar,
+		  TunnelGlobalArr ,TunnelGlobalVar  ,TunnelLocalArr ,TunnelLocalVar,
+		  CL1,ML1,CL2,ML2,ArrRef1,ArrRef2),
+#else
+        CL1=CL2,ML1=ML2,ArrRef1=ArrRef2,
+#endif  /*UNFOLD_OPT==TESTING*/
+#ifdef  PROFILE		
+	trace_true_branch(Id),
+#endif	
+#ifdef  GRAPHVIZ_USE
+        % Difference wrt record_sym_graph_edge is an special treatment
+        % of breaks/gotos inside loops
+        record_sym_graph_edge2(feasible,
+ 			      src( FName,PP,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+ 			      dest(FName,PP1,SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+ 			      Id,XCL,Statement,Loops),
+#else
+        % To prevent warnings
+        PP=_,
+#endif  /*GRAPHVIZ_USE*/
+	%----------------------------------------------------------------------
+	% Call unfold_aux3
+	%----------------------------------------------------------------------
+        unfold_aux3(Depth, Id, FName,
+	            GlobalArr, GlobalVar, LocalArr, LocalVar,
+		    CL, ML, PP1,
+#if     (UNFOLD_OPT == TESTING)
+		    TunnelGlobalArr,TunnelGlobalVar,TunnelLocalArr,TunnelLocalVar,		   
+#else		   
+		    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+#endif  /*(UNFOLD_OPT == TESTING)*/		    
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+#if     (UNFOLD_OPT == TESTING)
+		    TunnelSGlobalArr,TunnelSGlobalVar,TunnelSLocalArr,TunnelSLocalVar,
+#else		    
+		    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+#endif 	/*(UNFOLD_OPT == TESTING)*/	    
+		    XCL, CL2, ML2, CallStack, ArrRef2, Loops,
+		    Statement, UnknownVars, TableSpace).
+%------------------------------------------------------------------------------
+% Case: infeasible transition
+%------------------------------------------------------------------------------
+unfold_aux2(Depth, Id,
+	    % parent's evaluated
+ 	    _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+	    % parent's evaluated from trans
+ 	    _GlobalArrX, _GlobalVarX, _LocalArrX, _LocalVarX,
+	    FName, PP, PP1, Statement,
+	    % child's evaluated
+	    _GlobalArr1, _GlobalVar1, _LocalArr1, _LocalVar1,
+	    % parent's symbolic 
+	    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	    % child's symbolic
+	    SGlobalArr1,SGlobalVar1,SLocalArr1, SLocalVar1,
+	    CL, XCL, ML, _CallStack, _ArrRefX, _ArrRef, _Loops, _UnknownVars, _TableSpace) :-
+#ifdef  PROFILE
+        %----------------------------------------------------------------------
+        % Just for profiling: Record the current transition as needed guard
+        % to ensure infeasibility
+        %----------------------------------------------------------------------
+        record_trans_id(Id),
+#else   
+        % To avoid warnings
+        Id=_,
+#endif  /*PROFILE*/
+#ifdef  MINI_DEBUG_USE
+	print_message("TERMINAL: infeasible path found from %@% to %@% (%).\n",		    
+		      [FName,PP,FName,PP1,Id],red),
+#else   /*MINI_DEBUG_USE*/
+        % To avoid warnings
+        Id=_,
+#endif  /*MINI_DEBUG_USE*/
+%  	dump([GlobalArr]), dump([GlobalArrX]),
+%       dump([GlobalVar]), dump([GlobalVarX]),
+%       dump([LocalArr]) , dump([LocalArrX]),
+%  	dump([LocalVar]) , dump([LocalVarX]),
+#ifdef  PROFILE		
+        trace_infeasible_paths(Depth),
+	trace_false_branch(Id),
+#else   /*PROFILE*/
+        % To avoid warnings
+        Id=_,
+#endif  /*PROFILE*/
+%#ifdef  EXTERNAL_SOLVER
+%       print_message("SOLVER STORE (INFEASIBLE): \n",[]),
+	%-----------------------------------------------------------------% 
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	%-----------------------------------------------------------------% 	
+%	display_model_extern_solver,
+%#endif 
+#ifdef  GRAPHVIZ_USE
+        record_sym_graph_edge(infeasible,
+			      src( FName,PP,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+			      dest(FName,PP1,SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+			      Id,XCL,Statement,_Loops),
+	pop_context_stack,
+#else
+        % To prevent warnings
+        Statement=_, Id=_,
+        SGlobalArr1=_, SGlobalVar1=_, SLocalArr1=_, SLocalVar1=_,
+#endif  /*(defined(GRAPHVIZ_USE))*/
+        gen_interpolant_infeasible_path(FName,PP,PP1,XCL,CL,ML),
+#if     (UNFOLD_OPT==WCET)
+        wcet_fail_path(FName,Depth,Id,CL,ML,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, XCL),
+#elif   (UNFOLD_OPT==SAFETY)
+        safety_fail_path(FName,Depth,CL,ML,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, XCL),
+#elif   (UNFOLD_OPT==TESTING)
+        tester_fail_path(FName,Depth,CL,ML,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, XCL),	
+#elif   (UNFOLD_OPT==SLICING)
+        slice_fail_path(FName,Depth,Id,CL,ML,
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#elif   (UNFOLD_OPT==LIVE)
+        live_fail_path(FName,Depth,Id,CL,ML,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#endif
+	fail.
+
+%------------------------------------------------------------------------------%
+% Core operation
+%
+% gen_interpolant_infeasible_path(+FName,+FromPP,+ToPP,+XCL,+CL,?ML)
+%------------------------------------------------------------------------------%
+% Generate interpolant to keep infeasibility of the path.
+% PRECONDITION: CL in conjunction with XCL is already detected
+% infeasible. Thus, no need of calling interpolate_constraints_path/4
+% with flag "check".
+%
+% FIXME: option "check" does not work with array constraints!!
+%------------------------------------------------------------------------------%
+gen_interpolant_infeasible_path(_FName,_PP,_PP1,XCL,CL,ML):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	%----------------------------------------------------------------------
+	% The use of make_singleton_dnf/2 is vital to tell
+	% interpolate_constraints_path that interpret XCL1 as a
+	% conjunction of positive literals.
+	%----------------------------------------------------------------------	
+	make_singleton_dnf(XCL, XCL1),
+	interpolate_constraints_path(XCL1, CL, ML, no_check),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(forward_timing_2,Time1-Time0),
+#endif  /*PROFILE*/
+        true.
+
+%------------------------------------------------------------------------------
+% unfold_aux3
+%------------------------------------------------------------------------------
+% Recursive call to the main predicate unfold, which is supposed to
+% fail, after which we collate the answers from the children,
+% including updating witnesses (if applicable). That is, the symbolic
+% execution process is implemented forcing failure and backtracking
+% whenever a terminal node is found (infeasible, end, or subsumed
+% node).
+%------------------------------------------------------------------------------
+unfold_aux3(Depth, Id, FName,
+	    % parent's evaluated 
+	    _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,          
+	    _CL, _ML, PP1,
+	    % child's evaluated
+	    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+	    % parent's symbolic
+	    _SGlobalArr , _SGlobalVar , _SLocalArr , _SLocalVar,
+	    % child's symbolic
+	    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	    _XCL, CL1, ML1, CallStack, ArrRef1, Loops,
+	    _Statement, UnknownVars, TableSpace) :-
+	%----------------------------------------------------------------------
+	% We reset the abstraction flag to 0.
+	%----------------------------------------------------------------------
+	AbsPtFlag = 0,
+	unfold(Depth + 1, Id, FName, PP1,
+	       GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+	       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	       CL1, ML1, CallStack, ArrRef1, Loops, UnknownVars, AbsPtFlag,
+	       TableSpace).
+
+unfold_aux3(Depth, Id, FName,
+	    % parent's evaluated 
+	    _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,              
+	    CL, ML, PC1,
+	    % child's evaluated
+	    _GlobalArr1, _GlobalVar1, _LocalArr1, _LocalVar1,
+	    % parent's symbolic 
+	    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	    % child's symbolic
+	    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	    XCL, CL1, ML1, CallStack, _ArrRef1, _Loops,
+	    Statement, _UnknownVars, _TableSpace) :-
+#ifdef  PROFILE		
+	ctime(Start),
+#endif
+        debug_begin_pre_operator(FName,Id,Depth,PC1),
+%================================================================================
+% NOTES*:
+%================================================================================
+% When the transition corresponds to a function call the parent's
+% variables refer to the caller and the child's variables refer to the
+% callee. Thus, the set of variables in child and parent are different
+% and they might have different cardinalities. Assume the following call
+% graph to illustrate a function call (C) at 7 in main to foo at 0 and
+% its return point (R) at k in foo:
+%
+%
+%   main(6)
+%     |
+%     V
+%   main(7) --(C)---> foo(0)	
+%     |                 |
+%     |                 V
+%     |                foo(1)
+%     |                 |
+%     |                 V
+%     |                ....	 
+%     |               foo(k)
+%     V	        (R)     |
+%   main(8)<------------
+%
+%================================================================================
+#ifdef  PROFILE
+	sanityCheckOpSucceed(open,pre_op_checkpoint),
+#endif	/*PROFILE*/
+#if     (UNFOLD_OPT == WCET)
+        wcet_pre_operator(FName,Depth,Id,PC1,Statement,
+			  CallStack, % argument added due to NOTES* (12/16/09)
+			  XCL,
+			  CL, CL1,
+			  ML,ML1,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+#else
+        % To prevent warnings
+        CallStack=_,
+#if     (UNFOLD_OPT==SAFETY)
+        safety_pre_operator(FName,Depth,Id,PC1,Statement,
+			    CallStack, % argument added due to NOTES* (12/16/09)
+			    XCL,
+			    CL, CL1,
+			    ML, ML1,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+#elif   (UNFOLD_OPT==TESTING)
+        tester_pre_operator(FName,Depth,Id,PC1,Statement,
+			    CallStack, % argument added due to NOTES* (12/16/09)
+			    XCL,
+			    CL, CL1,
+			    ML, ML1,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+#elif   (UNFOLD_OPT==SLICING)
+        slice_pre_operator(FName,Depth,Id,PC1,Statement,
+			   CallStack, % argument added due to NOTES* (12/16/09)
+			   XCL,
+			   CL, CL1,
+			   ML, ML1,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+#elif   (UNFOLD_OPT==LIVE)
+        live_pre_operator(FName,Depth,Id,PC1,Statement,
+			  CallStack, % argument added due to NOTES* (12/16/09)
+			  XCL,
+			  CL, CL1,
+			  ML, ML1,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),	
+#endif  /*UNFOLD_OPT == SAFETY*/
+#endif  /*UNFOLD_OPT == WCET*/
+#ifdef  PROFILE	
+	sanityCheckOpSucceed(close,pre_op_checkpoint),
+#endif	
+        debug_end_pre_operator,
+#ifdef  PROFILE	
+        ctime(Finish),
+	add_counter(pre_timing,Finish-Start),
+#endif
+#ifdef  GRAPHVIZ_USE
+        pop_context_stack,
+#endif
+#ifdef  EXTERNAL_SOLVER
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+        extern_solver_backtrack,
+#endif  /*EXTERNAL_SOLVER*/
+        !, 
+	fail.
+#endif  /*MINMAX*/
+	
+%------------------------------------------------------------------------------%
+% Core operation
+%
+% Check satisfiability of a path 
+%------------------------------------------------------------------------------%
+#ifdef  EXTERNAL_SOLVER
+path_feasibility_test(Statement,FName,_,PP1,_,_,_,_,_,_,_,_,SymState,
+		      CL,XCL,ML,CL1,ML1,ArrRef,ArrRefX,OutArrRef):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+        path_feasibility_test_w_external_solver(Statement, FName, PP1, XCL, SymState),
+	!,
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(forward_timing_1,Time1-Time0),
+        ctime(Time2),	
+#endif	/*PROFILE*/	
+	append(ArrRefX,ArrRef,OutArrRef),
+	add_constraints_path(XCL, CL, ML, CL1, ML1),
+#ifdef  PROFILE
+        ctime(Time3),
+	add_counter(forward_timing_2,Time3-Time2),
+#endif  /*PROFILE*/	
+        true.
+#else
+path_feasibility_test(Statement,_,_,_,
+		      GlobalArr,GlobalVar,LocalArr,LocalVar,
+		      GlobalArrX,GlobalVarX,LocalArrX,LocalVarX,
+		      _,CL, XCL, ML, CL1, ML1, ArrRef, ArrRefX, OutArrRef):-
+        current_tracer_flag(path_sensitive,y),	
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+        %----------------------------------------------------------------------
+        % Here we do two things: we test path feasibility
+        % satistiability and propagate symbolic states
+        %----------------------------------------------------------------------
+        GlobalArr    = GlobalArrX,
+	GlobalVar    = GlobalVarX,
+        LocalArr     = LocalArrX,
+	LocalVar     = LocalVarX,
+	%----------------------------------------------------------------------
+%#ifdef  DEBUG_USE
+% Uncomment this if explanation of feasibility is needed.
+%       print_message("XCL: %\n",[XCL]),
+%       dump([GlobalArr]), dump([GlobalArrX]),
+%       dump([GlobalVar]), dump([GlobalVarX]),
+%       dump([LocalArr]) , dump([LocalArrX]),
+%       dump([LocalVar]) , dump([LocalVarX]),
+%#endif		
+	append(ArrRefX,ArrRef,OutArrRef),
+%#ifdef  DEBUG_USE	
+%	print_message("ARREF DUMP", []),
+%	dump([ArrRef,ArrRefX,OutArrRef]),
+%#endif
+	satisfiable_array_references_only_if_guard(Statement,OutArrRef),
+        !,
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(forward_timing_1,Time1-Time0),
+        ctime(Time2),	
+#endif  /*PROFILE*/
+	%----------------------------------------------------------------------
+	% Extend the path with new constraints XCL
+	%----------------------------------------------------------------------
+	add_constraints_path(XCL, CL, ML, CL1, ML1),
+#ifdef  PROFILE
+        ctime(Time3),
+	add_counter(forward_timing_2,Time3-Time2),
+#endif
+        true.
+%------------------------------------------------------------------------------
+% No detection of infeasible paths, hence all paths are feasible.
+% Then, we don't test satisfiability of the constraints.
+%------------------------------------------------------------------------------
+path_feasibility_test(_,_,_,_,_,_,_,_,_,_,_,_,_,CL,_,ML,CL, ML,_,_,[]):-
+	current_tracer_flag(path_sensitive,n),!.
+#endif  /*EXTERNAL_SOLVER*/
+
+#ifdef  EXTERNAL_SOLVER
+%----------------------------------------------------------------------%
+% Add all constraints (including more complex constrains such
+% as array constraints) to the external solver and check for
+% satisfiability. 1) Insert a choice point before doing
+% anything.  2) Add XCL into the store. 3) If unsat then this
+% procedure backtracks to the last choice point. Otherwise,
+% the new store state remains.
+%----------------------------------------------------------------------%
+path_feasibility_test_w_external_solver(branch,_,_,XCL,SymState):-
+	  % this predicate also adds properly choice point.
+          extern_solver_add_cnstr_and_check_sat(XCL,SymState).
+path_feasibility_test_w_external_solver(not_branch,FName,PP1,XCL,SymState):-
+	  extern_solver_add_choice_point,
+	  instantiate_func_ret_callee(XCL,FName,PP1,XCL1),
+          extern_solver_add_cnstr(XCL1,SymState).
+#endif /*EXTERNAL_SOLVER*/
+
+#ifndef MINMAX
+%----------------------------------------------------------------------------%
+% Code for inlining function calls
+%----------------------------------------------------------------------------%
+unfold_inlined_function_call(Depth, _Id, FName, PP,
+			     GlobalArr, GlobalVar, LocalArr, LocalVar,	
+			     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			     CL, ML, CallStack, ArrRef, Loops,
+			     UnknownVars, AbsPtFlag, TableSpace):-
+
+	
+	/* NOTE: The inlining we do is only correct if following
+	   assumptions hold:
+	  
+	   - Only one function call per transition.	   
+	   - The function call is always the first operand on the lhs
+	     (if more than one).
+
+	   E.g., statements like x = y + y + foo() + y; where foo()
+	   increments y by one, are compiled in the corresponding CLP
+	   of:
+	   	  	   
+	   tmp = foo();
+	   x = y + y + tmp + y;
+
+	*/ 
+        %----------------------------------------------------------------------
+        % Run the transition with the symbolic state
+        %----------------------------------------------------------------------
+	trans(FName, Id1, PP,
+	      GlobalArr, GlobalVar, SGlobalArr, SGlobalVar,
+	      LocalArr , LocalVar , SLocalArr , SLocalVar,
+	      PP1, 
+	      _GlobalArr1, _GlobalVar1, _SGlobalArr1, _SGlobalVar1,
+	      _LocalArr1 , _LocalVar1 , _SLocalArr1 , _SLocalVar1,
+	      _XCL,
+	      [call(CallFName, FormalLocalPars, SFormalLocalPars, CCL)],
+	      ArrRefX,_Statement),
+	%------------------------------------------------------%
+	% This call MUST NOT FAIL
+	%------------------------------------------------------%		
+	unfold_inlined_function_call_aux(Depth, Id1, FName, 
+			caller(FName, PP, PP1,
+			       GlobalArr , GlobalVar , LocalArr , LocalVar,	
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+			       CCL, % constraints for formal/actual parameters 
+			       CL, ML, CL1,ML1,
+			callee(CallFName, PP2,
+			       FormalLocalPars, SFormalLocalPars,
+			       CalleeGlobalArr, CalleeSGlobalArr,
+			       CalleeGlobalVar, CalleeSGlobalVar,
+			       CalleeLocalArr , CalleeSLocalArr,
+			       CalleeLocalVar , CalleeSLocalVar),
+			CallStack, CallStack1, ArrRef, ArrRefX, ArrRef1,
+		        Loops,UnknownVars, CalleeUnknownVars,AbsPtFlag, TableSpace),
+	
+#ifdef  SLICING_BUG4_FIX
+#if (UNFOLD_OPT == SLICING)
+    % Vijay - quick-fixing bug found on 2012/12/20
+    record_callsite_for_marking(Id1,FName,CallFName), % implemented in tracer_slicer
+#endif
+#endif
+
+	unfold_aux3(Depth, call(Id1) , CallFName, 
+	            GlobalArr, GlobalVar, LocalArr, LocalVar,
+		    CL, ML, PP2, 
+		    CalleeGlobalArr, CalleeGlobalVar,
+		    CalleeLocalArr , CalleeLocalVar,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    CalleeSGlobalArr, CalleeSGlobalVar,
+		    CalleeSLocalArr , CalleeSLocalVar,
+		    CCL, CL1, ML1, CallStack1,ArrRef1,Loops,
+		    not_branch, CalleeUnknownVars, TableSpace).
+#endif /*!MINMAX*/
+
+%----------------------------------------------------------------------%
+% The purpose of this intermediate call is to catch possible
+% errors. This predicate MUST NOT fail. Otherwise, something is wrong.
+%----------------------------------------------------------------------%	
+unfold_inlined_function_call_aux(Depth, Id1, FName, 
+				 caller(FName,PP,PP1,					
+					GlobalArr , GlobalVar , LocalArr , LocalVar,	
+					SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+				 CCL, CL, ML, CL1, ML1,	   
+				 callee(CallFName, PP2,					
+					FormalLocalPars, SFormalLocalPars,
+					CalleeGlobalArr, CalleeSGlobalArr,
+					CalleeGlobalVar, CalleeSGlobalVar,
+					CalleeLocalArr , CalleeSLocalArr,
+				        CalleeLocalVar , CalleeSLocalVar),
+				 CallStack, CallStack1, ArrRef, ArrRefX, ArrRef1, Loops,
+				 UnknownVars,CalleeUnknownVars, _AbsPtFlag, _TableSpace):-
+        %----------------------------------------------------------------------
+        % Global variables are unchanged in the transition from caller
+        % to callee
+        %----------------------------------------------------------------------
+        CalleeGlobalArr  = GlobalArr,
+	CalleeGlobalVar  = GlobalVar,
+	CalleeSGlobalArr = SGlobalArr,
+	CalleeSGlobalVar = SGlobalVar,
+	
+#ifdef  MINI_DEBUG_USE
+	print_message("---- FUNCTION CALL depth %  % id % (from % to %)\n\n",
+		      [Depth, CallFName,Id1,PP,PP1]),
+#else
+        % To prevent warnings
+        Depth=_,
+#endif
+#ifdef  PROFILE		
+	trace_true_branch(Id1),
+	trace_true_branch(call(Id1)),
+	ctime(Time0),
+#endif	
+	add_constraints_path(CCL,CL,ML,CL1,ML1),
+#ifdef  PROFILE
+        ctime(Time1),
+        add_counter(forward_timing_2,Time1-Time0),       
+#endif              	
+	%----------------------------------------------------------------------
+	% At the moment we simply extend array references, in the future
+	% use stack to be able to discard array references of callee
+	%----------------------------------------------------------------------
+	append(ArrRefX, ArrRef, ArrRef1),
+#ifdef	PROFILE
+	% Sanity check: if CallFName does not exist then ERROR
+        sanityCheckExistFunc(CallFName),
+	% Sanity check: if recursive call TRACER may not
+	% terminate. For the moment, we stop the traversal if we
+	% detect a recursive call.	
+	sanityCheckNonRecursive(CallFName,CallStack),
+#endif
+        start(CallFName,PP2),
+	freshlocalarrays(CallFName , CalleeLocalArr),	
+	freshlocalarrays(CallFName , CalleeSLocalArr),
+	freshlocalvars(CallFName   , CalleeLocalVar),
+	freshlocalvars(CallFName   , CalleeSLocalVar),
+	match_formal_actual_params(CallFName,
+				   % These two variables are open-ended tail lists
+				   FormalLocalPars,SFormalLocalPars,
+				   % Callee evaluated state
+				   state(CalleeGlobalArr,CalleeGlobalVar,
+					 CalleeLocalArr ,CalleeLocalVar),
+				   % Callee explicit state
+				   state(CalleeSGlobalArr,CalleeSGlobalVar,
+					 CalleeSLocalArr ,CalleeSLocalVar)),
+#ifdef  GRAPHVIZ_USE
+	% We produce the PPs with context of the transition to store
+	% them in the call stack.
+        attach_context_to_pc(FName,PP,PPContext),
+	%%%
+	%% Here cannot because at this point we dont know how many
+	%% return contexts we will find.	
+	%get_next_pp_context( FName,PP1,Loops,PP1Context),
+	%%%%
+        %---------------------------------------------------------------------------
+	get_next_pp_context(CallFName,PP2,Loops,PP2Context),
+	push_context_stack(CallFName,PP2Context),
+	record_sym_graph_inter_edge(call,
+				    caller(FName,PPContext),callee(CallFName,[PP2Context]),
+				    _,_,_,_),
+#else
+        % To prevent warnings
+        PPContext=_, Loops=_,
+#endif
+#ifdef  EXTERNAL_SOLVER
+        % Insert a choice point before starting.
+        % Then, it adds the constraints. Not satisfiability
+        % check because they must be sat.
+        %------------------------------------------------------------------%
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+        %------------------------------------------------------------------%
+	debug_message("[EXTERNAL SOLVER] BEGIN: adding constraints from call \n",[]),
+        extern_solver_add_choice_point,	
+        extern_solver_add_cnstr(CCL,
+				state(CallFName,
+				      CalleeSGlobalArr, CalleeSGlobalVar,
+				      CalleeSLocalArr , CalleeSLocalVar)),
+        debug_message("[EXTERNAL SOLVER] END \n\n",[]),		
+#endif  /*EXTERNAL_SOLVER*/
+#if     (UNFOLD_OPT==TESTING)
+	freshlocalarrays(CallFName , CalleeUnkLocalArr),
+	freshlocalvars(CallFName   , CalleeUnkLocalVar),
+	UnknownVars      =u(UnkGlobalArr,UnkGlobalVar,_,_),
+	CalleeUnknownVars=u(UnkGlobalArr,UnkGlobalVar,CalleeUnkLocalArr,CalleeUnkLocalVar),
+	update_unknownness_interproc(CallFName,CCL,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     CalleeLocalArr,CalleeLocalVar,
+				     UnknownVars,CalleeUnknownVars),
+#else
+        UnknownVars=_,CalleeUnknownVars=_,
+#endif	/*UNFOLD_OPT==TESTING*/
+	CallStack1	=  [sinfo(FName, PP1,
+			  % Caller state (local variables)
+			  LocalArr , LocalVar, SLocalArr, SLocalVar,	
+			  Id1,PP,PPContext, UnknownVars)|CallStack],
+	% To avoid backtracking	
+	!. 
+unfold_inlined_function_call_aux(_Depth,_Id1,FName,
+				 _Caller,
+				 _CCL,_CL,_ML,_CL1,_ML1,
+				 callee(CalleeFName,_,_,_,_,_,_,_,_,_,_,_),
+				 _CallStack,_CallStack1,_ArrRef,_ArrRefX,_ArrRef1,_Loops,
+				 _UnkVars,_CalleeUnkVars,_AbsPtFlag,_TableSpace):-
+	error_message(" call from function % to callee % failed\n",
+		      [FName,CalleeFName]).
+				 				 
+
+#ifndef MINMAX
+unfold_inlined_function_return(Depth, Id, FName, PP,
+			       GlobalArr, GlobalVar, LocalArr, LocalVar,
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       CL, ML, CallStack, ArrRef, Loops,
+			       UnknownVars, AbsPtFlag, TableSpace):-
+
+       %------------------------------------------------------%
+       % This call MUST NOT FAIL
+       %------------------------------------------------------%	
+       unfold_inlined_function_return_aux(
+			   Id, CallerId, FName, PP, CallerFName, CallerPP1,
+			   callee(GlobalArr, GlobalVar, LocalArr, LocalVar,
+				  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+			   caller(GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+				  SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1),
+			   CL, ML, XCL, CL1, ML1, CallStack, CallStack1, ArrRef,
+			   Loops,UnknownVars, CallerUnknownVars, AbsPtFlag, TableSpace),
+       
+       unfold_aux3(Depth, CallerId, CallerFName,
+		   GlobalArr, GlobalVar, LocalArr,LocalVar,
+                   CL, ML, CallerPP1, 
+		   GlobalArr1, GlobalVar1, LocalArr1, LocalVar1, 
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		   SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		   XCL, CL1, ML1, CallStack1, ArrRef,
+		   Loops,not_branch,CallerUnknownVars,TableSpace). 
+#endif /*!MINMAX*/
+
+%----------------------------------------------------------------------%
+% The purpose of this intermediate call is to catch possible
+% errors. This predicate MUST NOT fail. Otherwise, something is wrong.
+%----------------------------------------------------------------------%
+unfold_inlined_function_return_aux(Id, CallerId, FName, PP, ParFName, ParPP1,
+				   callee(GlobalArr,GlobalVar,LocalArr,LocalVar,
+					  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+				   caller(GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,
+					  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+				   CL, ML, XCL, CL1, ML1, CallStack, CallStack1, _ArrRef, Loops,
+				   UnknownVars, CallerUnknownVars, _AbsPtFlag, _TableSpace):-
+	CallStack = [sinfo(ParFName, ParPP1,
+		       % caller state (from)
+                       CallerLocalArr , CallerLocalVar,
+		       CallerSLocalArr, CallerSLocalVar,
+	 	       CallerId, ParPP0,ParPP0Context, CallerUnknownVars)|CallStack1],       
+#ifdef  MINI_DEBUG_USE		       
+        print_message("---- FUNCTION RETURN (%,%): continue with % \n\n",
+		      [FName,Id,ParPP1]),
+#endif  /*MINI_DEBUG_USE*/
+        %----------------------------------------------------------------------
+        % We compute the next states from the transition information
+        %----------------------------------------------------------------------
+	trans(ParFName, CallerId, _,
+	      % Global state before the call:	      
+	      %   CAUTIOUS: The global state was passed to the
+	      %   callee. Therefore, at this point these variables
+	      %   contain the global state AFTER the call.	      
+              GlobalArr,        GlobalVar,
+	      SGlobalArr,       SGlobalVar,
+	      % Caller local state before the call
+	      CallerLocalArr,   CallerLocalVar,
+	      CallerSLocalArr,  CallerSLocalVar,
+	      ParPP1,
+	      % Caller global state after the call
+              GlobalArr1,       GlobalVar1,
+              SGlobalArr1,      SGlobalVar1,
+	      % Caller local state after the call
+	      LocalArr1,        LocalVar1,
+              SLocalArr1,       SLocalVar1,
+              XCL,
+	      [call(FName, [RV0|_], [SRV0|_], _)],_,_),
+
+	propagate_return_value(FName,Id,
+			       GlobalArr,GlobalVar,LocalArr,LocalVar,
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       RV0,SRV0),
+	
+       % freshparams(FName,Indexes),
+       % find_return_from_state(Indexes,
+       % 			       state(GlobalArr,GlobalVar,LocalArr,LocalVar),
+       % 			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+       % 			       CalleeRV,SCalleeRV),
+       % unify_return_values_with_stack(Id,RV0,SRV0,CalleeRV,SCalleeRV),
+#ifdef EXTERNAL_SOLVER
+       % Insert a choice point before starting.
+       % Then, it adds the constraints. Not satisfiability
+       % check because they must be sat.
+       %------------------------------------------------------------------%
+       % This is a builtin CLP(R) predicate. Make sure you compile
+       % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+       % will fail.
+       %------------------------------------------------------------------%
+       debug_message("[EXTERNAL SOLVER] BEGIN: adding constraints from return \n",[]),       
+       extern_solver_add_choice_point,
+       instantiate_func_ret_caller(XCL,FName,ParFName,ParPP1,SRV0,NewXCL),
+       extern_solver_add_cnstr(NewXCL,
+			       state(ParFName,
+				     SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1)),
+       debug_message("[EXTERNAL SOLVER] END \n\n",[]),	       
+#endif /*EXTERNAL_SOLVER*/
+#ifdef PROFILE
+       ctime(Time0),
+#endif
+       add_constraints_path(XCL,CL,ML,CL1,ML1),
+#ifdef  PROFILE
+       ctime(Time1),
+       add_counter(forward_timing_2,Time1-Time0),       
+#endif              
+       %-----------------------------------------------------------------------
+       % At the moment we simply pass on array references, in the future
+       % we may need to separate local, parent, and global array references
+       % such that array references in the returning function can be
+       % discarded.
+       %-----------------------------------------------------------------------
+#ifdef  GRAPHVIZ_USE
+       % For each return we create a new context
+       get_next_pp_context(ParFName,ParPP1,Loops,ParPP1Context),
+       push_context_stack(ParFName,ParPP1Context),
+       once(record_sym_graph_inter_edge(
+		         return,
+			 caller(ParFName,
+				ParPP0,ParPP0Context,
+				SGlobalArr,SGlobalVar,
+			        CallerSLocalArr,CallerSLocalVar),
+			 callee(FName,PP),
+			 %-------------------------------------		
+			 % Continuation pp in the caller
+			 %-------------------------------------
+			 continuation(ParFName,
+				      ParPP1,[ParPP1Context],
+				      SGlobalArr1,SGlobalVar1,
+				      SLocalArr1,SLocalVar1),
+			 CallerId,XCL)),
+#else
+       % To prevent warnings
+       ParPP0=_,ParPP0Context=_, Loops=_, PP=_,
+#endif /*(defined(GRAPHVIZ_USE))*/
+#if    (UNFOLD_OPT==TESTING)
+       update_unknownness_interproc(ParFName,
+				    XCL,
+				    SGlobalArr, SGlobalVar, SLocalArr,SLocalVar,
+				    SLocalArr1,SLocalVar1, 
+				    UnknownVars,CallerUnknownVars),
+#else
+       UnknownVars=_,
+#endif /*UNFOLD_OPT==TESTING*/
+       % To avoid backtracking
+       !. 
+unfold_inlined_function_return_aux(_,_,FName,_,ParFName,
+				   _,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+       error_message(" return from function % to parent % failed\n",
+		      [FName,ParFName]).
+
+
+%---------------------------------------------------------------------%
+% Propagation of the RETURN value and catch error (if any)
+%---------------------------------------------------------------------%	
+% NOTE: the only information that needs to be propagated is the
+% return value due to the call-by-value semantics of
+% C. Pointers and &-referenced variables which may be used to
+% simulate call-by-ref are compiled like global entities
+% (pointers through global heaps and &-referenced variables
+% like global variables). 
+%---------------------------------------------------------------------%
+% freshparams/2 says which variables are formal parameters
+% using the following format: lv(I) (local variable), gv(I)
+% (global variable), la(I) (local array), and ga(I) (global
+% array) where I is the index (from 0...) of the variable in
+% the corresponding list.
+%---------------------------------------------------------------------%
+% foo { .... CalleeRV=...}	
+% X = RV0,
+%	
+% The special step is to unify CalleeRV with RV0 in order to
+% propagate the return value
+%---------------------------------------------------------------------%
+propagate_return_value(FName,_,_,_,_,_,_,_,_,_,_,_):-
+	% Special case: if wp is used we compile the C program in a
+	% different way which makes freshparams to return empty list:	
+	%    all functions are compiled without any formal parameters and
+	%    return void.
+	freshparams(FName,[]),
+	%current_tracer_flag(other_interp,y),
+	!.
+propagate_return_value(FName,Id,
+		       GlobalArr,GlobalVar,LocalArr,LocalVar,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		       RV0,SRV0):-
+	freshparams(FName,Indexes),
+	find_return_from_state(Indexes,
+			       state(GlobalArr,GlobalVar,LocalArr,LocalVar),
+			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+			       CalleeRV,SCalleeRV),
+	unify_return_values_with_stack(Id,RV0,SRV0,CalleeRV,SCalleeRV).
+
+
+
+%-----------------------------------------------------------------------------%
+#ifndef MINMAX
+%-----------------------------------------------------------------------------%
+%-----------------------------------------------------------------------------%
+% tabled(+Depth,+Id,+FName,+PP,
+%        +GlobalArr,...
+%        +SGlobalArr,...
+%        +CL,+ML,+WP,+CallStack,+ArrRef,+Answer):
+%-----------------------------------------------------------------------------%
+% Check table subsumption.
+% If success then current node is subsumed by another node stored
+% previously in the memo table.
+%-----------------------------------------------------------------------------%
+% Ip : List of program points
+% GlobalArr,... : Evaluated variables (with constraints)
+% SGlobalArr,...: Variables of the symbolic constraints
+% CL : List of symbolic constraints
+% ML : bitvector interpolant
+% ArrRef: array references 
+% Anwer: the solution (in case of analysis)
+%        WCET:  value (time)       + the witness path (in symbolic form)
+%        SLICING,LIVE: marked variables + witnesses paths (also in s.f.)
+%-----------------------------------------------------------------------------%
+tabled( _Depth,        
+        _Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,	
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, WP, CallStack, ArrRef, Answer) :-
+	current_tracer_flag(interpolation,y),
+	%----------------------------------------------------------------------
+	% Phase 1: lookup in memo table
+	%----------------------------------------------------------------------	
+        lookup_memo_table(FName,PP,CallStack,
+	                  PPContextSubsumer,
+			  TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+			  NegIntp,Answer),	
+%#ifdef  DIDODEBUG
+%	check_watchpoint_table(FName, PP,
+%	                       TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+%	                       NegIntp),
+%#endif  
+	%---------------------------------------------------------------------
+	% Phase 2: subsumption test
+	%---------------------------------------------------------------------
+        wrapper_subsumed_profiled(FName,
+				  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	                          GlobalArr , GlobalVar , LocalArr , LocalVar , ArrRef,
+				  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				  NegIntp),	
+#if     (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+	%---------------------------------------------------------------------
+	% Phase 2.5: checking witnesses 
+	%---------------------------------------------------------------------
+	subsumption_check_witnesses(FName,PP,
+	                            GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+				    Answer),
+#endif  /*(UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+#ifdef  MINI_DEBUG_USE
+	print_message("TERMINAL: subsumed state at %@%. \n",[FName,PP],green),
+#endif	
+#ifdef  GRAPHVIZ_USE
+	record_sym_graph_subsumed_edge(FName,PP,PPContextSubsumer),
+#else
+        % To prevent warnings
+        PPContextSubsumer=_,
+#endif  /*GRAPHVIZ_USE*/
+	%---------------------------------------------------------------------
+        % Phase 3: produce interpolant from the subsumed state
+        %---------------------------------------------------------------------
+        create_subsumed_interpolant(FName,
+				    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				    CL, ML,
+				    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				    NegIntp, WP).
+%-----------------------------------------------------------------------------%
+#endif  /*!MINMAX*/
+%-----------------------------------------------------------------------------%
+
+
+%=============================================================================%
+% Predicates used for handling lists with 'o' elements. Used to
+% represent bit-sets.
+%=============================================================================%
+mark_term(o).
+
+is_marked_term(X):- X == o.
+
+is_marked_list([X|_Xs]):- is_marked_term(X),!.
+is_marked_list([_|Xs]) :- is_marked_list(Xs).
+
+count_marked_elements([],0):-!.
+count_marked_elements([X|Xs],1+N):-
+	is_marked_term(X),
+	!,
+	count_marked_elements(Xs,N).	
+count_marked_elements([_X|Xs],N) :-
+	!,
+	count_marked_elements(Xs,N).
+
+unmark_nth(K,I,[_|Ms],[_|Ms]):- K == I,!.
+unmark_nth(K,I,[M|Ms],[M|Ns]):- K < I ,!, unmark_nth(K+1,I,Ms,Ns).
+
+#ifdef  MINMAX
+% For now used if CACHE_PROJECT_MINTESTS
+%-----------------------------------------------------------------------%
+% identical_marking: checking if two lists of constraint markings are
+% the same.
+%-----------------------------------------------------------------------%
+identical_marking([], []).
+identical_marking([X|R], [Y|S]) :-
+	myvar(X),
+	myvar(Y),
+	!,
+	identical_marking(R, S).
+identical_marking([X|_], [Y|_]) :-
+	myvar(X),
+	mark_term(Y),
+	!, fail.
+identical_marking([X|_], [Y|_]) :-
+	mark_term(X),
+	myvar(Y),
+	!, fail.
+identical_marking([X|R], [Y|S]) :-
+	mark_term(X),
+	mark_term(Y),
+	identical_marking(R, S).
+#endif  /*MINMAX*/
+%-----------------------------------------------------------------------%
+% mark_all_elements/1
+%-----------------------------------------------------------------------%
+mark_all_elements([]).
+mark_all_elements([X|R]) :-
+	mark_term(X), mark_all_elements(R).
+
+%-----------------------------------------------------------------------%
+% unify_all_elements/2
+%-----------------------------------------------------------------------%
+unify_all_elements([],_).
+unify_all_elements([Mark|R],Mark) :-
+	unify_all_elements(R,Mark).
+
+%------------------------------------------------------------------------------%
+% config_to_index/2: Converts configuration (list of program points) into
+% and index of the table.
+%------------------------------------------------------------------------------%
+config_to_index(Cfg, N) :- atom_list_concat(Cfg,N).
+
+#ifdef  PIPEMEMO_REUSE_CS
+pipe_master_cs_mark(Action):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_memo_slave("cs_mark(%,%) .\n", [Action,MsgTimeStamp1]),
+#else
+	write_memo_slave("cs_mark(%) .\n", [Action]),
+#endif /*PROFILE*/
+	%flush,
+	read_from_memo_slave(_).
+#endif  /*PIPEMEMO*/
+
+%==============================================================================
+% Some initialization procedures:
+% Assert predicate queries for fast query/store in the memo table,
+% record program program points, etc.
+%==============================================================================
+init_routines:-
+	compute_processnum,
+	compute_program_point,
+	compute_function_program_point,
+	declare_memo_table,
+	gen_static_check_t,
+	gen_static_store_t,
+#if     (defined(ENCODE_MEMO) || defined(ENCODE_CHILD_PARENT))
+        gen_static_encoding_code,
+#endif
+%%%#ifdef  PIPEMEMO
+%%%        declare_pp_counters,
+%%%#endif
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        precompute_program_database,
+#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE	
+	gen_static_trans_in_slice,
+#endif  /*SLICING_SPEEDUP_TRANS_IN_SLICE*/	
+#endif	/*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE */
+%% #if (UNFOLD_OPT == SAFETY) && defined(MINMAX)
+%% 	%----------------------------------------------------------------------
+%% 	% Make sure that Node id is zero
+%% 	%----------------------------------------------------------------------
+%% 	set_counter(node_id, 0),
+%% #endif
+%------------------------------------------------------------------------------
+% Note that the cut is to avoid backtracking: may happen at end of
+% run.
+%------------------------------------------------------------------------------
+	!.
+%------------------------------------------------------------------------------
+% No. of processes: always 1 because we are only dealing with
+% sequential programs.
+%------------------------------------------------------------------------------
+compute_processnum :- 
+	trans(_,_,L,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_),
+	length(L, N),
+	fassert(processnum(N)), !.
+%------------------------------------------------------------------------------
+% compute_program_point: computes all program points
+%------------------------------------------------------------------------------
+compute_program_point :-
+	% To avoid warnings
+	fassert(program_point(-1)), 
+	compute_program_point_aux,
+	retract(program_point(-1)).
+
+compute_program_point_aux :-
+	trans(_,_,L1,_,_,_,_,_,_,_,_,_L2,_,_,_,_,_,_,_,_,_,_,_,_),
+	which_table(L1, PP),
+	not(program_point(PP)),
+	fassert(program_point(PP)),
+	fail.
+compute_program_point_aux :-
+	trans(_,_,_L1,_,_,_,_,_,_,_,_,L2,_,_,_,_,_,_,_,_,_,_,_,_),
+	which_table(L2, PP),
+	not(program_point(PP)),
+	fassert(program_point(PP)),
+	fail.
+compute_program_point_aux.
+	
+cleanup_program_point:- retractall(program_point(_)).
+
+%------------------------------------------------------------------------------
+% compute_function_program_point: computes all program points for each
+% function
+%------------------------------------------------------------------------------
+compute_function_program_point :-
+	% To avoid warnings
+	fassert(func_program_point(xx,-1)), 
+	compute_function_program_point_aux,
+	retract(func_program_point(xx,-1)).
+compute_function_program_point_aux :-
+	trans(FName,_,L1,_,_,_,_,_,_,_,_,_L2,_,_,_,_,_,_,_,_,_,_,_,_),
+	which_table(L1, PP),
+	not(func_program_point(FName,PP)),
+	fassert(func_program_point(FName,PP)),
+	fail.
+compute_function_program_point_aux :-
+	trans(FName,_,_L1,_,_,_,_,_,_,_,_,L2,_,_,_,_,_,_,_,_,_,_,_,_),	
+	which_table(L2, PP),
+	not(func_program_point(FName,PP)),
+	fassert(func_program_point(FName,PP)),
+	fail.
+compute_function_program_point_aux.
+
+cleanup_function_program_point:-
+	retract(func_program_point(_,_)),
+	fail.
+cleanup_function_program_point.
+
+#if     (UNFOLD_OPT==SAFETY)
+%--------------------------------------------------------------------------%
+% The encoding of an unsafe program point. It this program point is
+% found then an error has been encountered.
+%--------------------------------------------------------------------------%
+is_error_reachable([$unsafe]).
+#endif  /*(UNFOLD_OPT==SAFETY)*/ 
+
+%------------------------------------------------------------------------------
+% Declaring table predicates t%d, where %d is the program
+% point. Therefore here predicates are different according to program
+% point. We declare t%d as dynamic
+%------------------------------------------------------------------------------
+which_table([X|_], X).
+
+
+%------------------------------------------------------------------------------
+% Remove unimportant information in the stack for the purpose
+% of tabling.
+%------------------------------------------------------------------------------
+simplify_stack([], []):-!.
+simplify_stack([A|R],[sinfo(FName,PP)|S]):-
+	A =.. [sinfo,FName,PP|_], simplify_stack(R,S),!.
+
+
+% #ifdef  PIPEMEMO
+% %%%%
+% % declare_pp_counters/0 initializes a counter to 0 for each program
+% % point used later to retrieve entries from the memo table in case
+% % it's stored in another process.
+% %%%%
+% declare_pp_counters :-
+%  	program_point(PP),
+%  	printf_to_atom(FName, "t%", [PP]),
+% 	set_counter(FName,1),
+%  	fail.
+% declare_pp_counters.
+% #endif  /*PIPEMEMO*/
+
+
+%==============================================================================
+% Auxiliary predicates for handling function calls
+%==============================================================================
+
+%-----------------------------------------------------------------------------%
+% This predicate is used when the return values are unified with
+% values stored in the call stack.
+%-----------------------------------------------------------------------------%
+unify_return_values_with_stack(_Id,RV,SRV,RV,SRV):- !.	
+% WARNING: it's possible that those values don't unify. E.g.,
+% x=5;
+% if (x == foo())
+%
+% If foo() returns something different from 5, then they won't
+% unify. In fact, this is an infeasible path but this case is not
+% covered by the current implementation.
+unify_return_values_with_stack(Id,RV0,SRV0,RV,SRV):-
+	print_message("\t (STACK)   RV0:% SRV0:% \n",[RV0,SRV0]),
+	print_message("\t (CONTEXT) RV :% SRV :% \n",[RV,SRV]),	
+	error_message("return value stored in the stack (Id: %)\n",[Id]).
+	%!,
+	%fail.
+
+%-------------------------------------------------------------------------------%
+% functionOfChildAndParent(+Id,+FNameOfId,+PC,+CallStack,
+%                          -FNameOfChild,-FNameOfParent)                          
+%-------------------------------------------------------------------------------%
+% As we mentioned in NOTES* (predicate unfold_aux3), if the
+% pre-operation is between a caller and a callee the set of variables
+% might be different. Any operation sensitive to the function name
+% (e.g., encode/decode of answers in slicing and wcet) needs to know
+% the function names of the caller and callee. This predicate gives
+% that information.
+%-------------------------------------------------------------------------------%
+functionOfChildAndParent(Id,CallerFName,_PC,_CallStack,CallerFName,CalleeFName):-
+	 % RETURN
+	 trans(CallerFName,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,
+	       [call(CalleeFName,_,_,_)],_,_),!,
+	 debug_message("\tBacktracking through inter-procedural transition ",[]),
+	 debug_message("from caller:% to callee %\n",[CallerFName,CalleeFName]).
+functionOfChildAndParent(call(_Id),CalleeFName,_PC,CallStack,CalleeFName,CallerFName):-
+	 % CALL
+	 %start(CalleeFName,PC),!,
+	 !,
+	 simplify_stack(CallStack,SimpleCallStack),
+	 SimpleCallStack = [sinfo(CallerFName,_)|_],
+	 debug_message("\tBacktracking through inter-procedural transition ",[]),
+	 debug_message("from callee:% to caller:%\n",[CalleeFName,CallerFName]).
+functionOfChildAndParent(_Id,CallerFName,_PC,_CallStack,CallerFName,CallerFName):-!.
+
+%------------------------------------------------------------------------%
+% match_formal_actual_params:
+%------------------------------------------------------------------------%
+% Unify formal and actual parameters when a function call using
+% freshparams/2
+%------------------------------------------------------------------------%
+match_formal_actual_params(FName,
+			   FormalLocalParsOpenTail,SFormalLocalParsOpenTail,
+			   Evaluate_State,Explicit_State):-			   
+	freshparams(FName,Indexes),
+	get_formal_params(FormalLocalParsOpenTail ,FormalLocalPars),
+	get_formal_params(SFormalLocalParsOpenTail,SFormalLocalPars),
+        match_formal_actual_params_aux(Indexes,0,
+				       FormalLocalPars,SFormalLocalPars,
+				       Evaluate_State,Explicit_State),
+	% To avoid backtracking
+	!.
+match_formal_actual_params(FName,_,_,_,_):-
+	error_message(" unexpected error in match_formal_actual_params/5 with %\n",
+		      [FName]).
+
+% Pos is the current position (0....N) of the head of the list in the
+% first.
+% I is the index of the variable (let's say GlobalVar) wrt the list
+% GlobalVar.
+match_formal_actual_params_aux([],_,_,_,_,_):- !.
+match_formal_actual_params_aux([lv(I)|Is],Pos,FormalLocalPars,SFormalLocalPars,	
+			       state(GlobalArr ,GlobalVar ,LocalArr ,LocalVar),
+			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)):-
+	!,
+	nthfunc(I,LocalVar,X),
+	nthfunc(I,SLocalVar,SX),
+	nthfunc(Pos,FormalLocalPars,Y),
+	nthfunc(Pos,SFormalLocalPars,SY),
+	X=Y,
+	SX=SY,
+	match_formal_actual_params_aux(Is,Pos+1,FormalLocalPars,SFormalLocalPars,	
+				       state(GlobalArr ,GlobalVar ,LocalArr ,LocalVar),
+				       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)).
+match_formal_actual_params_aux([la(I)|Is],Pos,FormalLocalPars,SFormalLocalPars,	
+			       state(GlobalArr,GlobalVar,LocalArr,LocalVar),
+			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)):-
+	!,
+	nthfunc(I,LocalArr,X),
+	nthfunc(I,SLocalArr,SX),
+	nthfunc(Pos,FormalLocalPars,Y),
+	nthfunc(Pos,SFormalLocalPars,SY),
+	X=Y,
+	SX=SY,
+	match_formal_actual_params_aux(Is,Pos+1,FormalLocalPars,SFormalLocalPars,	
+				       state(GlobalArr,GlobalVar,LocalArr,LocalVar),
+				       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)).
+match_formal_actual_params_aux([gv(I)|Is],Pos,FormalLocalPars,SFormalLocalPars,	
+			       state(GlobalArr,GlobalVar,LocalArr,LocalVar),
+			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)):-
+	!,
+	nthfunc(I,GlobalVar,X),
+	nthfunc(I,SGlobalVar,SX),
+	nthfunc(Pos,FormalLocalPars,Y),
+	nthfunc(Pos,SFormalLocalPars,SY),
+	X=Y,
+	SX=SY,
+	match_formal_actual_params_aux(Is,Pos+1,FormalLocalPars,SFormalLocalPars,	
+				       state(GlobalArr,GlobalVar,LocalArr,LocalVar),
+				       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)).
+match_formal_actual_params_aux([ga(_)|_],_,_,_,_,_):-	
+	% This case is not possible since a formal parameter can never
+	% be a global array variable. Instead, gv(I) is possible if
+	% the parameter is referenced using & somewhere in the function.
+	error_message(" match_formal_actual_params_aux/6 failed\n",[]).
+
+find_return_from_state([],_,_,_,_):-
+	error_message(" unexpected error in find_return_from_state/5 \n",[]).
+find_return_from_state([lv(I)|_],state(_,_ ,_,LocalVar),state(_,_,_,SLocalVar),
+		       R,SR):-
+	nthfunc(I,LocalVar,R),nthfunc(I,SLocalVar,SR),!.
+find_return_from_state([la(I)|_],state(_ ,_ ,LocalArr ,_),state(_,_,SLocalArr,_),
+		       R,SR):-
+	nthfunc(I,LocalArr,R),nthfunc(I,SLocalArr,SR),!.
+find_return_from_state([gv(I)|_],state(_ ,GlobalVar ,_ ,_),state(_,SGlobalVar,_,_),
+		       R,SR):-
+	nthfunc(I,GlobalVar,R),nthfunc(I,SGlobalVar,SR),!.
+find_return_from_state([ga(_)|_],_,_,_,_):-
+	error_message(" Indexing ga not expected \n",[]).
+
+%--------------------------------------------------------------------------%
+% get_formal_params(+Ps,-Fs)
+%--------------------------------------------------------------------------%
+% Ps is an open-ended list and Fs is a list that contains all elements
+% except the open-ended tail.
+%--------------------------------------------------------------------------%
+get_formal_params(Xs, []) :- var(Xs), !.
+get_formal_params([X|Xs],[X|Zs]):- !,
+	get_formal_params(Xs,Zs). 
+
+
+%------------------------------------------------------------------------------------%
+% get_return_index(+,+,+,+,+,+,-)
+% ------------------------------------------------------------------------------------%
+% Given an assignment x = foo(...), where foo is a function call,
+% obtain the index of the return value (i.e., x) from the list of
+% variables SGlobalArr . SGlobaVar . SLocalArr . SLocalVar starting
+% from 1.  Otherwise, return -1
+%------------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_get_return_index:-
+	SGA = [_H], SGV = [_A,_B,_C], SLA = [],SLV = [X,_Y,_Z],XCL = [assign(X,_)],
+	get_return_index(XCL,_,SGA,SGV,SLA,SLV,Index),
+	print_message("Index: % \n",[Index]).
+#endif  /*DEBUG_USE*/
+%------------------------------------------------------------------------------------%
+get_return_index(CL,_Id,GlobalArr,GlobalVar,LocalArr,LocalVar,Index):-
+	get_lhs_from_assignment(CL,Lhs),
+	get_return_index2(Lhs,GlobalArr,GlobalVar,LocalArr,LocalVar,Index),
+	!.
+get_return_index(_,Id,_, _, _, _, _):-
+	error_message("unexpected function call format compilation at % \n",[Id]).		     
+% We search for the variable on the left-hand side in the assignment
+% x = foo(...). If there is no such x then return -1
+get_lhs_from_assignment(CL,Lhs):-
+	get_lhs_from_assignment_aux(CL,Lhs),!.
+get_lhs_from_assignment(_,-1):- !.
+get_lhs_from_assignment_aux([assign(Lhs,_)|_],Lhs)   :- !.
+get_lhs_from_assignment_aux([arrassign(Lhs,_)|_],Lhs):- !.
+get_lhs_from_assignment_aux([_|CL],Lhs):-
+	!, get_lhs_from_assignment_aux(CL,Lhs).
+
+get_return_index2(Lhs, _, _ , _ ,_ , -1):- Lhs == -1,!.
+get_return_index2(Lhs,GlobalArr,GlobalVar,LocalArr,LocalVar,Index2):-
+	append(LocalArr,LocalVar,S0),
+	append(GlobalVar,S0,S1),
+	append(GlobalArr,S1,S2),
+	% Get index from Lhs wrt to the set of program variables	
+	get_return_index3(S2,Lhs,1,Index1),
+        length(GlobalArr,N1),
+	length(GlobalVar,N2),
+	% Return positive index only if local variables 
+	get_return_index4(Index1,N1+N2,Index2),!.
+	
+get_return_index3([X|_],SX,Index,Index)   :- X == SX , !.
+get_return_index3([_|Xs],SX,Index,NIndex) :- !,
+	get_return_index3(Xs,SX,1+Index,NIndex).
+get_return_index4(Index,N,Index):- Index > N, !. % Local variable
+get_return_index4(_,_,-1)       :- !.            % Global variable
+
+
+%==============================================================================
+% To access/update the (non minmax) loop stack handled
+%==============================================================================
+% Note: don't move from here. These predicates are needed, for
+% example, for GRAPHIVZ_USE with or without minmax.
+loopstack$point(LoopInfo,FName,PP):-
+	LoopInfo = loop(FName,PP,_,_,_,_,_,_,_).
+loopstack$point_with_context(LoopInfo,FName,PP,PPContext):-	
+	LoopInfo = loop(FName,PP,PPContext,_,_,_,_,_,_).
+loopstack$state(LoopInfo,FName,PP,	       
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL,WP):-
+	LoopInfo = loop(FName,PP,_,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL,WP).
+
+#ifdef  PROFILE
+% FIXME: these sanity checks should be under another GPP pragma rather
+% than PROFILE. Something like SANITY_CHECKS.
+%============================================================================
+%                            Sanity checks
+%============================================================================
+% Ensure that operation always has success. That is, it does not fail
+% in the middle of the code.
+#ifdef  MINMAX
+sanityCheckOpSucceed(open,pre_op_checkpoint):-
+	% if there is conflict the pre operation is expected to fail
+	% abruptly. Thus, we don't perform the sanity check here.		
+	is_conflict(_),!,
+%	print_message("WARNING: disabled sanityCheckOpSucceed w/ pre_op_checkpoint ",[]),
+%	print_message("due to conflict \n",[]),
+	set_counter(pre_op_checkpoint,0).
+#endif  /*MINMAX*/
+sanityCheckOpSucceed(open,Counter):-
+	counter_value(Counter,0),!,
+	add_counter(Counter,1).
+sanityCheckOpSucceed(open,Counter):-
+	error_message("% did not finished properly\n",[Counter]).
+sanityCheckOpSucceed(close,Counter):-
+	add_counter(Counter,-1).
+
+% If function call does not exist then halt. Otherwise return the
+% start PP
+sanityCheckExistFunc(FName):-
+	start(FName,_),!.
+sanityCheckExistFunc(FName):-
+	error_message("function call % does not exist \n",[FName]).
+
+sanityCheckNonRecursive(FName,CallStack):-
+	simplify_stack(CallStack, SimpleCallStack),
+	member(sinfo(FName,_),SimpleCallStack),!,
+	error_message("Recursive call to %\n\tCall stack: %.\n",
+		      [FName,SimpleCallStack]).
+sanityCheckNonRecursive(_,_):-!.
+
+sanityCheckMonovariance(FName,PP):-
+	current_tracer_flag(path_sensitive,n),!,
+	set_counter(num_memo_entries,0),
+	config_to_index(PP, PPIdx),         
+	which_table(PP, TableId),
+	count_memo_entries(TableId,PPIdx,FName),
+	counter_value(num_memo_entries,Val),
+	report_sanityCheckMonovariance(Val,FName,PP).
+sanityCheckMonovariance(_,_):-!.
+
+report_sanityCheckMonovariance(Val,FName,PP):-
+	Val > 1, !,
+%	print_memo_table,
+	error_message("Monovariance not preserved %:%\n",[FName,PP]).
+report_sanityCheckMonovariance(_,_,_).
+		
+sanityCheck_id_not_var(Id):-
+	var(Id),
+	error_message("123456 \n",[]).
+sanityCheck_id_not_var(_).
+
+init_sanitization_counters:-
+	% These checkpoints are used to notify any unexpected error in
+	% the pre operation, combine and store in the memo table.	
+	set_counter(pre_op_checkpoint,0),
+	set_counter(combine_op_checkpoint,0),
+	set_counter(store_op_checkpoint,0).
+#endif  /*PROFILE*/
+
+
+%============================================================================
+% Set main options of the interpreter.
+%============================================================================
+set_unfolder_options:-
+%%
+% Initialization of TRACER flags: don't change them!
+%%
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)        
+	% Set the current global tablespace id
+	TableSpace = 0,
+	set_counter(current_tablespace, TableSpace),
+	% Set flags
+#ifdef  SLICING_CONTROL_OPT	
+        %------------------------------------------------------------%
+        % This optimization is incorrect so don't use it!
+        %------------------------------------------------------------%
+        set_tracer_flag(slicer_control_opt,n),
+#endif	/*SLICING_CONTROL_OPT*/
+	set_tracer_flag(unroll_loop,n),
+#elif   (UNFOLD_OPT == SAFETY)
+        %% By default, unroll_loop is n
+	% set_tracer_flag(unroll_loop,y),
+#ifdef  MINMAX
+        %----------------------------------------------------------------------
+        % For minmax algorithm, we use naive path data structure for now
+        % (no partitioning).
+        %----------------------------------------------------------------------
+        set_tracer_flag(path_datastructure, naive),
+#endif  /*MINMAX*/
+	set_tracer_flag(path_sensitive,y),
+#elif   (UNFOLD_OPT == WCET)
+	%% By default, unroll_loop is n
+	% set_tracer_flag(unroll_loop,y),
+#elif   (UNFOLD_OPT == TESTING)
+        set_tracer_flag(unroll_loop,y),
+	set_tracer_flag(path_sensitive,y),
+        %----------------------------------------------------------------------
+        % For directed testing algorithm, we use naive path data
+        % structure for now (no partitioning).
+        %----------------------------------------------------------------------
+	set_tracer_flag(path_datastructure,naive),
+#endif  /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/
+%#ifdef  EXTERNAL_SOLVER
+%        set_tracer_flag(convert_strict_inequality,y),
+%#endif  /*EXTERNAL_SOLVER*/
+        set_path_slicing_if_naive_path_datastructure.
+
+% If user selects path_datastructure=naive then TRACER uses ALWAYS
+% path_slicing option which means that it will still try to delete
+% those constraints which are independent from the interpolation
+% target. It's less efficient than partition but better than nothing.
+set_path_slicing_if_naive_path_datastructure:-
+	current_tracer_flag(path_datastructure,naive),!,
+	set_tracer_flag(path_slicing,y).
+set_path_slicing_if_naive_path_datastructure:-!.
+
+% set_user_options/1: initialize TRACER flags from the user. If
+% something is wrong then default values.
+set_user_options(Opts):-
+	validate_user_options(Opts),
+	execute_user_options(Opts).
+
+execute_user_options([]).
+execute_user_options([nil|Opts]):-
+	execute_user_options(Opts).
+execute_user_options([option(Flag,Value)|Opts]):-
+	set_tracer_flag(Flag,Value),
+	execute_user_options(Opts).
+
+validate_user_options([]).
+validate_user_options([nil|Opts]):-
+	validate_user_options(Opts).
+validate_user_options([option(Flag,Value)|Opts]):-
+	%-----------------------------------------------------------%
+	% if valid_tracer_flag_value_catch_error/2 fails then halt.
+	%-----------------------------------------------------------%	
+	valid_tracer_flag_value_catch_error(Flag,Value),
+	validate_user_options(Opts).
+		      
+%==========================================================================%
+%                           I/O utilites
+%==========================================================================%
+
+#ifdef DEBUG_USE
+% Print a debugging message to standard output
+debug_message(Msg, Args) :-
+	stdout_printf(Msg, Args).
+debug_message(Msg,Args,Color):-
+	printf_to_atom(Msg0,Msg,Args),
+	string_add_color(Msg0,Color,Msg1),
+	stdout_printf("%",[Msg1]).
+#else
+debug_message(_Msg,_Args):-!.
+debug_message(_Msg,_Args,_Color):-!.
+#endif
+% Print an user message to standard output
+print_message(Msg,Args)  :-
+	stdout_printf(Msg,Args).
+print_message(Msg,Args,Color):-
+	printf_to_atom(Msg0,Msg,Args),
+	string_add_color(Msg0,Color,Msg1),
+	stdout_printf("%",[Msg1]).
+% Print an error message to standard output
+error_message(Msg,Args)  :-
+	print_message("TRACER ERROR:",[],red),
+	print_message(Msg,Args,red),
+	halt.
+% Write into a file
+print_file(Msg,Args):-
+	printf(Msg,Args).
+
+color_code(black,0).
+color_code(red,1).
+color_code(green,2).
+color_code(yellow,3).
+color_code(blue,4).
+color_code(magenta,5).
+color_code(cyan,6).
+color_code(white,7).
+
+string_add_color(String,Color,NString):-
+	Color == yellow,!,
+	% foreground
+	FG0 = 33,
+	% background always black
+	BG0 = 40, 
+	printf_to_atom(NString,"\033[0;%;%m%\033[m",[BG0,FG0,String]).
+string_add_color(String,Color,NString):-
+	color_code(Color,FG),
+	% foreground
+	FG0 = 30+FG,
+	% background always white
+	BG  = 7, BG0 = 40+BG, 
+	printf_to_atom(NString,"\033[0;%;%m%\033[m",[BG0,FG0,String]).
+
+%============================================================================%
+%               Predicates to output debugging messages to user
+%============================================================================%
+#ifdef  DEBUG_USE
+debug_begin_pre_operator(FName,call(_Id),Depth,_PC):-
+	% CALL
+	%start(FName,PC),!,
+	!, 
+	debug_message("\nBegin PRE-OP ",[],cyan),
+	debug_message("\tCALL callee % depth %\n",[FName,Depth],cyan).	
+debug_begin_pre_operator(CallerFName,Id,Depth,_PC):-
+	% RETURN
+	trans(CallerFName,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,
+	      [call(CalleeFName,_,_,_)],_,_),!,
+	debug_message("\nBegin PRE-OP ",[],cyan),
+	debug_message("\tRETURN from % to % depth %) \n",		      
+		      [CalleeFName,CallerFName,Depth],cyan).
+debug_begin_pre_operator(FName,Id,Depth,_PC):-
+	% INTRA-PROCEDURAL TRANSITIONS
+	trans(FName,Id,PC0,_,_,SGA1,SGV1,_,_,SLA1,SLV1,PC1,_,_,
+	      SGA2,SGV2,_,_,SLA2,SLV2,XCL,_,_,_),
+	debug_message("\nBegin PRE-OP ",[],cyan),	
+	debug_message("(%@%  -> %@%, id:% depth %) \n",
+  		      [FName,PC1,FName,PC0,Id,Depth],cyan),
+        debug_message("\tConstraints: ", []),
+        pretty_printer_constraints_list(FName,
+					SGA1,SGV1,SLA1,SLV1,
+					FName,
+					SGA2,SGV2,SLA2,SLV2,
+					XCL).
+debug_end_pre_operator:-
+	debug_message("End PRE-OP   \n\n", [],cyan).
+
+debug_begin_combine_operator(FName,PP):-
+	debug_message("Begin COMBINE %@% \n",[FName,PP],magenta).
+debug_end_combine_operator:-
+	debug_message("End COMBINE \n",[],magenta).
+#else /*DEBUG_USE*/
+debug_begin_pre_operator(_,_,_,_).
+debug_end_pre_operator.
+
+debug_begin_combine_operator(_,_).
+debug_end_combine_operator.
+#endif
+
+#ifdef  DEBUG_USE
+print_op_debugging(Op,
+		   FName,PP,Depth,
+		   _CL,_ML,WP,
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar):-
+	current_tracer_flag(other_interp,y),
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	print_message("\t",[]),
+	print_op_debugging_tittle(Op,FName,PP,Depth),	
+	pretty_printer_interp(FName,Depth,"Rybalchenko's interpolant -- ",
+			      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			      WP).	
+print_op_debugging(Op,
+		   FName,PP,Depth,
+		   CL,ML,WP,
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar):-
+	print_message("\tProjected unsat-core ",[]),
+	print_op_debugging_tittle(Op,FName,PP,Depth),
+	pretty_printer_marked_constraints(FName,
+					  CL,ML,
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+	pretty_printer_interp(FName,Depth,"\tWeakest-precondition interpolant -- ",
+			      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			      WP).
+
+print_op_debugging_tittle(Op,_,_,_):-
+	var(Op), !.
+print_op_debugging_tittle(pre,_,_,_):-
+	print_message("interpolant after pre-image\n\t",[]).
+print_op_debugging_tittle(combine,_,_,_):-
+	print_message("interpolant after combining all children's interpolants \n\t",[]).
+print_op_debugging_tittle(subsumption,_,_,_):-
+	print_message("interpolant for subsumed node \n\t",[]).
+print_op_debugging_tittle(infeasible,_,_,Depth):-
+	print_message("interpolant for infeasible path at depth %\n\t",
+		      [Depth]).
+print_op_debugging_tittle(loop_exit,FName,PP,_Depth):-
+        print_message("interpolant for BODY+EXIT LOOP %:% \n\t",
+		      [FName,PP],magenta).
+print_op_debugging_tittle(loop_exit_interpolant,FName,PP,_Depth):-
+       print_message("stored interpolant for the loop exit %:% \n\t",
+		     [FName,PP],yellow).
+print_op_debugging_tittle(loop_interpolant,FName,PP,_Depth):-
+        print_message("interpolant from BODY+EXIT LOOP %:% \n\t",
+		      [FName,PP], magenta).
+print_op_debugging_tittle(back_edge_interpolant,_,_,_):-
+	print_message("interpolant from back-edge \n\t",[],green).
+print_op_debugging_tittle(pre_abstraction,_,_,_):-
+	print_message("final state before abstraction point:\n\t",[],blue).	
+#endif  /*DEBUG_USE*/	
+
+%==============================================================================
+% Begin files import
+%==============================================================================
+#ifdef  SLICE_PSCFG
+%#define SLICING_CONTROL_OPT
+#define GRAPHVIZ_USE
+#endif
+#include "SWI_expansion.clp.gpp"
+#include "tracer_flags.clp.gpp"
+#include "tracer_interpolant_basic.clp.gpp"
+#include "tracer_memo.clp.gpp"
+#include "tracer_solver.clp.gpp"
+#include "tracer_solver_arrays.clp.gpp"
+#include "tracer_paths.clp.gpp"
+#include "tracer_abstraction.clp.gpp"
+#if       (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+#include "tracer_witnesses.clp.gpp"
+#endif    /*(UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+#if       ((UNFOLD_OPT!=TESTING) && (!defined(MINMAX)))
+#include "tracer_loops.clp.gpp"
+#if       (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+#include "tracer_loops_fixpo.clp.gpp"
+#include "tracer_analysis.clp.gpp"
+#endif    /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+#endif    /*((UNFOLD_OPT!=TESTING) && (!defined(MINMAX)))*/
+#include "tracer_graphviz.clp.gpp"
+#if       (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)  
+#include "tracer_preprocess.clp.gpp"
+#elif     defined(OUTPUT_TRUE_FALSE_TRANS_INFO)
+#include "tracer_preprocess.clp.gpp"
+#endif    /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/ 
+#include "tracer_interpolant_others.clp.gpp"
+#include "tracer_encode_ground.clp.gpp"
+#include "tracer_piped_operations.clp.gpp"
+#include "tracer_utils.clp.gpp"
+#include "tracer_profile.clp.gpp"
+#include "tracer_pretty_printer.clp.gpp"
+#include "union_find.clp.gpp"
+#include "balanced_tree.clp.gpp"
+#include "SWI_glue_code.clp.gpp"
+#include "polyhedra.clp.gpp"
+#if       (UNFOLD_OPT==SAFETY)
+#ifdef    MINMAX
+#include "tracer_safety_minmax.clp.gpp"
+#ifdef    TESTING_CREST
+#include "tracer_tester_crest.clp.gpp"
+#endif    /*TESTING_CREST*/
+#ifdef    GROUND_EXPLANATION
+#include "tracer_ground_explanation.clp.gpp"
+#endif
+#else
+#include "tracer_safety.clp.gpp"
+#endif    
+#elif     (UNFOLD_OPT==WCET)
+#include "tracer_wcet.clp.gpp"
+#elif     (UNFOLD_OPT==SLICING)
+#include "tracer_slicer.clp.gpp"
+#ifdef   SLICE_PSCFG
+#include "tracer_pscfg.clp.gpp"
+#endif   /*SLICE_PSCFG*/
+#elif     (UNFOLD_OPT==LIVE)
+#include "tracer_live.clp.gpp"
+#elif     (UNFOLD_OPT==TESTING)
+#include "tracer_tester.clp.gpp"
+#include "tracer_safety.clp.gpp"
+#endif
+#ifdef    EXTERNAL_SOLVER
+#include "tracer_solver_external.clp.gpp"     
+#endif    /*EXTERNAL_SOLVER*/
+#ifdef    RECURSIVE_SOLVER
+#include "tracer_recursive.clp.gpp"
+#endif    /*RECURSIVE_SOLVER*/
+
+% #ifdef    DIDODEBUG
+% #include "tracer_debug.clp.gpp"
+% #endif    /*DIDODEBUG*/
+%==============================================================================
+% End files import
+%==============================================================================

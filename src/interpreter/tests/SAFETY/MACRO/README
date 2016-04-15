@@ -1,0 +1,154 @@
+This directory contains programs from the BLAST web page. Here, the
+conferences where they were used with some information.
+
+
+From Lazy Abstraction, POPL'02:
+
+Name            LOC  Time(s)
+-----------------------------------------------------
+driver.c         95   0.08
+funlock.c        40   0.14
+read.c          370   4.42
+floppy.c       6473   2.05
+qmouse.c        400   0.74
+ll_rw_block.c  1281   5.82
+
+From Constraint Solving for Interpolation, VMCAI'07
+
+Name            LOC  Time(s)
+-----------------------------------------------------
+kbfiltr.i 
+diskperf.i
+floppy.i       6473 
+caudio.i
+
+From Abstraction from Proofs, POPL'04
+and also used in Joining Dataflow with Predicates, FSE'05
+
+Safety property: finite automaton with 22 states
+
+Name            LOC     Dis   +  Reach =  Total 
+-----------------------------------------------------
+kbfiltr       12301    0m52s     0m22s    1m14s
+floppy        17707    7m56s     3m21s    
+diskperf      14286    3m13s     1m18s
+caudio        18209   17m47s     4m12s
+parport       61777   74m58s     2m23s
+parclass     138373   42m24s     9m1s
+
+From Path Slicing, PLDI'05
+
+Name              LOC       Time  
+-----------------------------------------------------
+fcron 2.9.5      12K/14K      22.95s
+wuftpd 2.6.2     24K/35K    2417.14s
+make 3.80        30K/39K      89.8s
+privoxy 3.03     38K/51K     107.5s
+ijpeg            31K/37K     128.0s
+openssh 3.5.1    50K/114K   2211.5s
+
+
+From DASH, results on ---SLAM---
+
+Name                LOC    Property                Time
+----------------------------------------------------------------
+bluetooth-correct   700   SpinLock                  - 
+floppy-correct     6500   InterLockedQueuedIrps     *
+floppy-correct     6500   SpinLock                  *
+floppy-buggy       6500   SpinLock                  *
+serial-buggy      10380   SpinLock                  *
+serial-correct    10380   SpinLock                  *
+bluetooth-correct   700   CancelSpinLock           4.26s
+bluetooth-buggy     700   CancelSpinLock           5.69s
+bluetooth-buggy     700   SpinLock                 8.1 s
+diskperf-correct   2365                            1.76s
+diskperf-buggy     2365   ...                      2.55s
+diskperf-correct   2365                            2.35s
+diskperf-buggy     2365                            2.35s
+floppy-correct     6500                            7.81s 
+floppy-buggy       6500                            7.19s
+floppy-buggy       6500                           24.84s
+floppy-correct     6500   MarkIrpPending          11.84s
+floppy-buggy       6500   MarkIrpPending          10.95s
+
+
+
+SSH Experiments
+
+ssh is the implementation of the SSH protocol. The following files
+were provided by Sagar Chaki and already instrumented with the
+properties. All the properties are safe.  You can generate these
+results by running ./regrtest -block CHAKI -perf in the blast/test
+directory.
+
+Instrumented File
+Blast command line
+Time
+[0] s3_clnt.blast.1.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_clnt.blast.1.c	 0.850s
+[1] s3_clnt.blast.2.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_clnt.blast.2.c	 0.856s
+[2] s3_clnt.blast.3.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_clnt.blast.3.c	 0.854s
+[3] s3_clnt.blast.4.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_clnt.blast.4.c	 0.860s
+[4] s3_srvr.blast.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.c	 0.684s
+[5] s3_srvr.blast.1.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.1.c	 0.718s
+[6] s3_srvr.blast.2.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.2.c	 0.711s
+[7] s3_srvr.blast.3.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.3.c	 0.704s
+[8] s3_srvr.blast.4.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.4.c	 0.704s
+[9] s3_srvr.blast.5.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.5.c	 0.757s
+[10] s3_srvr.blast.6.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.6.c	 0.699s
+[11] s3_srvr.blast.7.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.7.c	 0.755s
+[12] s3_srvr.blast.8.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.8.c	 0.657s
+[13] s3_srvr.blast.9.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.9.c	 0.751s
+[14] s3_srvr.blast.10.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.10.c	 0.645s
+[15] s3_srvr.blast.11.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.11.c	 0.752s
+[16] s3_srvr.blast.12.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.12.c	 0.665s
+[17] s3_srvr.blast.13.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.13.c	 0.751s
+[18] s3_srvr.blast.14.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.14.c	 0.671s
+[19] s3_srvr.blast.15.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.15.c	 0.664s
+[20] s3_srvr.blast.16.c
+../bin/pblast.opt -nofp -predH 7 ssh/s3_srvr.blast.16.c  0.684s
+
+TCAS Experiments
+
+TCAS is an implementation of a traffic collision avoidance system
+provided to us by Himanshu Jain. The program was already instrumented
+with the properties. You can generate these results by running
+./regrtest -block TCAS -perf in the blast/test directory.
+
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY1A SAFE 2.029s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY1B	SAFE 19.793s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY2A	SAFE 2.111s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY3B	SAFE 5.235s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY2B	UNSAFE 8.452s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY5A	SAFE 3.118s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY3A	UNSAFE 2.868s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY4A	UNSAFE 6.795s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY4B	UNSAFE 7.088s
+../bin/pblast.opt -craig 2 -dfs -nolattice tcas.i -L PROPERTY5B	UNSAFE 10.683s
+
+From Automatically Refining Abstract Interpretation, TACAS'08
+
+Name
+---------------------------------------------------
+Sendmail
+STING
+Miscellaneous

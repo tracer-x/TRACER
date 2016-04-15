@@ -1,0 +1,90 @@
+#!/bin/bash
+##################################################################################
+# This script takes a C program, it builds its symbolic execution
+# graph and generates its equivalent C program.
+##################################################################################
+
+TRACER_CMMD=tracer 
+
+log=tmp.$(date +%y%m%d)
+
+# By default the symbolic execution graph needs to be generated
+gen_symgraph=1
+# Compiler options
+compiler_opts=" -tree-traces y"
+
+usage() {
+cat <<EOF
+usage: $0  prog.c [options]
+  -help                       print this message
+  -symgraph   ["tracer_opts"] generate the symbolic execution graph (default)
+  -nosymgraph                 do not generate the symbolic execution graph
+
+run "tracer -help" to see tracer_opts
+EOF
+}
+
+if [ $# -lt 1 ] 
+then
+    usage
+    exit 2
+fi
+
+input="$1"
+
+# process args
+while [ "$2" != "" ]; do
+    case "$2" in
+	-help)
+	    usage
+	    exit 2
+	    ;;	
+	-symgraph)
+	    shift
+	    gen_symgraph=1
+	    compiler_opts="$2$compiler_opts"
+	    ;;	
+	-nosymgraph)
+	    shift
+	    gen_symgraph=0
+	    ;;	
+	*)
+	    usage
+	    exit 2
+	    ;;
+    esac
+    shift
+done
+
+filename=`basename $input`
+dirname=`dirname $input`
+basename_NOSUFFIX=${filename%.c}
+
+basename_C=${basename_NOSUFFIX}.c
+basename_TRACES=${basename_NOSUFFIX}.clp.TRACES
+
+abspath_C="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_C"
+abspath_TRACES="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_TRACES"
+
+if [ $gen_symgraph -eq 1 ]
+then 
+    echo -e "c2c: generating the symbolic execution graph ... \n"
+    ${TRACER_CMMD} safety ${abspath_C} $compiler_opts >> $log
+    echo -e "c2c: generated successfully ${abspath_TRACES} \n"
+fi
+
+if  [ -f ${abspath_TRACES} ] 
+then       
+
+    echo -e "c2c: generating a C program from the symbolic execution graph ...\n"
+
+    cd ${TRACER_PATH} 
+    ant decompi -Darg1="${abspath_C}" -Darg2="${abspath_TRACES}" >> $log
+
+    echo -e "c2c: generated successfully $input.DECOMPILED.c \n"
+
+else
+    echo "ERROR: $input.clp.TRACES does not exist"
+fi  
+
+rm -f $log

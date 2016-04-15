@@ -1,0 +1,97 @@
+12 August, 2011  (updates 10 January 2012)
+By Jorge Navas
+
+(0) Added 16 January 2012
+
+The analysis of programs like SSH emphasizes the importance of
+avoiding interpolants over variables which have nothing to do with the
+safety condition. In particular, due to infeasible paths across loop
+unrolls. E.g.
+
+ while (*){
+      if (tmp) ...
+ }
+ _TRACER_abort(x!=0);
+
+The guard "if(tmp)" will generate infeasible paths after the second
+unrolled.
+
+The consideration of infeasible paths even if they are not relevant is
+a fundamental problem of symbolic execution. However, it could be
+mitigated by simplification of the memo table as follows:
+
+pp : !tmp and x=0 
+pp :  tmp and x=0 
+....
+
+The equivalent formula associated to pp is (!tmp and x=0) or (tmp and
+x=0) which can be simplied to x=0.
+       
+(1) caller's local variables are not visible to the callees which may
+project onto their own local variables getting rid of some
+interpolants (defined over caller's local variables). For example:
+
+  foo(){ }
+  
+  if(*)
+    x=0;
+  else
+    x=1;
+  foo()
+  if (x==1) error();
+       
+          A
+          /\         interpolant at D: x=0
+         /  \        interpolant at C: true !  (*)
+  x=0    |   | x=1   interpolant at B: x=0 again!
+         B   E       interpolant at A: true
+ call foo|   |       E is not subsumed by B (x=1 does not imply x=0)
+         C   F       F is subsumed by C !! (this is incorrect!)
+ ret foo |
+         D
+  x==1  /
+       /
+     false
+
+(*) At C we try to project the deletion vector onto the foo local
+variables and also global variables. The deletion vector contains x=0
+but x is actually a free variable. Therefore, it's projected away.
+
+We solve this for now by avoiding subsumption between different copies
+of the same function call. This has also a big impact in performance.
+
+(2) Here explain issue with dwp, ndwp, and clp (related to (1)).
+   TODO
+   int foo(){int a; if(a>0) skip; else a=1; return a;}
+   if (x>0) skip; else x=0;
+   y = foo();
+   {wp: x+y>0}
+
+(3) Here explain issue with static loop invariants  (related to (1))
+   Our static loop invariant generation is based on projection. 
+
+   Thus, the final loop invariant contains only constraints defined on
+the current local variables and global. However, we need also to
+propagate invariant constraints defined on some caller's local
+variables. This is done by an adhoc-step for -intp sp. Untested
+behavior for other interpolants (dwp, ndwp, and clp).
+
+(4) We have implemented other interpolants such as dwp (exact wp),
+ndwp (approximation of wp), and clp (clp-prover).  It's only coded for
+safety. We need to integrate it for analyses (wcet, slicing, etc).
+
+(5) minmax safety does not use partition which has an important impact
+in performance. There other FIXME things in
+tracer_safety_minmax.clp.gpp
+
+(6) projection in the array theory may return non-quantified free
+formulas. We don't do anything about it which clearly hampers
+subsumption.
+
+(7) Some problems during decompilation of privoxy and test-bug-35. The
+problem is related to weird unstructured loops which are not handled
+properly by TRACER.
+
+
+
+ 

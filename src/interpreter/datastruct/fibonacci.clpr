@@ -1,0 +1,36 @@
+
+coinductionlimit(2).   % Limit coinduction to depth 2.
+
+solver(arith).
+
+unfold(fib(X,Y),
+       [
+	body([], [eq(X,0), eq(Y,0)]),
+	body([], [eq(X,1), eq(Y,1)]),
+	body([fib(U,R), fib(V,S)],
+	     [eq(X,plus(U,1)),
+	      eq(X,plus(V,2)),
+	      eq(Y,plus(R,S))])
+       ]).
+
+% To Prove:
+%
+% fib(I-1,X), fib(I-2,Y), I>=2, I<=L |=
+%    fib(I,X+Y), fib(I-1,X), I>=1, I<=L
+%
+% This proof fails (because fib(2)=1, fib(3)=2, fib(4)=3:
+% fib(X,Y) |= X<=Y
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [fib(X,Y)], UnfoldableGAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [],
+		     [], [], [geq(Y,X)], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

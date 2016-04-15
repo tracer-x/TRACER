@@ -1,0 +1,318 @@
+% tracer_pretty_printer.clp.gpp
+
+%================================================================================%
+% This file contains all predicates for pretty printer.
+%
+% export
+%     apply_dict/3
+%     pretty_printer_constraints_list/6
+%     pretty_printer_constraints_list/11
+%     pretty_printer_solver_state/6             % output solver from master
+%     pretty_printer_marked_constraints/7       % output selected constraints
+%     pipe_master_pretty_printer_solver_state/7 % output solver from slaves
+#if    (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%     pretty_printer_markings/5                 % marked variables in slicing
+#endif /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/ 
+%     print_memo_table/0                        % print whole memo table
+%     pipe_master_print_memo_table/0            % same for the slaves
+%     print_memo_table_slave/0
+%     print_func_memo_table/1                   % print memo associated to function 
+%================================================================================%
+
+% Use of dictionary to print variable names from the source C program
+apply_dict(global,Arrays,Vars):-
+	globaldict(_,_,Arrays,Vars),!.
+apply_dict(FName,Arrays,Vars):-
+	dict(FName,_,_,Arrays,Vars),!.
+apply_dict(_FName,_,_):-!.
+	%print_message("No available dictionary for % variables. \n", [FName]),!.
+
+%--------------------------------------------------------------------------------%
+% Print a list of constraints using dictionary with variable only
+% after the execution of CL
+%--------------------------------------------------------------------------------%
+pretty_printer_constraints_list(_,_,_,_,_,[]):-
+	print_message("true\n",[]),
+	!.
+pretty_printer_constraints_list(FName,SGA,SGV,SLA,SLV,CL):-
+	apply_dict_to_constraints_list(FName,SGA,SGV,SLA,SLV,CL,CL1),
+	print_message("%\n",[CL1]),
+	!.
+
+pretty_printer_constraints_list(_,_,_,_,_,[],_):-
+	print_message("true\n",[]),
+	!.
+pretty_printer_constraints_list(FName,SGA,SGV,SLA,SLV,CL,Color):-
+	apply_dict_to_constraints_list(FName,SGA,SGV,SLA,SLV,CL,CL1),
+	print_message("%\n",[CL1],Color),
+	!.
+
+%--------------------------------------------------------------------------------%
+% Print a list of constraints using dictionary differentiating
+% the variables before and after the execution the CL.
+%--------------------------------------------------------------------------------%
+pretty_printer_constraints_list(_,_,_,_,_,_,_,_,_,_,[]):-
+	print_message("true\n",[]),
+	!.
+pretty_printer_constraints_list(FName,SGA,SGV,SLA,SLV,FName1,SGA1,SGV1,SLA1,SLV1,CL):-
+	apply_dict_to_constraints_list(FName,SGA,SGV,SLA,SLV,
+				       FName1,SGA1,SGV1,SLA1,SLV1,CL,CL1),
+	print_message("%\n",[CL1]),
+	!.
+
+pretty_printer_constraints_list(_,_,_,_,_,_,_,_,_,_,[],_):-
+	print_message("true\n",[]),
+	!.	
+pretty_printer_constraints_list(FName,SGA,SGV,SLA,SLV,FName1,SGA1,SGV1,SLA1,SLV1,CL,
+				Color):-
+	apply_dict_to_constraints_list(FName,SGA,SGV,SLA,SLV,
+				       FName1,SGA1,SGV1,SLA1,SLV1,CL,CL1),
+	print_message("%\n",[CL1],Color),
+	!.
+
+
+apply_dict_to_constraints_list(FName,SGA,SGV,SLA,SLV,CL,CL1):-
+	fcopy_term(t(SGA ,SGV ,SLA ,SLV,CL),
+		   t(SGA1,SGV1,SLA1,SLV1,CL1)),
+        apply_dict(global,SGA1,SGV1),
+	apply_dict(FName ,SLA1,SLV1).
+	% Catch any variable not instantiated due to any reason and
+	% mark them as unknown with the symbol '*'.
+	%varset_constraints(CL1,UnknownVars),
+	%unify_all_elements(UnknownVars,'*').
+		
+apply_dict_to_constraints_list(FName,SGA,SGV,SLA,SLV,FName1,SGA1,SGV1,SLA1,SLV1,
+			       CL,CL1):-
+	fcopy_term(t(SGA ,SGV ,SLA ,SLV,SGA1,SGV1,SLA1,SLV1,CL),
+		   t(SGAA,SGVA,SLAA,SLVA,SGAB,SGVB,SLAB,SLVB,CL1)),
+        apply_dict(global ,SGAA,SGVA),
+	apply_dict(FName  ,SLAA ,SLVA),
+        apply_dict(global ,SGAB,SGVB),
+	apply_dict(FName1 ,SLAB ,SLVB).
+	% Catch any variable not instantiated due to any reason and
+	% mark them as unknown with the symbol '*'.
+	%varset_constraints(CL1,UnknownVars),
+	%unify_all_elements(UnknownVars,'*').
+	
+%--------------------------------------------------------------------------------%
+% Print using dictionary those constraints from CL which are marked in
+% ML with symbol 'o'
+%--------------------------------------------------------------------------------%
+pretty_printer_marked_constraints(FName,CL,ML,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	select_marked_constraints_path(CL,ML,Core,o),
+	pretty_printer_marked_constraints_aux(Core, FName,
+					      SGlobalArr,SGlobalVar,
+					      SLocalArr,SLocalVar).
+pretty_printer_marked_constraints_aux(Core,_,_,_,_,_):-
+	Core == [], !,
+	print_message("true\n",[]).
+pretty_printer_marked_constraints_aux(Core, FName,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					Core).
+
+%--------------------------------------------------------------------------------%
+% Dump all the constraints from the solver and output them using the
+% dictionary.
+%--------------------------------------------------------------------------------%
+pretty_printer_solver_state(FName,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef):-
+	project_solver_context(state(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+			       state(GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,CList)),
+	apply_dict(global,GlobalArr1,GlobalVar1),
+	apply_dict(FName ,LocalArr1 ,LocalVar1),
+	print_message("\tDumped TRACER solver=% \n\n",[CList]),!.
+
+
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO)
+pipe_master_pretty_printer_solver_state(Slave,
+					FName,
+					GlobalArr,GlobalVar,LocalArr,LocalVar,
+					ArrRef):-
+	pipe_master_pretty_printer_solver_state_aux(Slave,
+						    GlobalArr,GlobalVar,LocalArr,LocalVar,
+						    ArrRef,X),
+						    
+	process_slave_output(X,
+			     reply_args(GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,CList)),
+	apply_dict(global,GlobalArr1,GlobalVar1),
+	apply_dict(FName ,LocalArr1 ,LocalVar1),
+	print_message("TRACER STATE: \n \t % \n",[CList]),!.
+
+% To dump the solver from the dump slave
+pipe_master_pretty_printer_solver_state_aux(dump_slave,					    
+					    GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,X):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_dump_slave("dump_solver(%,%,%,%,%,%) .\n",
+                   [GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef, MsgTimeStamp1]),		    
+#else
+	write_dump_slave("dump_solver(%,%,%,%,%) .\n",
+                   [GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef]),
+#endif /*PROFILE*/			    
+	%flush,
+	read_from_dump_slave(X).
+% To dump the solver from the answers slave
+pipe_master_pretty_printer_solver_state_aux(answers_slave,					    
+					    GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,X):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("dump_solver(%,%,%,%,%,%) .\n",
+                   [GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,MsgTimeStamp1]),		    
+#else
+	write_store_answers_slave("dump_solver(%,%,%,%,%) .\n",
+                   [GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef]),
+		    
+#endif /*PROFILE*/			    
+	%flush,
+	read_from_store_answers_slave(X).
+% To dump the solver from the memo slave
+pipe_master_pretty_printer_solver_state_aux(memo_slave,					    
+					    GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,X):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_memo_slave("dump_solver(%,%,%,%,%,%) .\n",
+                   [GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,MsgTimeStamp1]),		    
+#else
+	write_memo_slave("dump_solver(%,%,%,%,%) .\n",
+                   [GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef]),
+		    
+#endif /*PROFILE*/			    
+	%flush,
+	read_from_memo_slave(X).
+#endif  /*defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO)*/
+
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+% pretty_printer for markings variables
+pretty_printer_markings(FName,
+			MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar):-
+	pretty_printer_markings_aux(FName,
+				    MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+				    M),	
+	print_message("%\n",[M]),
+	!.
+pretty_printer_markings_aux(FName,
+			    MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+			    M):-		  
+	dict(FName,_,_,DictLocalArr,DictLocalVar),		
+	globaldict(_,_,DictGlobalArr,DictGlobalVar),
+	filter_marked_variables(MarkGlobalArr,DictGlobalArr,M1),
+	filter_marked_variables(MarkGlobalVar,DictGlobalVar,M2),
+	filter_marked_variables(MarkLocalArr ,DictLocalArr ,M3),
+	filter_marked_variables(MarkLocalVar ,DictLocalVar ,M4),
+	append(M1,M2,M5),
+	append(M5,M3,M6),
+	append(M6,M4,M).
+pretty_printer_markings_aux(FName,_,_,_,_,_):-
+	print_message("Warning: no available dictionary for % variables. \n",[FName]),!.
+
+filter_marked_variables([],[],[]):-!.
+filter_marked_variables([M|Ms],[D|Ds],[D|Zs]):-
+	is_marked_term(M),!,
+	filter_marked_variables(Ms,Ds,Zs).
+filter_marked_variables([_|Ms],[_|Ds],Zs):-
+	!,
+	filter_marked_variables(Ms,Ds,Zs).
+#endif /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+
+%--------------------------------------------------------------------------------%
+% Debugging purposes: routine for printing the dynamic table on screen
+%--------------------------------------------------------------------------------%
+print_memo_table :-
+	set_counter(size_memo_table,0),
+	print_memo_table_aux, !,
+	counter_value(size_memo_table,N),
+	print_message("% entries. \n",[N]).
+print_memo_table_aux :-	
+	program_point(PP),
+	printf_to_atom(A, "t%", [PP]),        
+	print_memo_table_entry(A),
+	% ls(A),	
+	fail.
+print_memo_table_aux.
+
+print_func_memo_table(FName) :-
+	set_counter(size_memo_table,0),
+	print_func_memo_table_aux(FName), !,
+	counter_value(size_memo_table,N),
+	print_message("% entries. \n",[N]).
+print_func_memo_table_aux(FName) :-
+	start(FName,_),
+	func_program_point(FName,PP),
+	printf_to_atom(A, "t%", [PP]),        
+	print_memo_table_entry(A),
+	ls(A),	
+	fail.
+print_func_memo_table_aux(_).
+
+print_memo_table_entry(F):-
+#ifdef  PIPEMEMO
+        functor(G,F,8),	
+#elif   defined(ENCODE_MEMO)
+	functor(G,F,7),
+#elif   defined(MINMAX)
+        functor(G,F,13),
+#else
+	functor(G,F,10),	
+#endif  /*PIPEMEMO*/
+	warning(warning_off),	
+	call(G),
+	warning(warning_on),		
+	print_message("\tEntry for % \n",[F]),
+	print_message("%\n",[G]),
+	add_counter(size_memo_table,1),
+	fail.
+print_memo_table_entry(_).
+
+#ifdef  PIPEMEMO
+pipe_master_print_memo_table:-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_memo_slave("print_memo_table(%) . \n",[MsgTimeStamp1]),
+#else
+        write_memo_slave("print_memo_table . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_memo_slave(_).
+
+print_memo_table_slave:-
+	set_counter(size_memo_table,0),
+	print_memo_table_slave_aux, !,
+	counter_value(size_memo_table,N),
+	print_message("% entries. \n",[N]).
+print_memo_table_slave_aux :-	
+	program_point(PP),
+	printf_to_atom(A, "t%", [PP]),
+        print_memo_table_entry(A),
+	fail.
+print_memo_table_slave_aux.
+#endif  /*PIPEMEMO*/
+
+% %-----------------------------------------------------------------------------%	
+% % For debugging purposes:
+% %-----------------------------------------------------------------------------%	
+% % Print some relevant information from the stack.
+% %-----------------------------------------------------------------------------%	
+% print_call_stack([],_):-!.
+% print_call_stack(CallStack,Id):-
+% 	print_message("STACK at %: \n",[Id]),
+% 	print_call_stack_aux(CallStack).
+
+% print_call_stack_aux([]).
+% print_call_stack_aux([sinfo(ParFName, ParPP1, 
+% 		       _,_,_,_,
+% 		       _CallerId,
+% #ifndef NEWFUNCTION
+% 		      _CallerLocalArr1 , _CallerLocalVar1 ,
+% 		      _CallerSLocalArr1, _CallerSLocalVar1,
+% #endif /* defined(NEWFUNCTION) */
+% 		      [RV0|_], [_SRV0|_], 
+% #ifndef NEWFUNCTION
+% 		      _XCL,
+% #endif /* defined(NEWFUNCTION) */ 
+% 		      _ParPP0,_ParPP0Context,_UnknownVars)|CallStack1]):-
+% 	print_message("\t sinfo(%,%,RV:%) \n",[ParFName,ParPP1,RV0]),
+% 	print_call_stack_aux(CallStack1).
+	    

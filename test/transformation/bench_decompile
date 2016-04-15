@@ -1,0 +1,17 @@
+#!/bin/bash
+function dec(){
+    echo "================= $1 ================="
+    cd $1
+    time decompi $1-prep.c
+    ../cleanup
+    cd ..
+}
+
+dec cdaudio
+dec diskperf
+dec floppy
+dec floppy2
+dec kbfiltr
+dec kbfiltr2
+
+echo "DONE"

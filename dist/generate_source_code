@@ -1,0 +1,61 @@
+#!/bin/bash
+
+TRACER_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter
+DEST_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/dist
+
+MAIN="tracer.0.1"
+#---------------------------------------------------------------------#
+# Function to change TRACER Makefile
+#---------------------------------------------------------------------#
+function change_Makefile() {
+    Make="${TRACER_PATH}/Makefile"
+    while [ "$1" != "" ]; do
+	case "$1" in
+	    -options)
+		shift
+		options="$1"
+		cat ${Make} | sed 's:OPTIONS\( *\)=\( *\)\(.*\):OPTIONS='"${options}"':g' > ${Make}.tmp
+		mv ${Make}.tmp ${Make}
+		;;	    	    
+	    *)
+		echo "unknown arg Makefile: $1"
+		exit 2
+		;;
+	esac
+	shift
+    done
+}
+
+#----------------------------------------------------------------------------#
+# To create profiled/debugging version of TRACER 
+#----------------------------------------------------------------------------#
+CURRENTDIR=`pwd`
+NONOPTOPTIONS="-DMINMAX -DTREEDOT -DSTSDOT -DPROFILE"
+echo "$MAIN""_debug.clpr"
+
+change_Makefile -options "$NONOPTOPTIONS"
+cd "${TRACER_PATH}"; make safety; cd $CURRENTDIR
+./remove_comments "${TRACER_PATH}/safety.clp" > "$DEST_PATH/safety__tmp.clp"
+cat header "$DEST_PATH/safety__tmp.clp" > "$DEST_PATH/$MAIN""_debug.clpr"
+#tr -s '\012' ' ' <"$DEST_PATH/safety__tmp.clp"  >"$DEST_PATH/$MAIN_debug.clpr"
+rm "$DEST_PATH/safety__tmp.clp"
+
+#----------------------------------------------------------------------------#
+# To create optimized version of TRACER 
+#----------------------------------------------------------------------------#
+OPTOPTIONS="-DMINMAX -DPIPEDUMP"
+
+change_Makefile -options "$OPTOPTIONS"
+cd "${TRACER_PATH}"; make safety; cd $CURRENTDIR
+./remove_comments "${TRACER_PATH}/safety.clp" > "$DEST_PATH/safety__tmp.clp"
+cat header "$DEST_PATH/safety__tmp.clp" > "$DEST_PATH/$MAIN.clpr"
+#tr -d '\012' <"$DEST_PATH/safety__tmp.clp"  >"$DEST_PATH/$MAIN.clpr"
+rm "$DEST_PATH/safety__tmp.clp"
+
+
+
+
+
+
+
+

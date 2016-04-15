@@ -1,0 +1,35 @@
+#!/bin/bash
+
+####################################################################
+# This script runs with different interpolation options
+####################################################################
+
+SAFETY_VERSION=./regrtest-TRACER
+#SAFETY_VERSION=./regrtest-TRACER-MINMAX
+
+# A. Our wp's as interpolants
+# we could try with -clean-after-dump y 
+${SAFETY_VERSION}  -Wt "-intp ndwp -convert-strict-ineq y" -block NTWINDOWS
+${SAFETY_VERSION}  -Wt "-intp ndwp -convert-strict-ineq y" -block TCAS
+${SAFETY_VERSION}  -Wt "-intp ndwp -convert-strict-ineq y" -block STATEMATE
+
+# B. Projected unsatisfiable cores without converting equalities to
+#    inequalities (our strongest interpolants)
+${SAFETY_VERSION}  -Wt "-intp sp -convert-strict-ineq y" -block NTWINDOWS
+${SAFETY_VERSION}  -Wt "-intp sp -convert-strict-ineq y" -block TCAS
+${SAFETY_VERSION}  -Wt "-intp sp -convert-strict-ineq y" -block STATEMATE
+
+# C. Projected unsatisfiable cores converting equalities to
+#    inequalities Weaker than B and stronger than A
+${SAFETY_VERSION}  -Wt "-intp sp -convert-strict-ineq y -convert-eq-to-ineq y " -block NTWINDOWS
+${SAFETY_VERSION}  -Wt "-intp sp -convert-strict-ineq y -convert-eq-to-ineq y " -block TCAS
+${SAFETY_VERSION}  -Wt "-intp sp -convert-strict-ineq y -convert-eq-to-ineq y " -block STATEMATE
+
+# D. Using clp-prover tool. It's weaker than B and C but stronger than
+#    A.
+${SAFETY_VERSION}  -Wt "-intp clp -convert-strict-ineq y" -block NTWINDOWS
+${SAFETY_VERSION}  -Wt "-intp clp -convert-strict-ineq y" -block TCAS
+${SAFETY_VERSION}  -Wt "-intp clp -convert-strict-ineq y" -block STATEMATE
+
+
+

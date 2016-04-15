@@ -1,0 +1,40 @@
+### Results obtained after:
+### 1) converting != to < and >
+### 2) NOT using CIL
+### 3) applying the "quick fix" to the unsound slicer (see Bug#4 in tracer_slicer)
+### 4) MAX_CONSTRAINTS = 50 (default)
+
+
+vijay@paella:~/new-new-work/TRACER/trunk/test/transformation2$ ./bench_postprocess 
+================= cdaudio =================
+
+real	0m25.218s
+user	0m24.980s
+sys	0m0.210s
+================= diskperf =================
+
+real	0m19.772s
+user	0m19.670s
+sys	0m0.090s
+================= floppy =================
+
+real	0m6.168s
+user	0m6.120s
+sys	0m0.040s
+================= floppy2 =================
+
+real	0m16.859s
+user	0m16.810s
+sys	0m0.030s
+================= kbfiltr =================
+
+real	0m0.275s
+user	0m0.250s
+sys	0m0.020s
+================= kbfiltr2 =================
+
+real	0m0.490s
+user	0m0.470s
+sys	0m0.020s
+DONE
+

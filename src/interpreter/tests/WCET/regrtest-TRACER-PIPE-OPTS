@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./regrtest-TRACER -Wt "-clean-after-dump y -optim-interpolants y -optim-memotable y" -all

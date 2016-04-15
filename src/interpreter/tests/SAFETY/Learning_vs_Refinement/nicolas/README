@@ -1,0 +1,140 @@
+1. ON 2A_SMALL AND 2B_SMALL EXAMPLES
+====================================
+
+From: andrews@comp.nus.edu.sg (Andrew E. Santosa)
+Subject: Re: example
+To: Joxan Jaffar <joxan@comp.nus.edu.sg>
+Cc: 	  NAVAS LASERNA Jorge Antonio <navas@comp.nus.edu.sg>,
+    andrews@comp.nus.edu.sg
+Date: Thu, 11 Feb 2010 13:09:12 +0800
+
+
+For the first example, it seems that Blast adds predicates on both
+c and s on first refinement, so I think the program only executes two
+paths. Timing 0.031 seconds.
+
+For the second example, the first iteration takes the "then" branches,
+and refines only on s, because c=1 does not prove c=0, so only s<=42
+can be established. 
+
+The second refinement is on "then then then else"
+path. Here, c=1 is added as predicate to exclude the last else, also,
+s<=37 is added at the end of program.
+
+The third refinement is on "then then else else" path.
+
+The fourth refinement is on "else" branches, adding c=0 predicate,
+as well as predicates on s.
+
+Timing 0.047 seconds.
+
+Dido
+
+Joxan Jaffar <joxan@comp.nus.edu.sg> writes:
+
+> Nicolas, just a suggestion:
+>
+> Program 1
+>
+> s = c = 0
+> if (c = 1) s += 1 else s += 2
+> if (c = 1) s += 4 else s += 8
+> if (c = 1) s += 16 else s += 32
+> {s <= 42} ............................... or try {s % 2 = 0}
+>
+> Program 2
+>
+> s = 0
+> if (*) c = 1 else c = 0
+> if (c = 1) s += 1 else s += 2
+> if (c = 1) s += 4 else s += 8
+> if (c = 1) s += 16 else s += 32
+> {c = 0 || s <= 42}
+>
+> For program 1, what we want is exponential cost
+> (in number of if statements) because s is refined before c.
+> For program 2, we want that it is significantly slower 
+> (in percentage terms) than program 1.
+>
+> JJ
+
+
+2. ON EXAMPLE 1
+===============
+
+From: Nicolas Koh <nicolask86@gmail.com>
+Subject: Blast, sum-of-subsets
+To: "Andrew E. Santosa" <andrews@comp.nus.edu.sg>
+Date: Mon, 28 Sep 2009 13:45:07 +0800                                           
+
+Hi Andrew,
+
+I haven't been able to make progress in understanding what BLAST does. The 3
+files I've attached are all almost the same program, but their refinements
+don't follow the same pattern at all.
+
+1c was what I sent you earlier, with the mysterious 80; it seems as though
+BLAST took a path that was infeasible (80 = 30 + 50, cutting across parallel
+branches), whether in the concrete or abstract semantics. Even if it was just
+the interpolant output by CSISat, I could produce numbers that give the same
+sort of pattern, and 80 as an interpolant for the path I was predicting seems
+too far-fetched.
+
+1d simply changes the 50 to 55, but with that mere change, I get the path I
+was predicting (left-right DFS)! And in this case, BLAST really did extra work
+as Joxan suspected, with the previous predicate s <= 10 being useless when it
+could be useful. A new predicate 2 * s <= 20 was added, equivalent to s <= 10.
+
+1e is a slightly bigger departure from 1c, with 20 and 50 exchanged in the
+if-else branch. And yet another refinement pattern resulted, with the second
+refinement path jumping across to the case c != 0. I've no idea what's
+happening...
+
+I suspect there is something to do with the relative ordering of the numbers I pick, but it hardly settles the differences I mentioned.
+
+Regards,
+Nick
+
+-------------------------------------------------------------------------------
+
+From: andrews@comp.nus.edu.sg (Andrew E. Santosa)
+Subject: Re: Sum of Subsets
+To: Nicolas Koh <nicolask86@gmail.com>
+Cc: Joxan Jaffar <joxan@comp.nus.edu.sg>, andrews@comp.nus.edu.sg
+Date: Fri, 18 Sep 2009 11:38:01 +0800                                                                                                      
+
+Nick,
+
+I tried your example, and I also got the constant 80 in the predicate
+(sum <= 80), which seems counterintuitive.
+
+To me, it seems that Blast's refiner does not always produce the
+predicates that we expect. I have no theory for this except that since
+Blast uses black-box theorem prover (Simplify/CSISat) to generate the
+interpolants, there is little that we can determine about the
+predicate, except that it is useful to exclude spurious
+counterexample.
+
+Please let us know of your theory, if any.
+
+Thanks,
+
+Andrew
+
+Nicolas Koh <nicolask86@gmail.com> writes:
+
+> Hi Andrew,
+>
+> I've been trying out the sum of subsets problem, and am quite stuck at
+> understanding what's happening for the code I've attached. In particular, the
+> predicate s <= 80 appears (in both DFS and BFS, although the former proves
+> safety faster). I can see where the number 80 comes from (and changing the
+> numbers involved confirm this pattern), but it sharply contradicts my
+> understanding of the ART construction and refinement.
+>
+> Can you help me take a look?
+>
+> Thanks very much!
+>
+> Best Regards,
+> Nick

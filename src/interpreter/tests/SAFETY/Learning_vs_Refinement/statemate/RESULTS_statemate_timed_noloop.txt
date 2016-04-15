@@ -1,0 +1,128 @@
+-------------------------------------------------------------------------------
+pblast.opt -timeout 9600 -bfs statemate-timed_noloop.i
+-------------------------------------------------------------------------------
+
+Model checker stats:
+
+Nb iterations of outer while loop: 0
+Nb iterations of reachability: 73885
+Nb created nodes: 0
+Nb refinment processes: 647
+Nb refined nodes: 0
+Nb proof tree nodes: 5906
+Nb proof tree covered nodes: 2268Nb deleted nodes: 0
+
+
+Abstractor stats:
+
+Total number of non-post queries = 1 
+Total number of cached queries = 5460600 
+Total number of queries = 7470481 
+Worst-case number of post queries = 7986198 
+Actual number of post queries = 7986198 
+NonDC number of post queries = 326830 
+Assume post queries = 5272358 
+Total posts = 60917 
+Total assume posts = 47442 
+Total foci queries = 3694 
+Foci Theory Clauses:
+Num theory clauses: 0
+List of predicates: 
+
+Number of predicates =378 
+Maximum number of predicates active together (discounting scope) = 0
+
+Functions visited:
+__BLAST_initialize_./statemate-timed_noloop.i , main , Writing out .abs file: /statemate-timed_noloop.abs
+Maximum #preds/loc: 373
+Average #preds/loc: 58
+Done writing .abs file
+
+Minor Words : 10067261214.
+Major Words : 1311654923.
+Total size of heap in words : 154124288
+Timings:
+TOTAL                         520.691 s (1)
+  update_tree_after_refinement[CUT]           0.000 s (4)
+  subtree_cut_refinement          101.959 s (643)
+    update_tree_after_refinement[CUT]          101.944 s (643)
+  check_error                   81.883 s (647)
+    block_analyze_trace           81.851 s (647)
+      cleanup and go                 1.105 s (647)
+      Interpolant Refine            47.658 s (647)
+        CSIsat time                    1.511 s (3047)
+          foci itpn                      1.511 s (3047)
+        convertToSimplifySyntax          21.789 s (14804)
+      get useful blocks             17.854 s (647)
+        foci itpn                      0.362 s (647)
+        convertToSimplifySyntax          11.929 s (69934)
+      Cons folder                    9.260 s (647)
+        convertToSimplifySyntax           3.487 s (18492)
+        get_lval_aliases_iter           0.078 s (49763)
+          Lval iterator                  0.016 s (116)
+      load lv table                  0.234 s (647)
+      make lv_stack                  0.000 s (647)
+  main post                     329.776 s (63714)
+    get_new_data                  329.493 s (63416)
+      postBdd                       310.245 s (62487)
+        bddForEachCube-post           270.288 s (40257)
+          _check_pred                   234.018 s (38687)
+            simp-a2:                      110.576 s (2020374)
+              lookup_cache_add               1.663 s (977746)
+              simplify querytime            27.429 s (977746)
+                convertToSimplifySyntax           3.791 s (977746)
+              lookup_cache                   3.224 s (2020374)
+            simp-a1:                      108.035 s (2020374)
+              lookup_cache_add               3.763 s (977746)
+              simplify querytime            26.449 s (977746)
+                convertToSimplifySyntax           4.210 s (977746)
+              lookup_cache                   3.232 s (2020374)
+          _assume                       12.919 s (38687)
+            convertToSimplifySyntax          12.734 s (38687)
+          _check_Pred_list               0.031 s (38687)
+          simplify querytime             8.601 s (14045)
+            convertToSimplifySyntax           8.069 s (14045)
+        _check_pred                   32.352 s (22230)
+          simp-a2:                      10.622 s (1690360)
+            lookup_cache_add               0.000 s (20081)
+            simplify querytime             0.578 s (20081)
+              convertToSimplifySyntax           0.031 s (20081)
+            lookup_cache                   2.156 s (1690360)
+          simp-a1:                      10.144 s (1690360)
+            lookup_cache_add               0.000 s (20081)
+            simplify querytime             0.566 s (20081)
+              convertToSimplifySyntax           0.063 s (20081)
+            lookup_cache                   2.122 s (1690360)
+        _assume                        0.251 s (22230)
+          convertToSimplifySyntax           0.047 s (22230)
+        _check_Pred_list               0.000 s (22230)
+        simplify querytime             0.000 s (181)
+          convertToSimplifySyntax           0.000 s (181)
+      mk_pred_triple sp              0.047 s (62487)
+      mk_pred_triple ac              4.348 s (62487)
+        getMustAliases                 0.706 s (184006)
+          filter alias candidates           0.076 s (184006)
+          getVarsAndDerefs               0.204 s (184006)
+        getPossibleAliases             0.859 s (184006)
+          filter alias candidates           0.063 s (184006)
+          getVarsAndDerefs               0.389 s (184006)
+  Covered check:                 0.342 s (73238)
+  cap                            6.700 s (73885)
+  initialize skipfun             0.000 s (2)
+  Kill init                      0.000 s (1)
+  read initial state             0.000 s (1)
+  read invariants                0.000 s (1)
+  modelCheck                     0.000 s (1)
+  Call graph construction           0.000 s (1)
+  Add alias override             0.000 s (1)
+  Modifies Database              0.000 s (1)
+  Alias analysis                 0.015 s (1)
+  Build CFA:                     0.016 s (1)
+  read alias pairs               0.000 s (1)
+  read seeds                     0.000 s (1)
+  Parse:                         0.000 s (1)
+
+
+No error found.  The system is safe :-)
+
+CSIsat stopped.

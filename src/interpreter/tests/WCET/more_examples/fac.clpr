@@ -1,0 +1,143 @@
+trans(func_fac, 1,
+	[1],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[2],[H],[],[SH],[],[],[ReturnValueNext,N],[],[SReturnValueNext,SN],
+	[eq(SReturnValueNext,1)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=1.
+trans(func_fac, 2,
+	[4],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[5],[H],[],[SH],[],[],[ReturnValueNext,N],[],[SReturnValueNext,SN],
+	[eq(SReturnValueNext,mult(SN,SRV0))],
+	[call(func_fac,[RV0,N-1|_],[SRV0,_V1|_],[eq(_V1,minus(SN,1))])],
+	[],
+	not_branch) :-
+	ReturnValueNext=(N*RV0).
+trans(func_fac, 3,
+	[3],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[6],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fac, 4,
+	[0],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[1],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[eq(SN,0)],
+	[],
+	[],
+	branch) :-
+	N=0.
+trans(func_fac, 5,
+	[0],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[4],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[gt(0,SN)],
+	[],
+	[],
+	not_branch) :-
+	N<0.
+trans(func_fac, 6,
+	[0],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[4],[H],[],[SH],[],[],[ReturnValue,N],[],[SReturnValue,SN],
+	[gt(SN,0)],
+	[],
+	[],
+	branch) :-
+	N>0.
+trans(func_main, 7,
+	[0],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[1],[H],[],[SH],[],[],[ReturnValue,INext,S,N],[],[SReturnValue,SINext,SS,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 8,
+	[1],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[2],[H],[],[SH],[],[],[ReturnValue,I,SNext,N],[],[SReturnValue,SI,SSNext,SN],
+	[eq(SSNext,0)],
+	[],
+	[],
+	not_branch) :-
+	SNext=0.
+trans(func_main, 9,
+	[2],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[3],[H],[],[SH],[],[],[ReturnValue,I,S,NNext],[],[SReturnValue,SI,SS,SNNext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 10,
+	[3],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[4],[H],[],[SH],[],[],[ReturnValue,INext,S,NNext],[],[SReturnValue,SINext,SS,SNNext],
+	[eq(SNNext,5),eq(SINext,0)],
+	[],
+	[],
+	not_branch) :-
+	NNext=5,INext=0.
+trans(func_main, 11,
+	[4],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[6],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[geq(SN,SI)],
+	[],
+	[],
+	branch) :-
+	I<=N.
+trans(func_main, 12,
+	[6],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[7],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[],
+	[call(func_fac,[RV0,I|_],[SRV0,_V1|_],[eq(_V1,SI)])],
+	[],
+	not_branch).
+trans(func_main, 13,
+	[4],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[5],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[gt(SI,SN)],
+	[],
+	[],
+	branch) :-
+	I>N.
+trans(func_main, 14,
+	[7],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[4],[H],[],[SH],[],[],[ReturnValue,INext,S,N],[],[SReturnValue,SINext,SS,SN],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[],
+	not_branch) :-
+	INext=I+1.
+trans(func_main, 15,
+	[5],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[8],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 16,
+	[8],[H],[],[SH],[],[],[ReturnValue,I,S,N],[],[SReturnValue,SI,SS,SN],
+	[9],[H],[],[SH],[],[],[ReturnValueNext,I,S,N],[],[SReturnValueNext,SI,SS,SN],
+	[eq(SReturnValueNext,SS)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=(S).
+%--------------------------------------------------
+loop(func_main, [4],[5], _, [n],[],[],[n,u,n,n]).
+%--------------------------------------------------
+start(func_fac, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_fac, [2]).
+bottom(func_fac, [5]).
+bottom(func_main, [9]).
+%--------------------------------------------------
+freshlocalarrays(func_fac,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_fac,[_,_]).
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+

@@ -1,0 +1,171 @@
+### Results obtained after:
+### 1) converting != to < and >
+### 2) NOT using CIL
+### 3) applying the "quick fix" to the unsound slicer (see Bug#4 in tracer_slicer)
+### 4) MAX_CONSTRAINTS = 50 (default)
+
+
+vijay@paella:~/new-new-work/TRACER/trunk/test/transformation2$ ./bench_decompile 
+================= cdaudio =================
+Buildfile: build.xml
+
+init:
+
+updatecheck:
+
+generate-parser:
+
+compile-antlr:
+
+decompi:
+     [java] NOT RUNNING CIL!!!
+     [java] sanity checking...
+     [java] program is sane!
+     [java] no. of empty trans (removed): 0
+     [java] Front-end: 2s
+     [java] SPS-CFG: 24s
+     [java] Decompile: 7s
+     [java] DONE!
+
+BUILD SUCCESSFUL
+Total time: 35 seconds
+
+real	0m35.466s
+user	0m37.410s
+sys	0m0.620s
+================= diskperf =================
+Buildfile: build.xml
+
+init:
+
+updatecheck:
+
+generate-parser:
+
+compile-antlr:
+
+decompi:
+     [java] NOT RUNNING CIL!!!
+     [java] sanity checking...
+     [java] program is sane!
+     [java] no. of empty trans (removed): 0
+     [java] Front-end: 0s
+     [java] SPS-CFG: 18s
+     [java] Decompile: 3s
+     [java] DONE!
+
+BUILD SUCCESSFUL
+Total time: 23 seconds
+
+real	0m23.697s
+user	0m24.230s
+sys	0m0.510s
+================= floppy =================
+Buildfile: build.xml
+
+init:
+
+updatecheck:
+
+generate-parser:
+
+compile-antlr:
+
+decompi:
+     [java] NOT RUNNING CIL!!!
+     [java] sanity checking...
+     [java] program is sane!
+     [java] no. of empty trans (removed): 0
+     [java] Front-end: 1s
+     [java] SPS-CFG: 7s
+     [java] Decompile: 1s
+     [java] DONE!
+
+BUILD SUCCESSFUL
+Total time: 10 seconds
+
+real	0m10.614s
+user	0m12.300s
+sys	0m0.470s
+================= floppy2 =================
+Buildfile: build.xml
+
+init:
+
+updatecheck:
+
+generate-parser:
+
+compile-antlr:
+
+decompi:
+     [java] NOT RUNNING CIL!!!
+     [java] sanity checking...
+     [java] program is sane!
+     [java] no. of empty trans (removed): 0
+     [java] Front-end: 1s
+     [java] SPS-CFG: 16s
+     [java] Decompile: 4s
+     [java] DONE!
+
+BUILD SUCCESSFUL
+Total time: 22 seconds
+
+real	0m22.832s
+user	0m24.030s
+sys	0m0.580s
+================= kbfiltr =================
+Buildfile: build.xml
+
+init:
+
+updatecheck:
+
+generate-parser:
+
+compile-antlr:
+
+decompi:
+     [java] NOT RUNNING CIL!!!
+     [java] sanity checking...
+     [java] program is sane!
+     [java] no. of empty trans (removed): 0
+     [java] Front-end: 0s
+     [java] SPS-CFG: 0s
+     [java] Decompile: 0s
+     [java] DONE!
+
+BUILD SUCCESSFUL
+Total time: 1 second
+
+real	0m1.733s
+user	0m1.860s
+sys	0m0.100s
+================= kbfiltr2 =================
+Buildfile: build.xml
+
+init:
+
+updatecheck:
+
+generate-parser:
+
+compile-antlr:
+
+decompi:
+     [java] NOT RUNNING CIL!!!
+     [java] sanity checking...
+     [java] program is sane!
+     [java] no. of empty trans (removed): 0
+     [java] Front-end: 0s
+     [java] SPS-CFG: 1s
+     [java] Decompile: 0s
+     [java] DONE!
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+
+real	0m2.844s
+user	0m3.000s
+sys	0m0.190s
+DONE

@@ -1,0 +1,9 @@
+-----------------------------------------------------------
+Total time taken in seconds 0
+Total number of Iterations 4
+Branches Covered 6
+Branch Coverage in Percentage 100
+Functions Tested 1
+Average percentage of arithmetic constraints found redundant -Inf
+Average percentage of iterations in which unsatisfiablity optimization helped 0
+-----------------------------------------------------------

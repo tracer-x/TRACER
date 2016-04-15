@@ -1,0 +1,374 @@
+%==========================================================================
+%                  PLEASE take a look at README file
+%==========================================================================
+% Description: This file tests the WCET analyzer for toy straight-line
+% programs with procedure calls, statemate.c, and bubblesort.c.
+% TODO: we need more tests with loops and bigger programs
+%==========================================================================
+% export:
+%    wcet_tests_0    % toy straight line programs
+%    wcet_tests_1    % statemate
+%    wcet_tests_2    % bubblesort
+%==========================================================================
+
+%%% NOTE: if you choose compile_version(old) make sure that
+%%% wcet_transition_cost/2 in tracer_wcet_clpr adds only 1.
+%%%
+%%% Here to test programs with old version of the compiler (one
+%%% transition for each C statement)
+%compiler_version(old).
+
+%%% Here to test programs with newest version of the compiler which
+%%% collapses C statements in one transition.
+compiler_version(new).
+
+% Load the unfold engine.
+%:- consult('tracer.clpr').
+:- consult('wcet.clpr').
+
+wcet_tests_0:-
+	% Run a set of small benchmarks with all possible values of
+	% interpolation and compositional flags.
+
+	current_tracer_flag(formula_path,FP),
+	%------------------------------------------------------------------%
+	% Compositional is not implemented with partition of constraints
+	%------------------------------------------------------------------%
+	set_tracer_flag(formula_path,naive),	
+	set_tracer_flag(compositional,y), set_tracer_flag(interpolation,y),
+	wcet_tests_0_aux,
+	set_tracer_flag(compositional,y), set_tracer_flag(interpolation,n),
+	wcet_tests_0_aux,
+	
+	set_tracer_flag(formula_path,FP),
+	set_tracer_flag(compositional,n), set_tracer_flag(interpolation,y),
+	wcet_tests_0_aux,
+	set_tracer_flag(compositional,n), set_tracer_flag(interpolation,n),
+	wcet_tests_0_aux.		
+wcet_tests_0_aux:-
+	% small benchmarks
+	current_tracer_flag(compositional,C),
+	current_tracer_flag(interpolation,I),
+	benchmark(FileName,File),
+	wcet_driver(FileName,WCET0,SV0,_Time,_Sub),
+	result(File,C,I,WCET1,SV1),
+	check_results(File,WCET0,WCET1,SV0,SV1),
+	fail.
+wcet_tests_0_aux:-
+        current_tracer_flag(compositional,C),
+	current_tracer_flag(interpolation,I),
+	printf("***************************************************\n",[]),
+	printf("               Test OK (comp=% inter=%).\n",[C,I]),
+	printf("***************************************************\n",[]).
+
+wcet_tests_1:-
+	% Run statemate with all possible values of the compositional
+	% flag.
+	current_tracer_flag(formula_path,FP),
+	%------------------------------------------------------------------%
+	% Compositional is not implemented with partition of constraints
+	%------------------------------------------------------------------%
+	set_tracer_flag(formula_path,naive),		
+	set_tracer_flag(compositional,y),
+	wcet_tests_1_aux,
+
+	set_tracer_flag(formula_path,FP),
+	set_tracer_flag(compositional,n),
+	wcet_tests_1_aux.
+
+wcet_tests_1_aux:-
+	% statemate
+	current_tracer_flag(compositional,C),
+	special_benchmark(FileName,File),
+	wcet_driver(FileName,WCET0,SV0,_Time,_Sub),
+	result(File,C,y,WCET1,SV1),
+	check_results(File,WCET0,WCET1,SV0,SV1),
+	fail.
+wcet_tests_1_aux:-
+	current_tracer_flag(compositional,C),
+	printf("***************************************************\n",[]),
+	printf("               Test OK (comp=%).\n",[C]),
+	printf("***************************************************\n",[]).
+
+% bubblesort for N=10 runs out of heap memory when formula_path is
+% partition. If we decrease N, the result is correct.
+wcet_tests_2:-
+	% Run benchmarks with loops (for now, only bubblesort) with
+	% all possible values of unroll_loop and interpolation flags.
+	current_tracer_flag(formula_path,FP),
+	%------------------------------------------------------------------%
+	% Compositional is not implemented with partition of constraints
+	%------------------------------------------------------------------%
+	set_tracer_flag(formula_path,naive),
+	set_tracer_flag(unroll_loop,y), set_tracer_flag(interpolation,y),
+	wcet_tests_2_aux,
+	
+	%set_tracer_flag(unroll_loop,y), set_tracer_flag(interpolation,n),
+	%wcet_tests_2_aux,
+	set_tracer_flag(formula_path,FP),
+	set_tracer_flag(unroll_loop,n), set_tracer_flag(interpolation,y),
+	wcet_tests_2_aux.
+	%set_tracer_flag(unroll_loop,n), set_tracer_flag(interpolation,n),
+	%wcet_tests_2_aux.		
+
+wcet_tests_2_aux:-
+	% bubblesort
+	current_tracer_flag(compositional,C),
+	% current_tracer_flag(interpolation,I),
+	I = y,
+	current_tracer_flag(unroll_loop,L),
+	loop_benchmark(FileName,File),
+	wcet_driver(FileName,WCET0,SV0,_Time,_Sub),
+	loop_result(File,C,L,I,WCET1,SV1),
+	check_results(File,WCET0,WCET1,SV0,SV1),
+	fail.
+wcet_tests_2_aux:-
+	current_tracer_flag(compositional,C),
+	current_tracer_flag(interpolation,I),
+	current_tracer_flag(unroll_loop,L),	
+	printf("***************************************************\n",[]),
+	printf("               Test OK (comp=% unrolled=% interp=%).\n",[C,L,I]),
+	printf("***************************************************\n",[]).
+
+
+
+%--------------------------------------------------------------------------%
+% wcet_driver(+Program,-WCET,-States,-Time,-Subsumed)
+%--------------------------------------------------------------------------%
+wcet_driver(Program,_,_,_,_) :- 	
+	% User options 
+	AbsPtFlag <= 0,  % No abstraction.
+	% Load the program
+	load_program(Program),
+        % Initialize routines and counters
+	init_routines,
+	set_counter(states_visited, 0),
+	set_counter(tabled_count,0),
+	% Taking init goal
+	init_goal(FName, PP, Id, 
+	          GlobalArr, GlobalVar, SGlobalArr, SGlobalVar,
+                  LocalArr, LocalVar, SLocalArr, SLocalVar, XCL),
+	init_constraints_path(XCL,CL,ML),	
+	% FP: append_symbolic_list(CL, [], [], CL, ML),
+	ztime,
+	% Unfold
+ 	unfold(0, Id, FName, PP, 
+               GlobalArr, GlobalVar, LocalArr, LocalVar,	  
+ 	       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+ 	       CL, ML, [], [], [], AbsPtFlag, 0),
+        !, printf("Something was wrong \n",[]).
+
+wcet_driver(_,A,SV,Seconds,TC) :-
+	ctime(Seconds),
+	counter_value(states_visited, SV),
+	counter_value(tabled_count, TC),
+	init_goal(FName,_,_,_,_,_,_,_,_,_,_,_),	
+ 	once(collate_wcet_answers(0, FName, _, A, _, _, _, _)),
+	printf("\nWCET: %\n % states visited in % seconds, % subsumed\n", 
+               [A, SV, Seconds, TC]),
+	once(cleanup).
+
+% Straight-line programs (with/without procedure calls)
+benchmark(FileName,Name):-
+	compiler_version(old),!,
+	old_benchmark(FileName,Name).
+benchmark(FileName,Name):-
+	compiler_version(new),!,
+	new_benchmark(FileName,Name).
+
+new_benchmark('tests/WCET/foo.clpr' ,foo).
+new_benchmark('tests/WCET/foo1.clpr',foo1).
+new_benchmark('tests/WCET/foo2.clpr',foo2).
+new_benchmark('tests/WCET/foo3.clpr',foo3).
+new_benchmark('tests/WCET/foo4.clpr',foo4).
+new_benchmark('tests/WCET/foo5.clpr',foo5).
+new_benchmark('tests/WCET/foo6.clpr',foo6).
+new_benchmark('tests/WCET/foo7.clpr',foo7).
+new_benchmark('tests/WCET/foo_bar.clpr',foo_bar).
+new_benchmark('tests/WCET/bar3.clpr',bar3).
+%new_benchmark('tests/WCET/sqrt_while_linear.clpr',sqrt).
+
+old_benchmark('tests/WCET/old_foo.clpr' ,foo).
+old_benchmark('tests/WCET/old_foo1.clpr',foo1).
+old_benchmark('tests/WCET/old_foo2.clpr',foo2).
+old_benchmark('tests/WCET/old_foo3.clpr',foo3).
+old_benchmark('tests/WCET/old_foo4.clpr',foo4).
+old_benchmark('tests/WCET/old_foo5.clpr',foo5).
+old_benchmark('tests/WCET/old_foo6.clpr',foo6).
+old_benchmark('tests/WCET/old_foo7.clpr',foo7).
+old_benchmark('tests/WCET/old_foo_bar.clpr',foo_bar).
+old_benchmark('tests/WCET/old_bar3.clpr',bar3).
+%old_benchmark('tests/WCET/old_sqrt_while_linear.clpr',sqrt).
+
+special_benchmark(FileName,Name):-
+	compiler_version(old),!,
+	old_special_benchmark(FileName,Name).
+special_benchmark(FileName,Name):-
+	compiler_version(new),!,
+	new_special_benchmark(FileName,Name).
+
+% Only programs which do not run without interpolation
+new_special_benchmark('tests/WCET/statemate.clpr',statemate).
+% Only programs which do not run without interpolation
+old_special_benchmark('tests/WCET/old_statemate.clpr',statemate).
+
+loop_benchmark(FileName,Name):-
+	compiler_version(old),!,
+	old_loop_benchmark(FileName,Name).
+loop_benchmark(FileName,Name):-
+	compiler_version(new),!,
+	new_loop_benchmark(FileName,Name).
+
+% Only programs with loops
+new_loop_benchmark('tests/WCET/bubblesort.clpr',bubblesort).
+% Only programs with loops
+old_loop_benchmark('tests/WCET/old_bubblesort.clpr',bubblesort).
+
+% Predicates to verify the results
+check_results(_,WCET0,WCET1,SV0,SV1):-
+	WCET0 = WCET1,
+	SV0 = SV1,!.
+check_results(File,WCET0,WCET1,SV0,SV1):-
+	printf("***************************************************\n",[]),
+	printf("% FAILED. WCET=% Visited States=% (expected % / %)\n",
+              [File,WCET0,SV0,WCET1,SV1]),
+	printf("***************************************************\n",[]),
+	!,
+	halt.
+
+% result(File,Compositional,Interpolation,WCET,States)
+result(File,C,I,W,S):-
+	compiler_version(old), !,
+	old_result(File,C,I,W,S).
+result(File,C,I,W,S):-
+	compiler_version(new),!,
+	new_result(File,C,I,W,S).
+
+:- no_style_check(all).
+
+% Compositional, interpolation
+old_result(foo       ,y,y,13,17).   new_result(foo       ,y,y,_,_).
+old_result(foo1      ,y,y,16,20).   new_result(foo1      ,y,y,_,_).
+old_result(foo2      ,y,y,23,27).   new_result(foo2      ,y,y,_,_).
+old_result(foo3      ,y,y,24,28).   new_result(foo3      ,y,y,_,_). 
+old_result(foo4      ,y,y,32,30).   new_result(foo4      ,y,y,_,_).
+old_result(foo5      ,y,y,19,14).   new_result(foo5      ,y,y,_,_).
+old_result(foo6      ,y,y,25,26).   new_result(foo6      ,y,y,_,_).
+old_result(foo7      ,y,y,25,17).   new_result(foo7      ,y,y,_,_).
+old_result(foo_bar   ,y,y,29,33).   new_result(foo_bar   ,y,y,_,_).
+old_result(bar3      ,y,y,24,28).   new_result(bar3      ,y,y,_,_).
+old_result(statemate ,y,y,346,344). new_result(statemate ,y,y,_,_).
+%old_result(sqrt   ,y,y,_,_). % N/A yet.
+
+% new_result(foo       ,y,y,14,13).
+% new_result(foo1      ,y,y,19,14).
+% new_result(foo2      ,y,y,30,19).
+% new_result(foo3      ,y,y,31,19).
+% new_result(foo4      ,y,y,29,19).
+% new_result(foo5      ,y,y,26,11).
+% new_result(foo6      ,y,y,34,15).
+% new_result(foo7      ,y,y,34,9).
+% new_result(foo_bar   ,y,y,49,22).
+% new_result(bar3      ,y,y,31,19).
+% new_result(statemate ,y,y,321,94).
+
+% Composition, no interpolation
+old_result(foo    ,y,n,13,19).      new_result(foo    ,y,n,_,_).
+old_result(foo1   ,y,n,16,22).      new_result(foo1   ,y,n,_,_).
+old_result(foo2   ,y,n,23,29).      new_result(foo2   ,y,n,_,_).
+old_result(foo3   ,y,n,24,30).      new_result(foo3   ,y,n,_,_).
+old_result(foo4   ,y,n,32,32).      new_result(foo4   ,y,n,_,_).
+old_result(foo5   ,y,n,19,14).      new_result(foo5   ,y,n,_,_).   
+old_result(foo6   ,y,n,25,26).      new_result(foo6   ,y,n,_,_).
+old_result(foo7   ,y,n,25,17).      new_result(foo7   ,y,n,_,_).
+old_result(foo_bar,y,n,29,35).      new_result(foo_bar,y,n,_,_).
+old_result(bar3   ,y,n,24,30).      new_result(bar3   ,y,n,_,_).
+%old_result(sqrt   ,y,n,_,_). % N/A yet.
+
+% new_result(foo    ,y,n,14,15).
+% new_result(foo1   ,y,n,19,16).
+% new_result(foo2   ,y,n,30,21).
+% new_result(foo3   ,y,n,31,21).
+% new_result(foo4   ,y,n,29,19).
+% new_result(foo5   ,y,n,26,11).   
+% new_result(foo6   ,y,n,34,15).
+% new_result(foo7   ,y,n,34,9).
+% new_result(foo_bar,y,n,49,24).
+% new_result(bar3   ,y,n,31,21).
+
+% no compositional, interpolation
+old_result(foo    ,n,y,13,17).      new_result(foo    ,n,y,_,_).
+old_result(foo1   ,n,y,16,20).      new_result(foo1   ,n,y,_,_).
+old_result(foo2   ,n,y,23,27).      new_result(foo2   ,n,y,_,_).
+old_result(foo3   ,n,y,24,28).      new_result(foo3   ,n,y,_,_).  
+old_result(foo4   ,n,y,32,36).      new_result(foo4   ,n,y,_,_).
+old_result(foo5   ,n,y,19,20).      new_result(foo5   ,n,y,_,_).
+old_result(foo6   ,n,y,25,26).      new_result(foo6   ,n,y,_,_).
+old_result(foo7   ,n,y,25,26).      new_result(foo7   ,n,y,_,_).
+old_result(foo_bar,n,y,29,33).      new_result(foo_bar,n,y,_,_).
+old_result(bar3   ,n,y,24,28).      new_result(bar3   ,n,y,_,_).
+old_result(statemate,n,y,346,356).  new_result(statemate,n,y,_,_).
+%old_result(sqrt   ,n,y,_,_). % N/A yet.
+
+% new_result(foo    ,n,y,10,13).
+% new_result(foo1   ,n,y,13,14).
+% new_result(foo2   ,n,y,20,19).
+% new_result(foo3   ,n,y,21,19).  
+% new_result(foo4   ,n,y,29,24).
+% new_result(foo5   ,n,y,16,11).
+% new_result(foo6   ,n,y,22,15).
+% new_result(foo7   ,n,y,22,14).
+% new_result(foo_bar,n,y,28,22).
+% new_result(bar3   ,n,y,21,19).
+% new_result(statemate,n,y,321,106).
+
+% no compositional, no interpolation
+old_result(foo    ,n,n,13,19).      new_result(foo    ,n,n,_,_).
+old_result(foo1   ,n,n,16,22).      new_result(foo1   ,n,n,_,_).
+old_result(foo2   ,n,n,23,29).      new_result(foo2   ,n,n,_,_).
+old_result(foo3   ,n,n,24,30).      new_result(foo3   ,n,n,_,_).
+old_result(foo4   ,n,n,32,38).      new_result(foo4   ,n,n,_,_). 
+old_result(foo5   ,n,n,19,20).      new_result(foo5   ,n,n,_,_).
+old_result(foo6   ,n,n,25,26).      new_result(foo6   ,n,n,_,_).
+old_result(foo7   ,n,n,25,26).      new_result(foo7   ,n,n,_,_).
+old_result(foo_bar,n,n,29,35).      new_result(foo_bar,n,n,_,_).
+old_result(bar3   ,n,n,24,30).      new_result(bar3   ,n,n,_,_).
+%old_result(sqrt   ,n,n,_,_). % N/A yet.
+
+% new_result(foo    ,n,n,10,15).
+% new_result(foo1   ,n,n,13,16).
+% new_result(foo2   ,n,n,20,21).
+% new_result(foo3   ,n,n,21,21).
+% new_result(foo4   ,n,n,29,26). 
+% new_result(foo5   ,n,n,16,11).
+% new_result(foo6   ,n,n,22,15).
+% new_result(foo7   ,n,n,22,14).
+% new_result(foo_bar,n,n,28,24).
+% new_result(bar3   ,n,n,21,21).
+
+:- style_check(all).
+
+% loop_result(File,Compositional,Unrolled,Interpolation,WCET,States)
+loop_result(File,C,U,I,W,S):-
+	compiler_version(old), !,
+	loop_old_result(File,C,U,I,W,S).
+loop_result(File,C,U,I,W,S):-
+	compiler_version(new), !,
+	loop_new_result(File,C,U,I,W,S).
+loop_old_result(bubblesort,_,y,y,376,422).  % for N=10 
+loop_old_result(bubblesort,_,n,y,628,22).   % for N=10 
+loop_old_result(bubblesort,_,y,n,_,_).      % for N=10   (It takes too much time!!)
+loop_old_result(bubblesort,_,n,n,628,24).   % for N=10
+
+loop_new_result(bubblesort,_,y,y,_,_).   % for N=10 
+loop_new_result(bubblesort,_,n,y,_,_).   % for N=10 
+loop_new_result(bubblesort,_,y,n,_,_).   % for N=10   (It takes too much time!!)
+loop_new_result(bubblesort,_,n,n,_,_).   % for N=10 
+
+% loop_new_result(bubblesort,_,y,y,308,328).  % for N=10 
+% loop_new_result(bubblesort,_,n,y,642,16).   % for N=10 
+% loop_new_result(bubblesort,_,y,n,_,_).      % for N=10   (It takes too much time!!)
+% loop_new_result(bubblesort,_,n,n,642,18).   % for N=10 
+
+%:- wcet_tests_1, wcet_tests_2, wcet_tests_0.
+

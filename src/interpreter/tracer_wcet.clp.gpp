@@ -1,0 +1,1407 @@
+% tracer_wcet.clp.gpp
+
+%============================================================================%
+% This file implements an overapproximation of the Worst-Case
+% Execution Time (WCET) of a program. The WCET inferred is at
+% high-level in the sense that no micro-architecture considerations
+% are taken. Instead, a special counter is incremented (differently
+% depending on the timing model, see below) each time a sequence of
+% statements is encountered.  All loops must be bound manually by the
+% user. Details are in "Efficient Memoization for Dynamic Programming
+% with Adhoc Constraints", AAAI'08.
+%============================================================================%
+% TIMING MODEL
+%============================================================================%
+% We handle two different timing models, both quite simple.  The most
+% basic, BASIC, consists of adding always one to an special variable
+% each time a transition in our CLP program is visited. That special
+% variable cannot be used to take control decisions.  The other one,
+% NUMOFCONSTRAINTS, increments the same counter by the number of
+% constraints that appear in each transition.  Furthermore, for
+% simplicity, we assume that all loops are run only ONCE which is
+% obviuosly incorrect. For input safe bounds, user-input is required.
+%
+%#define TIMING_MODEL BASIC
+#define TIMING_MODEL NUMOFCONSTRAINTS
+%=============================================================================%
+% Loop bounds must be given by user.
+%
+% If commented the following line, a default bound is assumed.
+% #define USER_INPUT
+%=============================================================================%
+% TODO:
+%
+% - We gave up on the maintenance of the compositional reasoning for
+%   function calls. Therefore, a lot of updating is needed if
+%   compositional wants to be used again.
+%    *  Merge in one predicate wcet_answer/8 and wcet_answer_ext/8
+%
+% KNOWN BUGS:
+% 
+%=============================================================================%
+	
+%-----------------------------------------------------------------------------%
+% Generic operation: cleanup
+%-----------------------------------------------------------------------------%
+cleanup_wcet :-
+%	retractall(proc_wcet_answer(_,_,_,_,_,_,_,_,_,_)),
+%	retractall(wcet_answer_ext(_,_,_,_,_,_,_)),
+%	retractall(summarization(_,_,_,_,_,_,_,_,_,_,_,_,_)),
+        retractall(wcet_answer(_,_,_,_,_,_,_)),
+	retractall(wcet_exit_answer(_,_,_,_)).
+
+%-----------------------------------------------------------------------------%
+% Return the final WCET of the program for stats
+%-----------------------------------------------------------------------------%
+get_wcet_total(WCET):-
+	%----------------------------------------------------------------------
+	% There was a warning that says "Don't remove once/1 here," but we
+	% put a cut in collate_wcet_answers, and removed the once.
+	%----------------------------------------------------------------------
+	init_goal(FName,_,_,_,_,_,_,_,_,_,_,_),		
+        % It is tricky why we don't use collate_wcet_answers here:
+        % collate_wcet_answers with LAZY_UPDATE_WITNESS assumes that
+        % any answer retracted has a ground id. This is always true if
+        % the sequence is pre operator - combine - pre operator -
+        % combine - .... However, when get_wcet_total/1 is called the
+        % sequence is combine - combine and hence, the id is not
+        % ground which causes problems.
+        retract_wcet_answer___(0,FName, _,_,_,WCET,_),				       
+	!.
+	
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_bound_reached(+,+,+,+,+,+,+,+,+)
+% Search depth bound has been reached. For now on, the analysis
+% results are incomplete!
+%-----------------------------------------------------------------------------%
+wcet_bound_reached(FName,Depth,Id,CL,ML,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	
+        interp_gen_success_path(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,Intp),
+#ifdef  ENCODE_CHILD_PARENT
+        init_encoded_witness(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+        % In this version the witnesses are already in encoded form.
+        % Thus, we don't perform here dump/3 (much faster).
+        assert_wcet_answer2(Depth, FName, Id, CL, ML,Intp,0,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)).	
+#else   /*ENCODE_CHILD_PARENT*/	
+	copy_to_unbound_list(SGlobalArr, WGlobalArr),
+	copy_to_unbound_list(SGlobalVar, WGlobalVar),
+	copy_to_unbound_list(SLocalArr , WLocalArr),
+	copy_to_unbound_list(SLocalVar , WLocalVar),
+        assert_wcet_answer(Depth,FName,Id,CL,ML,Intp,0,
+			   w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,[])).	
+#endif  /*ENCODE_CHILD_PARENT*/	
+	
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_success_path(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+% A terminal node has been found
+%-----------------------------------------------------------------------------%
+wcet_success_path(FName,Depth, Id, _PP,_CL,_ML,
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		  _GlobalArr,_GlobalVar,_LocalArr,_LocalVar,_ArrRef):-
+	
+        interp_gen_success_path(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,Intp),
+#ifdef  ENCODE_CHILD_PARENT
+        init_encoded_witness(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+				  WArrRef),
+        % In this version the witnesses are already in encoded form.
+        % Thus, we don't perform here dump/3 (much faster).
+        assert_wcet_answer2(Depth, FName,Id,_,_,Intp,0,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)).	
+#else   /*ENCODE_CHILD_PARENT*/
+	copy_to_unbound_list(SGlobalArr, WGlobalArr),
+	copy_to_unbound_list(SGlobalVar, WGlobalVar),
+	copy_to_unbound_list(SLocalArr , WLocalArr),
+	copy_to_unbound_list(SLocalVar , WLocalVar),
+	assert_wcet_answer(Depth,FName,Id,_,_,Intp,0,
+			   w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,[])).
+#endif  /*ENCODE_CHILD_PARENT*/	
+
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_fail_path(+,+,+,+,+,+,+,+,+,+)
+% An infeasible path has been found.
+%-----------------------------------------------------------------------------%
+wcet_fail_path(FName,Depth, Id, CL, ML,
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, XCL):-
+        interp_gen_infeasible_path(FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   CL,ML,XCL,Intp),
+#ifdef  DEBUG_USE
+        print_op_debugging(infeasible,
+			   FName,_,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#endif  /*DEBUG_USE*/	
+#ifdef  ENCODE_CHILD_PARENT
+        init_encoded_witness(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			     WArrRef),
+        % In this version the witnesses are already in encoded form.
+        % Thus, we don't perform here dump/3 (much faster).
+        assert_wcet_answer2(Depth, FName, Id, CL, ML,Intp,0,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)).	
+#else   /*ENCODE_CHILD_PARENT*/
+	copy_to_unbound_list(SGlobalArr, WGlobalArr),
+	copy_to_unbound_list(SGlobalVar, WGlobalVar),
+	copy_to_unbound_list(SLocalArr , WLocalArr),
+	copy_to_unbound_list(SLocalVar , WLocalVar),
+	assert_wcet_answer(Depth,FName,Id,CL,ML,Intp,0,
+			   w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,[])).			     
+#endif  /*ENCODE_CHILD_PARENT*/
+
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_loop_back_edge(+,+,+,+,+CL,+ML,+Intp,+,+,+,+)
+% A back-edge transition has been found (i.e., looping points)
+% The interpolant is taken from the exit paths of the loop. Here we
+% simply assert that interpolant. The solution returned is 0 and the
+% witness is a fresh one.
+%
+% FIXME: not sure if we can return the witness from the exit paths of
+% the loop.
+%-----------------------------------------------------------------------------%
+wcet_loop_back_edge(FName,Depth,Id, _PP, CL, ML, Intp,
+		    _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar):-
+#ifdef  ENCODE_CHILD_PARENT
+        init_encoded_witness(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			     WArrRef),
+        % In this version the witnesses are already in encoded form.
+        % Thus, we don't perform here dump/3 (much faster).
+        assert_wcet_answer2(Depth, FName, Id, CL, ML,Intp,0,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)).	
+#else
+	assert_wcet_answer(Depth,FName,Id,CL,ML,Intp,0,w(_,_,_,_,[])).
+#endif  /*ENCODE_CHILD_PARENT*/
+
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_loop_exit(+,+,+,+,+,+,+,-,-)
+% Process the result obtained from the exit paths of the loop.
+%-----------------------------------------------------------------------------%
+wcet_loop_exit(FName,Depth,PP,
+	       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,ML,Intp):-
+	debug_message("\tStoring solution from the loop exit (PP:%)\n",[PP],magenta),
+        %----------------------------------------------------------------------
+        % There are possibly multiple exit transitions, so we collate them
+        % We ignore the witness, which will not be used
+        %----------------------------------------------------------------------
+	collate_wcet_answers(Depth,FName,
+			     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			     ML,Intp,A,_,Witness),
+	assert_exit_interp(Depth, FName,ML,Intp),
+	assert_wcet_exit_answer(Depth,FName,A,Witness),
+	!, % cut added for being able to include the second clause
+	   % in order to catch potential errors.
+        debug_message("\tStored <ML:% WCET:%>\n\n",[ML,A],magenta).               
+wcet_loop_exit(FName,_,PP,_,_,_,_,_,_):-
+	error_message("wcet_loop_exit/9 failed in <%,%>\n",[FName,PP]).
+		      
+
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_reuse_answer(+,+,+,+,+,+)
+% Reuse an answer (WCET bound + witness) when a node is subsumed
+%-----------------------------------------------------------------------------%
+wcet_reuse_answer(FName, Depth, Id, CL, ML,Intp,
+		  answer(A,
+			 w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef))):-
+#ifdef  ENCODE_CHILD_PARENT	
+	% Here Answer is in encoded form
+        assert_wcet_answer2(Depth, FName, Id, CL, ML,Intp, A,
+			    w(WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+			      WArrRef)).
+#else
+	assert_wcet_answer(Depth, FName , Id, CL, ML,Intp, A,
+			   w(WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+			     WArrRef)).
+#endif /*ENCODE_CHILD_PARENT*/	
+
+%-----------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_check_subsumed_answer(+,+,+,+,+,+)
+% Check if answer subsumed holds in the new context
+%-----------------------------------------------------------------------------%
+wcet_check_subsumed_answer(_,_,_,_,_,_) :- 
+	current_tracer_flag(witnesses,n), !.
+wcet_check_subsumed_answer(GlobalArr, GlobalVar, LocalArr, LocalVar,
+			   ArrRef,
+			   answer(_,w(WGlobalArr,WGlobalVar,
+				      WLocalArr,WLocalVar,WArrRef))) :-
+	current_tracer_flag(witnesses,y), !,
+	%--------------------------------------------------------------------
+        % Checking witness feasibility
+	%--------------------------------------------------------------------
+#ifdef  PROFILE
+	% Number of times the whole bunch of witnesses is checked
+	add_counter(num_reps_is_checked, 1),
+	% Number of individual witnesses is checked. In WCET, both
+	% counters are the same since the number of witness is 1. But,
+	% in slicing those numbers are different.	
+	add_counter(num_checked_reps, 1),    
+	satisfiable_witness_profiled(GlobalArr, GlobalVar, LocalArr, LocalVar,
+				     ArrRef,
+				     WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+				     WArrRef).
+#else
+	satisfiable_witness(GlobalArr, GlobalVar, LocalArr, LocalVar,ArrRef,
+			    WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,WArrRef).
+#endif  /*PROFILE*/
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% wcet_combine_answers(+FName,+Id,+Depth,+CL,-ML,-Intp,-Answer,+SGlobalArr,...)
+% From each transition taken in the recursive case, produce an answer,
+% and store the result in the table.
+%-------------------------------------------------------------------------------%
+wcet_combine_answers(FName,_,Depth,_CL, ML, Intp, Answer,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar):-
+	collate_wcet_answers(Depth,FName,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     ML,Intp2,WCET,Id,Witness),
+	interp_simplify_after_combined(FName,Intp2,Intp),
+#ifdef  ENCODE_CHILD_PARENT
+        % In this version the witnesses are already in encoded form.
+        % Thus, assert_wcet_answer2___/9 does not encode witnesses (faster)
+        assert_wcet_answer2___(Depth, FName,Id,ML,Intp,WCET,Witness),
+#else
+        assert_wcet_answer___(Depth, FName,Id,ML, Intp,WCET, Witness),
+#endif	/*ENCODE_CHILD_PARENT*/
+	Answer = answer(WCET,Witness).
+			
+%-------------------------------------------------------------------------------%
+% collate_wcet_answers(+Depth,+FName,
+%                      +SGlobalArr,...
+%                      -ML,-Intp, -WCET,-Id,-Witness)
+%-------------------------------------------------------------------------------%
+% Take all children's answers and combined them. The result is the new
+% answer at the parent at level Depth.
+%-------------------------------------------------------------------------------%
+collate_wcet_answers(Depth,FName,
+		     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		     ML,Intp,A,Id,Witness) :-
+	% FIXME: should be hidden in tracer_interpolant_others.clp.gpp
+	InitIntp = state(_, _, _, _, [],_),
+	collate_wcet_answers_aux(Depth,FName,
+				 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 ML,InitIntp,_,
+	                         0,_,Intp,Id,A,Witness0),
+        combine_update_single_witness(Id,Witness0,Witness).
+collate_wcet_answers(_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("collate_wcet_answers/11 failed\n",[]).
+		     
+collate_wcet_answers_aux(Depth,FName,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+                         ML,IntpA,IdA,A,Witness0,IntpD,IdD,D,Witness1) :-
+#ifdef  ENCODE_CHILD_PARENT
+        % Here we retract directly the child's answer. Note that the
+        % witnesses will remain in encoded form.
+	retract_wcet_answer2___(Depth,FName,IdB,
+#ifdef  REDUNDANT_MARKINGS_PROFILE
+				OtherML,
+#else
+				ML,
+#endif
+			        IntpB,B,ChildWitness),
+#else   /*ENCODE_CHILD_PARENT*/
+	retract_wcet_answer___(Depth,FName,IdB,
+#ifdef  REDUNDANT_MARKINGS_PROFILE
+			       OtherML,
+#else
+			       ML, 
+#endif
+                               IntpB,B,ChildWitness),
+#endif  /*ENCODE_CHILD_PARENT*/	
+        %----------------------------------------------------------------------
+        % We put a cut here s.t. collate_wcet_answer need not be called with
+        % once/1.
+        %----------------------------------------------------------------------
+        !, 
+	% Here IdA may be var the first time so we make sure that it's
+	% instantiated to a valid id.
+        make_ground_id_if_var(IdA,IdB),
+	max_answer(a(A,IdA,Witness0),a(B,IdB,ChildWitness),a(C,IdC,AccWitness)),	
+        debug_message("\tDepth %, computing maximum between % (%) and % (%)=% (%) \n",
+		      [Depth,A,IdA,B,IdB,C,IdC]),	
+	interp_combine(IntpA,IntpB,Depth,FName,_PP,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,IntpC),
+#ifdef  REDUNDANT_MARKINGS_PROFILE
+	redundant_markings_profile(ML, OtherML, NewML),        
+#endif  /*REDUNDANT_MARKINGS_PROFILE*/
+	collate_wcet_answers_aux(Depth, FName,
+				 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+#ifdef  REDUNDANT_MARKINGS_PROFILE
+                                 NewML,
+#else   
+                                 ML, 
+#endif  /*REDUNDANT_MARKINGS_PROFILE*/
+                                 IntpC,IdC,C,AccWitness,IntpD,IdD,D,Witness1).
+collate_wcet_answers_aux(_,_,_,_,_,_,_,Intp,Id,A,Ws,Intp,Id,A,Ws).
+			 
+			                         
+make_ground_id_if_var(Id,Id):- var(Id),!.
+make_ground_id_if_var(_,_)  :-!.
+
+
+max_answer(a(A,Id,Witness), a(B,_,_),a(A,Id,Witness)):- A > B, !.
+max_answer(_, a(B,Id,Witness),a(B,Id,Witness)).
+	   	    
+%-----------------------------------------------------------------------------%
+% Generic operation: pre operator
+%-----------------------------------------------------------------------------%
+wcet_pre_operator(FName,Depth,Id,
+		  PC1, % child's PC
+		  Statement, % whether guard or not
+		  CallStack,  
+		  XCL, % Constraints for this transition
+		  CL,  % Collected constraints of the parent		   
+		  CL1, % Collected constraints of the child		   
+		  ML,  % Marked constraints (intp) of the parent	  
+		  ML1, % Marked constraints (intp) of the child
+		  % father's variables
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		  % child's  variables
+		  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	%---------------------------------------------------------------------
+	% Obtain from a child its WCET and witness
+	%---------------------------------------------------------------------
+#ifdef  PROFILE
+        ctime(Time0),
+#endif
+        % NOTE: the pre operation can be between a caller and its
+        % callee. Therefore, the parent's and child's variables might
+        % be different. We need to figure out that ...
+        functionOfChildAndParent(Id,FName,PC1,CallStack,
+				 FNameOfChild,FNameOfParent),
+
+#ifdef  ENCODE_CHILD_PARENT
+        %%%
+        % Here the post-state witnesses are in encoded form
+        %%%
+	retract_wcet_answer2(Depth+1,FNameOfChild,_Id1,CL1,ML1,Intp1,A,Witness1),
+#else   /*ENCODE_CHILD_PARENT*/
+	retract_wcet_answer(Depth+1,FNameOfChild,_Id1,CL1,ML1,Intp1,A,Witness1),
+#endif	/*ENCODE_CHILD_PARENT*/	
+%#ifdef  PROFILE
+%	record_when_marked(Id, XCL, ML1),
+%#endif  /*PROFILE*/
+	interp_pre_operator(Intp1,ML1,
+			    Id, FNameOfChild,
+			    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			    XCL,Statement, CL, ML,
+			    FNameOfParent, SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(pre_phase_1,Time1-Time0),
+#ifdef  PRE_DEBUG	
+        print_message("PRE operator 1: XCL=% \n",[XCL]),
+	print_message("Father's variables: % % % % \n",
+	       [SGlobalArr,SGlobalVar,SLocalArr,SLocalVar]),
+	print_message("Child's variables: % % % % \n" ,
+	       [SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1]),	
+#endif  /*PRE_DEBUG*/
+        ctime(Time6),
+#endif  /*PROFILE  */
+        %---------------------------------------------------------------------
+        % Update the WCET bound (the increment depends on the timing model)
+        %---------------------------------------------------------------------
+	wcet_transition_cost(Id,C),
+#ifdef  PROFILE
+        ctime(Time7),
+	add_counter(pre_phase_2,Time7-Time6),
+#endif  /*PROFILE  */
+        debug_message("\tCost of the transition: % (depends on timing model) \n",[C]),	
+        lazy_pre_update_single_witness(Id,			 
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       Witness,
+				       SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+				       Witness1),
+#ifdef  DEBUG_USE
+        print_op_debugging(pre,
+			   FName,_,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+#endif  /*DEBUG_USE*/	
+        %---------------------------------------------------------------------
+	% wcet_answer must be associated with FName. However, during
+	% encoding it needs to be associated with FNameOfParent. FName
+	% and FNameOfParent are different in the pre-operation of a
+	% call or return of a function.
+	%---------------------------------------------------------------------
+#ifdef  PROFILE
+	ctime(Time8),
+#endif  /*PROFILE*/
+
+#ifdef  ENCODE_CHILD_PARENT
+        assert_wcet_answer2(Depth,FNameOfParent,Id,CL,ML,Intp,A+C,Witness),
+#else
+	assert_wcet_answer(Depth,FNameOfParent,Id,CL,ML,Intp,A+C,Witness),
+			   
+#endif	/*ENCODE_CHILD_PARENT*/
+
+#ifdef  PROFILE
+        ctime(Time9),
+	add_counter(pre_phase_5,Time9-Time8),
+#endif	/*PROFILE*/		
+        debug_message("\tComputed pre-image at depth:% with WCET=% \n",
+                      [Depth,A+C]).
+
+%---------------------------------------------------------------------------------%
+% wcet_transition_cost(+Id,-C)
+%---------------------------------------------------------------------------------%
+% Given the constraints corresponding to the current transition, return
+% its WCET C.
+%---------------------------------------------------------------------------------%
+#if    (TIMING_MODEL == BASIC)
+% It adds one for each transition.
+wcet_transition_cost(_,1).
+#elif  (TIMING_MODEL == NUMOFCONSTRAINTS)
+% The basic WCET for a transition is calculated as follows:
+% WCET(transition) = A + B
+% where A = number of constraints associated with transition
+%       B = number of constraints associated with the function calls (if any)
+% In the future, we might consider AddRef
+wcet_transition_cost(Id,A):-
+	wcet_transition_cost_aux(Id,A),!.
+wcet_transition_cost(Id,_):-
+	error_message("wcet_transition_cost/2 on trans %\n",[Id]).
+		
+wcet_transition_cost_aux(call(Id), A):-
+	trans(_,Id,_PC0,_,_,_,_,_,_,_,_,_PC1,_,_,_,_,_,_,_,_,_XCL,CCL,_,_),	
+	add_cost_function_call(CCL,A),!.
+wcet_transition_cost_aux(Id, A):-
+	trans(_,Id,_PC0,_,_,_,_,_,_,_,_,_PC1,_,_,_,_,_,_,_,_,XCL,_CCL,_,_),
+	length(XCL,A).
+
+add_cost_function_call(Calls,C):- add_cost_function_call_aux(Calls,0,C),!.
+add_cost_function_call(_,0)    :- !. 
+add_cost_function_call_aux([],Acc,Acc):- !.
+add_cost_function_call_aux([call(_,_,_,CCL)|Cs],Acc,NAcc):-
+        length(CCL,C),
+        add_cost_function_call_aux(Cs,Acc+C,NAcc).
+#else
+wcet_transition_cost(_,_):-
+	error_message("Undefined timing model\n",[]).
+#endif  /*(TIMING_MODEL == BASIC)*/
+
+%wcet_transition_cost(Id, 1):-
+%	trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,[call(FName,_,_,_)|_],_,_),
+%	FName == func__INC_WCET,!.
+%wcet_transition_cost(_, 0):- !.
+
+%--------------------------------------------------------------------------%
+% Once the body loop has been traversed then we collate answers from
+% each transition taken in the recursive case, produce and answer, and
+% store the summarization in the table.
+% For loops timing is computed as the timing of the exit branch +
+% no. iter x (timing of body).
+%--------------------------------------------------------------------------%
+unfold_wcet_loop(Depth, Id, FName, PP, ExitPP,
+		 GlobalArr , GlobalVar , LocalArr , LocalVar,
+		 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		 CL, ML, CallStack, ArrRef, _Loops,
+		 TableSpace) :-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+        debug_message("Aggregating LOOP % - % ... \n",[PP,ExitPP],magenta),
+	%---------------------------------------------------------------------%
+	% After the body loop is finished we still need to collate
+	% answers before computing cost of the body loop.
+        % Here we ignore CL, ML, and Intp of the loop body. We will get them
+        % later, already combined with the interpolants of the exit paths,
+        % with the call to retract_wcet_loop_answer
+	%---------------------------------------------------------------------%
+	debug_message("\tBegin COMBINE (%) at PC:% \n",[FName,PP]),
+	wcet_combine_answers(FName,Id,Depth,_,_,_,_,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	debug_message("\tEnd COMBINE \n",[]),
+
+	%---------------------------------------------------------------------%
+	% We obtain the interpolant from the exit paths and combine
+	% (union) with the interpolant from the body.	
+	% Moreover, we obtain the witnesses from the loop body and
+	% from the exit paths.
+	%---------------------------------------------------------------------%
+	retract_wcet_loop_answer(Depth, FName,
+				 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 _Id, CL, ML, Intp,
+				 BodyWCET, _BodyWitness, ExitWCET, ExitWitness), 
+       % NOTE: if ENCODE_CHILD_PARENT then ExitWitness will be encoded but
+       %       NOT BodyWitness
+	
+#ifdef  DEBUG_USE
+        print_op_debugging(loop_exit,
+			   FName,PP,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#endif  /* DEBUG_USE */		
+	%----------------------------------------------------------------------
+	% Get the specified number of iterations for this loop
+	%----------------------------------------------------------------------
+        block(_,FName,PP,ExitPP,NoIter,l,_,_,_,_,_),
+	ask_user_loop_iterations(FName,PP,ExitPP,NoIter),
+	%----------------------------------------------------------------------
+	% and compute the WCET for the loop 
+	%----------------------------------------------------------------------
+        LoopWCET = ExitWCET + (NoIter * BodyWCET),
+	%=======================================================================%
+	% We return the witness from the exit paths of the loop.	
+	% IMPORTANT: backward_propagation_witness_across_abstraction/7
+	% will filter those which are not invariant.
+	%=======================================================================%
+#ifdef  ENCODE_CHILD_PARENT
+        assert_wcet_answer2(Depth,FName,Id,CL,ML,Intp,LoopWCET,ExitWitness),
+#else
+	assert_wcet_answer(Depth,FName,Id,CL,ML,Intp,LoopWCET,ExitWitness),
+#endif  /*ENCODE_CHILD_PARENT*/	
+#ifdef  MINI_DEBUG_USE
+        print_message("\t-----------------------------------------------\n",[]),
+        print_message("\tTotal WCET for loop=%+(%*%)=%\n",
+		      [ExitWCET,NoIter,BodyWCET,LoopWCET]),
+        print_message("\t-----------------------------------------------\n",[]),	
+#endif	/*MINI_DEBUG_USE*/
+        store(FName, Id, PP,
+	      GlobalArr , GlobalVar , LocalArr , LocalVar,
+	      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	      ArrRef, CL, ML,Intp, CallStack,
+	      answer(LoopWCET,ExitWitness),
+#ifdef  OPTIMIZED_FIXPO
+              _,
+#endif 	     	      
+	      TableSpace),
+#ifdef  DEBUG_USE
+	print_message("END aggregation loop.\n\n",[]),
+#endif	/*DEBUG_USE*/
+#ifdef  PROFILE		
+        ctime(Time1),
+	add_counter(wcet_loop_final,Time1-Time0),
+#endif  /*PROFILE*/		
+        !,  
+	fail.
+
+%-------------------------------------------------------------------------------%
+% ask_user_loop_iterations(+FName,+PP,+ExitPP,?NoIter)
+%-------------------------------------------------------------------------------%
+% The recursive blocks do not contain the number of loop
+% iterations. The user or another tool is supposed to provide that
+% information.
+%-------------------------------------------------------------------------------%
+#ifdef  USER_INPUT
+% The loop bounds are taken from the user
+ask_user_loop_iterations(FName,PP,ExitPP,NoIter):-
+	var(NoIter),!,
+	print_message("Loop found in function % with entry PP %  and exit PP % \n",
+		      [FName,PP,ExitPP]),
+	print_message("Asking user for the number of loop iterations: ",[]),
+	read(NoIter),
+	print_message("User wrote % iterations.\n",[NoIter]).
+#else   /*USER_INPUT*/
+ask_user_loop_iterations(_FName,_PP,_ExitPP,NoIter):-
+	var(NoIter),!,
+%#ifdef  MINI_DEBUG_USE	
+%	print_message("Finished the loop body in function % with entry PP %  and exit PP % \n",
+%	       [FName,PP,ExitPP]),
+%#else
+%        FName=_,PP=_,ExitPP=_,
+%#endif	
+	NoIter = 1. % by default just once iteration per loop.
+#endif  /*USER_INPUT*/
+% This clause in case NoIter is already instantiated.
+ask_user_loop_iterations(_,_,_,_):- !.
+
+		
+/****************************************************************************/
+/*              BEGIN assert/retract operations                             */
+/****************************************************************************/
+%------------------------------------------------------------------------------
+% assert_wcet_answer(+,+,+,+,+,+,+,+,+,+)
+%------------------------------------------------------------------------------
+
+assert_wcet_answer(Depth,FName,Id,_,ML,Intp,A, Witness):-
+	current_tracer_flag(path_datastructure,naive),!,
+	assert_wcet_answer___(Depth,FName,Id,ML,Intp,A, Witness).
+	                      
+
+assert_wcet_answer(Depth,FName,Id,Es,ML,Intp,A, Witness):-
+	current_tracer_flag(path_datastructure,partition),!,
+	% Transfer marked constraints from Es to ML
+#ifndef NEWPARTITION
+	convert_partition2naive_ifNotVar(Es,ML),
+#else   
+        % To prevent warnings
+        Es = _,
+#endif  /* !NEWPARTITION */
+	% FName is the function name associated to W*'s variables
+	% (needed for encode/decode)	
+	assert_wcet_answer___(Depth,FName,Id,ML,Intp,A, Witness).
+	                      
+#ifdef  ENCODE_CHILD_PARENT
+%%%%
+%% In this version, witnesses have been already encoded.
+%%%%
+assert_wcet_answer2(Depth,FName,Id,_,ML,Intp,A, Witness):-
+	current_tracer_flag(path_datastructure,naive),!,
+	assert_wcet_answer2___(Depth,FName,Id,ML,Intp,A, Witness).
+assert_wcet_answer2(Depth,FName,Id,Es,ML,Intp,A, Witness):-
+	current_tracer_flag(path_datastructure,partition),!,
+	% Transfer marked constraints from Es to ML
+#ifndef NEWPARTITION
+	convert_partition2naive_ifNotVar(Es,ML),
+#else   
+        Es = _,
+#endif  /*!NEWPARTITION*/
+	% FName is the function name associated to W*'s variables
+	% (needed for encode/decode)	
+	assert_wcet_answer2___(Depth,FName,Id,ML,Intp,A, Witness).
+#endif /* ENCODE_CHILD_PARENT */
+
+%--------------------------------------------------------------------------%
+% Retract wcet answers for a single program point
+%--------------------------------------------------------------------------%
+retract_wcet_answer(Depth,FName, Id, _,ML,Intp,A, Witness):-
+ 	current_tracer_flag(path_datastructure,naive),!,
+        retract_wcet_answer___(Depth,FName, Id, ML,Intp,A, Witness).
+retract_wcet_answer(Depth,FName, Id, Es,ML,Intp,A, Witness):-
+ 	current_tracer_flag(path_datastructure,partition),!,
+ 	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else   
+        Es = _,
+#endif  /*!NEWPARTITION*/
+	retract_wcet_answer___(Depth,FName, Id, ML,Intp,A, Witness).
+ 	                       
+#ifdef  ENCODE_CHILD_PARENT
+%%%%
+%% In this version, witnesses are not decoded.
+%%%%
+retract_wcet_answer2(Depth,FName, Id, _,ML,Intp,A, Witness):-
+ 	current_tracer_flag(path_datastructure,naive),!,
+        retract_wcet_answer2___(Depth,FName, Id, ML,Intp,A, Witness).
+retract_wcet_answer2(Depth,FName, Id, Es,ML,Intp,A, Witness):-
+ 	current_tracer_flag(path_datastructure,partition),!,
+ 	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else   
+        % To prevent warnings
+        Es = _,
+#endif  /*!NEWPARTITION*/
+	retract_wcet_answer2___(Depth,FName, Id, ML,Intp,A, Witness).
+#endif  /*ENCODE_CHILD_PARENT*/
+
+%--------------------------------------------------------------------------%
+% Retract wcet (interpolants + bound + witness) for the whole loop
+%--------------------------------------------------------------------------%
+retract_wcet_loop_answer(Depth,FName,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			 Id,_,ML,Intp,
+			 % body bound + witness
+			 BodyWCET,BodyWitness,
+			 % exit paths bound + witness
+			 ExitWCET,ExitWitness):- 
+ 	current_tracer_flag(path_datastructure,naive),!,
+        retract_wcet_loop_answer___(Depth,FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    Id,ML,Intp,
+				    BodyWCET,BodyWitness,ExitWCET,ExitWitness).
+retract_wcet_loop_answer(Depth,FName,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			 Id,Es,ML,
+                         Intp,
+			 % body bound + witness
+			 BodyWCET,BodyWitness,
+			 % exit paths bound + witness
+			 ExitWCET,ExitWitness):-  
+	current_tracer_flag(path_datastructure,partition),!,
+ 	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else   
+        % To prevent warnings
+        Es = _,
+#endif  /*!NEWPARTITION*/
+        retract_wcet_loop_answer___(Depth,FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    Id,ML,Intp,
+				    BodyWCET,BodyWitness,ExitWCET,ExitWitness).
+
+%--------------------------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT
+%--------------------------------------------------------------------------%
+% These operations perform assert/retract of answers in order to
+% propagate information from children to parents. To safe memory and
+% be faster the answers are first encoded if option
+% ENCODE_CHILD_PARENT is defined.
+
+% Low-level operation for ASSERT wcet_answer/9.
+assert_wcet_answer___(Depth,FName, Id, ML,Intp,A,
+		      w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)):-
+	debug_message(" ASSERT % \n",
+		      [wcet_answer(Depth,FName,ML,Intp,A,
+				   w(WGlobalArr,WGlobalVar,
+				     WLocalArr,WLocalVar,WArrRef))]),
+#ifdef  PROFILE
+        ctime(T0),
+#endif 			
+	encode_marked_list(ML,MLX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_interpolant_answers,T1-T0),
+	ctime(T2),
+#endif
+	% Here it's done dump for grabbing the witnesses' constraints
+        encode_witnesses(FName,
+			 WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			 WArrRef,
+			 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+			 WArrRefX),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(encode_witnesses_answers,T3-T2),
+#endif 		
+	debug_message(" ENCODED ASSERT %\n",
+		      [wcet_answer(Depth,FName,MLX,Intp,A,
+				   w(WGlobalArrX,WGlobalVarX,
+				     WLocalArrX,WLocalVarX,WArrRefX))]),
+#ifdef  PROFILE
+	ctime(T4),
+#endif
+%----------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%----------------------------------------------------------------------------%
+        pipe_master_store_wcet_answer(Depth,Id,MLX,Intp,A,
+				      w(WGlobalArrX,WGlobalVarX,
+					WLocalArrX,WLocalVarX,WArrRefX)),
+%----------------------------------------------------------------------------%
+#else   /*PIPEDUMP_AND_ANSWERS*/
+%----------------------------------------------------------------------------%
+        % FName is needed for compositional
+        fassert(wcet_answer(Depth,xx,Id,MLX,Intp,A,
+			    w(WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+			      WArrRefX))),
+%----------------------------------------------------------------------------%
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%----------------------------------------------------------------------------%
+#ifdef  PROFILE
+	ctime(T5),
+	add_counter(assert_timing,T5-T4).
+#else
+        true.
+#endif
+%----------------------------------------------------------------------------%
+#else /* ENCODE_CHILD_PARENT */
+%----------------------------------------------------------------------------%
+assert_wcet_answer___(Depth,_FName,Id, ML,Intp,A, _Witness):-
+        current_tracer_flag(witnesses,n),!,
+
+#ifdef  PROFILE
+	ctime(Time0),
+#endif
+        % FName is needed for compositional
+        fassert(wcet_answer(Depth,_,Id, ML,Intp,A, _Witness)),
+#ifdef  PROFILE 
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0).
+#else
+        true.
+#endif			
+assert_wcet_answer___(Depth,_FName,Id, ML,Intp,
+		      A, w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)):-
+        !,
+#ifdef  PROFILE
+	ctime(Time0),
+#endif
+        % FName is needed for compositional
+#ifdef  ONLY_LINEAR_WITNESSES
+        assert_only_lin_eqs(wcet_answer(Depth,_,Id,ML,Intp,A,
+					w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+					  WArrRef))),
+#else
+        assert(wcet_answer(Depth,_,Id,ML,Intp,A,
+			   w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			     WArrRef))),
+#endif	/*ONLY_LINEAR_WITNESSES*/	
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0).
+#else
+        true.
+#endif
+%----------------------------------------------------------------------------%
+#endif /* ENCODE_CHILD_PARENT */
+%----------------------------------------------------------------------------%
+
+%----------------------------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT
+%----------------------------------------------------------------------------%
+% In this version, witnesses are already encoded so no need to encode
+% them. ML is not encoded.
+assert_wcet_answer2___(Depth,FName,Id,ML,Intp,A,Witness):-
+	debug_message(" ASSERT % \n",
+		      [wcet_answer(Depth,FName,ML,Intp,A,Witness)]),
+#ifdef  PROFILE
+        ctime(T0),
+#endif 			
+	encode_marked_list(ML,MLX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_interpolant_answers,T1-T0),
+	ctime(T2),
+#endif
+%----------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%----------------------------------------------------------------------------%
+        pipe_master_store_wcet_answer(Depth,Id,MLX,Intp,A,Witness),
+%----------------------------------------------------------------------------%	
+#else
+%----------------------------------------------------------------------------%
+        % FName is needed for compositional
+        fassert(wcet_answer(Depth,xx,Id,MLX,Intp,A,Witness)),
+%----------------------------------------------------------------------------%	
+#endif /*PIPEDUMP_AND_ANSWERS*/ 
+%----------------------------------------------------------------------------%
+#ifdef  PROFILE
+	ctime(T3),
+	add_counter(assert_timing,T3-T2).
+#else
+        true.
+#endif
+%----------------------------------------------------------------------------%
+#endif /*ENCODE_CHILD_PARENT*/
+%----------------------------------------------------------------------------%
+
+%----------------------------------------------------------------------------%
+% Assert wcet answer (bound+witness) from the exit paths of the loop
+%----------------------------------------------------------------------------%
+assert_wcet_exit_answer(Depth,FName,WCET,_):-
+	current_tracer_flag(witnesses,n),!,
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  /*PROFILE*/		
+	fassert(wcet_exit_answer(Depth,FName,WCET,_)),
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0),
+#endif  /*PROFILE*/
+	true.	
+assert_wcet_exit_answer(Depth,FName,WCET,Witness):-
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  /*PROFILE*/
+#ifdef  ENCODE_CHILD_PARENT
+        fassert(wcet_exit_answer(Depth,FName,WCET,Witness)),
+#else
+	assert(wcet_exit_answer(Depth,FName,WCET,Witness)),
+#endif  /*ENCODE_CHILD_PARENT*/	
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0),
+#endif  /*PROFILE*/
+	true.
+
+
+%----------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%----------------------------------------------------------------------------%
+pipe_master_store_wcet_answer(Depth,Id,ML,Intp,A,
+			      w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+				WArrRef)):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("assert_answer(%,%,%,%,%,%,%,%,%,%,%) .\n",
+				  [Depth,Id, ML,Intp,A,
+				   WGlobalArr, WGlobalVar,
+				   WLocalArr, WLocalVar,WArrRef,
+				   MsgTimeStamp1]),
+#else
+	write_store_answers_slave("assert_answer(%,%,%,%,%,%,%,%,%,%) .\n",
+				  [Depth,Id,ML,Intp,A,
+				   WGlobalArr, WGlobalVar,
+				   WLocalArr, WLocalVar,WArrRef]),
+#endif /*PROFILE*/
+	%flush,
+	read_from_store_answers_slave(_).
+        %%%%
+        % No answer from slave.
+        %%%%
+pipe_master_remove_wcet_answer(Depth,Id,ML,Intp,A,
+			       w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+				 WArrRef)):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("retract_answer(%,%,%,%,%,%,%,%,%,%,%) .\n",
+				  [Depth,Id, ML,Intp,A,
+				   WGlobalArr, WGlobalVar,
+				   WLocalArr , WLocalVar,WArrRef,
+				   MsgTimeStamp1]),
+#else
+	write_store_answers_slave("retract_answer(%,%,%,%,%,%,%,%,%,%) .\n",
+				  [Depth,Id,ML,Intp,A,
+				   WGlobalArr, WGlobalVar,
+				   WLocalArr , WLocalVar,WArrRef]),
+#endif /*PROFILE*/
+	%flush,
+	read_from_store_answers_slave(X),
+	process_slave_output(X,Reply),
+	!,
+	pipe_master_remove_wcet_answer_aux(Reply,
+					   Depth,Id,ML,Intp,A,
+					   WGlobalArr , WGlobalVar,
+					   WLocalArr  , WLocalVar , WArrRef).	
+
+pipe_master_remove_wcet_answer_aux(reply_args(fail),_,_,_,_,_,_,_,_,_,_):-
+	!,
+	fail.
+pipe_master_remove_wcet_answer_aux(reply_args(
+				   Depth,Id,ML,Intp,A,
+			           WGlobalArr , WGlobalVar,
+			           WLocalArr  , WLocalVar , WArrRef),
+				   Depth,Id,ML,Intp,A,
+				   WGlobalArr , WGlobalVar,
+				   WLocalArr  , WLocalVar , WArrRef):- !.
+%-----------------------------------------------------------------------------%
+#endif /*PIPEDUMP_AND_ANSWERS*/
+%-----------------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT
+%-----------------------------------------------------------------------------%
+% Low-level operation for RETRACT wcet_answer/8.
+retract_wcet_answer___(Depth,FName,Id,ML,Intp,A,
+	               w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)):-
+#ifdef  PROFILE
+	ctime(T0),
+#endif
+#ifdef  PIPEDUMP_AND_ANSWERS
+        pipe_master_remove_wcet_answer(Depth,Id,MLX,Intp,A,
+				       w(WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+					 WArrRefX)),
+#else   /*PIPEDUMP_AND_ANSWERS*/
+        % FName is needed for compositional
+	retract(wcet_answer(Depth,_,Id,MLX,Intp,A,
+			    w(WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+			      WArrRefX))),
+#endif  /* PIPEDUMP_AND_ANSWERS*/	
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(retract_timing,T1-T0),
+#endif	
+	debug_message(" RETRACT %\n",
+		      [wcet_answer(Depth,FName,MLX,Intp,A, 
+				   w(WGlobalArrX,WGlobalVarX,
+				     WLocalArrX,WLocalVarX,WArrRefX))]),				   
+#ifdef  PROFILE
+	ctime(T2),
+#endif	
+	decode_marked_list(MLX,ML),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(decode_interpolant_answers,T3-T2),
+	ctime(T4),
+#endif
+        decode_witnesses(FName,
+			 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+			 WArrRefX,
+			 WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			 WArrRef),
+#ifdef  PROFILE
+        ctime(T5),
+	add_counter(decode_witnesses_answers,T5-T4),
+#endif 				
+	debug_message(" DECODED RETRACT %\n",
+		      [wcet_answer(Depth,FName,ML,Intp,A,
+				   w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+				     WArrRef))]).
+#else   /* ENCODE_CHILD_PARENT */
+retract_wcet_answer___(Depth,_FName,Id,ML,Intp,A, Witness):-
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  /*PROFILE*/
+        % FName is needed for compositional
+	wcet_answer(Depth, _,Id,ML, Intp,A, Witness),
+ 	robust_retract_no_call(wcet_answer(Depth,_,Id,_,_,_,_)),
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0).
+#else
+        true.
+#endif
+%--------------------------------------------------------------------------%
+#endif /*ENCODE_CHILD_PARENT*/
+%--------------------------------------------------------------------------%
+
+
+%--------------------------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT
+%--------------------------------------------------------------------------%
+% Decode only the interpolant list
+retract_wcet_answer2___(Depth,FName,Id,ML,Intp,WCET, Witness):-
+#ifdef  PROFILE
+	ctime(T0),
+#endif
+#ifdef  PIPEDUMP_AND_ANSWERS
+        pipe_master_remove_wcet_answer(Depth,Id,MLX,Intp,WCET,Witness),
+#else   /*PIPEDUMP_AND_ANSWERS*/
+        % FName is needed for compositional
+	retract(wcet_answer(Depth,_,Id,MLX,Intp,WCET, Witness)),
+#endif  /*PIPEDUMP_AND_ANSWERS*/	
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(retract_timing,T1-T0),
+#endif	
+	debug_message(" RETRACT %\n",
+		      [wcet_answer(Depth,FName,MLX,Intp,WCET, Witness)]),
+#ifdef  PROFILE
+	ctime(T2),
+#endif	
+	decode_marked_list(MLX,ML),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(decode_interpolant_answers,T3-T2),
+#endif
+        true.
+%--------------------------------------------------------------------------%
+#endif /*ENCODE_CHILD_PARENT*/
+%--------------------------------------------------------------------------%
+
+%--------------------------------------------------------------------------%
+#ifdef ENCODE_CHILD_PARENT
+%--------------------------------------------------------------------------%
+% Low-level operation for RETRACT
+% wcet_answer + exit_answer_interp + wcet_exit_answer
+retract_wcet_loop_answer___(Depth,FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    Id,ML,Intp,
+			    BodyWCET,BodyWitness,ExitWCET,ExitWitness):-
+	retract_wcet_answer___(Depth,FName,Id,ML,Intp1,BodyWCET,BodyWitness),
+	retract_exit_interp(Depth,FName,ML,Intp2),
+	retract_wcet_exit_answer(Depth,FName,ExitWCET,ExitWitness),
+	interp_merge_loop_interpolant(Intp1,Intp2,
+				      FName,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      Intp).	
+%--------------------------------------------------------------------------%
+#else /* defined(ENCODE_CHILD_PARENT) */
+%--------------------------------------------------------------------------%
+retract_wcet_loop_answer___(Depth,FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    Id,ML,Intp,
+			    BodyWCET,BodyWitness,ExitWCET,ExitWitness) :-
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  /*PROFILE*/
+  	robust_retract_no_call(wcet_answer(Depth,_,Id,ML,Intp1,
+					   BodyWCET,BodyWitness)),
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif  /*PROFILE*/
+ 	retract_exit_interp(Depth,_,ML,Intp2),
+	retract_wcet_exit_answer(Depth,FName,ExitWCET,ExitWitness),
+	interp_merge_loop_interpolant(Intp1,Intp2,
+				      FName,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      Intp).
+%--------------------------------------------------------------------------%
+#endif /*ENCODE_CHILD_PARENT*/
+%--------------------------------------------------------------------------%
+
+%--------------------------------------------------------------------------%
+% Retract wcet answer (bound+witness) from the exit paths of the loop
+%--------------------------------------------------------------------------%
+retract_wcet_exit_answer(Depth,FName,WCET,_):-
+	current_tracer_flag(witnesses,n),!,
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  /*PROFILE*/		
+	retract(wcet_exit_answer(Depth,FName,WCET,_)),
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif  /*PROFILE*/
+        true.	
+retract_wcet_exit_answer(Depth,FName,WCET,Witness):-
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  /*PROFILE*/
+#ifdef  ENCODE_CHILD_PARENT
+        retract(wcet_exit_answer(Depth,FName,WCET,Witness)),
+#else
+	wcet_exit_answer(Depth,FName,WCET,Witness),
+	robust_retract_no_call(wcet_exit_answer(Depth,FName,_,_)),
+#endif  /*ENCODE_CHILD_PARENT*/	
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif  /*PROFILE*/
+	true.
+
+
+%--------------------------------------------------------------------------%
+#if     defined(ENCODE_MEMO) 
+#if     (UNFOLD_OPT==WCET)
+%--------------------------------------------------------------------------%
+% Generic operation for encoding entries of the memo table.
+encode_memo(FName,
+	    GlobalArr/*list(var)*/, GlobalVar/*list(var)*/,
+	    LocalArr /*list(var)*/, LocalVar /*list(var)*/,
+	    CList , Answer,
+	    CListX, AnswerX):-
+	% defined in tracer_encode_ground.clp.gpp
+	/* Encode the negated list of constraints */ 
+	encode_constraints_list(FName,
+				GlobalArr,GlobalVar,LocalArr,LocalVar,
+				CList,CListX),
+	/* Encode the wcet answer */
+#ifdef  PROFILE
+	ctime(T0),
+#endif
+	encode_wcet_answer(FName,Answer,AnswerX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_memo_2,T1-T0),
+#endif
+	!.
+encode_memo(_,_,_,_,_,_,_,_,_):-
+	error_message("encode_memo/9 \n",[]).
+#endif	/*(UNFOLD_OPT==WCET)*/
+#endif  /*ENCODE_MEMO*/
+
+% Generic operation for decoding entries from the memo table.
+% decode_memo(FName,
+% 	    CListX, AnswerX,
+% 	    CList, Answer, GlobalArr, GlobalVar, LocalArr , LocalVar):-
+% 	% (defined in tracer_encode_ground.clp.gpp)
+%         decode_constraints_list(FName,
+% 				GlobalArr,GlobalVar,LocalArr,LocalVar,
+% 				CListX,CList),
+%         decode_wcet_answer(FName,AnswerX,Answer),!.
+% decode_memo(_,_,_,_,_,_,_,_,_):-
+% 	error_message("decode_memo/9 \n",[]).
+
+
+#ifdef  ENCODE_MEMO
+#if     (UNFOLD_OPT==WCET)
+% Generic operation for encoding WCET answers
+encode_wcet_answer(FName,Answer,AnswerX):-
+#ifdef  ENCODE_CHILD_PARENT
+        % To prevent warnings
+        FName=_,
+        Answer=AnswerX,!.
+#else
+	Answer = answer(WCET,
+			w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)),
+        encode_witnesses(FName,
+			 WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			 WArrRef,
+			 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+			 WArrRefX),			 	
+	AnswerX = answer(WCET,
+			 w(WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX)),!.
+#endif  /*ENCODE_CHILD_PARENT*/
+
+#endif	/*(UNFOLD_OPT==WCET)*/
+#endif  /*ENCODE_MEMO*/
+
+
+#if     defined(ENCODE_CHILD_PARENT) || defined(ENCODE_MEMO)
+#if     (UNFOLD_OPT==WCET)
+% Generic operation for decoding WCET answers
+decode_wcet_answer(FName,AnswerX,Answer):-
+	AnswerX = answer(WCET,
+			 w(WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX)),
+	decode_witnesses(FName,
+			 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,
+			 WArrRefX,
+			 WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+			 WArrRef),
+	Answer = answer(WCET,
+			w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)),!.
+#endif /*UNFOLD_OPT==WCET*/
+#endif /*ENCODE_CHILD_PARENT || ENCODE_MEMO */
+
+
+
+/** Begin OUTDATED if compositional **/
+%-----------------------------------------------------------------------------------%
+% collate_wcet_call_answers/8: collate (apply maximum) all children' solutions
+%-----------------------------------------------------------------------------------%
+% collate_wcet_call_answers(Depth, FName, ML, 
+%                           Intp,
+%   	                    A,
+% 			    GlobalArr, GlobalVar, LocalArr, LocalVar,
+% 			    ArrRef) :-
+
+% 	collate_wcet_call_answers_aux(Depth, FName, ML,
+% 	                              [],
+% 				      0, _, _, _, _, _, 
+%                                     Intp,
+% 				      A,
+%                                     GlobalArr, GlobalVar, 
+% 	                              LocalArr, LocalVar,
+% 				      ArrRef).
+
+% collate_wcet_call_answers_aux(Depth, FName, ML, 
+% 	                      IntpA,
+% 			      A,
+% 			      VGlobalArr, VGlobalVar, VLocalArr, VLocalVar,
+% 			      VArrRef,
+% 			      IntpD,
+% 			      D, 
+% 			      GlobalArr, GlobalVar, LocalArr, LocalVar,
+% 			      ArrRef) :-
+% 	retract_wcet_answer___(Depth, FName, ML, 
+% 			       IntpB,
+% 			       B,
+% 			       WGlobalArr, WGlobalVar,WLocalArr,WLocalVar,
+% 			       WArrRef),	
+% %  	wcet_answer(Depth, FName, ML, B,
+% % 		    WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef,
+% %  	robust_retract_no_call(wcet_answer(Depth, FName, _H, _I,
+% % 					   _JGlobalArr, _JGlobalVar, 
+% %                                          _JLocalArr, _JLocalVar,
+% %                                          _JArrRef)),
+	
+% 	max_answer(a(A, VGlobalArr, VGlobalVar, VLocalArr, VLocalVar,
+%                      VArrRef),
+% 	           a(B, WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+% 		     WArrRef),
+% 		   a(C, XGlobalArr, XGlobalVar, XLocalArr, XLocalVar,
+% 		     XArrRef)),
+	
+%         debug_message("Computing maximum between % and % = % \n",[A,B,C]),
+
+%         %----------------------------------------------------------------------
+%         % Intp obtained just by appending
+%         %----------------------------------------------------------------------
+%         append(IntpA, IntpB, IntpC),
+	
+% 	collate_wcet_call_answers_aux(Depth, FName, ML, 
+% 				      IntpC,
+% 	                              C, 
+% 				      XGlobalArr, XGlobalVar,
+% 				      XLocalArr, XLocalVar, XArrRef,
+% 				      IntpD,
+% 				      D,
+% 				      GlobalArr, GlobalVar,
+% 				      LocalArr, LocalVar, ArrRef).
+% collate_wcet_call_answers_aux(_Depth, _FName, _, 
+% 			      Intp,
+% 			      A,
+% 			      GlobalArr, GlobalVar, LocalArr, LocalVar,
+% 			      ArrRef,
+% 			      Intp,
+% 			      A,
+% 			      GlobalArr, GlobalVar, LocalArr, LocalVar,
+% 			      ArrRef).
+
+% %----------------------------------------------------------------------------------%
+% % collate_wcet_answers_ext/7 computes the disjunction of all final constraints.
+% % Note that here we don't worry about array references since the variables
+% % are on symbolic constraints in DisjCL
+% %----------------------------------------------------------------------------------%
+
+% collate_wcet_answers_ext(_,CallFName,DisjCL,
+% 	                 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+% 	collate_wcet_answers_ext_aux(_,CallFName,[],DisjCL0,
+% 	                             SGlobalArr,SGlobalVar,
+% 				     SLocalArr,SLocalVar),
+% 	combine_disjunctions(DisjCL0,DisjCL).
+
+% collate_wcet_answers_ext_aux(_,CallFName,DisjCL0,DisjCL2,
+% 	                     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+% 	wcet_answer_ext(CallFName, _, CL,
+%                         SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),	
+% 	robust_retract_no_call(wcet_answer_ext(CallFName, _, _, _,_,_,_)),
+	
+% 	debug_message("\t \t collating all return values % \n",[CL]),
+	
+% 	unord_setunion(CL,DisjCL0,DisjCL1),	       
+% 	collate_wcet_answers_ext_aux(_,CallFName,DisjCL1,DisjCL2,
+% 	                             SGlobalArr,SGlobalVar,
+% 				     SLocalArr,SLocalVar).
+% collate_wcet_answers_ext_aux(_,_CallFName,DisjCL,DisjCL,
+% 	                     _SGlobalArr,_SGlobalVar,
+% 			     _SLocalArr, _SLocalVar).
+
+% %----------------------------------------------------------------------------------%
+% % combine_disjunctions(+DisjCL,-CL).
+% %----------------------------------------------------------------------------------%
+% combine_disjunctions(A,A):-
+%         % print_message("Disjunctions %\n",[A]),
+% 	current_tracer_flag(merge_disj,n),!.
+
+% combine_disjunctions(A,B):-
+% 	current_tracer_flag(merge_disj,y),
+% 	combine_disjunctions0(A,B).
+% % TODO 
+% combine_disjunctions0(A,A).
+% 	% print_message("Disjunctions %\n",[A]).
+% % combine_disjunctions0([],[]):-!.
+% % combine_disjunctions0([CL|CLs],Lub):-
+% % 	combine_disjunctions_fold(CLs,CL,Lub).
+
+% % combine_disjunctions_fold([],Lub,Lub).
+% % combine_disjunctions_fold([CL1|CLs],CL2,Lub):-
+% % 	merge(CL1,CL2,CL),
+% % 	combine_disjunctions_fold(CLs,CL,Lub).
+
+% % merge([],_,[]).
+% % merge([C1|Cs1],Cs,[C1|Cs2]):-
+% % 	member(C1,Cs), !, % keep only common constraints
+% %         merge(Cs1,Cs,Cs2). 
+% % merge([_|Cs1],Cs,Cs2):-
+% %         !,
+% %         merge(Cs1,Cs,Cs2).
+
+% If compositional WCET enabled, then also add the cost of a child if
+% it's a function call.
+% collate_wcet_answers(Depth, FName, ML, A+B,
+% 		     WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef) :-
+% 	current_tracer_flag(compositional,y),
+%         proc_wcet_answer(Depth, _FName, ML, B,
+% 			 WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+% 			 WArrRef), !,
+%         robust_retract_no_call(proc_wcet_answer(Depth, _FName, ML, B,
+% 						_JGlobalArr, _JGlobalVar,
+% 						_JLocalArr, _JLocalVar,
+% 						_JArrRef)),
+% 	%----------------------------------------------------------------------
+% 	% Note that previously we had A+B+1 instead of A+B, now we assume
+% 	% a call is one transition step
+% 	%----------------------------------------------------------------------
+%         collate_wcet_answers_aux(Depth, FName, _ ,
+%                                  0, _, _, _, _, _,
+%          			 A, _, _, _, _, _),
+% 	debug_message("and adding the cost % of a function call: total % , depth:% \n",
+%                        [B,A+B,Depth]).
+
+% %--------------------------------------------------------------------------%
+% % get_func_name(+FName0,-FName1): we need this predicate because if
+% % compositional reasoning is 'n' then the unfolder just traverses the
+% % tree as a single function (main). Hence, all function names are
+% % considered as the main function. Otherwise, each subtree
+% % corresponding to each function is handled separately. This
+% % difference is important when answers are stored and retrieved.
+% %--------------------------------------------------------------------------%
+% % USED only for compositional ...
+% get_func_name(_,FName):-
+% 	current_tracer_flag(compositional,n),!,
+% 	init_goal(FName,_,_,_,_,_,_,_,_,_,_,_).
+% get_func_name(FName,FName):-
+% 	current_tracer_flag(compositional,y),!.
+
+/** End OUTDATED if compositional **/
+

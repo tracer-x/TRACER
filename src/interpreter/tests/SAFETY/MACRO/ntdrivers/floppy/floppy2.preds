@@ -1,0 +1,42 @@
+UNLOADED == 0;
+NP == 1;
+DC == 2;
+SKIP1 == 3;
+SKIP2 == 4;
+MPR1 == 5;
+MPR3 == 6;
+IPC == 7;
+
+s == UNLOADED;
+s == NP;
+s == DC;
+s == SKIP1;
+s == SKIP2;
+s == MPR1;
+s == MPR3;
+s == IPC;
+
+pended == 0;
+pended == 1;
+
+compFptr == 0;
+
+compRegistered == 0;
+compRegistered == 1;
+
+lowerDriverReturn == 0;
+lowerDriverReturn == 259; //semi
+
+setEventCalled == 0;
+setEventCalled == 1;
+
+customIrp == 0;
+customIrp == 1;
+
+status@main == -1; //semi
+status@main == 259; //semi
+status@main == 0; //semi
+
+myStatus == 0;
+
+

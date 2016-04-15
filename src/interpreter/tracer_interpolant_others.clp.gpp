@@ -1,0 +1,1463 @@
+% tracer_interpolant_others.clp.gpp
+
+%=============================================================================%
+% This file is a general interface for computing interpolants that can
+% be represented as an arbitrary formula.
+%=============================================================================%
+% export
+%
+%   interp_init_datastructures/0
+%   interp_cleanup_datastructures/0
+%
+%   interp_gen_success_path/5
+%   interp_gen_infeasible_path/9
+%   interp_pre_operator/18
+%   interp_combine/10
+%   interp_simplify_after_combined/3
+%   interp_subsumed/15
+%   interp_create_subsumed_interpolant/13
+%   interp_create_abstraction_interpolant/12
+%   interp_create_memo_interpolant/12
+%   interp_merge_loop_interpolant/8
+%   compute_interp_get_marked_constraints/4
+%
+#ifdef MINMAX
+%   interp_create_memo_loopheader_interpolant/9
+#endif /*MINMAX*/
+#ifdef ENCODE_MEMO_OPT
+%   encode_interp_conjunct_list/7
+%   decode_interp_conjunct_list/7
+#endif /*ENCODE_MEMO_OPT*/
+%
+%   for debugging
+%   pretty_printer_interp/4                
+%
+%   Stats
+%   interp_init_counters/0
+%   interp_print_combine_stats/0
+%   interp_print_pre_stats/0
+%   record stats in tracer_memo.clp.gpp
+%   interp_size/2
+%   used for WCET
+%   record_when_marked/3               
+%=============================================================================%
+% The use of arbitrary formulas is the major difference wrt to
+% tracer_interpolation_basic where an interpolant must be a subset of
+% the constraints that appear in a path. This relaxation allows us to
+% produce interpolants with a different degree of strength.
+%
+% Currently, we have the following interpolation methods:
+% 
+% dwp : Compute exact weakest preconditions. The formulas are, in
+% general, disjunctive. It's NOT PRACTICAL and it shouldn't be
+% used. We just keep it to play with small programs and for
+% comparison.
+%
+% ndwp : Compute more efficient weaker preconditions. The formulas are
+% always conjunctive but they are underapproximations of the exact wp.
+%
+% rybal: Use of CLP-Prover to compute interpolants. CLP-Prover is a
+% tool by A. Rybalchenko and and V. Sofronie-Stokkermans "Constraint
+% Solving for Interpolation" published in VMCAI 2007
+% -----------------------------------------------------------------------------%
+% For correctness in presence of function calls, we must compile the C
+% program as follows:
+%
+% Foreach
+%         "return_type f(arg_type a1,..., arg_type an)" rewrite as
+%         "void f(void)"
+% where:
+% 1) All local variables of main are lifted to global variables
+% 2) All formal parameters are lifted to global variables
+%    Do renaming of actual parameters
+% 3) All return variables are lifted to global variables
+%    Do proper renaming. This renaming is tricky since it must traverse
+%    all the callee functions until no more callee and then replace the
+%    return variable with the corresponding global variable.
+% Otherwise, programs as tests/SAFETY/wp/wp15.c are verified incorrectly!
+%=============================================================================%
+% BUGS: **solved by above compilation**
+% - Subsumption may be wrong with function calls and loops!: caller's
+%   local variables are projected away by callees but after returning
+%   some interpolants about those caller's variables may be needed. If
+%   we use interpolants from the deletion vector we will keep that
+%   information (sometimes with special adhoc steps like the one in
+%   backward_propagation_interp_across_abstraction/15) but for dwp,
+%   ndwp, and clp may be not the case. A proper solution is not easy
+%   since of the use of logical variables. It may be better to use
+%   atoms which contains the name of the function where it's
+%   defined. A quicker solution may be to detect those cases and get
+%   information from the deletion vector.
+%
+% FIXME/TODO:
+%
+% - Array and pointers. Here it's when our forward symbolic execution
+% could have a big impact in the weakest precondition
+% computations. For instance, let's assume the fragment:
+%
+%   if (p==p1) return;
+%   if (p==p2) return;
+%   *p1=*p2=0; <pp> *p=1;
+%   if (*p1==1 || *p2==1) error();
+%
+%   At <pp>  we have to compute:
+%   wp(*p=1, *p1=1 or *p2=1)
+%
+%   In principle, standard wp will consider the four cases:
+%   (1) p=p1  and p=p2  
+%   (2) p=p1  and p!=p2 
+%   (3) p!=p1 and p=p2  
+%   (4) p!=p1 and p!=p2
+%
+%   However by using forward info we know that only the (4) case is
+%   possible. Therefore, wp(*p=1, *p1=1 or *p2=1) =  *p1=1 or *p2=1
+%
+% - Not implemented for TRACER analysis (wcet is outdated, for slicing
+%   or live should be straightforward)
+%-----------------------------------------------------------------------------%
+% Notation
+%
+% Intp   is a tuple state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,IntpConj,_)
+% IntpConj is a list of intp_conjunct(Tail,List) where List is an
+%        open-tail list and the tail unifies with Tail.
+% IntpL  is the second argument of IntpConj where Tail is unified with [].
+%=============================================================================%
+
+% Note this predicate MUST be called from tracer.clp.gpp before
+% starting
+interp_init_datastructures:-
+	current_tracer_flag(other_interp,n),!.
+interp_init_datastructures:-
+	precompute_gen_labels.
+
+% Note this predicate MUST be called to avoid leaks.
+interp_cleanup_datastructures:-
+	current_tracer_flag(other_interp,n),!.
+interp_cleanup_datastructures:-
+	retractall(interp_caller(_,_,_)),
+	retractall('$MYVAR'(_,_,_,_)).
+
+%-----------------------------------------------------------------------------%
+% interp_init_counters
+%-----------------------------------------------------------------------------%
+interp_init_counters:-
+	current_tracer_flag(other_interp,n),!.
+interp_init_counters:-
+	% Count the size of the formula after combine (before storing
+	% memotable)	
+	set_counter(totalwpsize, 0),
+        % Count the size of the formula after pre operation
+        set_counter(wp_total_size, 0),
+	% Count the number of infeasible conjuncts
+	set_counter(num_of_infeasible_wp_conjunct,0),
+	% Count execution time of simplify_constraints/6
+	set_counter(wp_simplify_pre_timing,0),
+	set_counter(wp_simplify_combine_timing,0),	
+	% Count the execution time of remove_all_duplicates/3
+	set_counter(remove_all_duplicates_timing,0),
+	% Count the execution time of compute_wp_assignment/12
+	set_counter(compute_wp_assignment_timing,0),
+	% Count the execution time of compute_wp_aux/4
+	set_counter(compute_wp_guard_timing,0),
+	% Count the execution time of identical_test/3
+	set_counter(identical_test_timing,0),
+	% Number of constraints eliminated during combine of two wp's
+	set_counter(num_of_duplicates,0),
+	set_counter(time_interp_pre_operator,0),
+#ifdef  MINMAX	
+	set_counter(time_flatten_path_for_pre_op,0),
+#endif  /*MINMAX*/		
+	%----------------------------------------------------------------
+	% This flag is only for wp_non_disjunctive
+	%----------------------------------------------------------------
+	set_counter(time_pre_delete_irrelevant,0),
+	set_counter(time_pre_abduction,0),
+	set_counter(time_pre_recover_underapproximation,0),	
+	% Count the number of times that the wp is disjunctive
+	set_counter(num_of_disjuncts,0),
+	% Count the number of times that disjunctive wp could not be
+	% simplified to conjunctive form.
+	set_counter(num_of_unavoidable_disjuncts,0),
+	% Count the number of times that disjunctive wp could not be
+	% simplified to conjunctive form at an infeasible node.	
+	set_counter(num_of_unavoidable_disjuncts_at_infeasible,0),	
+	% Depending on the options, empty conjunctions are possible
+	set_counter(num_of_empty_conjunctions,0),
+	% Count the number of times a guard is skipped 
+	set_counter(num_of_wp_guard_skipped,0),
+	% Count the complement of num_of_wp_guard_skipped
+	set_counter(num_of_wp_guard_not_skipped,0),
+	% (temporary)
+	set_counter(num_context_not_stronger_than_wp,0),
+	%----------------------------------------------------------------	
+	% Count the number of times these predicates are called
+	set_counter(num_deletion_markings_from_wp,0),
+	set_counter(num_deletion_markings_from_wp_aux,0).
+
+
+%-----------------------------------------------------------------------------%
+% interp_gen_success_path(+,+,+,+,-)
+% Generate the interpolant of a safe path.
+%-----------------------------------------------------------------------------%
+interp_gen_success_path(_,_,_,_,nil):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp):-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp).
+interp_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp).
+interp_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp):-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp).
+					
+%-----------------------------------------------------------------------------%
+% interp_gen_infeasible_path(+,+,+,+,+,+,+,+,-)
+% Generate the interpolant for an infeasible path.
+%-----------------------------------------------------------------------------%
+interp_gen_infeasible_path(_,_,_,_,_,_,_,_,nil):-
+	current_tracer_flag(other_interp,n), !.
+interp_gen_infeasible_path(FName,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, XCL, Intp):-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_infeasible_path(FName,
+				    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				    CL, ML, XCL, Intp).
+interp_gen_infeasible_path(FName,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, XCL, Intp):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_infeasible_path(FName,
+				     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				     CL, ML, XCL, Intp).
+interp_gen_infeasible_path(FName,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, XCL, Intp):-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_infeasible_path(FName,
+			      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			      CL, ML, XCL, Intp).
+
+%-----------------------------------------------------------------------------%
+% interp_pre_operator(/*post-state*/
+%                    +Intp1, +ML1, +Id,
+% 	   	     +FName1,+SGlobalArr1,+SGlobalVar1,+SLocalArr1,+SLocalVar1,
+%	             /*constraints associated to the transition*/
+%	  	     XCL, GuardFlag,
+%		     /*pre-state*/
+%		     +CL, +ML,
+%		     +FName,+SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,-Intp)
+%-----------------------------------------------------------------------------%
+% Compute the pre-image of an interpolant
+%-----------------------------------------------------------------------------%
+interp_pre_operator(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,nil):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_pre_operator(PostIntp, ML1,
+		    Id, FName1, SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,		
+		    XCL, GuardFlag, CL,ML,
+		    FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,PreIntp) :-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	%---------------------------------------------------------------------
+	% Special step for function calls
+	%---------------------------------------------------------------------	
+	not(not(remember_caller_interp(Id, 
+				       SGlobalArr1, SGlobalVar1,
+				       SLocalArr1 , SLocalVar1,
+				       PostIntp))),	
+	wp_disjunct_pre_operator(PostIntp, ML1,
+				 Id, FName1, 
+				 SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,		
+				 XCL, GuardFlag, CL,ML,
+				 FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,PreIntp).
+interp_pre_operator(PostIntp, ML1,
+		    Id, FName1, SGlobalArr1,SGlobalVar1, SLocalArr1, SLocalVar1,		
+		    XCL, GuardFlag, CL, ML,
+		    FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,PreIntp) :-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	%---------------------------------------------------------------------	
+	% Special step for function calls
+	%---------------------------------------------------------------------	
+	not(not(remember_caller_interp(Id, 
+				       SGlobalArr1, SGlobalVar1,
+				       SLocalArr1 , SLocalVar1,
+				       PostIntp))),	
+	wp_nondisjunct_pre_operator(PostIntp, ML1,
+				    Id, FName1,
+				    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				    XCL, GuardFlag, CL, ML,
+				    FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				    PreIntp).
+interp_pre_operator(PostIntp, ML1,
+		    Id, FName1, SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,		
+		    XCL, GuardFlag, CL, ML,
+		    FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, PreIntp) :-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	%---------------------------------------------------------------------	
+	% Special step for function calls
+	%---------------------------------------------------------------------	
+	not(not(remember_caller_interp(Id, 
+				       SGlobalArr1, SGlobalVar1,
+				       SLocalArr1 , SLocalVar1,
+				       PostIntp))),	
+	rybal_pre_operator(PostIntp, ML1,
+			   FName1, SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			   XCL, GuardFlag, CL, ML,
+			   FName , SGlobalArr , SGlobalVar , SLocalArr , SLocalVar,
+			   PreIntp).
+
+%------------------------------------------------------------------------------
+% remember_caller_interp(+Id,+SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,+Intp)
+%------------------------------------------------------------------------------
+% A function call is quite tricky. Before, the flow moves from the
+% caller to the callee we MUST remember the part of the interpolant
+% related to caller's local variables which cannot be touched by the
+% callee. Then, once the function returns we just combine this partial
+% interpolant with the interpolant computed by the callee. This last
+% step is done by merge_caller_interp/9. Otherwise, the subsumption
+% would be unsound.
+%-----------------------------------------------------------------------------
+% FIXME: even so, this is not enough. Look at this program:
+%  int x;
+%  main(){
+%     int y;
+%     foo();
+%    {intp: x+y>0}
+%
+%  In the callee, we will try to project away y (caller's local
+%  variable) propagating inside foo the interpolant true (which is
+%  incorrect!!!)
+% ** I think ** we can solve this problem by ensuring that all
+% functions in the program are of the form:
+%            void f(void)
+%------------------------------------------------------------------------------
+remember_caller_interp(_,_,_,_,_,Intp):- Intp == nil, !.	
+remember_caller_interp(Id,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp):-
+	trans(CallerFName,Id,PP1,_,_,_,_,_,_,_,_,_,_,_,
+	      SGlobalArr,SGlobalVar,_,_,SLocalArr,SLocalVar,XCL,
+	      [call(_,_,_,_)],_,_),
+        !,
+#ifdef  DEBUG_USE	
+	print_message("\tStoring caller's interpolant ...",[],yellow),
+#endif  /*DEBUG_USE*/	 	
+	%----------------------------------------------------------------------
+        % Obtain the caller's local variables
+	%----------------------------------------------------------------------
+	obtain_caller_local_variables(XCL,Id,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      _,_,CallerSLocalArr,CallerSLocalVar),
+	%----------------------------------------------------------------------	
+	% CallerIntp is the projection of Intp wrt the caller's local variables
+	%----------------------------------------------------------------------	
+	Intp=state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,IntpL,_),
+
+	append(CallerSLocalArr,CallerSLocalVar,CallerVars),
+        % print_message("%\n",[Intp]),
+        % print_message("Caller local variables: % % \n",[CallerSLocalArr,CallerSLocalVar]),
+	project_interp(IntpL,
+		       CallerVars,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		       ProjIntpL),
+        %print_message("%\n",[ProjIntpL]),		
+	CallerIntp=state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,ProjIntpL,_),
+	%----------------------------------------------------------------------
+	% Store the result for future use in merge_caller_interpolant/9
+	%----------------------------------------------------------------------	
+	fassert(interp_caller(CallerFName,PP1,CallerIntp)),
+#ifdef  DEBUG_USE	
+	print_message("\tStored caller's interpolant ",[],yellow),
+	pretty_printer_interp(CallerFName,_,"",
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      CallerIntp),
+#endif  /*DEBUG_USE*/
+        true.
+remember_caller_interp(_,_,_,_,_,_):- !. 
+
+
+project_interp([],_,_,_,_,_,[]):-!.
+project_interp([intp_conjunct([],CL)|R], Vs,SGA,SGV,SLA,SLV,Ts):-
+	wrapper_project_sym_constraints(Vs,
+					SGA,SGV,SLA,SLV,
+					SGAX,SGVX,SLAX,SLVX,
+					CL,ProjCL),
+	!,
+	SGA=SGAX,SGV=SGVX,SLA=SLAX,SLV=SLVX,
+	project_interp_aux(ProjCL,T,Ts),	
+	project_interp(R,Vs,SGA,SGV,SLA,SLV,T).
+project_interp([_|R], Vs,SGA,SGV,SLA,SLV,Ts):-
+	!,
+	project_interp(R,Vs,SGA,SGV,SLA,SLV,Ts).
+
+project_interp_aux([],T,T):-!.
+project_interp_aux(CL,T,[intp_conjunct(Tail,CLTail)|T]):-
+	append(CL,Tail,CLTail),!.
+	
+wrapper_project_sym_constraints(Vars,
+				SGlobalArr   , SGlobalVar   , SLocalArr   , SLocalVar,
+				AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,
+				CL, ProjCL):-
+	forget_ifnotmember(Vars,
+			   SGlobalArr   ,SGlobalVar,    SLocalArr    ,SLocalVar,
+			   AbsSGlobalArr,AbsSGlobalVar, AbsSLocalArr,AbsSLocalVar),
+	project_sym_constraints(AbsSGlobalArr,AbsSGlobalVar, AbsSLocalArr,AbsSLocalVar,
+				CL, ProjCL).
+
+forget_ifnotmember(Vars,
+		   SGlobalArr , SGlobalVar , SLocalArr  , SLocalVar,
+		   SGlobalArrX, SGlobalVarX, SLocalArrX , SLocalVarX):-       
+	mark_unknown(SGlobalArr, Vars, SGlobalArrX),
+	mark_unknown(SGlobalVar, Vars, SGlobalVarX),
+	mark_unknown(SLocalArr , Vars, SLocalArrX),
+	mark_unknown(SLocalVar , Vars, SLocalVarX).	
+
+mark_unknown([],_,[]):-   !.
+mark_unknown([X|Xs],L,[X|Ys]):-
+	memberGndchk(X,L),!,
+	mark_unknown(Xs,L,Ys).
+mark_unknown([_|Xs],L,[_|Ys]):-
+	mark_unknown(Xs,L,Ys).
+
+%-------------------------------------------------------------------------%
+% obtain_caller_local_variables(+XCL,+Id,+SGlobalArr,+SGlobalVar,
+%                              +SLocalArr,+SLocalVar,-CallerVars)
+%-------------------------------------------------------------------------%
+% Before a call to a function is performed we get all caller's local
+% variables on which we want to keep their states after the call
+% returns.
+%-------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_obtain_caller_local_variables_1:-
+	SGA = [_H], SGV = [_A,_B,_C], SLA = [],SLV = [X,_Y,_Z],XCL = [assign(X,_)],
+	print_message("Before % % % %  \n",[SGA,SGV,SLA,SLV]),
+	obtain_caller_local_variables(XCL,_,SGA,SGV,SLA,SLV,SGA1,SGV1,SLA1,SLV1),
+	print_message("After % % % %  \n",[SGA1,SGV1,SLA1,SLV1]).
+test_obtain_caller_local_variables_2:-
+	SGA = [_H], SGV = [], SLA = [],SLV = [X,_Y,_Z],XCL = [assign(X,_)],
+	print_message("Before % % % %  \n",[SGA,SGV,SLA,SLV]),
+	obtain_caller_local_variables(XCL,_,SGA,SGV,SLA,SLV,SGA1,SGV1,SLA1,SLV1),
+	print_message("After % % % %  \n",[SGA1,SGV1,SLA1,SLV1]).
+test_obtain_caller_local_variables_3:-
+	SGA = [_H], SGV = [], SLA = [_A,_B,C],SLV = [_X,_Y,_Z],XCL = [assign(C,_)],
+	print_message("Before % % % %  \n",[SGA,SGV,SLA,SLV]),
+	obtain_caller_local_variables(XCL,_,SGA,SGV,SLA,SLV,SGA1,SGV1,SLA1,SLV1),
+	print_message("After % % % %  \n",[SGA1,SGV1,SLA1,SLV1]).	
+#endif  /*DEBUG_USE*/
+%---------------------------------------------------------------------------------%
+obtain_caller_local_variables(XCL,Id,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	%--------------------------------------------------------------------------	
+	% Let x=foo() be a statement, we call "return value" the
+	% variable "x". get_return_index/7 returns a number between 1
+	% and N where N is the number of variables such that it
+	% corresponds to the return value. If the statement is of the
+	% form foo() then get_return_index/7 returns -1.
+	%--------------------------------------------------------------------------	
+	get_return_index(XCL,Id,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			 RetIndex),
+        % if RetIndex=-1 then the function call does not have return
+        % value
+	RetIndex > -1 ,
+	!,
+	%--------------------------------------------------------------------------
+	% Replace the return value with a fresh variable because the
+	% return value is not part of the caller's variables. That is,
+	% it should be updated by the callee.
+	%--------------------------------------------------------------------------	
+	length(SGlobalArr,N1),
+	length(SGlobalVar,N2),
+	length(SLocalArr ,N3),
+	replace_return_with_fresh_var(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      N1,N2,N3, RetIndex,
+				      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1).
+obtain_caller_local_variables(_,_,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-!.
+
+replace_return_with_fresh_var(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      N1,N2,N3, RetIndex,
+			      SGlobalArr,SGlobalVar,SLocalArr1,SLocalVar):-
+	RetIndex > N1+N2, RetIndex <= N1+N2+N3, !,
+	replace_index_with_fresh_var(SLocalArr,1,RetIndex-(N1+N2),SLocalArr1).
+replace_return_with_fresh_var(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      N1,N2,N3, RetIndex,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar1):-
+	!,
+	replace_index_with_fresh_var(SLocalVar,1,RetIndex-(N1+N2+N3),SLocalVar1).
+				        
+replace_index_with_fresh_var([],_,_,[]).
+replace_index_with_fresh_var([_X|Xs],Index,Target,[_|Xs]):-
+	Index==Target, !.
+replace_index_with_fresh_var([X|Xs],Index,Target,[X|Zs]):-
+	replace_index_with_fresh_var(Xs,Index+1,Target,Zs).
+	
+
+%------------------------------------------------------------------------------%
+% interp_combine(+Intp1,+Intp2,
+%                +Depth,+FName,+PP,
+%	         +SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,
+%                -Intp3)
+%------------------------------------------------------------------------------%
+% Combine the interpolants of the children
+%------------------------------------------------------------------------------%
+interp_combine(_,_,_,_,_,_,_,_,_,nil):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_combine(Intp1,Intp2,Depth,FName,_PP,
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp3):-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_combine(Intp1,Intp2, Depth,FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    Intp3).
+interp_combine(Intp1,Intp2,Depth,FName,_PP,
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp3):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_combine(Intp1,Intp2,Depth,FName,
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       Intp3).
+interp_combine(Intp1,Intp2,_Depth,FName,_PP,
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp3):-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_combine(Intp1,Intp2,
+		      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		      Intp3).
+		      
+
+%-------------------------------------------------------------------------------
+% merge_caller_interp(+,+,+,+,+,+,+,+,-)
+%-------------------------------------------------------------------------------
+% This is the counterpart of remember_caller_interp/6
+%-------------------------------------------------------------------------------
+merge_caller_interp(FName,PP,Depth,
+		    Intp,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    Intp1):-
+	retract(interp_caller(FName,PP,CallerIntp)),
+%print_message("% % % % % % % \n",[FName,PP,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp]),				   
+%print_message("%\n",[interp_caller(FName,PP,CallerIntp)]),
+	!,	
+	interp_combine(Intp,CallerIntp,Depth,FName,PP,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp1),
+#ifdef  DEBUG_USE	
+	print_message("\tMerged with caller's interpolants: \n\t",[],yellow),
+	pretty_printer_interp(FName, Depth, "",
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      Intp1),
+#endif 	/*DEBUG_USE*/	
+	true.
+merge_caller_interp(_,_,_,Intp,_,_,_,_,Intp):- !.
+
+%------------------------------------------------------------------------------%
+% interp_simplify_after_combined(+FName,+Intp,-SimpIntp)
+%------------------------------------------------------------------------------%
+% After all children's interpolants have been combined, an extra step to try
+% to remove redundancies may be required.
+%------------------------------------------------------------------------------%
+interp_simplify_after_combined(_,_,nil):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_simplify_after_combined(FName,Intp,SimpIntp):-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_simplify_after_combined(FName,Intp,SimpIntp).
+interp_simplify_after_combined(FName,Intp,SimpIntp):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_simplify_after_combined(FName,Intp,SimpIntp).
+interp_simplify_after_combined(FName,Intp,SimpIntp):-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_simplify_after_combined(FName,Intp,SimpIntp).
+
+%------------------------------------------------------------------------------%
+% interp_subsumed(+,+,+,+,+,+,+,+,+,+,+)
+%------------------------------------------------------------------------------%
+interp_subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_subsumed(FName,
+		SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		GlobalArr ,GlobalVar ,LocalArr ,LocalVar, ArrRef,
+		TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, IntpConj):-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_subsumed(FName,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,			     
+			     GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+			     TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,IntpConj).
+interp_subsumed(FName,
+		SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+		GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, IntpConj):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_subsumed(FName,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+				GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+				TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, IntpConj).
+interp_subsumed(FName,
+		SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+		GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, NegIntp):-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_subsumed(FName,
+		       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,	    
+		       GlobalArr , GlobalVar , LocalArr , LocalVar , ArrRef,
+		       TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, NegIntp).
+
+%------------------------------------------------------------------------------%
+% interp_create_subsumed_interpolant(+,+,+,+,+,+,+,+,+,+,+,+,-)
+% create interpolant from subsuming memo goal
+%------------------------------------------------------------------------------%
+interp_create_subsumed_interpolant(_,_,_,_,_,_,_,_,_,_,_,_,nil) :-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_create_subsumed_interpolant(_FName,
+				   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				   CL, ML,
+				   TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				   NegIntp, OutIntp) :-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_create_subsumed_interpolant(
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       CL, ML,
+			       TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			       NegIntp, OutIntp).
+interp_create_subsumed_interpolant(_FName,
+				   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				   CL, ML,
+				   TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				   NegIntp, OutIntp) :-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_create_subsumed_interpolant(
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       CL, ML,
+			       TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			       NegIntp, OutIntp).
+interp_create_subsumed_interpolant(FName,
+				   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				   CL, ML,
+				   TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				   NegIntp, Intp) :-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_create_subsumed_interpolant(FName,
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					  CL, ML,
+					  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+					  NegIntp, Intp).
+
+%------------------------------------------------------------------------------%
+% interp_create_abstraction_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% create interpolant from an abstraction point (e.g., loops)
+%------------------------------------------------------------------------------%
+interp_create_abstraction_interpolant(_,_,_,_,_,_,_,_,_,_,_,nil) :-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_create_abstraction_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      CL, ML,
+				      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				      IntpConj, OutIntp) :-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	negate_interp_conjuncts(IntpConj,NegIntpConj),
+	wp_disjunct_create_abstraction_interpolant(SGlobalArr,SGlobalVar,
+						   SLocalArr,SLocalVar,
+						   CL, ML,
+						   TGlobalArr,TGlobalVar,
+						   TLocalArr,TLocalVar,
+						   NegIntpConj, OutIntp).
+interp_create_abstraction_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				      CL, ML,
+				      TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				      IntpConj, OutIntp) :-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	negate_interp_conjuncts(IntpConj,NegIntpConj),
+	wp_nondisjunct_create_abstraction_interpolant(SGlobalArr,SGlobalVar,
+						      SLocalArr,SLocalVar,
+						      CL, ML,
+						      TGlobalArr,TGlobalVar,
+						      TLocalArr,TLocalVar,
+						      NegIntpConj, OutIntp).
+interp_create_abstraction_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				      CL, ML,
+				      TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				      IntpConj, OutIntp) :-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	negate_interp_conjuncts(IntpConj,NegIntpConj),	
+	rybal_create_abstraction_interpolant(SGlobalArr,SGlobalVar,
+					     SLocalArr,SLocalVar,
+					     CL, ML,
+					     TGlobalArr,TGlobalVar,
+					     TLocalArr,TLocalVar,
+					     NegIntpConj, OutIntp).
+	
+	
+%------------------------------------------------------------------------------%
+% interp_create_memo_interpolant(+,+,+,+,+,+,-,+,+,+,+,+)
+% Produce the interpolant to store in the memo. 
+%------------------------------------------------------------------------------%
+interp_create_memo_interpolant(_,_,_,_,_,_,nil,_,_,_,_,_):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       CL, ML, Intp,
+			       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			       NegInterp) :-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_create_memo_interpolant(
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, Intp,
+			   SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			   NegInterp).
+interp_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       CL, ML, Intp,
+			       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			       NegInterp) :-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_create_memo_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					       CL,ML,Intp,
+					       SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+					       NegInterp).
+interp_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       CL, ML, Intp,
+			       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			       NegIntp) :-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				      CL, ML, Intp,
+				      SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				      NegIntp).
+
+
+#ifdef  MINMAX
+%------------------------------------------------------------------------------%
+% interp_create_memo_loopheader_interpolant(+,+,+,+,+,+,+,+,-)
+% Special case to produce the interpolant corresponding to a loop
+% header to store in the memo.
+%------------------------------------------------------------------------------%
+interp_create_memo_loopheader_interpolant(_,_,_,_,_,_,_,_,_):-	
+	current_tracer_flag(other_interp,n), !,
+	error_message("interp_create_memo_loopheader_interpolant/9 should not be called\n",
+		      []).
+interp_create_memo_loopheader_interpolant(_FName,
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					  LoopCL, LoopML, Intp, OutIntp ):-
+	current_tracer_flag(other_interp_method,disjunctive),	
+	!,
+	wp_disjunct_create_memo_loopheader_interpolant(SGlobalArr, SGlobalVar,
+						       SLocalArr , SLocalVar,
+						       LoopCL, LoopML, Intp ,OutIntp).
+interp_create_memo_loopheader_interpolant(_FName,
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					  _, _, Intp, OutIntp ):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_create_memo_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					       _,_,Intp,
+					       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					       OutIntp).
+
+interp_create_memo_loopheader_interpolant(_FName,
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					  _, _, Intp, OutIntp) :-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				      _,_, Intp,
+				      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				      OutIntp).
+
+#endif  /*MINMAX*/
+
+%------------------------------------------------------------------------------%
+% Succeed if the constraints in Intp1 is a strict subset of the
+% contraints in Intp2
+%------------------------------------------------------------------------------%
+interp_strict_subset(Intp1,Intp2):-
+	not(not(interp_strict_subset_(Intp1,Intp2))).
+interp_strict_subset_([intp_conjunct([],S1)],[intp_conjunct([],S2)]):-	
+	% This one does not catch if S1 and S2 are identical but
+	% different orders. For our current purposes, that's fine.	
+	S1 == S2,
+	!,
+	fail.
+interp_strict_subset_([intp_conjunct([],S1)],[intp_conjunct([],S2)]):-
+	unord_setsubset(S1,S2).
+	
+%------------------------------------------------------------------------------%
+% interp_merge_loop_interpolant(+Intp1,+Intp2,+FName,+SGlobalArr,...,-Intp3)
+%------------------------------------------------------------------------------%
+% Merge the interpolant of the loop body with the interpolant from the
+% loop exits.
+%------------------------------------------------------------------------------%
+interp_merge_loop_interpolant(_,_,_,_,_,_,_,nil):-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_merge_loop_interpolant(Intp1,Intp2,
+			      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      Intp3):-
+	current_tracer_flag(other_interp_method,disjunctive),
+	!,
+	wp_disjunct_merge_loop_interpolant(Intp1,Intp2,
+					   FName,
+					   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   Intp3).
+interp_merge_loop_interpolant(Intp1,Intp2,
+			      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      Intp3):-
+	current_tracer_flag(other_interp_method,non_disjunctive),
+	!,
+	wp_nondisjunct_merge_loop_interpolant(Intp1,Intp2,
+					      FName,
+					      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					      Intp3).
+interp_merge_loop_interpolant(Intp1,Intp2,
+			      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      Intp3):-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_merge_loop_interpolant(Intp1,Intp2,
+				     FName,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     Intp3).
+
+negate_interp_conjuncts([],[]):-!.
+negate_interp_conjuncts([intp_conjunct([],IntpL)|R],[intp_conjunct([],NegIntpL)|T]):-
+	%--------------------------------------------------------------------
+        % FIXME: array constraints
+	%--------------------------------------------------------------------	
+        negate_numerical_list(IntpL,NegIntpL),	
+	negate_interp_conjuncts(R,T),!.
+
+#ifdef  ENCODE_MEMO_OPT
+%------------------------------------------------------------------------------%
+% encode_interp_conjunct_list(+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------%
+encode_interp_conjunct_list([],_,_,_,_,_,[]).
+encode_interp_conjunct_list([intp_conjunct([],CList)|R],
+			    FName, GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    [intp_conjunct([],CListX)|T]):-
+	encode_constraints_list(FName,GlobalArr,GlobalVar,LocalArr,LocalVar,
+				CList,CListX),
+	encode_interp_conjunct_list(R,
+				FName, GlobalArr,GlobalVar,LocalArr,LocalVar,
+				T).
+
+%------------------------------------------------------------------------------%
+% decode_interp_conjunct_list(+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------%
+decode_interp_conjunct_list([],_,_,_,_,_,[]).
+decode_interp_conjunct_list([intp_conjunct([],CListX)|T],
+			    FName,GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    [intp_conjunct(Tail,CList1)|R]):-
+	decode_constraints_list(FName,GlobalArr,GlobalVar,LocalArr,LocalVar,
+				CListX,CList),
+	append(CList,Tail,CList1),
+	decode_interp_conjunct_list(T,
+				FName,GlobalArr,GlobalVar,LocalArr,LocalVar,
+				R).
+#endif /*ENCODE_MEMO_OPT*/	
+
+%==============================================================================%
+% STATS
+%==============================================================================%
+
+%------------------------------------------------------------------------------%
+% interp_size(+Intp, -Size)
+% Size is the number of conjuncts in Intp
+%------------------------------------------------------------------------------%
+
+interp_size(_,0):-
+	current_tracer_flag(other_interp,n),!.
+interp_size(IntpConj,Size):-
+	interp_size_aux(IntpConj,Size).
+
+% interp_size(_,0):-
+% 	current_tracer_flag(other_interp,n),!.
+% interp_size(Intp,Size):-
+% 	interp_size0(Intp,Size).
+
+% interp_size0(nil, 0).
+% interp_size0(state(_, _, _, _, IntpConj,_), N) :-
+% 	interp_size_aux(IntpConj, N).
+
+interp_size_aux([], 0).
+interp_size_aux([intp_conjunct(_, L)|R], M+N) :-
+	interp_conjunct_size(L, M), !,
+	interp_size_aux(R, N).
+
+interp_conjunct_size(L, N) :-
+	interp_conjunct_difflist_size(L, N).
+
+interp_conjunct_difflist_size(Tail, 0) :- var(Tail), !.
+interp_conjunct_difflist_size([_|R], N+1) :-
+	interp_conjunct_difflist_size(R, N).
+
+%----------------------------------------------------------------------------%
+% record_when_marked(TransId, XCL, ML)
+%----------------------------------------------------------------------------%
+record_when_marked(TransId, XCL, ML) :-
+	trans(_,TransId,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,branch),
+	marked_constraints(XCL, ML), !,
+	record_trans_id(TransId).
+record_when_marked(_, _, _).
+
+record_trans_id(TransId) :-
+	marked_guard(TransId), !.
+record_trans_id(TransId) :-
+	fassert(marked_guard(TransId)).
+
+marked_constraints([_|_], [M|_]) :-
+	is_marked_term(M), !.
+marked_constraints([_|R], [_|S]) :-
+	marked_constraints(R, S).
+	
+marked_branch_entry_count(N) :-
+	marked_branch_entry_count_aux(0, N).
+
+marked_branch_entry_count_aux(N, M) :-
+	retract(marked_guard(TransId)), !,
+	trans(_, TransId,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,CL,_,_,branch),
+	length(CL, K),
+	marked_branch_entry_count_aux(N+K, M).
+marked_branch_entry_count_aux(M, M).
+
+%-----------------------------------------------------------------------------
+% Output stats
+%-----------------------------------------------------------------------------
+interp_print_pre_stats:-	
+	current_tracer_flag(other_interp,n),
+	!.
+interp_print_pre_stats:-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_print_pre_stats.
+interp_print_pre_stats:-
+	counter_value(time_interp_pre_operator,TotalPreT),
+#ifdef  MINMAX	
+	counter_value(time_flatten_path_for_pre_op,FlattenPathT),
+#endif  /*MINMAX*/	
+	counter_value(compute_wp_assignment_timing,WPAssignT),
+	counter_value(compute_wp_guard_timing,WPGuardT),
+	counter_value(wp_simplify_pre_timing,WPSimpT),
+	%----------------------------------------------------------------------
+	print_message("\tComputation of weakest preconditions \n",[]),
+	print_message("\tTotal Time                                               : % sec.\n",
+		      [TotalPreT]),
+#ifdef  MINMAX	
+	print_message("\tTime for flatten path                                    : % sec.\n",
+		      [FlattenPathT]),
+	print_message("\tTime for computing pre-image                             : % sec.\n",
+		      [TotalPreT - FlattenPathT]),		      	
+#else
+	print_message("\tTime for computing pre-image                             : % sec.\n",
+		      [TotalPreT]),		      	
+#endif  /*MINMAX*/		
+	print_message("\t\tTime for wp on assignments                       : % sec.\n",
+		      [WPAssignT]),
+	print_message("\t\t\tTime for simplifying wp                  : % sec.\n",
+		      [WPSimpT]),	
+	print_message("\t\tTime for wp on guards                            : % sec.\n",
+		      [WPGuardT]),
+	wp_disjunct_print_pre_stats,
+	wp_nondisjunct_print_pre_stats.
+
+
+interp_print_combine_stats:-
+	current_tracer_flag(other_interp,n),
+	!.
+interp_print_combine_stats:-
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	rybal_print_combine_stats.	
+interp_print_combine_stats:-
+	counter_value(time_interp_combine_operator,TotalCombine),
+	counter_value(totalwpsize, TotalWPSize),
+	counter_value(node_id    , NumOfStates),
+        %marked_branch_entry_count(UniqueGuardsN),
+	%counter_value(wp_total_size, FinalWPSize),
+	counter_value(wp_simplify_combine_timing,WPSimpT),
+	check_div_by_zero(TotalWPSize,NumOfStates,WPSize1),	
+	%----------------------------------------------------------------------
+	print_message("\tComputation of weakest preconditions \n",[]),
+	print_message("\tTotal Time                                               : % sec.\n",
+		      [TotalCombine+WPSimpT]),		      	
+	print_message("\tTime for simplifying conjunctions                        : % sec \n",
+		      [WPSimpT]),
+	print_message("\tAvg. size of wp's (# constraints) stored in memo         : %\n",
+		      [WPSize1]),
+	wp_disjunct_print_combine_stats,
+	wp_nondisjunct_print_combine_stats.
+
+	% Jorge: don't understant this number ?!?
+%       print_message("\tNo. unique guard constraints used in wp / wp size : % / %\n",
+%		      [UniqueGuardsN, FinalWPSize]).
+%	counter_value(num_deletion_markings_from_wp,NumDelOfWP),
+%	counter_value(num_deletion_markings_from_wp_aux,NumDelOfWPAux),
+%	print_message("\tExtra number of interpolants for wp        :%\n",
+%		      [NumDelOfWPAux-NumDelOfWP]).
+
+%===================================================================================%
+%===================================================================================%
+%  Common auxiliary operations
+%===================================================================================%
+%===================================================================================%
+
+%---------------------------------------------------------------------------
+% Based on profiling, expensive predicate
+%---------------------------------------------------------------------------
+remove_all_duplicates(_, nil, nil) :- !.
+remove_all_duplicates(FName, Intp, Intp1) :-
+	Intp = state(GlobalArr, GlobalVar, LocalArr, LocalVar, IntpConj, ML),
+	remove_all_duplicates_aux(IntpConj,
+				  vars(FName,GlobalArr,GlobalVar,LocalArr,LocalVar),
+				  IntpConj1),
+	Intp1 = state(GlobalArr, GlobalVar, LocalArr, LocalVar, IntpConj1, ML).
+
+remove_all_duplicates_aux([],_,[]).
+remove_all_duplicates_aux([A|R], Vs, [A|S]) :-			  
+	remove_duplicates(R, A, Vs, T),
+	!,	                  
+	remove_all_duplicates_aux(T, Vs, S).
+
+remove_duplicates([],_,_,[]).
+remove_duplicates([Conj2|R], Conj1, Vs, [Conj2|S]) :- 	          
+	interp_conjunct_nonidentical_test(Vs, Conj1, Conj2),
+	!,
+	remove_duplicates(R, Conj1, Vs, S).
+remove_duplicates([_|R], Conj1, Vs, S) :-
+	add_counter(num_of_duplicates,1),	
+	remove_duplicates(R, Conj1, Vs, S).
+
+%------------------------------------------------------------------------------
+% interp_conjunct_nondentical_test(+Variables, +A, +B)
+%------------------------------------------------------------------------------
+% Succeed if conjunct A is (syntactically) NOT identical to conjunct B
+% without any binding.
+%------------------------------------------------------------------------------
+interp_conjunct_nonidentical_test(Vs,
+				  intp_conjunct([], CL1), intp_conjunct([], CL2)) :-
+	Vs = vars(FName,GlobalArr,GlobalVar,LocalArr,LocalVar),
+#ifdef  PROFILE	
+        ctime(T0),
+#endif 	/*PROFILE*/		
+	constraints_identical_test(CL1,CL2,FName,
+				   GlobalArr,GlobalVar,LocalArr,LocalVar
+#ifdef  PROFILE	
+				  ,T0
+#endif  /*PROFILE*/						  
+				  ),
+	!,
+	fail.
+interp_conjunct_nonidentical_test(_,_,_):-!.
+
+%------------------------------------------------------------------------------
+% constraints_identical_test(CL1,CL2,FName,GlobalArr,GlobalVar,LocalArr,LocalVar)
+%------------------------------------------------------------------------------
+% Succeed if CL1 and CL2 are (syntactically) identical.
+%------------------------------------------------------------------------------
+constraints_identical_test(CL1, CL2,
+			   FName, GlobalArr, GlobalVar, LocalArr, LocalVar
+#ifdef   PROFILE	
+			  ,T0
+#endif 	 /*PROFILE*/						  			  
+			  ):-
+	%label_variables(0, GlobalArr, A),
+	%label_variables(A, GlobalVar, B),
+	%label_variables(B, LocalArr, C),
+	%label_variables(C, LocalVar, D),
+	%----------------------------------------------------------------------
+	% This information is already precomputed
+	%----------------------------------------------------------------------	
+	'$MYVAR'(global,array,GlobalArr,_),'$MYVAR'(global,var,GlobalVar,_),
+	'$MYVAR'(FName ,array,LocalArr ,_),'$MYVAR'(FName ,var,LocalVar ,D),	
+	constraints_identical_test_aux(D, CL1, CL2, _),	
+#ifdef  PROFILE	
+        ctime(T1),
+        add_counter(identical_test_timing,T1-T0),
+#endif	/*PROFILE*/
+        !.
+constraints_identical_test(_,_,_,_,_,_,_
+#ifdef   PROFILE	
+			  ,T0
+#endif 	 /*PROFILE*/			
+			  ):- 
+#ifdef  PROFILE	
+        ctime(T1),
+        add_counter(identical_test_timing,T1-T0),
+#endif	
+        !,
+	fail.
+        
+% label_variables(N, [], N).
+% label_variables(N, [v(N)|R], M) :-
+% 	label_variables(N+1, R, M).
+
+constraints_identical_test_aux(N, X, Y, N+1) :- 
+	var(X), var(Y), !, X = Y, X = v(N).
+constraints_identical_test_aux(_, X, _, _) :-
+	var(X), !, fail.
+constraints_identical_test_aux(_, _, Y, _) :-
+	var(Y), !, fail.
+constraints_identical_test_aux(N, [], [], N) :- !.
+constraints_identical_test_aux(N, [C|R], [D|S], O) :- !,
+	constraints_identical_test_aux(N, C, D, M),
+	constraints_identical_test_aux(M, R, S, O).
+constraints_identical_test_aux(N, CL1, CL2, M) :-
+	CL1 =.. [Head|T1], CL2 =.. [Head|T2],
+	constraints_identical_test_aux(N, T1, T2, M).
+
+%------------------------------------------------------------------------------
+% Remove a conjunction if is unsatisfiable
+%------------------------------------------------------------------------------
+remove_infeasible_interp_conjunct([], []).
+remove_infeasible_interp_conjunct([intp_conjunct(Tail, X)|R], S) :-
+	infeasible_interp_conjunct(Tail, X), !,
+	add_counter(num_of_infeasible_wp_conjunct,1),	
+	remove_infeasible_interp_conjunct(R, S).
+remove_infeasible_interp_conjunct([intp_conjunct(Tail, X)|R],
+				  [intp_conjunct(Tail, X)|S]) :-
+	remove_infeasible_interp_conjunct(R, S).
+
+infeasible_interp_conjunct([], X) :-
+	constraint_symbolic_arrays_SAT_check_form(X,[],ArrRef),
+	satisfiable_array_references(ArrRef), 
+	!,
+	fail.
+#ifdef  PROFILE
+infeasible_interp_conjunct(_, X) :-
+	interp_conjunct_size(X, CLLength),
+	add_counter(wp_total_size, CLLength).
+#else   /*PROFILE*/
+infeasible_interp_conjunct(_, _).
+#endif  /*PROFILE*/
+
+%------------------------------------------------------------------------------------%
+% compute_wp_assignment(+Flag,+PostWP,+,+,+,+,+,+,+,+,+CL,-PreWP)
+%------------------------------------------------------------------------------------%
+% Compute WP(CL,PostWP) = PreWP
+% Note that CL is a sequence of multiple assignments.
+% If Flag=1 then PreWP is simplified.
+%
+% This operation is used by methods that compute weaker preconditions
+% as interpolants.
+%------------------------------------------------------------------------------------%
+test_compute_wp_assignment(SimpFlag):-
+	PostWP0 = state([_],[],[],[SX1,SY1,SZ1],[intp_conjunct(T,[geq(10,SX1)|T])],_),
+	OpList0 = [assign(SX1,plus(SX0,1))],
+	compute_wp_assignment(SimpFlag,PostWP0,[_],[],[],[SX1,SY1,SZ1],[_],[],[],[SX0,SY0,SZ0],
+			      OpList0,PreWP0),
+	% dictionary
+	[SX0,SY0,SZ0] = ['x0','y0','z0'],[SX1,SY1,SZ1] = ['x1','y1','z1'],
+	print_message("WP(\n\t%,\n\t%) = \n\t%\n",[OpList0,PostWP0,PreWP0]),
+        %-------------------------------------------------------------------------%
+	PostWP1 = state([_],[],[],[SX4,SY4,SZ4],[intp_conjunct(T,[geq(10,SX4)|T])],_),
+	OpList1 = [assign(SX3,plus(SX2,1)), assign(SX4,plus(SX3,2))],
+	compute_wp_assignment(SimpFlag,PostWP1,[_],[],[],[SX4,SY4,SZ4],[_],[],[],[SX2,SY2,SZ2],
+			      OpList1,
+			      PreWP1),
+	% dictionary
+	[SX2,SY2,SZ2] = ['x0','y0','z0'],[SX3,_SY3,_SZ3] = ['x1','y1','z1'],	
+	[SX4,SY4,SZ4] = ['x2','y2','z2'],
+	print_message("WP(\n\t%,\n\t%) = \n\t%\n",[OpList1,PostWP1,PreWP1]),
+        %-------------------------------------------------------------------------%
+	PostWP2 = state([_],[],[],[SX8,SY8,SZ8],[intp_conjunct(T,[geq(10,SX8)|T])],_),
+	OpList2 = [assign(SX5,0),
+		   assign(SX6,plus(SX5,1)), assign(SX7,plus(SX6,2)),
+		   assign(SX8,plus(SX7,1))],
+	compute_wp_assignment(SimpFlag,PostWP2,[_],[],[],[SX8,SY8,SZ8],[_],[],[],[SX5,SY5,SZ5],
+			      OpList2,
+			      PreWP2),
+	% dictionary
+	[SX5,SY5,SZ5] = ['x0','y0','z0'],[SX6,_SY6,_SZ6] = ['x1','y1','z1'],	
+	[SX7,_SY7,_SZ7] = ['x2','y2','z2'],[SX8,SY8,SZ8] = ['x3','y3','z3'],	
+	print_message("WP(\n\t%,\n\t%) = \n\t%\n",[OpList2,PostWP2,PreWP2]),
+        %-------------------------------------------------------------------------%
+	PostWP3 = state([_],[],[],[_,SY10,_],
+			[intp_conjunct(T10, [geq(44.000000, SY10)| T10]),
+			 intp_conjunct(T11, [gt(-44.000000, minus(0, SY10))|T11])],_), 
+	OpList3 = [assign(SY9,0)],
+	compute_wp_assignment(SimpFlag,PostWP3,[_],[],[],[_,SY10,_],[_],[],[],[_,SY9,_],
+			      OpList3,
+			      PreWP3),
+	% dictionary
+	[_,SY9,_] = ['x0','y0','z0'],[_,SY10,_] = ['x1','y1','z1'],	
+	print_message("WP(\n\t%,\n\t%) = \n\t%\n",[OpList3,PostWP3,PreWP3]).	
+%------------------------------------------------------------------------------------%
+compute_wp_assignment(SimpFlag,PostWP,
+		      PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+		      PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar,
+		      OpList, PreWP):-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+        %print_message("% % % % % \n",[PostWP,PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar]),
+        %print_message("Statement: %\n",[OpList]),
+        %print_message("% % % % \n",[PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar]),			      
+	%--------------------------------------------------------------
+	% OpList is a list of assignments where assignments with older
+	% names are on the head of the list. Thus, we need to reverse
+	% the list first.
+	%--------------------------------------------------------------	
+	reverse(OpList,OpList0),
+        PostWP = state(PostSGlobalArr, PostSGlobalVar, PostSLocalArr, PostSLocalVar,
+		       PostWPConj,_),
+	PreVars= vars(PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar),
+	compute_wp_assignment_conjuncts(PostWPConj,OpList0,SimpFlag,PreVars,PreWPConj),
+	make_diff_list_intp(PreWPConj, PreWPConj1),
+	PreWP  = state(PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+		       PreWPConj1,_),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(compute_wp_assignment_timing,T1-T0),
+#endif  /*PROFILE*/
+	true.
+
+compute_wp_assignment_conjuncts([],_,_,_,[]).
+%---------------------------------------------------------------------
+% Special cases:
+% - the wp can be ff (false) if the conjunction of two wp's is
+% false. This could happen if our underapproximation of the exact wp
+% is too strong.
+% - the wp is tt (true) if no infeasible path is detected.
+%---------------------------------------------------------------------
+compute_wp_assignment_conjuncts([intp_conjunct([],[ff])|R], OpList,SimpFlag,PreVars,
+				[intp_conjunct([],[ff])|T]):-	
+	compute_wp_assignment_conjuncts(R,OpList,SimpFlag,PreVars,T).
+compute_wp_assignment_conjuncts([intp_conjunct([],[tt])|R], OpList,SimpFlag,PreVars,
+				[intp_conjunct([],[tt])|T]):-	
+	compute_wp_assignment_conjuncts(R,OpList,SimpFlag,PreVars,T).
+compute_wp_assignment_conjuncts([intp_conjunct([],WP)|R], OpList,SimpFlag,PreVars,
+				[intp_conjunct([],WP1)|T]):-	
+	wp_replace_constraints_and_simplify(SimpFlag,OpList,PreVars,WP,WP1),
+	compute_wp_assignment_conjuncts(R,OpList,SimpFlag,PreVars,T).
+
+wp_replace_constraints_and_simplify(0,OpList,_,WP,WP1):- !,
+	wp_replace_constraints(OpList,WP,WP1).
+wp_replace_constraints_and_simplify(1,OpList,
+				    vars(SGlobalArr,SGlobalVar,
+					 SLocalArr ,SLocalVar), WP, WP2):-
+	wp_replace_constraints(OpList,WP,WP1),
+	simplify_constraints(combine,SGlobalArr,SGlobalVar,
+	 		     SLocalArr,SLocalVar, WP1,WP2).
+
+%-----------------------------------------------------------------------------
+% Basic code to simplify an interpolant formula (it can be generalized to
+% simplify any list of constraints if needed).
+%-----------------------------------------------------------------------------
+simplify_constraints(OpFlag,
+		     SGlobalArr ,SGlobalVar ,SLocalArr ,SLocalVar,
+		     CL, SimpCL):-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+        simplify_constraints_aux(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 CL, SimpCL),
+#ifdef  PROFILE
+        ctime(T1),
+	add_interp_simplify_counter(OpFlag,T1-T0),
+#else
+        % To avoid warnings
+        OpFlag=_,
+#endif  /*PROFILE*/
+        !.
+
+#ifdef  PROFILE
+add_interp_simplify_counter(pre,Time):-
+	add_counter(wp_simplify_pre_timing,Time).
+add_interp_simplify_counter(combine,Time):-
+	add_counter(wp_simplify_combine_timing,Time).
+#endif  /*PROFILE*/
+
+simplify_constraints_aux(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			 CL, SimpCL):-
+	project_sym_constraints(SGlobalArr,SGlobalVar,
+				SLocalArr,SLocalVar,CL,SimpCL),
+	!,
+	% it should not be this needed but anyway ...
+	make_empty_list_if_freevar(SimpCL).
+% failure here means true
+simplify_constraints_aux(_,_,_,_,_,[]):- !.   
+	
+
+%----------------------------------------------------------------------------%
+% wp_replace_constraints(+XCL,+PostWP,-PreWP)
+%----------------------------------------------------------------------------%
+% XCL is a list of assignments. For each one, we apply the rule
+% wp(x:=e,Phi) = Phi[e/x]
+%----------------------------------------------------------------------------%
+wp_replace_constraints([],PreWP,PreWP):- !.
+wp_replace_constraints([assign(X,E)|R],PostWP,PreWP):-
+	wp_replace_constraints1(PostWP,X,E,[],PreWP1),
+	wp_replace_constraints(R,PreWP1,PreWP), !.
+wp_replace_constraints([_C|_],_,_):-
+	% Sanity check
+	error_message("wp_multple_assignment/11 expects only assign/2 terms.\n",[]).
+
+wp_replace_constraints1([],_,_,Acc,Acc):- !.
+wp_replace_constraints1([C|Cs],X,E,Acc,Cs1):-
+	wp_replace(C,X,E,C1),
+	wp_replace_constraints1(Cs,X,E,[C1|Acc],Cs1).
+
+% Compute wp(x:=e,Phi) = Phi[e/x]
+wp_replace(V,X,E,E)   :- myvar(V), V == X, !.
+wp_replace(V,_X,_E,V) :- myvar(V), !.
+wp_replace(A,_X,_E,A) :- atomic(A), !.
+wp_replace(F,X,E,F1)  :-
+	F=..[H|T],
+	wp_replace_aux(T,X,E,T1),
+	F1=..[H|T1].	
+wp_replace_aux([],_,_,[]):-!.
+wp_replace_aux([Y|Ys],X,E,[Y1|Zs]):-
+	wp_replace(Y,X,E,Y1),
+	wp_replace_aux(Ys,X,E,Zs).
+
+make_diff_list_intp([], []).
+% Added new clause. Be sure it's ok.
+make_diff_list_intp([intp_conjunct([],L)|R], S) :-
+	L == [], !,
+	make_diff_list_intp(R, S).
+make_diff_list_intp([intp_conjunct([],L)|R], [intp_conjunct(T,M)|S]) :-
+	append(L, T, M), 
+	make_diff_list_intp(R, S).
+
+insert_conjunct_if_not_empty([],[]):-!.
+insert_conjunct_if_not_empty(WPCL,[intp_conjunct(Tail,WPCLTail)]):-
+	append(WPCL,Tail,WPCLTail),!.
+
+%-----------------------------------------------------------------------------%
+% get_marked_constraints(+ML,+XCL,-MarkedXCL,-Tail)
+%-----------------------------------------------------------------------------%
+% MarkedXCL is a list such that x \in MarkedXCL iff x \in XCL and its
+% corresponding element in ML is marked (i.e., non-var). Note that the
+% length of ML is equal or greater to the length of XCL. The tail of
+% MarkedXCL is Tail for further instantiation.
+%
+% An important assumption is that newest constraints are on the head
+% of ML.
+%-----------------------------------------------------------------------------%
+#ifdef MINMAX
+% Special case for loop header points where ML is empty
+get_marked_constraints([], _, Tail, Tail):-!.
+#endif /*MINMAX*/
+get_marked_constraints(_, [], Tail, Tail).
+get_marked_constraints([M|R], [_|S], T, Tail) :-
+	var(M), !,
+	get_marked_constraints(R, S, T, Tail).
+get_marked_constraints([_|R], [C|S], [C|T], Tail) :-
+	get_marked_constraints(R, S, T, Tail).
+
+% Note: this predicate should be defined in tracer_preprocess.clp.gpp.
+precompute_gen_labels:-
+	print_message("Pre-computing some stuff ... \n",[]),
+	gen_label_global_variables,
+	gen_label_local_variables.
+
+gen_label_global_variables:-
+	freshglobalarrays(GlobalArr),
+	freshglobalvars(GlobalVar),
+	label_variables(0, GlobalArr, A),
+	label_variables(A, GlobalVar, B),
+	fassert('$MYVAR'(global, array, GlobalArr, A)),
+	fassert('$MYVAR'(global, var  , GlobalVar, B)),	
+	fail.
+gen_label_global_variables.
+
+gen_label_local_variables:-
+	freshlocalarrays(FName,LocalArr),
+	freshlocalvars(  FName,LocalVar),
+	'$MYVAR'(global, var, _, B),
+	label_variables(B, LocalArr, C),
+	label_variables(C, LocalVar, D),
+	fassert('$MYVAR'(FName, array, LocalArr,C)),
+	fassert('$MYVAR'(FName, var  , LocalVar,D)),		
+	fail.
+gen_label_local_variables.
+	
+label_variables(N, [], N).
+label_variables(N, [v(N)|R], M) :-
+	label_variables(N+1, R, M).
+
+debug_print_var_labels:-
+        '$MYVAR'(A,B,C,D),
+	print_message("% % % %\n",[A,B,C,D]),
+	fail.
+debug_print_var_labels.
+
+%------------------------------------------------------------------------------
+% For debugging
+%------------------------------------------------------------------------------
+pretty_printer_interp(_,_,_,_,_,_,_,_):-
+	current_tracer_flag(other_interp,n),
+	!.
+pretty_printer_interp(FName, Depth, Msg,_,_,_,_,nil):-
+	print_message(Msg,[]),
+	print_message("% %:: nil \n",[FName,Depth]),
+	!.
+pretty_printer_interp(FName, Depth, Msg, _,_,_,_, Intp):-
+	print_message(Msg,[]),
+	print_message("% %::\n",[FName,Depth]),
+	Intp = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,IntpConj,_),
+	pretty_printer_interp_aux(IntpConj,FName,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	!.
+
+pretty_printer_interp_aux([],_,_,_,_,_):-
+	% empty
+	print_message("\ttrue \n",[]),
+	!.
+pretty_printer_interp_aux(IntpConj,
+			  FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	not(not(pretty_printer_interp_aux1(IntpConj,FName,
+					   SGlobalArr,SGlobalVar,
+					   SLocalArr,SLocalVar))),
+	print_message("\n",[]).
+
+	
+pretty_printer_interp_aux1([],_,_,_,_,_).
+pretty_printer_interp_aux1([intp_conjunct([],CL)],
+			   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	print_message("\t",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL).
+pretty_printer_interp_aux1([intp_conjunct([],CL)|R],
+			   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	print_message("\t",[]),	
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					CL),
+	print_message("\tOR",[]),
+	pretty_printer_interp_aux1(R,FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar).
+			     
+%=======================================================================%
+% Include different implementations
+%=======================================================================%
+
+#include "tracer_interpolant_wp_disjunctive.clp.gpp"
+#include "tracer_interpolant_wp_non_disjunctive.clp.gpp"
+#include "tracer_interpolant_rybal.clp.gpp"

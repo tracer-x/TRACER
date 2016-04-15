@@ -1,0 +1,167 @@
+
+----------------------------------------------------------------------
+                    deletion   |        wp                |  wp+abduction
+-----------------------------------------------------------------------
+Programs         #states time  |  #state  time  #UD  #UWP |  #state  
+-----------------------------------------------------------------------
+kbfiltr-safe      1396    1.63 |   748    1.21   47   0   |    748
+cdaudio          13814   25.47 | 12056   27.07   64   0   |  12056
+diskperf          5465   14.18 |  4310   10.42   32   3   |   4319
+floppy            3078    5.57 |  2369    4.61   92   2   |   2369
+tlan              4892   12.46 |  4892   10.42    0   0   |   4892 
+tcas_1a           5399    4.79 |  3274    4.02    2  59   |   1374
+tcas_1b           5418    4.63 |  1113    1.1     2  10   |    889
+tcas_2a           5399    4.58 |  3274    3.97    2  59   |   1374 
+tcas_3b           5388    4.55 |  3267    3.94    0  59   |   1374
+tcas_5a           5399    4.58 |  3267    3.96    0  59   |   1374
+-----------------------------------------------------------------------
+
+#UWP is the number of times that we may perform incorrectly the wp on
+a guard. Note that for the first 5 programs this situation does not
+happen often so this is why our results after adding the abduction
+step didn't change. That's good.
+
+Now, the results obtained for tcas are counterintuitive because for
+most of the variants we were doing incorrectly the wp on guards 59
+times. However, after fixing we notice a bigger state reduction.
+
+
+I checked and the problem is as follows:
+
+Let's focus on a joining point. From one path we obtain A1 such that
+A1 and g implies WP1 and for the other path we have A2 such that not g
+implies WP2. The idea is then to conjoin A1 and A2. If for some reason
+A1 and A2 are unsat, I just return the interpolant true for that
+joining point (not sure about this step)!!!
+
+Then, let's say that A1 and A2 talks only about the variable x. Then,
+before we were very aggresive and removed any occurrence of x in A1
+and A2. Therefore, when we were conjoining the two formulas the change
+of getting unsatisfiability were less.  Now, we are less aggressive
+and hence it's more likely that A1 and A2 have a contradiction about x
+and hence we return true. Btw, I have counted and before this
+situation about clash between two children was 3 times for tcas. Now
+it's 6 times. That's the reason for the reduction.
+
+Not sure what is wrong but we can talk about it later.
+
+Regards,
+Jorge
+
+On Thursday, May 19, 2011 at 05:50:56 (+0200), Jorge A. Navas wrote:
+>> 
+>> Now, I've read the paper "Abduction of Linear Arithmetic Constraints"
+>> by your friend Michael Maher which seems to be what we need. The
+>> problem is given B and C, we need to guess A such that A and B implies
+>> C. Here B is the guard and C the weakest precondition computed so far.
+>> 
+>> Basically, he starts with computing a redundancy free core of C wrt
+>> B. Let us call this core C'. Then we can use directly C' as an answer
+>> for A. Of course, C' is an approximation and not necessarily the most
+>> precise answer.
+>> 
+>> The contribution of the paper is to claim that the most precise answer
+>> for linear arithmetic constraints doesn't exist in general. And then,
+>> the rest of paper is about how to limit the form of the constraints
+>> such that the most precise answer exists and it's computable. 
+>> 
+>> Coming back to our problems, I've just implemented a redundancy free
+>> core algorithm because I believe that it's the only practical object
+>> we can compute although I've skipped many details of the paper and I
+>> could lose some important improvements. Anyway,
+>> 
+>> REDUNDANCY-FREE-CORE(c1,...,cn, B) is a subset of c1,...,cn such that 
+>>   delete ci if (c1,...,cn \ ci) and B implies ci
+>> 
+>> where c1,...cn \ci is the conjunction of c1,....,cn except ci.
+>> 
+>> Basically what you suggested yesterday.
+>> 
+>> Continue next email to see results ...
+>> 
+>> 
+>> >> 
+>> >> Hi Joxan,
+>> >> 
+>> >> I've been working on the abduction stuff. First of all, let me show
+>> >> you the number of times that we were doing potentially wrong the wp on
+>> >> a guard:
+>> >> 
+>> >> -----------------------
+>> >> Programs          
+>> >> -----------------------
+>> >> kbfiltr-safe         0
+>> >> kbfiltr-unsafe-1    N/A
+>> >> kbfiltr-unsafe-2    N/A
+>> >> cdaudio              0
+>> >> diskperf             3 
+>> >> floppy               2 
+>> >> tlan                 0
+>> >> tcas_1a             59
+>> >> tcas_1b             10
+>> >> tcas_2a             59
+>> >> tcas_2b            N/A
+>> >> tcas_3a            N/A
+>> >> tcas_3b             59
+>> >> tcas_4a            N/A
+>> >> tcas_4b            N/A
+>> >> tcas_5a             59
+>> >> tcas_5b            N/A
+>> >> -----------------------
+>> >> 
+>> >> 
+>> >> Continue next email ...
+>> >> 
+>> >> On Wednesday, May 18, 2011 at 11:15:26 (+0200), Jorge A. Navas wrote:
+>> >> >> Hi Joxan,
+>> >> >> 
+>> >> >> I've finally finished the implementation of weaker preconditions in
+>> >> >> TRACER but **WITHOUT** minmax. I've been debugging a lot during the
+>> >> >> last week so I feel quite confident about the results. Unfortunately,
+>> >> >> the use of weaker preconditions does not improve too much.
+>> >> >> 
+>> >> >> -----------------------------------------------------------------
+>> >> >>                                deletion           wp
+>> >> >> -----------------------------------------------------------------
+>> >> >> Programs          result     #states time    #state  time   #UD
+>> >> >> -----------------------------------------------------------------
+>> >> >> kbfiltr-safe       SAFE      1396    1.63     748    1.21    47
+>> >> >> kbfiltr-unsafe-1   UNSAFE     446    0.45     378    0.45    N/A
+>> >> >> kbfiltr-unsafe-2   UNSAFE     274    0.27     206    0.25    N/A
+>> >> >> cdaudio            SAFE     13814   25.47   12056   27.07    64
+>> >> >> diskperf           SAFE      5465   14.18    4310   10.42    32
+>> >> >> floppy             SAFE      3078    5.57    2369    4.61    92
+>> >> >> tlan               SAFE      4892   12.46    4892   10.42     0
+>> >> >> tcas_1a            SAFE      5399    4.79    3274    4.02     2
+>> >> >> tcas_1b            SAFE      5418    4.63    1113    1.1      2
+>> >> >> tcas_2a            SAFE      5399    4.58    3274    3.97     2
+>> >> >> tcas_2b            UNSAFE      82    0.02      82    0.02    N/A
+>> >> >> tcas_3a            UNSAFE     218    0.11     218    0.16    N/A
+>> >> >> tcas_3b            SAFE      5388    4.55    3267    3.94     0
+>> >> >> tcas_4a            UNSAFE     218    0.11     218    0.15    N/A
+>> >> >> tcas_4b            UNSAFE      82    0.11      82    0.02    N/A 
+>> >> >> tcas_5a            SAFE      5399    4.58    3267    3.96     0
+>> >> >> tcas_5b            UNSAFE      82    0.11      82    0.02    N/A
+>> >> >> -----------------------------------------------------------------
+>> >> >> 
+>> >> >> Row deletion  : compute interpolant using deletion algorithm
+>> >> >> Row wp        : compute interpolants computing weaker preconditions
+>> >> >> column #states: number of nodes of the symbolic execution tree
+>> >> >> column #time  : timing in seconds.
+>> >> >> 
+>> >> >> 
+>> >> >> Very important is the column #UD: Num of "unavoidable disjunctions".
+>> >> >> 
+>> >> >> I've realized that our algorithm for computing weaker preconditions
+>> >> >> CANNOT BE EXACT if we want to avoid disjunctions. Sometimes the reason
+>> >> >> of infeasibility is intrinsically a disjunction or simply the user
+>> >> >> adds a disjunctive safety condition. In that case, we try to several
+>> >> >> simplification methods to avid the disjunction. In the worst case, if
+>> >> >> it's not possible then we return the deletion vector. The column #UD
+>> >> >> reflects the number of times that we just returned the deletion
+>> >> >> vector. If #UD is equal to 0 we can claim that the weakest
+>> >> >> precondition is exact (modulo loops). Surprisingly, in cases where
+>> >> >> #UD=0 (e.g., tlan) we don't improve anything.
+>> >> >> 
+>> >> >> Regards,
+>> >> >> Jorge

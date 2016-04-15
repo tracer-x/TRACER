@@ -1,0 +1,19 @@
+Index: src/value/eval_funs.ml
+===================================================================
+--- src/value/eval_funs.ml	(revision 17768)
++++ src/value/eval_funs.ml	(working copy)
+@@ -376,9 +376,12 @@
+         let with_locals =
+           List.fold_left
+             (fun acc local ->
+-              Cvalue.Model.add_binding_not_initialized
++              Cvalue.Model.add_binding
++		~with_alarms:CilE.warn_none_mode
++		~exact:true
+                  acc
+-                 (Locations.loc_of_varinfo local))
++                 (Locations.loc_of_varinfo local)
++		Cvalue.V.top_int)
+             with_formals
+             f.slocals
+         in

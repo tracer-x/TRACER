@@ -1,0 +1,1 @@
+csurf hook-start fcron-instrumented-COMPILABLE -preset-build-options highest --- make fcron-instrumented-COMPILABLE

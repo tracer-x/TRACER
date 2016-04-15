@@ -1,0 +1,275 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This file is written in Org format.
+;; Org is an Emacs mode for notes, project planning, and authoring  
+;; http://orgmode.org/
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Please, even if you do not want to open this file in org-mode, 
+;; whenever you modify this file try to follow Org syntax.
+;; It is basically plain text with some simple features:
+;; *   :  item in the outer list
+;; **  :  item in a first-level nested list
+;; *** :  item in a second-level nested list, and so on.
+;; Keywords: TODO, ONGOING, CANCELED, and DONE
+;; :TAG: : TAG is the person who did or is assigned the task
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+* DONE Slicing 								 :JORGE:
+** Properly implement transitivity of control statement dependencies.
+** Include representatives also for control statements:
+  immediately set to unconstrained (imagine slicing criteron at that
+  statement consisting of the variables of the statement).
+** After all this, remove the debugging printfs and writelns.
+
+* DONE Implementation of partition constraints 				 :JORGE:  
+  Finished for safety, wcet and slicing. We need to extend it for wcet
+  in case of compositional function calls.
+* DONE Collapse sequence of assignments in a single transition.		 :VIJAY:
+* DONE Add in the C program safety and slicing queries. 		 :VIJAY:
+* Quadratic behavior when storing interpolant. 
+  This is due to evaluation of explicit constraints at storing. The
+  number of explicit constraints roughly correspond to the depth of
+  the computation tree.
+
+  An idea is to store the marked constraints for all the levels of the
+  tree, at only the point when interpolant is generated. But this has a
+  drawback that at every level we need to collate exponential number of
+  answers.
+  
+* DONE Backport all changes done in PrologEmitter.java to PrologEmitter.g  :VIJAY:
+
+* DONE Graphviz output: 						 :JORGE:
+  CLOSED: [2010-03-30 Tue 00:50]
+  - State "DONE"       [2010-03-30 Tue 00:50]
+  Almost done. I need to fix some problems with loops. For
+  straigh-line code it works properly.
+
+* DONE Remove gpp directives and factorize TRACER code. 		 :JORGE:
+  Support generic functions (e.g. JOIN, PRE, etc.) for each domain (safety,
+  slicing, WCET, etc). 
+  First passed done but still we need to factorize more.
+
+* CANCELED Added more builtins into CLP(R): @<, >@, etc (lexicographical operators)  :JORGE:ANDREW:
+* DONE Quick efficiency improvements: 					 :JORGE:
+** DONE Make store_t predicate static rather than dynamic  (time).
+** DONE Program counters should be atoms rather than reals (time)
+   It requires some modifications in the unfolder (config_to_index/2)
+** DONE With partition of constraints we SHOULD NOT assert the explicit constraints (memory). 
+* DONE Define new system predicate which returns memory usage 		 :VIJAY:
+  We may define something like:
+  mem_usage(Total,C,S,H,T,SS) where
+  Total is the total memory usage (C+S+H+T+SS)
+  C  is the code memory usage
+  S  is the local stack memory usage
+  H  is the heap memory usage
+  T  is the trail memory usage
+  SS is the solver memory usage    
+
+* DONE HIGH Define an specialized version of assert for tabling 	 :VIJAY:
+* DONE Fully support for pointers and arrays in the compilation phase 	 :VIJAY:
+* DONE HIGH Add solver stats into diagnostic/6 				 :VIJAY:
+* DONE HIGH Predicates for storing answers need to index also by FName 	 :JORGE:
+       Predicates to assert answers (e.g., wcet_answer, safety_answer,
+       and slicing_answer) do not consider FName (function name) to
+       index.       
+       This is inefficient but also INCORRECT. The WCET engine DOESN'T
+       WORK when option 'unroll_loop' is 'n'. This error has existed
+       for long time but we didn't notice it until now.
+
+       Actually, I've realized that we only need to do for WCET since
+       safety and slicing are not compositional.
+       
+* DONE HIGH Predicates for memo table need to index also by FName 	 :JORGE: 
+       Predicates to handle the memo table (e.g., store_t and check_t)
+       do not consider FName (function name) to index. This is
+       inefficient.
+
+* DONE Implement trail tags array 					 :VIJAY:
+       To keep track of addresses on the trail that go beyond
+       2^28. Now the solver is able to address memory more than 2^28
+       w/o any problem. You will get a debug message when it's
+       crossing the boundary.
+
+* DONE MEDIUM Modify compiler to support system calls 			 :VIJAY:
+       Given the following C program:
+       void main(){
+               ..., 
+	       x= system_call(y,z), 
+	       ... 
+       }
+
+       The compiler should assume that the actual C program to be
+       compiled is something like that:
+
+       void main(){
+               ..., 
+	       x1 = system_call_1(y1,z1), 
+	       ....,
+	       xN = system_call_N(yN,zN), 
+	       ... 
+       }
+      /////////////////////////////////////////////////////////////
+      // Here the templates for each system call
+      /////////////////////////////////////////////////////////////
+      type_return system_call_1(type_first_arg a,type_second_arg b){
+           type_return temp;
+	   return temp;
+      }
+      ....
+      type_return system_call_N(type_first_arg a,type_second_arg b){
+           type_return temp;
+	   return temp;
+      }
+
+
+      The idea is that for each system call we assume that global
+      variables cannot be modified and parameters are passed by
+      value. Then, the return value must be unconstrained (don't know
+      value).
+
+      Note also, for now the template for each system call is the
+      same. In the future, users may add assertions to improve
+      precision.
+          
+      Note also that you don't need to know the types of parameters of
+      the systems call.
+        
+* DONE MEDIUM Implement the counterpart of tabling/1 for retract 	 :VIJAY:
+
+       This retract CANNOT use unification in order to match some
+       entry from the database. Instead, only syntactic matching is
+       allowed.
+* DONE BUG: multiple safety properties.                                  :JORGE:
+* DONE Implement DART: directed automated random testing 		 :JORGE:
+
+* DONE Compilation of pointers 						 :VIJAY:  
+
+* DONE Keep profiling WCET/Slicing and find potential improvements. 	 :JORGE:
+
+  Read TODO in WCET and also already detected possible improvement in
+  some_member_is_in_the_slice/2.
+
+* CANCELED Implement external tabling  in C. 				 :VIJAY:
+* DONE ONGOING Encode all terms asserted (for answers and memo table).	 :JORGE:
+  CLOSED: [2010-01-12 Tue 23:42]
+  - State "DONE"       [2010-01-12 Tue 23:42]
+  This also solves the problem with fassert vs assert because we will
+  encode also witnesses. 
+
+  I finished a simple version. Unfortunately, it's not the fastest for
+  all the cases. More work is needed. --- Jorge
+
+* WCET optimization suggested by Joxan
+   A small refinement: after doing a subtree, table ALSO its leading
+   time.  subsume a candidate subtree if it is subsumed (by false path
+   considerations) and if its leading time is less than the tabled, then
+   no need to consider this subtree anymore.
+
+* ONGOING User-interface 					   :JORGE:VIJAY:
+  This includes:
+  - Input : Eclipse plugin 
+  - Output: Visualization of symbolic execution trees, STS, etc.  
+            Need to try with zgrviewer (ZVTM)
+
+* CANCELED Implementation of controlled unrolling of loops for WCET	  :HIEP:
+  CLOSED: [2010-03-11 Thu 17:44]
+  - State "CANCELED"   [2010-03-11 Thu 17:44]
+
+* CANCELED Merge disjunctions on WCET when compositional reasoning.	  :HIEP:
+  CLOSED: [2010-03-11 Thu 17:45]
+  - State "CANCELED"   [2010-03-11 Thu 17:45]
+  Right now, all disjunctions are kept, so exponential blow-up is
+  expected. An idea is to keep only common constraints although
+  constraints coming from different paths may be different. To do
+  this, we need to use projection.
+
+* DONE Design and implement reasoning for ground constraints.		:ANDREW:
+  CLOSED: [2010-03-11 Thu 17:44]
+  - State "DONE"       [2010-03-11 Thu 17:44]
+  When interpolating, some constraints may be ground already such that
+  they can be immediately removed from consideration. 
+* TODO Shorten symbolic constraint list to speedup interpolation        :ANDREW:
+  The collapsing of assignments has been too generous in the use of variables
+  and constraints, making some programs unable to run. We can do this more 
+  efficiently: For example, given a sequence
+  
+  y:=x+1
+  x:=y+z
+  a:=y+2
+
+  We collapse from last assignment to the first.
+  Iter. No. Evaluated                      Symbolic
+  -----------------------------------------------------------------------------
+  1.        (Add) NextA = Y1+2             (Add) assign(SNextA,plus(SY1,2))
+  2.        (Add) NextX = Y1+Z1            (Add) assign(SNextX,plus(SY1,SZ1))
+  3.        Modify the constraints above by substitution X1+1/Y1
+            NextA = X1+1+2                 assign(SNextA,plus(plus(SX1,1),2))
+            NextX = X1+1+Z1                assign(SNextX,plus(plus(SX1,1),SZ1))
+            (Add) NextY = X1+1             assign(SNextY,plus(X1,1))
+
+  This requires modification to the compiler.
+ 
+* TODO Compositional function calls is OUTDATED. 		 
+* TODO Implement slackening
+* DONE Implement pointer/array solver                               :ANDREW:JORGE:VIJAY
+  CLOSED: [2010-02-23 Tue 16:39]
+  - State "DONE"       [2010-02-23 Tue 16:39]
+** DONE Array solver for detecting infeasible paths
+   CLOSED: [2010-02-23 Tue 16:35]
+   - State "DONE"       [2010-02-23 Tue 16:35]
+** DONE Consider aliasing in the generation of the loop invariants
+   CLOSED: [2010-02-18 Thu 02:02]
+   - State "DONE"       [2010-02-18 Thu 02:02]
+** DONE Consider aliasing in slicing (update of the relevant set)
+   CLOSED: [2010-02-15 Mon 20:51]
+   - State "DONE"       [2010-02-15 Mon 20:51]
+** DONE Consider different heaps in the CLP program
+   CLOSED: [2010-02-10 Wed 17:57]
+   - State "DONE"       [2010-02-10 Wed 17:57]
+* DONE Fix/Implement in SLICING:					 :JORGE:
+  CLOSED: [2010-02-23 Tue 16:38]
+  - State "DONE"       [2010-02-23 Tue 16:38]
+** DONE Proper handling of loops in SLICING 
+   CLOSED: [2010-02-09 Tue 17:40]
+   - State "DONE"       [2010-02-09 Tue 17:40]
+   test-loop-unstr-1.c:             no exit condition
+   test-loop-unstr-2.c:             see bug#4 in tracer_slicer.clp.gpp
+   test-loop-unstr-3.c:             unstructured exit of the inner loop
+   test-return-2.c:                 spurious transitions (COMPILATION)
+   Tip-paper-1.c:                   see bug#4 in tracer_slicer.clp.gpp
+** DONE Encoding answer and memo table for SLICING 			 
+   CLOSED: [2010-02-22 Mon 23:43]
+   - State "DONE"       [2010-02-22 Mon 23:43]
+** DONE Check PRE-OPERATOR in SLICING between different functions 	 
+   CLOSED: [2010-02-23 Tue 16:38]
+   - State "DONE"       [2010-02-23 Tue 16:38]
+* Make sure proper behavior with NON-LINEAR operations 			 
+Also tracer_dart.clpr.gpp needs to be changed.
+There are several problems with nonlinear constraints that need
+fixing:
+
+1. Making sure that filter ignores symbolic constraints.
+
+   The symbolic constraints need to be evaluated in reverse (that is,
+   forward manner, currently the list evaluated backward) such that
+   variables of nonlinear constrains are ground more often in the
+   evaluation. In this evaluation order, we check if the nonlinears
+   become linear, in which case we evaluate them. Otherwise, we ignore
+   them.
+
+   This requires changing the filter predicate.
+
+2. We really need to separate nonlinears since we do not want
+   nonlinears evaluated constraints be evaluated while filter ignores
+   the nonlinear symbolic constraints. The easiest is for both evaluated
+   and symbolic nonlinears to be ignored until the end of the program.
+   More advanced technique including testing of the nonlinears have become
+   linear.
+   
+* DONE Split function call trans into two: call and return. 
+  CLOSED: [2010-04-14 Wed 23:07]
+  - State "DONE"       [2010-04-14 Wed 23:07]
+   Note that currently due to the bunching together of call and
+   return, the statement a[x] = f(), results in an array update
+   corresponding to the assignment being passed into the function's
+   (when a is global).  That is, upd(a,x,_) is being into f, which is
+   incorrect.

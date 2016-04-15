@@ -1,0 +1,13 @@
+rm -f output
+
+echo "Testing Linear Equation Solver"
+echo "The testing should complete in 4 runs"
+sleep 2
+
+#completes in 4 runs
+../cutec solve f
+../cute solve -i 20 -q
+../cuteStat.exe
+
+cat output
+../clean

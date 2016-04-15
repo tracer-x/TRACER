@@ -1,0 +1,71 @@
+% SWI-Prolog N=10000, T=0.37
+%            N=15000, T=0.50
+%            N=20000, T=0.56
+%            N=30000, T=0.99
+%            N=40000, T=4.39
+%            N=41000, T=5.03
+%            N=42000, T= out of global stack (32M)
+
+% SWI-Prolog N=10000, T=0.38
+%            N=15000, T=0.31
+%            N=20000, T=0.62
+%            N=30000, T=0.76
+%            N=40000, T=1.44
+%            N=50000, T=1.59
+%            N=60000, T=2.52
+%            N=70000, T=3.52
+%            N=80000, T=9.39
+%            N=81000, T=9.79
+%            N=82000, T=10.58
+%            N=83000, T=10.52
+%            N=84000, T= out of global stack (64M)
+
+
+concat([], B, B).
+concat([X|A], B, [X|C]) :- concat(A, B, C).
+
+create_lists(N):-
+	statistics(runtime,_),
+	statistics(heapused,_),
+	statistics(localused,_),
+	statistics(globalused,_),
+	unfolder(N,[]).
+
+% length of the list is 50
+trans([_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]).
+%trans([a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a]).
+%:- dynamic p/1.
+
+unfolder(0,L)    :- !,
+  length(L,N),
+  write('N= '), write(N), nl,
+  % Time
+  statistics(runtime,[_,T1]), T is T1/1000,
+  write('Time: '), write(T), write(' seconds.'), nl,
+  % Heap
+  statistics(heapused,HeapUsage0),
+  HeapUsage is HeapUsage0 / 1048576,
+  write('Heap usage: '), write(HeapUsage), write(' Mb.'),nl,
+  statistics(trailused,TrailUsed0),
+  TrailUsed is TrailUsed0 / 1048576,
+  write('Trail usage: '), write(TrailUsed), write(' Mb.'),nl,
+  % Stack
+  statistics(localused ,StackUsage0),
+  statistics(globalused,StackUsage1),
+  StackUsage2 is StackUsage0 + StackUsage1,
+  StackUsage is StackUsage2 / 1048576,
+  write('Stack usage: '), write(StackUsage), write(' Mb.'),nl,	
+  % Number of atom garbage collections
+  statistics(agc,NumGCs),
+  write('Number of garbage collections: '), write(NumGCs), nl.
+  
+	
+unfolder(N,List0):-
+  newtrans(a,NewListX),
+  %X = a,
+  concat(NewListX,List0,List1),
+  N1 is N -1,
+  unfolder(N1, List1).
+
+newtrans(N,[N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N]).
+	

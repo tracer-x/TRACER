@@ -1,0 +1,668 @@
+#if defined(ENCODE_CHILD_PARENT) || defined(ENCODE_MEMO)
+% tracer_encode_ground_clp.gpp
+
+%--------------------------------------------------------------------------%
+%  assert/1 and fassert/1 are very slow in CLP(R) . To
+%  mitigate this limitation, we make ground any term to be
+%  asserted. Moreover, we prefer functors rather than lists.
+%--------------------------------------------------------------------------%
+% BUGS:
+%
+% - Some problems are possible if nonlinear constraints. If you notice
+%   something weird, then uncomment the line in tracer.clp.gpp:
+%
+%   #define ONLY_LINEAR_WITNESSES
+%--------------------------------------------------------------------------%
+%  export
+%           gen_static_encoding_code/0,
+#ifdef  MINMAX
+%           mm_encode_marked_list/2
+%           mm_decode_marked_list/2
+#else
+%           encode_marked_list/2,
+%           decode_marked_list/2,
+#endif  /*MINMAX*/
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE)
+%           encode_witnesses/11,
+%           decode_witnesses/11,
+#endif  /*UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE*/
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%           encode_multiple_witnesses/3
+%           decode_multiple_witnesses/3
+#endif  /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/
+%           encode_constraints_list/7,
+%           decode_constraints_list/7
+%--------------------------------------------------------------------------
+% NOTE: the use of keys seems to be a bit slower ...
+% #ifdef PROFILE
+% :- dynamic(call2dump,1).
+% print_call2dump:-
+% 	set_counter(num_calls2dump,0),
+% 	set_counter(time_calls2dump,0),
+% 	print_call2dump_aux,
+% 	counter_value(num_calls2dump,TCalls),
+% 	counter_value(time_calls2dump,TTime),
+% 	print_message("Total calls to dump: %\n",[TCalls]),
+% 	print_message("Total time to dump: %\n",[TTime]),
+% 	print_message("Av. time per dump: %\n",[TTime/TCalls]).
+
+% print_call2dump_aux:-
+% 	retract(call2dump(Y)),
+% 	add_counter(num_calls2dump,1),
+% 	add_counter(time_calls2dump,Y),
+% 	counter_value(num_calls2dump,X),
+% 	print_message("% % \n",[X,Y]),
+% 	fail.
+% print_call2dump_aux.
+% #endif
+
+#ifdef  MINMAX
+% mm_endcode_marked_list(+,-)
+mm_encode_marked_list(L,f):-
+	% 'f' means free.
+	var(L),!.
+mm_encode_marked_list(L,enc(LX,N)):-
+	length(L,N),
+	% Make ground all free variables
+        mm_encode_marked_list_aux(L,1,N,XArgs),
+	% Replace list functor with b
+	LX =.. [b|XArgs],!.                      
+mm_encode_marked_list(_,_):-
+	error_message("mm_encode_marked_list/2 \n",[]).
+mm_encode_marked_list_aux([],_,_,[]):-!.
+mm_encode_marked_list_aux([X|Xs],I,J,[t(I,o)|Ys]):-	
+	X == o,!,
+	mm_encode_marked_list_aux(Xs,I+1,J,Ys).
+mm_encode_marked_list_aux([X|Xs],I,J,[t(I,x)|Ys]):-
+	X == x,!,	
+	mm_encode_marked_list_aux(Xs,I+1,J,Ys).
+mm_encode_marked_list_aux([_|Xs],I,J,Ys):-	!, 
+	mm_encode_marked_list_aux(Xs,I+1,J,Ys).
+
+% mm_decode_marked_list(+,-)
+mm_decode_marked_list(Term,[]):-
+	Term == enc(b,0),!.
+mm_decode_marked_list(enc(Term,N),Ds):-
+	Term  =.. [b|Bs],
+	mm_decoded_marked_list_aux(1,N,Bs,Ds).
+mm_decoded_marked_list_aux(I,N,_,[]):- I > N, !.
+mm_decoded_marked_list_aux(I,N,[t(I,D)|Bs],[D|Ds]):-
+	mm_decoded_marked_list_aux(I+1,N,Bs,Ds).
+mm_decoded_marked_list_aux(I,N,Bs,[_|Ds]):- !,
+	mm_decoded_marked_list_aux(I+1,N,Bs,Ds).
+#else
+%------------------------------------------------------------------------------%
+% encode_marked_list(+,-): Encode in a ground format a list of marked
+% variables used for interpolants and dependencies.
+%------------------------------------------------------------------------------%
+% E.g., encode_marked_list([_,_,o,_,o],b(f,f,o,f,o)).
+% E.g., encode_marked_list(_ ,f).
+% E.g., encode_marked_list([],b).
+#ifdef DEBUG_USE
+test_encode_decode_marked_list:-
+	L = [_,_,_,o,o,_,_,o,_,o],
+	print_message("Encoding % to ",[L]),
+	encode_marked_list(L,L0),
+	print_message("% \n",[L0]),	
+	decode_marked_list(L0,L1),
+	print_message("and decoding again to %\n",[L1]).
+#endif
+
+#ifdef  NEW_ENCODE_MARKED_LIST
+%------------------------------------------------------------------------------%
+encode_marked_list(L,f):-   % 'f' means free.
+	var(L),!.
+encode_marked_list(L,enc(LX,N)):-
+	length(L,N),
+        encode_marked_list_aux(L,1,N,XArgs),    % Make ground all free variables
+	LX =.. [b|XArgs],!.                      % Replace list functor with b
+encode_marked_list(_,_):-
+	error_message("encode_marked_list/2 \n",[]).
+
+encode_marked_list_aux([],_,_,[]):-!.
+encode_marked_list_aux([X|Xs],I,J,[I|Ys]):-	
+	is_marked_term(X),!,
+	encode_marked_list_aux(Xs,I+1,J,Ys).
+encode_marked_list_aux([_|Xs],I,J,Ys):-	!, 
+	encode_marked_list_aux(Xs,I+1,J,Ys).
+%------------------------------------------------------------------------------%
+#else
+encode_marked_list(L,f):-   % 'f' means free.
+	var(L),!.
+encode_marked_list(L,LX):-
+        encode_marked_list_aux(L,XArgs),    % Make ground all free variables
+	LX =.. [b|XArgs],!.                 % Replace list functor with b
+encode_marked_list(_,_):-
+	error_message("encode_marked_list/2 \n",[]).
+
+encode_marked_list_aux([],[]):-!.
+encode_marked_list_aux([X|Xs],[X|Ys]):-	
+	is_marked_term(X),!,
+	encode_marked_list_aux(Xs,Ys).
+encode_marked_list_aux([_|Xs],[f|Ys]):-	!, % f means 'free'
+	encode_marked_list_aux(Xs,Ys).
+#endif  /*NEW_ENCODE_MARKED_LIST*/
+ 
+%------------------------------------------------------------------------------%
+% decode_marked_list(+,-): counterpart of encode_marked_list/2.
+%------------------------------------------------------------------------------%
+% E.g., decode_marked_list(b(f,f,o,f,o),[_,_,o,_,o]).
+decode_marked_list(Term,_):-
+	Term == f,!.
+#ifdef  NEW_ENCODE_MARKED_LIST
+%------------------------------------------------------------------------------%
+decode_marked_list(Term,[]):-
+	Term == enc(b,0),!.
+decode_marked_list(enc(Term,N),Ds):-
+	Term  =.. [b|Bs],
+	decoded_marked_list_aux(1,N,Bs,Ds).
+
+decoded_marked_list_aux(I,N,_,[]):- I > N, !.
+decoded_marked_list_aux(I,N,[B|Bs],[D|Ds]):-
+	I=B,!,
+	mark_term(D),
+	decoded_marked_list_aux(I+1,N,Bs,Ds).
+decoded_marked_list_aux(I,N,Bs,[_|Ds]):- !,
+	decoded_marked_list_aux(I+1,N,Bs,Ds).
+%------------------------------------------------------------------------------%
+#else
+decode_marked_list(Term,[]):-
+	Term == b,!.
+decode_marked_list(Term,List):-
+ 	Term =.. [_|ListX],
+ 	encode_marked_list_aux(List,ListX),!.
+#endif  /*NEW_ENCODE_MARKED_LIST*/
+% decode_marked_list(_,_):-
+% 	error_message("decode_marked_list/2 \n",[]).
+#endif  /*MINMAX*/
+%==============================================================================
+% Andrew's code added Feb. '10. Eventually gave up making encoding capable
+% of arrays, but may continue later.
+%==============================================================================
+
+% encode_witnesses(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+%                  GGlobalArr, GGlobalVar,
+%                  GLocalArr, GLocalVar, GArrRef, GCL) :-
+
+% 	dump([state(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef)],
+% 	     [s], CL),
+% 	extract_state_copy(pos, DumpCL, GCL, X, FreeL1),
+% 	X = state(GGlobalArr, GGlobalVar, GLocalArr, GLocalVar, GArrRef),
+
+% 	%----------------------------------------------------------------------
+% 	% We first ground main variables
+% 	% The groundings contain information on the locality, type, and
+%         % order of the variable
+% 	%----------------------------------------------------------------------
+% 	ground_main_variables(global, arr, 1, GGlobalArr),
+% 	ground_main_variables(global, var, 1, GGlobalVar),
+% 	ground_main_variables(local,  arr, 1, GLocalArr),
+% 	ground_main_varibales(local,  var, 1, GLocalVar),
+
+% 	%----------------------------------------------------------------------
+% 	% We ground the variables in the constraints first that are not main
+%         % variables, so we can identify array references whose variables are
+%         % still nonground and can be removed.
+% 	%----------------------------------------------------------------------
+% 	ground_variables(1, FreeL1, M),
+% 	remove_useless_arrref(GArrRef, GArrRef1),
+
+% 	%----------------------------------------------------------------------
+% 	% We lastly remove ground all variables in the arrays and array
+%         % references
+% 	%----------------------------------------------------------------------
+% 	make_symbolic_aux(term, GGlobalArr, _, _, _, [], FreeL2),
+% 	make_symbolic_aux(term, GLocalArr, _, _, _, FreeL2, FreeL3),
+% 	make_symbolic_aux(term, GArrRef, _, _, _, FreeL3, FreeL4),
+% 	ground_variables(M, FreeL4, _).
+
+% decode_witnesses(GGlobalArr, GGlobalVar, GLocalArr, GLocalVar, GArrRef, GCL,
+% 	         GlobalArr,  GlobalVar,  LocalArr,  LocalVar,  ArrRef) :-
+% 	copy_to_unbound_list(GGlobalArr, GlobalArr),
+% 	copy_to_unbound_list(GGlobalVar, GlobalVar),
+% 	copy_to_unbound_list(GLocalArr,  LocalArr),
+% 	copy_to_unbound_list(GLocalVar,  LocalVar),
+
+% extract_state_copy(CFlag, DumpCL, CL, StateCopy, FreeL) :-
+% 	extract_state_copy_aux(CFlag, DumpCL, CL, StateCopy, [], FreeL).
+
+% extract_state_copy_aux(CFlag, [quote(s=X)|R], S, X, InFreeL, OutFreeL) :- !,
+% 	make_symbolic_aux(CFlag, R, _, [], S, InFreeL, OutFreeL).
+% extract_state_copy_aux(CFlag, [quote(X=s)|R], S, X, InFreeL, OutFreeL) :- !,
+% 	make_symbolic_aux(CFlag, R, _, [], S, InFreeL, OutFreeL).
+% extract_state_copy_aux(CFlag, [C|R], [D|S], X, InFreeL, OutFreeL) :- !,
+% 	make_symbolic_aux(CFlag, C, D, _, _, InFreeL, FreeL1),
+% 	extract_state_copy_aux(CFlag, R, S, X, FreeL1, OutFreeL).
+
+
+% %------------------------------------------------------------------------------
+% % We remove array references not used in the constraints
+% %------------------------------------------------------------------------------
+% remove_useless_arrref([], []).
+% remove_useless_arrref([ref(_, _, V)|R], S) :-
+% 	var(V), !, remove_useless_arrref(R, S).
+% remove_useless_arrref([Ref|R], [Ref|S]) :-
+% 	remove_useless_arrref(R, S).
+
+% %------------------------------------------------------------------------------
+% % Ground variables
+% %------------------------------------------------------------------------------
+% ground_variables(N, [], N).
+% ground_variables(N, [A|R], M) :- var(A), !, A=v(N),
+% 	ground_variables(N+1, R, M).
+% ground_variables(N, [_|R], M) :-
+% 	ground_variables(N, R, M).
+
+% %------------------------------------------------------------------------------
+% % Ground main variables with locality and type information
+% %------------------------------------------------------------------------------
+% ground_main_variables(_Locality, _Type, _N, []).
+% ground_main_variables(Locality,  Type,   N, [X|R]) :-
+% 	var(X), !,
+% 	X=v(Locality, Type, N),
+% 	ground_main_variables(Locality, Type, N+1, R).
+% ground_main_variables(Locality,  Type,   N, [_|R]) :-
+% 	ground_main_variables(Locality, Type, N+1, R).
+
+% encode_witnesses(FName,
+% 		 GlobalArr,  GlobalVar,  LocalArr,  LocalVar,  ArrRef,
+% 		 GlobalArrX, GlobalVarX, LocalArrX, LocalVarX, ArrRefX) :-
+% 	encode_witnesses_aux(GlobalArr, global, array, GlobalArrX),
+% 	encode_witnesses_aux(GlobalVar, global, var,   GlobalVarX),
+% 	encode_witnesses_aux(LocalArr,  FName,  array, LocalArrX),
+% 	encode_witnesses_aux(LocalVar,  FName,  var,   LocalVarX).
+
+%==============================================================================
+% End code by Andrew
+%==============================================================================
+
+%----------------------------------------------------------------%
+#if    (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%----------------------------------------------------------------%
+encode_multiple_witnesses([],_FName,[]):-!.
+encode_multiple_witnesses([w(I,Id,WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)|Rs],
+			 FName,
+			 [w(I,Id,WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX)|RsX]):-
+	encode_witnesses(FName,
+			 WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef,
+			 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX),
+	encode_multiple_witnesses(Rs,FName,RsX).
+
+decode_multiple_witnesses([],_FName,[]):-!.
+decode_multiple_witnesses([w(I,Id,WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX)|RsX],
+			 FName,
+			 [w(I,Id,WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)|Rs]):-
+	decode_witnesses(FName,
+			 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX,
+			 WGlobalArr ,WGlobalVar ,WLocalArr ,WLocalVar ,WArrRef),
+	decode_multiple_witnesses(RsX,FName,Rs).
+%------------------------------------------------------------------------------%
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%------------------------------------------------------------------------------%
+
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE || UNFOLD_OPT==WCET )
+%------------------------------------------------------------------------------%
+% encode_witnesses(+,+,+,+,+,+,-,-,-,-,-)
+%------------------------------------------------------------------------------%
+encode_witnesses(FName,
+		 WGlobalArr ,WGlobalVar ,WLocalArr,WLocalVar  , WArrRef,
+		 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX, WArrRef):-
+	%----------------------------------------------------------
+	% For the moment, we don't encode WArrRef.
+	%----------------------------------------------------------
+	encode_witnesses_aux(WGlobalArr, global, array, WGlobalArrX),
+	encode_witnesses_aux(WGlobalVar, global, var  , WGlobalVarX),
+	encode_witnesses_aux(WLocalArr , FName , array, WLocalArrX),
+	encode_witnesses_aux(WLocalVar , FName , var  , WLocalVarX).
+/*
+#if     PROFILE
+	% Debugging 
+	mylength(WGlobalArrX,N1),
+	mylength(WGlobalVarX,N2),
+	mylength(WLocalArrX ,N3),
+	mylength(WLocalVarX ,N4),
+	add_counter(num_of_encoded_constraints,N1+N2+N3+N4),
+#endif
+        true.
+
+mylength(f,0):- !.
+mylength(L,N):- length(L,N),!.
+*/
+	
+	
+%------------------------------------------------------------------------------
+% encode_witnesses_aux(+Vars, +FName, +Key ,-ExplicitConsList)
+%------------------------------------------------------------------------------
+encode_witnesses_aux(Vars,_FName,_Key  ,f):- var(Vars),!.    % 'f' means free variable
+encode_witnesses_aux(Vars, FName, Key0 ,ExplicitConsList):-
+#ifdef  PROFILE
+ 	ctime(T0),
+#endif
+%	debug_message("\t encode_witnesses 0: %\n",[var2ground(FName,Key0,AtomList)]),	 
+        var2ground(FName,Key0,AtomList),
+%	debug_message("\t encode_witnesses 1: %\n",[dump(Vars,AtomList,QuoteCons)]),	 
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_witnesses_answers_1,T1-T0),
+	ctime(T2),
+#endif
+#ifdef  ONLY_LINEAR_WITNESSES
+        dump_only_lin_eqs(Vars,AtomList,QuoteCons),
+#else
+        dump(Vars,AtomList,QuoteCons),
+#endif	/*ONLY_LINEAR_WITNESSES*/
+%       debug_message("\t encode_witnesses 2: %\n",[QuoteCons]),	 	
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(encode_witnesses_answers_2,T3-T2),
+	add_counter(calls_dump_to_encode, 1),
+	ctime(T4),
+#endif
+% NOTE: QuoteCons should not contain variables!!!
+	make_symbolic(QuoteCons,ExplicitConsList,_),
+%       debug_message("\t encode_witnesses 3: %\n",[ExplicitConsList]),	 	
+#ifdef  PROFILE
+        ctime(T5),
+	add_counter(encode_witnesses_answers_3,T5-T4),
+#endif
+        !.
+encode_witnesses_aux(Vars,FName,Key,L):-
+	error_message("encode_witnesses_aux/4 with % - % % (check % is free!).\n",
+		      [FName,Key,Vars,L]).
+
+%------------------------------------------------------------------------------%
+% decode_witnesses(+,+,+,+,+,+,?,?,?,?,?)
+%-----------------------------------------------------------------------------%
+decode_witnesses(FName,
+		 WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRef,
+		 WGlobalArr ,WGlobalVar ,WLocalArr ,WLocalVar ,WArrRef):-
+	
+	%----------------------------------------------------------
+	% For the moment, we don't decode neither WArrRef.
+	%----------------------------------------------------------
+	
+	decode_witnesses_aux(WGlobalArrX , global, array, WGlobalArr),
+	decode_witnesses_aux(WGlobalVarX , global, var  , WGlobalVar),
+	decode_witnesses_aux(WLocalArrX  , FName , array, WLocalArr),	
+	decode_witnesses_aux(WLocalVarX  , FName , var  , WLocalVar).
+		 
+decode_witnesses_aux(f  , _, _, _ ) :- !.
+decode_witnesses_aux(ExplicitConsList0, FName, Key0, VarList):-	
+#ifdef  PROFILE
+	ctime(T0),
+#endif
+        varlist2varterm(FName, Key0,VarList,VarFunctor),
+#ifdef  PROFILE
+	add_counter(calls2replace_atoms_with_vars,1),
+	length(ExplicitConsList0,N1),
+	add_counter(sizeOfreplace_atoms_with_vars,N1),
+#endif
+	replace_atoms_with_vars(ExplicitConsList0,VarFunctor,ExplicitConsList1),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(decode_witnesses_answers_1,T1-T0),
+	ctime(T2),
+#endif
+	constraint_symbolic(ExplicitConsList1,_,_),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(decode_witnesses_answers_2,T3-T2),
+#endif 			
+	!.
+decode_witnesses_aux(CL,FName,_,_):-
+	error_message("decode_witnesses_aux/4 % %\n",[CL,FName]).
+
+replace_atoms_with_vars([],_,[]):- !.				    
+replace_atoms_with_vars([C0|C0s],VarFunctor,[C1|C1s]):-
+	replace_atoms_with_vars2(C0,VarFunctor,C1),
+	replace_atoms_with_vars(C0s,VarFunctor,C1s).
+replace_atoms_with_vars2(v(I),VarFunctor,V):-
+	arg(I,VarFunctor,V),!.
+replace_atoms_with_vars2(X,_VarFunctor,X):-
+	atomic(X),!.
+replace_atoms_with_vars2(Term,VarFunctor,NTerm):-
+	functor(Term,F,_),!,
+	Term  =.. [_|Args],
+	replace_atoms_with_vars3(Args,VarFunctor,NArgs),
+	NTerm =.. [F|NArgs].
+replace_atoms_with_vars3([],_,[]):-!.
+replace_atoms_with_vars3([A|As],VarFunctor,[NA|NAs]):-
+	replace_atoms_with_vars2(A,VarFunctor,NA),
+	replace_atoms_with_vars3(As,VarFunctor,NAs).
+% TESTED: This is slower ....
+% replace_atoms_with_vars2(Term,VarFunctor,NTerm):-
+% 	functor(Term,F,N) , !,
+% 	functor(NTerm,F,N),
+% 	replace_atoms_with_vars3(1,N,VarFunctor,Term,NTerm).
+% replace_atoms_with_vars3(I,N,_,_,_):- I > N, !.
+% replace_atoms_with_vars3(I,N,VarFunctor,Term,NTerm):-
+%         arg(I,Term,A),
+% 	arg(I,NTerm,NA),
+% 	replace_atoms_with_vars2(A,VarFunctor,NA),
+% 	replace_atoms_with_vars3(I+1,N,VarFunctor,Term,NTerm).	
+#endif  /* UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE || UNFOLD_OPT==WCET */
+
+
+gen_static_encoding_code:-
+	telling(Old),
+	tell('encode.clp'),
+#if     (CLP_SYS==SWI)
+         format(":- style_check(-singleton).\n",[]),
+#endif
+	gen_static_variables2ground,
+ 	gen_static_varlist2varterm,
+	told,
+	tell(Old),
+	reconsult('encode.clp').
+
+
+% Add at compile-time a fact that contains a list with variables
+% represented as terms of the form v(I)'s from 1,...,N.
+gen_static_variables2ground:-
+	get_vars_from_func(FName,Type,VarList),
+	convert_vars2ground(VarList,1,LabelList),
+	print_file("var2ground(%,%,%).\n",[FName,Type,LabelList]),
+	fail.
+gen_static_variables2ground:- print_file("\n",[]).
+
+convert_vars2ground([],_K,[]):-!.
+convert_vars2ground([_X|Xs],K,[Y|Ys]):-!,
+	functor(Y,v,1),
+	arg(1,Y,K),
+	convert_vars2ground(Xs,K+1,Ys).
+
+% Add at compile-time a fact that associates a var list to a term
+% where each argument is an element of that list.
+gen_static_varlist2varterm:-
+	get_vars_from_func(FName, Type,VarList),
+	VarFunctor =.. [b|VarList],
+	print_file("varlist2varterm(%,%,%,%).\n",[FName, Type,VarList,VarFunctor]),
+	fail.
+gen_static_varlist2varterm:- print_file("\n",[]).
+
+get_vars_from_func(global, array, VarList):-
+	freshglobalarrays(VarList).
+get_vars_from_func(global, var  , VarList):-
+	freshglobalvars(VarList).
+get_vars_from_func(FName , array, VarList):-
+	freshlocalarrays(FName,VarList).
+get_vars_from_func(FName , var  , VarList):-
+	freshlocalvars(FName,VarList).
+
+%------------------------------------------------------------------------------%
+% encode_constraints_list(+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------%
+encode_constraints_list(_FName,
+			GlobalArr,GlobalVar,LocalArr,LocalVar,
+		        CList,
+			CListX):-
+	
+#ifdef  PROFILE
+        diagnostic(_Total0,_Code0,_Stack0,_Heap0,_Trail0,_Solver0,Pterms0),
+	add_counter(calls2encode_constraints,1),	
+        ctime(T0),
+#endif
+	replace_vars_with_atoms(CList,
+				GlobalArr,GlobalVar,LocalArr,LocalVar,
+				CListX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_memo_1,T1-T0),
+	diagnostic(_Total1,_Code1,_Stack1,_Heap1,_Trail1,_Solver1,Pterms1),
+	add_counter(memusage_encode_interp,Pterms1-Pterms0),
+#endif
+	!.
+encode_constraints_list(FName,_,_,_,_,CList,_):-
+	error_message("encode_constraints_list/6: FName % CList %\n",
+		      [FName,CList]).
+	
+replace_vars_with_atoms([],_,_,_,_,[]):- !.				    
+replace_vars_with_atoms([C0|C0s],GlobalArr,GlobalVar,LocalArr,LocalVar,
+			[C1|C1s]):-
+	replace_vars_with_atoms2(C0,GlobalArr,GlobalVar,LocalArr,LocalVar,C1),!,
+	replace_vars_with_atoms(C0s,GlobalArr,GlobalVar,LocalArr,LocalVar,C1s).
+
+replace_vars_with_atoms2(V,GlobalArr,GlobalVar,LocalArr,LocalVar,AtomV):-
+	var(V),!,
+	findNthVars(GlobalArr,GlobalVar,LocalArr,LocalVar,V,AtomV).
+replace_vars_with_atoms2(X,_,_,_,_,X):-
+	atomic(X),!.
+replace_vars_with_atoms2(Term,GlobalArr,GlobalVar,LocalArr,LocalVar,NTerm):-
+	functor(Term,F,_),!,
+	Term  =.. [_|Args],
+	replace_vars_with_atoms3(Args,GlobalArr,GlobalVar,LocalArr,LocalVar,NArgs),
+	NTerm =.. [F|NArgs].
+replace_vars_with_atoms3([],_,_,_,_,[]):-!.
+replace_vars_with_atoms3([A|As],GlobalArr,GlobalVar,LocalArr,LocalVar,[NA|NAs]):-
+	replace_vars_with_atoms2(A,GlobalArr,GlobalVar,LocalArr,LocalVar,NA),!,
+	replace_vars_with_atoms3(As,GlobalArr,GlobalVar,LocalArr,LocalVar,NAs).
+
+% Start encoding from 1 to ...
+findNthVars(_GlobalArr,_GlobalVar,_LocalArr,LocalVar,V,lv(Vth)):-
+	findnth(LocalVar,V,1,Vth), !.
+findNthVars(_GlobalArr,GlobalVar,_LocalArr,_LocalVar,V,gv(Vth)):-
+	findnth(GlobalVar,V,1,Vth),!.
+findNthVars(GlobalArr,_GlobalVar,_LocalArr,_LocalVar,V,ga(Vth)):-
+	findnth(GlobalArr,V,1,Vth),!.
+findNthVars(_GlobalArr,_GlobalVar,LocalArr,_LocalVar,V,la(Vth)):-
+	findnth(LocalArr,V,1,Vth), !.
+%------------------------------------------------------------------------------%
+% Important: if we don't find the variable then we don't encode
+% it. This is not ideal since if a variable cannot be encoded it means
+% that it's completely free. Therefore, subsumption will not succeed.
+%------------------------------------------------------------------------------%
+findNthVars(_,_,_,_,V,V).
+% 
+%findNthVars(_,_,_,_,_,_):-
+%	error_message("findNthVars/6 \n",[]).
+
+%------------------------------------------------------------------------------%
+% decode_constraints_list(+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------%
+decode_constraints_list(FName,
+			GlobalArr,GlobalVar,LocalArr,LocalVar,
+			CListX,CList):-
+#ifdef  PROFILE
+        diagnostic(_Total0,_Code0,_Stack0,_Heap0,_Trail0,_Solver0,Pterms0),
+	add_counter(calls2decode_constraints,1),
+        ctime(T0),
+#endif
+	varlist2varterm(global, array, GlobalArr, GlobalArrFunc),
+	varlist2varterm(global, var  , GlobalVar, GlobalVarFunc),
+	varlist2varterm(FName , array, LocalArr , LocalArrFunc),
+	varlist2varterm(FName , var  , LocalVar , LocalVarFunc),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(decode_memo_0,T1-T0),
+	length(CListX,NCListX),
+	add_counter(sizeOfreplace_atoms2_with_vars,NCListX),
+	add_counter(calls2replace_atoms2_with_vars,1),
+%	diagnostic(_Total1,_Code1,_Stack1,_Heap1,_Trail1,_Solver1,Pterms1),
+%	add_counter(memusage_decode_interp,Pterms1-Pterms0),	
+	ctime(T2),
+#endif
+        replace_atoms2_with_vars(CListX,
+				 GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				 CList),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(decode_memo_1,T3-T2),
+	diagnostic(_Total1,_Code1,_Stack1,_Heap1,_Trail1,_Solver1,Pterms1),
+	add_counter(memusage_decode_interp,Pterms1-Pterms0),
+#endif
+	!.
+decode_constraints_list(_FName,
+			_GlobalArr,_GlobalVar,_LocalArr,_LocalVar,
+			_CListX,_CList):-
+	error_message("decode_constraints_list/7 \n",[]).
+
+replace_atoms2_with_vars([],_,_,_,_,[]):- !.				    
+replace_atoms2_with_vars([C0|C0s],
+			 GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+			 [C1|C1s]):-!,
+	replace_atoms2_with_vars2(C0,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  C1),
+	replace_atoms2_with_vars(C0s,
+				 GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				 C1s).
+replace_atoms2_with_vars2(gv(I),_,GlobalVarFunc,_,_,V):- arg(I,GlobalVarFunc,V),!.
+replace_atoms2_with_vars2(lv(I),_,_,_,LocalVarFunc ,V):- arg(I,LocalVarFunc,V) ,!.
+replace_atoms2_with_vars2(la(I),_,_,LocalArrFunc,_ ,V):- arg(I,LocalArrFunc,V) ,!.
+replace_atoms2_with_vars2(ga(I),GlobalArrFunc,_,_,_,V):- arg(I,GlobalArrFunc,V),!.
+replace_atoms2_with_vars2(X,_,_,_,_,X)                :- atomic(X),!.
+replace_atoms2_with_vars2(Term,
+			  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+			  NTerm):-
+	functor(Term,F,_),!,
+	Term  =.. [_|Args],
+	replace_atoms2_with_vars3(Args,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  NArgs),
+	NTerm =.. [F|NArgs].
+%------------------------------------------------------------------------------%
+% added 17/05/11: 
+% Technically if this clause is reached, there exists a variable which
+% cannot be decoded properly. Nevertheless, we just continue to avoid
+% breaking everything.
+%------------------------------------------------------------------------------%
+replace_atoms2_with_vars2(Term,_,_,_,_,Term):-!.
+			  			  
+replace_atoms2_with_vars3([],_,_,_,_,[]):-!.
+replace_atoms2_with_vars3([A|As],
+			  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+			  [NA|NAs]):-
+	replace_atoms2_with_vars2(A,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  NA),
+	replace_atoms2_with_vars3(As,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  NAs).
+
+/******************************************************/
+/* This version is slower but it consumes less memory */
+/******************************************************/
+/*
+replace_atoms2_with_vars2(Term,
+			  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+			  NTerm):-
+	functor(Term,F,N) , !,
+	functor(NTerm,F,N),
+	replace_atoms2_with_vars3(1,N,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  Term,NTerm).
+replace_atoms2_with_vars3(I,N,_,_,_,_,_,_):- I > N, !.
+replace_atoms2_with_vars3(I,N,
+			  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+			  Term,NTerm):-
+        arg(I,Term ,A),
+	arg(I,NTerm,NA),
+	replace_atoms2_with_vars2(A,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  NA),
+	replace_atoms2_with_vars3(I+1,N,
+				  GlobalArrFunc,GlobalVarFunc,LocalArrFunc,LocalVarFunc,
+				  Term,NTerm).
+*/
+#endif
+

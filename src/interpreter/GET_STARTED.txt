@@ -1,0 +1,113 @@
+// Jorge Navas Dec 2011
+// This file contains several small examples that help to understand
+// the main concepts behind TRACER. It may be useful for new TRACER
+// developers
+
+// GOALS: 
+// - understand subsumption effects.
+//   run with "-tree-dot y" option.
+//   run with default options and with "-intp none"
+//   and compare symbolic trees.
+
+/*
+void main(){
+  int p1,p2,p3,x,y;
+
+  x=0;
+	
+  if (p1>0)  y = y+1;  ...
+  if (p2>0)  y = y+2;
+  if (p3>0)  y = y+4; 
+
+  _TRACER_abort(x > 0);
+  return;
+}
+*/
+
+// GOALS: 
+// - understand subsumption effects.
+//   run with "-tree-dot y" option.
+//   run with default options and with "-intp ndwp"
+//   compare symbolic trees
+// - understand need of projection when store in memo
+///  run with -debug 1 and search for "Begin COMBINE (func_main) at PC:[p14] "
+
+/*
+void main(){
+  int x = 0;
+  int p1,p2,p3;
+
+  x++;
+  x++;
+  x++;
+	
+  if (p1>0)  x = x+1;
+  if (p2>0)  x = x+2;
+  if (p3>0)  x = x+4; 
+
+  _TRACER_abort(x > 10);
+  return;
+}
+*/
+
+// GOAL: understand basic loops (I)
+// - run with default options
+
+/*
+main(){
+  int i,x,n;
+
+  i=0;
+  x=0;
+  while (i<n){
+    i++;
+  }
+  _TRACER_abort(x > 0);
+    
+}
+*/
+
+// GOAL: understand basic loops (II)
+// - run with default options. The program is unsafe, why?
+// - run with "minmax y" options. What happens now?
+
+
+/*
+main(){
+  int i,x,n;
+
+  i=0;
+  _TRACER_assume(x>0);
+
+  while (i<n){
+    x++;
+    i++;
+  }
+  _TRACER_abort(x <= 0);
+    
+}
+*/
+// GOAL: understand basic loops (III)
+// - run with default options again.
+// - run with "minmax y" options. 
+
+/*
+int main()
+{
+  int i = 0;
+  int N = 40;
+
+  while (i<N) {
+    i++;
+  }
+  
+  _TRACER_abort(i>N);
+
+  return 0;
+}
+*/
+
+// Look at tests/SAFETY/test-loop-allzeros-a.c
+// Look at tests/SAFETY/regrtest-TRACER-MINMAX
+// Look at tests/SAFETY/regrtest-TRACER
+// Look at tests/SAFETY/test-bug-34.c

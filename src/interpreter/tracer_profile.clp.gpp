@@ -1,0 +1,1798 @@
+% This file contains all routines for profiling TRACER
+
+%---------------------------------------------------------------------------%
+%  export
+%    init_profiling_counters/0  % initialize all counters
+%    output_stats               % Print all profiling info
+%    
+%    mem_watermark/1
+%    report_mem_usage/1
+%    report_mem_usage/1
+%    pipe_master_zmem_usage/1
+%    pipe_master_cmem_usage/2
+%    pipe_master_mem_watermark/2
+%
+%---------------------------------------------------------------------------%
+
+%============================================================================
+% init_profiling_counters/0: initialize counters used for profiling.
+%============================================================================
+init_profiling_counters:-
+        set_counter(states_visited_threshold,100),
+        % Keep track of the maximum depth of the tree
+	set_counter(max_depth,0),
+#ifdef  MINMAX
+        init_minimax_counters,
+#endif  /*MINMAX*/
+%%%% Begin PROFILE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef  PROFILE
+        %% Encode/Decode answers
+        set_counter(encode_interpolant_answers,0),
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)		
+        set_counter(encode_analysis_markings   ,0),
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+        set_counter(calls_dump_to_encode      ,0),    
+        set_counter(encode_witnesses_answers_1,0),
+	% this is the counter for dumps during encoding
+	set_counter(encode_witnesses_answers_2,0),
+	set_counter(encode_witnesses_answers_3,0),
+	set_counter(num_of_encoded_constraints,0),
+	set_counter(decode_interpolant_answers,0),
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)		
+	set_counter(decode_analysis_markings  ,0),
+#endif	/*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+	set_counter(decode_witnesses_answers_1,0),
+	set_counter(decode_witnesses_answers_2,0),
+	set_counter(calls2replace_atoms_with_vars,0),
+	set_counter(calls2replace_atoms2_with_vars,0),
+	set_counter(sizeOfreplace_atoms2_with_vars,0),
+	set_counter(sizeOfreplace_atoms_with_vars,0),
+        %% Encode/Decode memo
+	% For timing
+        set_counter(encode_memo_1,0),
+        set_counter(encode_memo_2,0),
+	set_counter(decode_memo_0,0),
+	set_counter(decode_memo_1,0),
+	set_counter(decode_memo_2,0),
+	set_counter(calls2decode_constraints,0),
+	set_counter(calls2encode_constraints,0),		
+	% For memory consumption
+	set_counter(memusage_encode_interp,0),
+	set_counter(memusage_decode_interp,0),	
+        %% False/true profiling
+        set_counter(true_branch,0),
+        set_counter(false_branch,0),
+	%% Subsumption and witnesses profiling
+	% timing when an entry in memo found.
+	set_counter(query_memo_timing_ok,0),
+	% timing when an entry in memo not found.
+	set_counter(query_memo_timing_failed,0),
+%#ifndef MINMAX
+% Used also for MINMAX		
+	% timing when subsumption test ok
+	set_counter(subsumed_timing_ok,0),
+	% timing when subsumption test failed.
+	set_counter(subsumed_timing_failed,0),
+%#endif  /*MINMAX*/
+	% number of times an entry in memo found.
+	set_counter(query_memo_ok,0),
+	% number of times an entry in memo not found.
+	set_counter(query_memo_failed,0),
+%#ifndef MINMAX
+% Used also for MINMAX	
+	% number of times subsumption test ok
+	set_counter(subsumed_ok,0),
+	% number of times subsumption test failed.
+	set_counter(subsumed_failed,0),
+%#endif  /*MINMAX*/	
+	% timing when check witnesses ok
+	set_counter(check_reps_timing_ok,0),
+	% timing when check witnesses failed
+	set_counter(check_reps_timing_failed,0),
+	% number of times witnesses hold.
+	set_counter(check_reps_ok,0),
+	% number of times witnesses did not hold.	
+	set_counter(check_reps_failed,0),        
+	set_counter(num_reps_is_checked,0),
+	set_counter(num_checked_reps,0),
+#ifdef  ENCODE_CHILD_PARENT	
+	set_counter(num_of_threw_witnesses,0),
+#endif	/*ENCODE_CHILD_PARENT*/
+	%% Loops profiling
+	set_counter(loop_invariant_timing,0),
+	set_counter(loop_interpolant_timing,0),
+        set_counter(num_loops_analyzed,0),
+	set_counter(loop_stack_length,0),
+	%% Alias profiling
+	set_counter(alias,0),
+	interp_init_counters,
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE)	
+	set_counter(pre_phase_1,0),
+	set_counter(pre_phase_2,0),
+	set_counter(pre_phase_3,0),
+	set_counter(pre_phase_4,0),
+	set_counter(pre_phase_5,0),
+#else
+        set_counter(pre_safety,0),
+#endif	/*UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE*/	
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        set_counter(entry_loop_analysis,0),
+        %% Fixpoint profiling
+        set_counter(cleanup_loop_memo,0),
+        set_counter(total_fixpoint_iteration,0),
+        set_counter(fixp_round_timing,0),
+	set_counter(fixp_combine_timing,0),
+	set_counter(fixp_exit_timing,0),
+#ifdef  SLICING_CONTROL_OPT	
+	set_counter(control_opt,0),
+	set_counter(control_opt_slice,0),
+#endif	
+	set_counter(pre_phase_6,0),
+	set_counter(pre_phase_7,0),
+	set_counter(pre_phase_8,0),	
+	set_counter(mark_cons_1,0),
+	set_counter(mark_cons_2,0),
+	set_counter(mark_cons_3,0),
+	set_counter(mark_cons_4,0),
+	set_counter(member_in_slice,0),
+#elif   (UNFOLD_OPT == WCET)
+        %% WCET profiling
+        set_counter(wcet_loop_final,0),
+#endif
+        %% Profiling reusing after subsumption
+        set_counter(reuse_timing,0),
+        %% Profiling forward propagation
+        set_counter(forward_timing_1,0),
+        set_counter(forward_timing_2,0),	
+	%% Profiling storing in the memo table
+	set_counter(store_timing_1,0), 
+	set_counter(store_timing_2,0),
+	set_counter(store_timing_3,0),	
+	%% Profiling assert/retract 
+	set_counter(assert_timing,0),
+	set_counter(retract_timing,0),
+	%% Profiling interpolation
+        %%% For basic algorithm 
+        init_compute_unsat_core_profile_counters,
+	%%% For slicing (before calling deletion)
+	set_counter(calls_to_solver_interpolation,0),
+	set_counter(compute_unsat_core_timing,0),
+	set_counter(ground_constraints_filtered,0),
+	set_counter(eliminate_ground_constraints_timing,0),
+	set_counter(path_slicing_timing,0),
+	set_counter(sliced_constraints,0),
+	%%% For partition 
+	init_partition_profile_counters,
+	%%% For rybal interpolation algorithm
+	init_rybal_profile_counters,	
+	%% Profiling certain operations 
+	set_counter(pre_timing,0),
+	set_counter(combine_timing,0),
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	set_counter(pipe_timing, 0),
+#endif  % defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        %---------------------------------------------------------------------
+        % Counters for array solver
+        %---------------------------------------------------------------------
+        set_counter(array_solver_subst_arrays_time,0),
+	set_counter(array_solver_sat_array_ref_time,0),
+	set_counter(infeasible_due_to_array,0),
+#ifdef  EXTERNAL_SOLVER
+        extern_solver_init_counters,
+#endif  /*EXTERNAL_SOLVER*/
+#endif  /*PROFILE*/
+%%%%%%%%End PROFILE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	set_counter(interval_time,0).
+
+%==========================================================================
+% Print all profiling information
+%==========================================================================
+#ifdef  TESTING_CREST
+output_stats(_,_,_,_
+#ifdef  PIPEDUMP_AND_ANSWERS
+	    ,_,_
+#endif
+#ifdef  PIPEMEMO
+	    ,_,_
+#endif	    
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+	    ,_,_
+#endif	    		    		    		    	    
+#if     (UNFOLD_OPT == SLICING)
+            ,_ 
+#elif  	(UNFOLD_OPT == WCET)
+	    ,_
+#endif	    
+#if     defined(PROFILE)&&(defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS))	    
+	    ,_
+#endif		    		    	    
+	    ):- !.
+#endif
+output_stats(Program,Time,MemUsage,MemWaterMark
+#ifdef  PIPEDUMP_AND_ANSWERS
+	    ,AnsSlaveMemUsage,AnsSlaveWaterMark
+#endif
+#ifdef  PIPEMEMO
+	    ,MemoSlaveMemUsage,MemoSlaveWaterMark
+#endif	    
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+	    ,DumpSlaveMemUsage,DumpSlaveWaterMark
+#endif	    		    		    		    	    
+#if     (UNFOLD_OPT == SLICING)
+            ,ProgramSlice  % Program slice
+#elif  	(UNFOLD_OPT == WCET)
+	    ,A             % WCET value	    
+#endif	    
+#if     defined(PROFILE)&&(defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS))	    
+	    ,SlaveCounters
+#endif		    		    	    
+	    ):-
+%#ifndef PROFILE
+%        SlaveCounters=_,
+%#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+%	DumpSlaveMemUsage=_,DumpSlaveWaterMark=_,
+%#endif	
+%#endif  /*!PROFILE*/
+	%----------------------------------------------------------------------
+	% NodeId = Number of states visited
+	%----------------------------------------------------------------------
+	counter_value(node_id, SV),
+%	counter_value(states_visited, SV),
+	counter_value(tabled_count, TC),
+%#ifndef EXTERNAL_SOLVER		
+%	counter_value(calls_to_solver_interpolation,CS),
+%#endif  /*EXTERNAL_SOLVER*/	
+#if     (UNFOLD_OPT == TESTING)
+        tester_output,
+#endif  /*(UNFOLD_OPT == TESTING)*/
+#if     (UNFOLD_OPT == SAFETY) 
+#if     defined(PROFILE) && (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+	% To prevent warnings
+        % SlaveCounter are to profile witnesses. In safety, they are
+        % not used.
+	SlaveCounters=_, 
+#endif  /*PIPEDUMP || PIPEDUMP_AND_ANSWERS*/
+#endif	
+	print_message("\nTRACER statistics \n\n",[]),
+#if     (UNFOLD_OPT == WCET)
+	print_message("Total WCET                  : % \n",[A]),
+#endif	
+	print_message("States visited              : % \n",[SV]),
+#ifdef  GC_INTP_INFEASIBLE
+    counter_value(gc_interpolants, SGC),
+	print_message("States visited (GC mode)    : % \n",[SGC]),
+#endif	
+#ifdef  MINMAX
+        %----------------------------------------------------------------------
+        % Calculate number of entries in the table
+        %----------------------------------------------------------------------
+%       mm_print_stat_calculate_table_size(MinmaxTableSize),
+%	print_message("(Table Entries: %)\n", [MinmaxTableSize]),	
+#endif  /*MINMAX*/
+	print_message("Analysis time               : % sec \n",[Time]),
+	check_div_by_zero(SV ,Time,Throughput),	
+	print_message("Analysis throughput         : % states/sec \n",
+		      [Throughput]),
+	print_message("# subsumed nodes            : % \n",[TC]),
+    counter_value(num_interpolants_total,NIT),
+	print_message("# interpolants total        : % \n",[NIT]),
+%#ifndef EXTERNAL_SOLVER	
+%	print_message("# calls to solver during interpolation : % \n",[CS]),
+%#endif  /*EXTERNAL_SOLVER*/	
+#ifdef  EXTERNAL_SOLVER
+        extern_solver_print_stats,
+#endif  /*EXTERNAL_SOLVER*/
+% #if     (!defined(PROFILE) && defined(MINMAX))
+%         counter_value(num_of_conflict,NumOfConflicts),
+% 	counter_value(num_loop_inv_gen_failed,NumOfLIGFailures),
+%         print_message("Number of refinements                                : % \n",
+% 		      [NumOfConflicts]),
+% 	print_message("Number of times loop inv. gen. (via widening) failed : % \n",
+% 		      [NumOfLIGFailures]),
+% #endif /*(!defined(PROFILE) && defined(MINMAX))*/ 		
+%	print_separator,
+        %----------------------------------------------------------------------
+        % BEGIN for output TRACER analyses info
+        %----------------------------------------------------------------------
+#if     (UNFOLD_OPT == SLICING)
+#ifdef  SLICESTSDOT
+	%% Output the slice STS of the program
+        atom_concat(Program,'.Sliced_STS.dot',SlicedSTS),
+        graphviz_slice_STS(SlicedSTS,ProgramSlice),
+#else
+        Program=_, % to avoid warning
+#endif  /*SLICESTSDOT*/	
+        %% Print to standard output percentage of reduction and size
+        %% of program slice
+	print_slicing_stats(ProgramSlice),
+#elif   (UNFOLD_OPT == LIVE)
+        % To prevent warnings
+        Program=_,
+	print_live_analysis_stats,
+#else
+        % To prevent warnings
+        Program=_,
+#endif  /*UNFOLD_OPT == SLICING*/
+#ifdef  PROFILE
+        %----------------------------------------------------------------------
+        % BEGIN for profiling specific common phases 
+        %----------------------------------------------------------------------
+	counter_value(combine_timing,CT),
+	counter_value(forward_timing_1,ForwardT1),
+	counter_value(forward_timing_2,ForwardT2),
+#ifdef  MINMAX
+        % To count time for storing information about loops
+	counter_value(prep_store_memo_timing,StoreT1),
+#else     
+        % To count time for evaluation of constraints (unused currently)
+	counter_value(store_timing_1,StoreT1),	
+#endif 	/*MINMAX*/
+        % To count time for producing interpolant to be stored in memo
+	counter_value(store_timing_2,StoreT2),
+	% To count time for actually storing the interpolant (via assert)
+	counter_value(store_timing_3,StoreT3),
+	%counter_value(eliminate_ground_constraints_timing,EGCT),
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	counter_value(pipe_timing, PipeT),
+#endif
+        print_separator,
+	print_interpolation_stats(InterpTotalTime),
+#ifdef  GC_INTP_INFEASIBLE
+    retract(intp_vars_indices_GA(IGA)), length(IGA,LIGA),
+    retract(intp_vars_indices_GV(IGV)), length(IGV,LIGV),
+    retract(intp_vars_indices_LA(ILA)), length(ILA,LILA),
+    retract(intp_vars_indices_LV(ILV)), length(ILV,LILV),
+    print_message("\tNumber of variables involved in interpolants : %\n",
+        [LIGA+LIGV+LILA+LILV]),
+#endif  /*GC_INTP_INFEASIBLE*/
+	counter_value(reuse_interpolant_for_infeasible_path,NumOfReuseInf),
+	counter_value(num_of_deleted_subsumed_memo_entries,NumOfDeletedSubsumed),
+#ifdef  GC_INTP_INFEASIBLE
+    counter_value(num_gc_applied,NumGCApplied),
+    counter_value(num_gc_success,NumGCSuccess),
+#endif
+	print_message("\t(Optimization)# reused interpolants for infeasible paths : %\n",
+		      [NumOfReuseInf]),
+	print_message("\t(Optimization)# deleted subsumed memo entries            : %\n",
+		      [NumOfDeletedSubsumed]),
+#ifdef  GC_INTP_INFEASIBLE
+	print_message("\t(Optimization)# GC success/GC applications               : %/%\n",
+		      [NumGCSuccess,NumGCApplied]),
+#endif
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+ 	%----------------------------------------------------------------------
+	% Pipe IPC time is unreliable since ctime() is calculated differently
+	% between processes: We need wall clock timetamps
+ 	%----------------------------------------------------------------------
+        print_separator,
+	print_message("Pipe IPC time (unreliable for now) : % \n", [PipeT]),
+#endif
+        print_array_solver_stats,
+        print_separator,
+	print_message("Backward symbolic execution",[]),
+#if     (UNFOLD_OPT == SAFETY) || (UNFOLD_OPT == TESTING)
+        counter_value(pre_safety,PT),
+	print_message(": % sec.\n",[PT]),
+#endif  /*UNFOLD_OPT == SAFETY*/
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==WCET || UNFOLD_OPT==LIVE)
+	print_message("\n",[]),
+	counter_value(pre_timing,PT),
+	counter_value(pre_phase_1,Pre1),
+	counter_value(pre_phase_2,Pre2),
+	counter_value(pre_phase_3,Pre3),
+	counter_value(pre_phase_4,Pre4),
+#if     (defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)) && (UNFOLD_OPT==WCET)
+        member(counter(pre_phase_2,Pre2Slave),SlaveCounters),
+        member(counter(pre_phase_3,Pre3Slave),SlaveCounters),
+	member(counter(pre_phase_4,Pre4Slave),SlaveCounters),
+#endif  /*PIPEDUMP && UNFOLD_OPT==WCET*/
+	counter_value(pre_phase_5,Pre5),
+#endif
+        %---------------------------------------------------------------------%	
+        % BEGIN for profiling specific phases of TRACER analyses
+        %---------------------------------------------------------------------%
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)	
+	counter_value(pre_phase_7,Pre7),
+	counter_value(pre_phase_8,Pre8),
+#if     UNFOLD_OPT==SLICING
+	counter_value(pre_phase_6,Pre6),
+	counter_value(mark_cons_1,MC1),
+	counter_value(mark_cons_4,MC5),	
+	counter_value(member_in_slice,MC4),
+#endif  /*UNFOLD_OPT==SLICING*/			
+	counter_value(mark_cons_2,MC2),
+	counter_value(mark_cons_3,MC3),
+	counter_value(alias,AliasT),
+	print_message("\tPre-operator (retract child's answer) : % sec\n",[Pre5]),
+	print_message("\tPre-operator (copy_term post marked)  : % sec\n",[Pre8]),	
+	print_message("\tPre-operator (copy_term XCL, pre, ...): % sec\n",[Pre1]),
+	print_message("\tPre-operator (mark wrt witnesses)     : % sec\n",[Pre2]),
+	print_message("\tPre-operator (mark constraints)       : % sec\n",[Pre3]),
+	print_message("\t\tUpdate markings with alias        ... % sec\n",[AliasT]),
+#if     UNFOLD_OPT==SLICING	
+	print_message("\t\tProp. dependencies in guards      ... % sec\n",[MC1]),
+#endif  /*UNFOLD_OPT==SLICING*/	
+	print_message("\t\tCreate new witnesses              ... % sec\n",[MC2]),
+#if     UNFOLD_OPT==SLICING		
+	print_message("\t\tProp. dependencies in assignments ... % sec\n",[MC3]),
+	print_message("\t\tChecking a trans is in a slice    ... % sec\n",[MC4]),
+	print_message("\t\tChecking if a branch trans        ... % sec\n",[MC5]),
+#endif  /*UNFOLD_OPT==SLICING*/
+#if     UNFOLD_OPT==LIVE		
+	print_message("\t\tPropagate live sets               ... % sec\n",[MC3]),
+#endif  /*UNFOLD_OPT==LIVE*/	
+	print_message("\tPre-operator (update witnesses)       : % sec\n",[Pre4]),
+#if     UNFOLD_OPT==SLICING	
+	print_message("\tPre-operator (assert slice facts)     : % sec\n",[Pre6]),	
+#endif  /*UNFOLD_OPT==SLICING*/	
+	print_message("\tPre-operator (assert markings+witnesses): % sec\n",[Pre7]),
+	print_message("\tTotal                                 : % sec\n",[PT]),
+	%---------------------------------------------------------------------%
+#endif
+        %---------------------------------------------------------------------%
+        % END for profiling specific phases of TRACER analyses
+        %---------------------------------------------------------------------%
+        % BEGIN for profiling specific phases of WCET
+        %---------------------------------------------------------------------%
+#if     (UNFOLD_OPT == WCET)
+	print_message("\tPre-operator time (retract child's answer) : % sec\n",
+		      [Pre1]),
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        print_message("\tMASTER: \n",[]),
+#endif  /*defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+	print_message("\tPre-operator time (add WCET transition)    : % sec\n",
+		      [Pre2]),
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        print_message("\tThe following timing may be not reliable.\n",[]),
+#endif 	/*defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)*/
+	print_message("\tPre-operator time (update witnesses)       : % sec\n",
+		      [Pre3+Pre4]),	
+	print_message("\t\tUpdate witness path                : % sec\n",[Pre3]),	
+	print_message("\t\tUnify optimal path                 : % sec\n",[Pre4]),
+#if     (defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)) && (UNFOLD_OPT==WCET)
+        print_message("\tSLAVE: \n",[]),
+	print_message("\tPre-operator time (add WCET transition)    : % sec\n",
+		      [Pre2Slave]),
+        print_message("\tThe following timing may be not reliable.\n",[]),
+	print_message("\tPre-operator time (update witnesses)       : % sec\n",
+		      [Pre3Slave+Pre4Slave]),	
+	print_message("\t\tUpdate witness path                : % sec\n",
+		      [Pre3Slave]),	
+	print_message("\t\tUnify optimal path                 : % sec\n",
+		      [Pre4Slave]),
+#endif  /* defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS) && UNFOLD_OPT==WCET*/	
+	print_message("\tPre-operator time (assert answer)          : % sec\n",
+		      [Pre5]),
+	print_message("\tTotal                                      : % sec\n",
+		      [PT]),
+#endif  /*(UNFOLD_OPT == WCET)*/
+        %---------------------------------------------------------------------%
+        % END for profiling specific phases of WCET
+        %---------------------------------------------------------------------%
+        interp_print_pre_stats,
+        print_separator,
+	print_message("Combine operation: % sec\n",[CT]),		      
+        interp_print_combine_stats,
+        print_separator,
+%----------------------------------------------------------------------%	
+#ifdef  ENCODE_CHILD_PARENT
+        counter_value(encode_interpolant_answers,EncIntAns),
+	counter_value(decode_interpolant_answers,DecIntAns),
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+	counter_value(encode_analysis_markings ,EncSlicingMarks),
+	counter_value(decode_analysis_markings ,DecSlicingMarks),	
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%----------------------------------------------------------------------%
+#if     (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)	
+	counter_value(encode_witnesses_answers_1,EncWAns1),
+	counter_value(encode_witnesses_answers_2,EncWAns2),
+	counter_value(encode_witnesses_answers_3,EncWAns3),
+	counter_value(calls_dump_to_encode      ,Calls2Dump),	
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	member(counter(encode_witnesses_answers_1,EncWAns1Slave),SlaveCounters),
+	member(counter(encode_witnesses_answers_2,EncWAns2Slave),SlaveCounters),
+	member(counter(encode_witnesses_answers_3,EncWAns3Slave),SlaveCounters),
+	member(counter(calls_dump_to_encode,Calls2DumpSlave),SlaveCounters),	
+#endif	
+	% counter_value(num_of_encoded_constraints,NumOfEncCons),	
+	counter_value(decode_witnesses_answers_1,DecWAns1),
+	counter_value(decode_witnesses_answers_2,DecWAns2),
+	counter_value(calls2replace_atoms_with_vars,NumReplaceAtoms),
+	counter_value(sizeOfreplace_atoms_with_vars,SizeReplaceAtoms),
+#if     defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)
+	member(counter(calls2replace_atoms_with_vars,NumReplaceAtomsSlave),
+	       SlaveCounters),
+	member(counter(sizeOfreplace_atoms_with_vars,SizeReplaceAtomsSlave),
+	       SlaveCounters),
+	member(counter(decode_witnesses_answers_1,DecWAns1Slave),
+	       SlaveCounters),
+	member(counter(decode_witnesses_answers_2,DecWAns2Slave),
+	       SlaveCounters),			 
+#endif
+#endif /*(UNFOLD_OPT == WCET || UNFOLD_OPT == SLICING || UNFOLD_OPT==LIVE)*/
+%----------------------------------------------------------------------%
+	print_message("Encode  interpolant (answers)  : % sec\n",
+		      [EncIntAns]),
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        print_message("Encode  analysis markings      : % sec\n",
+		      [EncSlicingMarks]),
+#endif
+%----------------------------------------------------------------------%
+#if     ( UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	print_message("[MASTER] Encode witnesses           : % sec\n",
+#else
+	print_message("Encode witnesses (only answers, not memo) : % sec\n",
+#endif	
+		      [EncWAns1+EncWAns2+EncWAns3]),
+	print_message("\tGenerate ground variable names    : % sec\n",
+		      [EncWAns1]),
+	print_message("\tDump constraints                  : % sec\n",
+		      [EncWAns2]),
+	print_message("\tNumber of dump's                  : % \n",
+		      [Calls2Dump]),
+	check_div_by_zero(EncWAns2,Calls2Dump,AvgDumpEnc),
+	print_message("\tAv. time for dump                 : % sec\n",
+		      [AvgDumpEnc]),	
+%	print_message("\tNumber of encoded constraints     : % \n",
+%		      [NumOfEncCons]),
+	print_message("\tMake explicit constraints         : % sec\n",
+		      [EncWAns3]),
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	print_message("[SLAVE] Encode witnesses (only answers, not memo) : % sec\n",
+		      [EncWAns1Slave+EncWAns2Slave+EncWAns3Slave]),
+	print_message("\tGenerate ground variable names: % sec\n",
+		      [EncWAns1Slave]),
+	print_message("\tDump constraints           : % sec\n",
+		      [EncWAns2Slave]),
+	print_message("\tNumber of dump's           : % \n",
+		      [Calls2DumpSlave]),
+	check_div_by_zero(EncWAns2Slave,Calls2DumpSlave,AvgDumpEncSlave),
+	print_message("\tAv. time for dump           : % sec\n",
+		      [AvgDumpEncSlave]),
+	print_message("\tMake explicit constraints   : % sec\n",
+		      [EncWAns3Slave]),
+#endif
+#endif /*( (UNFOLD_OPT == WCET)	|| (UNFOLD_OPT == SLICING || UNFOLD_OPT==LIVE)*/
+%------------------------------------------------------------------------%
+	print_message("Decode  interpolant (answers)  : % sec\n",
+		      [DecIntAns]),
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        print_message("Decode  analysis markings      : % sec\n",
+		      [DecSlicingMarks]),
+#endif
+%------------------------------------------------------------------------%
+#if     ( UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE )		     
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	print_message("[MASTER] Decode witnesses     : % sec\n",
+#else
+	print_message("Decode witnesses (only answers, not memo): % sec\n",
+#endif		      
+		      [DecWAns1+DecWAns2]),
+	print_message("\tReplace ground variables with logical: % sec\n",
+		      [DecWAns1]),
+	print_message("\t\tNumber of calls to replace_atoms_with_vars : % \n",
+		      [NumReplaceAtoms]),
+	print_message("\t\tSize of list in replace_atoms_with_vars    : % \n",
+		      [SizeReplaceAtoms]),
+	check_div_by_zero(SizeReplaceAtoms,NumReplaceAtoms,AvgSizeL),
+	print_message("\t\tAv. size of list in replace_atoms_with_vars: %  \n",
+		      [AvgSizeL]),
+	check_div_by_zero(DecWAns1,NumReplaceAtoms,AvgRep0),
+	check_div_by_zero(SizeReplaceAtoms,NumReplaceAtoms,AvgRep1),
+	check_div_by_zero(AvgRep0,AvgRep1,AvgRep2),
+	print_message("\t\tAv. timing in replace_atoms_with_vars      : % secs/const\n",
+		      [AvgRep2]),	
+	print_message("\tEvaluate symbolic constraints      : % sec\n",
+		      [DecWAns2]),
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	print_message("[SLAVE] Decode witnesses (only answers, not memo): % sec\n",
+		      [DecWAns1Slave+DecWAns2Slave]),
+	print_message("\tReplace ground variables with logical: % sec\n",
+		      [DecWAns1Slave]),
+	print_message("\t\tNumber of calls to replace_atoms_with_vars : % \n",
+		      [NumReplaceAtomsSlave]),
+	print_message("\t\tSize of list in replace_atoms_with_vars    : % \n",
+		      [SizeReplaceAtomsSlave]),
+	check_div_by_zero(SizeReplaceAtomsSlave,NumReplaceAtomsSlave,
+			  AvgSizeLSlave),
+	print_message("\t\tAv. size of list in replace_atoms_with_vars: %  \n",
+		      [AvgSizeLSlave]),
+	check_div_by_zero(DecWAns1Slave,NumReplaceAtomsSlave,AvgRep0Slave),
+	check_div_by_zero(SizeReplaceAtomsSlave,NumReplaceAtomsSlave,
+			  AvgRep1Slave),
+	check_div_by_zero(AvgRep0Slave,AvgRep1Slave,AvgRep2Slave),
+	print_message("\t\tAv. timing in replace_atoms_with_vars      : % secs/const \n",
+		      [AvgRep2Slave]),	
+	print_message("\tEvaluate symbolic constraints      : % sec\n",
+		      [DecWAns2Slave]),
+#endif  /*defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+#endif  /*(UNFOLD_OPT==WCET|| UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/		     
+        print_separator,	
+#endif	/*ENCODE_CHILD_PARENT*/
+#ifdef  ENCODE_MEMO
+	counter_value(encode_memo_1,EncMemo1),
+	counter_value(encode_memo_2,EncMemo2),
+	counter_value(decode_memo_0,DecMemo0),	
+	counter_value(decode_memo_1,DecMemo1),
+	counter_value(decode_memo_2,DecMemo2),
+	counter_value(memusage_encode_interp,EncMemUsage0),
+	counter_value(memusage_decode_interp,DecMemUsage0),
+	counter_value(calls2encode_constraints,Calls2EncMemo),
+	counter_value(calls2decode_constraints,Calls2DecMemo),				
+	EncMemUsage = EncMemUsage0/1048576, % in Mb.
+	DecMemUsage = DecMemUsage0/1048576, % in Mb.
+	counter_value(calls2replace_atoms2_with_vars,NumReplaceAtoms2),
+	counter_value(sizeOfreplace_atoms2_with_vars,SizeReplaceAtoms2),
+	print_message("Encode memo table              : % sec\n",
+		      [EncMemo1+EncMemo2]),
+	print_message("\tEncode constraints list          : % sec\n",
+		      [EncMemo1]),
+	print_message("\tEncode constraints list          : % Mb \n",
+		      [EncMemUsage]),
+	print_message("\t# calls to encode constraint list: %  \n",
+		      [Calls2EncMemo]),
+	check_div_by_zero(EncMemo1+EncMemo2,Calls2EncMemo,AvgTimingEncMemo),
+	print_message("\tAv. timing encode constraint list:  % sec/call \n",
+		      [AvgTimingEncMemo]),	
+	print_message("\tEncode answer                    : % sec\n",
+		      [EncMemo2]),
+	print_message("Decode memo table              : % sec\n",
+		      [DecMemo0+DecMemo1+DecMemo2]),
+	print_message("\tDecode constraints list          : % sec\n",
+		      [DecMemo0+DecMemo1]),
+	print_message("\tDecode constraints list          : % Mb \n",
+		      [DecMemUsage]),
+	print_message("\t# calls to decode constraint list: %  \n",
+		      [Calls2DecMemo]),
+	check_div_by_zero(DecMemo0+DecMemo1+DecMemo2,Calls2DecMemo,AvgTimingDecMemo),
+	print_message("\tAv. timing decode constraint list  % sec/call \n",
+		      [AvgTimingDecMemo]),		
+	print_message("\t\tGet set of variables as functors      : % sec\n",
+		      [DecMemo0]),		
+	print_message("\t\tReplace ground variables with logical : % sec\n",
+		      [DecMemo1]),
+	print_message("\t\t\tNumber of calls to replace_atoms2_with_vars : % \n",
+		      [NumReplaceAtoms2]),
+	print_message("\t\t\tSize of list in replace_atoms2_with_vars    : % \n",
+		      [SizeReplaceAtoms2]),
+        check_div_by_zero(SizeReplaceAtoms2,NumReplaceAtoms2,AvSizeRatoms2),
+	print_message("\t\t\tAv. size of list in replace_atoms2_with_vars: %  \n",
+		      [AvSizeRatoms2]),
+	check_div_by_zero(DecMemo1,NumReplaceAtoms2,DM1divNRA2),
+        check_div_by_zero(DM1divNRA2,AvSizeRatoms2,AvTiminRatoms2),		      
+	print_message("\t\t\tAv. timing in replace_atoms2_with_vars      : % sec/const \n",
+		      [AvTiminRatoms2]),
+	print_message("\tDecode answer                    : % sec\n",
+		      [DecMemo2]),	
+        print_separator,
+#endif 	/*ENCODE_MEMO*/
+#ifdef  MINMAX
+	counter_value(minimax_test_outgoing,MMTestOutT),
+	counter_value(apply_sibling_answers_timing,MMASAT),			     
+	print_message("Forward symbolic execution            : % sec\n",
+		      [ForwardT1+ForwardT2+MMTestOutT+MMASAT]),
+        print_message("\tClassify between feasible and infeasible trans : % sec\n",
+		      [MMTestOutT]),
+	print_message("\tApply abstraction to sibling                   : % sec\n",	       
+                      [MMASAT]),
+		      
+#else
+	print_message("Forward symbolic execution            : % sec\n",
+		      [ForwardT1+ForwardT2]),
+#endif  /*MINMAX*/
+        print_message("Note: maintenance of partitions included in interpolation time\n",[]),		     
+        print_separator,	      
+	print_message("Cache Insertion      \n",[]),
+#ifdef  MINMAX
+        counter_value(store_memo_compute_invariants,MemoInvariantsTime),
+        print_message("\tProduce the interpolant for the cache        : % sec\n",
+		      [StoreT2]),
+	print_message("\tCollect and store information about loops    : % sec\n",
+		      [StoreT1]),
+	print_message("\t\tCompute invariance dependencies      : % sec\n",
+		      [MemoInvariantsTime]),
+	counter_value(num_of_invariance_dependencies,NumOfInvDep),
+        print_message("\t\t\tNum of invariance dependencies: % \n",
+ 		      [NumOfInvDep]),
+%	counter_value(num_of_reused_invariance_dependencies,NumOfReusedInvDep),		      		      
+%       print_message("\t\t\t\tNum of reused         : % \n",
+% 		      [NumOfReusedInvDep]),		      
+#else
+        print_message("\tProduce the interpolant for the cache        : % sec\n",
+		      [StoreT2]),		     
+#endif  /*MINMAX*/		      
+	print_message("\tStore in the cache (via assert)              : % sec\n",
+		      [StoreT3]),
+	print_message("\tTotal                                        : % sec\n",
+		      [StoreT1+StoreT2+StoreT3]),
+        %------------------------------------------------------------------------
+        % END for profiling specific common phases 
+        %------------------------------------------------------------------------ 
+	% These three counters are not reliable. Possible due to
+	% backtracking effects.		      
+        counter_value(query_memo_timing_ok,QueryMemoTOK),	
+        counter_value(query_memo_ok,QueryMemoOK),
+#ifndef MINMAX
+        counter_value(subsumed_failed,SubsumedFailed),
+#endif  /*MINMAX*/
+	%---------------------------------------------------------%	        
+        counter_value(query_memo_failed,QueryMemoFailed),
+#ifndef MINMAX
+        counter_value(subsumed_ok,SubsumedOK),
+#endif  /*MINMAX*/
+        counter_value(query_memo_timing_failed,QueryMemoTFailed),
+#ifndef MINMAX
+        counter_value(subsumed_timing_failed,SubsumedTFailed),	
+        counter_value(subsumed_timing_ok,SubsumedTOK),
+#endif  /*MINMAX*/
+	counter_value(reuse_timing,ReuseT),
+	print_separator,
+	%%%% This shows the number of contexts per program point		
+	% stats_memo_table,
+	print_message("Cache Search:         \n",[]),
+        print_message("\tLookup                        \n",[]),
+	print_message("\t\t# searches for entries that failed       : % \n",
+		      [QueryMemoFailed]),	
+	print_message("\t\tTime                                     : % sec\n",
+		      [QueryMemoTFailed]),	
+        print_message("\t\t# searches for entries that succeed      : % \n",
+		      [QueryMemoOK]),
+        print_message("\t***Next line not included (problems w/ backtracking) \n",[]),
+        print_message("\t\tTime                                     : % sec \n",
+		      [QueryMemoTOK]), 	       
+        print_message("\tSubsumption test             \n",[]),
+#ifndef MINMAX
+        print_message("\t\t# Subsumption test failed                : % \n",
+		      [SubsumedFailed]),	
+        print_message("\t\tTime                                     : % sec\n",
+		      [SubsumedTFailed]),
+        print_message("\t\t# Subsumption test succeed               : % \n",
+		      [SubsumedOK]),		   
+        print_message("\t\tTime                                     : % sec\n",
+		      [SubsumedTOK]),	
+        print_message("\t\tTiming for reuse/store answers           : % sec\n",
+		      [ReuseT]),
+        TotalSubTiming = /*QueryMemoTOK+*/ QueryMemoTFailed+SubsumedTFailed+SubsumedTOK+ReuseT,	
+        print_message("\tTotal time (lookup+subsumption test)             : % sec\n",
+	       [TotalSubTiming]),
+#else   /*!MINMAX*/
+        print_mm_subsumption_stats(QueryMemoTOK,QueryMemoTFailed,ReuseT,TotalSubTiming), 
+#endif  /*!MINMAX*/
+        print_separator,
+        %---------------------------------------------------------------------
+        % BEGIN for profiling witnesses
+        %---------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        %%%%
+        % Stats about witnesses
+        %%%%        
+        % timing when witness holds.
+        counter_value(check_reps_timing_ok,CheckRepsTOK),
+	% Number of times witness holds. 	
+	counter_value(check_reps_ok,CheckRepsOK),
+	% timing when witness does not hold.
+        counter_value(check_reps_timing_failed,CheckRepsTFailed),
+	% Number of times witness did not hold.
+	counter_value(check_reps_failed,CheckRepsFailed),         
+	% Number of times that witnesses (as a group) are tested
+	counter_value(num_reps_is_checked,NumChecks),
+	% Total number of witnesses tested.
+	counter_value(num_checked_reps,NumCheckedReps),
+#ifdef  ENCODE_CHILD_PARENT
+        counter_value(num_of_threw_witnesses,NumThrewWitnesses),
+#endif  /*ENCODE_CHILD_PARENT*/
+	print_message("Witnesses information: \n",[]),
+	%print_message("\tWitnesses failed \n",[]),
+        print_message("\t# witnesses failed                         : %\n",
+	       [CheckRepsFailed]),
+	print_message("\tTiming for checking witnesses when failed  : % sec\n",
+	       [CheckRepsTFailed]),	
+	%print_message("\tWitnesses succeed \n",[]),
+        print_message("\t# witnesses succeed                        : %\n",
+	       [CheckRepsOK]),
+	print_message("\tTiming for checking witnesses when succeed : % sec\n",
+	       [CheckRepsTOK]),	
+	print_message("\t# times the bunch of witnesses is checked  : % \n",
+	       [NumChecks]),
+	print_message("\ttotal number of witnesses checked          : % \n",
+	       [NumCheckedReps]),
+        print_message("\t\t (include also empty witnesses) \n",[]),  
+	compute_average_num_checked_reps(NumChecks,NumCheckedReps,
+					 AvCheckedReps),	
+	print_message("\tAverage # witnesses checked                : % \n",
+	       [AvCheckedReps]),
+#ifdef  ENCODE_CHILD_PARENT
+        print_message("\t# witnesses deleted due to threshold (if any): % \n",
+	       [NumThrewWitnesses]),      
+#endif  /*ENCODE_CHILD_PARENT*/
+	TotalWitnessesT = CheckRepsTFailed+CheckRepsTOK,
+	print_message("\tTotal                                      : % sec\n",
+	       [TotalWitnessesT]),	
+        print_separator,
+#endif
+        %-----------------------------------------------------------------%
+        % END for profiling representatives
+        %-----------------------------------------------------------------%
+        %-----------------------------------------------------------------%
+        % BEGIN for profiling loops
+        %-----------------------------------------------------------------%
+#if     (!defined(MINMAX))
+	print_message("Some loop information: \n",[]),
+	counter_value(loop_invariant_timing,LInvT),
+        % Nobody updates it:
+	% counter_value(loop_interpolant_timing,LIntT),
+        counter_value(loop_stack_length,LSL),
+	print_message("\tTime for using loop invariants         : % sec\n",
+		      [LInvT]),
+	%print_message("\tTime for interpolant at the loop entry : % sec\n",
+        %	       [LIntT]),
+        num_of_loops(NumOfLoops),
+        print_message("\tNumber of loops in the program         : % \n",
+		      [NumOfLoops]),
+        counter_value(num_loops_analyzed,NumOfLoopsAnal),
+        print_message("\tNumber of loops analyzed               : % \n",
+		      [NumOfLoopsAnal]),
+        print_message("\tMaximum number of nested loops         : % \n",
+		      [LSL]),
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%       counter_value(entry_loop_analysis,ELA),
+%       print_message("\tNumber of times entry of loop is encountered: % \n",[ELA]),
+        counter_value(total_fixpoint_iteration,TFixpIter),
+%       counter_value(fixp_round_timing,FRT),
+%	counter_value(fixp_combine_timing,FCT),
+        check_div_by_zero(TFixpIter,NumOfLoopsAnal,AvFixpIter),
+        counter_value(cleanup_loop_memo,CLMT),
+%	counter_value(fixp_exit_timing,FET),
+        print_message("\tTotal number of fixpoint iterations    : %\n",[TFixpIter]),
+        print_message("\t\t Avg. fixpoint iterations / loop analyzed: %\n",[AvFixpIter]),
+        print_message("\t\t Time for cleanup memo after loop iter   : % sec\n",[CLMT]),
+%	print_message("\tTime for all fixpoint iterations       : % sec [NOT reliable]\n",
+%		      [FRT]),
+%	print_message("\tTime for combine fixpoint iterations   : % sec\n",
+%		      [FCT]),
+%	print_message("\tTime for finishing fixpoint            : % sec\n",
+%		      [FET]),
+#elif   (UNFOLD_OPT == WCET)
+        counter_value(wcet_loop_final,WCETLOOPFT),
+	print_message("\tTime for aggregation of the loops      : % sec\n",
+	       [WCETLOOPFT]),
+#endif
+#else   /*(!defined(MINMAX))*/
+	print_message("Loop information: \n",[]),
+        % Refinements
+        counter_value(num_of_conflict,NumOfConflicts),
+	counter_value(num_of_directed_refinements,NumOfDirectedRefinements),
+	counter_value(search_for_abstraction_to_refine_timing,MMLockCT),
+        % Loop invariant generation
+	counter_value(test_candidate_invariants_timing,MMIIT),
+	counter_value(enumerate_candidate_invariants_timing,MMProjT),
+	counter_value(num_loop_inv_gen_failed,NumOfLIGFailures),
+	counter_value(num_loop_inv_gen_succeed,NumOfLIGSucceed),
+        counter_value(num_of_tested_inv_candidates,NumOfTestedCandidates),
+        counter_value(num_of_successful_inv_candidates,NumOfInvConstraints),
+
+	print_message("\tLoop Invariant Generation: \n", []),
+	print_message("\t\tTime to enumerate candidate invariants  : % sec\n",
+		      [MMProjT]),
+	print_message("\t\tTime to test candidate invariants       : % sec\n",
+		      [MMIIT]),
+        print_message("\t\t#Tested candidate constraints           : % \n",
+		      [NumOfTestedCandidates]),
+        print_message("\t\t#Invariant constraints                  : % \n",
+		      [NumOfInvConstraints]),
+	print_message("\t\t#Loop invariant generation succeed      : % \n",
+		      [NumOfLIGSucceed]),
+	print_message("\t\t#Loop invariant generation failed       : % \n",
+		      [NumOfLIGFailures]),
+        print_message("\tRefinements:                                     \n",[]),
+        print_message("\t\tTotal time                              : % sec\n",
+		      [MMLockCT]),
+        print_message("\t\tNumber of refinements                   : % \n",
+		      [NumOfConflicts]),
+        print_message("\t\t\tNumber of guided refinements    : % \n",
+		      [NumOfDirectedRefinements]),
+        print_message("\t\t\tNumber of blind refinements     : % \n",
+		      [NumOfConflicts - NumOfDirectedRefinements]),
+#endif  /*(!defined(MINMAX))*/
+        %--------------------------------------------------------------------%
+        % END for profiling loops
+        %--------------------------------------------------------------------%
+
+        print_separator,
+#ifdef  OUTPUT_TRUE_FALSE_TRANS_INFO
+        %--------------------------------------------------------------------%
+        % BEGIN for profiling feasibility
+        %--------------------------------------------------------------------%
+	%---------------------------------------------------------------------
+	% There was a warning to not remove once/1 on max_depth,
+	% collect_total_infeasible/5, and collect_total_feasible, but we
+	% replaced them with cuts.
+	%---------------------------------------------------------------------
+        counter_value(max_depth,MaxDepth),
+ 	collect_total_infeasible(0,0,MaxDepth,_NumIP,_), !,
+ 	collect_total_feasible(0,MaxDepth,_NumFP), !,
+	print_message("Path-Sensitive information: \n",[]),
+ 	print_trans_profile_info,
+	%%%%%%print_message("\t# infeasible paths          : % \n",[NumIP]),
+	%%%%%%print_message("\t# feasible paths            : % \n",[NumFP]),
+
+        %% Uncomment the following line to output the info:
+	print_true_false_branches_info,
+        %print_message("\t Uncomment line for showing more info. \n",[]),
+	print_separator,
+#endif  /*OUTPUT_TRUE_FALSE_TRANS_INFO*/
+        %-------------------------------------------------------------------%
+        % END for profiling feasibility
+        %-------------------------------------------------------------------%
+#endif
+#ifdef  PROFILE
+	print_message("Some CLP(R) info \n",[]),
+	counter_value(assert_timing,AssertT),
+	counter_value(retract_timing,RetractT),
+	print_message("\tAssert  (cache asserts not included)  : % sec\n",
+		      [AssertT]),
+	print_message("\tRetract (cache retracts not included) : % sec\n",
+		      [RetractT]),
+        print_separator,
+#endif  
+#ifdef  OUTPUT_MEMORY_INFO
+#if     (defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO) || defined(PIPEDUMP))
+        print_message("[MASTER] \n",[]),
+#endif 
+        print_message("Memory watermark: \n",[]),
+        print_memory_info(MemWaterMark),
+        print_message("Memory usage: \n",[]),
+	report_mem_usage(MemUsage),
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+        print_message("[DUMP SLAVE] \n",[]),
+        print_message("Memory watermark: \n",[]),
+        print_memory_info(DumpSlaveWaterMark),
+        print_message("Memory usage: \n",[]),
+	report_mem_usage(DumpSlaveMemUsage),
+#endif	    		    		    		    
+#ifdef  PIPEDUMP_AND_ANSWERS
+        print_message("[STORE-ANSWERS SLAVE] \n",[]),
+        print_message("Memory watermark: \n",[]),
+        print_memory_info(AnsSlaveWaterMark),
+        print_message("Memory usage: \n",[]),
+	report_mem_usage(AnsSlaveMemUsage),
+#endif
+#ifdef  PIPEMEMO
+        print_message("[MEMO-TABLE SLAVE] \n",[]),
+        print_message("Memory watermark: \n",[]),
+        print_memory_info(MemoSlaveWaterMark),
+        print_message("Memory usage: \n",[]),
+	report_mem_usage(MemoSlaveMemUsage),
+#endif
+	print_separator,
+#ifdef  REDUNDANT_MARKINGS_PROFILE
+	print_redundant_markings_profile,
+#endif  /* REDUNDANT_MARKINGS PROFILE */
+#else
+%%% To avoid warnings
+        MemUsage=_,MemWaterMark=_,
+
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+	DumpSlaveMemUsage=_, DumpSlaveWaterMark=_,
+#endif
+#ifdef  PIPEDUMP_AND_ANSWERS
+	AnsSlaveMemUsage=_, AnsSlaveWaterMark=_,
+#endif
+#ifdef  PIPEMEMO
+	MemoSlaveMemUsage=_, MemoSlaveWaterMark=_,
+#endif
+	    	    
+#endif  /*OUTPUT_MEMORY_INFO*/
+#ifdef  PROFILE
+        print_summarized_timing(time(Time,
+				     InterpTotalTime,
+				     (PT+CT),
+#ifdef  MINMAX
+				     (ForwardT1+ForwardT2+MMTestOutT+MMASAT)+
+				     (MMLockCT+MMIIT+MMProjT),
+#else
+				     (ForwardT1+ForwardT2),
+#endif  /*MINMAX*/ 				     				     
+				     (StoreT1+StoreT2+StoreT3),
+				     TotalSubTiming)).
+#else
+         true.
+#endif  /*PROFILE*/
+
+#if     (UNFOLD_OPT==WCET)	
+%%%-------------------------
+%%% Temporary for a quick WCET summary 
+%%% Useful for debugging purposes.
+%         write_summarized_WCET_stats(A,SV,TC,
+% #ifdef  PROFILE			       
+% 				   CheckRepsFailed
+% #else
+% 				   _
+% #endif  /*PROFILE*/
+% 				   ).
+
+write_summarized_WCET_stats(WCET,States,Covered,UNSAT):-
+%	current_tracer_flag(path_datastructure,PDS),
+%	current_tracer_flag(path_slicing,PS),
+%	print_message("\n % + slicing:% \n",[PDS,PS]),
+	print_message("WCET:% States:% Covered:% UNSAT:% \n",
+		      [WCET,States,Covered,UNSAT]).
+%%%-------------------------	
+#endif  /*UNFOLD_OPT==WCET*/
+
+
+#ifdef  PROFILE
+print_summarized_timing(time(_Total,
+			     Int,PreComb,Forward,MemoStore,MemoLookup)):-
+	Total = Int+PreComb+Forward+MemoStore+MemoLookup,
+	% All timing in seconds
+	check_div_by_zero(Int,Total,PercInt0),
+	PercInt        = PercInt0*100,
+	check_div_by_zero(PreComb,Total,PreComb0),
+	PercPreComb    = PreComb0*100,
+	check_div_by_zero(Forward,Total,Forward0),
+	PercForward    = Forward0*100,
+	check_div_by_zero(MemoStore,Total,MemoStore0),
+	PercMemoStore  = MemoStore0*100,
+	check_div_by_zero(MemoLookup,Total,MemoLookup0),
+	PercMemoLookup = MemoLookup0*100,
+	print_message("Time usage: \n",[]),
+	print_message("\tTotal time on interpolation   : %d \%. \n"  ,[PercInt]),
+	print_message("\tTotal time on backward SE     : %d \%. \n"  ,[PercPreComb]),
+	print_message("\tTotal time on forward SE      : %d \%. \n"  ,[PercForward]),
+	print_message("\tTotal time on search in cache : %d \%. \n\n",[PercMemoLookup]),	
+	print_message("\tTotal time on store in cache  : %d \%. \n"  ,[PercMemoStore]).
+
+#endif  /*PROFILE*/
+
+#ifdef  PROFILE
+print_interpolation_stats(IntT+PST):-
+	current_tracer_flag(path_datastructure,naive),!,
+	get_interpolation_timing(IntT),	
+	counter_value(path_slicing_timing,PST),
+	write_interpolation_tittle,		
+	print_message("\tTotal time                                 : % sec \n",
+		      [IntT+PST]),
+	print_message("\t\t(1)Syntactic dependency analysis time: % sec \n",
+		      [PST]),
+	print_message("\t\t(2)Interpolation algorithm time      : % sec \n",
+		      [IntT]),
+	print_interpolation_more_stats.
+print_interpolation_stats(IntT+PTotal):-
+	get_partition_stats(PTotal,P1T,P2T,P3T,P4T),
+	get_interpolation_timing(IntT),
+	write_interpolation_tittle,	
+	print_message("\tTotal time                                 : % sec \n",
+		      [IntT+PTotal]),
+	print_partition_stats(PTotal,P1T,P2T,P3T,P4T),
+	print_message("\t\t(2)Interpolation algorithm time      : % sec \n",
+		      [IntT]),	
+	print_interpolation_more_stats.
+
+write_interpolation_tittle:-
+	current_tracer_flag(other_interp,y),
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	print_message("Generation of interpolants using Rybal&Sofronie's VMCAI'07 \n",[]).
+write_interpolation_tittle:-
+	!,
+	print_message("Generation of interpolants using strongest postconditions \n",[]).
+
+print_interpolation_more_stats:-
+	current_tracer_flag(other_interp,y),
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	print_rybal_interpolate_profile_stats.
+print_interpolation_more_stats:-
+ 	print_compute_unsat_core_profile_stats.
+
+get_interpolation_timing(IntpT):-
+	current_tracer_flag(other_interp,y),
+	current_tracer_flag(other_interp_method,rybal),
+	!,
+	counter_value(rybal_interpolate_timing,IntpT).
+get_interpolation_timing(IntpT):-
+	counter_value(compute_unsat_core_timing,IntpT).
+#endif  /*PROFILE*/
+
+%------------------------------------------------------------------------
+% Gather all memory information from the master process and slaves
+% processes (if applicable)
+%------------------------------------------------------------------------
+gather_mem_stats(MemWaterMark,MemUsage
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))       		 
+		 ,DumpSlaveWaterMark,DumpSlaveMemUsage
+#endif 		 
+#ifdef  PIPEDUMP_AND_ANSWERS
+		 ,AnsSlaveWaterMark,AnsSlaveMemUsage
+#endif
+#ifdef  PIPEMEMO
+		 ,MemoSlaveWaterMark,MemoSlaveMemUsage
+#endif                 
+		 ) :-
+	% To gather memory usage and watermark from the master	
+	cmem_usage(MemUsage),
+	mem_watermark(MemWaterMark),
+#ifdef  PIPEDUMP_AND_ANSWERS
+        % Here we gather memory usage and watermark from the slave
+        % that stores answers
+        pipe_master_cmem_usage(answers_slave,AnsSlaveMemUsage),
+	pipe_master_mem_watermark(answers_slave,AnsSlaveWaterMark), 
+#ifdef  PIPEMEMO
+        % Here we gather memory usage and watermark from the slave
+        % that stores memo table entries
+        pipe_master_cmem_usage(memo_slave,MemoSlaveMemUsage),
+	pipe_master_mem_watermark(memo_slave,MemoSlaveWaterMark), 
+#endif  /*PIPEMEMO*/	
+#endif  /* PIPEDUMP_AND_ANSWERS*/
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+        % Here we gather memory usage and watermark from the slave
+        % that does the dumps
+        pipe_master_cmem_usage(dump_slave,DumpSlaveMemUsage),
+	pipe_master_mem_watermark(dump_slave,DumpSlaveWaterMark), 
+#endif
+        true.
+
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+%%%
+% The master obtains a counter value from the slave process.
+%%%
+get_counter_value_from_dump_slave(Counter,Val):-
+#ifdef   PROFILE
+        ctime(MsgTimeStamp1),	
+	write_dump_slave("get_counter_value(%,%) . \n",[Counter,MsgTimeStamp1]),
+#else	
+        write_dump_slave("get_counter_value(%) . \n",[Counter]),
+#endif
+        %flush,
+	read_from_dump_slave(X),
+	process_slave_output(X,reply_args(Val)).
+#endif  /* defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+
+#if     defined(PROFILE) &&  (defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS))
+% This predicate gathers all counter values modified by the slave
+% process.
+getall_counter_values_from_dump_slave(SlaveCounters):-
+	% Encode witnesses
+	get_counter_value_from_dump_slave(encode_witnesses_answers_1,N1),
+	get_counter_value_from_dump_slave(encode_witnesses_answers_2,N2),
+	get_counter_value_from_dump_slave(encode_witnesses_answers_3,N3),	
+	get_counter_value_from_dump_slave(calls_dump_to_encode      ,N4),
+	% Decode witnesses
+	get_counter_value_from_dump_slave(calls2replace_atoms_with_vars,N5),	
+	get_counter_value_from_dump_slave(sizeOfreplace_atoms_with_vars,N6),
+	get_counter_value_from_dump_slave(decode_witnesses_answers_1,N7),
+	get_counter_value_from_dump_slave(decode_witnesses_answers_2,N8),
+#if     (UNFOLD_OPT==WCET)
+	% Update witnesses (WCET)
+        get_counter_value_from_dump_slave(pre_phase_2,N9),
+	get_counter_value_from_dump_slave(pre_phase_3,N10),
+	get_counter_value_from_dump_slave(pre_phase_4,N11),
+#endif
+	SlaveCounters = [counter(encode_witnesses_answers_1,N1),
+			 counter(encode_witnesses_answers_2,N2),
+			 counter(encode_witnesses_answers_3,N3),
+			 counter(calls_dump_to_encode      ,N4),
+			 counter(calls2replace_atoms_with_vars,N5),
+			 counter(sizeOfreplace_atoms_with_vars,N6),
+			 counter(decode_witnesses_answers_1,N7),
+			 counter(decode_witnesses_answers_2,N8)
+#if     (UNFOLD_OPT==WCET)
+                         ,counter(pre_phase_2,N9)
+			 ,counter(pre_phase_3,N10)
+			 ,counter(pre_phase_4,N11)
+#endif 	/*UNFOLD_OPT==WCET*/		
+			].			 
+#endif  /*defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)*/
+
+print_separator:-
+ print_message("---------------------------------------------------------------\n",
+ []).
+
+% mem_watermark/1 returns memory usage in bytes.
+mem_watermark(memory(A,B,C,D,E,F,G)):- diagnostic(A,B,C,D,E,F,G).
+		
+report_mem_usage(memory(Total,Code,Stack,Heap,Trail,Solver,PTerms)):-	
+ 	return_zero_if_negative(Stack,Stack0),
+ 	return_zero_if_negative(Heap,Heap0),
+ 	return_zero_if_negative(Trail,Trail0),
+ 	return_zero_if_negative(Solver,Solver0),
+	% In Mb
+	Unit = 1048576,
+	% diagnostic returns already memory usage in bytes	
+	Base = 1, 
+	% print_message("Memory usage stats: \n",[]),
+	print_message("\tTotal memory %Mb \n",[(Total*Base)/Unit]),		
+	print_message("\tCode space %Mb \n",[(Code*Base)/Unit]),	
+	print_message("\tStack %Mb \n",[(Stack0*Base)/Unit]),
+	print_message("\tHeap %Mb \n",[(Heap0*Base)/Unit]),
+	print_message("\tTrail %Mb \n",[(Trail0*Base)/Unit]),
+	print_message("\tSolver %Mb \n",[(Solver0*Base)/Unit]),
+	print_message("\tPTerms %Mb \n",[(PTerms*Base)/Unit]),
+	print_message("\tSum of Code+Space+Heap+Trail+Solver+PTerms %Mb \n",
+		      [(Code+Stack0+Heap0+Trail0+Solver0+PTerms)*Base/Unit]).
+
+return_zero_if_negative(X,0):- X < 0,!.
+return_zero_if_negative(X,X):- !.
+
+check_div_by_zero(A ,B,C)   :- A = 0, B = 0, !, C = 0.
+check_div_by_zero(_A,B,C)   :- B = 0, !, C = 0.
+check_div_by_zero(A ,B,A/B) :- !.
+
+%========================================================================%
+%              Auxiliary predicates for output stats
+%========================================================================%
+#ifdef  PROFILE	
+% Keep track of the maximum depth of the tree
+update_max_depth(Depth):-
+	counter_value(max_depth,OldDepth),
+	max(Depth,OldDepth,NewDepth),
+	set_counter(max_depth,NewDepth).
+
+% Keep track of a given depth of the tree the number of feasible
+% paths.
+trace_feasible_paths(Depth):-
+	retract(feasible_paths(Depth,OldValue)),!,
+	fassert(feasible_paths(Depth,OldValue+1)).
+trace_feasible_paths(Depth):-
+	fassert(feasible_paths(Depth,1)),!.
+
+% Return the total number of feasible paths.
+collect_total_feasible(Val,MaxDepth,NewVal):-
+        retract(feasible_paths(_Depth,Val0)), !,
+	collect_total_feasible(Val+Val0,MaxDepth,NewVal).
+collect_total_feasible(Val,_,Val):-!.
+
+% Keep track of a given depth of the tree the number of infeasible
+% transitions.
+trace_infeasible_paths(Depth):-
+	retract(infeasible_paths(Depth,OldValue)),!,
+	fassert(infeasible_paths(Depth,OldValue+1)).
+trace_infeasible_paths(Depth):-
+	fassert(infeasible_paths(Depth,1)),!.
+
+% Return the total number of infeasible paths and also a weighted
+% measure that consider the depth of the infeasible path (this last
+% weighted measure is not used)
+collect_total_infeasible(Total,Weighted,MaxDepth,NewTotal,NewWeighted):-
+        retract(infeasible_paths(Depth,Val0)),!,
+	collect_total_infeasible(Total+Val0,
+				 Weighted+
+				 (Val0 * ((MaxDepth - Depth) / MaxDepth)),
+				 MaxDepth,NewTotal,NewWeighted).
+collect_total_infeasible(Total,Weighted,_,Total,Weighted):-!.
+
+compute_average_num_checked_reps(TotalNumChecks,_TotalNumCheckedReps,Average):-
+	TotalNumChecks = 0,
+	Average = 0,!.
+compute_average_num_checked_reps(TotalNumChecks,TotalNumCheckedReps,Average):-
+	Average = TotalNumCheckedReps / TotalNumChecks.
+
+%------------------------------------------------------------------------------
+% To keep track the number of times that a branch transition was
+% satisfiable or unsatisfiable.
+%------------------------------------------------------------------------------
+trace_true_branch(Id):-
+	retract(trans_profile_info(Id,F,I)),!,
+	add_counter(true_branch,1),
+	fassert(trans_profile_info(Id,F+1,I)).
+trace_true_branch(Id):- !,
+	add_counter(true_branch,1),
+	fassert(trans_profile_info(Id,1,0)).
+
+trace_false_branch(Id):-
+	retract(trans_profile_info(Id,F,I)),!,
+	add_counter(false_branch,1),	
+	fassert(trans_profile_info(Id,F,I+1)).
+trace_false_branch(Id):- !,
+	add_counter(false_branch,1),	
+	fassert(trans_profile_info(Id,0,1)).
+%------------------------------------------------------------------------------
+% Output for each branch executed the number of times that it is
+% satisfiable and unsatisfiable.
+%------------------------------------------------------------------------------
+print_true_false_branches_info:-
+	counter_value(true_branch,N1),	
+	counter_value(false_branch,N2),
+#ifdef  EXTERNAL_SOLVER
+        counter_value(extern_solver_num_of_unsat,N3),
+#else	
+	counter_value(infeasible_due_to_array,N3),
+#endif  	
+	print_message("\t# TRUE branches             : % \n",[N1]),
+	print_message("\t# FALSE branches            : % \n",[N2]),
+	print_message("\t\t# FALSE branches due to array constraints : % \n",[N3]).
+
+%------------------------------------------------------------------------------
+% Output the number of live and dead transitions.
+%------------------------------------------------------------------------------
+% Live transition: transition executed at least once.
+% Dead transition: transition never executed.
+%------------------------------------------------------------------------------
+print_trans_profile_info:-
+	%----------------------------------------------------------------------
+	% There was a warning to not remove once/1 here, but we replaced
+	% it with a cut.
+	%----------------------------------------------------------------------
+	get_all_transition_identifiers(Ids), !,
+	print_trans_profile_info_aux(Ids,[],AliveT,[],DeadT),
+	%% output info
+	length(Ids,N),
+        length(AliveT,N0),
+        length(DeadT,N1),
+	print_message("\t# total transitions         : %\n"   , [N]),
+	print_message("\t# of alive transitions      : %\n"  , [N0]),
+	print_message("\t# of dead  transitions      : %\n"  , [N1]).
+
+%print_trans_profile_info_aux(_,_,_,_,_) :- fail.	       
+print_trans_profile_info_aux([],AT,AT,DT,DT):-!.
+print_trans_profile_info_aux([Id|Ids],AT,AT2,DT,DT2):-
+	trans_profile_info(Id,F,I),!,
+	print_trans_profile_info_aux_aux(Id,F,I,AT,AT1,DT,DT1),
+	print_trans_profile_info_aux(Ids,AT1,AT2,DT1,DT2).
+print_trans_profile_info_aux([Id|Ids],AT,AT1,DT,DT1):-!,
+	print_trans_profile_info_aux(Ids,AT,AT1,[Id|DT],DT1).
+
+print_trans_profile_info_aux_aux(Id,F,_,AT,[Id|AT],DT,DT):-
+	F > 0, !.
+print_trans_profile_info_aux_aux(Id,F,I,AT,AT,DT,[Id|DT]):-
+ 	F = 0, I > 0,!.
+print_trans_profile_info_aux_aux(_,_,_,AT,AT,DT,DT):- !.
+
+print_array_solver_stats:-
+	current_tracer_flag(array_solver, y),!,
+	counter_value(array_solver_subst_arrays_time,Time0),
+	counter_value(array_solver_sat_array_ref_time,Time1),
+	print_separator,
+	print_message("Stats about array solver (-mccarthy y) \n",[]),
+	print_message("\t Time for substitute array references                : % sec \n",
+		      [Time0]),
+	print_message("\t Time for checking satisfiability of array references: % sec \n",
+		      [Time1]).
+print_array_solver_stats.	
+#endif
+
+%------------------------------------------------------------------------------
+% More detailed profiling: output the average number of contexts for
+% program point.
+%------------------------------------------------------------------------------
+stats_memo_table:-
+	init_memo_table_counters,
+	count_memo_table_entries_aux,
+	report_memo_table_counters.
+	
+init_memo_table_counters:-	
+	program_point(PP),
+	printf_to_atom(C, "entry_counter%", [PP]),	
+	set_counter(C,0),
+	fail.
+init_memo_table_counters.
+
+count_memo_table_entries_aux:-
+	program_point(PP),
+	printf_to_atom(A, "t%", [PP]),
+#ifdef  PIPEMEMO
+	functor(G,A,8),	
+#elif   defined(ENCODE_MEMO)	
+	functor(G,A,7),
+#else
+	functor(G,A,10),
+#endif
+        % It will be slow ....	
+	robust_retract(G), 
+	printf_to_atom(C, "entry_counter%", [PP]),	
+	add_counter(C,1),
+	fail.
+count_memo_table_entries_aux.
+	
+report_memo_table_counters:-
+	set_counter(memo_table_total_entries,0),
+	set_counter(memo_table_total_counters,0),
+	gather_memo_table_counters,
+	counter_value(memo_table_total_entries,TotalEntries),
+	counter_value(memo_table_total_counters,TotalCounters),
+	print_message("\tNumber of program points: %\n",[TotalCounters]),
+	print_message("\tNumber of contexts      : %\n",[TotalEntries]),
+	print_message("\tAvg. number of contexts per program point: %\n",
+	       [TotalEntries/TotalCounters]).
+
+gather_memo_table_counters:-
+	program_point(PP),
+	printf_to_atom(C, "entry_counter%", [PP]),
+	counter_value(C,Val),
+	Val > 0,
+	add_counter(memo_table_total_entries,Val),
+	add_counter(memo_table_total_counters,1),
+	fail.
+gather_memo_table_counters.
+
+% This predicate counts the number of loops in the original program
+num_of_loops(N):-
+	set_counter(num_of_loops,0),
+	num_of_loops_aux,
+	counter_value(num_of_loops,N).
+num_of_loops_aux:-	
+	block(_Id,_,_,_,_,l,_,_,_,_,_),
+	add_counter(num_of_loops,1),
+	fail.
+num_of_loops_aux:-!.
+
+% This predicate records the maximum length of the loop stack
+record_loop_stack_length(Loops):-
+	counter_value(loop_stack_length,N),
+	length(Loops,M),
+	record_loop_stack_length_max(M,N).
+
+record_loop_stack_length_max(M,N):-
+	M > N,!,
+	set_counter(loop_stack_length,M).
+record_loop_stack_length_max(_M,_N).
+
+%%%
+%   These predicates to gather some profiling information from a slave
+%   process
+%%%
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+pipe_master_zmem_usage(dump_slave):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_dump_slave("zmem_usage(%) . \n",[MsgTimeStamp1]),
+#else
+        write_dump_slave("zmem_usage . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_dump_slave(_).
+#endif  /*defined(PIPEDUMP) || (PIPEDUMP_AND_ANSWERS)*/
+
+#ifdef  PIPEDUMP_AND_ANSWERS
+pipe_master_zmem_usage(answers_slave):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_store_answers_slave("zmem_usage(%) . \n",[MsgTimeStamp1]),
+#else
+        write_store_answers_slave("zmem_usage . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_store_answers_slave(_).
+        %%%%
+        % No answer from slave.
+        %%%%
+#ifdef  PIPEMEMO
+pipe_master_zmem_usage(memo_slave):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_memo_slave("zmem_usage(%) . \n",[MsgTimeStamp1]),
+#else
+        write_memo_slave("zmem_usage . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_memo_slave(_).
+#endif  /*PIPEMEMO*/
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+
+
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+pipe_master_cmem_usage(dump_slave,SlaveMemUsage):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_dump_slave("cmem_usage(%) . \n",[MsgTimeStamp1]),
+#else
+        write_dump_slave("cmem_usage . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_dump_slave(X),
+	process_slave_output(X,reply_args(SlaveMemUsage)).
+#endif  /*(defined(PIPEDUMP) || (PIPEDUMP_AND_ANSWERS))*/
+
+#ifdef  PIPEDUMP_AND_ANSWERS
+pipe_master_cmem_usage(answers_slave,SlaveMemUsage):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_store_answers_slave("cmem_usage(%) . \n",[MsgTimeStamp1]),
+#else
+        write_store_answers_slave("cmem_usage . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_store_answers_slave(X),
+	process_slave_output(X,reply_args(SlaveMemUsage)).
+#ifdef  PIPEMEMO
+pipe_master_cmem_usage(memo_slave,SlaveMemUsage):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_memo_slave("cmem_usage(%) . \n",[MsgTimeStamp1]),
+#else
+        write_memo_slave("cmem_usage . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_memo_slave(X),
+	process_slave_output(X,reply_args(SlaveMemUsage)).
+#endif  /*PIPEMEMO*/
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+
+
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+pipe_master_mem_watermark(dump_slave,memory(A,B,C,D,E,F,G)):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_dump_slave("diagnostic(%) . \n",[MsgTimeStamp1]),
+#else
+        write_dump_slave("diagnostic . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_dump_slave(X),
+	process_slave_output(X,reply_args(A,B,C,D,E,F,G)).
+#endif  /*(defined(PIPEDUMP) || (PIPEDUMP_AND_ANSWERS))*/
+
+#ifdef  PIPEDUMP_AND_ANSWERS
+pipe_master_mem_watermark(answers_slave,memory(A,B,C,D,E,F,G)):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_store_answers_slave("diagnostic(%) . \n",[MsgTimeStamp1]),
+#else
+        write_store_answers_slave("diagnostic . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_store_answers_slave(X),
+	process_slave_output(X,reply_args(A,B,C,D,E,F,G)).
+#ifdef  PIPEMEMO
+pipe_master_mem_watermark(memo_slave,memory(A,B,C,D,E,F,G)):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_memo_slave("diagnostic(%) . \n",[MsgTimeStamp1]),
+#else
+        write_memo_slave("diagnostic . \n",[]),
+#endif  /* PROFILE*/
+        %flush,
+        read_from_memo_slave(X),
+	process_slave_output(X,reply_args(A,B,C,D,E,F,G)).
+#endif  /*PIPEMEMO*/
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+
+%------------------------------------------------------------------------------
+% Debugging purposes
+%------------------------------------------------------------------------------
+report_mem_watermark:-
+	diagnostic(A,B,C,D,E,F,G),
+	print_memory_info(memory(A,B,C,D,E,F,G)).
+
+print_memory_info(memory(AA,BB,CC,DD,EE,FF,GG)):-
+	% Mb
+	Unit  = 1048576,
+	% diagnostic returns already memory usage in bytes
+	Base = 1, 
+        print_message("Total %.1fMb Code %.1fMb Stack %.1fMb Heap %.1fMb ",
+	       [(AA*Base)/Unit,(BB*Base)/Unit,(CC*Base)/Unit,(DD*Base)/Unit]),
+	print_message("Trail %.1fMb Solver %.1fMb PTerms %.1fMb \n",
+	       [(EE*Base)/Unit,(FF*Base)/Unit,(GG*Base)/Unit]).
+	
+%------------------------------------------------------------------------------
+% Debugging purposes: print the number of visited states each
+% Increment states.
+%------------------------------------------------------------------------------
+report_number_states(Increment):-
+	counter_value(states_visited_threshold,Y),
+	%----------------------------------------------------------------------
+	% NodeId = Number of states visited
+	%----------------------------------------------------------------------
+	counter_value(node_id, X),
+%	counter_value(states_visited,X),
+	X = Y,!,
+        print_message("%: ",[X]),
+	report_interval_speed(Increment),
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))	
+	print_message("[MASTER] ",[]),
+#endif	
+	report_mem_watermark,
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        pipe_master_mem_watermark(dump_slave,DumpSlaveWaterMark),
+	print_message("[DUMP]   ",[]),
+	print_memory_info(DumpSlaveWaterMark),
+#endif 
+#ifdef  PIPEDUMP_AND_ANSWERS
+        pipe_master_mem_watermark(answers_slave,AnsSlaveWaterMark),
+	print_message("[ANSWERS]",[]),
+	print_memory_info(AnsSlaveWaterMark),	
+#endif	
+#ifdef  PIPEMEMO
+        pipe_master_mem_watermark(memo_slave,MemoSlaveWaterMark),
+	print_message("[MEMO]   ",[]),
+	print_memory_info(MemoSlaveWaterMark),
+#endif		
+	flush,
+	add_counter(states_visited_threshold,Increment).
+report_number_states(_Increment):- !.
+
+report_interval_speed(StatesDelta):-
+	ctime(NewTime),	
+	counter_value(interval_time,OldTime),
+	set_counter(interval_time,NewTime),
+	Interval = NewTime - OldTime,
+	check_div_by_zero(StatesDelta,Interval,Speed),
+	print_message("speed for last % states = % states/sec \n",
+		      [StatesDelta,Speed]).
+	
+
+%---------------------------------------------------------------------------------%
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO))
+%---------------------------------------------------------------------------------%
+% print_slaves_pid/0 print the pid's of the slaves.
+print_slaves_pid:-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),
+	write_dump_slave(         "get_pid(%) .\n",[MsgTimeStamp1]),
+#ifdef  PIPEDUMP_AND_ANSWERS	
+	write_store_answers_slave("get_pid(%) .\n",[MsgTimeStamp1]),
+#endif
+#ifdef  PIPEMEMO
+	write_memo_slave(         "get_pid(%) .\n",[MsgTimeStamp1]),
+#endif							  
+#else  /* PROFILE */
+	write_dump_slave(         "get_pid . \n"  ,[]),
+#ifdef  PIPEDUMP_AND_ANSWERS		
+	write_store_answers_slave("get_pid . \n"  ,[]),
+#endif
+#ifdef  PIPEMEMO
+	write_memo_slave(         "get_pid . \n"  ,[]),
+#endif	
+#endif /* PROFILE */
+        read_from_dump_slave(X),
+	process_slave_output(X,reply_args(DumpPID)),
+#ifdef  PIPEDUMP_AND_ANSWERS		
+        read_from_store_answers_slave(Y),
+	process_slave_output(Y,reply_args(AnsPID)),
+#endif	
+#ifdef  PIPEMEMO
+        read_from_memo_slave(Z),
+	process_slave_output(Z,reply_args(MemoPID)),
+#endif
+        print_separator,
+        print_message("DUMP SLAVE PID: % \n",[DumpPID]),
+#ifdef  PIPEDUMP_AND_ANSWERS			
+        print_message("STORE ANSWERS SLAVE PID: % \n",[AnsPID]),
+#endif
+#ifdef  PIPEMEMO
+        print_message("MEMO SLAVE PID: % \n",[MemoPID]),
+#endif
+        print_separator.
+%---------------------------------------------------------------------------------%
+#endif /* PIPEDUMP || PIPEDUMP_AND_ANSWERS || PIPEMEMO */
+%---------------------------------------------------------------------------------%
+
+#ifdef REDUNDANT_MARKINGS_PROFILE
+%==============================================================================
+% Routines to Profile Redundant Markings between Siblings
+%==============================================================================
+init_redundant_markings_profile :-
+	set_counter(redundant_to_length, 0),
+	set_counter(redundant_to_markings, 0),
+	set_counter(redundant_markings_profile_count, 0).
+
+print_redundant_markings_profile :-
+	counter_value(redundant_to_length, N1),
+	counter_value(redundant_to_markings, N2),
+	counter_value(redundant_markings_profile_count, N3),
+	print_message("---------------------------------------------------------\n", []),
+	print_message("Average redundant marked constraints to length: %\n", [N1/N3]),
+	print_message("Average redundancy of marked constraints: %\n", [N2/N3]).
+
+redundant_markings_profile(CurrentML, OtherML, OtherML) :-
+	count_redundant_markings(CurrentML, OtherML,
+				 0, 0, 0,
+				 RedundantMarkingsNumber,
+				 TotalMarkingsNumber,
+				 Length),
+	counter_value(redundant_to_length, RedundantToLengthRatio),
+	counter_value(redundant_to_markings, RedundantToMarkingsRatio),
+        update_redundant_markings_ratios(RedundantToLengthRatio,
+					 RedundantMarkingsNumber /
+					 Length,
+					 RedundantToMarkingsRatio,
+					 RedundantMarkingsNumber /
+					 TotalMarkingsNumber),
+        add_counter(redundant_markings_profile_count, 1),
+	CurrentML = OtherML.
+
+count_redundant_markings([], [],
+			 RedundantMarkingsNumber,
+			 TotalMarkingsNumber,
+			 Length,
+			 RedundantMarkingsNumber,
+			 TotalMarkingsNumber,
+			 Length).
+count_redundant_markings([M1|R1], [M2|R2],
+			 RedundantMarkingsNumber,
+			 TotalMarkingsNumber,
+			 Length,
+			 OutRedundantMarkingsNumber,
+			 OutTotalMarkingsNumber,
+			 OutLength) :-
+        var(M1), var(M2), !,
+	count_redundant_markings(R1, R2,
+			 	 RedundantMarkingsNumber,
+			 	 TotalMarkingsNumber,
+			 	 Length+1,
+			 	 OutRedundantMarkingsNumber,
+			 	 OutTotalMarkingsNumber,
+			 	 OutLength).
+count_redundant_markings([M1|R1], [_|R2],
+			 RedundantMarkingsNumber,
+			 TotalMarkingsNumber,
+			 Length,
+			 OutRedundantMarkingsNumber,
+			 OutTotalMarkingsNumber,
+			 OutLength) :-
+        var(M1), !,
+	count_redundant_markings(R1, R2,
+			 	 RedundantMarkingsNumber,
+			 	 TotalMarkingsNumber+1,
+			 	 Length+1,
+			 	 OutRedundantMarkingsNumber,
+			 	 OutTotalMarkingsNumber,
+			 	 OutLength).
+count_redundant_markings([_|R1], [M2|R2],
+			 RedundantMarkingsNumber,
+			 TotalMarkingsNumber,
+			 Length,
+			 OutRedundantMarkingsNumber,
+			 OutTotalMarkingsNumber,
+			 OutLength) :-
+        var(M2), !,
+	count_redundant_markings(R1, R2,
+			 	 RedundantMarkingsNumber,
+			 	 TotalMarkingsNumber+1,
+			 	 Length+1,
+			 	 OutRedundantMarkingsNumber,
+			 	 OutTotalMarkingsNumber,
+			 	 OutLength).
+count_redundant_markings([_|R1], [_|R2],
+			 RedundantMarkingsNumber,
+			 TotalMarkingsNumber,
+			 Length,
+			 OutRedundantMarkingsNumber,
+			 OutTotalMarkingsNumber,
+			 OutLength) :-
+	count_redundant_markings(R1, R2,
+			 	 RedundantMarkingsNumber+1,
+			 	 TotalMarkingsNumber+1,
+			 	 Length+1,
+			 	 OutRedundantMarkingsNumber,
+			 	 OutTotalMarkingsNumber,
+			 	 OutLength).
+				
+update_redundant_markings_ratios(_RedundantToLengthRatio,
+			         NewRedundantToLengthRatio,
+				 RedundantToMarkingsRatio,
+				 NewRedundantToMarkingsRatio) :-
+	var(NewRedundantToLengthRatio),
+	update_redundant_to_markings_ratio_aux(RedundantToMarkingsRatio,
+					       NewRedundantToMarkingsRatio).
+update_redundant_markings_ratios(RedundantToLengthRatio,
+			         NewRedundantToLengthRatio,
+				 RedundantToMarkingsRatio,
+				 NewRedundantToMarkingsRatio) :-
+	RedundantToLengthRatio = 0,
+	set_counter(redundant_to_length, NewRedundantToLengthRatio),
+	update_redundant_to_markings_ratio_aux(RedundantToMarkingsRatio,
+					       NewRedundantToMarkingsRatio).
+update_redundant_markings_ratios(RedundantToLengthRatio,
+			         NewRedundantToLengthRatio,
+				 RedundantToMarkingsRatio,
+				 NewRedundantToMarkingsRatio) :-
+	set_counter(redundant_to_length, NewRedundantToLengthRatio +
+                                         RedundantToLengthRatio),
+	update_redundant_to_markings_ratio_aux(RedundantToMarkingsRatio,
+					       NewRedundantToMarkingsRatio).
+
+update_redundant_to_markings_ratio_aux(_RedundantToMarkingsRatio,
+				       NewRedundantToMarkingsRatio) :-
+	var(NewRedundantToMarkingsRatio).
+update_redundant_to_markings_ratio_aux(RedundantToMarkingsRatio,
+				       NewRedundantToMarkingsRatio) :-
+	RedundantToMarkingsRatio = 0,
+	set_counter(redundant_to_markings, NewRedundantToMarkingsRatio).
+update_redundant_to_markings_ratio_aux(RedundantToMarkingsRatio,
+				       NewRedundantToMarkingsRatio) :-
+	set_counter(redundant_to_markings, NewRedundantToMarkingsRatio +
+                                             RedundantToMarkingsRatio).
+#endif /* REDUNDANT_MARKINGS_PROFILE */

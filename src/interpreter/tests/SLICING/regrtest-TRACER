@@ -1,0 +1,354 @@
+#!/bin/bash
+
+source ./regrtest-expected-results
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=tracer 
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+TESTS_HOME=`dirname "$abspath"`
+
+currtest=""
+block="" 
+
+# counters
+counter=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -help         print this message
+  -Wt <options> pass string options to TRACER
+  -block s      run the tests in block s (default "all")
+  -all          run all the tests
+EOF
+}
+
+#------------------------------------------------------------------#
+# By default we use alias, array solver, and witnesses.
+#------------------------------------------------------------------#
+options="-alias y -mccarthy y" 
+
+# process args
+while [ "$1" != "" ]; do
+    case "$1" in
+	-help)
+	    usage
+	    exit 1
+	    ;;	
+	-block)
+	    shift
+	    block="$block$1"
+	    ;;	
+	-all)
+	    shift 
+	    block="ALL"
+	    ;;	 
+	-Wt)
+	    shift 
+	    options="$1 $options"
+	    ;;	 
+	*)
+	    echo "unknown arg: $1"
+	    usage
+	    exit 0
+	    ;;
+    esac
+    shift
+done
+
+
+# just does a bunch of greps on the *.out file
+function getstats {
+    echo $1 >> $stat
+    if grep "Analysis time" test_${currtest}_${counter}.out; then	
+        # Here we print to file the bunch of greps
+	echo `grep -ie "Slice size"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Original program size"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Percentage reduction of the slice"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "States visited" test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "# subsumed nodes"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "# witnesses failed"  test_${currtest}_${counter}.out` >> $stat
+        # Here we store in variables the results of greps	
+	s_size=`grep -ie "Slice size"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'`  
+	t_size=`grep -ie "program size"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'`
+	reduc=`grep -ie "Percentage reduction" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)\.\(.*\)@\2@g'` 
+	states=`grep -ie "states visited" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+	time=`grep -ie "analysis time"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\) sec@\2@g'` 
+	subsumed=`grep -ie "# subsumed nodes" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'`  
+	unsat=`grep -ie "# witnesses failed"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+    else	
+	dies=$[ $dies + 1]	
+    fi	
+}
+
+function cleanDirectory {
+    cd $1
+    rm -f *.clp
+    rm -f *.dot
+    rm -f *.TRACES
+    rm -f *.out
+    rm -f *_CIL.c
+    cd ${TESTS_HOME}    
+}
+
+
+# short_name full_name options
+function run {
+    currtest=$1
+    echo "[${counter}] ${currtest}.c" >> $log
+    echo "------------ [$currtest] $* ------------"
+    ${TRACER_CMMD} slicer $2.c $3 > test_${currtest}_${counter}.out
+    getstats $1
+    checkstats $1
+    counter=$[ ${counter} + 1]
+}
+
+function run_try_until_success {
+    currtest=$1
+    echo "[${counter}] ${currtest}.c" >> $log
+    echo "------------ [$currtest] $* ------------"
+    has_success=0
+    while [ $has_success -eq 0 ]; do
+	${TRACER_CMMD} slicer $2.c $3 &> test_${currtest}_${counter}.out
+	if grep "Segmentation fault"  test_${currtest}_${counter}.out; then	
+	    has_success=0
+        else
+	    has_success=1
+	fi
+    done
+    getstats $1
+    checkstats $1
+    counter=$[ ${counter} + 1]
+}
+
+blockSIMPLE(){
+    run test-1 test-1 "$options"
+    run test-2 test-2 "$options"
+    run test-3 test-3 "$options"
+}
+
+blockFUNCTION(){
+    run test_function-1 test_function-1 " $options"
+    run test_function-2 test_function-2 " $options"
+    run test_function-3 test_function-3 " $options"
+    run test_function-4 test_function-4 " $options"
+    run test_function-5 test_function-5 " $options"
+    run test_function-6 test_function-6 " $options"
+    run test_function-7 test_function-7 " $options"
+    run test_function-8 test_function-8 " $options"
+    run test_function-9 test_function-9 " $options"
+    run test_function-10 test_function-10 " $options"
+    run test_function-11 test_function-11 " $options"
+    run test_function-12 test_function-12 " $options"
+    run test_function-13 test_function-13 " $options"
+    run test_function-14 test_function-14 " $options"
+}
+
+blockARRAYS(){
+# All of them need "-mccarthy y" 
+    run test-arrays-1 test-arrays-1 "$options"
+    run test-arrays-2 test-arrays-2 "$options"
+    run test-arrays-3 test-arrays-3 "$options"
+    run test-arrays-4 test-arrays-4 "$options"
+    run test-arrays-5 test-arrays-5 "$options"
+    run test-arrays-6 test-arrays-6 "$options"
+    run test-arrays-7 test-arrays-7 "$options"
+    run test-arrays-8 test-arrays-8 "$options"
+}
+
+blockALIAS(){
+# All of them need "-mccarthy y" 
+    run test-alias-1 test-alias-1 " $options"
+    run test-alias-2 test-alias-2 " $options"
+    run test-alias-3 test-alias-3 " $options"
+    run test-alias-4 test-alias-4 " $options"
+    run test-alias-5 test-alias-5 " $options"
+    run test-alias-6 test-alias-6 " $options"
+    run test-alias-7 test-alias-7 " $options"
+    run test-alias-8 test-alias-8 " $options"
+    run test-alias-9 test-alias-9 " $options"
+    run test-alias-10 test-alias-10 " $options"
+    run test-alias-11 test-alias-11 " $options"
+    run test-alias-12 test-alias-12 " $options"
+    run test-alias-13 test-alias-13 " $options"
+}
+
+blockLOOP(){
+    run test-loop-1 test-loop-1 " $options"
+    run test-loop-2 test-loop-2 " $options"
+    run test-loop-3 test-loop-3 " $options"
+    run test-loop-4 test-loop-4 " $options"
+    run test-loop-5 test-loop-5 " $options"
+    run test-loop-6 test-loop-6 " $options"
+    run test-loop-7 test-loop-7 " $options"
+    run test-loop-8 test-loop-8 " $options"
+    run test-loop-9 test-loop-9 " $options"
+    run test-loop-10 test-loop-10 " $options"
+    run test-loop-function-6 test-loop-function-6 " $options"
+    run test-loop-function-7 test-loop-function-7 " $options"
+# test-loop-invariant-* need "-mccarthy y" 
+    run test-loop-invariant-1 test-loop-invariant-1  " $options"
+    run test-loop-invariant-2 test-loop-invariant-2  " $options"
+    run test-loop-invariant-3 test-loop-invariant-3  " $options"
+    run test-loop-invariant-4 test-loop-invariant-4  " $options"
+    run test-loop-invariant-5 test-loop-invariant-5  " $options"
+    run test-loop-unstr-1 test-loop-unstr-1 " $options"
+    run test-loop-unstr-2 test-loop-unstr-2 " $options"
+    run test-loop-unstr-3 test-loop-unstr-3 " $options"
+}
+
+blockRETURN(){
+    run test-return-1 test-return-1 " $options"
+    run test-return-2 test-return-2 " $options"
+    run test-return-3 test-return-3 " $options"
+    run test-return-4 test-return-4 " $options"
+    run test-return-5 test-return-5 " $options"
+}
+
+blockSWITCH(){
+    run test-switch-1 test-switch-1 " $options"
+    run test-switch-2 test-switch-2 " $options"
+    run test-switch-3 test-switch-3 " $options"
+    run test-switch-4 test-switch-4 " $options"
+}
+
+blockWITNESSES(){
+    run test-witnesses-1-1 test-witnesses-1 "$options"
+    run test-witnesses-1-2 test-witnesses-1 "-witnesses n $options"
+    run test-witnesses-3-1 test-witnesses-3 "$options"
+    run test-witnesses-3-2 test-witnesses-3 "-witnesses n $options"
+    run test-witnesses-4-1 test-witnesses-4 "$options"
+    run test-witnesses-4-2 test-witnesses-4 "-witnesses n $options"
+
+}
+
+blockIFTHENELSE(){
+    run test-if-then-else-1 test-if-then-else-1 " $options"
+    run test-if-then-else-2 test-if-then-else-2 " $options"
+    run test-if-then-else-3 test-if-then-else-3 " $options"
+    run test-if-then-else-4 test-if-then-else-4 " $options"
+    run test-if-then-else-5 test-if-then-else-5 " $options"
+}
+
+blockTIP_WEISER(){
+    run Tip-1 Tip-paper-1 "$options"
+    run Tip-2 Tip-paper-2 "$options"
+    run Tip-3 Tip-paper-3 "$options" # Tip-3 needs "-mccarthy y" 
+    run Weiser-1 Weiser-paper-1 "$options"
+    run Weiser-2 Weiser-paper-2 "$options"
+}
+
+runAllTests(){
+    blockSIMPLE
+    blockFUNCTION
+    blockLOOP
+    blockIFTHENELSE    
+    blockWITNESSES
+    blockRETURN
+    blockSWITCH
+    blockALIAS
+    blockTIP_WEISER
+    blockARRAYS
+}
+
+runAllTestsWithEncoding(){
+    blockSIMPLE
+    blockFUNCTION
+    blockLOOP
+    blockIFTHENELSE    
+    blockWITNESSES
+    blockRETURN
+    blockSWITCH
+#   blockALIAS
+#   blockTIP_WEISER
+#   blockARRAYS
+}
+
+echo $block
+case "$block" in
+    
+    SIMPLE)
+	shift
+	blockSIMPLE
+	;;    
+    ALIAS)
+	shift
+	blockALIAS
+	;;    
+    ARRAYS)
+	shift
+	blockARRAYS
+	;;    
+    FUNCTION)
+	shift
+	blockFUNCTION
+	;;
+    LOOP)
+	shift
+	blockLOOP
+	;;    
+    RETURN)
+	shift
+	blockRETURN
+	;;    
+    SWITCH)
+	shift
+	blockSWITCH
+	;;    
+    WITNESSES)
+	shift
+	blockWITNESSES
+	;;    
+    IFTHENELSE)
+	shift
+	blockIFTHENELSE
+	;;
+    TIP_WEISER)
+	shift
+	blockTIP_WEISER
+	;;
+    ALL)
+	shift 
+	runAllTests
+	;;    
+    USE_ENCODING)
+	shift
+	runAllTestsWithEncoding
+	;;    
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 0
+	;;
+esac  
+
+   
+# Clean temporary files
+cleanDirectory "."
+
+# Print some stuff
+echo "No Answer:             $dies"     >> $log
+
+exit 1

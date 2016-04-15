@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+
+    <meta name="description" content="TRACER is a tool for
+    verification of C programs developed at National University of
+    Singapore. "/>
+
+    <meta name="keywords" content="TRACER, symbolic execution,
+     software verification, competition on software verification
+     (SV-COMP), interpolation, weakest preconditions, strongest
+     postconditions, loop invariants, unbounded loops, safety
+     properties, formal methods."/>
+
+    <title>TRACER Homepage</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+    <link rel="stylesheet" href="style.css" type="text/css" /> 
+
+</head>
+
+<body> 
+
+<table>
+<tr>
+<td> <h1>TRACER: A Symbolic Execution  Tool for Verification</h1>
+</td>
+<td>  <img src="nus-logo.jpg" alt="NUS logo" height="90" width="160"/> </td>
+</tr>
+</table>
+
+<hr/>
+
+<h3> Description </h3>
+
+<div>
+TRACER is a verification tool based on symbolic execution for
+ finite-state C sequential programs developed at <a
+ href="http://www.comp.nus.edu.sg"> National University of Singapore
+ </a>.
+
+ <br/> TRACER attempts at building a finite symbolic execution tree
+ which overapproximates the set of all concrete reachable states. If
+ the error location cannot be reached from any symbolic path then the
+ program is reported as safe. Otherwise, either the program may
+ contain a bug or it may not terminate. TRACER reports a false alarm
+ only if the theorem prover fails to prove a valid claim. 
+
+ <br/> The most innovative features of TRACER stem from how it tackles
+ the two fundamental limitations of symbolic execution: exponential
+ number of paths on the number of program branches, and
+ infinite-length symbolic paths due to unbounded loops.
+
+ <br/> TRACER computes weakest preconditions as interpolants and
+ integrates a novel counterexample-guided refinement phase within the
+ symbolic execution process.  
+
+<br/>
+<br/>
+</div>
+
+<div>
+<img src="tool-design.gif" alt="Implementation of TRACER" height="250"
+width="320" />
+<br/>
+</div>
+
+
+<div>
+<small><em>TRACER Pipeline</em></small>
+<br/>
+</div>
+
+
+<hr/>
+
+<h3> Papers based on TRACER </h3>     
+<ul>
+  <li>
+    <a href="http://www.comp.nus.edu.sg/~joxan" >J.&nbsp;Jaffar</a>,
+    <a href="http://sydney.edu.au/engineering/it/~santosa">A.&nbsp;E.&nbsp;Santosa</a>
+    <a href="http://www.comp.nus.edu.sg/~razvan">R.&nbsp;Voicu</a>.
+    <a href="../docs/JaffarSantosaVoicuCP09.pdf">An Interpolation Method for CLP traversal </a>
+    <a href="http://centria.di.fct.unl.pt/conferences/cp2009/"> (CP'09) </a>	    
+    <br/>
+  </li>
+  
+  <li>
+    <a href="http://www.comp.nus.edu.sg/~joxan">J.&nbsp;Jaffar</a>,
+    <a href="http://www.clip.dia.fi.upm.es/~jorge">J.&nbsp;A.&nbsp;Navas</a>,
+    <a href="http://sydney.edu.au/engineering/it/~santosa">A.&nbsp;E.&nbsp;Santosa</a>
+    <a href="../docs/JaffarNavasSantosaRV11.pdf"> Unbounded
+      Symbolic Execution For Program Verification </a>
+    <a href="http://rv2011.eecs.berkeley.edu/Home.html"> (RV'11) </a>
+    <br/>	  
+  </li>
+
+  <li>
+    <a href="http://www.comp.nus.edu.sg/~joxan">J.&nbsp;Jaffar</a>,
+    <a href="http://www.comp.nus.edu.sg/~mvijayar"> Vijayaraghavan Murali </a>,
+    <a href="http://www.clip.dia.fi.upm.es/~jorge">J.&nbsp;A.&nbsp;Navas</a>,
+    <a href="http://www.sydney.edu.au/engineering/it/~santosa">A.&nbsp;E.&nbsp;Santosa</a>
+    <a href="../docs/tool.pdf"> TRACER: A Symbolic Execution Tool for Verification </a>
+     (draft) 
+    <br/>	  
+  </li>
+  
+</ul>
+
+<hr/>
+
+<h3> Download/Installation</h3> 
+
+<ul>
+  <li> You can download  TRACER for
+    <a href="http://www.clip.dia.fi.upm.es/~jorge/tracer/download/tracer.0.1.tar.gzip">
+ Linux/x86 </a> (version January 2012)
+ with <a href="http://www.clip.dia.fi.upm.es/~jorge/tracer/download/README">
+       instructions </a> for installation and usage. </li>
+  </ul>
+<hr/>
+
+
+<h3> People </h3>     
+<ul>
+  <li> <a href="http://www.comp.nus.edu.sg/~joxan" > Joxan Jaffar </a> </li>
+  
+  <li> <a href="http://www.comp.nus.edu.sg/~mvijayar"> Vijayaraghavan Murali </a></li>
+  <li> <a href="http://www.clip.dia.fi.upm.es/~jorge" > Jorge A. Navas
+  </a> (Maintainer)   </li>
+  <li> <a href="http://sydney.edu.au/engineering/it/~santosa"> Andrew E. Santosa </a> </li>
+    
+</ul>
+<hr/>
+
+<h3> Contact </h3>
+TRACER is under active development.
+<br/>
+
+Any feedback is welcome and feel free to email <a
+href="mailto:jorge.navas@unimelb.edu.au"> Jorge A. Navas </a> for any
+question/enquiry.
+<br/>
+<br/>
+<hr/>
+
+<div>
+<small> Author: Jorge Navas (Last updated: 2012-01-22
+14:03:06) </small>
+</div>
+
+<hr/>
+
+</body>
+
+</html>
+

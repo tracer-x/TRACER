@@ -1,0 +1,456 @@
+### Results obtained after:
+### 1) converting != to < and >
+### 2) NOT using CIL
+### 3) applying the "quick fix" to the unsound slicer (see Bug#4 in tracer_slicer)
+### 4) MAX_CONSTRAINTS = 50 (default)
+
+### CREST run with a budget of 200000 branches. That is, once 200000 branches are
+### covered (across multiple iterations), stop, and measure the no. of iterations
+### (paths) executed by CREST. Since in decompiled program each path is smaller,
+### it can execute more paths before the budget is exhausted.
+
+vijay@paella:~/new-new-work/TRACER/trunk/lib/crest/mytest/transformation$ ./bench 
+ =================== cdaudio ===================\n
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 cdaudio.c -o ./cdaudio.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./cdaudio.cil.c --doCrestInstrument ./cdaudio.i
+cdaudio.c:1953: Warning: Body of function main falls-through. Adding a return statement
+gcc -D_GNUCC -E -I../../../bin/../include ./cdaudio.cil.c -o ./cdaudio.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./cdaudio.o ./cdaudio.cil.i
+cdaudio.c:1754: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1755: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1756: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1757: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1758: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1759: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1760: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1761: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1762: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio.c:1763: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o cdaudio -I../../../bin/../include ./cdaudio.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 752 branches.
+Read 969 nodes.
+Wrote 1451 branch edges.
+Budget exhausted (200009/200000)! Num iterations: 3263
+
+real	0m7.494s
+user	0m3.840s
+sys	0m3.140s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 cdaudio-prep.c -o ./cdaudio-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./cdaudio-prep.cil.c --doCrestInstrument ./cdaudio-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./cdaudio-prep.cil.c -o ./cdaudio-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./cdaudio-prep.o ./cdaudio-prep.cil.i
+cdaudio-prep.c:1650: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1651: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1652: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1653: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1654: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1655: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1656: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1657: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1658: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep.c:1659: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o cdaudio-prep -I../../../bin/../include ./cdaudio-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 590 branches.
+Read 787 nodes.
+Wrote 1124 branch edges.
+Budget exhausted (200016/200000)! Num iterations: 4027
+
+real	0m9.777s
+user	0m5.540s
+sys	0m3.560s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 cdaudio-prep-dec-cil-prep.c -o ./cdaudio-prep-dec-cil-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./cdaudio-prep-dec-cil-prep.cil.c --doCrestInstrument ./cdaudio-prep-dec-cil-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./cdaudio-prep-dec-cil-prep.cil.c -o ./cdaudio-prep-dec-cil-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./cdaudio-prep-dec-cil-prep.o ./cdaudio-prep-dec-cil-prep.cil.i
+cdaudio-prep-dec-cil-prep.c:19: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:20: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:21: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:22: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:23: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:24: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:25: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:26: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:27: warning: ‘__crest_skip__’ attribute directive ignored
+cdaudio-prep-dec-cil-prep.c:28: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o cdaudio-prep-dec-cil-prep -I../../../bin/../include ./cdaudio-prep-dec-cil-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 1318 branches.
+Read 1929 nodes.
+Wrote 2167 branch edges.
+Budget exhausted (200026/200000)! Num iterations: 6238
+
+real	0m16.240s
+user	0m9.410s
+sys	0m5.720s
+ =================== diskperf ===================\n
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 diskperf.c -o ./diskperf.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./diskperf.cil.c --doCrestInstrument ./diskperf.i
+diskperf.c:891: Warning: Body of function main falls-through. Adding a return statement
+gcc -D_GNUCC -E -I../../../bin/../include ./diskperf.cil.c -o ./diskperf.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./diskperf.o ./diskperf.cil.i
+diskperf.c:666: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:667: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:668: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:669: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:670: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:671: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:672: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:673: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:674: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf.c:675: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o diskperf -I../../../bin/../include ./diskperf.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 394 branches.
+Read 506 nodes.
+Wrote 725 branch edges.
+Budget exhausted (200060/200000)! Num iterations: 1458
+
+real	0m3.293s
+user	0m1.770s
+sys	0m1.300s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 diskperf-prep.c -o ./diskperf-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./diskperf-prep.cil.c --doCrestInstrument ./diskperf-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./diskperf-prep.cil.c -o ./diskperf-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./diskperf-prep.o ./diskperf-prep.cil.i
+diskperf-prep.c:568: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:569: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:570: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:571: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:572: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:573: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:574: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:575: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:576: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep.c:577: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o diskperf-prep -I../../../bin/../include ./diskperf-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 220 branches.
+Read 317 nodes.
+Wrote 405 branch edges.
+Budget exhausted (200050/200000)! Num iterations: 1477
+
+real	0m3.381s
+user	0m1.790s
+sys	0m1.310s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 diskperf-prep-dec-cil-prep.c -o ./diskperf-prep-dec-cil-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./diskperf-prep-dec-cil-prep.cil.c --doCrestInstrument ./diskperf-prep-dec-cil-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./diskperf-prep-dec-cil-prep.cil.c -o ./diskperf-prep-dec-cil-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./diskperf-prep-dec-cil-prep.o ./diskperf-prep-dec-cil-prep.cil.i
+diskperf-prep-dec-cil-prep.c:15: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:16: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:17: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:18: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:19: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:20: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:21: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:22: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:23: warning: ‘__crest_skip__’ attribute directive ignored
+diskperf-prep-dec-cil-prep.c:24: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o diskperf-prep-dec-cil-prep -I../../../bin/../include ./diskperf-prep-dec-cil-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 914 branches.
+Read 1371 nodes.
+Wrote 1445 branch edges.
+Budget exhausted (200039/200000)! Num iterations: 3530
+
+real	0m8.330s
+user	0m4.380s
+sys	0m3.380s
+ =================== floppy ===================\n
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 floppy.c -o ./floppy.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./floppy.cil.c --doCrestInstrument ./floppy.i
+floppy.c:868: Warning: Body of function main falls-through. Adding a return statement
+gcc -D_GNUCC -E -I../../../bin/../include ./floppy.cil.c -o ./floppy.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./floppy.o ./floppy.cil.i
+floppy.c:653: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:654: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:655: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:656: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:657: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:658: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:659: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:660: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:661: warning: ‘__crest_skip__’ attribute directive ignored
+floppy.c:662: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o floppy -I../../../bin/../include ./floppy.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 450 branches.
+Read 581 nodes.
+Wrote 845 branch edges.
+Budget exhausted (200011/200000)! Num iterations: 3224
+
+real	0m7.239s
+user	0m3.710s
+sys	0m3.010s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 floppy-prep.c -o ./floppy-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./floppy-prep.cil.c --doCrestInstrument ./floppy-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./floppy-prep.cil.c -o ./floppy-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./floppy-prep.o ./floppy-prep.cil.i
+floppy-prep.c:603: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:604: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:605: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:606: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:607: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:608: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:609: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:610: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:611: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep.c:612: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o floppy-prep -I../../../bin/../include ./floppy-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 246 branches.
+Read 349 nodes.
+Wrote 456 branch edges.
+Budget exhausted (200008/200000)! Num iterations: 3305
+
+real	0m7.495s
+user	0m3.920s
+sys	0m2.970s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 floppy-prep-dec-cil-prep.c -o ./floppy-prep-dec-cil-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./floppy-prep-dec-cil-prep.cil.c --doCrestInstrument ./floppy-prep-dec-cil-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./floppy-prep-dec-cil-prep.cil.c -o ./floppy-prep-dec-cil-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./floppy-prep-dec-cil-prep.o ./floppy-prep-dec-cil-prep.cil.i
+floppy-prep-dec-cil-prep.c:14: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:15: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:16: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:17: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:18: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:19: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:20: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:21: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:22: warning: ‘__crest_skip__’ attribute directive ignored
+floppy-prep-dec-cil-prep.c:23: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o floppy-prep-dec-cil-prep -I../../../bin/../include ./floppy-prep-dec-cil-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 616 branches.
+Read 924 nodes.
+Wrote 1011 branch edges.
+Budget exhausted (200000+/200000)! Num iterations: 4313
+
+real	0m9.582s
+user	0m5.000s
+sys	0m3.700s
+ =================== floppy2 ===================\n
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 floppy2.c -o ./floppy2.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./floppy2.cil.c --doCrestInstrument ./floppy2.i
+floppy2.c:883: Warning: Body of function main falls-through. Adding a return statement
+gcc -D_GNUCC -E -I../../../bin/../include ./floppy2.cil.c -o ./floppy2.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./floppy2.o ./floppy2.cil.i
+floppy2.c:650: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:651: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:652: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:653: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:654: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:655: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:656: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:657: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:658: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2.c:659: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o floppy2 -I../../../bin/../include ./floppy2.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 696 branches.
+Read 866 nodes.
+Wrote 1317 branch edges.
+Budget exhausted (200053/200000)! Num iterations: 2999
+
+real	0m6.588s
+user	0m3.530s
+sys	0m2.510s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 floppy2-prep.c -o ./floppy2-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./floppy2-prep.cil.c --doCrestInstrument ./floppy2-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./floppy2-prep.cil.c -o ./floppy2-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./floppy2-prep.o ./floppy2-prep.cil.i
+floppy2-prep.c:583: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:584: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:585: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:586: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:587: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:588: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:589: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:590: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:591: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep.c:592: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o floppy2-prep -I../../../bin/../include ./floppy2-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 472 branches.
+Read 610 nodes.
+Wrote 893 branch edges.
+Budget exhausted (200054/200000)! Num iterations: 3112
+
+real	0m7.240s
+user	0m3.770s
+sys	0m3.000s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 floppy2-prep-dec-cil-prep.c -o ./floppy2-prep-dec-cil-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./floppy2-prep-dec-cil-prep.cil.c --doCrestInstrument ./floppy2-prep-dec-cil-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./floppy2-prep-dec-cil-prep.cil.c -o ./floppy2-prep-dec-cil-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./floppy2-prep-dec-cil-prep.o ./floppy2-prep-dec-cil-prep.cil.i
+floppy2-prep-dec-cil-prep.c:14: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:15: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:16: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:17: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:18: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:19: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:20: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:21: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:22: warning: ‘__crest_skip__’ attribute directive ignored
+floppy2-prep-dec-cil-prep.c:23: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o floppy2-prep-dec-cil-prep -I../../../bin/../include ./floppy2-prep-dec-cil-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 1104 branches.
+Read 1602 nodes.
+Wrote 1783 branch edges.
+Budget exhausted (200021/200000)! Num iterations: 4447
+
+real	0m11.034s
+user	0m6.530s
+sys	0m3.800s
+ =================== kbfiltr ===================\n
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 kbfiltr.c -o ./kbfiltr.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./kbfiltr.cil.c --doCrestInstrument ./kbfiltr.i
+gcc -D_GNUCC -E -I../../../bin/../include ./kbfiltr.cil.c -o ./kbfiltr.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./kbfiltr.o ./kbfiltr.cil.i
+kbfiltr.c:164: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:165: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:166: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:167: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:168: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:169: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:170: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:171: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:172: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr.c:173: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o kbfiltr -I../../../bin/../include ./kbfiltr.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 380 branches.
+Read 426 nodes.
+Wrote 685 branch edges.
+Budget exhausted (200000+/200000)! Num iterations: 177
+
+real	0m0.312s
+user	0m0.140s
+sys	0m0.140s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 kbfiltr-prep.c -o ./kbfiltr-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./kbfiltr-prep.cil.c --doCrestInstrument ./kbfiltr-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./kbfiltr-prep.cil.c -o ./kbfiltr-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./kbfiltr-prep.o ./kbfiltr-prep.cil.i
+kbfiltr-prep.c:164: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:165: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:166: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:167: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:168: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:169: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:170: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:171: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:172: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep.c:173: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o kbfiltr-prep -I../../../bin/../include ./kbfiltr-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 70 branches.
+Read 110 nodes.
+Wrote 112 branch edges.
+Budget exhausted (200000+/200000)! Num iterations: 59
+
+real	0m0.144s
+user	0m0.040s
+sys	0m0.050s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 kbfiltr-prep-dec-cil-prep.c -o ./kbfiltr-prep-dec-cil-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./kbfiltr-prep-dec-cil-prep.cil.c --doCrestInstrument ./kbfiltr-prep-dec-cil-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./kbfiltr-prep-dec-cil-prep.cil.c -o ./kbfiltr-prep-dec-cil-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./kbfiltr-prep-dec-cil-prep.o ./kbfiltr-prep-dec-cil-prep.cil.i
+kbfiltr-prep-dec-cil-prep.c:11: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:12: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:13: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:14: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:15: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:16: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:17: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:18: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:19: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr-prep-dec-cil-prep.c:20: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o kbfiltr-prep-dec-cil-prep -I../../../bin/../include ./kbfiltr-prep-dec-cil-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 50 branches.
+Read 75 nodes.
+Wrote 79 branch edges.
+Budget exhausted (200000+/200000)! Num iterations: 51
+
+real	0m0.166s
+user	0m0.060s
+sys	0m0.070s
+ =================== kbfiltr2 ===================\n
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 kbfiltr2.c -o ./kbfiltr2.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./kbfiltr2.cil.c --doCrestInstrument ./kbfiltr2.i
+kbfiltr2.c:498: Warning: Body of function main falls-through. Adding a return statement
+gcc -D_GNUCC -E -I../../../bin/../include ./kbfiltr2.cil.c -o ./kbfiltr2.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./kbfiltr2.o ./kbfiltr2.cil.i
+kbfiltr2.c:173: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:174: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:175: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:176: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:177: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:178: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:179: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:180: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:181: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2.c:182: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o kbfiltr2 -I../../../bin/../include ./kbfiltr2.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 472 branches.
+Read 543 nodes.
+Wrote 854 branch edges.
+Budget exhausted (200024/200000)! Num iterations: 4786
+
+real	0m11.323s
+user	0m6.070s
+sys	0m4.450s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 kbfiltr2-prep.c -o ./kbfiltr2-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./kbfiltr2-prep.cil.c --doCrestInstrument ./kbfiltr2-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./kbfiltr2-prep.cil.c -o ./kbfiltr2-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./kbfiltr2-prep.o ./kbfiltr2-prep.cil.i
+kbfiltr2-prep.c:171: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:172: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:173: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:174: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:175: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:176: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:177: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:178: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:179: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep.c:180: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o kbfiltr2-prep -I../../../bin/../include ./kbfiltr2-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 162 branches.
+Read 227 nodes.
+Wrote 280 branch edges.
+Budget exhausted (200000+/200000)! Num iterations: 6735
+
+real	0m15.997s
+user	0m8.900s
+sys	0m5.860s
+gcc -D_GNUCC -E -I../../../bin/../include -DCIL=1 kbfiltr2-prep-dec-cil-prep.c -o ./kbfiltr2-prep-dec-cil-prep.i
+/home/vijay/new-new-work/TRACER/trunk/lib/crest/cil/obj/x86_LINUX/cilly.asm.exe --out ./kbfiltr2-prep-dec-cil-prep.cil.c --doCrestInstrument ./kbfiltr2-prep-dec-cil-prep.i
+gcc -D_GNUCC -E -I../../../bin/../include ./kbfiltr2-prep-dec-cil-prep.cil.c -o ./kbfiltr2-prep-dec-cil-prep.cil.i
+gcc -D_GNUCC -c -I../../../bin/../include -o ./kbfiltr2-prep-dec-cil-prep.o ./kbfiltr2-prep-dec-cil-prep.cil.i
+kbfiltr2-prep-dec-cil-prep.c:11: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:12: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:13: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:14: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:15: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:16: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:17: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:18: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:19: warning: ‘__crest_skip__’ attribute directive ignored
+kbfiltr2-prep-dec-cil-prep.c:20: warning: ‘__crest_skip__’ attribute directive ignored
+../../../bin/../include/crest.h:202: warning: ‘__crest_skip__’ attribute directive ignored
+gcc -D_GNUCC -o kbfiltr2-prep-dec-cil-prep -I../../../bin/../include ./kbfiltr2-prep-dec-cil-prep.o ../../../bin/../lib/libcrest.a -L../../../bin/../lib -lstdc++
+Read 136 branches.
+Read 194 nodes.
+Wrote 215 branch edges.
+Budget exhausted (200000+/200000)! Num iterations: 1839
+
+real	0m3.749s
+user	0m1.880s
+sys	0m1.650s
+

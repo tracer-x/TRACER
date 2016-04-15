@@ -1,0 +1,170 @@
+#!/bin/bash
+
+TESTS_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter/tests/SAFETY
+DEST_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/dist/tests
+
+rm -r $DEST_PATH
+echo "Creating $DEST_PATH directory ..."
+mkdir $DEST_PATH
+
+cp  ./regrtest $DEST_PATH
+
+# SIMPLE
+
+cp $TESTS_PATH/foo1.c $DEST_PATH/test1.c
+cp $TESTS_PATH/foo1-unsafe.c $DEST_PATH/test1-unsafe.c
+cp $TESTS_PATH/foo2.c $DEST_PATH/test2.c
+cp $TESTS_PATH/foo2-unsafe.c $DEST_PATH/test2-unsafe.c
+cp $TESTS_PATH/multiple-foo.c $DEST_PATH/test3.c
+cp $TESTS_PATH/multiple-foo-1-unsafe.c $DEST_PATH/test3-unsafe.c
+
+# FUNCTIONS
+
+cp $TESTS_PATH/funcall-1.c  $DEST_PATH/testfunc1.c
+cp $TESTS_PATH/funcall-2.c  $DEST_PATH/testfunc1-unsafe.c
+cp $TESTS_PATH/funcall-3.c  $DEST_PATH/testfunc2.c
+cp $TESTS_PATH/funcall-10.c $DEST_PATH/testfunc2-unsafe.c
+cp $TESTS_PATH/funcall-4.c  $DEST_PATH/testfunc3.c
+cp $TESTS_PATH/funcall-5.c  $DEST_PATH/testfunc4.c
+cp $TESTS_PATH/funcall-11.c $DEST_PATH/testfunc4-unsafe.c
+cp $TESTS_PATH/funcall-6.c  $DEST_PATH/testfunc5.c
+cp $TESTS_PATH/funcall-7.c  $DEST_PATH/testfunc6.c
+cp $TESTS_PATH/funcall-12.c $DEST_PATH/testfunc6-unsafe.c
+cp $TESTS_PATH/funcall-8.c $DEST_PATH/testfunc7.c
+cp $TESTS_PATH/funcall-9.c $DEST_PATH/testfunc8.c
+cp $TESTS_PATH/test-function-1.c $DEST_PATH/testfunc9-unsafe.c
+
+cp $TESTS_PATH/funcall-12.c $DEST_PATH/testfunc10-unsafe.c 
+cp $TESTS_PATH/funcall-13.c $DEST_PATH/testfunc11.c 
+cp $TESTS_PATH/funcall-14.c $DEST_PATH/testfunc12-unsafe.c
+cp $TESTS_PATH/funcall-15.c $DEST_PATH/testfunc13-unsafe.c
+cp $TESTS_PATH/funcall-16.c $DEST_PATH/testfunc14.c
+
+# LOOPS
+cp $TESTS_PATH/test-loop-1.c $DEST_PATH/testloop1.c
+cp $TESTS_PATH/test-loop-2.c $DEST_PATH/testloop2.c
+cp $TESTS_PATH/test-loop-17.c $DEST_PATH/testloop3.c
+cp $TESTS_PATH/test-loop-3.c $DEST_PATH/testloop4.c
+cp $TESTS_PATH/test-loop-16.c $DEST_PATH/testloop5.c
+cp $TESTS_PATH/test-loop-11.c $DEST_PATH/testloop6.c
+cp $TESTS_PATH/test-loop-14.c $DEST_PATH/testloop7.c
+cp $TESTS_PATH/test-loop-4.c $DEST_PATH/testloop8.c
+cp $TESTS_PATH/test-loop-5.c $DEST_PATH/testloop9.c
+cp $TESTS_PATH/test-loop-6.c $DEST_PATH/testloop10.c
+cp $TESTS_PATH/test-loop-7.c $DEST_PATH/testloop11.c
+cp $TESTS_PATH/test-loop-8.c $DEST_PATH/testloop12.c
+cp $TESTS_PATH/test-loop-9.c $DEST_PATH/testloop13.c
+cp $TESTS_PATH/test-loop-10.c $DEST_PATH/testloop14.c
+cp $TESTS_PATH/test-loop-13.c $DEST_PATH/testloop15.c
+cp $TESTS_PATH/test-loop-12.c $DEST_PATH/testloop16.c
+cp $TESTS_PATH/test-loop-15.c $DEST_PATH/testloop17.c
+cp $TESTS_PATH/test-loop-19.c $DEST_PATH/testloop18.c
+cp $TESTS_PATH/test-loop-20.c $DEST_PATH/testloop19.c
+cp $TESTS_PATH/test-goto-1.c $DEST_PATH/testloop20.c
+cp $TESTS_PATH/test-goto-2.c $DEST_PATH/testloop21.c
+cp $TESTS_PATH/test-goto-3.c $DEST_PATH/testloop22.c
+cp $TESTS_PATH/test-loop-allzeros-a.c $DEST_PATH/testloop23.c
+cp $TESTS_PATH/test-loop-allzeros-b.c $DEST_PATH/testloop24.c
+cp $TESTS_PATH/test-loop-allzeros-unsafe-a.c $DEST_PATH/testloop25.c
+cp $TESTS_PATH/test-loop-allzeros-unsafe-b.c $DEST_PATH/testloop26.c
+cp $TESTS_PATH/test-loop-22.c $DEST_PATH/testloop27.c
+cp $TESTS_PATH/test-loop-23.c $DEST_PATH/testloop28.c
+cp $TESTS_PATH/test-loop-25.c $DEST_PATH/testloop29.c
+
+# USER ABSTRACTIONS
+
+cp $TESTS_PATH/abstraction/test-1-abs.c $DEST_PATH/testabs1.c
+cp $TESTS_PATH/abstraction/test-2-abs.c $DEST_PATH/testabs2.c
+cp $TESTS_PATH/abstraction/test-3-abs.c $DEST_PATH/testabs3.c
+cp $TESTS_PATH/abstraction/test-4-abs.c $DEST_PATH/testabs4.c
+cp $TESTS_PATH/abstraction/test-5-abs.c $DEST_PATH/testabs4.c
+cp $TESTS_PATH/abstraction/test-6-abs.c $DEST_PATH/testabs5.c
+cp $TESTS_PATH/abstraction/test-7-abs.c $DEST_PATH/testabs6.c
+cp $TESTS_PATH/abstraction/test-8a-abs.c $DEST_PATH/testabs7.c
+cp $TESTS_PATH/abstraction/test-8b-abs.c $DEST_PATH/testabs8.c
+cp $TESTS_PATH/abstraction/test-9-abs.c $DEST_PATH/testabs9.c
+cp $TESTS_PATH/abstraction/test-10-abs.c $DEST_PATH/testabs10.c
+cp $TESTS_PATH/abstraction/test-11-abs.c $DEST_PATH/testabs11.c
+cp $TESTS_PATH/abstraction/test-12-abs.c $DEST_PATH/testabs12.c
+cp $TESTS_PATH/abstraction/test-8c-abs.c $DEST_PATH/testabs13.c 
+cp $TESTS_PATH/abstraction/test-8d-abs.c $DEST_PATH/testabs14.c 
+cp $TESTS_PATH/abstraction/test-13-abs.c $DEST_PATH/testabs15.c 
+
+# ARRAYS
+
+cp $TESTS_PATH/array/test3.c      $DEST_PATH/testarrays1.c
+cp $TESTS_PATH/test-array-2.c     $DEST_PATH/testarrays2.c
+cp $TESTS_PATH/test-array-3.c     $DEST_PATH/testarrays3.c
+cp $TESTS_PATH/test-array-4.c     $DEST_PATH/testarrays4.c
+cp $TESTS_PATH/test-array-5.c     $DEST_PATH/testarrays5.c
+cp $TESTS_PATH/test-array-6.c     $DEST_PATH/testarrays6.c
+cp $TESTS_PATH/array/test2.c      $DEST_PATH/testarrays7.c 
+cp $TESTS_PATH/array/test5.c      $DEST_PATH/testarrays8.c 
+cp $TESTS_PATH/test-array-7.c     $DEST_PATH/testarrays9.c 
+cp $TESTS_PATH/test-array-8.c     $DEST_PATH/testarrays10.c 
+cp $TESTS_PATH/test-array-9.c     $DEST_PATH/testarrays11.c 
+cp $TESTS_PATH/test-array-10a.c   $DEST_PATH/testarrays12.c 
+cp $TESTS_PATH/test-array-11.c    $DEST_PATH/testarrays13.c 
+
+
+# ALIAS
+
+cp $TESTS_PATH/swap.c                 $DEST_PATH/testalias1.c
+cp $TESTS_PATH/test-alias-1.c         $DEST_PATH/testalias2.c
+cp $TESTS_PATH/test-alias-2.c         $DEST_PATH/testalias3.c
+cp $TESTS_PATH/test-alias-3.c         $DEST_PATH/testalias4.c
+cp $TESTS_PATH/test-alias-4.c         $DEST_PATH/testalias5.c
+cp $TESTS_PATH/test-alias-5.c         $DEST_PATH/testalias6.c
+cp $TESTS_PATH/test-alias-6.c         $DEST_PATH/testalias7.c
+cp $TESTS_PATH/test-DASH-1.c          $DEST_PATH/testalias8.c
+cp $TESTS_PATH/test-DASH-2.c          $DEST_PATH/testalias9.c
+cp $TESTS_PATH/test-DASH-3.c          $DEST_PATH/testalias10.c
+cp $TESTS_PATH/test-DASH-4.c          $DEST_PATH/testalias11.c
+cp $TESTS_PATH/test-DASH-5.c          $DEST_PATH/testalias12.c
+cp $TESTS_PATH/alias/alias1.c         $DEST_PATH/testalias13.c
+cp $TESTS_PATH/alias/alias1-unsafe.c  $DEST_PATH/testalias13-unsafe.c
+cp $TESTS_PATH/alias/alias2.c         $DEST_PATH/testalias14.c
+cp $TESTS_PATH/alias/alias2-unsafe.c  $DEST_PATH/testalias14-unsafe.c
+cp $TESTS_PATH/alias/alias3.c         $DEST_PATH/testalias15.c
+cp $TESTS_PATH/alias/alias3-unsafe.c  $DEST_PATH/testalias15-unsafe.c
+cp $TESTS_PATH/alias/field.c          $DEST_PATH/testalias16.c
+cp $TESTS_PATH/alias/field-unsafe.c   $DEST_PATH/testalias16-unsafe.c
+cp $TESTS_PATH/alias/memtemp.c        $DEST_PATH/testalias17.c
+cp $TESTS_PATH/alias/memtemp-unsafe.c $DEST_PATH/testalias17-unsafe.c
+cp $TESTS_PATH/alias/ptest0.c         $DEST_PATH/testalias18.c
+cp $TESTS_PATH/alias/ptest0-unsafe.c  $DEST_PATH/testalias18-unsafe.c
+cp $TESTS_PATH/alias/ptest1.c         $DEST_PATH/testalias19.c
+cp $TESTS_PATH/alias/ptest1-unsafe.c  $DEST_PATH/testalias19-unsafe.c
+cp $TESTS_PATH/alias/ptest2.c         $DEST_PATH/testalias20.c
+cp $TESTS_PATH/alias/ptest2-unsafe.c  $DEST_PATH/testalias20-unsafe.c
+cp $TESTS_PATH/alias/swap1.c          $DEST_PATH/testalias21.c
+cp $TESTS_PATH/alias/swap.c           $DEST_PATH/testalias22.c
+cp $TESTS_PATH/alias/swap-a.c         $DEST_PATH/testalias23.c
+cp $TESTS_PATH/alias/swap-bug.c       $DEST_PATH/testalias24.c
+cp $TESTS_PATH/alias/swap2.c          $DEST_PATH/testalias25.c
+cp $TESTS_PATH/alias/swap2-bug.c      $DEST_PATH/testalias25-unsafe.c
+cp $TESTS_PATH/alias/swap3.c          $DEST_PATH/testalias26.c
+#cp $TESTS_PATH/alias/swap3a.c        $DEST_PATH/testalias27.c
+cp $TESTS_PATH/alias/swap3-bug.c      $DEST_PATH/testalias28.c
+cp $TESTS_PATH/alias/swap4.c          $DEST_PATH/testalias29.c
+cp $TESTS_PATH/alias/swap4-bug.c      $DEST_PATH/testalias29-unsafe.c
+ 
+# Weakest preconditions as interpolants
+
+cp $TESTS_PATH/wp/wp1.c                 $DEST_PATH/testwp1.c
+cp $TESTS_PATH/wp/wp2.c                 $DEST_PATH/testwp2.c
+cp $TESTS_PATH/wp/wp3.c                 $DEST_PATH/testwp3.c
+cp $TESTS_PATH/wp/wp4.c                 $DEST_PATH/testwp4.c
+cp $TESTS_PATH/wp/wp5.c                 $DEST_PATH/testwp5.c
+cp $TESTS_PATH/wp/wp6.c                 $DEST_PATH/testwp6.c
+cp $TESTS_PATH/wp/wp7.c                 $DEST_PATH/testwp7.c
+cp $TESTS_PATH/wp/wp8.c                 $DEST_PATH/testwp8.c
+cp $TESTS_PATH/wp/wp9.c                 $DEST_PATH/testwp9.c
+cp $TESTS_PATH/wp/wp10.c                $DEST_PATH/testwp10.c
+cp $TESTS_PATH/wp/wp11.c                $DEST_PATH/testwp11.c
+cp $TESTS_PATH/wp/wp12.c                $DEST_PATH/testwp12.c
+cp $TESTS_PATH/wp/wp13.c                $DEST_PATH/testwp13.c
+cp $TESTS_PATH/wp/wp14.c                $DEST_PATH/testwp14.c
+cp $TESTS_PATH/wp/wp15.c                $DEST_PATH/testwp15.c
+cp $TESTS_PATH/wp/wp16.c                $DEST_PATH/testwp16.c
+cp $TESTS_PATH/wp/wp18.c                $DEST_PATH/testwp17.c

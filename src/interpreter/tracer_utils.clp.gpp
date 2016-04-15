@@ -1,0 +1,399 @@
+#if     (CLP_SYS == CLPR)
+% tracer_utils.clp.gpp
+
+%------------------------------------------------------------------------------
+% About the use of clear_pterm_buffer:
+%------------------------------------------------------------------------------
+% If -DGRAPHVIZ_USE is used then it raises a memory corruption
+% problem. We have seen that weird characters can be asserted to the
+% fact sym_graph/16. It seems that clear_pterm_buffer/0 frees
+% information that sym_graph/16 needs. For the moment, we don't call
+% clear_pterm_buffer to avoid these problems. We may need to use it
+% for slicing. Still, it seems safe to use it in the slave processes.
+%------------------------------------------------------------------------------
+
+% not(not(var(V)).
+% If var(V) succeeds then V is bound to another fresh variable. In
+% principle, this is not a problem unless an external solver is used
+% because it's very sensitive to the variable renaming.
+myvar(V):-
+	myvar_aux(V),
+	!,
+	fail.			% V is not var 		
+myvar(_):- !.                   % V is var.
+
+myvar_aux(V):-
+	var(V),
+	!,
+	fail.
+myvar_aux(_):- !.
+
+% similar to myvar/1 but succeeds only if V is nonvar.
+mynonvar(V):-
+	myvar(V),
+	!,
+	fail.
+mynonvar(_):-!.
+
+% List operations
+
+%------------------------------------------------------------------------------
+% copy_to_unbound_list(L1,L2)
+% Return L2 as list with the same length as L1 but with all members
+% unconstrained.
+%------------------------------------------------------------------------------
+copy_to_unbound_list([], []).
+copy_to_unbound_list([_|R], [_|S]) :- copy_to_unbound_list(R, S).
+
+%------------------------------------------------------------------------------
+% append/3
+%------------------------------------------------------------------------------
+append([], B, B).
+append([X|A], B, [X|C]) :- append(A, B, C).
+
+%-----------------------------------------------------------------------------
+% flatten(+LLs,-Ls)
+%-----------------------------------------------------------------------------
+flatten([],[]):-!.
+flatten([X|L],R):- !, flatten(X,FX), flatten(L,LX), append(FX,LX,R).
+flatten(X,R) :- R = [X].
+
+%------------------------------------------------------------------------------
+% findnth(+List,+Elem,+Base,-Index)
+%------------------------------------------------------------------------------
+findnth([Elem1|_], Elem2, N, N):- Elem1 == Elem2,!.
+findnth([_|List], Elem, N0, N) :- findnth(List, Elem, N0+1, N).
+
+%------------------------------------------------------------------------------
+% firstnth(+List,+N,-OutList): get the first N elements of List in OutList
+%------------------------------------------------------------------------------
+firstnth(List,N,OutList):-length(OutList,N), append(OutList,_,List).
+
+%------------------------------------------------------------------------------
+% find_position(+List,+I,X)
+%------------------------------------------------------------------------------
+% X is the I-th element of List. 
+% If I > length(List) then this predicate fails.
+%------------------------------------------------------------------------------
+find_position(L,N,X):- N >= 1, find_position_aux(L, 1, N, X).
+find_position_aux([X|_] ,I,N,X):- I = N, !.
+find_position_aux([_|Xs],I,N,X):- I < N, !, find_position_aux(Xs,I + 1,N,X).
+
+%------------------------------------------------------------------------------
+% deletenth(+List,+I,-NewList)
+%------------------------------------------------------------------------------
+% NList is like List but without the I-th element.
+%------------------------------------------------------------------------------
+deletenth(List,Index,NList):-
+	Index > 0,
+	deletenth_aux(List,1,Index,NList).
+
+deletenth_aux([],_,_,[]).
+deletenth_aux([_Elem|List],Index,Target,List):-
+	Index = Target,
+	!.
+deletenth_aux([Elem|List],Index,Target,[Elem|NList]):-
+	!,
+	deletenth_aux(List,Index+1,Target,NList).
+
+%------------------------------------------------------------------------------
+% delete_first_n(+L1,+N,-L2)
+% L2 is the list L1 but without the first N elements.
+%------------------------------------------------------------------------------
+delete_first_n([],_,[] ):- !.
+delete_first_n(Rest, N, Rest ):- N = 0,!.
+delete_first_n([_|Xs],N,Rest ):- N > 0, delete_first_n(Xs,N-1,Rest).
+
+%------------------------------------------------------------------------------
+% delete(+L1,+E,-L2)
+% L2 is L1 without the ocurrences of E.
+%------------------------------------------------------------------------------
+delete([], _, []).
+delete([Head|Tail], Element, Rest) :-
+	Head==Element, !,
+	delete(Tail, Element, Rest).
+delete([Head|Tail], Element, [Head|Rest]) :-
+	delete(Tail, Element, Rest).
+
+%------------------------------------------------------------------------------
+% nthfunc(+Index,+Base, +List,-Elem)
+%------------------------------------------------------------------------------
+% Index = 0 ,..., length(List)
+nthfunc(0, [Elem|_], Elem) :- !.
+nthfunc(N, [_|List], Elem) :- nthfunc(N-1, List, Elem).
+
+%------------------------------------------------------------------------------
+% select/3
+%------------------------------------------------------------------------------
+select(E, [E|Es], Es).
+select(E, [X|Es], [X|L]) :- select(E, Es, L).
+
+%------------------------------------------------------------------------------
+% member/2
+%------------------------------------------------------------------------------
+member(X,[X|_]).
+member(X,[_|T]):- member(X,T).
+
+%------------------------------------------------------------------------------
+% insert_if_not_member/3
+%------------------------------------------------------------------------------
+insert_if_not_member(H,T,T):- member(H,T),!.
+insert_if_not_member(H,T,[H|T]):- !.
+
+%------------------------------------------------------------------------------
+% nonmember/2
+%------------------------------------------------------------------------------
+nonmember(E, S) :- member(E, S), !, fail.
+nonmember(_, _).
+
+%------------------------------------------------------------------------------
+% member_special(X,L): X is a member of L but without creating bindings
+%------------------------------------------------------------------------------
+member_special(_X,T)     :- var(T), !, fail.
+member_special(X,[Y|_Ys]):- X == Y, !.
+member_special(X,[_|Ys]) :- member_special(X,Ys).
+
+%------------------------------------------------------------------------------
+% memberGndchk/2
+%------------------------------------------------------------------------------
+memberGndchk(X,[Y|_]):- X == Y. 
+memberGndchk(X,[_|T]):- memberGndchk(X,T).
+
+%------------------------------------------------------------------------------
+% insert_if_not_memberGndchk/3
+%------------------------------------------------------------------------------
+insert_if_not_memberGndchk(H,T,T):- memberGndchk(H,T),!.
+insert_if_not_memberGndchk(H,T,[H|T]):- !.
+
+%------------------------------------------------------------------------------
+% nonmemberGndchk/2
+%------------------------------------------------------------------------------
+nonmemberGndchk(_,[]).
+nonmemberGndchk(X,[Y|_]):- X == Y, !, fail.
+nonmemberGndchk(X,[_|T]):- nonmemberGndchk(X,T).
+
+%------------------------------------------------------------------------------
+% length/2
+%------------------------------------------------------------------------------
+length(L,N):- length_aux(L,0,N).
+length_aux([],Acc,Acc).
+length_aux([_|Xs],Acc,N):- length_aux(Xs,Acc+1,N).
+
+%------------------------------------------------------------------------------
+% reverse/2
+%------------------------------------------------------------------------------
+reverse(Xs,Ys) :- reverse_aux(Xs,[],Ys).			      
+reverse_aux([],L,L):-!.
+reverse_aux([X|Xs],Ys,Zs):- 
+	reverse_aux(Xs,[X|Ys],Zs).
+
+%-----------------------------------------------------------------------------%
+% make_empty_list_if_freevar(-X)
+% Return an empty list only if X is free
+%-----------------------------------------------------------------------------%
+make_empty_list_if_freevar(X):- var(X), !, X=[].
+make_empty_list_if_freevar(_).
+
+% Set operations
+
+%------------------------------------------------------------------------------
+% unord_setsubset(+Set1,+Set2)
+% Succeeds when every element of Set1 appears in Set2.
+%------------------------------------------------------------------------------
+unord_setsubset([],_).
+unord_setsubset([X|Xs],Ys):-
+	memberGndchk(X,Ys),
+	unord_setsubset(Xs,Ys).
+
+
+%------------------------------------------------------------------------------
+% unord_setintersect/2
+% Succeeds when the lists have at least one element in  common.
+%------------------------------------------------------------------------------
+unord_setintersect([X|_],Vs) :-
+	memberGndchk(X,Vs),!.
+unord_setintersect([_|Xs],Vs) :-
+	unord_setintersect(Xs,Vs).
+
+%------------------------------------------------------------------------------
+% unord_setintersection(+Set1,+Set2,-Inter)
+% It is true when Inter is the intersection of Set1 and Set2, provided
+% that Set1 and Set2 are lists.
+%------------------------------------------------------------------------------
+unord_setintersection([],_,[]).
+unord_setintersection([X|Xs],Vs,[X|Ws]) :-
+	memberGndchk(X,Vs),
+	!,
+	unord_setintersection(Xs,Vs,Ws).
+unord_setintersection([_|Xs],Vs,Ws) :-
+	unord_setintersection(Xs,Vs,Ws).
+
+%------------------------------------------------------------------------------
+% unord_setdiff(+Set1,+Set2,-Diff)
+% Diff contains those elements which are in Set1 but not in Set2.
+%------------------------------------------------------------------------------
+unord_setdiff([],_,[]).
+unord_setdiff([X|Xs],Ys,Zs) :-
+	memberGndchk(X,Ys),
+	!,
+	unord_setdiff(Xs,Ys,Zs).
+unord_setdiff([X|Xs],Ys,[X|Zs]) :-
+	unord_setdiff(Xs,Ys,Zs).
+
+%------------------------------------------------------------------------------
+% unord_setintersect_diff(+Set1,+Set2,-Inter,-Diff)
+% It is true when Inter is the intersection of Set1 and Set2, provided
+% that Set1 and Set2 are lists. Diff contains those elements which are
+% in Set1 but not in Set2.
+%------------------------------------------------------------------------------
+unord_setintersect_diff([],_,[],[]).
+unord_setintersect_diff([X|Xs],Vs,[X|Ws],Ys) :-
+	memberGndchk(X,Vs),
+	!,
+	unord_setintersect_diff(Xs,Vs,Ws,Ys).
+unord_setintersect_diff([X|Xs],Vs,Ws,[X|Ys]) :-
+	unord_setintersect_diff(Xs,Vs,Ws,Ys).
+
+%------------------------------------------------------------------------------
+% unord_setunion(+Set1,+Set2,-Union)
+% It is true when Union is the union of Set1 and Set2.  When some
+% element occurs in both sets, Union retains only one copy.
+%------------------------------------------------------------------------------
+unord_setunion([],X,X).
+unord_setunion([X|Xs],Vs,Ws) :-
+	memberGndchk(X,Vs),
+	!,
+	unord_setunion(Xs,Vs,Ws).
+unord_setunion([X|Xs],Vs,[X|Ws]) :-
+	unord_setunion(Xs,Vs,Ws).
+
+% Term operations
+
+%------------------------------------------------------------------------------
+% copy_term/2
+%------------------------------------------------------------------------------
+copy_term(X, Y) :-
+	set_cs_mark,
+	assert(copy_term_memo(X)),
+	robust_retract(copy_term_memo(Y)),
+	pop_cs_mark.
+
+%------------------------------------------------------------------------------
+% fcopy_term/2: as copy_term but using fassert/1 rather than assert/1
+%------------------------------------------------------------------------------
+fcopy_term(X, Y) :-
+	set_cs_mark,
+	fassert(fcopy_term_memo(X)),
+	retract(fcopy_term_memo(Y)),
+	pop_cs_mark.
+	%%--------------------------------------------------------------------
+	%% To free pterm buffer: it saves significant amount of
+	%% memory! but we need to check it's safe.
+	%%--------------------------------------------------------------------	
+	% clear_pterm_buffer.
+
+%------------------------------------------------------------------------------
+% robust_retract_no_call/1: same as retract, but also succeeds when the rule
+% actually contains body. Also, there is no call to the predicate so
+% unification is not performed.
+%------------------------------------------------------------------------------
+% IMPORTANT: this predicate MUST be used even if no witnesses are used
+% because of the presence of non-linear constraints:
+robust_retract_no_call(A) :-
+	rule(A,B), !,
+	robust_retract_rule(A,B).
+
+robust_retract_rule(A, true) :- !, retract(A).
+robust_retract_rule(A, B)    :-    retract(A :- B).
+
+%------------------------------------------------------------------------------
+% robust_retract/1: same as retract, but also succeeds when the rule
+% actually contains body. Avoid using this predicate because it's very
+% slow.
+%------------------------------------------------------------------------------
+robust_retract(A) :-
+	warning(warning_off),	
+	call(A),
+	oncerule(A, ABody),
+	robust_retract_rule(A, ABody),
+	warning(warning_on).
+
+oncerule(A, B) :-
+	rule(A, B), !.
+
+
+#ifdef  UNUSED_CODE
+% robust_retract(A) :-
+% 	%----------------------------------------------------------------------
+% 	% Retract/1 returns an answer, s.t. in robust_retract/1 we want to
+% 	% also return an answer. Here the answer need to be obtained before
+% 	% the rule is removed from the codespace. Both obtaining answer and
+% 	% removing it from codespace need to use the original argument
+% 	% A without unification with the answer. Therefore here we copy A to B
+% 	% such that we can use "fresh" A both for the answer ("call(A)" in
+% 	% robust_retract_aux) and removal from codespace 
+% 	% ("robust_retract_rule/2" in robust_retract_aux).
+% 	%----------------------------------------------------------------------
+% 	assert(robust_retract_memo(A)),
+% 	robust_retract_memo(B),
+% 	rule(robust_retract_memo(A), ABody),
+% 	robust_retract_rule(robust_retract_memo(A), ABody),
+% 	!,
+% 	robust_retract_aux(A, B).
+
+% robust_retract_aux(A, B) :-
+% 	call(A),
+% 	oncerule(B, BBody),
+% 	robust_retract_rule(B, BBody).
+
+
+/*
+ * This version does not backtrack
+ *
+*/
+/*
+:- dynamic(robust_retract_memo, 1).
+
+robust_retract(A) :-
+	assert(robust_retract_memo(A)),
+	robust_retract_aux(A).
+
+robust_retract_aux(A) :-
+	call(A), robust_retract_aux_aux.
+robust_retract_aux(A) :-
+	rule(robust_retract_memo(A), B),
+	robust_retract_rule(robust_retract_memo(A), B),
+	!, fail.
+
+robust_retract_aux_aux :-
+	robust_retract_memo(A), rule(A, B), !,
+	robust_retract_rule(A, B), !,
+	robust_retract_memo(C),	rule(robust_retract_memo(C), D), !,
+	robust_retract_rule(robust_retract_memo(C), D).
+*/
+#endif  /*UNUSED_CODE*/
+
+% Arithmetic operations
+
+%------------------------------------------------------------------------------
+% max(+,+,-)
+%------------------------------------------------------------------------------
+max(X,Y,X):- X >= Y,!.
+max(_,Y,Y):- !.
+
+% Miscellaneous
+
+%------------------------------------------------------------------------------
+% gen_varlabels: Generate list of atoms to be used as variable names for
+%                printing nodes on screen, if varlabels/1 is not provided
+%                by the user.
+%------------------------------------------------------------------------------
+gen_varlabels(L, L1) :-
+	gen_varlabels_aux(0, L, L1).
+
+gen_varlabels_aux(_, [], []).
+gen_varlabels_aux(N, [_|R], [X|S]) :-
+	printf_to_atom(X, "v%d", [N+1]),
+        gen_varlabels_aux(N+1, R, S).
+
+#endif

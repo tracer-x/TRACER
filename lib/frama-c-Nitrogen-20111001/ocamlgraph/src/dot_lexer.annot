@@ -1,0 +1,2079 @@
+"ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+type(
+  Buffer.t
+)
+ident(
+  def string_buf "ocamlgraph/src/dot_lexer.mll" 27 125 127 --
+)
+"ocamlgraph/src/dot_lexer.mll" 25 86 105 "ocamlgraph/src/dot_lexer.mll" 25 86 118
+type(
+  int -> Buffer.t
+)
+ident(
+  ext_ref Buffer.create
+)
+"ocamlgraph/src/dot_lexer.mll" 25 86 119 "ocamlgraph/src/dot_lexer.mll" 25 86 123
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 25 86 105 "ocamlgraph/src/dot_lexer.mll" 25 86 123
+call(
+  stack
+)
+type(
+  Buffer.t
+)
+"ocamlgraph/src/dot_lexer.mll" 27 125 131 "ocamlgraph/src/dot_lexer.mll" 27 125 138
+type(
+  string -> Dot_parser.token
+)
+ident(
+  def keyword "ocamlgraph/src/dot_lexer.ml" 25 452 452 --
+)
+"ocamlgraph/src/dot_lexer.mll" 28 141 149 "ocamlgraph/src/dot_lexer.mll" 28 141 150
+type(
+  (string, Dot_parser.token) Hashtbl.t
+)
+"ocamlgraph/src/dot_lexer.mll" 28 141 153 "ocamlgraph/src/dot_lexer.mll" 28 141 167
+type(
+  int -> (string, Dot_parser.token) Hashtbl.t
+)
+ident(
+  ext_ref Hashtbl.create
+)
+"ocamlgraph/src/dot_lexer.mll" 28 141 168 "ocamlgraph/src/dot_lexer.mll" 28 141 170
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 28 141 153 "ocamlgraph/src/dot_lexer.mll" 28 141 170
+call(
+  stack
+)
+type(
+  (string, Dot_parser.token) Hashtbl.t
+)
+"ocamlgraph/src/dot_lexer.mll" 29 174 178 "ocamlgraph/src/dot_lexer.mll" 29 174 187
+type(
+  (string * Dot_parser.token -> unit) ->
+  (string * Dot_parser.token) list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 201 "ocamlgraph/src/dot_lexer.mll" 30 189 202
+type(
+  string
+)
+ident(
+  def s "ocamlgraph/src/dot_lexer.mll" 30 189 209 "ocamlgraph/src/dot_lexer.mll" 30 189 226
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 203 "ocamlgraph/src/dot_lexer.mll" 30 189 204
+type(
+  Dot_parser.token
+)
+ident(
+  def k "ocamlgraph/src/dot_lexer.mll" 30 189 209 "ocamlgraph/src/dot_lexer.mll" 30 189 226
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 200 "ocamlgraph/src/dot_lexer.mll" 30 189 205
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 209 "ocamlgraph/src/dot_lexer.mll" 30 189 220
+type(
+  (string, Dot_parser.token) Hashtbl.t -> string -> Dot_parser.token -> unit
+)
+ident(
+  ext_ref Hashtbl.add
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 221 "ocamlgraph/src/dot_lexer.mll" 30 189 222
+type(
+  (string, Dot_parser.token) Hashtbl.t
+)
+ident(
+  int_ref h "ocamlgraph/src/dot_lexer.mll" 28 141 149 "ocamlgraph/src/dot_lexer.mll" 28 141 150
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 223 "ocamlgraph/src/dot_lexer.mll" 30 189 224
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 30 189 201 "ocamlgraph/src/dot_lexer.mll" 30 189 202
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 225 "ocamlgraph/src/dot_lexer.mll" 30 189 226
+type(
+  Dot_parser.token
+)
+ident(
+  int_ref k "ocamlgraph/src/dot_lexer.mll" 30 189 203 "ocamlgraph/src/dot_lexer.mll" 30 189 204
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 209 "ocamlgraph/src/dot_lexer.mll" 30 189 226
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 30 189 195 "ocamlgraph/src/dot_lexer.mll" 30 189 227
+type(
+  string * Dot_parser.token -> unit
+)
+"ocamlgraph/src/dot_lexer.mll" 32 236 237 "ocamlgraph/src/dot_lexer.mll" 32 236 245
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 32 236 247 "ocamlgraph/src/dot_lexer.mll" 32 236 253
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 32 236 237 "ocamlgraph/src/dot_lexer.mll" 32 236 253
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 33 255 256 "ocamlgraph/src/dot_lexer.mll" 33 255 263
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 33 255 265 "ocamlgraph/src/dot_lexer.mll" 33 255 270
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 33 255 256 "ocamlgraph/src/dot_lexer.mll" 33 255 270
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 34 272 273 "ocamlgraph/src/dot_lexer.mll" 34 272 282
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 34 272 284 "ocamlgraph/src/dot_lexer.mll" 34 272 291
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 34 272 273 "ocamlgraph/src/dot_lexer.mll" 34 272 291
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 35 293 294 "ocamlgraph/src/dot_lexer.mll" 35 293 304
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 35 293 306 "ocamlgraph/src/dot_lexer.mll" 35 293 314
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 35 293 294 "ocamlgraph/src/dot_lexer.mll" 35 293 314
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 36 316 317 "ocamlgraph/src/dot_lexer.mll" 36 316 323
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 36 316 325 "ocamlgraph/src/dot_lexer.mll" 36 316 329
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 36 316 317 "ocamlgraph/src/dot_lexer.mll" 36 316 329
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 37 331 332 "ocamlgraph/src/dot_lexer.mll" 37 331 338
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 37 331 340 "ocamlgraph/src/dot_lexer.mll" 37 331 344
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 37 331 332 "ocamlgraph/src/dot_lexer.mll" 37 331 344
+type(
+  string * Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 31 228 234 "ocamlgraph/src/dot_lexer.mll" 38 346 353
+type(
+  (string * Dot_parser.token) list
+)
+"ocamlgraph/src/dot_lexer.mll" 29 174 178 "ocamlgraph/src/dot_lexer.mll" 38 346 353
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 363 "ocamlgraph/src/dot_lexer.mll" 39 355 364
+type(
+  string
+)
+ident(
+  def s "ocamlgraph/src/dot_lexer.mll" 39 355 368 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 372 "ocamlgraph/src/dot_lexer.mll" 39 355 373
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 376 "ocamlgraph/src/dot_lexer.mll" 39 355 392
+type(
+  string -> string
+)
+ident(
+  ext_ref String.lowercase
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 393 "ocamlgraph/src/dot_lexer.mll" 39 355 394
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 39 355 363 "ocamlgraph/src/dot_lexer.mll" 39 355 364
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 376 "ocamlgraph/src/dot_lexer.mll" 39 355 394
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 398 "ocamlgraph/src/dot_lexer.mll" 39 355 410
+type(
+  (string, Dot_parser.token) Hashtbl.t -> string -> Dot_parser.token
+)
+ident(
+  ext_ref Hashtbl.find
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 411 "ocamlgraph/src/dot_lexer.mll" 39 355 412
+type(
+  (string, Dot_parser.token) Hashtbl.t
+)
+ident(
+  int_ref h "ocamlgraph/src/dot_lexer.mll" 28 141 149 "ocamlgraph/src/dot_lexer.mll" 28 141 150
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 413 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 39 355 372 "ocamlgraph/src/dot_lexer.mll" 39 355 373
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 398 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 368 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 39 355 359 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+type(
+  string -> Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 29 174 178 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+type(
+  string -> Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 28 141 145 "ocamlgraph/src/dot_lexer.mll" 39 355 414
+type(
+  string -> Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 25 452 456 "ocamlgraph/src/dot_lexer.ml" 25 452 474
+type(
+  Lexing.lex_tables
+)
+ident(
+  def __ocaml_lex_tables "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 27 500 503 "ocamlgraph/src/dot_lexer.ml" 32 850 879
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 34 905 908 "ocamlgraph/src/dot_lexer.ml" 39 1255 1284
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 41 1310 1313 "ocamlgraph/src/dot_lexer.ml" 46 1660 1689
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 48 1713 1716 "ocamlgraph/src/dot_lexer.ml" 107 5843 5896
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 109 5920 5923 "ocamlgraph/src/dot_lexer.ml" 168 10050 10103
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 170 10131 10134 "ocamlgraph/src/dot_lexer.ml" 170 10131 10136
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 172 10167 10170 "ocamlgraph/src/dot_lexer.ml" 172 10167 10172
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 174 10203 10206 "ocamlgraph/src/dot_lexer.ml" 174 10203 10208
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 176 10237 10240 "ocamlgraph/src/dot_lexer.ml" 176 10237 10242
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 178 10271 10274 "ocamlgraph/src/dot_lexer.ml" 178 10271 10276
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 180 10299 10302 "ocamlgraph/src/dot_lexer.ml" 180 10299 10304
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 25 452 477 "ocamlgraph/src/dot_lexer.ml" 181 10306 10307
+type(
+  Lexing.lex_tables
+)
+"ocamlgraph/src/dot_lexer.ml" 183 10309 10317 "ocamlgraph/src/dot_lexer.ml" 183 10309 10322
+type(
+  Lexing.lexbuf -> Dot_parser.token
+)
+ident(
+  def token "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 183 10309 10323 "ocamlgraph/src/dot_lexer.ml" 183 10309 10329
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 184 10332 10336 "ocamlgraph/src/dot_lexer.ml" 184 10332 10366
+)
+"ocamlgraph/src/dot_lexer.ml" 184 10332 10336 "ocamlgraph/src/dot_lexer.ml" 184 10332 10357
+type(
+  Lexing.lexbuf -> int -> Dot_parser.token
+)
+ident(
+  int_ref __ocaml_lex_token_rec "ocamlgraph/src/dot_lexer.ml" 185 10367 10371 "ocamlgraph/src/dot_lexer.ml" 185 10367 10392
+)
+"ocamlgraph/src/dot_lexer.ml" 184 10332 10358 "ocamlgraph/src/dot_lexer.ml" 184 10332 10364
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 183 10309 10323 "ocamlgraph/src/dot_lexer.ml" 183 10309 10329
+)
+"ocamlgraph/src/dot_lexer.ml" 184 10332 10365 "ocamlgraph/src/dot_lexer.ml" 184 10332 10366
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 184 10332 10336 "ocamlgraph/src/dot_lexer.ml" 184 10332 10366
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 185 10367 10371 "ocamlgraph/src/dot_lexer.ml" 185 10367 10392
+type(
+  Lexing.lexbuf -> int -> Dot_parser.token
+)
+ident(
+  def __ocaml_lex_token_rec "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10400 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+)
+"ocamlgraph/src/dot_lexer.ml" 185 10367 10400 "ocamlgraph/src/dot_lexer.ml" 185 10367 10417
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 186 10420 10422 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+)
+"ocamlgraph/src/dot_lexer.ml" 186 10420 10428 "ocamlgraph/src/dot_lexer.ml" 186 10420 10441
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+ident(
+  ext_ref Lexing.engine
+)
+"ocamlgraph/src/dot_lexer.ml" 186 10420 10442 "ocamlgraph/src/dot_lexer.ml" 186 10420 10460
+type(
+  Lexing.lex_tables
+)
+ident(
+  int_ref __ocaml_lex_tables "ocamlgraph/src/dot_lexer.ml" 25 452 456 "ocamlgraph/src/dot_lexer.ml" 25 452 474
+)
+"ocamlgraph/src/dot_lexer.ml" 186 10420 10461 "ocamlgraph/src/dot_lexer.ml" 186 10420 10478
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 185 10367 10400 "ocamlgraph/src/dot_lexer.ml" 185 10367 10417
+)
+"ocamlgraph/src/dot_lexer.ml" 186 10420 10479 "ocamlgraph/src/dot_lexer.ml" 186 10420 10485
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 186 10420 10428 "ocamlgraph/src/dot_lexer.ml" 186 10420 10485
+call(
+  stack
+)
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 187 10491 10499 "ocamlgraph/src/dot_lexer.ml" 187 10491 10500
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 52 10540 10548 "ocamlgraph/src/dot_lexer.mll" 52 10540 10553
+type(
+  Lexing.lexbuf -> Dot_parser.token
+)
+ident(
+  int_ref token "ocamlgraph/src/dot_lexer.ml" 183 10309 10317 "ocamlgraph/src/dot_lexer.ml" 183 10309 10322
+)
+"ocamlgraph/src/dot_lexer.mll" 52 10540 10554 "ocamlgraph/src/dot_lexer.mll" 52 10540 10560
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.mll" 52 10540 10546 "ocamlgraph/src/dot_lexer.mll" 52 10540 10562
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 192 10600 10604 "ocamlgraph/src/dot_lexer.ml" 192 10600 10605
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 54 10645 10653 "ocamlgraph/src/dot_lexer.mll" 54 10645 10658
+type(
+  Lexing.lexbuf -> Dot_parser.token
+)
+ident(
+  int_ref token "ocamlgraph/src/dot_lexer.ml" 183 10309 10317 "ocamlgraph/src/dot_lexer.ml" 183 10309 10322
+)
+"ocamlgraph/src/dot_lexer.mll" 54 10645 10659 "ocamlgraph/src/dot_lexer.mll" 54 10645 10665
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.mll" 54 10645 10651 "ocamlgraph/src/dot_lexer.mll" 54 10645 10667
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 197 10705 10709 "ocamlgraph/src/dot_lexer.ml" 197 10705 10710
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10758 "ocamlgraph/src/dot_lexer.mll" 56 10750 10765
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  int_ref comment "ocamlgraph/src/dot_lexer.ml" 364 15128 15132 "ocamlgraph/src/dot_lexer.ml" 364 15128 15139
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10766 "ocamlgraph/src/dot_lexer.mll" 56 10750 10772
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10758 "ocamlgraph/src/dot_lexer.mll" 56 10750 10772
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10774 "ocamlgraph/src/dot_lexer.mll" 56 10750 10779
+type(
+  Lexing.lexbuf -> Dot_parser.token
+)
+ident(
+  int_ref token "ocamlgraph/src/dot_lexer.ml" 183 10309 10317 "ocamlgraph/src/dot_lexer.ml" 183 10309 10322
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10780 "ocamlgraph/src/dot_lexer.mll" 56 10750 10786
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10774 "ocamlgraph/src/dot_lexer.mll" 56 10750 10786
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 56 10750 10756 "ocamlgraph/src/dot_lexer.mll" 56 10750 10788
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 202 10826 10830 "ocamlgraph/src/dot_lexer.ml" 202 10826 10831
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 58 10871 10877 "ocamlgraph/src/dot_lexer.mll" 58 10871 10886
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 207 10924 10928 "ocamlgraph/src/dot_lexer.ml" 207 10924 10929
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 60 10969 10975 "ocamlgraph/src/dot_lexer.mll" 60 10969 10984
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 212 11022 11026 "ocamlgraph/src/dot_lexer.ml" 212 11022 11027
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 62 11067 11073 "ocamlgraph/src/dot_lexer.mll" 62 11067 11086
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 217 11124 11128 "ocamlgraph/src/dot_lexer.ml" 217 11124 11129
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 64 11169 11175 "ocamlgraph/src/dot_lexer.mll" 64 11169 11184
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 222 11222 11226 "ocamlgraph/src/dot_lexer.ml" 222 11222 11227
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 66 11267 11273 "ocamlgraph/src/dot_lexer.mll" 66 11267 11281
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 227 11319 11323 "ocamlgraph/src/dot_lexer.ml" 227 11319 11324
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 68 11364 11370 "ocamlgraph/src/dot_lexer.mll" 68 11364 11378
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 232 11416 11420 "ocamlgraph/src/dot_lexer.ml" 232 11416 11421
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 70 11461 11467 "ocamlgraph/src/dot_lexer.mll" 70 11461 11474
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 237 11512 11516 "ocamlgraph/src/dot_lexer.ml" 237 11512 11518
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 72 11558 11564 "ocamlgraph/src/dot_lexer.mll" 72 11558 11571
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 242 11609 11613 "ocamlgraph/src/dot_lexer.ml" 242 11609 11615
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 74 11655 11661 "ocamlgraph/src/dot_lexer.mll" 74 11655 11671
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 247 11709 11713 "ocamlgraph/src/dot_lexer.ml" 247 11709 11715
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 75 11759 11772 "ocamlgraph/src/dot_lexer.mll" 75 11759 11773
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11812 "ocamlgraph/src/dot_lexer.ml" 252 11810 11829
+type(
+  Lexing.lexbuf -> int -> int -> string
+)
+ident(
+  ext_ref Lexing.sub_lexeme
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11830 "ocamlgraph/src/dot_lexer.ml" 252 11810 11836
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11837 "ocamlgraph/src/dot_lexer.ml" 252 11810 11843
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11837 "ocamlgraph/src/dot_lexer.ml" 252 11810 11864
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11865 "ocamlgraph/src/dot_lexer.ml" 252 11810 11871
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11865 "ocamlgraph/src/dot_lexer.ml" 252 11810 11891
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 252 11810 11812 "ocamlgraph/src/dot_lexer.ml" 252 11810 11891
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11943 "ocamlgraph/src/dot_lexer.mll" 76 11931 11950
+type(
+  string -> Dot_parser.token
+)
+ident(
+  int_ref keyword "ocamlgraph/src/dot_lexer.mll" 27 125 131 "ocamlgraph/src/dot_lexer.mll" 27 125 138
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11951 "ocamlgraph/src/dot_lexer.mll" 76 11931 11952
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 75 11759 11772 "ocamlgraph/src/dot_lexer.mll" 75 11759 11773
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11943 "ocamlgraph/src/dot_lexer.mll" 76 11931 11952
+call(
+  stack
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11958 "ocamlgraph/src/dot_lexer.mll" 76 11931 11967
+type(
+  exn
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11981 "ocamlgraph/src/dot_lexer.mll" 76 11931 11982
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 75 11759 11772 "ocamlgraph/src/dot_lexer.mll" 75 11759 11773
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11974 "ocamlgraph/src/dot_lexer.mll" 76 11931 11983
+type(
+  Dot_ast.id
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11971 "ocamlgraph/src/dot_lexer.mll" 76 11931 11983
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 76 11931 11937 "ocamlgraph/src/dot_lexer.mll" 76 11931 11985
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 248 11719 11719 "ocamlgraph/src/dot_lexer.mll" 76 11931 11985
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 257 12023 12027 "ocamlgraph/src/dot_lexer.ml" 257 12023 12029
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 77 12073 12087 "ocamlgraph/src/dot_lexer.mll" 77 12073 12088
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12127 "ocamlgraph/src/dot_lexer.ml" 262 12125 12144
+type(
+  Lexing.lexbuf -> int -> int -> string
+)
+ident(
+  ext_ref Lexing.sub_lexeme
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12145 "ocamlgraph/src/dot_lexer.ml" 262 12125 12151
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12152 "ocamlgraph/src/dot_lexer.ml" 262 12125 12158
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12152 "ocamlgraph/src/dot_lexer.ml" 262 12125 12179
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12180 "ocamlgraph/src/dot_lexer.ml" 262 12125 12186
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12180 "ocamlgraph/src/dot_lexer.ml" 262 12125 12206
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 262 12125 12127 "ocamlgraph/src/dot_lexer.ml" 262 12125 12206
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 78 12246 12265 "ocamlgraph/src/dot_lexer.mll" 78 12246 12266
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 77 12073 12087 "ocamlgraph/src/dot_lexer.mll" 77 12073 12088
+)
+"ocamlgraph/src/dot_lexer.mll" 78 12246 12257 "ocamlgraph/src/dot_lexer.mll" 78 12246 12267
+type(
+  Dot_ast.id
+)
+"ocamlgraph/src/dot_lexer.mll" 78 12246 12252 "ocamlgraph/src/dot_lexer.mll" 78 12246 12269
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 258 12033 12033 "ocamlgraph/src/dot_lexer.mll" 78 12246 12269
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 267 12307 12311 "ocamlgraph/src/dot_lexer.ml" 267 12307 12313
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 80 12353 12361 "ocamlgraph/src/dot_lexer.mll" 80 12353 12373
+type(
+  Buffer.t -> unit
+)
+ident(
+  ext_ref Buffer.clear
+)
+"ocamlgraph/src/dot_lexer.mll" 80 12353 12374 "ocamlgraph/src/dot_lexer.mll" 80 12353 12384
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 80 12353 12361 "ocamlgraph/src/dot_lexer.mll" 80 12353 12384
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 81 12387 12392 "ocamlgraph/src/dot_lexer.mll" 81 12387 12393
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 81 12387 12396 "ocamlgraph/src/dot_lexer.mll" 81 12387 12402
+type(
+  Lexing.lexbuf -> string
+)
+ident(
+  int_ref string "ocamlgraph/src/dot_lexer.ml" 298 13149 13153 "ocamlgraph/src/dot_lexer.ml" 298 13149 13159
+)
+"ocamlgraph/src/dot_lexer.mll" 81 12387 12403 "ocamlgraph/src/dot_lexer.mll" 81 12387 12409
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.mll" 81 12387 12396 "ocamlgraph/src/dot_lexer.mll" 81 12387 12409
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 82 12413 12425 "ocamlgraph/src/dot_lexer.mll" 82 12413 12426
+type(
+  string
+)
+ident(
+  int_ref s "ocamlgraph/src/dot_lexer.mll" 81 12387 12392 "ocamlgraph/src/dot_lexer.mll" 81 12387 12393
+)
+"ocamlgraph/src/dot_lexer.mll" 82 12413 12417 "ocamlgraph/src/dot_lexer.mll" 82 12413 12427
+type(
+  Dot_ast.id
+)
+"ocamlgraph/src/dot_lexer.mll" 82 12413 12414 "ocamlgraph/src/dot_lexer.mll" 82 12413 12427
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 81 12387 12388 "ocamlgraph/src/dot_lexer.mll" 82 12413 12427
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 80 12353 12359 "ocamlgraph/src/dot_lexer.mll" 82 12413 12429
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 274 12467 12471 "ocamlgraph/src/dot_lexer.ml" 274 12467 12473
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 84 12513 12521 "ocamlgraph/src/dot_lexer.mll" 84 12513 12533
+type(
+  Buffer.t -> unit
+)
+ident(
+  ext_ref Buffer.clear
+)
+"ocamlgraph/src/dot_lexer.mll" 84 12513 12534 "ocamlgraph/src/dot_lexer.mll" 84 12513 12544
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 84 12513 12521 "ocamlgraph/src/dot_lexer.mll" 84 12513 12544
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 85 12547 12548 "ocamlgraph/src/dot_lexer.mll" 85 12547 12552
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  int_ref html "ocamlgraph/src/dot_lexer.ml" 331 14133 14137 "ocamlgraph/src/dot_lexer.ml" 331 14133 14141
+)
+"ocamlgraph/src/dot_lexer.mll" 85 12547 12553 "ocamlgraph/src/dot_lexer.mll" 85 12547 12559
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.mll" 85 12547 12548 "ocamlgraph/src/dot_lexer.mll" 85 12547 12559
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 86 12562 12573 "ocamlgraph/src/dot_lexer.mll" 86 12562 12588
+type(
+  Buffer.t -> string
+)
+ident(
+  ext_ref Buffer.contents
+)
+"ocamlgraph/src/dot_lexer.mll" 86 12562 12589 "ocamlgraph/src/dot_lexer.mll" 86 12562 12599
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 86 12562 12572 "ocamlgraph/src/dot_lexer.mll" 86 12562 12600
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 86 12562 12566 "ocamlgraph/src/dot_lexer.mll" 86 12562 12601
+type(
+  Dot_ast.id
+)
+"ocamlgraph/src/dot_lexer.mll" 86 12562 12563 "ocamlgraph/src/dot_lexer.mll" 86 12562 12601
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 85 12547 12548 "ocamlgraph/src/dot_lexer.mll" 86 12562 12601
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.mll" 84 12513 12519 "ocamlgraph/src/dot_lexer.mll" 86 12562 12603
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 281 12641 12645 "ocamlgraph/src/dot_lexer.ml" 281 12641 12647
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 88 12687 12693 "ocamlgraph/src/dot_lexer.mll" 88 12687 12700
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 286 12738 12742 "ocamlgraph/src/dot_lexer.ml" 286 12738 12744
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 89 12788 12797 "ocamlgraph/src/dot_lexer.mll" 89 12788 12798
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.ml" 291 12835 12837 "ocamlgraph/src/dot_lexer.ml" 291 12835 12859
+type(
+  Lexing.lexbuf -> int -> char
+)
+ident(
+  ext_ref Lexing.sub_lexeme_char
+)
+"ocamlgraph/src/dot_lexer.ml" 291 12835 12860 "ocamlgraph/src/dot_lexer.ml" 291 12835 12866
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 291 12835 12867 "ocamlgraph/src/dot_lexer.ml" 291 12835 12873
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 291 12835 12867 "ocamlgraph/src/dot_lexer.ml" 291 12835 12894
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 291 12835 12837 "ocamlgraph/src/dot_lexer.ml" 291 12835 12894
+call(
+  stack
+)
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12942 "ocamlgraph/src/dot_lexer.mll" 90 12934 12950
+type(
+  string -> Dot_parser.token
+)
+ident(
+  ext_ref Pervasives.failwith
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12952 "ocamlgraph/src/dot_lexer.mll" 90 12934 12983
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12984 "ocamlgraph/src/dot_lexer.mll" 90 12934 12985
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12986 "ocamlgraph/src/dot_lexer.mll" 90 12934 12997
+type(
+  int -> char -> string
+)
+ident(
+  ext_ref String.make
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12998 "ocamlgraph/src/dot_lexer.mll" 90 12934 12999
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 13000 "ocamlgraph/src/dot_lexer.mll" 90 12934 13001
+type(
+  char
+)
+ident(
+  int_ref c "ocamlgraph/src/dot_lexer.mll" 89 12788 12797 "ocamlgraph/src/dot_lexer.mll" 89 12788 12798
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12986 "ocamlgraph/src/dot_lexer.mll" 90 12934 13001
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12951 "ocamlgraph/src/dot_lexer.mll" 90 12934 13002
+call(
+  stack
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 90 12934 12940 "ocamlgraph/src/dot_lexer.mll" 90 12934 13004
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 287 12748 12748 "ocamlgraph/src/dot_lexer.mll" 90 12934 13004
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13046 "ocamlgraph/src/dot_lexer.ml" 296 13042 13063
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 296 13042 13067 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13067 "ocamlgraph/src/dot_lexer.ml" 296 13042 13073
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13067 "ocamlgraph/src/dot_lexer.ml" 296 13042 13092
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13093 "ocamlgraph/src/dot_lexer.ml" 296 13042 13099
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13067 "ocamlgraph/src/dot_lexer.ml" 296 13042 13099
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13101 "ocamlgraph/src/dot_lexer.ml" 296 13042 13122
+type(
+  Lexing.lexbuf -> int -> Dot_parser.token
+)
+ident(
+  int_ref __ocaml_lex_token_rec "ocamlgraph/src/dot_lexer.ml" 185 10367 10371 "ocamlgraph/src/dot_lexer.ml" 185 10367 10392
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13123 "ocamlgraph/src/dot_lexer.ml" 296 13042 13129
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 185 10367 10393 "ocamlgraph/src/dot_lexer.ml" 185 10367 10399
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13130 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 296 13042 13046 "ocamlgraph/src/dot_lexer.ml" 296 13042 13063
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13101 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+call(
+  tail
+)
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 296 13042 13067 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 186 10420 10422 "ocamlgraph/src/dot_lexer.ml" 296 13042 13147
+type(
+  Dot_parser.token
+)
+"ocamlgraph/src/dot_lexer.ml" 298 13149 13153 "ocamlgraph/src/dot_lexer.ml" 298 13149 13159
+type(
+  Lexing.lexbuf -> string
+)
+ident(
+  def string "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 298 13149 13160 "ocamlgraph/src/dot_lexer.ml" 298 13149 13166
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 299 13169 13173 "ocamlgraph/src/dot_lexer.ml" 299 13169 13205
+)
+"ocamlgraph/src/dot_lexer.ml" 299 13169 13173 "ocamlgraph/src/dot_lexer.ml" 299 13169 13195
+type(
+  Lexing.lexbuf -> int -> string
+)
+ident(
+  int_ref __ocaml_lex_string_rec "ocamlgraph/src/dot_lexer.ml" 300 13206 13210 "ocamlgraph/src/dot_lexer.ml" 300 13206 13232
+)
+"ocamlgraph/src/dot_lexer.ml" 299 13169 13196 "ocamlgraph/src/dot_lexer.ml" 299 13169 13202
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 298 13149 13160 "ocamlgraph/src/dot_lexer.ml" 298 13149 13166
+)
+"ocamlgraph/src/dot_lexer.ml" 299 13169 13203 "ocamlgraph/src/dot_lexer.ml" 299 13169 13205
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 299 13169 13173 "ocamlgraph/src/dot_lexer.ml" 299 13169 13205
+call(
+  tail
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 300 13206 13210 "ocamlgraph/src/dot_lexer.ml" 300 13206 13232
+type(
+  Lexing.lexbuf -> int -> string
+)
+ident(
+  def __ocaml_lex_string_rec "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13240 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+)
+"ocamlgraph/src/dot_lexer.ml" 300 13206 13240 "ocamlgraph/src/dot_lexer.ml" 300 13206 13257
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 301 13260 13262 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+)
+"ocamlgraph/src/dot_lexer.ml" 301 13260 13268 "ocamlgraph/src/dot_lexer.ml" 301 13260 13281
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+ident(
+  ext_ref Lexing.engine
+)
+"ocamlgraph/src/dot_lexer.ml" 301 13260 13282 "ocamlgraph/src/dot_lexer.ml" 301 13260 13300
+type(
+  Lexing.lex_tables
+)
+ident(
+  int_ref __ocaml_lex_tables "ocamlgraph/src/dot_lexer.ml" 25 452 456 "ocamlgraph/src/dot_lexer.ml" 25 452 474
+)
+"ocamlgraph/src/dot_lexer.ml" 301 13260 13301 "ocamlgraph/src/dot_lexer.ml" 301 13260 13318
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 300 13206 13240 "ocamlgraph/src/dot_lexer.ml" 300 13206 13257
+)
+"ocamlgraph/src/dot_lexer.ml" 301 13260 13319 "ocamlgraph/src/dot_lexer.ml" 301 13260 13325
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.ml" 301 13260 13268 "ocamlgraph/src/dot_lexer.ml" 301 13260 13325
+call(
+  stack
+)
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 302 13331 13339 "ocamlgraph/src/dot_lexer.ml" 302 13331 13340
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 94 13380 13388 "ocamlgraph/src/dot_lexer.mll" 94 13380 13403
+type(
+  Buffer.t -> string
+)
+ident(
+  ext_ref Buffer.contents
+)
+"ocamlgraph/src/dot_lexer.mll" 94 13380 13404 "ocamlgraph/src/dot_lexer.mll" 94 13380 13414
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 94 13380 13386 "ocamlgraph/src/dot_lexer.mll" 94 13380 13416
+call(
+  tail
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 307 13454 13458 "ocamlgraph/src/dot_lexer.ml" 307 13454 13459
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 96 13499 13507 "ocamlgraph/src/dot_lexer.mll" 96 13499 13522
+type(
+  Buffer.t -> char -> unit
+)
+ident(
+  ext_ref Buffer.add_char
+)
+"ocamlgraph/src/dot_lexer.mll" 96 13499 13523 "ocamlgraph/src/dot_lexer.mll" 96 13499 13533
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 96 13499 13534 "ocamlgraph/src/dot_lexer.mll" 96 13499 13537
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.mll" 96 13499 13507 "ocamlgraph/src/dot_lexer.mll" 96 13499 13537
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 97 13539 13540 "ocamlgraph/src/dot_lexer.mll" 97 13539 13546
+type(
+  Lexing.lexbuf -> string
+)
+ident(
+  int_ref string "ocamlgraph/src/dot_lexer.ml" 298 13149 13153 "ocamlgraph/src/dot_lexer.ml" 298 13149 13159
+)
+"ocamlgraph/src/dot_lexer.mll" 97 13539 13547 "ocamlgraph/src/dot_lexer.mll" 97 13539 13553
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.mll" 97 13539 13540 "ocamlgraph/src/dot_lexer.mll" 97 13539 13553
+call(
+  tail
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 96 13499 13505 "ocamlgraph/src/dot_lexer.mll" 97 13539 13555
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 313 13593 13597 "ocamlgraph/src/dot_lexer.ml" 313 13593 13598
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 98 13642 13651 "ocamlgraph/src/dot_lexer.mll" 98 13642 13652
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.ml" 318 13689 13691 "ocamlgraph/src/dot_lexer.ml" 318 13689 13713
+type(
+  Lexing.lexbuf -> int -> char
+)
+ident(
+  ext_ref Lexing.sub_lexeme_char
+)
+"ocamlgraph/src/dot_lexer.ml" 318 13689 13714 "ocamlgraph/src/dot_lexer.ml" 318 13689 13720
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.ml" 318 13689 13721 "ocamlgraph/src/dot_lexer.ml" 318 13689 13727
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.ml" 318 13689 13721 "ocamlgraph/src/dot_lexer.ml" 318 13689 13748
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 318 13689 13691 "ocamlgraph/src/dot_lexer.ml" 318 13689 13748
+call(
+  stack
+)
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.mll" 99 13788 13796 "ocamlgraph/src/dot_lexer.mll" 99 13788 13811
+type(
+  Buffer.t -> char -> unit
+)
+ident(
+  ext_ref Buffer.add_char
+)
+"ocamlgraph/src/dot_lexer.mll" 99 13788 13812 "ocamlgraph/src/dot_lexer.mll" 99 13788 13822
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 99 13788 13823 "ocamlgraph/src/dot_lexer.mll" 99 13788 13824
+type(
+  char
+)
+ident(
+  int_ref c "ocamlgraph/src/dot_lexer.mll" 98 13642 13651 "ocamlgraph/src/dot_lexer.mll" 98 13642 13652
+)
+"ocamlgraph/src/dot_lexer.mll" 99 13788 13796 "ocamlgraph/src/dot_lexer.mll" 99 13788 13824
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 100 13826 13827 "ocamlgraph/src/dot_lexer.mll" 100 13826 13833
+type(
+  Lexing.lexbuf -> string
+)
+ident(
+  int_ref string "ocamlgraph/src/dot_lexer.ml" 298 13149 13153 "ocamlgraph/src/dot_lexer.ml" 298 13149 13159
+)
+"ocamlgraph/src/dot_lexer.mll" 100 13826 13834 "ocamlgraph/src/dot_lexer.mll" 100 13826 13840
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.mll" 100 13826 13827 "ocamlgraph/src/dot_lexer.mll" 100 13826 13840
+call(
+  tail
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 99 13788 13794 "ocamlgraph/src/dot_lexer.mll" 100 13826 13842
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 314 13602 13602 "ocamlgraph/src/dot_lexer.mll" 100 13826 13842
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 324 13880 13884 "ocamlgraph/src/dot_lexer.ml" 324 13880 13885
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 102 13926 13934 "ocamlgraph/src/dot_lexer.mll" 102 13926 13942
+type(
+  string -> string
+)
+ident(
+  ext_ref Pervasives.failwith
+)
+"ocamlgraph/src/dot_lexer.mll" 102 13926 13943 "ocamlgraph/src/dot_lexer.mll" 102 13926 13985
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 102 13926 13932 "ocamlgraph/src/dot_lexer.mll" 102 13926 13987
+call(
+  tail
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14029 "ocamlgraph/src/dot_lexer.ml" 329 14025 14046
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 329 14025 14050 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14050 "ocamlgraph/src/dot_lexer.ml" 329 14025 14056
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14050 "ocamlgraph/src/dot_lexer.ml" 329 14025 14075
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14076 "ocamlgraph/src/dot_lexer.ml" 329 14025 14082
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14050 "ocamlgraph/src/dot_lexer.ml" 329 14025 14082
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14084 "ocamlgraph/src/dot_lexer.ml" 329 14025 14106
+type(
+  Lexing.lexbuf -> int -> string
+)
+ident(
+  int_ref __ocaml_lex_string_rec "ocamlgraph/src/dot_lexer.ml" 300 13206 13210 "ocamlgraph/src/dot_lexer.ml" 300 13206 13232
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14107 "ocamlgraph/src/dot_lexer.ml" 329 14025 14113
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 300 13206 13233 "ocamlgraph/src/dot_lexer.ml" 300 13206 13239
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14114 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 329 14025 14029 "ocamlgraph/src/dot_lexer.ml" 329 14025 14046
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14084 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+call(
+  tail
+)
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 329 14025 14050 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 301 13260 13262 "ocamlgraph/src/dot_lexer.ml" 329 14025 14131
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.ml" 331 14133 14137 "ocamlgraph/src/dot_lexer.ml" 331 14133 14141
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  def html "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 331 14133 14142 "ocamlgraph/src/dot_lexer.ml" 331 14133 14148
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 332 14151 14155 "ocamlgraph/src/dot_lexer.ml" 332 14151 14185
+)
+"ocamlgraph/src/dot_lexer.ml" 332 14151 14155 "ocamlgraph/src/dot_lexer.ml" 332 14151 14175
+type(
+  Lexing.lexbuf -> int -> unit
+)
+ident(
+  int_ref __ocaml_lex_html_rec "ocamlgraph/src/dot_lexer.ml" 333 14186 14190 "ocamlgraph/src/dot_lexer.ml" 333 14186 14210
+)
+"ocamlgraph/src/dot_lexer.ml" 332 14151 14176 "ocamlgraph/src/dot_lexer.ml" 332 14151 14182
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 331 14133 14142 "ocamlgraph/src/dot_lexer.ml" 331 14133 14148
+)
+"ocamlgraph/src/dot_lexer.ml" 332 14151 14183 "ocamlgraph/src/dot_lexer.ml" 332 14151 14185
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 332 14151 14155 "ocamlgraph/src/dot_lexer.ml" 332 14151 14185
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 333 14186 14190 "ocamlgraph/src/dot_lexer.ml" 333 14186 14210
+type(
+  Lexing.lexbuf -> int -> unit
+)
+ident(
+  def __ocaml_lex_html_rec "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14218 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+)
+"ocamlgraph/src/dot_lexer.ml" 333 14186 14218 "ocamlgraph/src/dot_lexer.ml" 333 14186 14235
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 334 14238 14240 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+)
+"ocamlgraph/src/dot_lexer.ml" 334 14238 14246 "ocamlgraph/src/dot_lexer.ml" 334 14238 14259
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+ident(
+  ext_ref Lexing.engine
+)
+"ocamlgraph/src/dot_lexer.ml" 334 14238 14260 "ocamlgraph/src/dot_lexer.ml" 334 14238 14278
+type(
+  Lexing.lex_tables
+)
+ident(
+  int_ref __ocaml_lex_tables "ocamlgraph/src/dot_lexer.ml" 25 452 456 "ocamlgraph/src/dot_lexer.ml" 25 452 474
+)
+"ocamlgraph/src/dot_lexer.ml" 334 14238 14279 "ocamlgraph/src/dot_lexer.ml" 334 14238 14296
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 333 14186 14218 "ocamlgraph/src/dot_lexer.ml" 333 14186 14235
+)
+"ocamlgraph/src/dot_lexer.ml" 334 14238 14297 "ocamlgraph/src/dot_lexer.ml" 334 14238 14303
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.ml" 334 14238 14246 "ocamlgraph/src/dot_lexer.ml" 334 14238 14303
+call(
+  stack
+)
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 335 14309 14317 "ocamlgraph/src/dot_lexer.ml" 335 14309 14318
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 106 14359 14365 "ocamlgraph/src/dot_lexer.mll" 106 14359 14371
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 340 14409 14413 "ocamlgraph/src/dot_lexer.ml" 340 14409 14414
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14463 "ocamlgraph/src/dot_lexer.mll" 108 14455 14478
+type(
+  Buffer.t -> char -> unit
+)
+ident(
+  ext_ref Buffer.add_char
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14479 "ocamlgraph/src/dot_lexer.mll" 108 14455 14489
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14490 "ocamlgraph/src/dot_lexer.mll" 108 14455 14493
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14463 "ocamlgraph/src/dot_lexer.mll" 108 14455 14493
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14495 "ocamlgraph/src/dot_lexer.mll" 108 14455 14499
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  int_ref html "ocamlgraph/src/dot_lexer.ml" 331 14133 14137 "ocamlgraph/src/dot_lexer.ml" 331 14133 14141
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14500 "ocamlgraph/src/dot_lexer.mll" 108 14455 14506
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14495 "ocamlgraph/src/dot_lexer.mll" 108 14455 14506
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14509 "ocamlgraph/src/dot_lexer.mll" 109 14508 14524
+type(
+  Buffer.t -> char -> unit
+)
+ident(
+  ext_ref Buffer.add_char
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14525 "ocamlgraph/src/dot_lexer.mll" 109 14508 14535
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14536 "ocamlgraph/src/dot_lexer.mll" 109 14508 14539
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14509 "ocamlgraph/src/dot_lexer.mll" 109 14508 14539
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14541 "ocamlgraph/src/dot_lexer.mll" 109 14508 14545
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  int_ref html "ocamlgraph/src/dot_lexer.ml" 331 14133 14137 "ocamlgraph/src/dot_lexer.ml" 331 14133 14141
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14546 "ocamlgraph/src/dot_lexer.mll" 109 14508 14552
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14541 "ocamlgraph/src/dot_lexer.mll" 109 14508 14552
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 109 14508 14509 "ocamlgraph/src/dot_lexer.mll" 109 14508 14552
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14495 "ocamlgraph/src/dot_lexer.mll" 109 14508 14552
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 108 14455 14461 "ocamlgraph/src/dot_lexer.mll" 109 14508 14554
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 346 14592 14596 "ocamlgraph/src/dot_lexer.ml" 346 14592 14597
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 110 14642 14651 "ocamlgraph/src/dot_lexer.mll" 110 14642 14652
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.ml" 351 14689 14691 "ocamlgraph/src/dot_lexer.ml" 351 14689 14713
+type(
+  Lexing.lexbuf -> int -> char
+)
+ident(
+  ext_ref Lexing.sub_lexeme_char
+)
+"ocamlgraph/src/dot_lexer.ml" 351 14689 14714 "ocamlgraph/src/dot_lexer.ml" 351 14689 14720
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.ml" 351 14689 14721 "ocamlgraph/src/dot_lexer.ml" 351 14689 14727
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.ml" 351 14689 14721 "ocamlgraph/src/dot_lexer.ml" 351 14689 14748
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 351 14689 14691 "ocamlgraph/src/dot_lexer.ml" 351 14689 14748
+call(
+  stack
+)
+type(
+  char
+)
+"ocamlgraph/src/dot_lexer.mll" 111 14789 14797 "ocamlgraph/src/dot_lexer.mll" 111 14789 14812
+type(
+  Buffer.t -> char -> unit
+)
+ident(
+  ext_ref Buffer.add_char
+)
+"ocamlgraph/src/dot_lexer.mll" 111 14789 14813 "ocamlgraph/src/dot_lexer.mll" 111 14789 14823
+type(
+  Buffer.t
+)
+ident(
+  int_ref string_buf "ocamlgraph/src/dot_lexer.mll" 25 86 92 "ocamlgraph/src/dot_lexer.mll" 25 86 102
+)
+"ocamlgraph/src/dot_lexer.mll" 111 14789 14824 "ocamlgraph/src/dot_lexer.mll" 111 14789 14825
+type(
+  char
+)
+ident(
+  int_ref c "ocamlgraph/src/dot_lexer.mll" 110 14642 14651 "ocamlgraph/src/dot_lexer.mll" 110 14642 14652
+)
+"ocamlgraph/src/dot_lexer.mll" 111 14789 14797 "ocamlgraph/src/dot_lexer.mll" 111 14789 14825
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 112 14827 14828 "ocamlgraph/src/dot_lexer.mll" 112 14827 14832
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  int_ref html "ocamlgraph/src/dot_lexer.ml" 331 14133 14137 "ocamlgraph/src/dot_lexer.ml" 331 14133 14141
+)
+"ocamlgraph/src/dot_lexer.mll" 112 14827 14833 "ocamlgraph/src/dot_lexer.mll" 112 14827 14839
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.mll" 112 14827 14828 "ocamlgraph/src/dot_lexer.mll" 112 14827 14839
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.mll" 111 14789 14795 "ocamlgraph/src/dot_lexer.mll" 112 14827 14841
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 347 14601 14601 "ocamlgraph/src/dot_lexer.mll" 112 14827 14841
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 357 14879 14883 "ocamlgraph/src/dot_lexer.ml" 357 14879 14884
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 114 14925 14933 "ocamlgraph/src/dot_lexer.mll" 114 14925 14941
+type(
+  string -> unit
+)
+ident(
+  ext_ref Pervasives.failwith
+)
+"ocamlgraph/src/dot_lexer.mll" 114 14925 14942 "ocamlgraph/src/dot_lexer.mll" 114 14925 14982
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 114 14925 14931 "ocamlgraph/src/dot_lexer.mll" 114 14925 14984
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15026 "ocamlgraph/src/dot_lexer.ml" 362 15022 15043
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 362 15022 15047 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15047 "ocamlgraph/src/dot_lexer.ml" 362 15022 15053
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15047 "ocamlgraph/src/dot_lexer.ml" 362 15022 15072
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15073 "ocamlgraph/src/dot_lexer.ml" 362 15022 15079
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15047 "ocamlgraph/src/dot_lexer.ml" 362 15022 15079
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15081 "ocamlgraph/src/dot_lexer.ml" 362 15022 15101
+type(
+  Lexing.lexbuf -> int -> unit
+)
+ident(
+  int_ref __ocaml_lex_html_rec "ocamlgraph/src/dot_lexer.ml" 333 14186 14190 "ocamlgraph/src/dot_lexer.ml" 333 14186 14210
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15102 "ocamlgraph/src/dot_lexer.ml" 362 15022 15108
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 333 14186 14211 "ocamlgraph/src/dot_lexer.ml" 333 14186 14217
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15109 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 362 15022 15026 "ocamlgraph/src/dot_lexer.ml" 362 15022 15043
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15081 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 362 15022 15047 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 334 14238 14240 "ocamlgraph/src/dot_lexer.ml" 362 15022 15126
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 364 15128 15132 "ocamlgraph/src/dot_lexer.ml" 364 15128 15139
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  def comment "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 364 15128 15140 "ocamlgraph/src/dot_lexer.ml" 364 15128 15146
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 365 15149 15153 "ocamlgraph/src/dot_lexer.ml" 365 15149 15186
+)
+"ocamlgraph/src/dot_lexer.ml" 365 15149 15153 "ocamlgraph/src/dot_lexer.ml" 365 15149 15176
+type(
+  Lexing.lexbuf -> int -> unit
+)
+ident(
+  int_ref __ocaml_lex_comment_rec "ocamlgraph/src/dot_lexer.ml" 366 15187 15191 "ocamlgraph/src/dot_lexer.ml" 366 15187 15214
+)
+"ocamlgraph/src/dot_lexer.ml" 365 15149 15177 "ocamlgraph/src/dot_lexer.ml" 365 15149 15183
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 364 15128 15140 "ocamlgraph/src/dot_lexer.ml" 364 15128 15146
+)
+"ocamlgraph/src/dot_lexer.ml" 365 15149 15184 "ocamlgraph/src/dot_lexer.ml" 365 15149 15186
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 365 15149 15153 "ocamlgraph/src/dot_lexer.ml" 365 15149 15186
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 366 15187 15191 "ocamlgraph/src/dot_lexer.ml" 366 15187 15214
+type(
+  Lexing.lexbuf -> int -> unit
+)
+ident(
+  def __ocaml_lex_comment_rec "ocamlgraph/src/dot_lexer.ml" 183 10309 10309 --
+)
+"ocamlgraph/src/dot_lexer.ml" 366 15187 15215 "ocamlgraph/src/dot_lexer.ml" 366 15187 15221
+type(
+  Lexing.lexbuf
+)
+ident(
+  def lexbuf "ocamlgraph/src/dot_lexer.ml" 366 15187 15222 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+)
+"ocamlgraph/src/dot_lexer.ml" 366 15187 15222 "ocamlgraph/src/dot_lexer.ml" 366 15187 15239
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 367 15242 15244 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+)
+"ocamlgraph/src/dot_lexer.ml" 367 15242 15250 "ocamlgraph/src/dot_lexer.ml" 367 15242 15263
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+ident(
+  ext_ref Lexing.engine
+)
+"ocamlgraph/src/dot_lexer.ml" 367 15242 15264 "ocamlgraph/src/dot_lexer.ml" 367 15242 15282
+type(
+  Lexing.lex_tables
+)
+ident(
+  int_ref __ocaml_lex_tables "ocamlgraph/src/dot_lexer.ml" 25 452 456 "ocamlgraph/src/dot_lexer.ml" 25 452 474
+)
+"ocamlgraph/src/dot_lexer.ml" 367 15242 15283 "ocamlgraph/src/dot_lexer.ml" 367 15242 15300
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 366 15187 15222 "ocamlgraph/src/dot_lexer.ml" 366 15187 15239
+)
+"ocamlgraph/src/dot_lexer.ml" 367 15242 15301 "ocamlgraph/src/dot_lexer.ml" 367 15242 15307
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 366 15187 15215 "ocamlgraph/src/dot_lexer.ml" 366 15187 15221
+)
+"ocamlgraph/src/dot_lexer.ml" 367 15242 15250 "ocamlgraph/src/dot_lexer.ml" 367 15242 15307
+call(
+  stack
+)
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.ml" 368 15313 15321 "ocamlgraph/src/dot_lexer.ml" 368 15313 15322
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 118 15363 15369 "ocamlgraph/src/dot_lexer.mll" 118 15363 15375
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 373 15413 15417 "ocamlgraph/src/dot_lexer.ml" 373 15413 15418
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 120 15459 15467 "ocamlgraph/src/dot_lexer.mll" 120 15459 15474
+type(
+  Lexing.lexbuf -> unit
+)
+ident(
+  int_ref comment "ocamlgraph/src/dot_lexer.ml" 364 15128 15132 "ocamlgraph/src/dot_lexer.ml" 364 15128 15139
+)
+"ocamlgraph/src/dot_lexer.mll" 120 15459 15475 "ocamlgraph/src/dot_lexer.mll" 120 15459 15481
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 366 15187 15215 "ocamlgraph/src/dot_lexer.ml" 366 15187 15221
+)
+"ocamlgraph/src/dot_lexer.mll" 120 15459 15465 "ocamlgraph/src/dot_lexer.mll" 120 15459 15483
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 378 15521 15525 "ocamlgraph/src/dot_lexer.ml" 378 15521 15526
+type(
+  int
+)
+"ocamlgraph/src/dot_lexer.mll" 122 15567 15575 "ocamlgraph/src/dot_lexer.mll" 122 15567 15583
+type(
+  string -> unit
+)
+ident(
+  ext_ref Pervasives.failwith
+)
+"ocamlgraph/src/dot_lexer.mll" 122 15567 15584 "ocamlgraph/src/dot_lexer.mll" 122 15567 15617
+type(
+  string
+)
+"ocamlgraph/src/dot_lexer.mll" 122 15567 15573 "ocamlgraph/src/dot_lexer.mll" 122 15567 15619
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15661 "ocamlgraph/src/dot_lexer.ml" 383 15657 15678
+type(
+  int
+)
+ident(
+  def __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 383 15657 15682 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15682 "ocamlgraph/src/dot_lexer.ml" 383 15657 15688
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 366 15187 15215 "ocamlgraph/src/dot_lexer.ml" 366 15187 15221
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15682 "ocamlgraph/src/dot_lexer.ml" 383 15657 15707
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15708 "ocamlgraph/src/dot_lexer.ml" 383 15657 15714
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 366 15187 15215 "ocamlgraph/src/dot_lexer.ml" 366 15187 15221
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15682 "ocamlgraph/src/dot_lexer.ml" 383 15657 15714
+call(
+  stack
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15716 "ocamlgraph/src/dot_lexer.ml" 383 15657 15739
+type(
+  Lexing.lexbuf -> int -> unit
+)
+ident(
+  int_ref __ocaml_lex_comment_rec "ocamlgraph/src/dot_lexer.ml" 366 15187 15191 "ocamlgraph/src/dot_lexer.ml" 366 15187 15214
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15740 "ocamlgraph/src/dot_lexer.ml" 383 15657 15746
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "ocamlgraph/src/dot_lexer.ml" 366 15187 15215 "ocamlgraph/src/dot_lexer.ml" 366 15187 15221
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15747 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+type(
+  int
+)
+ident(
+  int_ref __ocaml_lex_state "ocamlgraph/src/dot_lexer.ml" 383 15657 15661 "ocamlgraph/src/dot_lexer.ml" 383 15657 15678
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15716 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+call(
+  tail
+)
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 383 15657 15682 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+type(
+  unit
+)
+"ocamlgraph/src/dot_lexer.ml" 367 15242 15244 "ocamlgraph/src/dot_lexer.ml" 383 15657 15764
+type(
+  unit
+)

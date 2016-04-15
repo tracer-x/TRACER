@@ -1,0 +1,152 @@
+main_1(N) :-
+      zmem_usage,
+      test_answer(N),
+      cmem_usage(MemUsage),
+      print_message("MASTER MEMORY USAGE: \n",[]),
+      report_mem_usage(MemUsage).            
+
+main_2(N) :-
+      pipe_init,
+      zmem_usage,	
+      pipe_master_do_test(N),
+      pipe_terminate,
+      cmem_usage(MemUsage),
+      print_message("MASTER MEMORY USAGE: \n",[]),
+      report_mem_usage(MemUsage).            
+main_2(_) :-      
+      pipe_slave_loop.
+	
+        /* TEST CODE */
+:- dynamic(slicing_answer,8).
+test_answer(N):-
+	ML = f(0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0),
+	Reps = [rep(2 ,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(10,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(15,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(31,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f, f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(33,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))],
+        GlobalArrMark=f(0),
+	GlobalVarMark=f(1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0),
+	LocalArrMark =f,
+	LocalVarMark =f(0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0),
+	%ztime,
+	p(N,func_main,0,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark).
+	%ctime(Time),
+	%printf("Time: %\n",[Time]).
+
+
+
+p(0,_,_,_,_,_,_,_,_):-!.
+p(N,FName,Depth,ML,     
+  Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark):-
+	N > 0,!,
+	assert(slicing_answer(FName,Depth,ML,Reps,			      			      
+			      GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark)),
+	p(N-1,FName,Depth+1, 	  
+	  ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark).
+	  
+
+
+	/* PIPE OPERATIONS*/
+	
+pipe_init :-
+	pipe(pipe_master_slave),
+	pipe(pipe_slave_master),
+	fork,
+	print_message("*** MASTER: STARTED\n", []), 
+	tell(pipe_master_slave),
+	see(pipe_slave_master),
+	!.
+pipe_init :-
+	see(pipe_master_slave),
+	tell(pipe_slave_master),
+	print_message("*** SLAVE: STARTED\n", []),
+	!,
+	fail.
+
+pipe_terminate :-
+	print_file("halt .\n", []), flush, seen, told,
+	print_message("*** MASTER: HALT SENT\n", []).
+
+/* Here slave loop to receive indefinitely requests */
+pipe_slave_loop :-
+	not(not(pipe_slave_perform_action)),
+	pipe_slave_loop.
+
+pipe_slave_perform_action :-
+	%----------------------------------------------------------------------
+        % We use "not not" technique to clear up the context
+	%----------------------------------------------------------------------
+	pipe_slave_perform_action_aux, !, fail.
+pipe_slave_perform_action.
+
+pipe_slave_perform_action_aux :-	
+	% Read slave from the master	
+	read(X),
+
+	% Process master request
+        process_master_input(X,
+			     RequestArgs,
+			     Action
+			    ),
+	
+        % Perform action for master and reply
+        slave_perform_action_and_reply(Action,
+				       RequestArgs
+				      ),
+	!, fail.
+pipe_slave_perform_action_aux.
+
+/* Here slave replies requests */
+process_master_input(do_test(N),request_args(N),do_test):- !.
+process_master_input(halt,_,_):-
+	print_message("SLAVE: CLOSING PIPES \n",[]),
+	told,seen,halt.
+
+slave_perform_action_and_reply(do_test,request_args(N)):-
+	zmem_usage,
+	test_answer(N),
+	cmem_usage(MemUsage),
+	print_message("SLAVE: test done for % \n",[N]),
+	print_message("SLAVE MEMORY USAGE: \n",[]),
+	report_mem_usage(MemUsage),	
+	% Reply ACK
+	print_file("ok .\n",[]),
+	% Flush pipes
+	flush.
+
+/* Here master requests */
+pipe_master_do_test(N):-
+	% Do request 
+	print_file("do_test(%) . \n",[N]),
+	% Get ACK
+	read(_),!.
+	
+
+print_message(Msg,Args)  :- stdout_printf(Msg,Args).
+print_file(Msg,Args)     :- printf(Msg,Args).
+
+% For profiling memory usage 
+report_mem_usage(memory(_Total,Code,Stack,Heap,Trail,Solver,PTerms)):-	
+ 	return_zero_if_negative(Stack,Stack0),
+ 	return_zero_if_negative(Heap,Heap0),
+ 	return_zero_if_negative(Trail,Trail0),
+ 	return_zero_if_negative(Solver,Solver0),
+	Unit = 1048576,  % Mb
+	Base = 1, % diagnostic returns already memory usage in bytes	
+	% print_message("\t Memory usage stats: \n",[]),
+	print_message("\t\tTotal memory %Mb \n",
+	       [(Code+Stack0+Heap0+Trail0+Solver0+PTerms)*Base/Unit]),
+	print_message("\t\tProgram memory %Mb \n",[(Code*Base)/Unit]),
+	print_message("\t\tStack %Mb \n",[(Stack0*Base)/Unit]),
+	print_message("\t\tHeap %Mb \n",[(Heap0*Base)/Unit]),
+	print_message("\t\tTrail %Mb \n",[(Trail0*Base)/Unit]),
+	print_message("\t\tSolver %Mb \n",[(Solver0*Base)/Unit]),
+	print_message("\t\tPTerms %Mb \n",[(PTerms*Base)/Unit]).
+return_zero_if_negative(X,0):- X < 0,!.
+return_zero_if_negative(X,X):- !.

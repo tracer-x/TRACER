@@ -1,0 +1,21 @@
+In the paper "Software Model Checking by Program Specialization" a
+system called MAP is compared with TRACER which behaves very badly!
+
+The examples from that paper can be obtained from
+http://map.uniroma2.it/smc/
+
+
+
+Commend added by Jorge (08/01/2012):
+
+The programs are too much for TRACER. In order to prove safety we need
+either:
+
+- inductive invariants that can be obtained by abstract interpretation
+  but not likely by interpolants
+
+- use different interpolants from wp's during the refinement.
+
+
+
+

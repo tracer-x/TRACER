@@ -1,0 +1,331 @@
+#!/bin/bash
+
+ABSPATH=$(cd ${0%/*} && echo $PWD/${0##*/})
+# to get the path only - not the script name - add
+SCRIPT_HOME=`dirname "$ABSPATH"`
+
+# Tests directories
+SAFETY_DIR=${SCRIPT_HOME}/SAFETY
+WCET_DIR=${SCRIPT_HOME}/WCET
+SLICING_DIR=${SCRIPT_HOME}/SLICING
+
+log=log.$(date +%Y-%h-%d__%H-%M)
+block=""
+
+usage() {
+cat <<EOF
+usage: $0 [options] 
+  -help         print this message
+  -block s      run the tests in block s (default "all")
+  -all          run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+    case "$1" in	
+	-help)
+	    usage
+	    exit 1
+	    ;;	
+	-block)
+	    shift
+	    block="$block$1"
+	    ;;	
+	-all)
+	    shift
+	    block="ALL"
+	    ;;	
+	*)
+	    echo "unknown arg: $1"
+	    usage
+	    exit 0
+	    ;;	
+    esac
+    shift
+done
+
+######################################################################
+#### [BEGIN] SAFETY regression tests
+######################################################################
+
+### Small tests
+
+blockSAFETYNONMINMAX(){
+#echo -e "\nSafety regression tests \n" 
+#echo -e "\nSafety regression tests \n" >> ${log}
+# MICRO tests w/o MINMAX
+    echo -e "Micro tests w/o MINMAX: \n" 
+    echo -e "Micro tests w/o MINMAX: \n" >> ${log}
+    cd ${SAFETY_DIR}
+    ./regrtest-TRACER-NONMINMAX -all  
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockSAFETYMINMAX(){
+# MICRO tests w/ MINMAX
+    echo -e "Micro tests w/ MINMAX:  \n" 
+    echo -e "Micro tests w/ MINMAX:  \n" >> ${log}
+    cd ${SAFETY_DIR}
+    ./regrtest-TRACER-MINMAX -all   
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+blockSAFETYZ3(){
+##### MICRO tests w/o MINMAX w/ Z3
+    echo -e "Micro tests w/o MINMAX w/ Z3:  \n" 
+    echo -e "Micro tests w/o MINMAX w/ Z3:  \n" >> ${log}
+    cd ${SAFETY_DIR}
+    ./regrtest-TRACER-Z3
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockSAFETYDWP(){
+##### MICRO tests w/o MINMAX w/ (disjunctive) WP
+    echo -e "Micro tests w/o MINMAX w/ disjunctive WP:  \n" 
+    echo -e "Micro tests w/o MINMAX w/ disjunctive WP:  \n" >> ${log}
+    cd ${SAFETY_DIR}
+    ./regrtest-TRACER-DWP -all
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockSAFETYNDWP(){
+##### MICRO tests w/o MINMAX w/ (non-disjunctive) WP
+    echo -e "Micro tests w/o MINMAX w/ non-disjunctive WP:  \n" 
+    echo -e "Micro tests w/o MINMAX w/ non-disjunctive WP:  \n" >> ${log}
+    cd ${SAFETY_DIR}
+    ./regrtest-TRACER-NDWP -all
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockSAFETYCLPPROVER(){
+##### MICRO tests w/o MINMAX w/ clp-prover 
+    echo -e "Micro tests w/o MINMAX w/ clp-prover:  \n" 
+    echo -e "Micro tests w/o MINMAX w/ clp-prover:  \n" >> ${log}
+    cd ${SAFETY_DIR}
+    ./regrtest-TRACER-CLP-PROVER -all
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+### Benchmarks
+
+blockSAFETYMACRONONMINMAX(){
+##### MACRO tests w/o MINMAX
+    echo -e "Benchmarks w/o MINMAX:  \n" 
+    echo -e "Benchmarks w/o MINMAX:  \n" >> ${log}
+    cd ${SAFETY_DIR}/MACRO
+    ./regrtest-TRACER -all 
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockSAFETYMACROMINMAX(){
+##### MACRO tests w/ MINMAX
+echo -e "Benchmarks w/ MINMAX:  \n" 
+echo -e "Benchmarks w/ MINMAX:  \n" >> ${log}
+cd ${SAFETY_DIR}/MACRO
+./regrtest-TRACER-MINMAX -all 
+cat log.txt >> ${SCRIPT_HOME}/${log}
+cat *.stat  >> ${SCRIPT_HOME}/${log}
+rm -f log.txt
+rm -f *.stat
+cd ${SCRIPT_HOME}
+}
+######################################################################
+#### [END] SAFETY regression tests
+######################################################################
+
+######################################################################
+#### [BEGIN] WCET regression tests
+######################################################################
+#echo -e "\nBounds Analysis regression tests \n" 
+#echo -e "\nBounds Analysis regression tests \n" >> ${log}
+
+blockWCET(){
+##### MICRO tests
+    echo -e "Micro benchmarks w/ WCET:  \n" 
+    echo -e "Micro benchmarks w/ WCET:  \n" >> ${log}
+    cd ${WCET_DIR}
+    ./regrtest-TRACER -all 
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+blockWCETPIPES(){
+##### MICRO tests using all pipe options
+    echo -e "Micro benchmarks w/ WCET+pipes:  \n" 
+    echo -e "Micro benchmarks w/ WCET+pipes:  \n" >> ${log}
+    cd ${WCET_DIR}
+    ./regrtest-TRACER-PIPE-OPTS 
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockWCETMACRO(){
+##### MACRO tests
+    echo -e "Macro benchmarks w/ WCET:  \n" 
+    echo -e "Macro benchmarks w/ WCET:  \n" >> ${log}
+    cd ${WCET_DIR}/MACRO_TESTS
+    ./regrtest-TRACER -all 
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+######################################################################
+#### [END] WCET regression tests
+######################################################################
+
+
+######################################################################
+#### [BEGIN] SLICING regression tests
+######################################################################
+#echo -e "\nSlicing regression tests \n" 
+#echo -e "\nSlicing regression tests \n" >> ${log}
+blockSLICING(){
+##### MICRO tests
+    echo -e "Micro tests w/ SLICING:  \n" 
+    echo -e "Micro tests w/ SLICING:  \n" >> ${log}
+    cd ${SLICING_DIR}
+    ./regrtest-TRACER -all 
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f log.txt
+    rm -f *.stat
+    cd ${SCRIPT_HOME}
+}
+
+blockSLICINGMACRO(){
+##### MACRO tests
+    echo -e "Macro benchmarks w/ SLICING:  \n" 
+    echo -e "Macro benchmarks w/ SLICING:  \n" >> ${log}
+    cd ${SLICING_DIR}/MACRO_TESTS
+    ./regrtest-TRACER -all 
+    cat log.txt >> ${SCRIPT_HOME}/${log}
+    cat *.stat  >> ${SCRIPT_HOME}/${log}
+    rm -f *.stat
+    rm -f log.txt
+    cd ${SCRIPT_HOME}
+}
+######################################################################
+#### [END] SLICING regression tests
+######################################################################
+
+runAllTests(){
+    blockSAFETYNONMINMAX
+    blockSAFETYMINMAX
+    blockSAFETYZ3
+    blockSAFETYDWP
+    blockSAFETYNDWP
+    blockSAFETYCLPPROVER
+    blockSAFETYMACRONONMINMAX
+    blockSAFETYMACROMINMAX
+    
+    blockWCET
+    blockWCETPIPES
+    blockWCETMACRO
+    
+    blockSLICING
+    blockSLICINGMACRO    
+}
+
+# process args
+#echo $block
+case "$block" in    
+    MICRO-ALL)
+	shift
+	blockSAFETYNONMINMAX
+	blockSAFETYMINMAX
+	blockSAFETYZ3
+	blockSAFETYDWP
+	blockSAFETYNDWP
+	blockSAFETYCLPPROVER
+	blockWCET
+	blockWCETPIPES
+	blockSLICING
+	;;    
+    MICRO-SAFETY)
+	shift
+	blockSAFETYNONMINMAX
+	blockSAFETYMINMAX
+	blockSAFETYZ3
+	blockSAFETYDWP
+	blockSAFETYNDWP
+	blockSAFETYCLPPROVER
+	;;    
+    MICRO-WCET)
+	shift
+	blockWCET
+	blockWCETPIPES
+	;;    
+    MICRO-SLICING)
+	shift
+	blockSLICING
+	;;    
+    MACRO-ALL)
+	shift
+	blockSAFETYMACRONONMINMAX
+	blockSAFETYMACROMINMAX
+	blockWCETMACRO
+	blockSLICINGMACRO    
+	;;    
+    MACRO-SAFETY)
+	shift
+	blockSAFETYMACRONONMINMAX
+	;;    
+    MACRO-SAFETY-MINMAX)
+	blockSAFETYMACROMINMAX
+	shift
+	;;    
+    MACRO-WCET)
+	blockWCETMACRO
+	shift
+	;;    
+    MACRO-SLICING)
+	blockSLICINGMACRO    
+	shift
+	;;    
+    ALL)
+	shift 
+	runAllTests
+	;;
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 0
+	;;
+esac  
+shift

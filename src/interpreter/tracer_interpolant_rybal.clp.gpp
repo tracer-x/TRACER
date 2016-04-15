@@ -1,0 +1,638 @@
+% tracer_rybal_interpolant.clp.gpp
+
+% #define CLP_INTERPOLATE_DEBUG
+
+%=============================================================================%
+% This file contains procedures used to compute interpolants using the
+% method proposed by A. Rybalchenko and V. Sofronie-Stokkermans
+% "Constraint Solving for Interpolation" published in VMCAI 2007
+%=============================================================================%
+% export
+%
+%   rybal_init/0
+%   rybal_end/0
+%
+%   rybal_gen_success_path/5
+%   rybal_infeasible_path/9
+%   rybal_pre_operator/18
+%   rybal_combine/3
+%   rybal_simplify_after_combined/3
+%   rybal_subsumed/15                    
+%   rybal_create_subsumed_interpolant/12  
+%   rybal_create_memo_interpolant/11
+%   rybal_create_abstraction_interpolant/12
+%   rybal_merge_loop_interpolant/8
+%
+%%% stats
+%   init_rybal_profile_counters/0
+%   print_rybal_interpolate_profile_stats/0
+%   rybal_print_pre_stats/0
+%   rybal_print_combine_stats/0
+%
+%=============================================================================%
+% We assume the procedure interpolate(A,B,Intp) which given that A and
+% B is unsatisfiable returns an interpolant Intp such that
+% (1) A => Intp,
+% (2) Intp and B is unsatisfiable
+% (3) Intp has common variables between A and B.
+%
+% The interpolants are propagated through the symbolic execution tree
+% as follows:
+%
+%   - If state <pc,Phi> and guard g is reached. Then, if Phi and g is
+%     unsatisfiable then return Intp st. interpolate(Phi,g,Intp)
+%   - If state <pc,Phi> and (pc = pc_end and Phi is satisfiable) then
+%     return trivially true, because (anything => true) = true.
+%   - If state <pc,Phi> and exists another state <pc,Phi_bar> such
+%     that Phi and Phi_bar are unsatisfiable then return
+%                  interpolate(\Phi, not(Phi_bar))
+%                                        ^^^^
+%                                this is disjunctive
+%
+%   - Otherwise, perform one symbolic execution step and during
+%     backtracking:
+%
+%     pre(c,\Phi,Post) = I s.t. interpolate(\Phi, c and not(Post),I) 
+%                                                       ^^^^
+%                                                    this is disjunctive
+%
+%     To store the wp formula in the memo, we negate it
+%     first. Therefore, what it's stored in the memo table must be
+%     interpreted as a disjunction of negated literals.
+%----------------------------------------------------------------------------%
+% TODO:
+%----------------------------------------------------------------------------%
+% - Arrays/pointers
+% - Not implemented for TRACER analyses (wcet, slicing, etc)
+%----------------------------------------------------------------------------%
+% FIXME:
+%----------------------------------------------------------------------------%
+% - NONLINEAR constraints: not sure yet.
+%=============================================================================%
+
+rybal_init:-
+	current_tracer_flag(other_interp, y),	
+	current_tracer_flag(other_interp_method, rybal),
+	clp_prover_start,
+	!.
+rybal_init.
+
+rybal_end:-
+	current_tracer_flag(other_interp, y),	
+	current_tracer_flag(other_interp_method, rybal),
+	clp_prover_exit,
+	!.
+rybal_end.
+
+%-----------------------------------------------------------------------------%
+% rybal_gen_success_path(+,+,+,+,-)
+% Generate the formula true.
+%-----------------------------------------------------------------------------%
+rybal_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp):-
+	Intp = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,[],_).
+	                                                     % ^^ means true
+
+%-----------------------------------------------------------------------------%
+% rybal_infeasible_path(+,+,+,+,+,+,+,+,-)
+% Generate the interpolant of an infeasible path.
+%-----------------------------------------------------------------------------%
+rybal_infeasible_path(_,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		      Es,_,Guard,Intp):-
+	% Es is an union-find (if path_datastructure=partition) or a
+	% list, otherwise.  
+	rybal_interpolate(Es,Guard,I),
+	append(I, Tail, CLTail),
+	Intp = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		     [intp_conjunct(Tail,CLTail)],_),
+	!.
+
+%-----------------------------------------------------------------------------%
+% rybal_pre_operator
+%-----------------------------------------------------------------------------%
+% Compute the pre interpolant of a post interpolant
+%-----------------------------------------------------------------------------%
+/*
+rybal_pre_operator(PostIntp, _ML1,
+		   _FName1, PostSGA, PostSGV, PostSLA, PostSLV,
+		   XCL, GuardFlag, _Es, _ML,
+		   _FName , PreSGA , PreSGV , PreSLA , PreSLV,
+		   PreIntp) :-	
+	GuardFlag == not_branch,
+	!,
+	compute_wp_assignment(1,
+			      PostIntp,
+			      PostSGA,PostSGV,PostSLA,PostSLV,
+			      PreSGA ,PreSGV ,PreSLA ,PreSLV , XCL, PreIntp).
+*/
+rybal_pre_operator(PostIntp, _ML1,
+		   _FName1, SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		   XCL, GuardFlag, Es, _ML,
+		   _FName , SGlobalArr , SGlobalVar , SLocalArr , SLocalVar,
+		   PreIntp) :-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+	%----------------------------------------------------------------------
+	% Always be aware that across function calls, the variables of the
+	% parent can be different from children
+        %----------------------------------------------------------------------
+	PostIntp = state(SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			 PostConj,_),
+	convert_path_to_list(Es,CL),
+	compute_rybal_wp(PostConj, CL, XCL, GuardFlag,
+			 FName,
+			 SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			 FName,
+			 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			 PreConj),
+	PreIntp  = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		  	 PreConj,_),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(rybal_pre_timing,T1-T0),
+#endif  /*PROFILE*/	
+	true.
+			 
+%-----------------------------------------------------------------------------%
+% compute_rybal_wp(+PostIntp,+CL,+XCL,+GuardFlag,....,-PreIntp)
+%-----------------------------------------------------------------------------%
+compute_rybal_wp([],_,_,_,_,_,_,_,_,_,_,_,_,_,[]):- !.
+compute_rybal_wp(PreIntp,_,[],_,_,_,_,_,_,_,_,_,_,_,PreIntp):-!.
+compute_rybal_wp([intp_conjunct([],PostIntpCL)],CL,XCL,GuardFlag,
+		 _PostFName,
+		 _PostSGlobalArr,_PostSGlobalVar,_PostSLocalArr,_PostSLocalVar,
+		 _PreFName ,
+		 PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar,
+		 Res ):-
+	% print_message("Post WP: \n\t",[]),
+	% pretty_printer_constraints_list(FName,
+	% 				PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+	% 				PostFName,
+	% 				PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar,
+	% 				PostIntpCL),
+	% pretty_printer_constraints_list(FName,
+        % 				  PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+        % 				  PreFName,
+        % 				  PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar,
+        % 				  B),
+	negate_numerical_list(PostIntpCL,DisjNegPostIntpCL),
+	compute_rybal_wp_aux0(DisjNegPostIntpCL, GuardFlag, CL, XCL, PreIntpCL),
+	
+	%compute_rybal_wp_aux(PostIntpCL, GuardFlag, CL, XCL, PreIntpCL),
+	simplify_constraints(pre,
+			     PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+			     PreIntpCL,SimpPreIntpCL),
+
+	insert_conjunct_if_not_empty(SimpPreIntpCL,Res),
+	!.
+compute_rybal_wp(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("compute_rybal_wp/15 failed \n",[]).
+
+%----------------------------------------------------------------------------%
+% compute_rybal_wp_aux(+PostIntp,+GuardFlag,+Prefix,+XCL,-PreIntp)
+%----------------------------------------------------------------------------%	
+% compute_rybal_wp_aux([], _, _, _, []):- !.
+% compute_rybal_wp_aux([PostIntp|PostIntps], GuardFlag, PrefixCL, XCL, Res  ):-
+% 	negate_numerical_list([PostIntp],DisjNegPostIntp),
+% 	compute_rybal_wp_aux0(DisjNegPostIntp, GuardFlag, PrefixCL, XCL, PreIntpCLs),
+% 	compute_rybal_wp_aux(PostIntps, GuardFlag, PrefixCL, XCL, Zs),
+% 	append(PreIntpCLs,Zs, Res).
+
+compute_rybal_wp_aux0([], _ , _, _, []):- !.
+compute_rybal_wp_aux0([DisjNegPostIntp|Zs], GuardFlag, PrefixCL, XCL, Res):-
+	% XCL is the statement or guard
+	% DisjNegPostIntp is a negated disjunct from the post wp
+	% PrefixCL1 is the constraints above XCL
+        % XCL MUST be appended to DisjNegPostIntp WITHOUT negation
+	% E.g., (x>0)... if(y>0) {post wp: x+y>0}
+	% PrefixCL1      : x>0
+	% Guard          : y>0
+	% DisjNegPostIntp: x+y<=0
+	% We want to find an interpolant I s.t. x>0 => I and (I  and y>0 and x+y<=0) is unsat	
+	% if we would negate y>0 then the query is sat. If we would
+	% put y>0 together with x>0 we cannot get rid of y>0 which is
+	% actually the goal.	
+	append(XCL,[DisjNegPostIntp],B),
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%% KEY OPTIMIZATION TO SPEED UP clp-prover
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+	varset_constraints(B,Vs),	
+	% irrel_rel_constraints/4 calls to compute_related_constraints/6
+	irrel_rel_constraints(PrefixCL,Vs,_,PrefixCL1),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\n\tCalling clp-prover to compute interpolant ... \n",[]),	
+        print_message("\tCL: %\n",[PrefixCL]),	
+        print_message("\tSimp CL: % NegProp % should be UNSAT \n",[PrefixCL1,B]),	
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+	wrapper_clp_prover_interpolate(PrefixCL1, B, PreIntpCL),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\tIntp % \n",[PreIntpCL]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+        %-----------------------------------------------------------------------%
+        % Insert element with sanity check!
+        %-----------------------------------------------------------------------%
+        insert_if_not_empty(PreIntpCL,PreIntpCLs,Res),
+	compute_rybal_wp_aux0(Zs, GuardFlag, PrefixCL, XCL, PreIntpCLs).
+	%append(PreIntpCL,PreIntpCLs, Res).
+
+insert_if_not_empty([],Xs,Xs):-!.
+insert_if_not_empty([X],Xs,[X|Xs]):-!.
+insert_if_not_empty(X,_,_):-
+	print_message("% is not an empty or singleton list.\n",[X]).
+
+%------------------------------------------------------------------------------%
+% rybal_simplify_after_combined(+FName,+Intp,-SimpIntp)
+%------------------------------------------------------------------------------%
+rybal_simplify_after_combined(_, Intp, Intp):- !.
+
+%-----------------------------------------------------------------------------
+% rybal_combine(+Intp1,+Intp2, 
+%               +FName,+SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,-Intp3)         
+%-----------------------------------------------------------------------------
+rybal_combine(Intp1,Intp2,
+	      _FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	      Intp3):-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+	Intp1 = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,I1,_),
+	Intp2 = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,I2,_),
+	rybal_combine_aux(I1,I2,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,I3),
+	Intp3 = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,I3,_),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(rybal_combine_timing,T1-T0),
+#endif  /*PROFILE*/	
+	!.
+rybal_combine(_,_,_,_,_,_,_,_):-
+	error_message("rybal_combine/8 failed \n",[]).
+	      
+	      	      
+rybal_combine_aux([],[],_,_,_,_,[]):- !.
+rybal_combine_aux([],X,_,_,_,_,X)  :- !.
+rybal_combine_aux(X,[],_,_,_,_,X)  :- !.
+rybal_combine_aux([intp_conjunct([],CL1)],[intp_conjunct([],CL2)],
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		  Res):-
+	append(CL1,CL2,CL3),
+	project_sym_constraints(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				CL3, ProjCL3),
+	insert_conjunct_if_not_empty(ProjCL3,Res),
+	%print_message("% % \n",[ProjCL3,Res]),
+	!.
+rybal_combine_aux(_,_,_,_,_,_,_):-
+	error_message("rybal_combine_aux/7 failed\n",[]).
+
+		
+%------------------------------------------------------------------------------
+% rybal_subsumed(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+%------------------------------------------------------------------------------
+rybal_subsumed(FName,
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+	       GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+	       TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, NegIntpConj) :-	
+	rybal_subsumed_aux(NegIntpConj,
+			   FName,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+			   GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+			   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar),
+	!.
+
+rybal_subsumed_aux([],_,_,_,_,_,_,_,_,_,_,_,_,_,_) :- !.
+rybal_subsumed_aux([intp_conjunct([],NegIntpCL)],
+		   FName,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+		   GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+		   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar) :-
+	
+	not_not_rybal_subsumed(FName,
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       GlobalArr ,GlobalVar ,LocalArr ,LocalVar , ArrRef,
+			       TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, NegIntpCL),
+	!.
+
+not_not_rybal_subsumed(FName,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		       GlobalArr ,GlobalVar ,LocalArr ,LocalVar , ArrRef,
+		       TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, NegIntpCL):-
+	rybal_non_subsumed(FName,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   GlobalArr ,GlobalVar ,LocalArr ,LocalVar , ArrRef,
+			   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, NegIntpCL),
+	!,
+	fail.
+not_not_rybal_subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	!.
+			   
+rybal_non_subsumed(FName,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   GlobalArr ,GlobalVar ,LocalArr ,LocalVar , ArrRef,
+		   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, NegIntpCL):-
+	%----------------------------------------------------------------------
+	% NegIntpCL1 will be interpreted as a disjunction of negated
+	% literals
+	%----------------------------------------------------------------------
+        SGlobalArr = TGlobalArr,
+	SGlobalVar = TGlobalVar,
+	SLocalArr  = TLocalArr,
+	SLocalVar  = TLocalVar,	
+        make_dnf(NegIntpCL,NegIntpCL1),
+	subsumed_profiled(FName,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  GlobalArr ,GlobalVar ,LocalArr ,LocalVar , ArrRef,
+			  TGlobalArr,TGlobalVar,TLocalArr,TLocalVar, NegIntpCL1),
+	!,
+	fail.
+rybal_non_subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	!.
+
+	
+%------------------------------------------------------------------------------%
+% rybal_create_subsumed_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% Create interpolant from subsuming memo goal
+%------------------------------------------------------------------------------%
+rybal_create_subsumed_interpolant(FName,
+				  TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				  CL, ML,
+				  TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				  NegIntpConj, Intp) :-
+                                 %  ^^^^^
+	                         % make sure it's negated
+	% pretty_printer_constraints_list(FName,
+	% 				TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+	% 				CL),
+	% pretty_printer_constraints_list(FName,
+	% 				TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+	% 				NegIntpConj),	
+	rybal_create_subsumed_interpolant_aux(NegIntpConj, 
+					      FName,
+					      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					      CL, ML,
+					      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					      IntpConj),
+	Intp = state(TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,IntpConj,_).
+	
+	
+rybal_create_subsumed_interpolant_aux([],_,_,_,_,_,_,_,_,_,_,_,[]):- !.
+rybal_create_subsumed_interpolant_aux([intp_conjunct([],NegIntpCL)],
+				      _FName,
+				      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				      Es, _ML,
+				      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				      OutIntpConj):-	
+	% Es is an union-find (if path_datastructure=partition) or a
+	% list, otherwise.
+        rybal_create_subsumed_interpolant_aux0(NegIntpCL,Es,IntpCL),
+	simplify_constraints(pre,
+			     TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+			     IntpCL,SimpIntpCL),
+	insert_conjunct_if_not_empty(SimpIntpCL,OutIntpConj),
+	!.
+rybal_create_subsumed_interpolant_aux(_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("rybal_create_subsumed_interpolant_aux/13 failed\n",[]).
+
+rybal_create_subsumed_interpolant_aux0([],_, []) :-!.
+rybal_create_subsumed_interpolant_aux0([NegDisj|NegDisjs],Es, [IntpCL|OutIntpConj]):-				       
+	% Es is an union-find (if path_datastructure=partition) or a
+	% list, otherwise.
+	rybal_interpolate_with_singleton_sanity_check(Es,[NegDisj],IntpCL),
+	rybal_create_subsumed_interpolant_aux0(NegDisjs,Es,OutIntpConj).
+					       
+rybal_interpolate_with_singleton_sanity_check(A,B,Intp):-
+	rybal_interpolate(A,B,[Intp]),
+	!.
+rybal_interpolate_with_singleton_sanity_check(_,_,_):-
+	error_message("rybal_interpolate_with_singleton_sanity_check/3 failed\n",[]).
+	
+
+%------------------------------------------------------------------------------%
+% rybal_create_abstraction_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% Create interpolant from an abstraction point (e.g., loops)
+%------------------------------------------------------------------------------%
+rybal_create_abstraction_interpolant(_, _, _, _, _, _,TGA,TGV,TLA,TLV,[],OutWP):-
+	OutWP = state(TGA,TGV,TLA,TLV,[],_), !.
+rybal_create_abstraction_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     Es, ML,
+				     TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				     NegWPConj, WP) :-
+	rybal_create_subsumed_interpolant_aux(NegWPConj,_,
+					      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					      Es,ML,
+					      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					      IntpConj),
+	%----------------------------------------------------------------------	
+	% Return the wp itself
+	%----------------------------------------------------------------------	
+	WP = state(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,IntpConj,_),
+	!.
+rybal_create_abstraction_interpolant(_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("rybal_create_abstraction_interpolant/12 failed\n",[]).
+
+%------------------------------------------------------------------------------
+% rybal_create_memo_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------
+rybal_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			      _CL,_ML, Intp,
+			      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			      MemoIntpConj) :-
+	Intp     = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, IntpConj, _),
+	create_memo_interpolant_rybal_aux(IntpConj,
+					  SGlobalArr,SGlobalVar,
+					  SLocalArr,SLocalVar,
+					  MemoIntpConj).
+%	MemoIntp = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+%			 MemoIntpConj, _).
+
+create_memo_interpolant_rybal_aux([],_,_,_,_,[]):- !.
+create_memo_interpolant_rybal_aux([intp_conjunct([],IntpCL)],_,_,_,_,
+				  [intp_conjunct(Tail,NegIntpCLTail)]):-
+	negate_numerical_list(IntpCL,NegIntpCL),
+	append(NegIntpCL,Tail,NegIntpCLTail),
+	!.
+create_memo_interpolant_rybal_aux(_,_,_,_,_,_):-
+	error_message("create_memo_interpolant_aux/6 failed.\n ",[]).
+
+				     
+%------------------------------------------------------------------------------%
+% rybal_merge_loop_interpolant(+WP1,+WP2,+FName,+SGlobalArr,...,-WP3)
+%------------------------------------------------------------------------------%
+% Merge the interpolants of the loop body with the loop exit's
+%------------------------------------------------------------------------------%
+rybal_merge_loop_interpolant(WP1,WP2,
+			     FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     WP3):-
+	rybal_combine(WP1,WP2,
+		      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		      WP3).
+
+
+%------------------------------------------------------------------------------
+% Pre:  A and B is unsat
+% Post: A => Intp, Intp and B is unsat, and Intp has common variables to A and B.
+% A and B is a list of symbolic constraints
+% Intp is a list of symbolic constraints
+%------------------------------------------------------------------------------
+% TODO: if partition is not used we should call first
+% compute_related_constraints/6 to remove irrelevant constraints.
+% CLP(R) must be compile with option USE_CLP_PROVER=1
+%------------------------------------------------------------------------------
+rybal_interpolate(CL,NegProp,Intp):-
+	current_tracer_flag(path_datastructure,naive),
+	!,
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% KEY OPTIMIZATION TO SPEEDUP clp-prover
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+	varset_constraints(NegProp,Vs),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\n\tCalling clp-prover to compute interpolant ... \n",[]),
+        print_message("\tCL: %\n",[CL]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+	irrel_rel_constraints(CL,Vs,_,CL1),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\tSimpCL: % and NegProp % should be UNSAT \n",[CL1,NegProp]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/	
+	wrapper_clp_prover_interpolate(CL1,NegProp,Intp),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\tIntp % \n",[Intp]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+        true.
+rybal_interpolate(UnionFind,NegProp,Intp):-
+	current_tracer_flag(path_datastructure,partition),
+	!,
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+ 	varset_constraints(NegProp,InterestVars),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\n\tCalling clp-prover to compute interpolant ... \n",[]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% KEY OPTIMIZATION TO SPEEDUP clp-prover
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+	relevant_constraints(InterestVars,UnionFind,CL,_ML),
+#ifdef  PROFILE
+        union_find_size(UnionFind,UnionFindSize),
+	length(CL,CLSize),
+	add_counter(total_constraints_before_partition,UnionFindSize),
+	add_counter(total_constraints_after_partition,CLSize),	
+#endif  /*PROFILE*/
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\tSimpCL:% and NegProp % should be UNSAT.\n",[CL,NegProp]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(partition_prep_interpolation,T1-T0),
+#endif  /*PROFILE*/
+        wrapper_clp_prover_interpolate(CL,NegProp,Intp),
+#ifdef  CLP_INTERPOLATE_DEBUG
+        print_message("\tIntp % \n",[Intp]),
+#endif  /*CLP_INTERPOLATE_DEBUG*/
+	true.
+
+% This base case is possible for programs like
+% main(){ if(x>0){ if (x<=0) error()}}
+% During the pre-image of if(x>0) A will be empty
+wrapper_clp_prover_interpolate([],_B,[]):-!.
+wrapper_clp_prover_interpolate(A,B,NormIntp):-
+#ifdef  PROFILE
+	add_counter(rybal_interpolate_num_of_calls,1),
+        ctime(T0),
+#endif  /*PROFILE*/
+        clp_prover_filter_uninterpreted_input(A,A1),
+        clp_prover_filter_uninterpreted_input(B,B1),
+        clp_prover_replace_empty_list_with_true(A1,A2),
+        %print_message("clp_prover_interpolate(%,%).\n",[A2,B1]),
+	clp_prover_interpolate(A2,B1,Intp),
+	!,
+        %print_message("\t Intp % \n",[Intp]),        
+	clp_prover_normalize_output(Intp,NormIntp),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(rybal_interpolate_timing,T1-T0),
+#endif  /*PROFILE*/
+	true.
+%---------------------------------------------------------------------------%
+% IMPORTANT: for interpolants that pass through a function and are
+% defined in terms of some caller's local variables, any attempt of
+% computing wp calling clp_prover_interpolant will return a SAT query
+% since the interpolant will have free variables.
+%---------------------------------------------------------------------------%
+wrapper_clp_prover_interpolate(_,_,[]):-
+	print_message("WARNING: SAT query \n",[]),
+	!.
+	
+clp_prover_filter_uninterpreted_input([],[]):-!.
+clp_prover_filter_uninterpreted_input([X|Xs],[X|Ys]):-
+	clp_prover_filter_uninterpreted_input_aux(X),
+	!,
+	clp_prover_filter_uninterpreted_input(Xs,Ys).
+clp_prover_filter_uninterpreted_input([_|Xs],Ys):-
+	!,
+	clp_prover_filter_uninterpreted_input(Xs,Ys).
+
+% It's possible situations like x=1; {wp: x=1} where x=1; is the first
+% statement in the program. Then, we would produce queries like
+% clp_prover_interpolate([],[assign(X,1),gt(X,1)],Intp).
+clp_prover_replace_empty_list_with_true([],[eq(1,1)]):- !.
+clp_prover_replace_empty_list_with_true(X,X):- !.
+				  
+clp_prover_filter_uninterpreted_input_aux(C):-
+	atomic(C),
+	not(uninterpreted_function(C)),	
+	!.
+clp_prover_filter_uninterpreted_input_aux(C):-
+	myvar(C),
+	!.
+clp_prover_filter_uninterpreted_input_aux(Op):-
+	Op =.. [F|Args],
+	not(uninterpreted_function(F)),
+	clp_prover_filter_uninterpreted_input_aux_args(Args),	
+	!.
+
+clp_prover_filter_uninterpreted_input_aux_args([]):- !.
+clp_prover_filter_uninterpreted_input_aux_args([A|As]):-
+        clp_prover_filter_uninterpreted_input_aux(A),
+	clp_prover_filter_uninterpreted_input_aux_args(As).
+	
+% Tautologies
+clp_prover_normalize_output(leq(A,B) , []         ):- A == 1, B == 1, !.
+clp_prover_normalize_output(geq(A,B) , []         ):- A == 1, B == 1, !.
+clp_prover_normalize_output(eq( A,B) , []         ):- A == 1, B == 1, !.
+% Rest
+clp_prover_normalize_output(eq(A,B)  , [eq(A,B)]) :-!.
+clp_prover_normalize_output(lt(A,B)  , [gt(B,A)]) :-!.
+clp_prover_normalize_output(gt(A,B)  , [gt(A,B)]) :-!.
+clp_prover_normalize_output(leq(A,B) , [geq(B,A)]):-!. 
+clp_prover_normalize_output(geq(A,B) , [geq(A,B)]):-!.
+clp_prover_normalize_output(A,_):-
+	error_message("clp_prover_normalize_output/2 failed % \n",[A]).
+	
+%==================================================================================%
+%                                  STATS
+%==================================================================================%
+init_rybal_profile_counters:-
+	set_counter(rybal_interpolate_num_of_calls,0),
+	set_counter(rybal_interpolate_timing,0),
+	%%% Pre-operation
+	set_counter(rybal_pre_timing,0),
+	%%% Combine
+	set_counter(rybal_combine_timing,0).
+
+print_rybal_interpolate_profile_stats:-
+	counter_value(rybal_interpolate_num_of_calls,NumCalls),
+	print_message("\tTotal number an interpolant is computed        : %\n",
+		      [NumCalls]).
+
+rybal_print_pre_stats:-
+	counter_value(rybal_pre_timing,PreT),
+	counter_value(wp_simplify_pre_timing,WPSimpT),	
+	print_message("\tTime for computing pre-image of interpolants   : % sec.\n",
+		      [PreT]),
+	print_message("\tTime for simplifying pre-image of interpolants : % sec.\n",
+		      [WPSimpT]).
+	
+rybal_print_combine_stats:-
+	counter_value(rybal_combine_timing,CombineT),
+	print_message("\tTime for combining interpolants                : % sec.\n",
+		      [CombineT]).
+

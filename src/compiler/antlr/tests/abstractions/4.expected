@@ -1,0 +1,83 @@
+trans(func_main, i6,
+	[p$init_0],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[p$init_1],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i7,
+	[p$init_1],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[p0],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[],
+	[call(func___TRACER_INIT,[RV0|_],[SRV0|_],[])],
+	[],
+	not_branch).
+trans(func_main, i1,
+	[p0],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[p5],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$$Next$],[ReturnValue,X$__1$$Next$],[SY$__1$$Next$],[SReturnValue,SX$__1$$Next$],
+	[assign(SX$__1$$Next$,5),arrassign(SY$__1$$Next$,upd(SY$__1$,2,2))],
+	[],
+	[ref(Y$__1$,2,Y$__1$Ref0)],
+	not_branch) :-
+	X$__1$$Next$=5,Y$__1$$Next$=upd(Y$__1$,2,2).
+trans(func_main, i2,
+	[p5],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[p6],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i3,
+	[p6],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],
+	[p7],[H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue$Next$,X$__1$],[SY$__1$],[SReturnValue$Next$,SX$__1$],
+	[assign(SReturnValue$Next$,_)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValue$Next$=_.
+trans(func___TRACER_INIT, i4,
+	[p0],[H$1$,X],[Y],[SH$1$,SX],[SY],[],[ReturnValue],[],[SReturnValue],
+	[p1],[H$1$,X],[Y$Next$],[SH$1$,SX],[SY$Next$],[],[ReturnValue],[],[SReturnValue],
+	[assign(SY$Next$,5)],
+	[],
+	[],
+	not_branch) :-
+	Y$Next$=5.
+trans(func___TRACER_INIT, i5,
+	[p1],[H$1$,X],[Y],[SH$1$,SX],[SY],[],[ReturnValue],[],[SReturnValue],
+	[p2],[H$1$,X],[Y],[SH$1$,SX],[SY],[],[ReturnValue$Next$],[],[SReturnValue$Next$],
+	[assign(SReturnValue$Next$,_)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValue$Next$=_.
+%--------------------------------------------------
+block(b1, func_main, [_], [_], _, nl, [i1,i2,i3,i6,i7],  [n,n],[n],[u],[u,u]).
+block(b2, func___TRACER_INIT, [_], [_], _, nl, [i4,i5],  [n,n],[u],[],[u]).
+%--------------------------------------------------
+start(func_main, [p$init_0]).
+start(func___TRACER_INIT, [p0]).
+%--------------------------------------------------
+bottom(func_main, [p7]).
+bottom(func___TRACER_INIT, [p2]).
+%--------------------------------------------------
+freshglobalarrays([SH$1$,SX]).
+%--------------------------------------------------
+freshglobalvars([SY]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[SY$__1$]).
+freshlocalarrays(func___TRACER_INIT,[]).
+%--------------------------------------------------
+freshlocalvars(func_main,[SReturnValue,SX$__1$]).
+freshlocalvars(func___TRACER_INIT,[SReturnValue]).
+%--------------------------------------------------
+freshparams(func_main,[lv(0)]).
+freshparams(func___TRACER_INIT,[lv(0)]).
+%--------------------------------------------------
+init_goal(func_main, [p$init_0], i6, [H$1$,X],[Y],[SH$1$,SX],[SY],[Y$__1$],[ReturnValue,X$__1$],[SY$__1$],[SReturnValue,SX$__1$],[]).
+%--------------------------------------------------
+abstract(func_main,[p6],
+	[H$1$,X],[Y],[Y$__1$],[ReturnValue,X$__1$],
+	[SH$1$,SX],[SY],[SY$__1$],[SReturnValue,SX$__1$],
+	[_,_],[_],[o],[_,o],
+	[gt(SX$__1$,5),gt(10,ref(SY$__1$,2))]).

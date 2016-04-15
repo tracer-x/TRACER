@@ -1,0 +1,100 @@
+ -------------- [Steensgaard, field-insensitive] -----------------
+ points-to-set([((unsigned int)f), f, &(f->__BLAST_FLAG)])
+ points-to-set([ftime->tm_hour, ftime->tm_mon, ftime->tm_min,
+                ftime->tm_wday, ftime->tm_year, ftime->tm_mday])
+ points-to-set([((unsigned int)fcronconf), fcronconf])
+ points-to-set([&(tmp___8->__BLAST_FLAG), tmp___8])
+ points-to-set([&(tmp___9->__BLAST_FLAG), tmp___9])
+ points-to-set([pipef, ((unsigned int)pipef), tmp___21,
+ 	        &(pipef->__BLAST_FLAG), &(tmp___21->__BLAST_FLAG)])
+ points-to-set([pipe_pid_fd, &(pipe_pid_fd)[1]])
+ points-to-set([&(line->cl_hrs)[(ftime->tm_hour >> 3)],
+                ((int)&(line->cl_hrs)[(ftime->tm_hour >> 3)]),
+                &(line->cl_dow)[(ftime->tm_wday >> 3)],
+                ((int)&(line->cl_dow)[(ftime->tm_wday >> 3)]),
+                ((int)&(line->cl_option)[2]), &(line->cl_option)[2],
+                ((int)&(line->cl_option)[1]), &(line->cl_option)[1],
+                &(line->cl_mons)[(ftime->tm_mon >> 3)],
+                ((int)&(line->cl_mons)[(ftime->tm_mon >> 3)]),
+                line->cl_option, ((int)line->cl_option),
+                &(line->cl_file->cf_tzdiff), line->cl_file,
+                &(line->cl_mins)[(ftime->tm_min >> 3)],
+                ((int)&(line->cl_mins)[(ftime->tm_min >> 3)]),
+                line->cl_shell, &(line->cl_days)[(ftime->tm_mday >>
+                3)], ((int)&(line->cl_days)[(ftime->tm_mday >> 3)])])
+points-to-set([&(line->cl_file->cf_running), &(line->cl_option)[2],
+               ((int)&(line->cl_option)[2]), &(line->cl_option)[3],
+               ((int)&(line->cl_option)[3]), line->cl_option,
+               ((int)line->cl_option), line->cl_file, line->cl_nice,
+               ((int)line->cl_nice), line->cl_shell,
+               &(line->cl_file->cf_user),
+               &(line->cl_file->cf_env_base)])
+points-to-set([&(cl->cl_numexe), &(cl->cl_nice),
+               &(cl->cl_mins), &(cl->cl_mailto), &(cl->cl_remain),
+               &(cl->cl_timefreq), ((unsigned int)cl), cl,
+               &(cl->cl_until), &(cl->cl_dow), &(cl->cl_lavg),
+               &(cl->cl_runfreq), &(cl->cl_mons), &(cl->cl_runas),
+               &(cl->cl_hrs), &(cl->cl_nextexe), &(cl->cl_days),
+               &(cl->cl_option), &(cl->cl_shell), &(cl->cl_first),
+               calloc0, calloc2]) 
+points-to-set([&(line->cl_dow),
+               line, &(&(line->cl_days)[(ftime->tm_mday >> 3)]),
+               &(line->cl_shell), &(&(line->cl_dow)[(ftime->tm_wday >>
+               3)]), &(&(line->cl_mins)[(ftime->tm_min >> 3)]),
+               &(line->cl_file), &(line->cl_hrs), &(line->cl_days),
+               &(line->cl_mins), &(&(line->cl_hrs)[(ftime->tm_hour >>
+               3)]), &(&(line->cl_mons)[(ftime->tm_mon >> 3)]),
+               &(line->cl_mons), &(&(line->cl_option)[1]),
+               &(line->cl_option), &(&(line->cl_option)[2])])
+points-to-set([*ptr2, *ptr1])
+points-to-set([&(pass->pw_name), ((unsigned int)pass), pass])
+points-to-set([&(cf->cf_tzdiff), cf, &(cf->cf_env_base),
+               &(cf->cf_user)])
+points-to-set(["stdout", tmp___3, "file"])
+points-to-set([cl->cl_runfreq, cl->cl_first, cl->cl_nextexe,
+               cl->cl_timefreq, cl->cl_until, cl->cl_remain])
+points-to-set([tmp___8, "end of interval", "first non matching"])
+points-to-set([&(&(pipe_pid_fd)[1]), &(pipe_pid_fd)])
+points-to-set([env->e_next, (line->cl_file->cf_running + 1),
+               line->cl_file->cf_running, env,
+               line->cl_file->cf_env_base, env->e_val, &(env->e_next),
+               &(env->e_val), line->cl_file->cf_user])
+points-to-set([&(&(mailbuf)[(size(array(196, char)) - 1)]),
+               ((ptr(char))&(mailbuf)), &(mailbuf)])
+points-to-set([((ptr(char))&(buf)), &(buf)])
+points-to-set([&(&(exeent->e_job_pid)[i]), exeent, &(exeent->e_line),
+               &(exeent->e_job_pid), &(exeent->e_ctrl_pid)])
+points-to-set([&(ptr1[((int)namesize)]), &(ptr2[1]), ptr2, &(ptr1[1]),
+               ((unsigned int)ptr1), ptr1])
+points-to-set([&(env->e_next), cf->cf_user, env, ((unsigned int)env),
+               env->e_val, cf->cf_env_base, env->e_next,
+               cf->cf_tzdiff, &(env->e_val), runas_str, calloc1])
+points-to-set([tmp___10, &(tmp___10->__BLAST_FLAG)])
+points-to-set([pipef->__BLAST_FLAG, tmp___21->__BLAST_FLAG])
+points-to-set([((unsigned int)ff), ff, &(ff->__BLAST_FLAG)])
+points-to-set([&(&(pipe_fd)[1]), &(pipe_fd)])
+points-to-set([tmp___11, &(tmp___11->__BLAST_FLAG)])
+points-to-set([&(st.st_uid), &(st.st_mode), &(st)])
+points-to-set([st.st_uid, st.st_mode])
+points-to-set([&(next_period.tm_hour), &(next_period.tm_year),
+               &(next_period.tm_mon), &(next_period.tm_min),
+               &(next_period.tm_mday), &(next_period)])
+points-to-set([&(line->cl_shell), &(line->cl_nice), &(line->cl_file),
+               &(line->cl_option), &(&(line->cl_option)[2]),
+               &(&(line->cl_option)[3]), line, exeent->e_line,
+               exeent->e_ctrl_pid, exeent->e_job_pid])
+points-to-set([file_name, &(file_name[4])])
+points-to-set([next_period.tm_hour, next_period.tm_min,
+               next_period.tm_year, next_period.tm_mon,
+               next_period.tm_mday])
+points-to-set([&(ftime->tm_min), &(ftime->tm_year), &(ftime->tm_hour),
+               &(ftime->tm_mday), ftime, &(ftime->tm_wday),
+               &(ftime->tm_mon)])
+points-to-set(["normal", "stdout", tmp___1])
+points-to-set([&(pipe_fd)[1], pipe_fd]) 
+points-to-set([shell, curshell, ((unsigned int)curshell)])
+points-to-set(["running in background", tmp___2, "running in foreground"])
+points-to-set([home, ((unsigned int)home)])
+points-to-set([tmp___23, ((unsigned int)tmp___23)])
+points-to-set([&(file_stat.st_uid), &(file_stat)])
+points-to-set([((ptr(void))&(buf)), &(buf)])

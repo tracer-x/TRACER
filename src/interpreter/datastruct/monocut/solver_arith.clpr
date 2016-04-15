@@ -1,0 +1,71 @@
+
+%------------------------------------------------------------------------------
+% Solver for linear arithmetic constraints
+%------------------------------------------------------------------------------
+
+satisfiable_negation(_GConstraints, []) :-
+	%----------------------------------------------------------------------
+	% [] means "true", so its negation is "false"
+	%----------------------------------------------------------------------
+	!, fail.
+satisfiable_negation(GConstraints, HConstraints) :-
+	constraint_symbolic_list(GConstraints), !,
+	negate_list(HConstraints, NegHConstraints),
+	constraint_symbolic_list(NegHConstraints).
+
+negate_list([], []).
+negate_list([neq(A,B)|R], [eq(A,B)|S]) :- !, negate_list(R, S).
+negate_list([eq(A,B)|R], [gt(A,B)|S]) :- negate_list(R, S).
+negate_list([eq(A,B)|R], [gt(B,A)|S]) :- !, negate_list(R, S).
+negate_list([gt(A,B)|R], [geq(B,A)|S]) :- !, negate_list(R, S).
+negate_list([geq(A,B)|R], [gt(B,A)|S]) :- !, negate_list(R, S).
+negate_list([_|R], [tt|S]) :- negate_list(R, S).
+
+%------------------------------------------------------------------------------
+% constraint_symbolic_list/1:
+% Evaluate list of symbolic constraints
+%------------------------------------------------------------------------------
+constraint_symbolic_list([]).
+constraint_symbolic_list([C|R]) :-
+	constraint_symbolic(C),
+	constraint_symbolic_list(R).
+
+%------------------------------------------------------------------------------
+% constraint_symbolic/1:
+% Evaluate symbolic constraint
+%
+% constraint_symbolic/1 should not handle neq constraints for
+% performance reasons (the corresponding clauses are commented
+% out). Backtracking here would be costly.
+%------------------------------------------------------------------------------
+constraint_symbolic(tt).
+constraint_symbolic(eq(A,B)) :-
+	numconstraint_symbolic(A,M),
+	numconstraint_symbolic(B,N), M=N.
+constraint_symbolic(gt(A,B)) :-
+	numconstraint_symbolic(A,M),
+	numconstraint_symbolic(B,N), M>N.
+constraint_symbolic(geq(A,B)) :-
+	numconstraint_symbolic(A,M),
+	numconstraint_symbolic(B,N), M>=N.
+constraint_symbolic(ff) :- !, fail.
+
+%------------------------------------------------------------------------------
+% Numeric expression evaluator
+%------------------------------------------------------------------------------
+numconstraint_symbolic(A,A) :- var(A), !.
+numconstraint_symbolic(A,A) :- atomic(A), !.
+numconstraint_symbolic(minus(A),-N) :- !,
+	numconstraint_symbolic(A,N).
+numconstraint_symbolic(plus(A,B), E+F) :- !,
+	numconstraint_symbolic(A,E),
+	numconstraint_symbolic(B,F).
+numconstraint_symbolic(minus(A,B), E-F) :- !,
+	numconstraint_symbolic(A,E),
+	numconstraint_symbolic(B,F).
+numconstraint_symbolic(mult(A,B), E*F) :-
+	numconstraint_symbolic(A,E),
+	numconstraint_symbolic(B,F).
+numconstraint_symbolic(div(A,B), E/F) :-
+	numconstraint_symbolic(A,E),
+	numconstraint_symbolic(B,F).

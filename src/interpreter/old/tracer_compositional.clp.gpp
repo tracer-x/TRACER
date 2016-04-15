@@ -1,0 +1,599 @@
+% tracer_compositional.clp.gpp
+
+/* OUTDATED! */
+/*
+  IT IS IMPORTANT TO NOTE THAT THIS COMPOSITIONAL VERSION MAY STILL HAVE THE PROBLEM
+  WITH THE RETURNS, WHERE RETURN VALUE EXPRESSION IS APPLIED BEFORE FUNCTION
+  ENTRY, RESULTING IN OUT-OF-ORDER ARRAY UPDATES AND UNPREDICTABLE FAILURE
+  WHEN ANALYSING FUNCTION BODY - ANDREW
+*/
+
+
+%==============================================================================
+% unfold_compositional_call: Handling functions compositionally For
+% the moment, only designed for WCET. This code might be
+% out-of-updated. Moreover, it doesn't support constraint independence
+% (i.e. partition).
+%==============================================================================
+
+unfold_compositional_call(Depth, _OldId, FName, PP, 
+                          GlobalArr, GlobalVar, LocalArr, LocalVar,	
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			  CL, ML, Stack, ArrRef, Loops,
+			  TableSpace) :-
+	trans(FName, Id, PP,
+	      GlobalArr, GlobalVar, SGlobalArr, SGlobalVar,
+	      LocalArr, LocalVar, SLocalArr, SLocalVar,
+	      PP1, 
+	      _GlobalArr1, _GlobalVar1, SGlobalArr1, SGlobalVar1,
+	      _LocalArr1,  _LocalVar1,  SLocalArr1,  SLocalVar1,
+              XCL, [call(CallFName, FormalLocalPars, SFormalLocalPars, CCL)],
+	      ArrRefX, _Statement),
+	%----------------------------------------------------------------------
+       	% Split formal variables from local
+       	% Need to be able to handle arrays in the future
+	%----------------------------------------------------------------------
+       	get_formal_params(FormalLocalPars , [RV|InitArgs]),
+       	get_formal_params(SFormalLocalPars, [SRV|SInitArgs]),
+	
+	%----------------------------------------------------------------------
+	% We check if summarization exist. We note that a summarization is
+	% always a relation on the globals and parameters (SGlobalArr,
+	% SGlobalVar, [SRV|SInitArgs], also refer to the call to
+	% store_function_summarization below). Since we have the SRV variable,
+	% we have the constraint on the return value. Hence the summarization
+	% relates input to output value. 
+	%
+       	% We note that WLocalArr and WLocalVar are parent (caller)'s local
+	% variables, see the call to store_function_summarization below.
+	%----------------------------------------------------------------------
+
+       	% ls summarization,
+
+       	summarization(CallFName, NegProj, DisjCL, A,
+	              SGlobalArr, SGlobalVar, [], [SRV|SInitArgs],
+       	 	      WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+		      WArrRef),
+
+#ifdef USEWP
+        WP1 = NegProj,
+	WP1 = state(TGlobalArr1, TGlobalVar1, TLocalArr1, TLocalVar1, 
+	            WPCond1),
+#ifdef PROFILE
+        check_all_wp_conjuncts_profiled(GlobalArr, GlobalVar,
+	                                [], [RV|InitArgs],
+					TGlobalArr1, TGlobalVar1,
+					[], TLocalVar1,
+					WPCond1),
+#else /* defined(PROFILE) */
+        check_all_wp_conjuncts(GlobalArr, GlobalVar, [], [RV|InitArgs],
+			       TGlobalArr1, TGlobalVar1, [], TLocalVar1,
+			       WPCond1),
+#endif /* defined(PROFILE) */
+
+#else /* defined(USEWP) */
+	%----------------------------------------------------------------------
+	% Here we check if the current call is subsumed.
+	% Subsumed/10 handles arrays
+	%----------------------------------------------------------------------
+	subsumed(GlobalArr , GlobalVar , [], [RV|InitArgs],
+	         ArrRef,
+	         SGlobalArr, SGlobalVar, [], [SRV|SInitArgs],
+	         NegProj),
+#endif /* defined(USEWP) */
+
+       	debug_message("Solution (at depth:%) %: % to % SUMMARIZED \n",
+                      [Depth,CallFName,PP,PP1]),
+
+	%----------------------------------------------------------------------
+	% Now we want to test for witness feasibility
+        %----------------------------------------------------------------------
+       	feasible_path(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+ 	              WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef),
+
+        % Old code
+%       %----------------------------------------------------------------------
+% 	% We first project WLocalVar only on current parameters of the call
+%       % Need to be able to handle arrays in the future
+% 	%----------------------------------------------------------------------
+%         	project_local_var_onto_call([SRV|SInitArgs], SLocalVar,
+%  	                            WLocalVar, CCL, WLocalVarProj),       
+
+%        	feasible_path(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+% 	              WGlobalArr, WGlobalVar, WLocalArr, WLocalVarProj,
+% 		      WArrRef),
+	!, % Subsumption succesful, commit to it by cutting
+
+       	%--------------------------------------------------------------------%
+       	% Store answer for the call (proc_wcet_answer/8)
+       	%--------------------------------------------------------------------%
+	append_symbolic_list(CCL, CL, ML, CL0, ML0),
+
+% 	append(CL,CCL,CL0), 
+% 	copy_to_unbound_list(CL0,ML0),
+
+
+#ifdef USEWP
+        deletion_of_wp_conjuncts(SGlobalArr, SGlobalVar, [], [SRV|SInitArgs],
+	                         CL0, ML0,
+				 TGlobalArr1, TGlobalVar1, [], TLocalVar1,
+				 WPCond1, WPCond2),
+	WP2 = state(TGlobalArr1, TGlobalVar1, TLocalArr1, TLocalVar1, WPCond2),
+	WP  = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, _),
+	compute_wp(WP2, ML0, CCL, WP),
+#else /* defined(USEWP) */
+	make_dnf(NegProj, NegProj1),
+	interpolate_constraints_path(NegProj1, CL0,ML0, no_check),
+#endif /* defined(USEWP) */
+
+	assert(proc_wcet_answer(Depth, CallFName, ML , 
+#ifdef USEWP
+                                WP,
+#endif
+	                        A,
+			        WGlobalArr, WGlobalVar,
+			        WLocalArr, WLocalVar,
+			        WArrRef)),
+	% Old code
+% 	assert(proc_wcet_answer(Depth, CallFName, ML , A,
+% 			       WGlobalArr, WGlobalVar,
+% 			       WLocalArr, WLocalVarProj,
+% 			       WArrRef)),
+       debug_message("REUSING solution (at depth:%) %: % to % with \n % \n",
+                    [Depth,CallFName,PP,PP1,
+                     summarization(NegProj,DisjCL,A,SGlobalArr,SGlobalVar,
+				   [],[SRV|SInitArgs])]),
+#ifdef GRAPHVIZ_USE
+       %----------------------------------------------------------------------
+       % Pretty-printer
+       %----------------------------------------------------------------------
+       incr_context(FName,PP1,_),        
+       attach_context_to_pc(FName,PP,PPP),
+       attach_context_to_pc(FName,PP1,PPP1),
+       fassert(sym_graph(FName,FName,Id,PPP,PPP1,
+                       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		       SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,     
+		       XCL,not_branch,feasible)),
+       start(CallFName,CallPP0),		
+       attach_context_to_pc(FName,CallPP0,CallPPP0),
+       fassert(sym_graph(CallFName,FName,summarized,CallPPP0,PPP,_,_,_,_,_,_,_,_,_,_,_)),
+#endif
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       % Call continuation
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       unfold_compositional_call_continuation(Depth, Id, FName,
+		 GlobalArr,   GlobalVar,   LocalArr,   LocalVar,
+                 SGlobalArr,  SGlobalVar,  SLocalArr,  SLocalVar,
+		 PP1,
+		 SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		 Stack, Loops, CCL, DisjCL, XCL, CL, ML, ArrRef, ArrRefX,
+		 TableSpace).
+
+%------------------------------------------------------------------------------
+% Function call transition: forward (compositional version)
+% This is when the call is not subsumed by a previous function summarization
+%------------------------------------------------------------------------------
+unfold_compositional_call(Depth, _OldId, FName,
+	                  PP,
+			  GlobalArr, GlobalVar, LocalArr, LocalVar,	
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			  CL, ML, Stack, ArrRef, Loops,
+			  TableSpace) :-
+	trans(FName, Id, PP,
+	      GlobalArr, GlobalVar, SGlobalArr, SGlobalVar,
+	      LocalArr, LocalVar, SLocalArr, SLocalVar,
+	      PP1, 
+	      GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+	      LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	      XCL, [call(CallFName, FormalLocalPars, SFormalLocalPars, CCL)],
+	      ArrRefX,Statement),
+
+        get_formal_params(FormalLocalPars , [RV|InitArgs]),
+        get_formal_params(SFormalLocalPars, [SRV|SInitArgs]),
+	debug_message("FUNCTION CALL (forward) depth % % id % (from % to %) with CL:%\n", 
+                      [Depth,FName,Id,PP,PP1,CL]),
+        %----------------------------------------------------------------------
+        % ATTENTION: Here we add "tt" for marking the start of the symbolic
+        % constraints for this function. This is useful for computing the
+        % answer for this function, which is from the tt mark up to the end
+        % (return point) of the function.
+        %----------------------------------------------------------------------
+	CCL1 = [tt|CCL],	
+	append_symbolic_list(CCL1, CL, ML, CL1, ML1),
+
+	%----------------------------------------------------------------------
+	% At the moment we simply extend array references, in the future
+	% use stack to be able to discard array references of callee
+	%----------------------------------------------------------------------
+	append(ArrRefX, ArrRef, ArrRef1),
+	start(CallFName, PP2),
+
+	freshlocalarrays(CallFName, FreshLocalArr),
+        freshlocalvars(CallFName, FormalLocalPars),
+	freshlocalarrays(CallFName, FreshSLocalArr),
+        freshlocalvars(CallFName, SFormalLocalPars),
+
+#ifdef  GRAPHVIZ_USE
+        incr_context(FName,PP1,_),        
+        attach_context_to_pc(FName,PP,PPP),
+        attach_context_to_pc(FName,PP1,PPP1),
+	fassert(sym_graph(FName,FName,Id,PPP,PPP1,
+	                SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	                SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,     
+		        XCL,Statement,feasible)),
+	% Artificial transition, added for clarity.		
+        attach_context_to_pc(FName,PP2,PPP2),
+	fassert(sym_graph(FName,CallFName,call,PPP,PPP2,_,_,_,_,_,_,_,_,_,_,_)),
+#else
+        %----------------------------------------------------------------------
+        % To prevent warnings
+        %----------------------------------------------------------------------
+        Statement=_, PPP=_,
+#endif
+
+ 	unfold_aux3(Depth, Id, CallFName, 
+	            GlobalArr, GlobalVar, LocalArr, LocalVar,
+		    CL, ML, PP2, 
+		    GlobalArr1, GlobalVar1, FreshLocalArr, FormalLocalPars,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    SGlobalArr1, SGlobalVar1, FreshSLocalArr, SFormalLocalPars,
+		    CCL1, CL1, ML1,
+		    [sinfo(FName, PP1, 
+     		           LocalArr  , LocalVar,
+			   SLocalArr , SLocalVar,
+			   Id,
+		           LocalArr1, LocalVar1,
+			   SLocalArr1, SLocalVar1,
+		           [RV|InitArgs], [SRV|SInitArgs],
+			   XCL, PPP, SGlobalArr, SGlobalVar)|Stack],
+		    ArrRef1, Loops, Statement, _UnknownVars, TableSpace).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Function call: backtracking and continuation (compositional version)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+unfold_compositional_call(Depth, _OldId, FName,
+	                  PP, 
+			  GlobalArr, GlobalVar, LocalArr, LocalVar,	
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			  CL, ML, Stack , ArrRef, Loops,
+			  TableSpace) :-
+       % NOTE: At this point the call info has been popped from Stack
+       trans(FName, Id, PP, 
+             GlobalArr,GlobalVar,SGlobalArr,SGlobalVar,
+	     LocalArr ,LocalVar ,SLocalArr ,SLocalVar,
+             PP1,
+             _GlobalArr1, _GlobalVar1, SGlobalArr1,SGlobalVar1,
+	     _LocalArr1 , _LocalVar1 , SLocalArr1 ,SLocalVar1,
+             XCL, [call(CallFName, _ , SFormalLocalPars, CCL)], ArrRefX, _),
+
+       % Split formal variables from local
+       % Need to be able to handle arrays in the future
+       get_formal_params(SFormalLocalPars, [SRV|SArgs]),
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       % Backtracking from the function call
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       %--------------------------------------------------------------------%
+       % Collate answer (wcet_answer/9) from the callee and store its
+       % global answer for that call in proc_wcet_answer/9.
+       % HERE: WLocalVar is the list of caller's local variables (not
+       % callee's!).
+       %--------------------------------------------------------------------%
+       once(collate_wcet_call_answers(Depth, CallFName, ML , 
+#ifdef USEWP
+				      WP,
+#endif
+	                              A,
+	                              WGlobalArr, WGlobalVar,
+				      WLocalArr, WLocalVar, WArrRef)),      
+       assert(proc_wcet_answer(Depth, CallFName, ML, 
+#ifdef USEWP
+			       WP,
+#endif
+			       A,
+			       WGlobalArr, WGlobalVar,
+			       WLocalArr, WLocalVar, WArrRef)),
+       debug_message("% (id %) collating all answers ... at depth % WCET=% \n",
+                     [CallFName,Id,Depth,A]),
+       %--------------------------------------------------------------------%
+       % collate wcet_answers_ext/7
+       %--------------------------------------------------------------------%
+       % Compute the constraint solution for a function call (disjunctions).
+       % Each disjunction is the projection only onto the return value.
+       % NOTE: it may be too expensive, so abstraction would be required.
+       % That abstraction may be applied at merge_disjunction/3.	
+       %--------------------------------------------------------------------%
+       once(collate_wcet_answers_ext(Depth, CallFName, DisjCL, 
+                                     SGlobalInitArr, SGlobalInitVar, 
+				     [], [SRV|SInitArgs])),
+       % Here we unify the function's initial variables with the current
+       SGlobalInitArr = SGlobalArr,
+       SGlobalInitVar = SGlobalVar,
+       SInitArgs      = SArgs,
+       %--------------------------------------------------------------------%
+       % Store summarization
+       %--------------------------------------------------------------------%
+       % WLocalVar contains parent local variables.
+       store_function_summarization(CallFName,
+	                            SGlobalInitArr, SGlobalInitVar,
+				    [], [SRV|SInitArgs],
+	                            CL, ML, 
+#ifdef USEWP
+                                    WP,
+#endif
+				    CCL, DisjCL, A,
+				    WGlobalArr, WGlobalVar,
+				    WLocalArr, WLocalVar,
+				    WArrRef),
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       % Call continuation
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       %--------------------------------------------------------------------%
+       % Unfold all disjunctions
+       % Note that we advance one step (we increment the depth)
+       %--------------------------------------------------------------------%
+       !,
+       unfold_compositional_call_continuation(Depth, Id, FName,
+		GlobalArr,   GlobalVar,   LocalArr,   LocalVar,
+		SGlobalArr,  SGlobalVar,  SLocalArr,  SLocalVar,
+		PP1,
+		SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	        Stack, Loops, CCL, DisjCL, XCL, CL, ML, ArrRef, ArrRefX,
+		TableSpace).
+
+%------------------------------------------------------------------------------
+% unfold_compositional_call_continuation:
+% This part encapsulates the part of the code that calls the continuation.
+% Here we unfold all disjunctions returned by a function call
+% Note that we advance one step (we increment the depth). This procedure is
+% intended to fail.
+%------------------------------------------------------------------------------
+unfold_compositional_call_continuation(Depth, Id, FName,
+	GlobalArr,   GlobalVar,   LocalArr,   LocalVar,
+	SGlobalArr,  SGlobalVar,  SLocalArr,  SLocalVar,
+	PP1,
+	SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	Stack, Loops, CCL, DisjCL, XCL, CL, ML, ArrRef, _ArrRefX,
+	TableSpace) :-
+
+       %-----------------------------------------------------------------------
+       % Here we try to join CCL, a disjunct, and XCL, resulting in XCL1
+       %-----------------------------------------------------------------------
+       append_all(CCL, DisjCL, DisjCL0), % Append CCL to all disjuncts returned
+       append_all(XCL, DisjCL0, DisjCL1),% Append XCL to all disjuncts returned
+       % Select nonempty XCL1 out of DisjCL1
+       select_not_empty(XCL1, DisjCL1),
+       %-----------------------------------------------------------------------
+       % Append XCL1 to CL, producing ML at the side
+       %-----------------------------------------------------------------------
+       append_symbolic_list(XCL1, CL, ML, CL1, ML1), 
+
+       %-----------------------------------------------------------------------
+       % Don't forget to pass on the array references
+       % (This is old: instead of adding ArrRefX, we use ArrRef3 below,
+       % obtained from evaluation of symbolic constraints)
+       %-----------------------------------------------------------------------
+       % append(ArrRefX, ArrRef, ArrRef1),
+
+       %-----------------------------------------------------------------------
+       % Now we apply XCL1 to evaluated constraints, resulting in evaluated
+       % transition relation between pre-state (GlobalArr2, GlobalVar2,
+       % LocalArr2, LocalVar2, and post-state (GlobalArr3, GlobalVar3,
+       % LocalArr3, LocalVar3, with ArrRef3).
+       %-----------------------------------------------------------------------
+       copy_constraint_symbolic_to_evaluated(XCL1,
+       	     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	     SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+	     GlobalArr2, GlobalVar2, LocalArr2, LocalVar2,
+	     GlobalArr3, GlobalVar3, LocalArr3, LocalVar3, ArrRef3),
+       %-----------------------------------------------------------------------
+       % Sew in pre-state of XCL1 with actual evaluated pre-state, obtaining
+       % evaluated post-state in GlobalArr3, GlobalVar3, LocalArr3, LocalVar3
+       % which are then propagated.
+       %-----------------------------------------------------------------------
+       GlobalArr  = GlobalArr2,
+       GlobalVar  = GlobalVar2,
+       LocalArr   = LocalArr2,
+       LocalVar   = LocalVar2,
+
+       %-----------------------------------------------------------------------
+       % We append further array references
+       %-----------------------------------------------------------------------
+       append(ArrRef3, ArrRef, ArrRef1),
+       debug_message("CALL CONTINUATION after backtracking from the call: \n",[]),
+       unfold_aux3(Depth, Id, FName,
+		   GlobalArr2, GlobalVar2, LocalArr2, LocalVar2,
+		   CL, ML, PP1, 
+		   GlobalArr3, GlobalVar3, LocalArr3, LocalVar3,
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		   SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		   XCL1, CL1, ML1, Stack, ArrRef1, Loops,
+		   _Statement, _UnknownVars, TableSpace).
+
+%==============================================================================
+% Auxiliary predicates
+%==============================================================================
+
+negated_return_value(RV, SRV, RVNegProj) :-
+	dump([RV], [SRV], DumpList),
+	make_negated_symbolic(DumpList, RVNegProj, _).
+
+%------------------------------------------------------------------------------
+% get_answer_copy(+CL, +ML, -RefCL): Based on ML, copy only important
+% constraints in CL into RefCL. RefCL is in the format [[...]], if it is
+% nonempty, or [] if there is no important constraints
+%------------------------------------------------------------------------------
+get_answer_copy(CL, ML, Proj) :-
+	get_answer_copy_aux(CL, ML, Proj1),
+	get_answer_copy_aux2(Proj1, Proj).
+
+get_answer_copy_aux([tt|_], _, [])       :- !.
+get_answer_copy_aux([_|R], [X|S], T)     :- var(X), !,
+	get_answer_copy_aux(R, S, T).
+get_answer_copy_aux([C|R], [_|S], [C|T]) :-
+	get_answer_copy_aux(R, S, T).
+
+get_answer_copy_aux2([], []) :- !.
+get_answer_copy_aux2(Proj, [Proj]).
+
+%------------------------------------------------------------------------------
+% select_not_empty(-X,+L)
+%------------------------------------------------------------------------------
+% if merge_disj is 'n' then return in X an element of the list L. By
+% backtracking, all elements are returned.  If merge_disj is 'y' then
+% L is a singleton list which is returned (i.e., only one solution).
+% For real programs, the merge_disj to 'n' option should not be
+% used. I still keep this option because it may be useful for
+% experiments and/or debugging.
+%------------------------------------------------------------------------------
+
+select_not_empty([],[]):-!.
+select_not_empty(X,L):-
+%	current_tracer_flag(merge_disj,n),
+	select(X,L,_).
+%select_not_empty(X,[X]):-
+%	current_tracer_flag(merge_disj,y).
+
+%----------------------------------------------------------------------------------%
+% project_local_var_onto_call(+SFormalPars,+SLocalVar,+LocalVar,+CCL,-LocalVarProj)
+%----------------------------------------------------------------------------------%
+% Project (evaluated) LocalVar only onto the current parameters of the
+% function call.  To do this, we use symbolic variables (SFormalPars
+% and SLocalVar). CCL relates formal parameters (SFormalPars) with
+% local variables (SLocalVar).
+%----------------------------------------------------------------------------------%
+
+% project_local_var_onto_call([],_,_,_,[]):-!.
+% project_local_var_onto_call(_,[],_,_,[]):-!.
+% % project_local_var_onto_call([SX|SXs], [SY|SYs],[W|Ws],CCL,[W|Zs]):-
+% % 	member_special(assign(SY,SX), CCL),
+% % % 	not(not(member(assign(C,SX),CCL))),
+% % % 	C == SY, !,
+% % 	project_local_var_onto_call(SXs,SYs,Ws,CCL,Zs).
+% project_local_var_onto_call([SX|SXs], [SY|SYs],[W|Ws],CCL,[W|Zs]):-
+% 	member_special(assign(SX,SY), CCL),
+% % 	not(not(member(assign(SX,C),CCL))),
+% % 	C == SY, !,
+% 	project_local_var_onto_call(SXs,SYs,Ws,CCL,Zs).
+% project_local_var_onto_call([SX|SXs],[_|SYs],[_|Ws],CCL,[_|Zs]):- 
+%         !,
+% 	project_local_var_onto_call([SX|SXs],SYs,Ws,CCL,Zs).
+
+
+%------------------------------------------------------------------------------
+% store_function_summarization: Store function summarization
+% Need to be able to handle arrays in the future
+%------------------------------------------------------------------------------
+store_function_summarization(FName,
+	                     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	                     CL, ML, 
+#ifdef USEWP
+                             WP,
+#endif
+			     CCL, DisjCL, A,
+			     WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+			     WArrRef) :-
+#ifdef USEWP
+        %----------------------------------------------------------------------
+        % The second argument of summarization is weakest precondition
+        %----------------------------------------------------------------------
+	assert(summarization(FName, WP, DisjCL, A,
+	                     SGlobalArr, SGlobalVar,
+			     SLocalArr, SLocalVar,
+			     WGlobalArr, WGlobalVar,
+			     WLocalArr, WLocalVar,
+			     WArrRef)),
+	%----------------------------------------------------------------------
+	% To avoid warnings
+	%----------------------------------------------------------------------
+	CL=_, ML=_, CCL=_.
+
+#else /* defined(USEWP) */
+	fcopy_term(t(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     DisjCL),
+		   t(SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		     DisjCL1)),
+  	not(store_function_summarization_aux(FName,
+	                                     SGlobalArr, SGlobalVar,
+					     SLocalArr, SLocalVar,
+					     SGlobalArr1, SGlobalVar1,
+					     SLocalArr1, SLocalVar1,
+	                                     CL, ML, 
+					     CCL, DisjCL1, A,
+					     WGlobalArr, WGlobalVar,
+					     WLocalArr, WLocalVar,
+					     WArrRef)).
+#endif
+
+#ifndef USEWP
+store_function_summarization_aux(FName,
+	                         SGlobalArr, SGlobalVar,
+				 SLocalArr, SLocalVar,
+	                         SGlobalArr1, SGlobalVar1,
+				 SLocalArr1, SLocalVar1,
+                                 CL, ML, 
+				 CCL, DisjCL1, A,
+				 WGlobalArr, WGlobalVar,
+				 WLocalArr, WLocalVar,
+				 WArrRef) :-
+	current_tracer_flag(interpolation,y),!,
+	constraint_symbolic(CCL, [], ArrRef1),
+	constraint_symbolic_selectively(CL, ML, ArrRef1, SArrRef, o),
+	store_function_summarization_aux_aux(FName,
+	                                     SGlobalArr, SGlobalVar,
+					     SLocalArr, SLocalVar,
+					     SArrRef,
+					     SGlobalArr1, SGlobalVar1,
+					     SLocalArr1, SLocalVar1,
+	                                     DisjCL1, A,
+					     WGlobalArr, WGlobalVar,
+					     WLocalArr, WLocalVar,
+					     WArrRef),
+	!, fail.
+store_function_summarization_aux(FName,
+	                         SGlobalArr, SGlobalVar,
+				 SLocalArr, SLocalVar,
+	                         SGlobalArr1, SGlobalVar1,
+				 SLocalArr1, SLocalVar1,
+                                 CL, _ML,
+				 CCL, DisjCL1, A,
+				 WGlobalArr, WGlobalVar,
+				 WLocalArr, WLocalVar,
+				 WArrRef) :-
+	constraint_symbolic(CCL, [], ArrRef1),
+	constraint_symbolic(CL, ArrRef1, SArrRef),
+	store_function_summarization_aux_aux(FName,
+	                                     SGlobalArr, SGlobalVar,
+					     SLocalArr, SLocalVar,
+					     SArrRef,
+					     SGlobalArr1, SGlobalVar1,
+					     SLocalArr1, SLocalVar1,
+	                                     DisjCL1, A,
+					     WGlobalArr, WGlobalVar,
+					     WLocalArr, WLocalVar,
+					     WArrRef),
+	!, fail.
+
+store_function_summarization_aux_aux(FName,
+	                             SGlobalArr, SGlobalVar,
+				     SLocalArr, SLocalVar,
+				     SArrRef,
+				     SGlobalArr1, SGlobalVar1,
+				     SLocalArr1, SLocalVar1,
+				     DisjCL1, A,
+				     WGlobalArr, WGlobalVar,
+				     WLocalArr, WLocalVar,
+				     WArrRef) :-
+	build_negated_constraints_list(state(SGlobalArr, SGlobalVar,
+	                                     SLocalArr, SLocalVar,
+				             SArrRef),
+				       state(SGlobalArr1, SLocalVar1,
+				             SLocalArr1, SLocalVar1,
+				             NegProj)),
+	assert(summarization(FName, NegProj, DisjCL1, A,
+	                     SGlobalArr1, SGlobalVar1,
+			     SLocalArr1, SLocalVar1,
+			     WGlobalArr, WGlobalVar,
+			     WLocalArr, WLocalVar,
+			     WArrRef)).
+
+#endif /* !defined(USEWP) */

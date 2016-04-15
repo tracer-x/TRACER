@@ -1,0 +1,29 @@
+:- codegen_debug.
+
+:- dynamic(output, 2).
+
+run :- ztime, set_counter(nodecount, 0), fail.
+run :- execute(0,T,S), store_max(T,S), 
+	printf("storing % %\n", [T,S]), 
+    fail.
+run :- ctime(Z), retract_output(T,S), counter_value(nodecount, Y), !,
+	printf("Answer: % Time: % Space: %\n", [T,Z,Y]),
+    printf("Now running simulation ...\n", []),
+    ztime, execute(1,T,S), !, ctime(X),
+	printf("Simulation Time: %\n", [X]).
+
+
+store_max(X,S) :- output(Y,_), !, store_max1(X,S,Y).
+store_max(X,S) :- assert(output(X,S)).
+
+store_max1(X,S,Y) :- X > Y, retract_output(Y,_), assert(output(X,S)), !.
+store_max1(_,_,_).
+
+retract_output(Y,S) :-
+	rule(output(Y,S), Body),
+	retract_output_aux(Y,S,Body).
+
+retract_output_aux(Y,S,true) :- !,
+	retract(output(Y,S)).
+retract_output_aux(Y,S,Body) :-
+	retract(output(Y,S) :- Body).

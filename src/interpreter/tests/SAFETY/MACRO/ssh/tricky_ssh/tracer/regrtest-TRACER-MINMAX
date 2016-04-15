@@ -1,0 +1,205 @@
+#!/bin/bash
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=tracer 
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+TESTS_HOME=`dirname "$abspath"`
+
+currtest=""
+block="" 
+
+# counters
+counter=0
+success=0
+failure=0
+unexSuccess=0
+unexFailure=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -help        print this message
+  -block s     run the tests in block s (default "all")
+  -all         run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+  case "$1" in
+    -help)
+      usage
+      exit 0
+      ;;
+
+    -block)
+      shift
+      block="$block$1"
+     ;;
+     
+    -all)
+     block="ALL"
+     ;;
+     
+    *)
+      echo "unknown arg: $1"
+      usage
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+echo "Running MINMAX algorithm " >> $log
+echo "Running MINMAX algorithm " >> $stat
+
+#takes  no args -- just does a bunch of greps on the *.out file
+function getstatsSAFE() {
+if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}   
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+    echo `grep "MINMAX restarts"  test_${currtest}_${counter}.out` >> $stat
+    success=$[ $success + 1 ]
+else 
+    if grep "UNSAFE" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexFailure=$[ $unexFailure + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]	
+    fi
+fi
+}
+
+function getstatsUNSAFE() {
+if grep "UNSAFE" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}      
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program UNSAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+    failure=$[ $failure + 1 ]
+else 
+    if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexSuccess=$[ $unexSuccess + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]		
+    fi
+fi
+}
+
+function cleanDirectory {
+    cd $1
+    rm -f *.clp
+    rm -f *.dot
+    rm -f *.TRACES
+    rm -f *.out
+    cd ${TESTS_HOME}    
+}
+
+
+# short_name full_name options
+function runSAFE {
+    currtest=$1
+    echo "[${counter}] ${currtest}.c" >> $log
+    echo "------------ [$currtest] $2 ------------"
+    ${TRACER_CMMD} safety $1.c $2 > test_${currtest}_${counter}.out
+    getstatsSAFE $1
+    counter=$[ ${counter} + 1]
+}
+
+# Note: the alias analysis
+options="-minmax y -clean-after-dump y -ignore-comp-errors y " 
+
+blockSSH(){
+    runSAFE s3_clnt.blast.1 "$options"
+    runSAFE s3_clnt.blast.2 "$options"
+    runSAFE s3_clnt.blast.3 "$options"
+    runSAFE s3_clnt.blast.4 "$options"
+
+    runSAFE s3_srvr.blast.1 "$options"
+    runSAFE s3_srvr.blast.2 "$options"
+    runSAFE s3_srvr.blast.3 "$options"
+    runSAFE s3_srvr.blast.4 "$options"
+    runSAFE s3_srvr.blast.6 "$options"
+    runSAFE s3_srvr.blast.7 "$options"
+    runSAFE s3_srvr.blast.8 "$options"
+    runSAFE s3_srvr.blast.9 "$options"
+    runSAFE s3_srvr.blast.10 "$options"
+    runSAFE s3_srvr.blast.11 "$options"
+    runSAFE s3_srvr.blast.12 "$options"
+    runSAFE s3_srvr.blast.13 "$options"
+    runSAFE s3_srvr.blast.14 "$options"
+    runSAFE s3_srvr.blast.15 "$options"
+    runSAFE s3_srvr.blast.16 "$options"
+}
+
+
+runAllTests(){
+    blockSSH
+}
+
+
+echo $block
+case "$block" in
+    
+    SSH)
+	shift
+	blockSSH
+	;;
+    
+    ALL)
+	runAllTests
+	;;    
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 2
+	;;
+esac  
+
+   
+# Clean temporary files
+cleanDirectory "."
+
+
+echo ""                                     >> ${log}   
+echo ""                                     
+echo "Successful tests:      $success"      >> ${log}   
+echo "Successful tests:      $success"     
+echo "Failed as expected:    $failure"      >> ${log}      
+echo "Failed as expected:    $failure"      
+echo "Unexpected success:    $unexSuccess"  >> ${log}   
+echo "Unexpected success:    $unexSuccess"  
+echo "Unexpected failure:    $unexFailure"  >> ${log}   
+echo "Unexpected failure:    $unexFailure"  
+echo "No Answer:             $dies"         >> ${log}   
+echo "No Answer:             $dies"         
+
+

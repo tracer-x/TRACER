@@ -1,0 +1,12 @@
+rm -f output
+
+echo "completes in 120 runs"
+sleep 2
+
+#completes in 120 runs
+../cutec qsort f
+../cute qsort -i 2000 -q 
+../cuteStat.exe
+
+cat output
+../clean

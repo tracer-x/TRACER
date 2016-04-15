@@ -1,0 +1,150 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BLAST cannot avoid unroll completely the loop to prove safety.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% void main() {
+%   int y, n;
+%   if (y >= 0) {
+%     n = 0;
+%     while (n < 50) {
+%       y++;
+%       n++;
+%     }
+%     _ABORT(y + n < 50);    
+%   }
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+is_exit(i5).
+is_loop([p4]).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+trans(func_main, i1,
+	[p0],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p2],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i2,
+	[p3],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p4],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N$Next$],[],[SReturnValue,SY,SN$Next$],
+	[assign(SN$Next$,0)],
+	[],
+	[],
+	not_branch) :-
+	N$Next$=0.
+trans(func_main, i3,
+	[p4],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p6],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[gt(1000,SN)],
+	[],
+	[],
+	branch) :-
+	N<1000.
+trans(func_main, i4,
+	[p6],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p8],[H$$],[],[SH$$],[],[],[ReturnValue,Y$Next$,N$Next$],[],[SReturnValue,SY$Next$,SN$Next$],
+	[assign(SY$Next$,plus(SY,1)),assign(SN$Next$,plus(SN,1))],
+	[],
+	[],
+	not_branch) :-
+	Y$Next$=Y+1,N$Next$=N+1.
+trans(func_main, i5,
+	[p4],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p5],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[geq(SN,1000)],
+	[],
+	[],
+	branch) :-
+	N>=1000.
+trans(func_main, i6,
+	[p8],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p4],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i7,
+	[p5],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p9],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i8,
+	[p9],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p10],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i9,
+	[p10],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[$unsafe],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[gt(1000,plus(SY,SN))],
+	[],
+	[],
+	branch) :-
+	Y+N<1000.
+trans(func_main, i10,
+	[p10],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p11],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i11,
+	[p2],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p3],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[geq(SY,0)],
+	[],
+	[],
+	branch) :-
+	Y>=0.
+trans(func_main, i12,
+	[p2],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p11],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[gt(0,SY)],
+	[],
+	[],
+	branch) :-
+	Y<0.
+trans(func_main, i13,
+	[p11],[H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],
+	[p12],[H$$],[],[SH$$],[],[],[ReturnValue$Next$,Y,N],[],[SReturnValue$Next$,SY,SN],
+	[assign(SReturnValue$Next$,_)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValue$Next$=_.
+%--------------------------------------------------
+block(b1, func_main, [_], [_], _, nl, [i1,i13], [nc],[],[],[nc,nc,nc], [n],[],[],[u,u,u]).
+block(b2, func_main, [_], [_], _, nl, [i2,i7,i8,i11], [nc],[],[],[nc,c,nc], [n],[],[],[n,u,u]).
+block(b3, func_main, [p4], [p5], _, l, [i3,i4,i6], [nc],[],[],[nc,nc,c], [n],[],[],[n,u,u]).
+block(b4, func_main, [_], [_], _, nl, [i5], [nc],[],[],[nc,nc,c], [n],[],[],[n,n,n]).
+block(b5, func_main, [_], [_], _, nl, [i12], [nc],[],[],[nc,c,nc], [n],[],[],[n,n,n]).
+%--------------------------------------------------
+block_hierarchy(b0,b1).
+block_hierarchy(b1,b2).
+block_hierarchy(b2,b3).
+block_hierarchy(b2,b4).
+block_hierarchy(b4,b4).
+block_hierarchy(b3,b3).
+block_hierarchy(b1,b5).
+block_hierarchy(b5,b5).
+%--------------------------------------------------
+break(a5678).
+%--------------------------------------------------
+start(func_main, [p0]).
+%--------------------------------------------------
+bottom(func_main, [p12]).
+%--------------------------------------------------
+freshglobalarrays([SH$$]).
+%--------------------------------------------------
+freshglobalvars([]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_main,[SReturnValue,SY,SN]).
+%--------------------------------------------------
+test_input_vars(func_main,[_],[],[],[_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [p0], i1, [H$$],[],[SH$$],[],[],[ReturnValue,Y,N],[],[SReturnValue,SY,SN],[]).

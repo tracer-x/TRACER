@@ -1,0 +1,396 @@
+% This file implements the machinery for testing using CREST.
+
+#ifdef TESTING_CREST
+
+%----------------------------------------------------------------------------%
+% The main entry point for TESTING_CREST runs. tracer script calls this
+% instead of the usual run_with_user_options/2
+%----------------------------------------------------------------------------%
+store_program_and_user_options(Program,Options):-
+    assert(program(Program)),
+	% User options	
+	set_user_options(Options),
+        % TRACER default options which overwrite user options because
+        % these options are mandatory
+	set_unfolder_options,       
+	% Load the program
+	load_program(Program),
+        % Run initialization routines
+	init_routines,
+	% Initialize counters for profiling
+	init_profiling_counters,
+	% Init CLP-Prover (rybalchenko's interpolation)
+	rybal_init,
+#ifdef  PROFILE	
+	% Initialize counters used for sanity checks
+	init_sanitization_counters,
+#endif  /*PROFILE*/	
+    print_message("stored program % and options %\n", [Program,Options]).
+
+%----------------------------------------------------------------------------%
+% This predicate is called directly from CREST with the argument the path it took
+%----------------------------------------------------------------------------%
+run_crest_feasible_path(Path) :-
+    add_counter(num_crest_paths,1),
+    program(Program),
+    setup_path(Path),
+    set_counter(mycounter,0), % experimental purposes (see below how it's used)
+    allow_combine_operations,
+    print_message("running CREST path: %\n",[Path]),
+    execute(Program),
+    cleanup_path,
+    print_crest_paths_stats, !.
+
+setup_path(Path):-
+    fassert(crest_path(Path)),
+    set_counter(crest_path_ptr,0).
+
+cleanup_path:-
+    retract(crest_path(_)).
+
+print_crest_paths_stats:-
+    counter_value(num_crest_paths,NPaths),
+    counter_value(num_subsumed_crest_paths,NSubsumed),
+    counter_value(num_repeated_crest_paths,NRepeated),
+    counter_value(num_crest_states_visited,NStates),
+    counter_value(num_half_interpolant_pp,NHalfInterpolantPP),
+    print_message("% CREST PATHS WERE RUN (% SUBSUMED) (% REPEATED), % states visited, % half interpolants",
+         [NPaths,NSubsumed,NRepeated,NStates,NHalfInterpolantPP],green), !.
+    %ls half_interpolant_pp, !.
+print_crest_paths_stats.
+
+%----------------------------------------------------------------------------%
+% If in fast verification mode, call get_trans to return the (only) feasible
+% trans. This is guaranteed to be the only trans due to unfold_enabled clause 1.
+% If not in fast verification mode, call get_crest_trans to return CREST trans.
+%----------------------------------------------------------------------------%
+get_trans_wrapper(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+                     PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		     XCL, Call, ArrRef, BranchMode,
+		     NotInSet) :-
+    in_fast_verification_mode,
+    get_trans(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+                     PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		     XCL, Call, ArrRef, BranchMode,
+		     NotInSet).
+get_trans_wrapper(_, _, _,  _,  _,  _,  _,  _,  _,  _,  _,
+                     _, _, _, _, _, _, _, _, _,
+		     _, _, _, _,
+		     _) :-
+    in_fast_verification_mode, !, fail.
+get_trans_wrapper(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+                     PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		     XCL, Call, ArrRef, BranchMode,
+		     NotInSet) :-
+    get_crest_trans(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+                     PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		     XCL, Call, ArrRef, BranchMode,
+		     NotInSet).
+
+%----------------------------------------------------------------------------%
+% Returns the transition from PC that is along the CREST path
+%----------------------------------------------------------------------------%
+get_crest_trans(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+                     PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		     XCL, Call, ArrRef, BranchMode,
+		     NotInSet) :-
+	get_crest_trans_aux(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+  	                         PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+			         XCL, Call, ArrRef, BranchMode, NotInSet).
+
+% If a not_branch transition is found, the PP is along a straight line. Just
+% return the (only) transition possible from PP.
+get_crest_trans_aux(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+	                 PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	                 XCL, Call, ArrRef, not_branch, NotInSet) :-
+	trans(FName, Id,
+		PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+		PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, Call, ArrRef, not_branch),
+	mm_not_included(Id, NotInSet),
+    !.
+
+% Otherwise, check if PP is a loop header. In this case, always return the trans
+% that goes into the loop. IMPORTANT ASSUMPTION: the way CREST compiles using CIL,
+% all loops are converted to while(1) loops by default. If this is changed, this 
+% predicate becomes incorrect! (currently this predicate is needed because CREST
+% does not consider loops as branches, and doesn't assign an ID to it)
+get_crest_trans_aux(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+	                 PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	                 XCL, Call, ArrRef, branch, NotInSet) :-
+    % Important: we check if loop by explicitly using block, not is_ancestor_pp,
+    % because is_ancestor_pp is set to fail (see tracer_safety_minmax.clp.gpp)
+    block(_,FName,PC,ExitPP,_,l,_,_,_,_,_), !,
+	trans(FName, Id,
+		PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+		PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, Call, ArrRef, branch),
+    not(PC1=ExitPP), % don't take the trans that exits the loop
+	mm_not_included(Id, NotInSet), !.
+
+% Otherwise, PP is a branch. Now return the (only) feasible trans from PP 
+% that is along the CREST path.
+get_crest_trans_aux(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+	                 PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	                 XCL, Call, ArrRef, branch, NotInSet) :-
+	trans(FName, Id,
+		PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+		PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, Call, ArrRef, branch),
+    get_trans_block(Id,BlockId),
+    get_crest_id_of_block(BlockId,CrestId),
+    check_crest_id_along_path(CrestId),
+	mm_not_included(Id, NotInSet), !.
+
+% Sanity check to make sure if PP was branch point, there is at least
+% one trans that was followed (by clause 2 of get_crest_trans_aux)
+get_crest_trans_aux(FName, Id, PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+	                 PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	                 XCL, Call, ArrRef, branch, _) :-
+    counter_value(crest_infeasible_path,0), % don't error if we're at Crest path's inf. branch
+	trans(FName, Id,
+		PC,  GA,  GV,  SGA,  SGV,  LA,  LV,  SLA,  SLV,
+		PC1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, Call, ArrRef, branch),
+    crest_path(Path),
+    counter_value(crest_path_ptr,I),
+    error_message("Branch trans from %:% could not be mapped to CREST path % [%]
+    Hint: Are there any == or != in the program?\n",[FName,PC,Path,I]).
+
+%----------------------------------------------------------------------------%
+% Helper predicates for get_crest_trans_aux
+%----------------------------------------------------------------------------%
+get_trans_block(Id,BlockId) :-
+    block(BlockId,_,_,_,_,_,IdList,_,_,_,_),
+    member(Id,IdList), !.
+get_trans_block(Id,_) :-
+    error_message("block for transition % was not found\n",[Id]).
+
+get_crest_id_of_block(BlockId,CrestId) :-
+    crest_branch(CrestId,BlockId), !.
+get_crest_id_of_block(BlockId,_) :-
+    error_message("Block % did not have a CREST branch id!\n",[BlockId]).
+
+check_crest_id_along_path(CrestId):-
+    crest_path(Path),
+    counter_value(crest_path_ptr,I),
+    nthfunc(I,Path,CrestId).
+
+%----------------------------------------------------------------------------%
+% Mainly take one step along the CREST path by incrementing the pointer, but 
+% only if the BranchMod is branch. Otherwise do nothing
+%----------------------------------------------------------------------------%
+take_one_step_along_crest_path(_,_,_):- in_fast_verification_mode, !.
+take_one_step_along_crest_path(_,_,not_branch):- !.
+take_one_step_along_crest_path(FName,PP,branch):-
+    block(_,FName,PP,_,_,l,_,_,_,_,_), !. % if loop header, don't take step
+take_one_step_along_crest_path(_,_,branch):-
+    crest_path(Path),
+    length(Path,L),
+    counter_value(crest_path_ptr,I),
+    I <= L, % sanity check
+    !, set_counter(crest_path_ptr,I+1).
+take_one_step_along_crest_path(_,_,branch):-
+    crest_path(Path),
+    length(Path,L),
+    counter_value(crest_path_ptr,I),
+    error_message("CREST path index % is more than path length %!\n",[I+1,L]).
+
+%----------------------------------------------------------------------------%
+% Mainly take one step along the CREST path by incrementing the pointer, but 
+% only if the BranchMod is branch. Otherwise do nothing
+%----------------------------------------------------------------------------%
+back_one_step_along_crest_path(FName,PP):- not is_branch_pp(FName,PP), !.
+back_one_step_along_crest_path(FName,PP):-
+    block(_,FName,PP,_,_,l,_,_,_,_,_), !. % if loop header, don't back step
+back_one_step_along_crest_path(_,_):-
+    counter_value(crest_path_ptr,I),
+    I >= 0, !, % sanity check
+    set_counter(crest_path_ptr,I-1).
+back_one_step_along_crest_path(_,_):-
+    error_message("something went wrong while back-stepping through crest path\n",[]).
+
+%----------------------------------------------------------------------------%
+% Marks a given PP in a function as visited. Before marking, check if
+% combine operations are enabled, otherwise even if the PP is visited, it
+% will not have a full-interpolant yet.
+%----------------------------------------------------------------------------%
+mark_child_as_visited(FName,PP,PathStack):-
+    combine_operations_enabled,
+    is_branch_pp(FName,PP), !, % don't do anything for non-branch PPs
+    get_unique_context_num(PathStack,PPContext),
+    add_visited_child(PPContext).
+mark_child_as_visited(_,_,_).
+
+add_visited_child(PPContext):-
+    %printf_to_atom(Ctr,"nvc_%",[PPContext]),
+    %add_counter(Ctr,1).
+    retract(num_visited_children(PPContext,N)), !,
+    fassert(num_visited_children(PPContext,N+1)).
+add_visited_child(PPContext):-
+    fassert(num_visited_children(PPContext,1)).
+
+is_branch_pp(FName,PP):-
+	trans(FName, _,
+		PP,  _,  _,  _,  _,  _,  _,  _,  _,
+		_, _, _, _, _, _, _, _, _,
+		_, _, _, branch).
+
+% if fast verification is 1, always allow to execute unfold_disabled.
+% if not, allow to execute unfold_disabled if crest_infeasible_path is 1
+% or value of mycounter is less than some "k" (for experimental purposes)
+check_fast_verification_type:- counter_value(fast_verification,1), !.
+check_fast_verification_type:-
+    counter_value(crest_infeasible_path,1), !,
+    set_counter(crest_infeasible_path,0).
+check_fast_verification_type:-
+    counter_value(mycounter,N), N<1,
+    add_counter(mycounter,1).
+
+%----------------------------------------------------------------------------%
+% Given the PathStack, this predicate returns a unique context number associated
+% with the state of the PathStack.
+%----------------------------------------------------------------------------%
+get_unique_context_num(PathStack,PPContext):-
+    get_path_ids(PathStack,PPContext).
+
+get_path_ids([t(_,_,Id)|T1],[Id|T2]):-
+    !, get_path_ids(T1,T2).
+get_path_ids([r(_,_,_,_,_,_,_,_,_,_,_,_)|T1],[ret|T2]):-
+    !, get_path_ids(T1,T2).
+get_path_ids([funcall|T1],[funcall|T2]):-
+    !, get_path_ids(T1,T2).
+get_path_ids([],[]):-!.
+get_path_ids(_,_):-
+    error_message("improper PathStack provided to get_path_ids/2",[]).
+
+%----------------------------------------------------------------------------%
+% Checks if a given PP contains a half or full interpolant
+%----------------------------------------------------------------------------%
+is_half_interpolant_pp(FName,PP,PathStack):-
+    is_full_interpolant_pp(FName,PP,PathStack), !, fail.
+is_half_interpolant_pp(_,_,_).
+
+is_full_interpolant_pp(FName,PP,PathStack):-
+    is_branch_pp(FName,PP), !, % proceed only if branch PP
+    num_children_pp(FName,PP,N),
+    get_unique_context_num(PathStack,PPContext),
+    num_visited_children(PPContext,N1),
+    %printf_to_atom(Ctr,"nvc_%",[PPContext]),
+    %counter_value(Ctr,N1),
+    all_children_visited(N1,N).
+is_full_interpolant_pp(_,_,_). % for non-branch PPs
+
+all_children_visited(N1,N):-
+    N1>N, error_message("num. visited children > num. children",[]).
+all_children_visited(N,N).
+
+%----------------------------------------------------------------------------%
+% Get the number of children from PP (no. of feasible+infeasible transitions). 
+% Currently uses counters to avoid recalculating every time, so fix it in case 
+% of memory problems.
+%----------------------------------------------------------------------------%
+num_children_pp(FName,PP,_):-
+    printf_to_atom(Ctr,"num_children_%_%",[FName,PP]),
+    counter_value(Ctr,0),
+    % if counter value is 0, this is the first time num_children_pp is being
+    % called, so initialize the counter
+    get_num_trans_from_pp(FName,PP,N),
+    N>0, % sanity check
+    set_counter(Ctr,N),
+    fail.
+num_children_pp(FName,PP,_):-
+    printf_to_atom(Ctr,"num_children_%_%",[FName,PP]),
+    counter_value(Ctr,0),
+    error_message("number of children for %::% is 0!",[FName,PP]).
+num_children_pp(FName,PP,N):-
+    printf_to_atom(Ctr,"num_children_%_%",[FName,PP]),
+    counter_value(Ctr,N).
+
+get_num_trans_from_pp(FName,PP,1):-
+    bottom(FName,PP), !.
+get_num_trans_from_pp(FName,PP,_):-
+    set_counter(mycount,0),
+	trans(FName, _,
+		PP,  _,  _,  _,  _,  _,  _,  _,  _,
+		_, _, _, _, _, _, _, _, _,
+		_, _, _, _),
+    add_counter(mycount,1),
+    fail. % force backtracking at trans(...)
+get_num_trans_from_pp(_,_,N):-
+    counter_value(mycount,N).
+
+%----------------------------------------------------------------------------%
+% This predicate stores the prefix of the CREST path that has been visited
+% so far. This is called when a point is subsumed so that we can record the
+% subsumed CREST prefix.
+% UPDATE (2013/01/25): storing/checking subsumed prefix has been moved to Crest
+% this predicate now just informs Crest to do so
+%----------------------------------------------------------------------------%
+store_subsumed_crest_prefix:- in_fast_verification_mode, !.
+store_subsumed_crest_prefix:-
+    counter_value(crest_path_ptr,I),
+    I > 0, !,
+    crest_path(Path),
+    firstnth(Path,I,Prefix), % get first I elements of Path in Prefix
+    Prefix=[_|_], % sanity check
+    % don't change the following message, it is read by Crest to store the prefix
+    print_message("prefix subsumed at: %\n",[I],green), !.
+store_subsumed_crest_prefix:-
+    print_message("PROGRAM VERIFIED!\n",[],green), halt.
+
+%----------------------------------------------------------------------------%
+% Same as retract_safety_answer, but before retracting, check if the answer
+% is for a successor node of NodeId. Normally, this check is not needed (the
+% answer can be retracted simply by using Depth) because at the time of the call
+% there will be exactly one safety_answer at Depth. But with TRACER+CREST this
+% assumption may be violated because at the same Depth there can be two different
+% PPs due to two different CREST runs. So need to check if the answer we are 
+% retracting is indeed the one for the correct node (the successor of NodeId1).
+%----------------------------------------------------------------------------%
+retract_safety_answer_with_check(NodeId1, Depth,_FName,_CL,ML,LoopStackML,
+            Intp,LoopContext) :-
+    retract_safety_answer([_|NodeId1],Depth,_,_,ML,LoopStackML,Intp,LoopContext),!.
+retract_safety_answer_with_check(NodeId1, Depth,_,_,_,_,_,_) :-
+    error_message("retract_safety_answer_with_check failed at depth % for NodeId %"
+                    ,[Depth,NodeId1]).
+
+%----------------------------------------------------------------------------%
+% Predicates to allow toggling combine operations
+%----------------------------------------------------------------------------%
+halt_combine_operations:-
+    set_counter(combine_halt,1).
+allow_combine_operations:-
+    set_counter(combine_halt,0).
+combine_operations_enabled:-
+    counter_value(combine_halt,0).
+combine_operations_disabled:-
+    counter_value(combine_halt,1).
+
+%----------------------------------------------------------------------------%
+% Predicates to allow toggling fast verification
+%----------------------------------------------------------------------------%
+turn_on_fast_verification(FName,PP,NodeId):-
+    not fast_verification(_), assert(fast_verification(NodeId)),
+    print_message("STARTING FAST VERIFICATION at %:%!\n",[FName,PP],red).
+turn_off_fast_verification(NodeId):-
+    retract(fast_verification(NodeId)).
+in_fast_verification_mode:-
+    fast_verification(_).
+
+fast_verification_bookkeeping(FName,PP,PathStack):-
+    combine_operations_enabled, !,
+    % fast verification SUCCESS, record subsumed Crest path
+    print_message("Fast verification SUCCESS at %:%!\n",[FName,PP],red),
+    store_subsumed_crest_prefix.
+fast_verification_bookkeeping(FName,PP,PathStack):-
+    not combine_operations_enabled, !,
+    % fast verificaion FAILED, record half interpolant at PP
+    print_message("Fast verification FAILED at %:%!\n",[FName,PP],red),
+	print_message("%_% HAS HALF-INTP.. COMBINE OPERATIONS HALTED\n",
+		      [FName,PP],red),
+	get_unique_context_num(PathStack,PPContext),
+	fassert(half_interpolant_pp(FName,PP,PPContext)),
+	add_counter(num_half_interpolant_pp,1).
+
+#endif

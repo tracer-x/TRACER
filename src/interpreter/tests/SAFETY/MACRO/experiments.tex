@@ -1,0 +1,180 @@
+\documentstyle[11pt]{article}
+% Default margins are too wide all the way around. I reset them here
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{.125in}
+\setlength{\textwidth}{6.25in}
+\begin{document}
+\title{Experiment: Abstraction Learning vs Abstraction Refinement}
+\author{No authors}
+
+\maketitle
+
+\begin{figure*}[tbh]
+\begin{small}
+\begin{center}
+\begin{tabular}{|l|r||c|c||c|c|} \hline
+       & & \multicolumn{2}{c||}{\textsf{BLAST}} & \multicolumn{2}{c||}{\textsf{TRACER}} \\ \cline{3-6}
+\textsf{Program} & \textsf{LOC} & \textsf{Predicates} & \textsf{Time(sec)} 
+                                 & \textsf{States} & \textsf{Time(sec)} \\ \hline\hline
+%          CLOC
+% qpmouse  260
+% tlan     1811
+% cdaudio  3813
+% diskperf  954
+% floppy   2035
+% kbfiltr   670
+
+\texttt{qpmouse}~\cite{BLAST-web} w/o -predH 7 & 400 & 4  &  1.10 &  974  &  1.23  \\ 
+\texttt{qpmouse}~\cite{BLAST-web} w/ -predH 7  & 400 & 12 &  3.75 &    &    \\ 
+\hline
+\texttt{tlan}~\cite{BLAST-web} w/ tproj &  8069 &   9  &  41.95 &  4382 &   14.81     \\ 
+\texttt{tlan-TRACER} w/  tproj &       &   8  &  15.34 &       &        \\ 
+\texttt{tlan-TRACER} w/o tproj &       &  14  &  97.92 &       &       \\ 
+\hline 
+\hline
+\texttt{cdaudio}~\cite{BLAST-web}&  8921 &  N/A   &  N/A         &  6258      &  36.74  \\ 
+\hline
+\texttt{diskperf}~\cite{BLAST-web}&  6984  &   NoNewPred(94) &  214 (disc+reach) &  3226  & 21.3     \\ 
+                                  &        &  42              & 24 (reach)       &        &           \\
+\hline
+\texttt{floppy}~\cite{BLAST-web}&  8570 &    N/A        &  N/A         &  3124  & 20.99     \\ 
+\hline
+\texttt{kbfiltr-safe}~\cite{BLAST-web}& 5931 &  45        &  87    &  1392   & 5.12      \\  
+\texttt{kbfiltr-unsafe-1}~\cite{BLAST-web}& &  NoNewPred(62) &  278    &  463      & 1.44      \\ 
+\texttt{kbfiltr-unsafe-2}~\cite{BLAST-web}& &  NoNewPred(53)   &  187    &  283      & 0.83      \\ \hline 
+\texttt{mouclass}~\cite{BLAST-web}& N/A   &  N/A   &  N/A         &  N/A      &  N/A         \\ \hline 
+\texttt{serial}~\cite{BLAST-web}& 10380   &  N/A   &  N/A         &  48804     &  716.93         \\ \hline 
+\hline
+\texttt{ssh-clnt-1..4}~\cite{BLAST-web}&   N/A   &    N/A  &  N/A  &  N/A      &  N/A         \\ 
+\texttt{ssh-srvr-1..16}~\cite{BLAST-web}&   N/A   & N/A    &  N/A   &  N/A      &  N/A         \\ \hline 
+\hline
+\texttt{stmate-trivial-1}~\cite{malardalenbenchmark}& 1276  & 21 (w/o -predH 7) & 165.43 (U$^{_2}$) & 44687  & 218.77    \\ 
+                                                    &   &  2 (w/ -predH 7)  & 1.33 (U$^{_1}$)&    &           \\ 
+\texttt{stmate-trivial-2}~\cite{malardalenbenchmark}&  &  2 &   0.99 (U$^{_1}$)   & 44687  & 222.08    \\ 
+                 &     &  1       &   0.22 (U$^{_2}$)  &        &           \\ \hline
+\texttt{stmate-timed-short}~\cite{malardalenbenchmark}& 900 & 215  &  1494 & 6483   & 78.02     \\ \hline 
+\hline
+\texttt{tcas-1a-safe}~\cite{BLAST-web}& 394 & 23           & 6.9     & 6029  & 16.91 \\ 
+\texttt{tcas-1b-safe}~\cite{BLAST-web}&     & 56           & 142.26  & 6050  & 16.30 \\ 
+\texttt{tcas-2a-safe}~\cite{BLAST-web}&     & 22           & 6.38    & 6029  & 15.98 \\ 
+\texttt{tcas-2b-unsafe}~\cite{BLAST-web}&     & 40           & 29.85   &  91     & 0.06  \\ 
+\texttt{tcas-3a-unsafe}~\cite{BLAST-web}&     & 25           & 19.27   &  243     & 0.37  \\
+\texttt{tcas-3b-safe}~\cite{BLAST-web}&     & 39           & 32.22   & 6017  & 15.97 \\ 
+\texttt{tcas-4a-unsafe}~\cite{BLAST-web}&     & OutOfMem(45) & 35.33 &  243     & 0.40 \\ 
+\texttt{tcas-4b-unsafe}~\cite{BLAST-web}&     & OutOfMem(36) & 27.60 &   91    & 0.04  \\ 
+\texttt{tcas-5a-safe}~\cite{BLAST-web}&    & 31           &  12.02& 6029  & 16.16 \\ 
+\texttt{tcas-5b-unsafe}~\cite{BLAST-web}&    & OutOfMem(54) & 72.64 &  91     & 0.05  \\ \hline 
+\hline
+\texttt{tcas-1a-safe-inlined}  & 253 & 18  & 3.6   & 2450  & 12.38 \\ 
+\texttt{tcas-1b-safe-inlined}  &     & 27  & 11.85 & 2433  & 12.57 \\ 
+\texttt{tcas-2a-safe-inlined}  &     & 18  & 3.67  & 2450  & 12.41 \\ 
+\texttt{tcas-2b-unsafe-inlined}  &     & 25  & 11.25 & 68    & 0.04  \\ 
+\texttt{tcas-3a-unsafe-inlined}  &     & 14  & 4.3   & 177   & 0.34  \\ 
+\texttt{tcas-3b-safe-inlined}  &     & 22  & 7.39  & 2433  & 12.31 \\ 
+\texttt{tcas-4a-unsafe-inlined}  &     & 17  & 3.38  & 177   & 0.36  \\ 
+\texttt{tcas-4b-unsafe-inlined}  &     & 20  & 6.68  &  68   & 0.03  \\
+\texttt{tcas-5a-safe-inlined}  &     & 17  & 3.15  & 2450  & 12.32 \\ 
+\texttt{tcas-5b-unsafe-inlined}  &     & 25  & 10.35 &  68   & 0.04  \\ \hline 
+\hline
+\end{tabular}
+
+\caption{Comparison of TRACER (\emph{AL}) vs BLAST (\emph{AR}) on
+  Intel 1.33Ghz 2.0 GiB}
+\label{tab:result-1}
+\end{center}
+\end{small}
+\end{figure*}
+
+\newpage
+\appendix
+\section{Command options used for BLAST}
+\begin{verbatim}
+
+Options used to run experiments with BLAST:  
+R (recommended by BLAST Team) and 
+U (in case R did not work, options finally used)
+
+--------------------------------------------------------------------------------------
+qpmouse        R: pblast qpmouse-BLAST.c  
+tlan           R: pblast tlan.i -pred tlan.preds -craig 1 -scope -nocache  
+               R: pblast -bfs -bddmin  tlan.i  
+               U: pblast -bfs -bddmin -pred tlan.preds tlan-BLAST.c 
+               U: pblast -incref -tproj -msvc -bfs -bddmin -predH 7 tlan-BLAST.c
+--------------------------------------------------------------------------------------
+cdaudio}       R: pblast -pred ../irpMaf.preds -dfs -clp -nofp -predH 7 
+                         -scope cdaudio-BLAST.c  
+               U: ? 
+diskperf       R:  pblast -craig 2  -scope -cldepth 1 -noinitialize -timezero -dfs 
+                          -predH 6  [-itpn] diskperf-BLAST-safe.c  
+               U:  pblast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd 
+                          -pred ../irpMaf.preds kbfiltr-BLAST.c -incref -bfs 
+
+floppy         R: pblast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd
+                         -pred ../irpMaf.preds -incref -bfs floppy-BLAST.c  
+               R: pblast -bfs -bddmin -msvc -nofp -block -predH 7 -scope
+                         -craig 1 floppy-BLAST.c  
+               R: pblast  -msvc -nofp -craig 2 -scope -cldepth 1 -timezero -noinitialize 
+                          -dfs -predH 6 floppy.i  
+
+               U: pblast   -bddcov -bddmin -pred ../irpMaf.preds -dfs -clp 
+                           -nofp -predH 7 -craig 2 -scope floppy-BLAST.c 
+                           (not working yet) 
+kbfiltr-safe}    R: pblast -craig 2 -scope -cldepth 1 -timezero  -dfs kbfiltr-BLAST.c  
+                 U: pblast -craig 2 -dfs -predH 7 kbfiltr-BLAST.c 
+kbfiltr-unsafe-1 U: pblast -craig 2 -dfs -predH 7 kbfiltr-BLAST-unsafe-1.c 
+kbfiltr-unsafe-2 U: pblast -dfs -craig 2 -predH 7 kbfiltr-BLAST-unsafe-2.c 
+
+mouclass
+---------------------------------------------------------------------------------------
+ssh-clnt-1..4
+ssh-srvr-1..16   
+---------------------------------------------------------------------------------------
+stmate-trivial-1..2  U1: pblast -craig 2 -dfs -predH 7 statemate-BLAST-trivial-safe-1.c 
+                     U2: pblast -craig 2  -dfs  statemate-BLAST-trivial-safe-1.c 
+stmate-timed-short}  U: pblast -craig 2  -predH 7 statemate-shorter-BLAST-timed-1.c 
+---------------------------------------------------------------------------------------
+tcas            R: pblast -craig 2 -dfs -nolattice tcas.i -L PROPERTY1A  
+---------------------------------------------------------------------------------------
+\end{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\small
+\bibliographystyle{plain}
+\begin{thebibliography}{10}
+\bibitem{BLAST-web}
+{D}. {B}eyer, {T}.{A}. {H}enzinger, {R}. {J}hala, and {R}. {M}ajumdar.
+\newblock {BLAST}: {B}erkeley {L}azy {A}bstraction {S}oftware {V}erification
+  {T}ool.
+\newblock URL http://mtc.epfl.ch/software-tools/blast/index-epfl.php.
+
+\bibitem{beyer07blast}
+D.~Beyer, T.A. Henzinger, R.~Jhala, and R.~Majumdar.
+\newblock The {S}oftware {M}odel {C}hecker {BLAST}.
+\newblock {\em Int. J. STTT}, 9:505--525, 2007.
+
+\bibitem{ARMC07}
+Andreas Podelski and Andrey Rybalchenko.
+\newblock {ARMC}: {T}he {L}ogical {C}hoice for {S}oftware {M}odel {C}hecking
+  with {A}bstraction {R}efinement.
+\newblock In {\em PADL}, 2007.
+
+\bibitem{ARMC-web}
+{A}. {R}ybalchenko.
+\newblock {ARMC}: {A}bstraction {R}efinement {M}odel {C}hecker.
+\newblock URL http://www.mpi-sws.org/\~{}rybal/armc/.
+
+\bibitem{malardalenbenchmark}
+M\"{a}lardalen {WCET} research group benchmarks.
+\newblock URL {\tt
+  h\-t\-t\-p://www.m\-r\-t\-c.m\-d\-h.se/pro\-jects/w\-c\-e\-t/bench\-marks.ht%
+ml}, 2006.
+
+\end{thebibliography}
+
+}
+
+
+\end{document}

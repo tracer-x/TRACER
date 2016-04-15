@@ -1,0 +1,3 @@
+Replaced bitwise operations with normal integer operations,
+removed initialization outside function.
+

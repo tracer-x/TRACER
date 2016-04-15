@@ -1,0 +1,30 @@
+main_univ(N):-
+	ztime,
+	functor(G0,foo,N),
+	G0 =.. [_|X0s],
+	functor(G1,foo,N),
+	G1 =.. [_|X1s],
+	map(X0s,X1s),
+	ctime(Time),
+	printf("Finished % in % seconds \n",[N,Time]).
+
+map([],[]).
+map([X|Xs],[a|Ys]):-
+	map(Xs,Ys).
+
+main_arg(N):-
+	ztime,
+	functor(G0,foo,N),
+	functor(G1,foo,N),
+	map_arg(1,N,G0,G1),
+	ctime(Time),
+	printf("Finished % in % seconds \n",[N,Time]).
+
+map_arg(I,N,G0,G1):- I > N, !.
+map_arg(I,N,G0,G1):- 
+        arg(I,G1,X),
+	X = a,
+	map_arg(I+1,N,G0,G1).
+
+	
+	

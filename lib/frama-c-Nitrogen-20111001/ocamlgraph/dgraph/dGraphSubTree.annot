@@ -1,0 +1,2920 @@
+"dgraph/dGraphSubTree.ml" 86 3190 3203 "dgraph/dGraphSubTree.ml" 86 3190 3220
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 87 3221 3235 "dgraph/dGraphSubTree.ml" 87 3221 3255
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3325 "dgraph/dGraphSubTree.ml" 92 3320 3330
+type(
+  Tree.E.t -> Tree.E.t -> bool
+)
+ident(
+  def equal "dgraph/dGraphSubTree.ml" 93 3360 3361 "dgraph/dGraphSubTree.ml" 94 3385 3395
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3331 "dgraph/dGraphSubTree.ml" 92 3320 3332
+type(
+  Tree.E.t
+)
+ident(
+  def x "dgraph/dGraphSubTree.ml" 92 3320 3333 "dgraph/dGraphSubTree.ml" 92 3320 3359
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3333 "dgraph/dGraphSubTree.ml" 92 3320 3334
+type(
+  Tree.E.t
+)
+ident(
+  def y "dgraph/dGraphSubTree.ml" 92 3320 3337 "dgraph/dGraphSubTree.ml" 92 3320 3359
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3337 "dgraph/dGraphSubTree.ml" 92 3320 3351
+type(
+  Tree.E.t -> Tree.E.t -> int
+)
+ident(
+  ext_ref Tree.E.compare
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3352 "dgraph/dGraphSubTree.ml" 92 3320 3353
+type(
+  Tree.E.t
+)
+ident(
+  int_ref x "dgraph/dGraphSubTree.ml" 92 3320 3331 "dgraph/dGraphSubTree.ml" 92 3320 3332
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3354 "dgraph/dGraphSubTree.ml" 92 3320 3355
+type(
+  Tree.E.t
+)
+ident(
+  int_ref y "dgraph/dGraphSubTree.ml" 92 3320 3333 "dgraph/dGraphSubTree.ml" 92 3320 3334
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3337 "dgraph/dGraphSubTree.ml" 92 3320 3355
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3356 "dgraph/dGraphSubTree.ml" 92 3320 3357
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3358 "dgraph/dGraphSubTree.ml" 92 3320 3359
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 92 3320 3337 "dgraph/dGraphSubTree.ml" 92 3320 3359
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 93 3360 3365 "dgraph/dGraphSubTree.ml" 93 3360 3369
+type(
+  'a -> int
+)
+ident(
+  def hash "dgraph/dGraphSubTree.ml" 93 3360 3384 "dgraph/dGraphSubTree.ml" 94 3385 3395
+)
+"dgraph/dGraphSubTree.ml" 93 3360 3372 "dgraph/dGraphSubTree.ml" 93 3360 3384
+type(
+  'a -> int
+)
+ident(
+  ext_ref Hashtbl.hash
+)
+"dgraph/dGraphSubTree.ml" 89 3270 3274 "dgraph/dGraphSubTree.ml" 94 3385 3396
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 107 3674 3680 "dgraph/dGraphSubTree.ml" 107 3674 3693
+type(
+  t -> Tree.t
+)
+ident(
+  def get_structure "dgraph/dGraphSubTree.ml" 108 3712 3714 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 107 3674 3694 "dgraph/dGraphSubTree.ml" 107 3674 3695
+type(
+  t
+)
+ident(
+  def t "dgraph/dGraphSubTree.ml" 107 3674 3698 "dgraph/dGraphSubTree.ml" 107 3674 3709
+)
+"dgraph/dGraphSubTree.ml" 107 3674 3698 "dgraph/dGraphSubTree.ml" 107 3674 3699
+type(
+  t
+)
+ident(
+  int_ref t "dgraph/dGraphSubTree.ml" 107 3674 3694 "dgraph/dGraphSubTree.ml" 107 3674 3695
+)
+"dgraph/dGraphSubTree.ml" 107 3674 3698 "dgraph/dGraphSubTree.ml" 107 3674 3709
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 108 3712 3718 "dgraph/dGraphSubTree.ml" 108 3712 3726
+type(
+  t -> Tree.V.t
+)
+ident(
+  def get_root "dgraph/dGraphSubTree.ml" 112 3841 3843 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 108 3712 3727 "dgraph/dGraphSubTree.ml" 108 3712 3728
+type(
+  t
+)
+ident(
+  def t "dgraph/dGraphSubTree.ml" 108 3712 3731 "dgraph/dGraphSubTree.ml" 108 3712 3737
+)
+"dgraph/dGraphSubTree.ml" 108 3712 3731 "dgraph/dGraphSubTree.ml" 108 3712 3732
+type(
+  t
+)
+ident(
+  int_ref t "dgraph/dGraphSubTree.ml" 108 3712 3727 "dgraph/dGraphSubTree.ml" 108 3712 3728
+)
+"dgraph/dGraphSubTree.ml" 108 3712 3731 "dgraph/dGraphSubTree.ml" 108 3712 3737
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 112 3841 3847 "dgraph/dGraphSubTree.ml" 112 3841 3864
+type(
+  H.key -> t -> Tree.V.t list
+)
+ident(
+  def get_tree_vertices "dgraph/dGraphSubTree.ml" 117 4014 4016 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 112 3841 3865 "dgraph/dGraphSubTree.ml" 112 3841 3871
+type(
+  H.key
+)
+ident(
+  def vertex "dgraph/dGraphSubTree.ml" 112 3841 3872 "dgraph/dGraphSubTree.ml" 114 3929 3963
+)
+"dgraph/dGraphSubTree.ml" 112 3841 3872 "dgraph/dGraphSubTree.ml" 112 3841 3876
+type(
+  t
+)
+ident(
+  def tree "dgraph/dGraphSubTree.ml" 113 3879 3883 "dgraph/dGraphSubTree.ml" 114 3929 3963
+)
+"dgraph/dGraphSubTree.ml" 113 3879 3887 "dgraph/dGraphSubTree.ml" 113 3879 3897
+type(
+  Tree.V.t H.t -> H.key -> Tree.V.t list
+)
+ident(
+  ext_ref H.find_all
+)
+"dgraph/dGraphSubTree.ml" 113 3879 3898 "dgraph/dGraphSubTree.ml" 113 3879 3902
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 112 3841 3872 "dgraph/dGraphSubTree.ml" 112 3841 3876
+)
+"dgraph/dGraphSubTree.ml" 113 3879 3898 "dgraph/dGraphSubTree.ml" 113 3879 3921
+type(
+  Tree.V.t H.t
+)
+"dgraph/dGraphSubTree.ml" 113 3879 3922 "dgraph/dGraphSubTree.ml" 113 3879 3928
+type(
+  H.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 112 3841 3865 "dgraph/dGraphSubTree.ml" 112 3841 3871
+)
+"dgraph/dGraphSubTree.ml" 113 3879 3887 "dgraph/dGraphSubTree.ml" 113 3879 3928
+call(
+  stack
+)
+type(
+  Tree.V.t list
+)
+"dgraph/dGraphSubTree.ml" 114 3929 3938 "dgraph/dGraphSubTree.ml" 114 3929 3947
+type(
+  exn
+)
+"dgraph/dGraphSubTree.ml" 114 3929 3951 "dgraph/dGraphSubTree.ml" 114 3929 3963
+type(
+  Tree.V.t list
+)
+"dgraph/dGraphSubTree.ml" 113 3879 3883 "dgraph/dGraphSubTree.ml" 114 3929 3963
+type(
+  Tree.V.t list
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4020 "dgraph/dGraphSubTree.ml" 117 4014 4033
+type(
+  HT.key -> t -> bool
+)
+ident(
+  def is_ghost_node "dgraph/dGraphSubTree.ml" 120 4120 4122 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4034 "dgraph/dGraphSubTree.ml" 117 4014 4035
+type(
+  HT.key
+)
+ident(
+  def v "dgraph/dGraphSubTree.ml" 117 4014 4036 "dgraph/dGraphSubTree.ml" 117 4014 4071
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4036 "dgraph/dGraphSubTree.ml" 117 4014 4040
+type(
+  t
+)
+ident(
+  def tree "dgraph/dGraphSubTree.ml" 117 4014 4043 "dgraph/dGraphSubTree.ml" 117 4014 4071
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4043 "dgraph/dGraphSubTree.ml" 117 4014 4049
+type(
+  unit HT.t -> HT.key -> bool
+)
+ident(
+  ext_ref HT.mem
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4050 "dgraph/dGraphSubTree.ml" 117 4014 4054
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 117 4014 4036 "dgraph/dGraphSubTree.ml" 117 4014 4040
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4050 "dgraph/dGraphSubTree.ml" 117 4014 4069
+type(
+  unit HT.t
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4070 "dgraph/dGraphSubTree.ml" 117 4014 4071
+type(
+  HT.key
+)
+ident(
+  int_ref v "dgraph/dGraphSubTree.ml" 117 4014 4034 "dgraph/dGraphSubTree.ml" 117 4014 4035
+)
+"dgraph/dGraphSubTree.ml" 117 4014 4043 "dgraph/dGraphSubTree.ml" 117 4014 4071
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4126 "dgraph/dGraphSubTree.ml" 120 4120 4139
+type(
+  HE.key -> t -> bool
+)
+ident(
+  def is_ghost_edge "dgraph/dGraphSubTree.ml" 122 4178 4180 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4140 "dgraph/dGraphSubTree.ml" 120 4120 4141
+type(
+  HE.key
+)
+ident(
+  def e "dgraph/dGraphSubTree.ml" 120 4120 4142 "dgraph/dGraphSubTree.ml" 120 4120 4174
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4142 "dgraph/dGraphSubTree.ml" 120 4120 4146
+type(
+  t
+)
+ident(
+  def tree "dgraph/dGraphSubTree.ml" 120 4120 4149 "dgraph/dGraphSubTree.ml" 120 4120 4174
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4149 "dgraph/dGraphSubTree.ml" 120 4120 4155
+type(
+  unit HE.t -> HE.key -> bool
+)
+ident(
+  ext_ref HE.mem
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4156 "dgraph/dGraphSubTree.ml" 120 4120 4160
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 120 4120 4142 "dgraph/dGraphSubTree.ml" 120 4120 4146
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4156 "dgraph/dGraphSubTree.ml" 120 4120 4172
+type(
+  unit HE.t
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4173 "dgraph/dGraphSubTree.ml" 120 4120 4174
+type(
+  HE.key
+)
+ident(
+  int_ref e "dgraph/dGraphSubTree.ml" 120 4120 4140 "dgraph/dGraphSubTree.ml" 120 4120 4141
+)
+"dgraph/dGraphSubTree.ml" 120 4120 4149 "dgraph/dGraphSubTree.ml" 120 4120 4174
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 126 4333 4339 "dgraph/dGraphSubTree.ml" 126 4333 4355
+type(
+  HT.key -> t -> Tree.V.label
+)
+ident(
+  def get_graph_vertex "dgraph/dGraphSubTree.ml" 132 4555 4557 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 126 4333 4356 "dgraph/dGraphSubTree.ml" 126 4333 4362
+type(
+  HT.key
+)
+ident(
+  def vertex "dgraph/dGraphSubTree.ml" 126 4333 4363 "dgraph/dGraphSubTree.ml" 128 4425 4453
+)
+"dgraph/dGraphSubTree.ml" 126 4333 4363 "dgraph/dGraphSubTree.ml" 126 4333 4367
+type(
+  t
+)
+ident(
+  def tree "dgraph/dGraphSubTree.ml" 127 4370 4374 "dgraph/dGraphSubTree.ml" 128 4425 4453
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4377 "dgraph/dGraphSubTree.ml" 127 4370 4390
+type(
+  HT.key -> t -> bool
+)
+ident(
+  int_ref is_ghost_node "dgraph/dGraphSubTree.ml" 117 4014 4020 "dgraph/dGraphSubTree.ml" 117 4014 4033
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4391 "dgraph/dGraphSubTree.ml" 127 4370 4397
+type(
+  HT.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 126 4333 4356 "dgraph/dGraphSubTree.ml" 126 4333 4362
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4398 "dgraph/dGraphSubTree.ml" 127 4370 4402
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 126 4333 4363 "dgraph/dGraphSubTree.ml" 126 4333 4367
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4377 "dgraph/dGraphSubTree.ml" 127 4370 4402
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4408 "dgraph/dGraphSubTree.ml" 127 4370 4413
+type(
+  exn -> Tree.V.label
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4414 "dgraph/dGraphSubTree.ml" 127 4370 4424
+type(
+  exn
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4408 "dgraph/dGraphSubTree.ml" 127 4370 4424
+type(
+  Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 128 4425 4434 "dgraph/dGraphSubTree.ml" 128 4425 4446
+type(
+  Tree.V.t -> Tree.V.label
+)
+ident(
+  ext_ref Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 128 4425 4447 "dgraph/dGraphSubTree.ml" 128 4425 4453
+type(
+  HT.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 126 4333 4356 "dgraph/dGraphSubTree.ml" 126 4333 4362
+)
+"dgraph/dGraphSubTree.ml" 128 4425 4434 "dgraph/dGraphSubTree.ml" 128 4425 4453
+call(
+  tail
+)
+type(
+  Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 127 4370 4374 "dgraph/dGraphSubTree.ml" 128 4425 4453
+type(
+  Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4561 "dgraph/dGraphSubTree.ml" 132 4555 4566
+type(
+  GA.t -> t -> H.key -> Tree.E.vertex -> bool -> int -> unit
+)
+ident(
+  def build "dgraph/dGraphSubTree.ml" 258 8716 8718 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4567 "dgraph/dGraphSubTree.ml" 132 4555 4576
+type(
+  GA.t
+)
+ident(
+  def src_graph "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 211 7195 7213
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+type(
+  t
+)
+ident(
+  def tree "dgraph/dGraphSubTree.ml" 132 4555 4582 "dgraph/dGraphSubTree.ml" 211 7195 7213
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4582 "dgraph/dGraphSubTree.ml" 132 4555 4592
+type(
+  H.key
+)
+ident(
+  def src_vertex "dgraph/dGraphSubTree.ml" 132 4555 4593 "dgraph/dGraphSubTree.ml" 211 7195 7213
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4593 "dgraph/dGraphSubTree.ml" 132 4555 4602
+type(
+  Tree.E.vertex
+)
+ident(
+  def tree_root "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 211 7195 7213
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+type(
+  bool
+)
+ident(
+  def backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4617 "dgraph/dGraphSubTree.ml" 211 7195 7213
+)
+"dgraph/dGraphSubTree.ml" 132 4555 4617 "dgraph/dGraphSubTree.ml" 132 4555 4622
+type(
+  int
+)
+ident(
+  def depth "dgraph/dGraphSubTree.ml" 133 4625 4629 "dgraph/dGraphSubTree.ml" 211 7195 7213
+)
+"dgraph/dGraphSubTree.ml" 133 4625 4633 "dgraph/dGraphSubTree.ml" 133 4625 4650
+type(
+  Tree.V.t -> int -> unit
+)
+"dgraph/dGraphSubTree.ml" 133 4625 4651 "dgraph/dGraphSubTree.ml" 133 4625 4652
+type(
+  Tree.V.t
+)
+ident(
+  def v "dgraph/dGraphSubTree.ml" 133 4625 4653 "dgraph/dGraphSubTree.ml" 145 5122 5132
+)
+"dgraph/dGraphSubTree.ml" 133 4625 4653 "dgraph/dGraphSubTree.ml" 133 4625 4660
+type(
+  int
+)
+ident(
+  def missing "dgraph/dGraphSubTree.ml" 134 4663 4669 "dgraph/dGraphSubTree.ml" 145 5122 5132
+)
+"dgraph/dGraphSubTree.ml" 134 4663 4673 "dgraph/dGraphSubTree.ml" 134 4663 4684
+type(
+  Tree.V.t ref
+)
+"dgraph/dGraphSubTree.ml" 134 4663 4687 "dgraph/dGraphSubTree.ml" 134 4663 4690
+type(
+  Tree.V.t -> Tree.V.t ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/dGraphSubTree.ml" 134 4663 4691 "dgraph/dGraphSubTree.ml" 134 4663 4692
+type(
+  Tree.V.t
+)
+ident(
+  int_ref v "dgraph/dGraphSubTree.ml" 133 4625 4651 "dgraph/dGraphSubTree.ml" 133 4625 4652
+)
+"dgraph/dGraphSubTree.ml" 134 4663 4687 "dgraph/dGraphSubTree.ml" 134 4663 4692
+type(
+  Tree.V.t ref
+)
+"dgraph/dGraphSubTree.ml" 135 4696 4706 "dgraph/dGraphSubTree.ml" 135 4696 4717
+type(
+  Tree.V.t ref
+)
+"dgraph/dGraphSubTree.ml" 135 4696 4720 "dgraph/dGraphSubTree.ml" 135 4696 4723
+type(
+  Tree.V.t -> Tree.V.t ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/dGraphSubTree.ml" 135 4696 4724 "dgraph/dGraphSubTree.ml" 135 4696 4725
+type(
+  Tree.V.t
+)
+ident(
+  int_ref v "dgraph/dGraphSubTree.ml" 133 4625 4651 "dgraph/dGraphSubTree.ml" 133 4625 4652
+)
+"dgraph/dGraphSubTree.ml" 135 4696 4720 "dgraph/dGraphSubTree.ml" 135 4696 4725
+type(
+  Tree.V.t ref
+)
+"dgraph/dGraphSubTree.ml" 136 4729 4743 "dgraph/dGraphSubTree.ml" 136 4729 4744
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 136 4729 4748 "dgraph/dGraphSubTree.ml" 136 4729 4755
+type(
+  int
+)
+ident(
+  int_ref missing "dgraph/dGraphSubTree.ml" 133 4625 4653 "dgraph/dGraphSubTree.ml" 133 4625 4660
+)
+"dgraph/dGraphSubTree.ml" 136 4729 4756 "dgraph/dGraphSubTree.ml" 136 4729 4757
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/dGraphSubTree.ml" 136 4729 4758 "dgraph/dGraphSubTree.ml" 136 4729 4759
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 136 4729 4748 "dgraph/dGraphSubTree.ml" 136 4729 4759
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4764 "dgraph/dGraphSubTree.ml" 137 4763 4775
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref next_vertex "dgraph/dGraphSubTree.ml" 135 4696 4706 "dgraph/dGraphSubTree.ml" 135 4696 4717
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4776 "dgraph/dGraphSubTree.ml" 137 4763 4778
+type(
+  Tree.V.t ref -> Tree.V.t -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4779 "dgraph/dGraphSubTree.ml" 137 4763 4792
+type(
+  Tree.V.label -> Tree.V.t
+)
+ident(
+  ext_ref Tree.V.create
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4794 "dgraph/dGraphSubTree.ml" 137 4763 4806
+type(
+  Tree.V.t -> Tree.V.label
+)
+ident(
+  ext_ref Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4807 "dgraph/dGraphSubTree.ml" 137 4763 4808
+type(
+  Tree.V.t
+)
+ident(
+  int_ref v "dgraph/dGraphSubTree.ml" 133 4625 4651 "dgraph/dGraphSubTree.ml" 133 4625 4652
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4793 "dgraph/dGraphSubTree.ml" 137 4763 4809
+call(
+  stack
+)
+type(
+  Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4779 "dgraph/dGraphSubTree.ml" 137 4763 4809
+call(
+  stack
+)
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4764 "dgraph/dGraphSubTree.ml" 137 4763 4809
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4812 "dgraph/dGraphSubTree.ml" 138 4811 4818
+type(
+  unit HT.t -> HT.key -> unit -> unit
+)
+ident(
+  ext_ref HT.add
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4819 "dgraph/dGraphSubTree.ml" 138 4811 4823
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4819 "dgraph/dGraphSubTree.ml" 138 4811 4838
+type(
+  unit HT.t
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4839 "dgraph/dGraphSubTree.ml" 138 4811 4840
+type(
+  Tree.V.t ref -> Tree.V.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4840 "dgraph/dGraphSubTree.ml" 138 4811 4851
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref next_vertex "dgraph/dGraphSubTree.ml" 135 4696 4706 "dgraph/dGraphSubTree.ml" 135 4696 4717
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4839 "dgraph/dGraphSubTree.ml" 138 4811 4851
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4852 "dgraph/dGraphSubTree.ml" 138 4811 4854
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4812 "dgraph/dGraphSubTree.ml" 138 4811 4854
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 139 4856 4861 "dgraph/dGraphSubTree.ml" 139 4856 4875
+type(
+  Tree.E.t
+)
+ident(
+  def new_ghost_edge "dgraph/dGraphSubTree.ml" 142 4997 5001 "dgraph/dGraphSubTree.ml" 144 5092 5121
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4884 "dgraph/dGraphSubTree.ml" 140 4878 4897
+type(
+  bool
+)
+ident(
+  int_ref backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4903 "dgraph/dGraphSubTree.ml" 140 4878 4916
+type(
+  Tree.E.vertex -> Tree.E.label -> Tree.E.vertex -> Tree.E.t
+)
+ident(
+  ext_ref Tree.E.create
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4917 "dgraph/dGraphSubTree.ml" 140 4878 4918
+type(
+  Tree.V.t ref -> Tree.V.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4918 "dgraph/dGraphSubTree.ml" 140 4878 4929
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref next_vertex "dgraph/dGraphSubTree.ml" 135 4696 4706 "dgraph/dGraphSubTree.ml" 135 4696 4717
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4917 "dgraph/dGraphSubTree.ml" 140 4878 4929
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4930 "dgraph/dGraphSubTree.ml" 140 4878 4932
+type(
+  Tree.E.label
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4933 "dgraph/dGraphSubTree.ml" 140 4878 4934
+type(
+  Tree.V.t ref -> Tree.V.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4934 "dgraph/dGraphSubTree.ml" 140 4878 4945
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref pred_vertex "dgraph/dGraphSubTree.ml" 134 4663 4673 "dgraph/dGraphSubTree.ml" 134 4663 4684
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4933 "dgraph/dGraphSubTree.ml" 140 4878 4945
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4903 "dgraph/dGraphSubTree.ml" 140 4878 4945
+call(
+  stack
+)
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4954 "dgraph/dGraphSubTree.ml" 141 4946 4967
+type(
+  Tree.E.vertex -> Tree.E.label -> Tree.E.vertex -> Tree.E.t
+)
+ident(
+  ext_ref Tree.E.create
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4968 "dgraph/dGraphSubTree.ml" 141 4946 4969
+type(
+  Tree.V.t ref -> Tree.V.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4969 "dgraph/dGraphSubTree.ml" 141 4946 4980
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref pred_vertex "dgraph/dGraphSubTree.ml" 134 4663 4673 "dgraph/dGraphSubTree.ml" 134 4663 4684
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4968 "dgraph/dGraphSubTree.ml" 141 4946 4980
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4981 "dgraph/dGraphSubTree.ml" 141 4946 4983
+type(
+  Tree.E.label
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4984 "dgraph/dGraphSubTree.ml" 141 4946 4985
+type(
+  Tree.V.t ref -> Tree.V.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4985 "dgraph/dGraphSubTree.ml" 141 4946 4996
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref next_vertex "dgraph/dGraphSubTree.ml" 135 4696 4706 "dgraph/dGraphSubTree.ml" 135 4696 4717
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4984 "dgraph/dGraphSubTree.ml" 141 4946 4996
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 141 4946 4954 "dgraph/dGraphSubTree.ml" 141 4946 4996
+call(
+  stack
+)
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 140 4878 4881 "dgraph/dGraphSubTree.ml" 141 4946 4996
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 142 4997 5001 "dgraph/dGraphSubTree.ml" 142 4997 5016
+type(
+  Tree.t -> Tree.E.t -> unit
+)
+ident(
+  ext_ref Tree.add_edge_e
+)
+"dgraph/dGraphSubTree.ml" 142 4997 5017 "dgraph/dGraphSubTree.ml" 142 4997 5021
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 142 4997 5017 "dgraph/dGraphSubTree.ml" 142 4997 5031
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 142 4997 5032 "dgraph/dGraphSubTree.ml" 142 4997 5046
+type(
+  Tree.E.t
+)
+ident(
+  int_ref new_ghost_edge "dgraph/dGraphSubTree.ml" 139 4856 4861 "dgraph/dGraphSubTree.ml" 139 4856 4875
+)
+"dgraph/dGraphSubTree.ml" 142 4997 5001 "dgraph/dGraphSubTree.ml" 142 4997 5046
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5049 "dgraph/dGraphSubTree.ml" 143 5048 5055
+type(
+  unit HE.t -> HE.key -> unit -> unit
+)
+ident(
+  ext_ref HE.add
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5056 "dgraph/dGraphSubTree.ml" 143 5048 5060
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5056 "dgraph/dGraphSubTree.ml" 143 5048 5072
+type(
+  unit HE.t
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5073 "dgraph/dGraphSubTree.ml" 143 5048 5087
+type(
+  Tree.E.t
+)
+ident(
+  int_ref new_ghost_edge "dgraph/dGraphSubTree.ml" 139 4856 4861 "dgraph/dGraphSubTree.ml" 139 4856 4875
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5088 "dgraph/dGraphSubTree.ml" 143 5048 5090
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5049 "dgraph/dGraphSubTree.ml" 143 5048 5090
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 144 5092 5093 "dgraph/dGraphSubTree.ml" 144 5092 5104
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref pred_vertex "dgraph/dGraphSubTree.ml" 134 4663 4673 "dgraph/dGraphSubTree.ml" 134 4663 4684
+)
+"dgraph/dGraphSubTree.ml" 144 5092 5105 "dgraph/dGraphSubTree.ml" 144 5092 5107
+type(
+  Tree.V.t ref -> Tree.V.t -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 144 5092 5108 "dgraph/dGraphSubTree.ml" 144 5092 5109
+type(
+  Tree.V.t ref -> Tree.V.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 144 5092 5109 "dgraph/dGraphSubTree.ml" 144 5092 5120
+type(
+  Tree.V.t ref
+)
+ident(
+  int_ref next_vertex "dgraph/dGraphSubTree.ml" 135 4696 4706 "dgraph/dGraphSubTree.ml" 135 4696 4717
+)
+"dgraph/dGraphSubTree.ml" 144 5092 5108 "dgraph/dGraphSubTree.ml" 144 5092 5120
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 144 5092 5093 "dgraph/dGraphSubTree.ml" 144 5092 5121
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 143 5048 5049 "dgraph/dGraphSubTree.ml" 144 5092 5121
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 142 4997 5001 "dgraph/dGraphSubTree.ml" 144 5092 5121
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 139 4856 4857 "dgraph/dGraphSubTree.ml" 144 5092 5121
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 138 4811 4812 "dgraph/dGraphSubTree.ml" 144 5092 5121
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 137 4763 4764 "dgraph/dGraphSubTree.ml" 144 5092 5121
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 136 4729 4735 "dgraph/dGraphSubTree.ml" 145 5122 5132
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 135 4696 4702 "dgraph/dGraphSubTree.ml" 145 5122 5132
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 134 4663 4669 "dgraph/dGraphSubTree.ml" 145 5122 5132
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+type(
+  bool ref
+)
+"dgraph/dGraphSubTree.ml" 147 5140 5159 "dgraph/dGraphSubTree.ml" 147 5140 5162
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/dGraphSubTree.ml" 147 5140 5163 "dgraph/dGraphSubTree.ml" 147 5140 5168
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 147 5140 5159 "dgraph/dGraphSubTree.ml" 147 5140 5168
+type(
+  bool ref
+)
+"dgraph/dGraphSubTree.ml" 148 5172 5180 "dgraph/dGraphSubTree.ml" 148 5172 5194
+type(
+  bool H.t
+)
+"dgraph/dGraphSubTree.ml" 148 5172 5197 "dgraph/dGraphSubTree.ml" 148 5172 5205
+type(
+  int -> bool H.t
+)
+ident(
+  ext_ref H.create
+)
+"dgraph/dGraphSubTree.ml" 148 5172 5206 "dgraph/dGraphSubTree.ml" 148 5172 5208
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 148 5172 5197 "dgraph/dGraphSubTree.ml" 148 5172 5208
+call(
+  stack
+)
+type(
+  bool H.t
+)
+"dgraph/dGraphSubTree.ml" 149 5212 5220 "dgraph/dGraphSubTree.ml" 149 5212 5225
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+"dgraph/dGraphSubTree.ml" 149 5212 5228 "dgraph/dGraphSubTree.ml" 149 5212 5240
+type(
+  unit -> (Tree.V.label * Tree.V.t * int) Queue.t
+)
+ident(
+  ext_ref Queue.create
+)
+"dgraph/dGraphSubTree.ml" 149 5212 5241 "dgraph/dGraphSubTree.ml" 149 5212 5243
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 149 5212 5228 "dgraph/dGraphSubTree.ml" 149 5212 5243
+call(
+  stack
+)
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+"dgraph/dGraphSubTree.ml" 150 5247 5251 "dgraph/dGraphSubTree.ml" 150 5247 5256
+type(
+  bool H.t -> H.key -> bool -> unit
+)
+ident(
+  ext_ref H.add
+)
+"dgraph/dGraphSubTree.ml" 150 5247 5257 "dgraph/dGraphSubTree.ml" 150 5247 5271
+type(
+  bool H.t
+)
+ident(
+  int_ref vertex_visited "dgraph/dGraphSubTree.ml" 148 5172 5180 "dgraph/dGraphSubTree.ml" 148 5172 5194
+)
+"dgraph/dGraphSubTree.ml" 150 5247 5272 "dgraph/dGraphSubTree.ml" 150 5247 5282
+type(
+  H.key
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 132 4555 4582 "dgraph/dGraphSubTree.ml" 132 4555 4592
+)
+"dgraph/dGraphSubTree.ml" 150 5247 5283 "dgraph/dGraphSubTree.ml" 150 5247 5287
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 150 5247 5251 "dgraph/dGraphSubTree.ml" 150 5247 5287
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 152 5316 5323 "dgraph/dGraphSubTree.ml" 152 5316 5328
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 132 4555 4617 "dgraph/dGraphSubTree.ml" 132 4555 4622
+)
+"dgraph/dGraphSubTree.ml" 152 5316 5329 "dgraph/dGraphSubTree.ml" 152 5316 5331
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<>
+)
+"dgraph/dGraphSubTree.ml" 152 5316 5332 "dgraph/dGraphSubTree.ml" 152 5316 5333
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 152 5316 5323 "dgraph/dGraphSubTree.ml" 152 5316 5333
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 153 5339 5348 "dgraph/dGraphSubTree.ml" 153 5339 5361
+type(
+  bool
+)
+ident(
+  int_ref backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+)
+"dgraph/dGraphSubTree.ml" 154 5367 5368 "dgraph/dGraphSubTree.ml" 154 5367 5380
+type(
+  (Tree.V.label -> unit) -> GA.t -> H.key -> unit
+)
+ident(
+  ext_ref GA.iter_pred
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5389 "dgraph/dGraphSubTree.ml" 155 5381 5390
+type(
+  Tree.V.label
+)
+ident(
+  def a "dgraph/dGraphSubTree.ml" 155 5381 5394 "dgraph/dGraphSubTree.ml" 155 5381 5431
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5394 "dgraph/dGraphSubTree.ml" 155 5381 5403
+type(
+  Tree.V.label * Tree.V.t * int ->
+  (Tree.V.label * Tree.V.t * int) Queue.t -> unit
+)
+ident(
+  ext_ref Queue.add
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5405 "dgraph/dGraphSubTree.ml" 155 5381 5406
+type(
+  Tree.V.label
+)
+ident(
+  int_ref a "dgraph/dGraphSubTree.ml" 155 5381 5389 "dgraph/dGraphSubTree.ml" 155 5381 5390
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5408 "dgraph/dGraphSubTree.ml" 155 5381 5417
+type(
+  Tree.E.vertex
+)
+ident(
+  int_ref tree_root "dgraph/dGraphSubTree.ml" 132 4555 4593 "dgraph/dGraphSubTree.ml" 132 4555 4602
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5419 "dgraph/dGraphSubTree.ml" 155 5381 5424
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 132 4555 4617 "dgraph/dGraphSubTree.ml" 132 4555 4622
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5404 "dgraph/dGraphSubTree.ml" 155 5381 5425
+type(
+  Tree.V.label * Tree.V.t * int
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5426 "dgraph/dGraphSubTree.ml" 155 5381 5431
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+ident(
+  int_ref queue "dgraph/dGraphSubTree.ml" 149 5212 5220 "dgraph/dGraphSubTree.ml" 149 5212 5225
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5394 "dgraph/dGraphSubTree.ml" 155 5381 5431
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 155 5381 5384 "dgraph/dGraphSubTree.ml" 155 5381 5432
+type(
+  Tree.V.label -> unit
+)
+"dgraph/dGraphSubTree.ml" 156 5433 5436 "dgraph/dGraphSubTree.ml" 156 5433 5445
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 132 4555 4567 "dgraph/dGraphSubTree.ml" 132 4555 4576
+)
+"dgraph/dGraphSubTree.ml" 157 5446 5449 "dgraph/dGraphSubTree.ml" 157 5446 5459
+type(
+  H.key
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 132 4555 4582 "dgraph/dGraphSubTree.ml" 132 4555 4592
+)
+"dgraph/dGraphSubTree.ml" 154 5367 5368 "dgraph/dGraphSubTree.ml" 157 5446 5459
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 159 5471 5472 "dgraph/dGraphSubTree.ml" 159 5471 5484
+type(
+  (Tree.V.label -> unit) -> GA.t -> H.key -> unit
+)
+ident(
+  ext_ref GA.iter_succ
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5493 "dgraph/dGraphSubTree.ml" 160 5485 5494
+type(
+  Tree.V.label
+)
+ident(
+  def a "dgraph/dGraphSubTree.ml" 160 5485 5498 "dgraph/dGraphSubTree.ml" 160 5485 5535
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5498 "dgraph/dGraphSubTree.ml" 160 5485 5507
+type(
+  Tree.V.label * Tree.V.t * int ->
+  (Tree.V.label * Tree.V.t * int) Queue.t -> unit
+)
+ident(
+  ext_ref Queue.add
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5509 "dgraph/dGraphSubTree.ml" 160 5485 5510
+type(
+  Tree.V.label
+)
+ident(
+  int_ref a "dgraph/dGraphSubTree.ml" 160 5485 5493 "dgraph/dGraphSubTree.ml" 160 5485 5494
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5512 "dgraph/dGraphSubTree.ml" 160 5485 5521
+type(
+  Tree.E.vertex
+)
+ident(
+  int_ref tree_root "dgraph/dGraphSubTree.ml" 132 4555 4593 "dgraph/dGraphSubTree.ml" 132 4555 4602
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5523 "dgraph/dGraphSubTree.ml" 160 5485 5528
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 132 4555 4617 "dgraph/dGraphSubTree.ml" 132 4555 4622
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5508 "dgraph/dGraphSubTree.ml" 160 5485 5529
+type(
+  Tree.V.label * Tree.V.t * int
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5530 "dgraph/dGraphSubTree.ml" 160 5485 5535
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+ident(
+  int_ref queue "dgraph/dGraphSubTree.ml" 149 5212 5220 "dgraph/dGraphSubTree.ml" 149 5212 5225
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5498 "dgraph/dGraphSubTree.ml" 160 5485 5535
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 160 5485 5488 "dgraph/dGraphSubTree.ml" 160 5485 5536
+type(
+  Tree.V.label -> unit
+)
+"dgraph/dGraphSubTree.ml" 161 5537 5540 "dgraph/dGraphSubTree.ml" 161 5537 5549
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 132 4555 4567 "dgraph/dGraphSubTree.ml" 132 4555 4576
+)
+"dgraph/dGraphSubTree.ml" 162 5550 5553 "dgraph/dGraphSubTree.ml" 162 5550 5563
+type(
+  H.key
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 132 4555 4582 "dgraph/dGraphSubTree.ml" 132 4555 4592
+)
+"dgraph/dGraphSubTree.ml" 159 5471 5472 "dgraph/dGraphSubTree.ml" 162 5550 5563
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 153 5339 5345 "dgraph/dGraphSubTree.ml" 162 5550 5563
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 152 5316 5320 "dgraph/dGraphSubTree.ml" 162 5550 5563
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 164 5587 5599 "dgraph/dGraphSubTree.ml" 164 5587 5610
+type(
+  unit -> unit
+)
+"dgraph/dGraphSubTree.ml" 164 5587 5611 "dgraph/dGraphSubTree.ml" 164 5587 5613
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5625 "dgraph/dGraphSubTree.ml" 165 5616 5628
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5629 "dgraph/dGraphSubTree.ml" 165 5616 5643
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t -> bool
+)
+ident(
+  ext_ref Queue.is_empty
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5644 "dgraph/dGraphSubTree.ml" 165 5616 5649
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+ident(
+  int_ref queue "dgraph/dGraphSubTree.ml" 149 5212 5220 "dgraph/dGraphSubTree.ml" 149 5212 5225
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5628 "dgraph/dGraphSubTree.ml" 165 5616 5650
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5625 "dgraph/dGraphSubTree.ml" 165 5616 5650
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+type(
+  Tree.V.label
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5675 "dgraph/dGraphSubTree.ml" 166 5662 5688
+type(
+  Tree.E.vertex
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5695
+type(
+  Tree.V.label * Tree.V.t * int
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5698 "dgraph/dGraphSubTree.ml" 166 5662 5708
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t -> Tree.V.label * Tree.V.t * int
+)
+ident(
+  ext_ref Queue.take
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5709 "dgraph/dGraphSubTree.ml" 166 5662 5714
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+ident(
+  int_ref queue "dgraph/dGraphSubTree.ml" 149 5212 5220 "dgraph/dGraphSubTree.ml" 149 5212 5225
+)
+"dgraph/dGraphSubTree.ml" 166 5662 5698 "dgraph/dGraphSubTree.ml" 166 5662 5714
+call(
+  stack
+)
+type(
+  Tree.V.label * Tree.V.t * int
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5722 "dgraph/dGraphSubTree.ml" 167 5718 5727
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5728 "dgraph/dGraphSubTree.ml" 167 5718 5729
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5730 "dgraph/dGraphSubTree.ml" 167 5718 5731
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5722 "dgraph/dGraphSubTree.ml" 167 5718 5731
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 168 5743 5763 "dgraph/dGraphSubTree.ml" 168 5743 5776
+type(
+  Tree.V.label -> Tree.V.t
+)
+ident(
+  ext_ref Tree.V.create
+)
+"dgraph/dGraphSubTree.ml" 168 5743 5777 "dgraph/dGraphSubTree.ml" 168 5743 5783
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 168 5743 5763 "dgraph/dGraphSubTree.ml" 168 5743 5783
+call(
+  stack
+)
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5790 "dgraph/dGraphSubTree.ml" 169 5787 5795
+type(
+  Tree.V.t H.t -> H.key -> Tree.V.t -> unit
+)
+ident(
+  ext_ref H.add
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5796 "dgraph/dGraphSubTree.ml" 169 5787 5800
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5796 "dgraph/dGraphSubTree.ml" 169 5787 5819
+type(
+  Tree.V.t H.t
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5820 "dgraph/dGraphSubTree.ml" 169 5787 5826
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5827 "dgraph/dGraphSubTree.ml" 169 5787 5837
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5790 "dgraph/dGraphSubTree.ml" 169 5787 5837
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 170 5839 5845 "dgraph/dGraphSubTree.ml" 170 5839 5858
+type(
+  bool
+)
+ident(
+  int_ref backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+)
+"dgraph/dGraphSubTree.ml" 171 5870 5879 "dgraph/dGraphSubTree.ml" 171 5870 5887
+type(
+  Tree.E.t
+)
+ident(
+  def new_edge "dgraph/dGraphSubTree.ml" 172 5935 5940 "dgraph/dGraphSubTree.ml" 172 5935 5979
+)
+"dgraph/dGraphSubTree.ml" 171 5870 5890 "dgraph/dGraphSubTree.ml" 171 5870 5903
+type(
+  Tree.E.vertex -> Tree.E.label -> Tree.E.vertex -> Tree.E.t
+)
+ident(
+  ext_ref Tree.E.create
+)
+"dgraph/dGraphSubTree.ml" 171 5870 5904 "dgraph/dGraphSubTree.ml" 171 5870 5914
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 171 5870 5915 "dgraph/dGraphSubTree.ml" 171 5870 5917
+type(
+  Tree.E.label
+)
+"dgraph/dGraphSubTree.ml" 171 5870 5918 "dgraph/dGraphSubTree.ml" 171 5870 5931
+type(
+  Tree.E.vertex
+)
+ident(
+  int_ref origin_vertex "dgraph/dGraphSubTree.ml" 166 5662 5675 "dgraph/dGraphSubTree.ml" 166 5662 5688
+)
+"dgraph/dGraphSubTree.ml" 171 5870 5890 "dgraph/dGraphSubTree.ml" 171 5870 5931
+call(
+  stack
+)
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 172 5935 5940 "dgraph/dGraphSubTree.ml" 172 5935 5955
+type(
+  Tree.t -> Tree.E.t -> unit
+)
+ident(
+  ext_ref Tree.add_edge_e
+)
+"dgraph/dGraphSubTree.ml" 172 5935 5956 "dgraph/dGraphSubTree.ml" 172 5935 5960
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 172 5935 5956 "dgraph/dGraphSubTree.ml" 172 5935 5970
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 172 5935 5971 "dgraph/dGraphSubTree.ml" 172 5935 5979
+type(
+  Tree.E.t
+)
+ident(
+  int_ref new_edge "dgraph/dGraphSubTree.ml" 171 5870 5879 "dgraph/dGraphSubTree.ml" 171 5870 5887
+)
+"dgraph/dGraphSubTree.ml" 172 5935 5940 "dgraph/dGraphSubTree.ml" 172 5935 5979
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 170 5839 5864 "dgraph/dGraphSubTree.ml" 173 5980 5986
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 174 5998 6007 "dgraph/dGraphSubTree.ml" 174 5998 6015
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 174 5998 6018 "dgraph/dGraphSubTree.ml" 174 5998 6031
+type(
+  Tree.E.vertex -> Tree.E.label -> Tree.E.vertex -> Tree.E.t
+)
+ident(
+  ext_ref Tree.E.create
+)
+"dgraph/dGraphSubTree.ml" 174 5998 6032 "dgraph/dGraphSubTree.ml" 174 5998 6045
+type(
+  Tree.E.vertex
+)
+ident(
+  int_ref origin_vertex "dgraph/dGraphSubTree.ml" 166 5662 5675 "dgraph/dGraphSubTree.ml" 166 5662 5688
+)
+"dgraph/dGraphSubTree.ml" 174 5998 6046 "dgraph/dGraphSubTree.ml" 174 5998 6048
+type(
+  Tree.E.label
+)
+"dgraph/dGraphSubTree.ml" 174 5998 6049 "dgraph/dGraphSubTree.ml" 174 5998 6059
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 174 5998 6018 "dgraph/dGraphSubTree.ml" 174 5998 6059
+call(
+  stack
+)
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 175 6063 6068 "dgraph/dGraphSubTree.ml" 175 6063 6083
+type(
+  Tree.t -> Tree.E.t -> unit
+)
+ident(
+  ext_ref Tree.add_edge_e
+)
+"dgraph/dGraphSubTree.ml" 175 6063 6084 "dgraph/dGraphSubTree.ml" 175 6063 6088
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 175 6063 6084 "dgraph/dGraphSubTree.ml" 175 6063 6098
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 175 6063 6099 "dgraph/dGraphSubTree.ml" 175 6063 6107
+type(
+  Tree.E.t
+)
+ident(
+  int_ref new_edge "dgraph/dGraphSubTree.ml" 174 5998 6007 "dgraph/dGraphSubTree.ml" 174 5998 6015
+)
+"dgraph/dGraphSubTree.ml" 175 6063 6068 "dgraph/dGraphSubTree.ml" 175 6063 6107
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 173 5980 5992 "dgraph/dGraphSubTree.ml" 176 6108 6114
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 170 5839 5842 "dgraph/dGraphSubTree.ml" 176 6108 6114
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6122 "dgraph/dGraphSubTree.ml" 177 6116 6125
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6126 "dgraph/dGraphSubTree.ml" 177 6116 6131
+type(
+  bool H.t -> H.key -> bool
+)
+ident(
+  ext_ref H.mem
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6132 "dgraph/dGraphSubTree.ml" 177 6116 6146
+type(
+  bool H.t
+)
+ident(
+  int_ref vertex_visited "dgraph/dGraphSubTree.ml" 148 5172 5180 "dgraph/dGraphSubTree.ml" 148 5172 5194
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6147 "dgraph/dGraphSubTree.ml" 177 6116 6153
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6125 "dgraph/dGraphSubTree.ml" 177 6116 6154
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6122 "dgraph/dGraphSubTree.ml" 177 6116 6154
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 178 6166 6171 "dgraph/dGraphSubTree.ml" 178 6166 6176
+type(
+  bool H.t -> H.key -> bool -> unit
+)
+ident(
+  ext_ref H.add
+)
+"dgraph/dGraphSubTree.ml" 178 6166 6177 "dgraph/dGraphSubTree.ml" 178 6166 6191
+type(
+  bool H.t
+)
+ident(
+  int_ref vertex_visited "dgraph/dGraphSubTree.ml" 148 5172 5180 "dgraph/dGraphSubTree.ml" 148 5172 5194
+)
+"dgraph/dGraphSubTree.ml" 178 6166 6192 "dgraph/dGraphSubTree.ml" 178 6166 6198
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 178 6166 6199 "dgraph/dGraphSubTree.ml" 178 6166 6203
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 178 6166 6171 "dgraph/dGraphSubTree.ml" 178 6166 6203
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 179 6205 6214 "dgraph/dGraphSubTree.ml" 179 6205 6218
+type(
+  ((Tree.V.label -> unit) -> GA.t -> Tree.V.label -> 'b) -> 'b
+)
+ident(
+  def iter "dgraph/dGraphSubTree.ml" 187 6343 6348 "dgraph/dGraphSubTree.ml" 189 6475 6498
+)
+"dgraph/dGraphSubTree.ml" 179 6205 6219 "dgraph/dGraphSubTree.ml" 179 6205 6220
+type(
+  (Tree.V.label -> unit) -> GA.t -> Tree.V.label -> 'b
+)
+ident(
+  def f "dgraph/dGraphSubTree.ml" 180 6223 6230 "dgraph/dGraphSubTree.ml" 185 6326 6334
+)
+"dgraph/dGraphSubTree.ml" 180 6223 6230 "dgraph/dGraphSubTree.ml" 180 6223 6231
+type(
+  (Tree.V.label -> unit) -> GA.t -> Tree.V.label -> 'b
+)
+ident(
+  int_ref f "dgraph/dGraphSubTree.ml" 179 6205 6219 "dgraph/dGraphSubTree.ml" 179 6205 6220
+)
+"dgraph/dGraphSubTree.ml" 181 6232 6239 "dgraph/dGraphSubTree.ml" 181 6232 6240
+type(
+  Tree.V.label
+)
+ident(
+  def a "dgraph/dGraphSubTree.ml" 182 6244 6248 "dgraph/dGraphSubTree.ml" 183 6292 6312
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6248 "dgraph/dGraphSubTree.ml" 182 6244 6257
+type(
+  Tree.V.label * Tree.V.t * int ->
+  (Tree.V.label * Tree.V.t * int) Queue.t -> unit
+)
+ident(
+  ext_ref Queue.add
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6259 "dgraph/dGraphSubTree.ml" 182 6244 6260
+type(
+  Tree.V.label
+)
+ident(
+  int_ref a "dgraph/dGraphSubTree.ml" 181 6232 6239 "dgraph/dGraphSubTree.ml" 181 6232 6240
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6262 "dgraph/dGraphSubTree.ml" 182 6244 6272
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6274 "dgraph/dGraphSubTree.ml" 182 6244 6279
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6280 "dgraph/dGraphSubTree.ml" 182 6244 6281
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6282 "dgraph/dGraphSubTree.ml" 182 6244 6283
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6274 "dgraph/dGraphSubTree.ml" 182 6244 6283
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6258 "dgraph/dGraphSubTree.ml" 182 6244 6284
+type(
+  Tree.V.label * Tree.V.t * int
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6285 "dgraph/dGraphSubTree.ml" 182 6244 6290
+type(
+  (Tree.V.label * Tree.V.t * int) Queue.t
+)
+ident(
+  int_ref queue "dgraph/dGraphSubTree.ml" 149 5212 5220 "dgraph/dGraphSubTree.ml" 149 5212 5225
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6248 "dgraph/dGraphSubTree.ml" 182 6244 6290
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 183 6292 6296 "dgraph/dGraphSubTree.ml" 183 6292 6304
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 183 6292 6305 "dgraph/dGraphSubTree.ml" 183 6292 6307
+type(
+  bool ref -> bool -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 183 6292 6308 "dgraph/dGraphSubTree.ml" 183 6292 6312
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 183 6292 6296 "dgraph/dGraphSubTree.ml" 183 6292 6312
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 182 6244 6248 "dgraph/dGraphSubTree.ml" 183 6292 6312
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 181 6232 6234 "dgraph/dGraphSubTree.ml" 183 6292 6313
+type(
+  Tree.V.label -> unit
+)
+"dgraph/dGraphSubTree.ml" 184 6314 6316 "dgraph/dGraphSubTree.ml" 184 6314 6325
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 132 4555 4567 "dgraph/dGraphSubTree.ml" 132 4555 4576
+)
+"dgraph/dGraphSubTree.ml" 185 6326 6328 "dgraph/dGraphSubTree.ml" 185 6326 6334
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 180 6223 6230 "dgraph/dGraphSubTree.ml" 185 6326 6334
+call(
+  tail
+)
+type(
+  'b
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6351 "dgraph/dGraphSubTree.ml" 187 6343 6364
+type(
+  bool
+)
+ident(
+  int_ref backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6370 "dgraph/dGraphSubTree.ml" 187 6343 6374
+type(
+  ((Tree.V.label -> unit) -> GA.t -> Tree.V.label -> unit) -> unit
+)
+ident(
+  int_ref iter "dgraph/dGraphSubTree.ml" 179 6205 6214 "dgraph/dGraphSubTree.ml" 179 6205 6218
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6375 "dgraph/dGraphSubTree.ml" 187 6343 6387
+type(
+  (Tree.V.label -> unit) -> GA.t -> Tree.V.label -> unit
+)
+ident(
+  ext_ref GA.iter_pred
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6370 "dgraph/dGraphSubTree.ml" 187 6343 6387
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6393 "dgraph/dGraphSubTree.ml" 187 6343 6397
+type(
+  ((Tree.V.label -> unit) -> GA.t -> Tree.V.label -> unit) -> unit
+)
+ident(
+  int_ref iter "dgraph/dGraphSubTree.ml" 179 6205 6214 "dgraph/dGraphSubTree.ml" 179 6205 6218
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6398 "dgraph/dGraphSubTree.ml" 187 6343 6410
+type(
+  (Tree.V.label -> unit) -> GA.t -> Tree.V.label -> unit
+)
+ident(
+  ext_ref GA.iter_succ
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6393 "dgraph/dGraphSubTree.ml" 187 6343 6410
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6348 "dgraph/dGraphSubTree.ml" 187 6343 6410
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6420 "dgraph/dGraphSubTree.ml" 188 6412 6423
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6424 "dgraph/dGraphSubTree.ml" 188 6412 6425
+type(
+  bool ref -> bool
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6425 "dgraph/dGraphSubTree.ml" 188 6412 6433
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6424 "dgraph/dGraphSubTree.ml" 188 6412 6433
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6420 "dgraph/dGraphSubTree.ml" 188 6412 6433
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6439 "dgraph/dGraphSubTree.ml" 188 6412 6456
+type(
+  Tree.V.t -> int -> unit
+)
+ident(
+  int_ref complete_to_depth "dgraph/dGraphSubTree.ml" 133 4625 4633 "dgraph/dGraphSubTree.ml" 133 4625 4650
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6457 "dgraph/dGraphSubTree.ml" 188 6412 6467
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6468 "dgraph/dGraphSubTree.ml" 188 6412 6473
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6439 "dgraph/dGraphSubTree.ml" 188 6412 6473
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6417 "dgraph/dGraphSubTree.ml" 188 6412 6473
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 189 6475 6480 "dgraph/dGraphSubTree.ml" 189 6475 6488
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 189 6475 6489 "dgraph/dGraphSubTree.ml" 189 6475 6491
+type(
+  bool ref -> bool -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 189 6475 6492 "dgraph/dGraphSubTree.ml" 189 6475 6497
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 189 6475 6480 "dgraph/dGraphSubTree.ml" 189 6475 6498
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 188 6412 6417 "dgraph/dGraphSubTree.ml" 189 6475 6498
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 187 6343 6348 "dgraph/dGraphSubTree.ml" 189 6475 6498
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 179 6205 6210 "dgraph/dGraphSubTree.ml" 189 6475 6498
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6160 "dgraph/dGraphSubTree.ml" 190 6499 6505
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 190 6499 6514 "dgraph/dGraphSubTree.ml" 190 6499 6519
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+)
+"dgraph/dGraphSubTree.ml" 190 6499 6520 "dgraph/dGraphSubTree.ml" 190 6499 6522
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<>
+)
+"dgraph/dGraphSubTree.ml" 190 6499 6523 "dgraph/dGraphSubTree.ml" 190 6499 6524
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 190 6499 6514 "dgraph/dGraphSubTree.ml" 190 6499 6524
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 191 6536 6544 "dgraph/dGraphSubTree.ml" 191 6536 6557
+type(
+  bool
+)
+ident(
+  int_ref backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6570 "dgraph/dGraphSubTree.ml" 192 6563 6582
+type(
+  (G.V.t -> unit) -> GA.t -> Tree.V.label -> unit
+)
+ident(
+  ext_ref GA.iter_pred
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6588 "dgraph/dGraphSubTree.ml" 192 6563 6589
+type(
+  G.V.t
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6593 "dgraph/dGraphSubTree.ml" 192 6563 6601
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6602 "dgraph/dGraphSubTree.ml" 192 6563 6604
+type(
+  bool ref -> bool -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6605 "dgraph/dGraphSubTree.ml" 192 6563 6609
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6593 "dgraph/dGraphSubTree.ml" 192 6563 6609
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6583 "dgraph/dGraphSubTree.ml" 192 6563 6610
+type(
+  G.V.t -> unit
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6611 "dgraph/dGraphSubTree.ml" 192 6563 6620
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 132 4555 4567 "dgraph/dGraphSubTree.ml" 132 4555 4576
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6621 "dgraph/dGraphSubTree.ml" 192 6563 6627
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 192 6563 6570 "dgraph/dGraphSubTree.ml" 192 6563 6627
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6645 "dgraph/dGraphSubTree.ml" 194 6638 6657
+type(
+  (G.V.t -> unit) -> GA.t -> Tree.V.label -> unit
+)
+ident(
+  ext_ref GA.iter_succ
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6663 "dgraph/dGraphSubTree.ml" 194 6638 6664
+type(
+  G.V.t
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6668 "dgraph/dGraphSubTree.ml" 194 6638 6676
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6677 "dgraph/dGraphSubTree.ml" 194 6638 6679
+type(
+  bool ref -> bool -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6680 "dgraph/dGraphSubTree.ml" 194 6638 6684
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6668 "dgraph/dGraphSubTree.ml" 194 6638 6684
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6658 "dgraph/dGraphSubTree.ml" 194 6638 6685
+type(
+  G.V.t -> unit
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6686 "dgraph/dGraphSubTree.ml" 194 6638 6695
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 132 4555 4567 "dgraph/dGraphSubTree.ml" 132 4555 4576
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6696 "dgraph/dGraphSubTree.ml" 194 6638 6702
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 194 6638 6645 "dgraph/dGraphSubTree.ml" 194 6638 6702
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 191 6536 6541 "dgraph/dGraphSubTree.ml" 194 6638 6702
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 195 6704 6712 "dgraph/dGraphSubTree.ml" 195 6704 6713
+type(
+  bool ref -> bool
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphSubTree.ml" 195 6704 6713 "dgraph/dGraphSubTree.ml" 195 6704 6721
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 195 6704 6712 "dgraph/dGraphSubTree.ml" 195 6704 6721
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 196 6733 6744 "dgraph/dGraphSubTree.ml" 196 6733 6756
+type(
+  Tree.V.t
+)
+ident(
+  def ghost_vertex "dgraph/dGraphSubTree.ml" 197 6783 6790 "dgraph/dGraphSubTree.ml" 202 7020 7067
+)
+"dgraph/dGraphSubTree.ml" 196 6733 6759 "dgraph/dGraphSubTree.ml" 196 6733 6772
+type(
+  Tree.V.label -> Tree.V.t
+)
+ident(
+  ext_ref Tree.V.create
+)
+"dgraph/dGraphSubTree.ml" 196 6733 6773 "dgraph/dGraphSubTree.ml" 196 6733 6779
+type(
+  Tree.V.label
+)
+ident(
+  int_ref vertex "dgraph/dGraphSubTree.ml" 166 5662 5667 "dgraph/dGraphSubTree.ml" 166 5662 5673
+)
+"dgraph/dGraphSubTree.ml" 196 6733 6759 "dgraph/dGraphSubTree.ml" 196 6733 6779
+call(
+  stack
+)
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6790 "dgraph/dGraphSubTree.ml" 197 6783 6796
+type(
+  unit HT.t -> HT.key -> unit -> unit
+)
+ident(
+  ext_ref HT.add
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6797 "dgraph/dGraphSubTree.ml" 197 6783 6801
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6797 "dgraph/dGraphSubTree.ml" 197 6783 6816
+type(
+  unit HT.t
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6817 "dgraph/dGraphSubTree.ml" 197 6783 6829
+type(
+  Tree.V.t
+)
+ident(
+  int_ref ghost_vertex "dgraph/dGraphSubTree.ml" 196 6733 6744 "dgraph/dGraphSubTree.ml" 196 6733 6756
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6830 "dgraph/dGraphSubTree.ml" 197 6783 6832
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6790 "dgraph/dGraphSubTree.ml" 197 6783 6832
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 198 6834 6845 "dgraph/dGraphSubTree.ml" 198 6834 6853
+type(
+  Tree.E.t
+)
+ident(
+  def new_edge "dgraph/dGraphSubTree.ml" 201 6969 6979 "dgraph/dGraphSubTree.ml" 202 7020 7067
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6861 "dgraph/dGraphSubTree.ml" 199 6856 6874
+type(
+  bool
+)
+ident(
+  int_ref backward_flag "dgraph/dGraphSubTree.ml" 132 4555 4603 "dgraph/dGraphSubTree.ml" 132 4555 4616
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6880 "dgraph/dGraphSubTree.ml" 199 6856 6893
+type(
+  Tree.E.vertex -> Tree.E.label -> Tree.E.vertex -> Tree.E.t
+)
+ident(
+  ext_ref Tree.E.create
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6894 "dgraph/dGraphSubTree.ml" 199 6856 6906
+type(
+  Tree.V.t
+)
+ident(
+  int_ref ghost_vertex "dgraph/dGraphSubTree.ml" 196 6733 6744 "dgraph/dGraphSubTree.ml" 196 6733 6756
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6907 "dgraph/dGraphSubTree.ml" 199 6856 6909
+type(
+  Tree.E.label
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6910 "dgraph/dGraphSubTree.ml" 199 6856 6920
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6880 "dgraph/dGraphSubTree.ml" 199 6856 6920
+call(
+  stack
+)
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 200 6921 6928 "dgraph/dGraphSubTree.ml" 200 6921 6941
+type(
+  Tree.E.vertex -> Tree.E.label -> Tree.E.vertex -> Tree.E.t
+)
+ident(
+  ext_ref Tree.E.create
+)
+"dgraph/dGraphSubTree.ml" 200 6921 6942 "dgraph/dGraphSubTree.ml" 200 6921 6952
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 200 6921 6953 "dgraph/dGraphSubTree.ml" 200 6921 6955
+type(
+  Tree.E.label
+)
+"dgraph/dGraphSubTree.ml" 200 6921 6956 "dgraph/dGraphSubTree.ml" 200 6921 6968
+type(
+  Tree.V.t
+)
+ident(
+  int_ref ghost_vertex "dgraph/dGraphSubTree.ml" 196 6733 6744 "dgraph/dGraphSubTree.ml" 196 6733 6756
+)
+"dgraph/dGraphSubTree.ml" 200 6921 6928 "dgraph/dGraphSubTree.ml" 200 6921 6968
+call(
+  stack
+)
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 199 6856 6858 "dgraph/dGraphSubTree.ml" 200 6921 6968
+type(
+  Tree.E.t
+)
+"dgraph/dGraphSubTree.ml" 201 6969 6979 "dgraph/dGraphSubTree.ml" 201 6969 6994
+type(
+  Tree.t -> Tree.E.t -> unit
+)
+ident(
+  ext_ref Tree.add_edge_e
+)
+"dgraph/dGraphSubTree.ml" 201 6969 6995 "dgraph/dGraphSubTree.ml" 201 6969 6999
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 132 4555 4577 "dgraph/dGraphSubTree.ml" 132 4555 4581
+)
+"dgraph/dGraphSubTree.ml" 201 6969 6995 "dgraph/dGraphSubTree.ml" 201 6969 7009
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 201 6969 7010 "dgraph/dGraphSubTree.ml" 201 6969 7018
+type(
+  Tree.E.t
+)
+ident(
+  int_ref new_edge "dgraph/dGraphSubTree.ml" 198 6834 6845 "dgraph/dGraphSubTree.ml" 198 6834 6853
+)
+"dgraph/dGraphSubTree.ml" 201 6969 6979 "dgraph/dGraphSubTree.ml" 201 6969 7018
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7027 "dgraph/dGraphSubTree.ml" 202 7020 7044
+type(
+  Tree.V.t -> int -> unit
+)
+ident(
+  int_ref complete_to_depth "dgraph/dGraphSubTree.ml" 133 4625 4633 "dgraph/dGraphSubTree.ml" 133 4625 4650
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7045 "dgraph/dGraphSubTree.ml" 202 7020 7057
+type(
+  Tree.V.t
+)
+ident(
+  int_ref ghost_vertex "dgraph/dGraphSubTree.ml" 196 6733 6744 "dgraph/dGraphSubTree.ml" 196 6733 6756
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7059 "dgraph/dGraphSubTree.ml" 202 7020 7064
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7064 "dgraph/dGraphSubTree.ml" 202 7020 7065
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7065 "dgraph/dGraphSubTree.ml" 202 7020 7066
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7058 "dgraph/dGraphSubTree.ml" 202 7020 7067
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 202 7020 7027 "dgraph/dGraphSubTree.ml" 202 7020 7067
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 201 6969 6979 "dgraph/dGraphSubTree.ml" 202 7020 7067
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 198 6834 6841 "dgraph/dGraphSubTree.ml" 202 7020 7067
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 197 6783 6790 "dgraph/dGraphSubTree.ml" 202 7020 7067
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 195 6704 6727 "dgraph/dGraphSubTree.ml" 203 7068 7076
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 204 7082 7089 "dgraph/dGraphSubTree.ml" 204 7082 7106
+type(
+  Tree.V.t -> int -> unit
+)
+ident(
+  int_ref complete_to_depth "dgraph/dGraphSubTree.ml" 133 4625 4633 "dgraph/dGraphSubTree.ml" 133 4625 4650
+)
+"dgraph/dGraphSubTree.ml" 204 7082 7107 "dgraph/dGraphSubTree.ml" 204 7082 7117
+type(
+  Tree.V.t
+)
+ident(
+  int_ref new_vertex "dgraph/dGraphSubTree.ml" 168 5743 5750 "dgraph/dGraphSubTree.ml" 168 5743 5760
+)
+"dgraph/dGraphSubTree.ml" 204 7082 7118 "dgraph/dGraphSubTree.ml" 204 7082 7123
+type(
+  int
+)
+ident(
+  int_ref depth "dgraph/dGraphSubTree.ml" 166 5662 5690 "dgraph/dGraphSubTree.ml" 166 5662 5695
+)
+"dgraph/dGraphSubTree.ml" 204 7082 7089 "dgraph/dGraphSubTree.ml" 204 7082 7123
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 195 6704 6709 "dgraph/dGraphSubTree.ml" 204 7082 7123
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 205 7125 7130 "dgraph/dGraphSubTree.ml" 205 7125 7138
+type(
+  bool ref
+)
+ident(
+  int_ref has_succ "dgraph/dGraphSubTree.ml" 147 5140 5148 "dgraph/dGraphSubTree.ml" 147 5140 5156
+)
+"dgraph/dGraphSubTree.ml" 205 7125 7139 "dgraph/dGraphSubTree.ml" 205 7125 7141
+type(
+  bool ref -> bool -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphSubTree.ml" 205 7125 7142 "dgraph/dGraphSubTree.ml" 205 7125 7147
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 205 7125 7130 "dgraph/dGraphSubTree.ml" 205 7125 7148
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 195 6704 6709 "dgraph/dGraphSubTree.ml" 205 7125 7148
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 190 6499 6530 "dgraph/dGraphSubTree.ml" 206 7149 7155
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 190 6499 6511 "dgraph/dGraphSubTree.ml" 206 7149 7155
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 177 6116 6119 "dgraph/dGraphSubTree.ml" 206 7149 7155
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 170 5839 5842 "dgraph/dGraphSubTree.ml" 206 7149 7155
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 169 5787 5790 "dgraph/dGraphSubTree.ml" 206 7149 7155
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5737 "dgraph/dGraphSubTree.ml" 207 7156 7160
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5719 "dgraph/dGraphSubTree.ml" 207 7156 7160
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 208 7162 7163 "dgraph/dGraphSubTree.ml" 208 7162 7174
+type(
+  unit -> unit
+)
+ident(
+  int_ref empty_queue "dgraph/dGraphSubTree.ml" 164 5587 5599 "dgraph/dGraphSubTree.ml" 164 5587 5610
+)
+"dgraph/dGraphSubTree.ml" 208 7162 7175 "dgraph/dGraphSubTree.ml" 208 7162 7177
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 208 7162 7163 "dgraph/dGraphSubTree.ml" 208 7162 7177
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 167 5718 5719 "dgraph/dGraphSubTree.ml" 208 7162 7177
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5656 "dgraph/dGraphSubTree.ml" 209 7178 7187
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 165 5616 5622 "dgraph/dGraphSubTree.ml" 209 7178 7187
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 211 7195 7199 "dgraph/dGraphSubTree.ml" 211 7195 7210
+type(
+  unit -> unit
+)
+ident(
+  int_ref empty_queue "dgraph/dGraphSubTree.ml" 164 5587 5599 "dgraph/dGraphSubTree.ml" 164 5587 5610
+)
+"dgraph/dGraphSubTree.ml" 211 7195 7211 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 211 7195 7199 "dgraph/dGraphSubTree.ml" 211 7195 7213
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 164 5587 5591 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 152 5316 5320 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 150 5247 5251 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 149 5212 5216 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 148 5172 5176 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 147 5140 5144 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 133 4625 4629 "dgraph/dGraphSubTree.ml" 211 7195 7213
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 258 8716 8722 "dgraph/dGraphSubTree.ml" 258 8716 8726
+type(
+  GA.t -> Tree.V.label -> int -> int -> t
+)
+ident(
+  def make "dgraph/dGraphSubTree.ml" 273 9375 9383 "dgraph/dGraphSubTree.ml" 275 9385 9388
+)
+"dgraph/dGraphSubTree.ml" 258 8716 8727 "dgraph/dGraphSubTree.ml" 258 8716 8736
+type(
+  GA.t
+)
+ident(
+  def src_graph "dgraph/dGraphSubTree.ml" 258 8716 8737 "dgraph/dGraphSubTree.ml" 273 9375 9383
+)
+"dgraph/dGraphSubTree.ml" 258 8716 8737 "dgraph/dGraphSubTree.ml" 258 8716 8747
+type(
+  Tree.V.label
+)
+ident(
+  def src_vertex "dgraph/dGraphSubTree.ml" 258 8716 8748 "dgraph/dGraphSubTree.ml" 273 9375 9383
+)
+"dgraph/dGraphSubTree.ml" 258 8716 8748 "dgraph/dGraphSubTree.ml" 258 8716 8761
+type(
+  int
+)
+ident(
+  def depth_forward "dgraph/dGraphSubTree.ml" 258 8716 8762 "dgraph/dGraphSubTree.ml" 273 9375 9383
+)
+"dgraph/dGraphSubTree.ml" 258 8716 8762 "dgraph/dGraphSubTree.ml" 258 8716 8776
+type(
+  int
+)
+ident(
+  def depth_backward "dgraph/dGraphSubTree.ml" 259 8779 8783 "dgraph/dGraphSubTree.ml" 273 9375 9383
+)
+"dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 260 8796 8814 "dgraph/dGraphSubTree.ml" 260 8796 8825
+type(
+  ?size:int -> unit -> Tree.t
+)
+ident(
+  ext_ref Tree.create
+)
+"dgraph/dGraphSubTree.ml" 260 8796 8826 "dgraph/dGraphSubTree.ml" 260 8796 8828
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 260 8796 8814 "dgraph/dGraphSubTree.ml" 260 8796 8828
+call(
+  stack
+)
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 261 8830 8843 "dgraph/dGraphSubTree.ml" 261 8830 8856
+type(
+  Tree.V.label -> Tree.V.t
+)
+ident(
+  ext_ref Tree.V.create
+)
+"dgraph/dGraphSubTree.ml" 261 8830 8857 "dgraph/dGraphSubTree.ml" 261 8830 8867
+type(
+  Tree.V.label
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 258 8716 8737 "dgraph/dGraphSubTree.ml" 258 8716 8747
+)
+"dgraph/dGraphSubTree.ml" 261 8830 8843 "dgraph/dGraphSubTree.ml" 261 8830 8867
+call(
+  stack
+)
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 262 8869 8896 "dgraph/dGraphSubTree.ml" 262 8869 8904
+type(
+  int -> Tree.V.t H.t
+)
+ident(
+  ext_ref H.create
+)
+"dgraph/dGraphSubTree.ml" 262 8869 8905 "dgraph/dGraphSubTree.ml" 262 8869 8907
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 262 8869 8896 "dgraph/dGraphSubTree.ml" 262 8869 8907
+call(
+  stack
+)
+type(
+  Tree.V.t H.t
+)
+"dgraph/dGraphSubTree.ml" 263 8909 8932 "dgraph/dGraphSubTree.ml" 263 8909 8941
+type(
+  int -> unit HT.t
+)
+ident(
+  ext_ref HT.create
+)
+"dgraph/dGraphSubTree.ml" 263 8909 8942 "dgraph/dGraphSubTree.ml" 263 8909 8944
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 263 8909 8932 "dgraph/dGraphSubTree.ml" 263 8909 8944
+call(
+  stack
+)
+type(
+  unit HT.t
+)
+"dgraph/dGraphSubTree.ml" 264 8946 8966 "dgraph/dGraphSubTree.ml" 264 8946 8975
+type(
+  int -> unit HE.t
+)
+ident(
+  ext_ref HE.create
+)
+"dgraph/dGraphSubTree.ml" 264 8946 8976 "dgraph/dGraphSubTree.ml" 264 8946 8978
+type(
+  int
+)
+"dgraph/dGraphSubTree.ml" 264 8946 8966 "dgraph/dGraphSubTree.ml" 264 8946 8978
+call(
+  stack
+)
+type(
+  unit HE.t
+)
+"dgraph/dGraphSubTree.ml" 259 8779 8794 "dgraph/dGraphSubTree.ml" 265 8980 8985
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 267 8993 8997 "dgraph/dGraphSubTree.ml" 267 8993 9002
+type(
+  Tree.V.t H.t -> H.key -> Tree.V.t -> unit
+)
+ident(
+  ext_ref H.add
+)
+"dgraph/dGraphSubTree.ml" 267 8993 9003 "dgraph/dGraphSubTree.ml" 267 8993 9007
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 267 8993 9003 "dgraph/dGraphSubTree.ml" 267 8993 9026
+type(
+  Tree.V.t H.t
+)
+"dgraph/dGraphSubTree.ml" 267 8993 9027 "dgraph/dGraphSubTree.ml" 267 8993 9037
+type(
+  Tree.V.label
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 258 8716 8737 "dgraph/dGraphSubTree.ml" 258 8716 8747
+)
+"dgraph/dGraphSubTree.ml" 267 8993 9038 "dgraph/dGraphSubTree.ml" 267 8993 9042
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 267 8993 9038 "dgraph/dGraphSubTree.ml" 267 8993 9047
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 267 8993 8997 "dgraph/dGraphSubTree.ml" 267 8993 9047
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9053 "dgraph/dGraphSubTree.ml" 268 9049 9068
+type(
+  Tree.t -> Tree.V.t -> unit
+)
+ident(
+  ext_ref Tree.add_vertex
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9069 "dgraph/dGraphSubTree.ml" 268 9049 9073
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9069 "dgraph/dGraphSubTree.ml" 268 9049 9083
+type(
+  Tree.t
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9084 "dgraph/dGraphSubTree.ml" 268 9049 9088
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9084 "dgraph/dGraphSubTree.ml" 268 9049 9093
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9053 "dgraph/dGraphSubTree.ml" 268 9049 9093
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9099 "dgraph/dGraphSubTree.ml" 269 9095 9104
+type(
+  GA.t -> t -> H.key -> Tree.E.vertex -> bool -> int -> unit
+)
+ident(
+  int_ref build "dgraph/dGraphSubTree.ml" 132 4555 4561 "dgraph/dGraphSubTree.ml" 132 4555 4566
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9105 "dgraph/dGraphSubTree.ml" 269 9095 9114
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 258 8716 8727 "dgraph/dGraphSubTree.ml" 258 8716 8736
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9115 "dgraph/dGraphSubTree.ml" 269 9095 9119
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9120 "dgraph/dGraphSubTree.ml" 269 9095 9130
+type(
+  Tree.V.label
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 258 8716 8737 "dgraph/dGraphSubTree.ml" 258 8716 8747
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9131 "dgraph/dGraphSubTree.ml" 269 9095 9135
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9131 "dgraph/dGraphSubTree.ml" 269 9095 9140
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9141 "dgraph/dGraphSubTree.ml" 269 9095 9146
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9147 "dgraph/dGraphSubTree.ml" 269 9095 9160
+type(
+  int
+)
+ident(
+  int_ref depth_forward "dgraph/dGraphSubTree.ml" 258 8716 8748 "dgraph/dGraphSubTree.ml" 258 8716 8761
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9099 "dgraph/dGraphSubTree.ml" 269 9095 9160
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9166 "dgraph/dGraphSubTree.ml" 270 9162 9171
+type(
+  GA.t -> t -> H.key -> Tree.E.vertex -> bool -> int -> unit
+)
+ident(
+  int_ref build "dgraph/dGraphSubTree.ml" 132 4555 4561 "dgraph/dGraphSubTree.ml" 132 4555 4566
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9172 "dgraph/dGraphSubTree.ml" 270 9162 9181
+type(
+  GA.t
+)
+ident(
+  int_ref src_graph "dgraph/dGraphSubTree.ml" 258 8716 8727 "dgraph/dGraphSubTree.ml" 258 8716 8736
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9182 "dgraph/dGraphSubTree.ml" 270 9162 9186
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9187 "dgraph/dGraphSubTree.ml" 270 9162 9197
+type(
+  Tree.V.label
+)
+ident(
+  int_ref src_vertex "dgraph/dGraphSubTree.ml" 258 8716 8737 "dgraph/dGraphSubTree.ml" 258 8716 8747
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9198 "dgraph/dGraphSubTree.ml" 270 9162 9202
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9198 "dgraph/dGraphSubTree.ml" 270 9162 9207
+type(
+  Tree.V.t
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9208 "dgraph/dGraphSubTree.ml" 270 9162 9212
+type(
+  bool
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9213 "dgraph/dGraphSubTree.ml" 270 9162 9227
+type(
+  int
+)
+ident(
+  int_ref depth_backward "dgraph/dGraphSubTree.ml" 258 8716 8762 "dgraph/dGraphSubTree.ml" 258 8716 8776
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9166 "dgraph/dGraphSubTree.ml" 270 9162 9227
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphSubTree.ml" 273 9375 9379 "dgraph/dGraphSubTree.ml" 273 9375 9383
+type(
+  t
+)
+ident(
+  int_ref tree "dgraph/dGraphSubTree.ml" 259 8779 8787 "dgraph/dGraphSubTree.ml" 259 8779 8791
+)
+"dgraph/dGraphSubTree.ml" 270 9162 9166 "dgraph/dGraphSubTree.ml" 273 9375 9383
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 269 9095 9099 "dgraph/dGraphSubTree.ml" 273 9375 9383
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 268 9049 9053 "dgraph/dGraphSubTree.ml" 273 9375 9383
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 267 8993 8997 "dgraph/dGraphSubTree.ml" 273 9375 9383
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 259 8779 8783 "dgraph/dGraphSubTree.ml" 273 9375 9383
+type(
+  t
+)
+"dgraph/dGraphSubTree.ml" 280 9480 9482 "dgraph/dGraphSubTree.ml" 280 9480 9490
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 280 9480 9482 "dgraph/dGraphSubTree.ml" 280 9480 9496
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 280 9480 9482 "dgraph/dGraphSubTree.ml" 280 9480 9499
+call(
+  tail
+)
+"dgraph/dGraphSubTree.ml" 285 9619 9621 "dgraph/dGraphSubTree.ml" 286 9627 9649
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 285 9619 9621 "dgraph/dGraphSubTree.ml" 287 9650 9660
+call(
+  stack
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9722 "dgraph/dGraphSubTree.ml" 290 9712 9731
+type(
+  'a -> < iter_succ : 'a -> 'b; .. > -> 'b
+)
+ident(
+  def iter_succ "dgraph/dGraphSubTree.ml" 291 9752 9758 "dgraph/dGraphSubTree.ml" 292 9792 9800
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9732 "dgraph/dGraphSubTree.ml" 290 9712 9733
+type(
+  'a
+)
+ident(
+  def f "dgraph/dGraphSubTree.ml" 290 9712 9734 "dgraph/dGraphSubTree.ml" 290 9712 9751
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9734 "dgraph/dGraphSubTree.ml" 290 9712 9735
+type(
+  < iter_succ : 'a -> 'b; .. > as 'c
+)
+ident(
+  def g "dgraph/dGraphSubTree.ml" 290 9712 9738 "dgraph/dGraphSubTree.ml" 290 9712 9751
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9738 "dgraph/dGraphSubTree.ml" 290 9712 9739
+type(
+  'c
+)
+ident(
+  int_ref g "dgraph/dGraphSubTree.ml" 290 9712 9734 "dgraph/dGraphSubTree.ml" 290 9712 9735
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9738 "dgraph/dGraphSubTree.ml" 290 9712 9749
+type(
+  'a -> 'b
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9750 "dgraph/dGraphSubTree.ml" 290 9712 9751
+type(
+  'a
+)
+ident(
+  int_ref f "dgraph/dGraphSubTree.ml" 290 9712 9732 "dgraph/dGraphSubTree.ml" 290 9712 9733
+)
+"dgraph/dGraphSubTree.ml" 290 9712 9738 "dgraph/dGraphSubTree.ml" 290 9712 9751
+type(
+  'b
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9762 "dgraph/dGraphSubTree.ml" 291 9752 9771
+type(
+  'd -> < iter_pred : 'd -> 'e; .. > -> 'e
+)
+ident(
+  def iter_pred "dgraph/dGraphSubTree.ml" 291 9752 9791 "dgraph/dGraphSubTree.ml" 292 9792 9800
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9772 "dgraph/dGraphSubTree.ml" 291 9752 9773
+type(
+  'd
+)
+ident(
+  def f "dgraph/dGraphSubTree.ml" 291 9752 9774 "dgraph/dGraphSubTree.ml" 291 9752 9791
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9774 "dgraph/dGraphSubTree.ml" 291 9752 9775
+type(
+  < iter_pred : 'd -> 'e; .. > as 'f
+)
+ident(
+  def g "dgraph/dGraphSubTree.ml" 291 9752 9778 "dgraph/dGraphSubTree.ml" 291 9752 9791
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9778 "dgraph/dGraphSubTree.ml" 291 9752 9779
+type(
+  'f
+)
+ident(
+  int_ref g "dgraph/dGraphSubTree.ml" 291 9752 9774 "dgraph/dGraphSubTree.ml" 291 9752 9775
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9778 "dgraph/dGraphSubTree.ml" 291 9752 9789
+type(
+  'd -> 'e
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9790 "dgraph/dGraphSubTree.ml" 291 9752 9791
+type(
+  'd
+)
+ident(
+  int_ref f "dgraph/dGraphSubTree.ml" 291 9752 9772 "dgraph/dGraphSubTree.ml" 291 9752 9773
+)
+"dgraph/dGraphSubTree.ml" 291 9752 9778 "dgraph/dGraphSubTree.ml" 291 9752 9791
+type(
+  'e
+)
+"dgraph/dGraphSubTree.ml" 285 9619 9621 "dgraph/dGraphSubTree.ml" 292 9792 9801
+call(
+  tail
+)

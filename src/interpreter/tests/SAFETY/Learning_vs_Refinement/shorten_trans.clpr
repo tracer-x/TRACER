@@ -1,0 +1,242 @@
+
+% shorten_trans.clpr
+% 
+% Usage: Load compiled version first, consult this file,
+% and say: gen_simplified_trans(func_main, [0]).
+% to simplify main function.
+%
+% This program is to reduce the number of transitions from
+% the output of the compiler. It
+% basically collapse a single guard followed by a number of
+% assignments into a single transition.
+%
+% The resulting transitions are encoded in trans2/22 predicate.
+
+:- codegen_debug.
+
+:- dynamic(trans2, 22).
+
+shorten_transappend([], B, B).
+shorten_transappend([X|A], B, [X|C]) :- shorten_transappend(A, B, C).
+
+
+count_next_trans(_FuncName, _PP1, _) :- 
+	set_counter(count_next_trans_ctr, 0), fail.
+count_next_trans(FuncName, PP1, _) :-
+	trans(FuncName, 
+	PP1,_GA1, _GV1, _SGA1, _SGV1, _LA1, _LV1, _SLA1, _SLV1,
+	_PP2, _GA2, _GV2, _SGA2, _SGV2, _LA2, _LV2, _SLA2, _SLV2,
+	_, _, _), add_counter(count_next_trans_ctr, 1), fail.
+count_next_trans(_FuncName, _PP1, X) :-
+	counter_value(count_next_trans_ctr,X).
+
+gen_fresh_ga(FuncName, GA) :-
+	trans(FuncName, _, _, _, GA, _, _, _, _, _,
+                         _, _, _,  _, _, _, _, _, _, _, _, _).
+gen_fresh_gv(FuncName, GV) :-
+	trans(FuncName, _, _, _, _, GV, _, _, _, _,
+                         _, _, _, _,  _, _, _, _, _, _, _, _).
+gen_fresh_la(FuncName, LA) :-
+	trans(FuncName, _, _, _, _, _, _, _, LA, _,
+                         _, _, _, _, _, _, _, _, _, _, _, _).
+gen_fresh_lv(FuncName, LV) :-
+	trans(FuncName, _, _, _, _, _, _, _, _, LV,
+                         _, _, _, _, _, _, _, _, _, _, _, _).
+
+
+gen_simplified_trans(FuncName, PP0) :-
+	printf("Starting basic block at program point %\n", PP0),
+	trans2(FuncName,
+	        PP0, _GA0, _GV0, _SGA0, _SGV0, _LA0, _LV0, _SLA0, _SLV0,
+	        _PP1, _GA1, _GV1, _SGA1, _SGV1, _LA1, _LV1, _SLA1, _SLV1,
+		_XCL, _FunCall, _ArrRef), !,
+	printf("Basic block already compiled\n", []), !.
+gen_simplified_trans(FuncName, PP0) :-
+        gen_fresh_ga(FuncName, GA0), gen_fresh_ga(FuncName, SGA0),
+	gen_fresh_gv(FuncName, GV0), gen_fresh_gv(FuncName, SGV0),
+	gen_fresh_la(FuncName, LA0), gen_fresh_la(FuncName, SLA0),
+	gen_fresh_lv(FuncName, LV0), gen_fresh_lv(FuncName, SLV0),
+	printf("Basic block not yet compiled, proceed\n", []), !,
+	count_next_trans(FuncName, PP0, X),
+	printf("The number of next transitions is %\n", [X]),
+	gen_simplified_trans_aux(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0, X).
+
+
+gen_simplified_trans_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0, 1) :-
+	trans(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	        PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, [], ArrRef),
+	nb_trans_reaching_this_point(FuncName, PP1, X),
+	printf("% transitions reaching %\n", [X, PP1]),
+ 	X=1, !,
+	printf("Normal single transition\n", []),
+        gen_simplified_trans_aux_aux(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, ArrRef).
+gen_simplified_trans_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0, 1) :-
+	trans(FuncName, PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	         PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		 XCL, [], ArrRef), !,
+	assert(trans2(FuncName,
+	              PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		      PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		      XCL, [], ArrRef)),
+        gen_simplified_trans(FuncName, PP1).
+gen_simplified_trans_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0, 1) :-
+	trans(FuncName, PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	         PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		 XCL, FunCall, ArrRef), !,
+	printf("Single transition with function call\n", []),
+	assert(trans2(FuncName,
+	              PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		      PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		      XCL, FunCall, ArrRef)),
+        gen_simplified_trans(FuncName, PP1).
+
+
+gen_simplified_trans_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0, 1) :-
+	trans(FuncName, PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	         PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		 XCL, FunCall, ArrRef), !,
+	printf("Single transition with function call\n", []),
+	assert(trans2(FuncName,
+	              PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		      PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		      XCL, FunCall, ArrRef)),
+        gen_simplified_trans(FuncName, PP1).
+gen_simplified_trans_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0, X) :-
+	X>=2, 
+	gen_simplified_trans_aux_loop(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0).
+
+gen_simplified_trans_aux_loop(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0) :-
+	trans(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	        PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, [], ArrRef),
+	printf("Processing trans emanating from % to %\n", [PP0, PP1]),
+	once(gen_simplified_trans_aux_aux(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	        PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL, ArrRef)), 
+	fail.
+gen_simplified_trans_aux_loop(_FuncName,
+	_PP0, _GA0, _GV0, _SGA0, _SGV0, _LA0, _LV0, _SLA0, _SLV0).
+
+
+gen_simplified_trans_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1) :-
+	count_next_trans(FuncName, PP1, X),
+	printf("There are % transitions emanating from %\n", [X, PP1]),
+	gen_simplified_trans_aux_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1, X).
+
+
+
+gen_simplified_trans_aux_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1, 0) :-
+	printf("No transition emanating from %\n", PP1),
+	assert(trans2(FuncName,
+		PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		XCL1, [], ArrRef1)).
+gen_simplified_trans_aux_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1, 1) :-
+	trans(FuncName,
+	        PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	        PP2, GA2, GV2, SGA2, SGV2, LA2, LV2, SLA2, SLV2,
+		XCL, [], ArrRef),
+	nb_trans_reaching_this_point(FuncName, PP2, X), 
+	printf("% transitions reaching %\n", [X, PP2]),
+	X=1, !,
+	shorten_transappend(XCL, XCL1, XCL2),
+	shorten_transappend(ArrRef, ArrRef1, ArrRef2),
+	gen_simplified_trans_aux_aux(FuncName,
+	        PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	        PP2, GA2, GV2, SGA2, SGV2, LA2, LV2, SLA2, SLV2,
+		XCL2, ArrRef2).
+gen_simplified_trans_aux_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1, 1) :-
+	trans(FuncName, PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	        PP2, GA2, GV2, SGA2, SGV2, LA2, LV2, SLA2, SLV2,
+		XCL, [], ArrRef), !,
+        shorten_transappend(XCL, XCL1, XCL2),
+	shorten_transappend(ArrRef, ArrRef1, ArrRef2),
+	assert(trans2(FuncName,
+	              PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		      PP2, GA2, GV2, SGA2, SGV2, LA2, LV2, SLA2, SLV2,
+		      XCL2, [], ArrRef2)),
+	gen_simplified_trans(FuncName, PP2).
+gen_simplified_trans_aux_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1, 1) :-
+	trans(FuncName, PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	        PP2, GA2, GV2, SGA2, SGV2, LA2, LV2, SLA2, SLV2,
+		XCL, FunCall, ArrRef), !,
+        shorten_transappend(XCL, XCL1, XCL2),
+	shorten_transappend(ArrRef, ArrRef1, ArrRef2),
+	assert(trans2(FuncName,
+	              PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		      PP2, GA2, GV2, SGA2, SGV2, LA2, LV2, SLA2, SLV2,
+		      XCL2, FunCall, ArrRef2)),
+	gen_simplified_trans(FuncName, PP2).
+gen_simplified_trans_aux_aux_aux(FuncName,
+	PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+	PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+	XCL1, ArrRef1, X) :-
+	X>=2,
+	assert(trans2(FuncName,
+	              PP0, GA0, GV0, SGA0, SGV0, LA0, LV0, SLA0, SLV0,
+		      PP1, GA1, GV1, SGA1, SGV1, LA1, LV1, SLA1, SLV1,
+		      XCL1, [], ArrRef1)),
+	gen_simplified_trans(FuncName, PP1).
+
+
+
+notin(_X, []) :- !.
+notin(X, [X|_]) :- !, fail.
+notin(X, [_|R]) :- !, notin(X, R).
+
+:- dynamic(nb_trans_reaching_this_point_memo, 1).
+:- assert(nb_trans_reaching_this_point_memo([])).
+
+nb_trans_reaching_this_point(FuncName, PP1, X) :-
+	set_counter(nb_trans_reaching_this_point_count, 0),
+	nb_trans_reaching_this_point_aux(FuncName, PP1, X).
+
+nb_trans_reaching_this_point_aux(FuncName, PP1, X) :-
+	trans(FuncName,
+	        PP0, _GA0, _GV0, _SGA0, _SGV0, _LA0, _LV0, _SLA0, _SLV0,
+	        PP1, _GA1, _GV1, _SGA1, _SGV1, _LA1, _LV1, _SLA1, _SLV1,
+		_XCL, _FunCall, _ArrRef),
+	nb_trans_reaching_this_point_memo(PPList),
+	notin(PP0, PPList),
+	once(retract(nb_trans_reaching_this_point_memo(_))),
+	once(assert(nb_trans_reaching_this_point_memo([PP0|PPList]))),
+	add_counter(nb_trans_reaching_this_point_count, 1),
+	fail.
+nb_trans_reaching_this_point_aux(_FuncName, _PP1, X) :-
+	once(retract(nb_trans_reaching_this_point_memo(_))),
+	once(assert(nb_trans_reaching_this_point_memo([]))),
+	counter_value(nb_trans_reaching_this_point_count, X).
+

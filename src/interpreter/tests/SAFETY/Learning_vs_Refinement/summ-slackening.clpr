@@ -1,0 +1,631 @@
+
+% Safety prover with constraint deletion.
+% Coded by Andrew Santosa, 10 August 2007
+%
+% Some features of this version are:
+%
+% ** 1 **
+% Only for proving assertions of the form
+% p(PC,X,Xf), C1(X) |= C2(Xf), not I/O relations such as
+%
+% p(PC,X,Xf), C1(X) |= C2(X,Xf) ................................. (a)
+%
+% The verification of assertion (a) can be done by an implementation
+% with I/O relation discovery.
+%
+% Another way is to introduce a variable Y and Yf, where Y stores the
+% initial value of X, and Yf is assigned to Y at the base case. Then
+% proving the last assertion can be done by proving:
+%
+% q(PC,X,Y,Xf,Yf), C1(X), X=Y |= C2(Yf,Xf) ...................... (b)
+%
+% where q is the same as p but with extra variables Y and Yf which
+% are only equated at the base case.
+%
+% However, this technique would increase the proof size.
+%
+% PROPOSITION. q(PC,X,Y,Xf,Yf), C1(X), X=Y |= C2(Yf,Xf) generally has
+% a bigger proof tree than p(PC,X,Xf), C1(X) |= C2(X,Xf)
+%
+% PROOF. It is clear that whenever an assertion
+% p(PC,X,Xf), C3(X,Z) |= C2(Z,Xf) .... (c)
+% is reached in the unfold tree of (a),
+% p(PC,X,Y,Xf,Yf), C3(X,Y) |= C2(Yf,Xf) .... (d)
+% is reached in the unfold tree of (b), because both are
+% be obtained through the same sequence of unfolds.
+%
+% Suppose that (c) is redundant to:
+%
+% p(PC,X,Xf), C4(X,Z) |= C2(Z,Xf) .... (e)
+%
+% in the proof tree of (a). This means that the followings hold:
+%
+% 1) C3(X,Z) |= exists A: C4(X,A)
+% 2) (exists A : C2(A,Xf), C4(X,A)), C3(X,Z) |= C2(Z,Xf) 
+%
+% (by the corrected condition of redundancy 15/8/07, not as it is in
+%  the submitted version of the thesis)
+%
+% By the same argument as above, when (e) exists in the unfold tree of (a),
+% p(PC,X,Y,Xf,Yf), C4(X,Y) |= C2(Yf,Xf) .... (f)
+% also exists in the unfold tree of (b). The redundancy condition for
+% (d) to be subsumed by (f) is:
+%
+% C3(X,Y) |= C4(X,Y).
+%
+% This is strictly stronger than both 1) and 2) above. []
+%
+% ** 2 **
+% This version is for proving timing bounds. Here, the first variable
+% in the (symbolic and evaluated) variable lists have to be the resource
+% variable, denoting the resource consumption thus far, and the second
+% variable in the lists have to be the final value of the resource (see
+% the example below).
+%
+% The reason for separate treatment is the use of "slackening" technique
+% for generating interpolant of resource variables (see PLDI '09 draft).
+
+
+%------------------------------------------------------------------------------
+% Sample Problem
+%------------------------------------------------------------------------------
+%
+% <0> if (a>=1) then
+% <1>   skip
+%     end if
+% <2> if (b>=1) then
+% <3>   c := 0
+%     end if
+% <4> if (c>=1) then
+% <5>   x := x+1
+%     end if
+
+% The following is the definition of the transitions of the program,
+% with general form:
+%
+% trans(PC1, SymbolicVariables1, EvaluatedVariables1,
+%       PC2, SymbolicVariables2, EvaluatedVariables2,
+%       SymbolicConstraints) :- <List of Evaluated Constraints>.
+
+%% ST is the resource variable for the symbolic constraints
+%% STf is the final value of the resource variable for the symbolic constraints
+%% T is the resource variable for the evaluated constraints
+%% Tf is the final value of the resource variable for the evaluated constraints
+
+%% trans([0],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [1],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),geq(SA,1)]) :- A>=1.
+%% trans([0],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [2],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),gt(1,SA)]) :- 1>A.
+%% trans([1],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [2],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1))]).
+%% trans([2],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [3],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),geq(SB,1)]) :- B>=1.
+%% trans([2],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [4],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),gt(1,SB)]) :- B<1.
+%% trans([3],[ST,STf,SX,SA,SB,_SC,SXf],[T,Tf,X,A,B,_C,Xf],
+%%       [4],[ST1,STf,SX,SA,SB,SC1,SXf],[T+1,Tf,X,A,B,0,Xf],
+%%           [eq(ST1,plus(ST,1)),eq(SC1,0)]).
+%% trans([4],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [5],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),geq(SC,1)]) :- C>=1.
+%% trans([4],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [6],[ST1,STf,SX,SA,SB,SC,SXf],[T+1,Tf,X,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),gt(1,SC)]) :- C<1.
+%% trans([5],[ST,STf,SX,SA,SB,SC,SXf],[T,Tf,X,A,B,C,Xf],
+%%       [6],[ST1,STf,SX1,SA,SB,SC,SXf],[T+1,Tf,X+1,A,B,C,Xf],
+%%           [eq(ST1,plus(ST,1)),eq(SX1,plus(SX,1))]).
+
+% Terminal point specification, with general form:
+% 
+% stop(PC, SymbolicVariables, EvaluatedVariables, SymbolicConstraints) :-
+%      <List of Evaluated Constraints>.
+
+%% stop([6],[ST,STf,SX,_SA,_SB,_SC,SXf],[T,T,X,_A,_B,_C,X],
+%%          [eq(ST,STf),eq(SX,SXf)]).
+
+% The assertion to be proven, with general form:
+%
+% query(PC, SymbolicVariables, EvaluatedVariables, 
+%       LHSSymbolicConjuncts, RHSSymbolicDisjuncts) :-
+%       <Evaluated LHS Conjuncts>.
+%
+% This is for proving:
+% p(PC, Variables), LHSConjuncts |= not (RHSDisjuncts).
+
+%% query([0],[ST,STf,SX,_SA,_SB,_SC,SXf],[T,Tf,X,_A,_B,_C,_Xf],[eq(ST,0),geq(SX,0)],[gt(STf,B),gt(0,SXf)]) :-
+%% 	T=0, X>=0, verified_depthbound(B).
+
+% Value of resource bound to be verified.
+
+%% verified_depthbound(1000000).
+
+% Variable names for generating noises
+
+%% varnames([x,a,b,c,xf]).
+
+%------------------------------------------------------------------------------
+% "Run" wrapper
+%------------------------------------------------------------------------------
+
+:- codegen_debug.
+
+run :-	
+	set_counter(nodecount, 0),
+	query(PC,SV,V,LHSSymbolicConjuncts,RHSSymbolicDisjuncts), !,
+	ztime,
+	p(0,PC,SV,V,LHSSymbolicConjuncts,RHSSymbolicDisjuncts),
+	printf("VERIFICATION FAILURE\n", []).
+run :-
+	ctime(T),
+	counter_value(nodecount, X),
+	printf("VERIFICATION SUCCESS\n", []),
+	printf("Node count = % Time(s) = %\n", [X,T]).
+
+%------------------------------------------------------------------------------
+% Testing for specification of depth bound
+%------------------------------------------------------------------------------
+
+test_depthbound :-
+	depthbound(_), !.
+test_depthbound :-
+	dynamic(depthbound, 1),
+	assert(depthbound(_)).
+
+:- warning(warning_off), test_depthbound, warning(warning_on).
+
+%------------------------------------------------------------------------------
+% Testing for specification of integer negation
+%------------------------------------------------------------------------------
+
+test_integer_negation :-
+	integer_negation(_), !.
+test_integer_negation :-
+	dynamic(integer_negation, 1),
+	assert(integer_negation(0)).
+
+:- warning(warning_off), test_integer_negation, warning(warning_on).
+
+%------------------------------------------------------------------------------
+% Generic routines
+%------------------------------------------------------------------------------
+
+append([],B,B).
+append([X|A],B,[X|C]) :- append(A,B,C).
+
+:- dynamic(answer,2), dynamic(t,3).
+
+%------------------------------------------------------------------------------
+% "P" Main Predicate
+%------------------------------------------------------------------------------
+
+% :- codegen_debug.
+
+% PART 1: NOISES
+p(Depth,PC,SV,V,CL,NegSafety) :-
+	add_counter(nodecount, 1),
+%	once(noise(Depth,PC,SV,V,CL,NegSafety)),
+%	varnames(Names),
+%	dump(SV,Names),
+	fail.
+
+% PART 2: DEPTH BOUND EXCEEDED
+p(Depth,_PC,_SV,_V,CL,_NegSafety) :-
+	depthbound(X), not var(X), Depth > X,
+	% We assume all constraints are needed, but the property
+	% is proved for this subtree.
+	% An alternative is to assume that no constraint is needed.
+	generate_fully_marked_list(CL,ML),
+	assert(answer(Depth,ML)), !, 
+%	printf("DEPTH BOUND REACHED\n", []),
+	fail.
+
+% PART 3: SUBSUMPTION
+p(Depth,PC,SV,V,CL,_NegSafety) :-
+%	noise_table(PC),
+	subsumed(Depth,PC,SV,V,CL),
+%	printf("SUBSUMED\n", []),
+	!, fail.
+
+% PART 4: BASE CASE (STOP POINT)
+p(Depth,PC,SV,V,CL,NegSafety) :-
+	stop(PC,SV,V,AddC),
+%	printf("STOP POINT\n", []),
+	base(Depth,SV,V,CL,AddC,NegSafety).
+
+% PART 5: TAKING TRANSITION
+p(Depth,PC,SV,V,CL,NegSafety) :-
+%	printf("attempt taking trans\n", []),
+%	printf("trans(%,%,%,%,%,%,%,%)\n", [PC,SV,V,PC2,SV2,V2,AddC,DelayedC]),
+	trans(PC,SV,V1,PC2,SV2,V2,AddC,DelayedC),
+	enabled_transition(Depth,V,V1,CL,AddC,DelayedC),
+	append(AddC,CL,CL2),
+	inductive(Depth,PC2,SV2,V2,CL2,NegSafety,AddC).
+
+% PART 6: GENERATING CONJUNCTION OF MARKED CONSTRAINTS
+p(Depth,PC,SV,_V,CL,_NegSafety) :-
+	collate_answers(Depth,ML), !,
+	store_in_context(Depth,PC,SV,CL,ML),
+	!, fail.
+
+%------------------------------------------------------------------------------
+% Generating context to be stored, and store it
+%------------------------------------------------------------------------------
+store_in_context(Depth,PC,SV,CL, ML) :-
+	summarization(1),
+	constrain_symbolic_list_selectively(CL, ML),
+	store(Depth,PC,SV).
+store_in_context(Depth,PC,SV,CL, _ML) :-
+	summarization(0),
+	constrain_symbolic_list(CL),
+	store1(Depth,PC,SV).
+
+%------------------------------------------------------------------------------
+% Noise
+%------------------------------------------------------------------------------
+
+noise(Depth,PC,_SV,V,_CL,_NegSafety) :-
+	counter_value(nodecount,Count),
+	printf("Depth: % PC: % Node count: %", [Depth,PC,Count]),
+        varnames(Names),
+        dump(V,Names).
+
+noise_table(PC) :-
+	varnames(Names),
+	t(PC, Names, L2),
+	printf("Tabled: % %\n", [PC, L2]),
+        fail.
+noise_table(_).
+
+%------------------------------------------------------------------------------
+% Generate fully marked list from constraint list
+%------------------------------------------------------------------------------
+
+generate_fully_marked_list([], []).
+generate_fully_marked_list([_|R], [o|S]) :-
+	generate_fully_marked_list(R, S).
+
+%------------------------------------------------------------------------------
+% Checking for subsumption
+%------------------------------------------------------------------------------
+
+subsumed(Depth,PC,SV,V,CL) :-
+	t(PC,SV,NegConstraints),            % Table check
+%	printf("test_safety(%,%,%)\n", [SV,V,NegConstraints]),
+	test_safety(SV,V,NegConstraints),   % Safety check
+%	printf("TEST_SAFETY OK\n", []),
+	filter(NegConstraints,CL,ML), !,    % Filter
+	assert(answer(Depth,ML)).           % Produce answer for this branch
+
+%------------------------------------------------------------------------------
+% Stopping Point
+%------------------------------------------------------------------------------
+
+base(Depth,SV,V,CL,AddC,NegSafety) :-
+%	printf("test_safety(%,%,%)\n", [SV,V,NegSafety]),
+	test_safety(SV,V,NegSafety),
+%	printf("append(%,%,CL1)\n", [AddC,CL]),
+	append(AddC,CL,CL1),
+%	printf("filter(%,%,ML1)\n", [NegSafety,CL1]),
+	filter(NegSafety,CL1,ML1), !, 
+	chop_marked_list(AddC,ML1,ML),
+%	printf("BASE CASE\n", []),
+	assert(answer(Depth,ML)),
+	!, fail.
+base(_Depth,_SV,_V,_CL,_AddC,_NegSafety).
+	% Success here is verification failure.
+
+%------------------------------------------------------------------------------
+% Taking Transition
+%------------------------------------------------------------------------------
+
+enabled_transition(_Depth,V,V1,_CL,_AddC,DelayedC) :-
+	V=V1,
+	enabled_transition_aux(DelayedC), !,
+	execute_delayed(DelayedC).
+enabled_transition(Depth,_V,_V1,CL,AddC,_DelayedC) :-
+%	printf("FAILED TRANS\n", []),
+	append(AddC,CL,CL2),
+%	printf("filter(%,%,ML2)\n", [[tt],CL2]),
+	filter([tt],CL2,ML2), !,
+	chop_marked_list(AddC,ML2,ML),
+%	printf("assert(answer(%,%))\n", [Depth,ML]),
+	assert(answer(Depth,ML)),
+	!, fail.
+
+enabled_transition_aux(DelayedC) :-
+	execute_delayed_failure(DelayedC), !, fail.
+enabled_transition_aux(_DelayedC).
+	
+execute_delayed_failure([C|_]) :- not execute_delayed_constraint(C).
+execute_delated_failure([C|R]) :-
+	execute_delayed_constraint(C),
+	execute_delayed_failure(R).
+
+execute_delayed([]).
+execute_delayed([C|R]) :- execute_delayed_constraint(C), execute_delayed(R).
+
+inductive(Depth,PC,SV,V,CL,NegSafety,_AddC) :-
+	p(Depth+1,PC,SV,V,CL,NegSafety).
+inductive(Depth,_PC,_SV,_V,_CL,_NegSafety,AddC) :-
+	retract(answer(Depth+1,ML)),
+	chop_marked_list(AddC,ML,ML1),
+	assert(answer(Depth,ML1)),
+	!, fail.
+
+
+%------------------------------------------------------------------------------
+% Table storing
+%------------------------------------------------------------------------------
+
+collate_answers(Depth,OutML) :-
+	retract(answer(Depth,ML)),
+	collate_answers_aux(Depth,ML,OutML).
+
+collate_answers_aux(Depth,ML,OutML) :-
+	retract(answer(Depth,ML)),
+	collate_answers_aux(Depth,ML,OutML).
+collate_answers_aux(Depth,ML,ML) :-
+	assert(answer(Depth,ML)).
+
+store(Depth,PC,[_T|V]) :-
+	negate_symbolic(V,VOut,NegConstraints),
+	verified_depthbound(Bound),
+	assert(t(PC,[X|VOut],[gt(X,Bound-Depth)|NegConstraints])).
+
+store1(_Depth,PC,V) :-
+	negate_symbolic(V,VOut,NegConstraints),
+	assert(t(PC,VOut,NegConstraints)).
+
+create_fresh([],[]).
+create_fresh([_|L],[_|R]) :- create_fresh(L,R).
+
+negate_symbolic(V,VOut,NegConstraints) :-
+	create_fresh(V,VOut),                   % Get fresh variables
+	dump(V,VOut,CL),
+	negate_list(CL,NegConstraints).
+
+negate_list([], []).
+negate_list([C|R], [NC|S]) :-
+	negate(C, [NC]), !, negate_list(R, S).
+negate_list([C|R], [NC1,NC2|S]) :-
+	negate(C, [NC1,NC2]), !, negate_list(R, S).
+negate_list([C|R], S) :- negate(C, []), negate_list(R, S).
+
+negate(quote(A = B), [gt(M,N),gt(N,M)]) :-
+	integer_negation(0),
+	make_symbolic(A,M), make_symbolic(B,N).
+negate(quote(A = B), [geq(M,plus(N,1)),geq(N,plus(M,1))]) :-
+	integer_negation(1),
+	make_symbolic(A,M), make_symbolic(B,N).
+negate(quote(A < B), [geq(M,N)]) :-
+	make_symbolic(A,M), make_symbolic(B,N).
+negate(quote(A > B), [geq(N,M)]) :-
+	make_symbolic(A,M), make_symbolic(B,N).
+negate(quote(A <= B), [gt(M,N)]) :-
+	integer_negation(0),
+	make_symbolic(A,M), make_symbolic(B,N).	
+negate(quote(A <= B), [geq(M,plus(N,1))]) :-
+	integer_negation(1),
+	make_symbolic(A,M), make_symbolic(B,N).	
+negate(quote(A >= B), [gt(N,M)]) :-
+	integer_negation(0),
+	make_symbolic(A,M), make_symbolic(B,N).
+negate(quote(A >= B), [geq(N,plus(M,1))]) :-
+	integer_negation(1),
+	make_symbolic(A,M), make_symbolic(B,N).
+negate(ff, [tt]).
+negate(quote(real(_)), []).
+negate(tt, []).
+
+make_symbolic(A, A) :- var(A), !.
+make_symbolic(A, A) :- atomic(A), !.
+make_symbolic(quote(-A), minus(N)) :- !, make_symbolic(A, N).
+make_symbolic(quote(A + B), plus(E,F)) :- !,
+	make_symbolic(A, E), make_symbolic(B, F).
+make_symbolic(quote(A - B), minus(E,F)) :- !,
+	make_symbolic(A, E), make_symbolic(B, F).
+make_symbolic(quote(A * B), mul(E,F)) :-
+	make_symbolic(A, E), make_symbolic(B, F).
+make_symbolic(quote(A / B), div(E,F)) :-
+	make_symbolic(A, E), make_symbolic(B, F).
+	
+
+%------------------------------------------------------------------------------
+% Generic routines
+%------------------------------------------------------------------------------
+
+% chop_marked_list(A,B,C), when l is the length of A, removes l elements
+% from the head of B, resulting in C.
+
+chop_marked_list([],ML,ML).
+chop_marked_list([_|R],[_|MLIn],MLOut) :-
+	chop_marked_list(R,MLIn,MLOut).
+
+% test_safety/3 tests whether evaluated variables V has no intersection
+% with any disjunct in NegSafety, which variables include SV (symbolic
+% variables).
+
+:- dynamic(negsafety_copy,2).
+
+test_safety(SV,V,NegSafety) :-
+	assert(negsafety_copy(SV,NegSafety)),
+	retract(negsafety_copy(V,NegSafety2)),
+	test_safety_aux(NegSafety2).
+
+test_safety_aux([]).
+test_safety_aux([C|R]) :-
+%	printf("not constrain_symbolic(%)\n", [C]),
+	not test_safety_aux2(C),
+	test_safety_aux(R).
+
+test_safety_aux2(C) :-
+	constrain_symbolic(C,[],Delayed),
+	execute_delayed(Delayed).
+
+
+% filter/3 linearly generates unique (not minimal) unsatisfiable subset
+% and marking on needed constraints
+
+filter(NegImplied, CL, ML) :-
+	filter_aux(NegImplied, [], CL, ML).
+
+filter_aux(_NegImplied, _, [], []).
+filter_aux(NegImplied, Essential, CL, ML) :-
+	CL = [_|RestCL], ML = [_|RestML],
+%	printf("filter_sufficient(%,%,%)\n", [NegImplied, Essential, RestCL]),
+	filter_sufficient(NegImplied, Essential, RestCL),
+%	printf("SUFFICIENT\n", []),
+	filter_aux(NegImplied, Essential, RestCL, RestML).
+filter_aux(NegImplied, Essential, CL, ML) :-
+	CL = [C|RestCL], ML = [o|RestML],
+	filter_aux(NegImplied, [C|Essential], RestCL, RestML).
+	
+filter_sufficient([], _, _).
+filter_sufficient([C|R], L1, L2) :-
+	not filter_satisfiable(C, L1, L2),
+	filter_sufficient(R, L1, L2).
+
+filter_satisfiable(C, L1, L2) :-
+	constrain_symbolic(C,[],Delayed1),
+	constrain_symbolic_list_aux(L1,Delayed1,Delayed2),
+	constrain_symbolic_list_aux(L2,Delayed2,Delayed3),
+	execute_delayed(Delayed3).
+
+
+% constrain_symbolic_list/1: Evaluate list of symbolic constraints.
+
+constrain_symbolic_list(CL) :-
+	constrain_symbolic_list_aux(CL, [], Delayed),
+	execute_delayed(Delayed).
+
+constrain_symbolic_list_aux([], Delayed, Delayed).
+constrain_symbolic_list_aux([C|R], Delayed1, Delayed) :-
+	constrain_symbolic(C, Delayed1, Delayed2),
+	constrain_symbolic_list_aux(R, Delayed2, Delayed).
+
+% constrain_symbolic_list_selectively/2: Evaluate list of symbolic constraints
+% selectively, by evaluating only marked constraints.
+
+constrain_symbolic_list_selectively(CL, ML) :-
+	constrain_symbolic_list_selectively_aux(CL, ML, [], Delayed),
+	execute_delayed(Delayed).
+
+constrain_symbolic_list_selectively_aux([], [], Delayed, Delayed).
+constrain_symbolic_list_selectively_aux([C|R], [Tag|S], Delayed1, Delayed) :-
+	atom(Tag),
+	constrain_symbolic(C, Delayed1, Delayed2),
+	constrain_symbolic_list_selectively_aux(R, S, Delayed2, Delayed).
+constrain_symbolic_list_selectively_aux([_|R], [_|S], Delayed1, Delayed) :-
+	constrain_symbolic_list_selectively_aux(R, S, Delayed1, Delayed).
+
+% constrain_symbolic/1 should not handle neq constraints for performance
+% backtracking here would be costly
+
+constrain_symbolic(tt,Delayed0,Delayed0).
+constrain_symbolic(eq(A,B),Delayed0,Delayed2) :-
+	numconstrain_symbolic(A,M,Delayed0,Delayed1),
+	numconstrain_symbolic(B,N,Delayed1,Delayed2), M=N.
+% constrain_symbolic(neq(A,B),Delayed0,Delayed2) :-
+% 	numconstrain_symbolic(A,M,Delayed0,Delayed1),
+% 	numconstrain_symbolic(B,N,Delayed1,Delayed2), M<N.
+% constrain_symbolic(neq(A,B),Delayed0,Delayed1) :-
+% 	numconstrain_symbolic(A,M,Delayed0,Delayed1),
+% 	numconstrain_symbolic(B,N,Delayed1,Delayed2), M>N.
+constrain_symbolic(gt(A,B),Delayed0,Delayed2) :-
+	numconstrain_symbolic(A,M,Delayed0,Delayed1),
+	numconstrain_symbolic(B,N,Delayed1,Delayed2), M>N.
+constrain_symbolic(geq(A,B),Delayed0,Delayed2) :-
+	numconstrain_symbolic(A,M,Delayed0,Delayed1),
+	numconstrain_symbolic(B,N,Delayed1,Delayed2), M>=N.
+constrain_symbolic(arrelem_leq(J,X),Delayed0,Delayed1) :-
+	numconstrain_symbolic(J,K,[arrelem_leq(K,X)|Delayed0],Delayed1).
+%% constrain_symbolic(nostrict(L)) :-
+%% 	nostrict(L).
+constrain_symbolic(ff,_,_) :- !, fail.
+
+numconstrain_symbolic(A,A,Delayed0,Delayed0) :- var(A), !.
+numconstrain_symbolic(A,A,Delayed0,Delayed0) :- atomic(A), !.
+numconstrain_symbolic([],[],Delayed0,Delayed0) :- !.
+numconstrain_symbolic([X|R],[Y|S],Delayed0,Delayed2) :- !,
+	numconstrain_symbolic(X,Y,Delayed0,Delayed1),
+	numconstrain_symbolic(R,S,Delayed1,Delayed2).
+numconstrain_symbolic(minus(A),-N,Delayed0,Delayed1) :- !,
+	numconstrain_symbolic(A,N,Delayed0,Delayed1).
+numconstrain_symbolic(plus(A,B), E+F, Delayed0,Delayed2) :- !,
+	numconstrain_symbolic(A,E,Delayed0,Delayed1),
+	numconstrain_symbolic(B,F,Delayed1,Delayed2).
+numconstrain_symbolic(minus(A,B), E-F, Delayed0,Delayed2) :- !,
+	numconstrain_symbolic(A,E, Delayed0,Delayed1),
+	numconstrain_symbolic(B,F, Delayed1,Delayed2).
+numconstrain_symbolic(mul(A,B), X, Delayed0,Delayed2) :-
+	numconstrain_symbolic(A,E, [go_multiply(E,F,X)|Delayed0],Delayed1),
+	numconstrain_symbolic(B,F, Delayed1,Delayed2).
+numconstrain_symbolic(div(A,B), X, Delayed0,Delayed2) :-
+	numconstrain_symbolic(A,E, [go_divide(E,F,X)|Delayed0],Delayed1),
+	numconstrain_symbolic(B,F, Delayed1,Delayed2).
+numconstrain_symbolic(exp2(Exponent), X, Delayed0,Delayed1) :-
+	numconstrain_symbolic(Exponent,EV, [exp2(EV,X)|Delayed0], Delayed1).
+%	exp2(EV,X).
+numconstrain_symbolic(arrelem_gt(J,X),X1,Delayed0,Delayed1) :-
+	numconstrain_symbolic(J,K,[arrelem_gt(K,X,X1)|Delayed0],Delayed1).
+%	arrelem_gt(J,X,X1).
+
+
+%-------------------------------------------------------------------------------
+% execute_delayed_constraint
+%-------------------------------------------------------------------------------
+
+execute_delayed_constraint(go_multiply(A,B,C)) :- C=A*B.
+execute_delayed_constraint(go_divide(A,B,C)) :- C=A/B.
+execute_delayed_constraint(exp2(V,X)) :- exp2(V,X).
+execute_delayed_constraint(arrelem_gt(K,X,Y)) :- arrelem_gt(K,X,Y).
+execute_delayed_constraint(arrelem_leq(K,X)) :- arrelem_leq(K,X).
+
+%-------------------------------------------------------------------------------
+% Routine to compute two's exponent: Needed for some sample problems
+%-------------------------------------------------------------------------------
+:- dynamic(exp2_store,2).
+
+exp2(0, 1).
+exp2(X, Y) :- X>0, X<=30, exp2_store(X, Y), !.
+exp2(X, Y * 2) :- X>0, X<=30,
+	exp2(X-1, Y),
+	assert(exp2_store(X, Y * 2)), !.
+exp2(X, Y * 2) :- X>0, exp2(X-1, Y).
+
+
+%-------------------------------------------------------------------------------
+% arrelem_gt: compare and swap, when X[J] >= X[J+1]+1
+% Useful for bubble sort
+%-------------------------------------------------------------------------------
+
+arrelem_gt(0,[A,B|R],[B,A|R]) :-
+	numvalues(U),
+	A >= B+1, A>=0, A<=U-1, B>=0, B<=U-1.
+arrelem_gt(J,[N|X],[N|X1]) :-
+	J > 0, arrelem_gt(J-1,X,X1).
+
+arrelem_leq(0,[A,B|_]) :-
+	numvalues(U),
+	A <= B, A>=0, A<=U-1, B>=0, B<=U-1.
+arrelem_leq(J,[_|R]) :-
+	J > 0, arrelem_leq(J-1,R).
+
+
+
+%-------------------------------------------------------------------------------
+% exists_strict: at least one strict relation exists in
+% bubble sort array.
+%-------------------------------------------------------------------------------
+
+%% nostrict(L) :- not exists_strict(L).
+
+%% exists_strict([]) :- !, fail.
+%% exists_strict([_]) :- !, fail.
+%% exists_strict([A,B|_]) :- not A >= B.
+%% exists_strict([_|R]) :- exists_strict(R).

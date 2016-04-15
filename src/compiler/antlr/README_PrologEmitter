@@ -1,0 +1,6 @@
+PrologEmitter.java is suposedly generated from PrologEmitter.g, but
+at present it has been modified independently. I have made an attempt
+to port the updates back from .java to .g, but I have not tested
+the new PrologEmitter.g.
+
+

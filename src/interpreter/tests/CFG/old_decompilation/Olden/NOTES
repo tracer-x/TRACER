@@ -1,0 +1,6 @@
+- bisort has a recursive function (Bisort)
+- health contains a recursive function (alloc_tree)
+- mst contains a recursive function (Do_all_BlueRule)
+- perimeter contains several recursive function (gtequal_adj_neighbor,
+  CountTree, etc)
+- em3d contains a recursive function (do_all_compute)

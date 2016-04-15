@@ -1,0 +1,6832 @@
+"dgraph/xDot.ml" 70 2949 2953 "dgraph/xDot.ml" 70 2949 2967
+type(
+  name:string ->
+  pos:pos ->
+  bbox:bounding_box ->
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list -> node_layout
+)
+ident(
+  def mk_node_layout "dgraph/xDot.ml" 77 3104 3104 --
+)
+"dgraph/xDot.ml" 70 2949 2969 "dgraph/xDot.ml" 70 2949 2973
+type(
+  string
+)
+ident(
+  def name "dgraph/xDot.ml" 70 2949 2974 "dgraph/xDot.ml" 75 3081 3102
+)
+"dgraph/xDot.ml" 70 2949 2975 "dgraph/xDot.ml" 70 2949 2978
+type(
+  pos
+)
+ident(
+  def pos "dgraph/xDot.ml" 70 2949 2979 "dgraph/xDot.ml" 75 3081 3102
+)
+"dgraph/xDot.ml" 70 2949 2980 "dgraph/xDot.ml" 70 2949 2984
+type(
+  bounding_box
+)
+ident(
+  def bbox "dgraph/xDot.ml" 70 2949 2985 "dgraph/xDot.ml" 75 3081 3102
+)
+"dgraph/xDot.ml" 70 2949 2986 "dgraph/xDot.ml" 70 2949 2990
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 70 2949 2991 "dgraph/xDot.ml" 75 3081 3102
+)
+"dgraph/xDot.ml" 70 2949 2992 "dgraph/xDot.ml" 70 2949 2997
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 71 3000 3002 "dgraph/xDot.ml" 75 3081 3102
+)
+"dgraph/xDot.ml" 71 3000 3016 "dgraph/xDot.ml" 71 3000 3020
+type(
+  string
+)
+ident(
+  int_ref name "dgraph/xDot.ml" 70 2949 2969 "dgraph/xDot.ml" 70 2949 2973
+)
+"dgraph/xDot.ml" 72 3022 3036 "dgraph/xDot.ml" 72 3022 3039
+type(
+  pos
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 70 2949 2975 "dgraph/xDot.ml" 70 2949 2978
+)
+"dgraph/xDot.ml" 73 3041 3055 "dgraph/xDot.ml" 73 3041 3059
+type(
+  bounding_box
+)
+ident(
+  int_ref bbox "dgraph/xDot.ml" 70 2949 2980 "dgraph/xDot.ml" 70 2949 2984
+)
+"dgraph/xDot.ml" 74 3061 3075 "dgraph/xDot.ml" 74 3061 3079
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 70 2949 2986 "dgraph/xDot.ml" 70 2949 2990
+)
+"dgraph/xDot.ml" 75 3081 3095 "dgraph/xDot.ml" 75 3081 3100
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 70 2949 2992 "dgraph/xDot.ml" 70 2949 2997
+)
+"dgraph/xDot.ml" 71 3000 3002 "dgraph/xDot.ml" 75 3081 3102
+type(
+  node_layout
+)
+"dgraph/xDot.ml" 77 3104 3108 "dgraph/xDot.ml" 77 3104 3125
+type(
+  pos:pos ->
+  bbox:bounding_box ->
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list -> cluster_layout
+)
+ident(
+  def mk_cluster_layout "dgraph/xDot.ml" 83 3234 3234 --
+)
+"dgraph/xDot.ml" 77 3104 3127 "dgraph/xDot.ml" 77 3104 3130
+type(
+  pos
+)
+ident(
+  def pos "dgraph/xDot.ml" 77 3104 3131 "dgraph/xDot.ml" 81 3211 3232
+)
+"dgraph/xDot.ml" 77 3104 3132 "dgraph/xDot.ml" 77 3104 3136
+type(
+  bounding_box
+)
+ident(
+  def bbox "dgraph/xDot.ml" 77 3104 3137 "dgraph/xDot.ml" 81 3211 3232
+)
+"dgraph/xDot.ml" 77 3104 3138 "dgraph/xDot.ml" 77 3104 3142
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 77 3104 3143 "dgraph/xDot.ml" 81 3211 3232
+)
+"dgraph/xDot.ml" 77 3104 3144 "dgraph/xDot.ml" 77 3104 3149
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 78 3152 3154 "dgraph/xDot.ml" 81 3211 3232
+)
+"dgraph/xDot.ml" 78 3152 3166 "dgraph/xDot.ml" 78 3152 3169
+type(
+  pos
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 77 3104 3127 "dgraph/xDot.ml" 77 3104 3130
+)
+"dgraph/xDot.ml" 79 3171 3185 "dgraph/xDot.ml" 79 3171 3189
+type(
+  bounding_box
+)
+ident(
+  int_ref bbox "dgraph/xDot.ml" 77 3104 3132 "dgraph/xDot.ml" 77 3104 3136
+)
+"dgraph/xDot.ml" 80 3191 3205 "dgraph/xDot.ml" 80 3191 3209
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 77 3104 3138 "dgraph/xDot.ml" 77 3104 3142
+)
+"dgraph/xDot.ml" 81 3211 3225 "dgraph/xDot.ml" 81 3211 3230
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 77 3104 3144 "dgraph/xDot.ml" 77 3104 3149
+)
+"dgraph/xDot.ml" 78 3152 3154 "dgraph/xDot.ml" 81 3211 3232
+type(
+  cluster_layout
+)
+"dgraph/xDot.ml" 83 3234 3238 "dgraph/xDot.ml" 83 3234 3252
+type(
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list ->
+  hdraw:XDotDraw.operation list ->
+  tdraw:XDotDraw.operation list ->
+  hldraw:XDotDraw.operation list ->
+  tldraw:XDotDraw.operation list -> edge_layout
+)
+ident(
+  def mk_edge_layout "dgraph/xDot.ml" 92 3436 3436 --
+)
+"dgraph/xDot.ml" 83 3234 3254 "dgraph/xDot.ml" 83 3234 3258
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 83 3234 3259 "dgraph/xDot.ml" 90 3431 3434
+)
+"dgraph/xDot.ml" 83 3234 3260 "dgraph/xDot.ml" 83 3234 3265
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 83 3234 3266 "dgraph/xDot.ml" 90 3431 3434
+)
+"dgraph/xDot.ml" 83 3234 3267 "dgraph/xDot.ml" 83 3234 3272
+type(
+  XDotDraw.operation list
+)
+ident(
+  def hdraw "dgraph/xDot.ml" 83 3234 3273 "dgraph/xDot.ml" 90 3431 3434
+)
+"dgraph/xDot.ml" 83 3234 3274 "dgraph/xDot.ml" 83 3234 3279
+type(
+  XDotDraw.operation list
+)
+ident(
+  def tdraw "dgraph/xDot.ml" 83 3234 3280 "dgraph/xDot.ml" 90 3431 3434
+)
+"dgraph/xDot.ml" 83 3234 3281 "dgraph/xDot.ml" 83 3234 3287
+type(
+  XDotDraw.operation list
+)
+ident(
+  def hldraw "dgraph/xDot.ml" 83 3234 3288 "dgraph/xDot.ml" 90 3431 3434
+)
+"dgraph/xDot.ml" 83 3234 3289 "dgraph/xDot.ml" 83 3234 3295
+type(
+  XDotDraw.operation list
+)
+ident(
+  def tldraw "dgraph/xDot.ml" 84 3298 3300 "dgraph/xDot.ml" 90 3431 3434
+)
+"dgraph/xDot.ml" 84 3298 3313 "dgraph/xDot.ml" 84 3298 3317
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 83 3234 3254 "dgraph/xDot.ml" 83 3234 3258
+)
+"dgraph/xDot.ml" 85 3319 3334 "dgraph/xDot.ml" 85 3319 3339
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 83 3234 3260 "dgraph/xDot.ml" 83 3234 3265
+)
+"dgraph/xDot.ml" 86 3341 3356 "dgraph/xDot.ml" 86 3341 3361
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref hdraw "dgraph/xDot.ml" 83 3234 3267 "dgraph/xDot.ml" 83 3234 3272
+)
+"dgraph/xDot.ml" 87 3363 3378 "dgraph/xDot.ml" 87 3363 3383
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref tdraw "dgraph/xDot.ml" 83 3234 3274 "dgraph/xDot.ml" 83 3234 3279
+)
+"dgraph/xDot.ml" 88 3385 3400 "dgraph/xDot.ml" 88 3385 3406
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref hldraw "dgraph/xDot.ml" 83 3234 3281 "dgraph/xDot.ml" 83 3234 3287
+)
+"dgraph/xDot.ml" 89 3408 3423 "dgraph/xDot.ml" 89 3408 3429
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref tldraw "dgraph/xDot.ml" 83 3234 3289 "dgraph/xDot.ml" 83 3234 3295
+)
+"dgraph/xDot.ml" 84 3298 3300 "dgraph/xDot.ml" 90 3431 3434
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 96 3499 3507 "dgraph/xDot.ml" 96 3499 3511
+type(
+  int -> 'a list -> 'a list
+)
+ident(
+  def take "dgraph/xDot.ml" 96 3499 3499 --
+)
+"dgraph/xDot.ml" 96 3499 3512 "dgraph/xDot.ml" 96 3499 3513
+type(
+  int
+)
+ident(
+  def n "dgraph/xDot.ml" 96 3499 3516 "dgraph/xDot.ml" 99 3561 3590
+)
+"dgraph/xDot.ml" 97 3525 3529 "dgraph/xDot.ml" 97 3525 3531
+type(
+  'a list
+)
+"dgraph/xDot.ml" 97 3525 3535 "dgraph/xDot.ml" 97 3525 3537
+type(
+  'a list
+)
+"dgraph/xDot.ml" 98 3538 3542 "dgraph/xDot.ml" 98 3538 3543
+type(
+  'a list
+)
+ident(
+  def l "dgraph/xDot.ml" 98 3538 3544 "dgraph/xDot.ml" 98 3538 3560
+)
+"dgraph/xDot.ml" 98 3538 3549 "dgraph/xDot.ml" 98 3538 3550
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 96 3499 3512 "dgraph/xDot.ml" 96 3499 3513
+)
+"dgraph/xDot.ml" 98 3538 3551 "dgraph/xDot.ml" 98 3538 3552
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 98 3538 3553 "dgraph/xDot.ml" 98 3538 3554
+type(
+  int
+)
+"dgraph/xDot.ml" 98 3538 3549 "dgraph/xDot.ml" 98 3538 3554
+type(
+  bool
+)
+"dgraph/xDot.ml" 98 3538 3558 "dgraph/xDot.ml" 98 3538 3560
+type(
+  'a list
+)
+"dgraph/xDot.ml" 98 3538 3544 "dgraph/xDot.ml" 98 3538 3560
+type(
+  'a list
+)
+"dgraph/xDot.ml" 99 3561 3565 "dgraph/xDot.ml" 99 3561 3566
+type(
+  'a
+)
+ident(
+  def h "dgraph/xDot.ml" 99 3561 3573 "dgraph/xDot.ml" 99 3561 3590
+)
+"dgraph/xDot.ml" 99 3561 3568 "dgraph/xDot.ml" 99 3561 3569
+type(
+  'a list
+)
+ident(
+  def t "dgraph/xDot.ml" 99 3561 3573 "dgraph/xDot.ml" 99 3561 3590
+)
+"dgraph/xDot.ml" 99 3561 3565 "dgraph/xDot.ml" 99 3561 3569
+type(
+  'a list
+)
+"dgraph/xDot.ml" 99 3561 3573 "dgraph/xDot.ml" 99 3561 3574
+type(
+  'a
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 99 3561 3565 "dgraph/xDot.ml" 99 3561 3566
+)
+"dgraph/xDot.ml" 99 3561 3577 "dgraph/xDot.ml" 99 3561 3581
+type(
+  int -> 'a list -> 'a list
+)
+ident(
+  int_ref take "dgraph/xDot.ml" 96 3499 3507 "dgraph/xDot.ml" 96 3499 3511
+)
+"dgraph/xDot.ml" 99 3561 3583 "dgraph/xDot.ml" 99 3561 3584
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 96 3499 3512 "dgraph/xDot.ml" 96 3499 3513
+)
+"dgraph/xDot.ml" 99 3561 3584 "dgraph/xDot.ml" 99 3561 3585
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/xDot.ml" 99 3561 3585 "dgraph/xDot.ml" 99 3561 3586
+type(
+  int
+)
+"dgraph/xDot.ml" 99 3561 3582 "dgraph/xDot.ml" 99 3561 3587
+type(
+  int
+)
+"dgraph/xDot.ml" 99 3561 3588 "dgraph/xDot.ml" 99 3561 3589
+type(
+  'a list
+)
+ident(
+  int_ref t "dgraph/xDot.ml" 99 3561 3568 "dgraph/xDot.ml" 99 3561 3569
+)
+"dgraph/xDot.ml" 99 3561 3576 "dgraph/xDot.ml" 99 3561 3590
+call(
+  stack
+)
+type(
+  'a list
+)
+"dgraph/xDot.ml" 99 3561 3573 "dgraph/xDot.ml" 99 3561 3590
+type(
+  'a list
+)
+"dgraph/xDot.ml" 96 3499 3516 "dgraph/xDot.ml" 99 3561 3590
+type(
+  'a list -> 'a list
+)
+"dgraph/xDot.ml" 101 3592 3596 "dgraph/xDot.ml" 101 3592 3602
+type(
+  string -> int -> string
+)
+ident(
+  def suffix "dgraph/xDot.ml" 104 3710 3710 --
+)
+"dgraph/xDot.ml" 101 3592 3603 "dgraph/xDot.ml" 101 3592 3604
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 101 3592 3605 "dgraph/xDot.ml" 102 3650 3708
+)
+"dgraph/xDot.ml" 101 3592 3605 "dgraph/xDot.ml" 101 3592 3606
+type(
+  int
+)
+ident(
+  def i "dgraph/xDot.ml" 101 3592 3609 "dgraph/xDot.ml" 102 3650 3708
+)
+"dgraph/xDot.ml" 101 3592 3613 "dgraph/xDot.ml" 101 3592 3623
+type(
+  string -> int -> int -> string
+)
+ident(
+  ext_ref String.sub
+)
+"dgraph/xDot.ml" 101 3592 3624 "dgraph/xDot.ml" 101 3592 3625
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 101 3592 3603 "dgraph/xDot.ml" 101 3592 3604
+)
+"dgraph/xDot.ml" 101 3592 3626 "dgraph/xDot.ml" 101 3592 3627
+type(
+  int
+)
+ident(
+  int_ref i "dgraph/xDot.ml" 101 3592 3605 "dgraph/xDot.ml" 101 3592 3606
+)
+"dgraph/xDot.ml" 101 3592 3630 "dgraph/xDot.ml" 101 3592 3643
+type(
+  string -> int
+)
+ident(
+  ext_ref String.length
+)
+"dgraph/xDot.ml" 101 3592 3644 "dgraph/xDot.ml" 101 3592 3645
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 101 3592 3603 "dgraph/xDot.ml" 101 3592 3604
+)
+"dgraph/xDot.ml" 101 3592 3629 "dgraph/xDot.ml" 101 3592 3646
+type(
+  int
+)
+"dgraph/xDot.ml" 101 3592 3646 "dgraph/xDot.ml" 101 3592 3647
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/xDot.ml" 101 3592 3647 "dgraph/xDot.ml" 101 3592 3648
+type(
+  int
+)
+ident(
+  int_ref i "dgraph/xDot.ml" 101 3592 3605 "dgraph/xDot.ml" 101 3592 3606
+)
+"dgraph/xDot.ml" 101 3592 3628 "dgraph/xDot.ml" 101 3592 3649
+type(
+  int
+)
+"dgraph/xDot.ml" 101 3592 3613 "dgraph/xDot.ml" 101 3592 3649
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 102 3650 3688 "dgraph/xDot.ml" 102 3650 3702
+type(
+  string
+)
+"dgraph/xDot.ml" 102 3650 3672 "dgraph/xDot.ml" 102 3650 3702
+type(
+  exn
+)
+"dgraph/xDot.ml" 102 3650 3706 "dgraph/xDot.ml" 102 3650 3708
+type(
+  string
+)
+"dgraph/xDot.ml" 101 3592 3609 "dgraph/xDot.ml" 102 3650 3708
+type(
+  string
+)
+"dgraph/xDot.ml" 104 3710 3718 "dgraph/xDot.ml" 104 3710 3730
+type(
+  'a list -> ('a * 'a) list
+)
+ident(
+  def group_tuples "dgraph/xDot.ml" 104 3710 3710 --
+)
+"dgraph/xDot.ml" 105 3742 3746 "dgraph/xDot.ml" 105 3742 3748
+type(
+  'a list
+)
+"dgraph/xDot.ml" 105 3742 3752 "dgraph/xDot.ml" 105 3742 3754
+type(
+  ('a * 'a) list
+)
+"dgraph/xDot.ml" 106 3755 3760 "dgraph/xDot.ml" 106 3755 3761
+type(
+  'a
+)
+ident(
+  def x "dgraph/xDot.ml" 106 3755 3766 "dgraph/xDot.ml" 106 3755 3768
+)
+"dgraph/xDot.ml" 106 3755 3759 "dgraph/xDot.ml" 106 3755 3762
+type(
+  'a list
+)
+"dgraph/xDot.ml" 106 3755 3766 "dgraph/xDot.ml" 106 3755 3768
+type(
+  ('a * 'a) list
+)
+"dgraph/xDot.ml" 107 3769 3773 "dgraph/xDot.ml" 107 3769 3775
+type(
+  'a
+)
+ident(
+  def h1 "dgraph/xDot.ml" 107 3769 3786 "dgraph/xDot.ml" 107 3769 3812
+)
+"dgraph/xDot.ml" 107 3769 3777 "dgraph/xDot.ml" 107 3769 3779
+type(
+  'a
+)
+ident(
+  def h2 "dgraph/xDot.ml" 107 3769 3786 "dgraph/xDot.ml" 107 3769 3812
+)
+"dgraph/xDot.ml" 107 3769 3781 "dgraph/xDot.ml" 107 3769 3782
+type(
+  'a list
+)
+ident(
+  def t "dgraph/xDot.ml" 107 3769 3786 "dgraph/xDot.ml" 107 3769 3812
+)
+"dgraph/xDot.ml" 107 3769 3777 "dgraph/xDot.ml" 107 3769 3782
+type(
+  'a list
+)
+"dgraph/xDot.ml" 107 3769 3773 "dgraph/xDot.ml" 107 3769 3782
+type(
+  'a list
+)
+"dgraph/xDot.ml" 107 3769 3787 "dgraph/xDot.ml" 107 3769 3789
+type(
+  'a
+)
+ident(
+  int_ref h1 "dgraph/xDot.ml" 107 3769 3773 "dgraph/xDot.ml" 107 3769 3775
+)
+"dgraph/xDot.ml" 107 3769 3791 "dgraph/xDot.ml" 107 3769 3793
+type(
+  'a
+)
+ident(
+  int_ref h2 "dgraph/xDot.ml" 107 3769 3777 "dgraph/xDot.ml" 107 3769 3779
+)
+"dgraph/xDot.ml" 107 3769 3786 "dgraph/xDot.ml" 107 3769 3794
+type(
+  'a * 'a
+)
+"dgraph/xDot.ml" 107 3769 3798 "dgraph/xDot.ml" 107 3769 3810
+type(
+  'a list -> ('a * 'a) list
+)
+ident(
+  int_ref group_tuples "dgraph/xDot.ml" 104 3710 3718 "dgraph/xDot.ml" 104 3710 3730
+)
+"dgraph/xDot.ml" 107 3769 3811 "dgraph/xDot.ml" 107 3769 3812
+type(
+  'a list
+)
+ident(
+  int_ref t "dgraph/xDot.ml" 107 3769 3781 "dgraph/xDot.ml" 107 3769 3782
+)
+"dgraph/xDot.ml" 107 3769 3798 "dgraph/xDot.ml" 107 3769 3812
+call(
+  stack
+)
+type(
+  ('a * 'a) list
+)
+"dgraph/xDot.ml" 107 3769 3786 "dgraph/xDot.ml" 107 3769 3812
+type(
+  ('a * 'a) list
+)
+"dgraph/xDot.ml" 104 3710 3733 "dgraph/xDot.ml" 107 3769 3812
+type(
+  'a list -> ('a * 'a) list
+)
+"dgraph/xDot.ml" 111 3883 3887 "dgraph/xDot.ml" 111 3883 3892
+type(
+  char -> string -> string list
+)
+ident(
+  def split "dgraph/xDot.ml" 118 4097 4097 --
+)
+"dgraph/xDot.ml" 111 3883 3893 "dgraph/xDot.ml" 111 3883 3894
+type(
+  char
+)
+ident(
+  def c "dgraph/xDot.ml" 111 3883 3895 "dgraph/xDot.ml" 116 4057 4095
+)
+"dgraph/xDot.ml" 111 3883 3895 "dgraph/xDot.ml" 111 3883 3896
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 112 3899 3901 "dgraph/xDot.ml" 116 4057 4095
+)
+"dgraph/xDot.ml" 112 3899 3909 "dgraph/xDot.ml" 112 3899 3919
+type(
+  int -> string list
+)
+"dgraph/xDot.ml" 112 3899 3920 "dgraph/xDot.ml" 112 3899 3921
+type(
+  int
+)
+ident(
+  def n "dgraph/xDot.ml" 113 3924 3928 "dgraph/xDot.ml" 115 4020 4056
+)
+"dgraph/xDot.ml" 113 3924 3936 "dgraph/xDot.ml" 113 3924 3937
+type(
+  int
+)
+ident(
+  def p "dgraph/xDot.ml" 114 3964 3975 "dgraph/xDot.ml" 114 3964 4019
+)
+"dgraph/xDot.ml" 113 3924 3940 "dgraph/xDot.ml" 113 3924 3957
+type(
+  string -> int -> char -> int
+)
+ident(
+  ext_ref String.index_from
+)
+"dgraph/xDot.ml" 113 3924 3958 "dgraph/xDot.ml" 113 3924 3959
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 111 3883 3895 "dgraph/xDot.ml" 111 3883 3896
+)
+"dgraph/xDot.ml" 113 3924 3960 "dgraph/xDot.ml" 113 3924 3961
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 112 3899 3920 "dgraph/xDot.ml" 112 3899 3921
+)
+"dgraph/xDot.ml" 113 3924 3962 "dgraph/xDot.ml" 113 3924 3963
+type(
+  char
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 111 3883 3893 "dgraph/xDot.ml" 111 3883 3894
+)
+"dgraph/xDot.ml" 113 3924 3940 "dgraph/xDot.ml" 113 3924 3963
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/xDot.ml" 114 3964 3976 "dgraph/xDot.ml" 114 3964 3986
+type(
+  string -> int -> int -> string
+)
+ident(
+  ext_ref String.sub
+)
+"dgraph/xDot.ml" 114 3964 3987 "dgraph/xDot.ml" 114 3964 3988
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 111 3883 3895 "dgraph/xDot.ml" 111 3883 3896
+)
+"dgraph/xDot.ml" 114 3964 3989 "dgraph/xDot.ml" 114 3964 3990
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 112 3899 3920 "dgraph/xDot.ml" 112 3899 3921
+)
+"dgraph/xDot.ml" 114 3964 3992 "dgraph/xDot.ml" 114 3964 3993
+type(
+  int
+)
+ident(
+  int_ref p "dgraph/xDot.ml" 113 3924 3936 "dgraph/xDot.ml" 113 3924 3937
+)
+"dgraph/xDot.ml" 114 3964 3993 "dgraph/xDot.ml" 114 3964 3994
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/xDot.ml" 114 3964 3994 "dgraph/xDot.ml" 114 3964 3995
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 112 3899 3920 "dgraph/xDot.ml" 112 3899 3921
+)
+"dgraph/xDot.ml" 114 3964 3991 "dgraph/xDot.ml" 114 3964 3996
+type(
+  int
+)
+"dgraph/xDot.ml" 114 3964 3975 "dgraph/xDot.ml" 114 3964 3997
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 114 3964 4002 "dgraph/xDot.ml" 114 3964 4012
+type(
+  int -> string list
+)
+ident(
+  int_ref split_from "dgraph/xDot.ml" 112 3899 3909 "dgraph/xDot.ml" 112 3899 3919
+)
+"dgraph/xDot.ml" 114 3964 4014 "dgraph/xDot.ml" 114 3964 4015
+type(
+  int
+)
+ident(
+  int_ref p "dgraph/xDot.ml" 113 3924 3936 "dgraph/xDot.ml" 113 3924 3937
+)
+"dgraph/xDot.ml" 114 3964 4015 "dgraph/xDot.ml" 114 3964 4016
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"dgraph/xDot.ml" 114 3964 4016 "dgraph/xDot.ml" 114 3964 4017
+type(
+  int
+)
+"dgraph/xDot.ml" 114 3964 4013 "dgraph/xDot.ml" 114 3964 4018
+type(
+  int
+)
+"dgraph/xDot.ml" 114 3964 4001 "dgraph/xDot.ml" 114 3964 4019
+call(
+  stack
+)
+type(
+  string list
+)
+"dgraph/xDot.ml" 114 3964 3975 "dgraph/xDot.ml" 114 3964 4019
+type(
+  string list
+)
+"dgraph/xDot.ml" 113 3924 3932 "dgraph/xDot.ml" 114 3964 4019
+type(
+  string list
+)
+"dgraph/xDot.ml" 115 4020 4029 "dgraph/xDot.ml" 115 4020 4038
+type(
+  exn
+)
+"dgraph/xDot.ml" 115 4020 4044 "dgraph/xDot.ml" 115 4020 4050
+type(
+  string -> int -> string
+)
+ident(
+  int_ref suffix "dgraph/xDot.ml" 101 3592 3596 "dgraph/xDot.ml" 101 3592 3602
+)
+"dgraph/xDot.ml" 115 4020 4051 "dgraph/xDot.ml" 115 4020 4052
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 111 3883 3895 "dgraph/xDot.ml" 111 3883 3896
+)
+"dgraph/xDot.ml" 115 4020 4053 "dgraph/xDot.ml" 115 4020 4054
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 112 3899 3920 "dgraph/xDot.ml" 112 3899 3921
+)
+"dgraph/xDot.ml" 115 4020 4044 "dgraph/xDot.ml" 115 4020 4054
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 115 4020 4042 "dgraph/xDot.ml" 115 4020 4056
+type(
+  string list
+)
+"dgraph/xDot.ml" 113 3924 3928 "dgraph/xDot.ml" 115 4020 4056
+type(
+  string list
+)
+"dgraph/xDot.ml" 116 4057 4065 "dgraph/xDot.ml" 116 4057 4066
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 111 3883 3895 "dgraph/xDot.ml" 111 3883 3896
+)
+"dgraph/xDot.ml" 116 4057 4066 "dgraph/xDot.ml" 116 4057 4067
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 116 4057 4067 "dgraph/xDot.ml" 116 4057 4069
+type(
+  string
+)
+"dgraph/xDot.ml" 116 4057 4065 "dgraph/xDot.ml" 116 4057 4069
+type(
+  bool
+)
+"dgraph/xDot.ml" 116 4057 4075 "dgraph/xDot.ml" 116 4057 4077
+type(
+  string list
+)
+"dgraph/xDot.ml" 116 4057 4083 "dgraph/xDot.ml" 116 4057 4093
+type(
+  int -> string list
+)
+ident(
+  int_ref split_from "dgraph/xDot.ml" 112 3899 3909 "dgraph/xDot.ml" 112 3899 3919
+)
+"dgraph/xDot.ml" 116 4057 4094 "dgraph/xDot.ml" 116 4057 4095
+type(
+  int
+)
+"dgraph/xDot.ml" 116 4057 4083 "dgraph/xDot.ml" 116 4057 4095
+call(
+  tail
+)
+type(
+  string list
+)
+"dgraph/xDot.ml" 116 4057 4062 "dgraph/xDot.ml" 116 4057 4095
+type(
+  string list
+)
+"dgraph/xDot.ml" 112 3899 3901 "dgraph/xDot.ml" 116 4057 4095
+type(
+  string list
+)
+"dgraph/xDot.ml" 118 4097 4101 "dgraph/xDot.ml" 118 4097 4109
+type(
+  string -> float * float
+)
+ident(
+  def read_pos "dgraph/xDot.ml" 120 4158 4158 --
+)
+"dgraph/xDot.ml" 118 4097 4110 "dgraph/xDot.ml" 118 4097 4111
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 118 4097 4114 "dgraph/xDot.ml" 118 4097 4156
+)
+"dgraph/xDot.ml" 118 4097 4114 "dgraph/xDot.ml" 118 4097 4126
+type(
+  string ->
+  (float -> float -> float * float, '_a,
+   (float -> float -> float * float) -> float * float, float * float)
+  Scanf.scanner
+)
+ident(
+  ext_ref Scanf.sscanf
+)
+"dgraph/xDot.ml" 118 4097 4127 "dgraph/xDot.ml" 118 4097 4128
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 118 4097 4110 "dgraph/xDot.ml" 118 4097 4111
+)
+"dgraph/xDot.ml" 118 4097 4129 "dgraph/xDot.ml" 118 4097 4136
+type(
+  (float -> float -> float * float, Scanf.Scanning.scanbuf, '_a,
+   (float -> float -> float * float) -> float * float,
+   (float -> float -> float * float) -> float * float, float * float)
+  format6
+)
+"dgraph/xDot.ml" 118 4097 4142 "dgraph/xDot.ml" 118 4097 4143
+type(
+  float
+)
+ident(
+  def x "dgraph/xDot.ml" 118 4097 4144 "dgraph/xDot.ml" 118 4097 4155
+)
+"dgraph/xDot.ml" 118 4097 4144 "dgraph/xDot.ml" 118 4097 4145
+type(
+  float
+)
+ident(
+  def y "dgraph/xDot.ml" 118 4097 4149 "dgraph/xDot.ml" 118 4097 4155
+)
+"dgraph/xDot.ml" 118 4097 4149 "dgraph/xDot.ml" 118 4097 4150
+type(
+  float
+)
+ident(
+  int_ref x "dgraph/xDot.ml" 118 4097 4142 "dgraph/xDot.ml" 118 4097 4143
+)
+"dgraph/xDot.ml" 118 4097 4152 "dgraph/xDot.ml" 118 4097 4154
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"dgraph/xDot.ml" 118 4097 4154 "dgraph/xDot.ml" 118 4097 4155
+type(
+  float
+)
+ident(
+  int_ref y "dgraph/xDot.ml" 118 4097 4144 "dgraph/xDot.ml" 118 4097 4145
+)
+"dgraph/xDot.ml" 118 4097 4152 "dgraph/xDot.ml" 118 4097 4155
+type(
+  float
+)
+"dgraph/xDot.ml" 118 4097 4149 "dgraph/xDot.ml" 118 4097 4155
+type(
+  float * float
+)
+"dgraph/xDot.ml" 118 4097 4137 "dgraph/xDot.ml" 118 4097 4156
+type(
+  float -> float -> float * float
+)
+"dgraph/xDot.ml" 118 4097 4114 "dgraph/xDot.ml" 118 4097 4156
+call(
+  tail
+)
+type(
+  float * float
+)
+"dgraph/xDot.ml" 120 4158 4162 "dgraph/xDot.ml" 120 4158 4174
+type(
+  float * float -> float -> float -> (float * float) * (float * float)
+)
+ident(
+  def bounding_box "dgraph/xDot.ml" 125 4286 4286 --
+)
+"dgraph/xDot.ml" 120 4158 4176 "dgraph/xDot.ml" 120 4158 4177
+type(
+  float
+)
+ident(
+  def x "dgraph/xDot.ml" 120 4158 4182 "dgraph/xDot.ml" 123 4260 4284
+)
+"dgraph/xDot.ml" 120 4158 4179 "dgraph/xDot.ml" 120 4158 4180
+type(
+  float
+)
+ident(
+  def y "dgraph/xDot.ml" 120 4158 4182 "dgraph/xDot.ml" 123 4260 4284
+)
+"dgraph/xDot.ml" 120 4158 4175 "dgraph/xDot.ml" 120 4158 4181
+type(
+  float * float
+)
+"dgraph/xDot.ml" 120 4158 4182 "dgraph/xDot.ml" 120 4158 4183
+type(
+  float
+)
+ident(
+  def w "dgraph/xDot.ml" 120 4158 4184 "dgraph/xDot.ml" 123 4260 4284
+)
+"dgraph/xDot.ml" 120 4158 4184 "dgraph/xDot.ml" 120 4158 4185
+type(
+  float
+)
+ident(
+  def h "dgraph/xDot.ml" 121 4188 4190 "dgraph/xDot.ml" 123 4260 4284
+)
+"dgraph/xDot.ml" 121 4188 4194 "dgraph/xDot.ml" 121 4188 4204
+type(
+  float * float
+)
+"dgraph/xDot.ml" 121 4188 4207 "dgraph/xDot.ml" 121 4188 4208
+type(
+  float
+)
+ident(
+  int_ref x "dgraph/xDot.ml" 120 4158 4176 "dgraph/xDot.ml" 120 4158 4177
+)
+"dgraph/xDot.ml" 121 4188 4209 "dgraph/xDot.ml" 121 4188 4211
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"dgraph/xDot.ml" 121 4188 4212 "dgraph/xDot.ml" 121 4188 4213
+type(
+  float
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 120 4158 4182 "dgraph/xDot.ml" 120 4158 4183
+)
+"dgraph/xDot.ml" 121 4188 4207 "dgraph/xDot.ml" 121 4188 4213
+type(
+  float
+)
+"dgraph/xDot.ml" 121 4188 4216 "dgraph/xDot.ml" 121 4188 4217
+type(
+  float
+)
+ident(
+  int_ref y "dgraph/xDot.ml" 120 4158 4179 "dgraph/xDot.ml" 120 4158 4180
+)
+"dgraph/xDot.ml" 121 4188 4218 "dgraph/xDot.ml" 121 4188 4220
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"dgraph/xDot.ml" 121 4188 4221 "dgraph/xDot.ml" 121 4188 4222
+type(
+  float
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 120 4158 4184 "dgraph/xDot.ml" 120 4158 4185
+)
+"dgraph/xDot.ml" 121 4188 4216 "dgraph/xDot.ml" 121 4188 4222
+type(
+  float
+)
+"dgraph/xDot.ml" 121 4188 4207 "dgraph/xDot.ml" 121 4188 4222
+type(
+  float * float
+)
+"dgraph/xDot.ml" 122 4226 4232 "dgraph/xDot.ml" 122 4226 4243
+type(
+  float * float
+)
+"dgraph/xDot.ml" 122 4226 4247 "dgraph/xDot.ml" 122 4226 4248
+type(
+  float
+)
+ident(
+  int_ref x "dgraph/xDot.ml" 120 4158 4176 "dgraph/xDot.ml" 120 4158 4177
+)
+"dgraph/xDot.ml" 122 4226 4248 "dgraph/xDot.ml" 122 4226 4250
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"dgraph/xDot.ml" 122 4226 4250 "dgraph/xDot.ml" 122 4226 4251
+type(
+  float
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 120 4158 4182 "dgraph/xDot.ml" 120 4158 4183
+)
+"dgraph/xDot.ml" 122 4226 4247 "dgraph/xDot.ml" 122 4226 4251
+type(
+  float
+)
+"dgraph/xDot.ml" 122 4226 4252 "dgraph/xDot.ml" 122 4226 4253
+type(
+  float
+)
+ident(
+  int_ref y "dgraph/xDot.ml" 120 4158 4179 "dgraph/xDot.ml" 120 4158 4180
+)
+"dgraph/xDot.ml" 122 4226 4253 "dgraph/xDot.ml" 122 4226 4255
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"dgraph/xDot.ml" 122 4226 4255 "dgraph/xDot.ml" 122 4226 4256
+type(
+  float
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 120 4158 4184 "dgraph/xDot.ml" 120 4158 4185
+)
+"dgraph/xDot.ml" 122 4226 4252 "dgraph/xDot.ml" 122 4226 4256
+type(
+  float
+)
+"dgraph/xDot.ml" 122 4226 4247 "dgraph/xDot.ml" 122 4226 4256
+type(
+  float * float
+)
+"dgraph/xDot.ml" 123 4260 4262 "dgraph/xDot.ml" 123 4260 4272
+type(
+  float * float
+)
+ident(
+  int_ref lower_left "dgraph/xDot.ml" 121 4188 4194 "dgraph/xDot.ml" 121 4188 4204
+)
+"dgraph/xDot.ml" 123 4260 4273 "dgraph/xDot.ml" 123 4260 4284
+type(
+  float * float
+)
+ident(
+  int_ref upper_right "dgraph/xDot.ml" 122 4226 4232 "dgraph/xDot.ml" 122 4226 4243
+)
+"dgraph/xDot.ml" 123 4260 4262 "dgraph/xDot.ml" 123 4260 4284
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 122 4226 4228 "dgraph/xDot.ml" 123 4260 4284
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 121 4188 4190 "dgraph/xDot.ml" 123 4260 4284
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 125 4286 4290 "dgraph/xDot.ml" 125 4286 4304
+type(
+  Graph.Dot_ast.id -> string
+)
+ident(
+  def get_dot_string "dgraph/xDot.ml" 133 4448 4448 --
+)
+"dgraph/xDot.ml" 126 4316 4335 "dgraph/xDot.ml" 126 4316 4336
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 126 4316 4340 "dgraph/xDot.ml" 126 4316 4341
+)
+"dgraph/xDot.ml" 126 4316 4320 "dgraph/xDot.ml" 126 4316 4336
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 126 4316 4340 "dgraph/xDot.ml" 126 4316 4341
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 126 4316 4335 "dgraph/xDot.ml" 126 4316 4336
+)
+"dgraph/xDot.ml" 127 4342 4360 "dgraph/xDot.ml" 127 4342 4361
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 127 4342 4365 "dgraph/xDot.ml" 127 4342 4366
+)
+"dgraph/xDot.ml" 127 4342 4346 "dgraph/xDot.ml" 127 4342 4361
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 127 4342 4365 "dgraph/xDot.ml" 127 4342 4366
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 127 4342 4360 "dgraph/xDot.ml" 127 4342 4361
+)
+"dgraph/xDot.ml" 128 4367 4386 "dgraph/xDot.ml" 128 4367 4387
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 128 4367 4391 "dgraph/xDot.ml" 128 4367 4392
+)
+"dgraph/xDot.ml" 128 4367 4371 "dgraph/xDot.ml" 128 4367 4387
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 128 4367 4391 "dgraph/xDot.ml" 128 4367 4392
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 128 4367 4386 "dgraph/xDot.ml" 128 4367 4387
+)
+"dgraph/xDot.ml" 129 4393 4410 "dgraph/xDot.ml" 129 4393 4411
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 129 4393 4415 "dgraph/xDot.ml" 129 4393 4416
+)
+"dgraph/xDot.ml" 129 4393 4397 "dgraph/xDot.ml" 129 4393 4411
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 129 4393 4415 "dgraph/xDot.ml" 129 4393 4416
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 129 4393 4410 "dgraph/xDot.ml" 129 4393 4411
+)
+"dgraph/xDot.ml" 125 4286 4307 "dgraph/xDot.ml" 129 4393 4416
+type(
+  Graph.Dot_ast.id -> string
+)
+"dgraph/xDot.ml" 133 4448 4452 "dgraph/xDot.ml" 133 4448 4467
+type(
+  Graph.Dot_ast.id -> string
+)
+ident(
+  def read_node_label "dgraph/xDot.ml" 139 4566 4566 --
+)
+"dgraph/xDot.ml" 134 4479 4497 "dgraph/xDot.ml" 134 4479 4498
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 137 4541 4563 "dgraph/xDot.ml" 137 4541 4564
+)
+"dgraph/xDot.ml" 134 4479 4483 "dgraph/xDot.ml" 134 4479 4498
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 135 4499 4518 "dgraph/xDot.ml" 135 4499 4519
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 137 4541 4563 "dgraph/xDot.ml" 137 4541 4564
+)
+"dgraph/xDot.ml" 135 4499 4503 "dgraph/xDot.ml" 135 4499 4519
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 134 4479 4483 "dgraph/xDot.ml" 135 4499 4519
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 136 4520 4539 "dgraph/xDot.ml" 136 4520 4540
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 137 4541 4563 "dgraph/xDot.ml" 137 4541 4564
+)
+"dgraph/xDot.ml" 136 4520 4524 "dgraph/xDot.ml" 136 4520 4540
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 134 4479 4483 "dgraph/xDot.ml" 136 4520 4540
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 137 4541 4558 "dgraph/xDot.ml" 137 4541 4559
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 137 4541 4563 "dgraph/xDot.ml" 137 4541 4564
+)
+"dgraph/xDot.ml" 137 4541 4545 "dgraph/xDot.ml" 137 4541 4559
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 134 4479 4483 "dgraph/xDot.ml" 137 4541 4559
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 137 4541 4563 "dgraph/xDot.ml" 137 4541 4564
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 134 4479 4497 "dgraph/xDot.ml" 134 4479 4498
+)
+"dgraph/xDot.ml" 133 4448 4470 "dgraph/xDot.ml" 137 4541 4564
+type(
+  Graph.Dot_ast.id -> string
+)
+"dgraph/xDot.ml" 139 4566 4570 "dgraph/xDot.ml" 139 4566 4581
+type(
+  char -> string -> (float * float) list option
+)
+ident(
+  def read_points "dgraph/xDot.ml" 153 5046 5046 --
+)
+"dgraph/xDot.ml" 139 4566 4582 "dgraph/xDot.ml" 139 4566 4583
+type(
+  char
+)
+ident(
+  def c "dgraph/xDot.ml" 139 4566 4584 "dgraph/xDot.ml" 149 4914 4952
+)
+"dgraph/xDot.ml" 139 4566 4584 "dgraph/xDot.ml" 139 4566 4585
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 140 4588 4590 "dgraph/xDot.ml" 149 4914 4952
+)
+"dgraph/xDot.ml" 140 4588 4594 "dgraph/xDot.ml" 140 4588 4596
+type(
+  string
+)
+"dgraph/xDot.ml" 140 4588 4599 "dgraph/xDot.ml" 140 4588 4605
+type(
+  string -> int -> string
+)
+ident(
+  int_ref suffix "dgraph/xDot.ml" 101 3592 3596 "dgraph/xDot.ml" 101 3592 3602
+)
+"dgraph/xDot.ml" 140 4588 4606 "dgraph/xDot.ml" 140 4588 4607
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 139 4566 4584 "dgraph/xDot.ml" 139 4566 4585
+)
+"dgraph/xDot.ml" 140 4588 4609 "dgraph/xDot.ml" 140 4588 4621
+type(
+  string -> char -> int
+)
+ident(
+  ext_ref String.index
+)
+"dgraph/xDot.ml" 140 4588 4622 "dgraph/xDot.ml" 140 4588 4623
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 139 4566 4584 "dgraph/xDot.ml" 139 4566 4585
+)
+"dgraph/xDot.ml" 140 4588 4624 "dgraph/xDot.ml" 140 4588 4625
+type(
+  char
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 139 4566 4582 "dgraph/xDot.ml" 139 4566 4583
+)
+"dgraph/xDot.ml" 140 4588 4608 "dgraph/xDot.ml" 140 4588 4626
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/xDot.ml" 140 4588 4599 "dgraph/xDot.ml" 140 4588 4626
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 141 4630 4636 "dgraph/xDot.ml" 141 4630 4642
+type(
+  string list
+)
+"dgraph/xDot.ml" 141 4630 4645 "dgraph/xDot.ml" 141 4630 4656
+type(
+  (string -> bool) -> string list -> string list
+)
+ident(
+  ext_ref List.filter
+)
+"dgraph/xDot.ml" 141 4630 4662 "dgraph/xDot.ml" 141 4630 4663
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 141 4630 4667 "dgraph/xDot.ml" 141 4630 4674
+)
+"dgraph/xDot.ml" 141 4630 4667 "dgraph/xDot.ml" 141 4630 4668
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 141 4630 4662 "dgraph/xDot.ml" 141 4630 4663
+)
+"dgraph/xDot.ml" 141 4630 4669 "dgraph/xDot.ml" 141 4630 4671
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Pervasives.<>
+)
+"dgraph/xDot.ml" 141 4630 4672 "dgraph/xDot.ml" 141 4630 4674
+type(
+  string
+)
+"dgraph/xDot.ml" 141 4630 4667 "dgraph/xDot.ml" 141 4630 4674
+type(
+  bool
+)
+"dgraph/xDot.ml" 141 4630 4657 "dgraph/xDot.ml" 141 4630 4675
+type(
+  string -> bool
+)
+"dgraph/xDot.ml" 141 4630 4677 "dgraph/xDot.ml" 141 4630 4684
+type(
+  string list -> string list
+)
+ident(
+  ext_ref List.tl
+)
+"dgraph/xDot.ml" 141 4630 4686 "dgraph/xDot.ml" 141 4630 4691
+type(
+  char -> string -> string list
+)
+ident(
+  int_ref split "dgraph/xDot.ml" 111 3883 3887 "dgraph/xDot.ml" 111 3883 3892
+)
+"dgraph/xDot.ml" 141 4630 4692 "dgraph/xDot.ml" 141 4630 4695
+type(
+  char
+)
+"dgraph/xDot.ml" 141 4630 4696 "dgraph/xDot.ml" 141 4630 4698
+type(
+  string
+)
+ident(
+  int_ref s' "dgraph/xDot.ml" 140 4588 4594 "dgraph/xDot.ml" 140 4588 4596
+)
+"dgraph/xDot.ml" 141 4630 4685 "dgraph/xDot.ml" 141 4630 4699
+call(
+  stack
+)
+type(
+  string list
+)
+"dgraph/xDot.ml" 141 4630 4676 "dgraph/xDot.ml" 141 4630 4700
+call(
+  stack
+)
+type(
+  string list
+)
+"dgraph/xDot.ml" 141 4630 4645 "dgraph/xDot.ml" 141 4630 4700
+call(
+  stack
+)
+type(
+  string list
+)
+"dgraph/xDot.ml" 142 4704 4716 "dgraph/xDot.ml" 142 4704 4722
+type(
+  string list
+)
+ident(
+  int_ref tokens "dgraph/xDot.ml" 141 4630 4636 "dgraph/xDot.ml" 141 4630 4642
+)
+"dgraph/xDot.ml" 143 4728 4734 "dgraph/xDot.ml" 143 4728 4736
+type(
+  string list
+)
+"dgraph/xDot.ml" 143 4728 4740 "dgraph/xDot.ml" 143 4728 4744
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 144 4745 4751 "dgraph/xDot.ml" 144 4745 4752
+type(
+  string
+)
+ident(
+  def n "dgraph/xDot.ml" 145 4759 4765 "dgraph/xDot.ml" 148 4896 4913
+)
+"dgraph/xDot.ml" 144 4745 4754 "dgraph/xDot.ml" 144 4745 4755
+type(
+  string list
+)
+ident(
+  def t "dgraph/xDot.ml" 145 4759 4765 "dgraph/xDot.ml" 148 4896 4913
+)
+"dgraph/xDot.ml" 144 4745 4751 "dgraph/xDot.ml" 144 4745 4755
+type(
+  string list
+)
+"dgraph/xDot.ml" 145 4759 4769 "dgraph/xDot.ml" 145 4759 4770
+type(
+  int
+)
+"dgraph/xDot.ml" 145 4759 4773 "dgraph/xDot.ml" 145 4759 4786
+type(
+  string -> int
+)
+ident(
+  ext_ref Pervasives.int_of_string
+)
+"dgraph/xDot.ml" 145 4759 4787 "dgraph/xDot.ml" 145 4759 4788
+type(
+  string
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 144 4745 4751 "dgraph/xDot.ml" 144 4745 4752
+)
+"dgraph/xDot.ml" 145 4759 4773 "dgraph/xDot.ml" 145 4759 4788
+type(
+  int
+)
+"dgraph/xDot.ml" 146 4792 4802 "dgraph/xDot.ml" 146 4792 4808
+type(
+  float list
+)
+"dgraph/xDot.ml" 146 4792 4811 "dgraph/xDot.ml" 146 4792 4819
+type(
+  (string -> float) -> string list -> float list
+)
+ident(
+  ext_ref List.map
+)
+"dgraph/xDot.ml" 146 4792 4820 "dgraph/xDot.ml" 146 4792 4835
+type(
+  string -> float
+)
+ident(
+  ext_ref Pervasives.float_of_string
+)
+"dgraph/xDot.ml" 146 4792 4837 "dgraph/xDot.ml" 146 4792 4841
+type(
+  int -> string list -> string list
+)
+ident(
+  int_ref take "dgraph/xDot.ml" 96 3499 3507 "dgraph/xDot.ml" 96 3499 3511
+)
+"dgraph/xDot.ml" 146 4792 4843 "dgraph/xDot.ml" 146 4792 4844
+type(
+  int
+)
+ident(
+  int_ref n "dgraph/xDot.ml" 145 4759 4769 "dgraph/xDot.ml" 145 4759 4770
+)
+"dgraph/xDot.ml" 146 4792 4844 "dgraph/xDot.ml" 146 4792 4845
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.*
+)
+"dgraph/xDot.ml" 146 4792 4845 "dgraph/xDot.ml" 146 4792 4846
+type(
+  int
+)
+"dgraph/xDot.ml" 146 4792 4842 "dgraph/xDot.ml" 146 4792 4847
+type(
+  int
+)
+"dgraph/xDot.ml" 146 4792 4848 "dgraph/xDot.ml" 146 4792 4849
+type(
+  string list
+)
+ident(
+  int_ref t "dgraph/xDot.ml" 144 4745 4754 "dgraph/xDot.ml" 144 4745 4755
+)
+"dgraph/xDot.ml" 146 4792 4836 "dgraph/xDot.ml" 146 4792 4850
+call(
+  stack
+)
+type(
+  string list
+)
+"dgraph/xDot.ml" 146 4792 4811 "dgraph/xDot.ml" 146 4792 4850
+call(
+  stack
+)
+type(
+  float list
+)
+"dgraph/xDot.ml" 147 4854 4864 "dgraph/xDot.ml" 147 4854 4870
+type(
+  (float * float) list
+)
+"dgraph/xDot.ml" 147 4854 4873 "dgraph/xDot.ml" 147 4854 4885
+type(
+  float list -> (float * float) list
+)
+ident(
+  int_ref group_tuples "dgraph/xDot.ml" 104 3710 3718 "dgraph/xDot.ml" 104 3710 3730
+)
+"dgraph/xDot.ml" 147 4854 4886 "dgraph/xDot.ml" 147 4854 4892
+type(
+  float list
+)
+ident(
+  int_ref floats "dgraph/xDot.ml" 146 4792 4802 "dgraph/xDot.ml" 146 4792 4808
+)
+"dgraph/xDot.ml" 147 4854 4873 "dgraph/xDot.ml" 147 4854 4892
+call(
+  stack
+)
+type(
+  (float * float) list
+)
+"dgraph/xDot.ml" 148 4896 4907 "dgraph/xDot.ml" 148 4896 4913
+type(
+  (float * float) list
+)
+ident(
+  int_ref points "dgraph/xDot.ml" 147 4854 4864 "dgraph/xDot.ml" 147 4854 4870
+)
+"dgraph/xDot.ml" 148 4896 4902 "dgraph/xDot.ml" 148 4896 4913
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 147 4854 4860 "dgraph/xDot.ml" 148 4896 4913
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 146 4792 4798 "dgraph/xDot.ml" 148 4896 4913
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 145 4759 4765 "dgraph/xDot.ml" 148 4896 4913
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 142 4704 4710 "dgraph/xDot.ml" 148 4896 4913
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 149 4914 4929 "dgraph/xDot.ml" 149 4914 4944
+type(
+  string
+)
+"dgraph/xDot.ml" 149 4914 4921 "dgraph/xDot.ml" 149 4914 4944
+type(
+  exn
+)
+"dgraph/xDot.ml" 149 4914 4948 "dgraph/xDot.ml" 149 4914 4952
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 142 4704 4706 "dgraph/xDot.ml" 149 4914 4952
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 141 4630 4632 "dgraph/xDot.ml" 149 4914 4952
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 140 4588 4590 "dgraph/xDot.ml" 149 4914 4952
+type(
+  (float * float) list option
+)
+"dgraph/xDot.ml" 153 5046 5050 "dgraph/xDot.ml" 153 5046 5068
+type(
+  (pos:float * float ->
+   bbox:(float * float) * (float * float) ->
+   draw:XDotDraw.operation list -> ldraw:XDotDraw.operation list -> 'a) ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list -> 'a
+)
+ident(
+  def read_common_layout "dgraph/xDot.ml" 187 6304 6304 --
+)
+"dgraph/xDot.ml" 153 5046 5069 "dgraph/xDot.ml" 153 5046 5078
+type(
+  pos:float * float ->
+  bbox:(float * float) * (float * float) ->
+  draw:XDotDraw.operation list -> ldraw:XDotDraw.operation list -> 'a
+)
+ident(
+  def mk_layout "dgraph/xDot.ml" 153 5046 5079 "dgraph/xDot.ml" 185 6268 6302
+)
+"dgraph/xDot.ml" 153 5046 5079 "dgraph/xDot.ml" 153 5046 5088
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list
+)
+ident(
+  def attr_list "dgraph/xDot.ml" 156 5176 5178 "dgraph/xDot.ml" 185 6268 6302
+)
+"dgraph/xDot.ml" 156 5176 5182 "dgraph/xDot.ml" 156 5176 5186
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list ->
+  Graph.Dot_ast.id * Graph.Dot_ast.id option ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 156 5176 5189 "dgraph/xDot.ml" 156 5176 5190
+type(
+  string option
+)
+ident(
+  def p "dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+)
+"dgraph/xDot.ml" 156 5176 5191 "dgraph/xDot.ml" 156 5176 5192
+type(
+  string option
+)
+ident(
+  def w "dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+)
+"dgraph/xDot.ml" 156 5176 5193 "dgraph/xDot.ml" 156 5176 5194
+type(
+  string option
+)
+ident(
+  def h "dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+)
+"dgraph/xDot.ml" 156 5176 5196 "dgraph/xDot.ml" 156 5176 5200
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+)
+"dgraph/xDot.ml" 156 5176 5201 "dgraph/xDot.ml" 156 5176 5206
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+)
+"dgraph/xDot.ml" 156 5176 5188 "dgraph/xDot.ml" 156 5176 5207
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 156 5176 5187 "dgraph/xDot.ml" 156 5176 5217
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  def attrs "dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+)
+"dgraph/xDot.ml" 157 5229 5250 "dgraph/xDot.ml" 157 5229 5255
+type(
+  string
+)
+"dgraph/xDot.ml" 157 5229 5235 "dgraph/xDot.ml" 157 5229 5256
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 157 5229 5279 "dgraph/xDot.ml" 157 5229 5280
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 158 5285 5293 "dgraph/xDot.ml" 158 5285 5319
+)
+"dgraph/xDot.ml" 157 5229 5263 "dgraph/xDot.ml" 157 5229 5281
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 157 5229 5258 "dgraph/xDot.ml" 157 5229 5281
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 157 5229 5235 "dgraph/xDot.ml" 157 5229 5281
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 158 5285 5299 "dgraph/xDot.ml" 158 5285 5300
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 157 5229 5279 "dgraph/xDot.ml" 157 5229 5280
+)
+"dgraph/xDot.ml" 158 5285 5293 "dgraph/xDot.ml" 158 5285 5301
+type(
+  string option
+)
+"dgraph/xDot.ml" 158 5285 5303 "dgraph/xDot.ml" 158 5285 5304
+type(
+  string option
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 156 5176 5191 "dgraph/xDot.ml" 156 5176 5192
+)
+"dgraph/xDot.ml" 158 5285 5306 "dgraph/xDot.ml" 158 5285 5307
+type(
+  string option
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 156 5176 5193 "dgraph/xDot.ml" 156 5176 5194
+)
+"dgraph/xDot.ml" 158 5285 5309 "dgraph/xDot.ml" 158 5285 5313
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 156 5176 5196 "dgraph/xDot.ml" 156 5176 5200
+)
+"dgraph/xDot.ml" 158 5285 5314 "dgraph/xDot.ml" 158 5285 5319
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 156 5176 5201 "dgraph/xDot.ml" 156 5176 5206
+)
+"dgraph/xDot.ml" 158 5285 5293 "dgraph/xDot.ml" 158 5285 5319
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 159 5320 5341 "dgraph/xDot.ml" 159 5320 5348
+type(
+  string
+)
+"dgraph/xDot.ml" 159 5320 5326 "dgraph/xDot.ml" 159 5320 5349
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 159 5320 5372 "dgraph/xDot.ml" 159 5320 5373
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 160 5378 5386 "dgraph/xDot.ml" 160 5378 5412
+)
+"dgraph/xDot.ml" 159 5320 5356 "dgraph/xDot.ml" 159 5320 5374
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 159 5320 5351 "dgraph/xDot.ml" 159 5320 5374
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 159 5320 5326 "dgraph/xDot.ml" 159 5320 5374
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 160 5378 5386 "dgraph/xDot.ml" 160 5378 5387
+type(
+  string option
+)
+ident(
+  int_ref p "dgraph/xDot.ml" 156 5176 5189 "dgraph/xDot.ml" 156 5176 5190
+)
+"dgraph/xDot.ml" 160 5378 5395 "dgraph/xDot.ml" 160 5378 5396
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 159 5320 5372 "dgraph/xDot.ml" 159 5320 5373
+)
+"dgraph/xDot.ml" 160 5378 5389 "dgraph/xDot.ml" 160 5378 5397
+type(
+  string option
+)
+"dgraph/xDot.ml" 160 5378 5399 "dgraph/xDot.ml" 160 5378 5400
+type(
+  string option
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 156 5176 5193 "dgraph/xDot.ml" 156 5176 5194
+)
+"dgraph/xDot.ml" 160 5378 5402 "dgraph/xDot.ml" 160 5378 5406
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 156 5176 5196 "dgraph/xDot.ml" 156 5176 5200
+)
+"dgraph/xDot.ml" 160 5378 5407 "dgraph/xDot.ml" 160 5378 5412
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 156 5176 5201 "dgraph/xDot.ml" 156 5176 5206
+)
+"dgraph/xDot.ml" 160 5378 5386 "dgraph/xDot.ml" 160 5378 5412
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 161 5413 5434 "dgraph/xDot.ml" 161 5413 5442
+type(
+  string
+)
+"dgraph/xDot.ml" 161 5413 5419 "dgraph/xDot.ml" 161 5413 5443
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 161 5413 5466 "dgraph/xDot.ml" 161 5413 5467
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 162 5472 5480 "dgraph/xDot.ml" 162 5472 5506
+)
+"dgraph/xDot.ml" 161 5413 5450 "dgraph/xDot.ml" 161 5413 5468
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 161 5413 5445 "dgraph/xDot.ml" 161 5413 5468
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 161 5413 5419 "dgraph/xDot.ml" 161 5413 5468
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 162 5472 5480 "dgraph/xDot.ml" 162 5472 5481
+type(
+  string option
+)
+ident(
+  int_ref p "dgraph/xDot.ml" 156 5176 5189 "dgraph/xDot.ml" 156 5176 5190
+)
+"dgraph/xDot.ml" 162 5472 5483 "dgraph/xDot.ml" 162 5472 5484
+type(
+  string option
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 156 5176 5191 "dgraph/xDot.ml" 156 5176 5192
+)
+"dgraph/xDot.ml" 162 5472 5492 "dgraph/xDot.ml" 162 5472 5493
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 161 5413 5466 "dgraph/xDot.ml" 161 5413 5467
+)
+"dgraph/xDot.ml" 162 5472 5486 "dgraph/xDot.ml" 162 5472 5494
+type(
+  string option
+)
+"dgraph/xDot.ml" 162 5472 5496 "dgraph/xDot.ml" 162 5472 5500
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 156 5176 5196 "dgraph/xDot.ml" 156 5176 5200
+)
+"dgraph/xDot.ml" 162 5472 5501 "dgraph/xDot.ml" 162 5472 5506
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 156 5176 5201 "dgraph/xDot.ml" 156 5176 5206
+)
+"dgraph/xDot.ml" 162 5472 5480 "dgraph/xDot.ml" 162 5472 5506
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 163 5507 5528 "dgraph/xDot.ml" 163 5507 5536
+type(
+  string
+)
+"dgraph/xDot.ml" 163 5507 5513 "dgraph/xDot.ml" 163 5507 5537
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 163 5507 5560 "dgraph/xDot.ml" 163 5507 5564
+type(
+  string
+)
+ident(
+  def draw "dgraph/xDot.ml" 164 5569 5570 "dgraph/xDot.ml" 164 5569 5603
+)
+"dgraph/xDot.ml" 163 5507 5544 "dgraph/xDot.ml" 163 5507 5565
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 163 5507 5539 "dgraph/xDot.ml" 163 5507 5565
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 163 5507 5513 "dgraph/xDot.ml" 163 5507 5565
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 164 5569 5570 "dgraph/xDot.ml" 164 5569 5571
+type(
+  string option
+)
+ident(
+  int_ref p "dgraph/xDot.ml" 156 5176 5189 "dgraph/xDot.ml" 156 5176 5190
+)
+"dgraph/xDot.ml" 164 5569 5572 "dgraph/xDot.ml" 164 5569 5573
+type(
+  string option
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 156 5176 5191 "dgraph/xDot.ml" 156 5176 5192
+)
+"dgraph/xDot.ml" 164 5569 5574 "dgraph/xDot.ml" 164 5569 5575
+type(
+  string option
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 156 5176 5193 "dgraph/xDot.ml" 156 5176 5194
+)
+"dgraph/xDot.ml" 164 5569 5577 "dgraph/xDot.ml" 164 5569 5591
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 164 5569 5592 "dgraph/xDot.ml" 164 5569 5596
+type(
+  string
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 163 5507 5560 "dgraph/xDot.ml" 163 5507 5564
+)
+"dgraph/xDot.ml" 164 5569 5577 "dgraph/xDot.ml" 164 5569 5596
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 164 5569 5598 "dgraph/xDot.ml" 164 5569 5603
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 156 5176 5201 "dgraph/xDot.ml" 156 5176 5206
+)
+"dgraph/xDot.ml" 164 5569 5570 "dgraph/xDot.ml" 164 5569 5603
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 165 5604 5625 "dgraph/xDot.ml" 165 5604 5634
+type(
+  string
+)
+"dgraph/xDot.ml" 165 5604 5610 "dgraph/xDot.ml" 165 5604 5635
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 165 5604 5658 "dgraph/xDot.ml" 165 5604 5663
+type(
+  string
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 166 5668 5669 "dgraph/xDot.ml" 166 5668 5702
+)
+"dgraph/xDot.ml" 165 5604 5642 "dgraph/xDot.ml" 165 5604 5664
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 165 5604 5637 "dgraph/xDot.ml" 165 5604 5664
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 165 5604 5610 "dgraph/xDot.ml" 165 5604 5664
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 166 5668 5669 "dgraph/xDot.ml" 166 5668 5670
+type(
+  string option
+)
+ident(
+  int_ref p "dgraph/xDot.ml" 156 5176 5189 "dgraph/xDot.ml" 156 5176 5190
+)
+"dgraph/xDot.ml" 166 5668 5671 "dgraph/xDot.ml" 166 5668 5672
+type(
+  string option
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 156 5176 5191 "dgraph/xDot.ml" 156 5176 5192
+)
+"dgraph/xDot.ml" 166 5668 5673 "dgraph/xDot.ml" 166 5668 5674
+type(
+  string option
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 156 5176 5193 "dgraph/xDot.ml" 156 5176 5194
+)
+"dgraph/xDot.ml" 166 5668 5676 "dgraph/xDot.ml" 166 5668 5680
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 156 5176 5196 "dgraph/xDot.ml" 156 5176 5200
+)
+"dgraph/xDot.ml" 166 5668 5682 "dgraph/xDot.ml" 166 5668 5696
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 166 5668 5697 "dgraph/xDot.ml" 166 5668 5702
+type(
+  string
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 165 5604 5658 "dgraph/xDot.ml" 165 5604 5663
+)
+"dgraph/xDot.ml" 166 5668 5682 "dgraph/xDot.ml" 166 5668 5702
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 166 5668 5669 "dgraph/xDot.ml" 166 5668 5702
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 167 5703 5709 "dgraph/xDot.ml" 167 5703 5710
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 167 5703 5714 "dgraph/xDot.ml" 167 5703 5719
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  int_ref attrs "dgraph/xDot.ml" 156 5176 5187 "dgraph/xDot.ml" 156 5176 5217
+)
+"dgraph/xDot.ml" 156 5176 5220 "dgraph/xDot.ml" 167 5703 5719
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 169 5724 5730 "dgraph/xDot.ml" 169 5724 5739
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 169 5724 5740 "dgraph/xDot.ml" 169 5724 5743
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  def acc "dgraph/xDot.ml" 169 5724 5744 "dgraph/xDot.ml" 170 5756 5793
+)
+"dgraph/xDot.ml" 169 5724 5744 "dgraph/xDot.ml" 169 5724 5753
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list
+)
+ident(
+  def attr_list "dgraph/xDot.ml" 170 5756 5760 "dgraph/xDot.ml" 170 5756 5793
+)
+"dgraph/xDot.ml" 170 5756 5760 "dgraph/xDot.ml" 170 5756 5774
+type(
+  (string option * string option * string option * XDotDraw.operation list *
+   XDotDraw.operation list ->
+   Graph.Dot_ast.id * Graph.Dot_ast.id option ->
+   string option * string option * string option * XDotDraw.operation list *
+   XDotDraw.operation list) ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  ext_ref List.fold_left
+)
+"dgraph/xDot.ml" 170 5756 5775 "dgraph/xDot.ml" 170 5756 5779
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list ->
+  Graph.Dot_ast.id * Graph.Dot_ast.id option ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  int_ref fold "dgraph/xDot.ml" 156 5176 5182 "dgraph/xDot.ml" 156 5176 5186
+)
+"dgraph/xDot.ml" 170 5756 5780 "dgraph/xDot.ml" 170 5756 5783
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  int_ref acc "dgraph/xDot.ml" 169 5724 5740 "dgraph/xDot.ml" 169 5724 5743
+)
+"dgraph/xDot.ml" 170 5756 5784 "dgraph/xDot.ml" 170 5756 5793
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list
+)
+ident(
+  int_ref attr_list "dgraph/xDot.ml" 169 5724 5744 "dgraph/xDot.ml" 169 5724 5753
+)
+"dgraph/xDot.ml" 170 5756 5760 "dgraph/xDot.ml" 170 5756 5793
+call(
+  tail
+)
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 171 5797 5803 "dgraph/xDot.ml" 171 5797 5808
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 171 5797 5811 "dgraph/xDot.ml" 171 5797 5825
+type(
+  (string option * string option * string option * XDotDraw.operation list *
+   XDotDraw.operation list ->
+   (Graph.Dot_ast.id * Graph.Dot_ast.id option) list ->
+   string option * string option * string option * XDotDraw.operation list *
+   XDotDraw.operation list) ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  ext_ref List.fold_left
+)
+"dgraph/xDot.ml" 171 5797 5826 "dgraph/xDot.ml" 171 5797 5835
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list ->
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  int_ref fold_attr "dgraph/xDot.ml" 169 5724 5730 "dgraph/xDot.ml" 169 5724 5739
+)
+"dgraph/xDot.ml" 171 5797 5837 "dgraph/xDot.ml" 171 5797 5841
+type(
+  string option
+)
+"dgraph/xDot.ml" 171 5797 5843 "dgraph/xDot.ml" 171 5797 5847
+type(
+  string option
+)
+"dgraph/xDot.ml" 171 5797 5849 "dgraph/xDot.ml" 171 5797 5853
+type(
+  string option
+)
+"dgraph/xDot.ml" 171 5797 5855 "dgraph/xDot.ml" 171 5797 5857
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 171 5797 5859 "dgraph/xDot.ml" 171 5797 5861
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 171 5797 5836 "dgraph/xDot.ml" 171 5797 5862
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 172 5863 5867 "dgraph/xDot.ml" 172 5863 5876
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list
+)
+ident(
+  int_ref attr_list "dgraph/xDot.ml" 153 5046 5079 "dgraph/xDot.ml" 153 5046 5088
+)
+"dgraph/xDot.ml" 171 5797 5811 "dgraph/xDot.ml" 172 5863 5876
+call(
+  stack
+)
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 175 5933 5941 "dgraph/xDot.ml" 175 5933 5946
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+ident(
+  int_ref attrs "dgraph/xDot.ml" 171 5797 5803 "dgraph/xDot.ml" 171 5797 5808
+)
+"dgraph/xDot.ml" 176 5952 5963 "dgraph/xDot.ml" 176 5952 5966
+type(
+  string
+)
+ident(
+  def pos "dgraph/xDot.ml" 177 5997 6003 "dgraph/xDot.ml" 181 6141 6186
+)
+"dgraph/xDot.ml" 176 5952 5958 "dgraph/xDot.ml" 176 5952 5966
+type(
+  string option
+)
+"dgraph/xDot.ml" 176 5952 5973 "dgraph/xDot.ml" 176 5952 5974
+type(
+  string
+)
+ident(
+  def w "dgraph/xDot.ml" 177 5997 6003 "dgraph/xDot.ml" 181 6141 6186
+)
+"dgraph/xDot.ml" 176 5952 5968 "dgraph/xDot.ml" 176 5952 5974
+type(
+  string option
+)
+"dgraph/xDot.ml" 176 5952 5981 "dgraph/xDot.ml" 176 5952 5982
+type(
+  string
+)
+ident(
+  def h "dgraph/xDot.ml" 177 5997 6003 "dgraph/xDot.ml" 181 6141 6186
+)
+"dgraph/xDot.ml" 176 5952 5976 "dgraph/xDot.ml" 176 5952 5982
+type(
+  string option
+)
+"dgraph/xDot.ml" 176 5952 5984 "dgraph/xDot.ml" 176 5952 5988
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 177 5997 6003 "dgraph/xDot.ml" 181 6141 6186
+)
+"dgraph/xDot.ml" 176 5952 5989 "dgraph/xDot.ml" 176 5952 5994
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 177 5997 6003 "dgraph/xDot.ml" 181 6141 6186
+)
+"dgraph/xDot.ml" 176 5952 5958 "dgraph/xDot.ml" 176 5952 5994
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 177 5997 6007 "dgraph/xDot.ml" 177 5997 6010
+type(
+  float * float
+)
+"dgraph/xDot.ml" 177 5997 6013 "dgraph/xDot.ml" 177 5997 6021
+type(
+  string -> float * float
+)
+ident(
+  int_ref read_pos "dgraph/xDot.ml" 118 4097 4101 "dgraph/xDot.ml" 118 4097 4109
+)
+"dgraph/xDot.ml" 177 5997 6022 "dgraph/xDot.ml" 177 5997 6025
+type(
+  string
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 176 5952 5963 "dgraph/xDot.ml" 176 5952 5966
+)
+"dgraph/xDot.ml" 177 5997 6013 "dgraph/xDot.ml" 177 5997 6025
+call(
+  stack
+)
+type(
+  float * float
+)
+"dgraph/xDot.ml" 178 6029 6039 "dgraph/xDot.ml" 178 6029 6044
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 178 6029 6047 "dgraph/xDot.ml" 178 6029 6059
+type(
+  float * float -> float -> float -> (float * float) * (float * float)
+)
+ident(
+  int_ref bounding_box "dgraph/xDot.ml" 120 4158 4162 "dgraph/xDot.ml" 120 4158 4174
+)
+"dgraph/xDot.ml" 178 6029 6060 "dgraph/xDot.ml" 178 6029 6063
+type(
+  float * float
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 177 5997 6007 "dgraph/xDot.ml" 177 5997 6010
+)
+"dgraph/xDot.ml" 179 6064 6066 "dgraph/xDot.ml" 179 6064 6081
+type(
+  string -> float
+)
+ident(
+  ext_ref Pervasives.float_of_string
+)
+"dgraph/xDot.ml" 179 6064 6082 "dgraph/xDot.ml" 179 6064 6083
+type(
+  string
+)
+ident(
+  int_ref w "dgraph/xDot.ml" 176 5952 5973 "dgraph/xDot.ml" 176 5952 5974
+)
+"dgraph/xDot.ml" 179 6064 6065 "dgraph/xDot.ml" 179 6064 6084
+type(
+  float
+)
+"dgraph/xDot.ml" 179 6064 6086 "dgraph/xDot.ml" 179 6064 6088
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"dgraph/xDot.ml" 179 6064 6089 "dgraph/xDot.ml" 179 6064 6104
+type(
+  string -> float
+)
+ident(
+  ext_ref Pervasives.float_of_string
+)
+"dgraph/xDot.ml" 179 6064 6105 "dgraph/xDot.ml" 179 6064 6106
+type(
+  string
+)
+ident(
+  int_ref h "dgraph/xDot.ml" 176 5952 5981 "dgraph/xDot.ml" 176 5952 5982
+)
+"dgraph/xDot.ml" 179 6064 6088 "dgraph/xDot.ml" 179 6064 6107
+type(
+  float
+)
+"dgraph/xDot.ml" 179 6064 6085 "dgraph/xDot.ml" 179 6064 6108
+type(
+  float
+)
+"dgraph/xDot.ml" 178 6029 6047 "dgraph/xDot.ml" 179 6064 6108
+call(
+  stack
+)
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 181 6141 6147 "dgraph/xDot.ml" 181 6141 6156
+type(
+  pos:float * float ->
+  bbox:(float * float) * (float * float) ->
+  draw:XDotDraw.operation list -> ldraw:XDotDraw.operation list -> 'a
+)
+ident(
+  int_ref mk_layout "dgraph/xDot.ml" 153 5046 5069 "dgraph/xDot.ml" 153 5046 5078
+)
+"dgraph/xDot.ml" 181 6141 6158 "dgraph/xDot.ml" 181 6141 6161
+type(
+  float * float
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 177 5997 6007 "dgraph/xDot.ml" 177 5997 6010
+)
+"dgraph/xDot.ml" 181 6141 6168 "dgraph/xDot.ml" 181 6141 6173
+type(
+  (float * float) * (float * float)
+)
+ident(
+  int_ref coord "dgraph/xDot.ml" 178 6029 6039 "dgraph/xDot.ml" 178 6029 6044
+)
+"dgraph/xDot.ml" 181 6141 6175 "dgraph/xDot.ml" 181 6141 6179
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 176 5952 5984 "dgraph/xDot.ml" 176 5952 5988
+)
+"dgraph/xDot.ml" 181 6141 6181 "dgraph/xDot.ml" 181 6141 6186
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 176 5952 5989 "dgraph/xDot.ml" 176 5952 5994
+)
+"dgraph/xDot.ml" 181 6141 6147 "dgraph/xDot.ml" 181 6141 6186
+call(
+  tail
+)
+type(
+  'a
+)
+"dgraph/xDot.ml" 178 6029 6035 "dgraph/xDot.ml" 181 6141 6186
+type(
+  'a
+)
+"dgraph/xDot.ml" 177 5997 6003 "dgraph/xDot.ml" 181 6141 6186
+type(
+  'a
+)
+"dgraph/xDot.ml" 182 6187 6193 "dgraph/xDot.ml" 182 6187 6194
+type(
+  string option
+)
+"dgraph/xDot.ml" 182 6187 6195 "dgraph/xDot.ml" 182 6187 6196
+type(
+  string option
+)
+"dgraph/xDot.ml" 182 6187 6197 "dgraph/xDot.ml" 182 6187 6198
+type(
+  string option
+)
+"dgraph/xDot.ml" 182 6187 6200 "dgraph/xDot.ml" 182 6187 6204
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 183 6215 6216 "dgraph/xDot.ml" 185 6268 6302
+)
+"dgraph/xDot.ml" 182 6187 6206 "dgraph/xDot.ml" 182 6187 6211
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 183 6215 6216 "dgraph/xDot.ml" 185 6268 6302
+)
+"dgraph/xDot.ml" 182 6187 6193 "dgraph/xDot.ml" 182 6187 6211
+type(
+  string option * string option * string option * XDotDraw.operation list *
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 183 6215 6220 "dgraph/xDot.ml" 183 6215 6223
+type(
+  float * float
+)
+"dgraph/xDot.ml" 183 6215 6227 "dgraph/xDot.ml" 183 6215 6229
+type(
+  float
+)
+"dgraph/xDot.ml" 183 6215 6230 "dgraph/xDot.ml" 183 6215 6232
+type(
+  float
+)
+"dgraph/xDot.ml" 183 6215 6226 "dgraph/xDot.ml" 183 6215 6233
+type(
+  float * float
+)
+"dgraph/xDot.ml" 184 6237 6242 "dgraph/xDot.ml" 184 6237 6246
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 184 6237 6250 "dgraph/xDot.ml" 184 6237 6252
+type(
+  float
+)
+"dgraph/xDot.ml" 184 6237 6253 "dgraph/xDot.ml" 184 6237 6255
+type(
+  float
+)
+"dgraph/xDot.ml" 184 6237 6249 "dgraph/xDot.ml" 184 6237 6256
+type(
+  float * float
+)
+"dgraph/xDot.ml" 184 6237 6258 "dgraph/xDot.ml" 184 6237 6260
+type(
+  float
+)
+"dgraph/xDot.ml" 184 6237 6261 "dgraph/xDot.ml" 184 6237 6263
+type(
+  float
+)
+"dgraph/xDot.ml" 184 6237 6257 "dgraph/xDot.ml" 184 6237 6264
+type(
+  float * float
+)
+"dgraph/xDot.ml" 184 6237 6249 "dgraph/xDot.ml" 184 6237 6264
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 185 6268 6269 "dgraph/xDot.ml" 185 6268 6278
+type(
+  pos:float * float ->
+  bbox:(float * float) * (float * float) ->
+  draw:XDotDraw.operation list -> ldraw:XDotDraw.operation list -> 'a
+)
+ident(
+  int_ref mk_layout "dgraph/xDot.ml" 153 5046 5069 "dgraph/xDot.ml" 153 5046 5078
+)
+"dgraph/xDot.ml" 185 6268 6280 "dgraph/xDot.ml" 185 6268 6283
+type(
+  float * float
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 183 6215 6220 "dgraph/xDot.ml" 183 6215 6223
+)
+"dgraph/xDot.ml" 185 6268 6285 "dgraph/xDot.ml" 185 6268 6289
+type(
+  (float * float) * (float * float)
+)
+ident(
+  int_ref bbox "dgraph/xDot.ml" 184 6237 6242 "dgraph/xDot.ml" 184 6237 6246
+)
+"dgraph/xDot.ml" 185 6268 6291 "dgraph/xDot.ml" 185 6268 6295
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 182 6187 6200 "dgraph/xDot.ml" 182 6187 6204
+)
+"dgraph/xDot.ml" 185 6268 6297 "dgraph/xDot.ml" 185 6268 6302
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 182 6187 6206 "dgraph/xDot.ml" 182 6187 6211
+)
+"dgraph/xDot.ml" 185 6268 6269 "dgraph/xDot.ml" 185 6268 6302
+call(
+  tail
+)
+type(
+  'a
+)
+"dgraph/xDot.ml" 184 6237 6238 "dgraph/xDot.ml" 185 6268 6302
+type(
+  'a
+)
+"dgraph/xDot.ml" 183 6215 6216 "dgraph/xDot.ml" 185 6268 6302
+type(
+  'a
+)
+"dgraph/xDot.ml" 175 5933 5935 "dgraph/xDot.ml" 185 6268 6302
+type(
+  'a
+)
+"dgraph/xDot.ml" 171 5797 5799 "dgraph/xDot.ml" 185 6268 6302
+type(
+  'a
+)
+"dgraph/xDot.ml" 169 5724 5726 "dgraph/xDot.ml" 185 6268 6302
+type(
+  'a
+)
+"dgraph/xDot.ml" 156 5176 5178 "dgraph/xDot.ml" 185 6268 6302
+type(
+  'a
+)
+"dgraph/xDot.ml" 187 6304 6308 "dgraph/xDot.ml" 187 6304 6324
+type(
+  Graph.Dot_ast.id * 'a ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list -> node_layout
+)
+ident(
+  def read_node_layout "dgraph/xDot.ml" 192 6489 6489 --
+)
+"dgraph/xDot.ml" 187 6304 6326 "dgraph/xDot.ml" 187 6304 6328
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  def id "dgraph/xDot.ml" 187 6304 6332 "dgraph/xDot.ml" 191 6459 6488
+)
+"dgraph/xDot.ml" 187 6304 6329 "dgraph/xDot.ml" 187 6304 6330
+type(
+  'a
+)
+"dgraph/xDot.ml" 187 6304 6325 "dgraph/xDot.ml" 187 6304 6331
+type(
+  Graph.Dot_ast.id * 'a
+)
+"dgraph/xDot.ml" 187 6304 6332 "dgraph/xDot.ml" 187 6304 6337
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list
+)
+ident(
+  def attrs "dgraph/xDot.ml" 188 6340 6342 "dgraph/xDot.ml" 191 6459 6488
+)
+"dgraph/xDot.ml" 188 6340 6346 "dgraph/xDot.ml" 188 6340 6347
+type(
+  name:string -> node_layout
+)
+"dgraph/xDot.ml" 188 6340 6350 "dgraph/xDot.ml" 188 6340 6368
+type(
+  (pos:pos ->
+   bbox:bounding_box ->
+   draw:XDotDraw.operation list ->
+   ldraw:XDotDraw.operation list -> name:string -> node_layout) ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list ->
+  name:string -> node_layout
+)
+ident(
+  int_ref read_common_layout "dgraph/xDot.ml" 153 5046 5050 "dgraph/xDot.ml" 153 5046 5068
+)
+"dgraph/xDot.ml" 189 6369 6379 "dgraph/xDot.ml" 189 6369 6382
+type(
+  pos
+)
+ident(
+  def pos "dgraph/xDot.ml" 189 6369 6383 "dgraph/xDot.ml" 189 6369 6443
+)
+"dgraph/xDot.ml" 189 6369 6384 "dgraph/xDot.ml" 189 6369 6388
+type(
+  bounding_box
+)
+ident(
+  def bbox "dgraph/xDot.ml" 189 6369 6389 "dgraph/xDot.ml" 189 6369 6443
+)
+"dgraph/xDot.ml" 189 6369 6390 "dgraph/xDot.ml" 189 6369 6394
+type(
+  XDotDraw.operation list
+)
+ident(
+  def draw "dgraph/xDot.ml" 189 6369 6395 "dgraph/xDot.ml" 189 6369 6443
+)
+"dgraph/xDot.ml" 189 6369 6396 "dgraph/xDot.ml" 189 6369 6401
+type(
+  XDotDraw.operation list
+)
+ident(
+  def ldraw "dgraph/xDot.ml" 189 6369 6405 "dgraph/xDot.ml" 189 6369 6443
+)
+"dgraph/xDot.ml" 189 6369 6405 "dgraph/xDot.ml" 189 6369 6419
+type(
+  name:string ->
+  pos:pos ->
+  bbox:bounding_box ->
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list -> node_layout
+)
+ident(
+  int_ref mk_node_layout "dgraph/xDot.ml" 70 2949 2953 "dgraph/xDot.ml" 70 2949 2967
+)
+"dgraph/xDot.ml" 189 6369 6421 "dgraph/xDot.ml" 189 6369 6424
+type(
+  pos
+)
+ident(
+  int_ref pos "dgraph/xDot.ml" 189 6369 6379 "dgraph/xDot.ml" 189 6369 6382
+)
+"dgraph/xDot.ml" 189 6369 6426 "dgraph/xDot.ml" 189 6369 6430
+type(
+  bounding_box
+)
+ident(
+  int_ref bbox "dgraph/xDot.ml" 189 6369 6384 "dgraph/xDot.ml" 189 6369 6388
+)
+"dgraph/xDot.ml" 189 6369 6432 "dgraph/xDot.ml" 189 6369 6436
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 189 6369 6390 "dgraph/xDot.ml" 189 6369 6394
+)
+"dgraph/xDot.ml" 189 6369 6438 "dgraph/xDot.ml" 189 6369 6443
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 189 6369 6396 "dgraph/xDot.ml" 189 6369 6401
+)
+"dgraph/xDot.ml" 189 6369 6405 "dgraph/xDot.ml" 189 6369 6443
+call(
+  tail
+)
+type(
+  name:string -> node_layout
+)
+"dgraph/xDot.ml" 189 6369 6373 "dgraph/xDot.ml" 189 6369 6444
+type(
+  pos:pos ->
+  bbox:bounding_box ->
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list -> name:string -> node_layout
+)
+"dgraph/xDot.ml" 190 6445 6450 "dgraph/xDot.ml" 190 6445 6455
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list
+)
+ident(
+  int_ref attrs "dgraph/xDot.ml" 187 6304 6332 "dgraph/xDot.ml" 187 6304 6337
+)
+"dgraph/xDot.ml" 188 6340 6350 "dgraph/xDot.ml" 190 6445 6455
+call(
+  stack
+)
+type(
+  name:string -> node_layout
+)
+"dgraph/xDot.ml" 191 6459 6461 "dgraph/xDot.ml" 191 6459 6462
+type(
+  name:string -> node_layout
+)
+ident(
+  int_ref f "dgraph/xDot.ml" 188 6340 6346 "dgraph/xDot.ml" 188 6340 6347
+)
+"dgraph/xDot.ml" 191 6459 6470 "dgraph/xDot.ml" 191 6459 6484
+type(
+  Graph.Dot_ast.id -> string
+)
+ident(
+  int_ref get_dot_string "dgraph/xDot.ml" 125 4286 4290 "dgraph/xDot.ml" 125 4286 4304
+)
+"dgraph/xDot.ml" 191 6459 6485 "dgraph/xDot.ml" 191 6459 6487
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  int_ref id "dgraph/xDot.ml" 187 6304 6326 "dgraph/xDot.ml" 187 6304 6328
+)
+"dgraph/xDot.ml" 191 6459 6469 "dgraph/xDot.ml" 191 6459 6488
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 191 6459 6461 "dgraph/xDot.ml" 191 6459 6488
+call(
+  tail
+)
+type(
+  node_layout
+)
+"dgraph/xDot.ml" 188 6340 6342 "dgraph/xDot.ml" 191 6459 6488
+type(
+  node_layout
+)
+"dgraph/xDot.ml" 192 6489 6493 "dgraph/xDot.ml" 192 6489 6512
+type(
+  Graph.Dot_ast.attr list -> cluster_layout
+)
+ident(
+  def read_cluster_layout "dgraph/xDot.ml" 208 6929 6929 --
+)
+"dgraph/xDot.ml" 192 6489 6515 "dgraph/xDot.ml" 192 6489 6533
+type(
+  (pos:pos ->
+   bbox:bounding_box ->
+   draw:XDotDraw.operation list ->
+   ldraw:XDotDraw.operation list -> cluster_layout) ->
+  Graph.Dot_ast.attr list -> cluster_layout
+)
+ident(
+  int_ref read_common_layout "dgraph/xDot.ml" 153 5046 5050 "dgraph/xDot.ml" 153 5046 5068
+)
+"dgraph/xDot.ml" 192 6489 6534 "dgraph/xDot.ml" 192 6489 6551
+type(
+  pos:pos ->
+  bbox:bounding_box ->
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list -> cluster_layout
+)
+ident(
+  int_ref mk_cluster_layout "dgraph/xDot.ml" 77 3104 3108 "dgraph/xDot.ml" 77 3104 3125
+)
+"dgraph/xDot.ml" 192 6489 6515 "dgraph/xDot.ml" 192 6489 6551
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.attr list -> cluster_layout
+)
+"dgraph/xDot.ml" 208 6929 6933 "dgraph/xDot.ml" 208 6929 6949
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list -> edge_layout
+)
+ident(
+  def read_edge_layout "dgraph/xDot.ml" 235 7946 7946 --
+)
+"dgraph/xDot.ml" 208 6929 6950 "dgraph/xDot.ml" 208 6929 6959
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list
+)
+ident(
+  def attr_list "dgraph/xDot.ml" 209 6962 6964 "dgraph/xDot.ml" 232 7853 7912
+)
+"dgraph/xDot.ml" 209 6962 6968 "dgraph/xDot.ml" 209 6962 6972
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 209 6962 6977 "dgraph/xDot.ml" 209 6962 6980
+type(
+  XDotDraw.operation list -> XDotDraw.operation list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/xDot.ml" 209 6962 6981 "dgraph/xDot.ml" 209 6962 6983
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 209 6962 6977 "dgraph/xDot.ml" 209 6962 6983
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 210 6987 6993 "dgraph/xDot.ml" 210 6987 6998
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 210 6987 7002 "dgraph/xDot.ml" 210 6987 7005
+type(
+  XDotDraw.operation list -> XDotDraw.operation list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/xDot.ml" 210 6987 7006 "dgraph/xDot.ml" 210 6987 7008
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 210 6987 7002 "dgraph/xDot.ml" 210 6987 7008
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 211 7012 7018 "dgraph/xDot.ml" 211 7012 7023
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 211 7012 7027 "dgraph/xDot.ml" 211 7012 7030
+type(
+  XDotDraw.operation list -> XDotDraw.operation list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/xDot.ml" 211 7012 7031 "dgraph/xDot.ml" 211 7012 7033
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 211 7012 7027 "dgraph/xDot.ml" 211 7012 7033
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 212 7037 7043 "dgraph/xDot.ml" 212 7037 7048
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 212 7037 7052 "dgraph/xDot.ml" 212 7037 7055
+type(
+  XDotDraw.operation list -> XDotDraw.operation list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/xDot.ml" 212 7037 7056 "dgraph/xDot.ml" 212 7037 7058
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 212 7037 7052 "dgraph/xDot.ml" 212 7037 7058
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 213 7062 7068 "dgraph/xDot.ml" 213 7062 7074
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 213 7062 7077 "dgraph/xDot.ml" 213 7062 7080
+type(
+  XDotDraw.operation list -> XDotDraw.operation list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/xDot.ml" 213 7062 7081 "dgraph/xDot.ml" 213 7062 7083
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 213 7062 7077 "dgraph/xDot.ml" 213 7062 7083
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 214 7087 7093 "dgraph/xDot.ml" 214 7087 7099
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 214 7087 7102 "dgraph/xDot.ml" 214 7087 7105
+type(
+  XDotDraw.operation list -> XDotDraw.operation list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/xDot.ml" 214 7087 7106 "dgraph/xDot.ml" 214 7087 7108
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 214 7087 7102 "dgraph/xDot.ml" 214 7087 7108
+type(
+  XDotDraw.operation list ref
+)
+"dgraph/xDot.ml" 215 7112 7118 "dgraph/xDot.ml" 215 7112 7131
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+"dgraph/xDot.ml" 216 7143 7164 "dgraph/xDot.ml" 216 7143 7172
+type(
+  string
+)
+"dgraph/xDot.ml" 216 7143 7149 "dgraph/xDot.ml" 216 7143 7173
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 216 7143 7198 "dgraph/xDot.ml" 216 7143 7199
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 217 7204 7205 "dgraph/xDot.ml" 217 7204 7231
+)
+"dgraph/xDot.ml" 216 7143 7182 "dgraph/xDot.ml" 216 7143 7200
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 216 7143 7177 "dgraph/xDot.ml" 216 7143 7200
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 216 7143 7149 "dgraph/xDot.ml" 216 7143 7200
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 217 7204 7205 "dgraph/xDot.ml" 217 7204 7209
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 209 6962 6968 "dgraph/xDot.ml" 209 6962 6972
+)
+"dgraph/xDot.ml" 217 7204 7212 "dgraph/xDot.ml" 217 7204 7214
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/xDot.ml" 217 7204 7215 "dgraph/xDot.ml" 217 7204 7229
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 217 7204 7230 "dgraph/xDot.ml" 217 7204 7231
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 216 7143 7198 "dgraph/xDot.ml" 216 7143 7199
+)
+"dgraph/xDot.ml" 217 7204 7215 "dgraph/xDot.ml" 217 7204 7231
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 217 7204 7205 "dgraph/xDot.ml" 217 7204 7231
+type(
+  unit
+)
+"dgraph/xDot.ml" 218 7232 7253 "dgraph/xDot.ml" 218 7232 7262
+type(
+  string
+)
+"dgraph/xDot.ml" 218 7232 7238 "dgraph/xDot.ml" 218 7232 7263
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 218 7232 7287 "dgraph/xDot.ml" 218 7232 7288
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 219 7293 7294 "dgraph/xDot.ml" 219 7293 7320
+)
+"dgraph/xDot.ml" 218 7232 7271 "dgraph/xDot.ml" 218 7232 7289
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 218 7232 7266 "dgraph/xDot.ml" 218 7232 7289
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 218 7232 7238 "dgraph/xDot.ml" 218 7232 7289
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 219 7293 7294 "dgraph/xDot.ml" 219 7293 7299
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 210 6987 6993 "dgraph/xDot.ml" 210 6987 6998
+)
+"dgraph/xDot.ml" 219 7293 7301 "dgraph/xDot.ml" 219 7293 7303
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/xDot.ml" 219 7293 7304 "dgraph/xDot.ml" 219 7293 7318
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 219 7293 7319 "dgraph/xDot.ml" 219 7293 7320
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 218 7232 7287 "dgraph/xDot.ml" 218 7232 7288
+)
+"dgraph/xDot.ml" 219 7293 7304 "dgraph/xDot.ml" 219 7293 7320
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 219 7293 7294 "dgraph/xDot.ml" 219 7293 7320
+type(
+  unit
+)
+"dgraph/xDot.ml" 220 7321 7342 "dgraph/xDot.ml" 220 7321 7351
+type(
+  string
+)
+"dgraph/xDot.ml" 220 7321 7327 "dgraph/xDot.ml" 220 7321 7352
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 220 7321 7376 "dgraph/xDot.ml" 220 7321 7377
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 221 7382 7383 "dgraph/xDot.ml" 221 7382 7409
+)
+"dgraph/xDot.ml" 220 7321 7360 "dgraph/xDot.ml" 220 7321 7378
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 220 7321 7355 "dgraph/xDot.ml" 220 7321 7378
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 220 7321 7327 "dgraph/xDot.ml" 220 7321 7378
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 221 7382 7383 "dgraph/xDot.ml" 221 7382 7388
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref hdraw "dgraph/xDot.ml" 211 7012 7018 "dgraph/xDot.ml" 211 7012 7023
+)
+"dgraph/xDot.ml" 221 7382 7390 "dgraph/xDot.ml" 221 7382 7392
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/xDot.ml" 221 7382 7393 "dgraph/xDot.ml" 221 7382 7407
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 221 7382 7408 "dgraph/xDot.ml" 221 7382 7409
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 220 7321 7376 "dgraph/xDot.ml" 220 7321 7377
+)
+"dgraph/xDot.ml" 221 7382 7393 "dgraph/xDot.ml" 221 7382 7409
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 221 7382 7383 "dgraph/xDot.ml" 221 7382 7409
+type(
+  unit
+)
+"dgraph/xDot.ml" 222 7410 7431 "dgraph/xDot.ml" 222 7410 7440
+type(
+  string
+)
+"dgraph/xDot.ml" 222 7410 7416 "dgraph/xDot.ml" 222 7410 7441
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 222 7410 7465 "dgraph/xDot.ml" 222 7410 7466
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 223 7471 7472 "dgraph/xDot.ml" 223 7471 7498
+)
+"dgraph/xDot.ml" 222 7410 7449 "dgraph/xDot.ml" 222 7410 7467
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 222 7410 7444 "dgraph/xDot.ml" 222 7410 7467
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 222 7410 7416 "dgraph/xDot.ml" 222 7410 7467
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 223 7471 7472 "dgraph/xDot.ml" 223 7471 7477
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref tdraw "dgraph/xDot.ml" 212 7037 7043 "dgraph/xDot.ml" 212 7037 7048
+)
+"dgraph/xDot.ml" 223 7471 7479 "dgraph/xDot.ml" 223 7471 7481
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/xDot.ml" 223 7471 7482 "dgraph/xDot.ml" 223 7471 7496
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 223 7471 7497 "dgraph/xDot.ml" 223 7471 7498
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 222 7410 7465 "dgraph/xDot.ml" 222 7410 7466
+)
+"dgraph/xDot.ml" 223 7471 7482 "dgraph/xDot.ml" 223 7471 7498
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 223 7471 7472 "dgraph/xDot.ml" 223 7471 7498
+type(
+  unit
+)
+"dgraph/xDot.ml" 224 7499 7520 "dgraph/xDot.ml" 224 7499 7530
+type(
+  string
+)
+"dgraph/xDot.ml" 224 7499 7505 "dgraph/xDot.ml" 224 7499 7531
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 224 7499 7554 "dgraph/xDot.ml" 224 7499 7555
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 225 7560 7561 "dgraph/xDot.ml" 225 7560 7587
+)
+"dgraph/xDot.ml" 224 7499 7538 "dgraph/xDot.ml" 224 7499 7556
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 224 7499 7533 "dgraph/xDot.ml" 224 7499 7556
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 224 7499 7505 "dgraph/xDot.ml" 224 7499 7556
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 225 7560 7561 "dgraph/xDot.ml" 225 7560 7567
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref hldraw "dgraph/xDot.ml" 213 7062 7068 "dgraph/xDot.ml" 213 7062 7074
+)
+"dgraph/xDot.ml" 225 7560 7568 "dgraph/xDot.ml" 225 7560 7570
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/xDot.ml" 225 7560 7571 "dgraph/xDot.ml" 225 7560 7585
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 225 7560 7586 "dgraph/xDot.ml" 225 7560 7587
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 224 7499 7554 "dgraph/xDot.ml" 224 7499 7555
+)
+"dgraph/xDot.ml" 225 7560 7571 "dgraph/xDot.ml" 225 7560 7587
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 225 7560 7561 "dgraph/xDot.ml" 225 7560 7587
+type(
+  unit
+)
+"dgraph/xDot.ml" 226 7588 7609 "dgraph/xDot.ml" 226 7588 7619
+type(
+  string
+)
+"dgraph/xDot.ml" 226 7588 7594 "dgraph/xDot.ml" 226 7588 7620
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 226 7588 7643 "dgraph/xDot.ml" 226 7588 7644
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 227 7649 7650 "dgraph/xDot.ml" 227 7649 7676
+)
+"dgraph/xDot.ml" 226 7588 7627 "dgraph/xDot.ml" 226 7588 7645
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 226 7588 7622 "dgraph/xDot.ml" 226 7588 7645
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 226 7588 7594 "dgraph/xDot.ml" 226 7588 7645
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 227 7649 7650 "dgraph/xDot.ml" 227 7649 7656
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref tldraw "dgraph/xDot.ml" 214 7087 7093 "dgraph/xDot.ml" 214 7087 7099
+)
+"dgraph/xDot.ml" 227 7649 7657 "dgraph/xDot.ml" 227 7649 7659
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/xDot.ml" 227 7649 7660 "dgraph/xDot.ml" 227 7649 7674
+type(
+  string -> XDotDraw.operation list
+)
+ident(
+  ext_ref XDotDraw.parse
+)
+"dgraph/xDot.ml" 227 7649 7675 "dgraph/xDot.ml" 227 7649 7676
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 226 7588 7643 "dgraph/xDot.ml" 226 7588 7644
+)
+"dgraph/xDot.ml" 227 7649 7660 "dgraph/xDot.ml" 227 7649 7676
+call(
+  stack
+)
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 227 7649 7650 "dgraph/xDot.ml" 227 7649 7676
+type(
+  unit
+)
+"dgraph/xDot.ml" 228 7677 7683 "dgraph/xDot.ml" 228 7677 7684
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 228 7677 7688 "dgraph/xDot.ml" 228 7677 7690
+type(
+  unit
+)
+"dgraph/xDot.ml" 215 7112 7134 "dgraph/xDot.ml" 228 7677 7690
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+"dgraph/xDot.ml" 229 7694 7696 "dgraph/xDot.ml" 229 7694 7705
+type(
+  ((Graph.Dot_ast.id * Graph.Dot_ast.id option) list -> unit) ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 229 7694 7707 "dgraph/xDot.ml" 229 7694 7716
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit) ->
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 229 7694 7717 "dgraph/xDot.ml" 229 7694 7730
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+ident(
+  int_ref fill_draw_ops "dgraph/xDot.ml" 215 7112 7118 "dgraph/xDot.ml" 215 7112 7131
+)
+"dgraph/xDot.ml" 229 7694 7706 "dgraph/xDot.ml" 229 7694 7731
+call(
+  stack
+)
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list -> unit
+)
+"dgraph/xDot.ml" 229 7694 7732 "dgraph/xDot.ml" 229 7694 7741
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option) list list
+)
+ident(
+  int_ref attr_list "dgraph/xDot.ml" 208 6929 6950 "dgraph/xDot.ml" 208 6929 6959
+)
+"dgraph/xDot.ml" 229 7694 7696 "dgraph/xDot.ml" 229 7694 7741
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 230 7743 7749 "dgraph/xDot.ml" 230 7743 7753
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 230 7743 7755 "dgraph/xDot.ml" 230 7743 7760
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 230 7743 7749 "dgraph/xDot.ml" 230 7743 7760
+type(
+  XDotDraw.operation list * XDotDraw.operation list
+)
+"dgraph/xDot.ml" 230 7743 7763 "dgraph/xDot.ml" 230 7743 7764
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/xDot.ml" 230 7743 7764 "dgraph/xDot.ml" 230 7743 7768
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 209 6962 6968 "dgraph/xDot.ml" 209 6962 6972
+)
+"dgraph/xDot.ml" 230 7743 7763 "dgraph/xDot.ml" 230 7743 7768
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 230 7743 7770 "dgraph/xDot.ml" 230 7743 7771
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/xDot.ml" 230 7743 7771 "dgraph/xDot.ml" 230 7743 7776
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 210 6987 6993 "dgraph/xDot.ml" 210 6987 6998
+)
+"dgraph/xDot.ml" 230 7743 7770 "dgraph/xDot.ml" 230 7743 7776
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 230 7743 7763 "dgraph/xDot.ml" 230 7743 7776
+type(
+  XDotDraw.operation list * XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7786 "dgraph/xDot.ml" 231 7780 7791
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7793 "dgraph/xDot.ml" 231 7780 7798
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7800 "dgraph/xDot.ml" 231 7780 7806
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7808 "dgraph/xDot.ml" 231 7780 7814
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7786 "dgraph/xDot.ml" 231 7780 7814
+type(
+  XDotDraw.operation list * XDotDraw.operation list *
+  XDotDraw.operation list * XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7817 "dgraph/xDot.ml" 231 7780 7818
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/xDot.ml" 231 7780 7818 "dgraph/xDot.ml" 231 7780 7823
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref hdraw "dgraph/xDot.ml" 211 7012 7018 "dgraph/xDot.ml" 211 7012 7023
+)
+"dgraph/xDot.ml" 231 7780 7817 "dgraph/xDot.ml" 231 7780 7823
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7825 "dgraph/xDot.ml" 231 7780 7826
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/xDot.ml" 231 7780 7826 "dgraph/xDot.ml" 231 7780 7831
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref tdraw "dgraph/xDot.ml" 212 7037 7043 "dgraph/xDot.ml" 212 7037 7048
+)
+"dgraph/xDot.ml" 231 7780 7825 "dgraph/xDot.ml" 231 7780 7831
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7833 "dgraph/xDot.ml" 231 7780 7834
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/xDot.ml" 231 7780 7834 "dgraph/xDot.ml" 231 7780 7840
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref hldraw "dgraph/xDot.ml" 213 7062 7068 "dgraph/xDot.ml" 213 7062 7074
+)
+"dgraph/xDot.ml" 231 7780 7833 "dgraph/xDot.ml" 231 7780 7840
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7842 "dgraph/xDot.ml" 231 7780 7843
+type(
+  XDotDraw.operation list ref -> XDotDraw.operation list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/xDot.ml" 231 7780 7843 "dgraph/xDot.ml" 231 7780 7849
+type(
+  XDotDraw.operation list ref
+)
+ident(
+  int_ref tldraw "dgraph/xDot.ml" 214 7087 7093 "dgraph/xDot.ml" 214 7087 7099
+)
+"dgraph/xDot.ml" 231 7780 7842 "dgraph/xDot.ml" 231 7780 7849
+type(
+  XDotDraw.operation list
+)
+"dgraph/xDot.ml" 231 7780 7817 "dgraph/xDot.ml" 231 7780 7849
+type(
+  XDotDraw.operation list * XDotDraw.operation list *
+  XDotDraw.operation list * XDotDraw.operation list
+)
+"dgraph/xDot.ml" 232 7853 7855 "dgraph/xDot.ml" 232 7853 7869
+type(
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list ->
+  hdraw:XDotDraw.operation list ->
+  tdraw:XDotDraw.operation list ->
+  hldraw:XDotDraw.operation list ->
+  tldraw:XDotDraw.operation list -> edge_layout
+)
+ident(
+  int_ref mk_edge_layout "dgraph/xDot.ml" 83 3234 3238 "dgraph/xDot.ml" 83 3234 3252
+)
+"dgraph/xDot.ml" 232 7853 7871 "dgraph/xDot.ml" 232 7853 7875
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref draw "dgraph/xDot.ml" 230 7743 7749 "dgraph/xDot.ml" 230 7743 7753
+)
+"dgraph/xDot.ml" 232 7853 7877 "dgraph/xDot.ml" 232 7853 7882
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref ldraw "dgraph/xDot.ml" 230 7743 7755 "dgraph/xDot.ml" 230 7743 7760
+)
+"dgraph/xDot.ml" 232 7853 7884 "dgraph/xDot.ml" 232 7853 7889
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref hdraw "dgraph/xDot.ml" 231 7780 7786 "dgraph/xDot.ml" 231 7780 7791
+)
+"dgraph/xDot.ml" 232 7853 7891 "dgraph/xDot.ml" 232 7853 7896
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref tdraw "dgraph/xDot.ml" 231 7780 7793 "dgraph/xDot.ml" 231 7780 7798
+)
+"dgraph/xDot.ml" 232 7853 7898 "dgraph/xDot.ml" 232 7853 7904
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref hldraw "dgraph/xDot.ml" 231 7780 7800 "dgraph/xDot.ml" 231 7780 7806
+)
+"dgraph/xDot.ml" 232 7853 7906 "dgraph/xDot.ml" 232 7853 7912
+type(
+  XDotDraw.operation list
+)
+ident(
+  int_ref tldraw "dgraph/xDot.ml" 231 7780 7808 "dgraph/xDot.ml" 231 7780 7814
+)
+"dgraph/xDot.ml" 232 7853 7855 "dgraph/xDot.ml" 232 7853 7912
+call(
+  tail
+)
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 231 7780 7782 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 230 7743 7745 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 229 7694 7696 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 215 7112 7114 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 214 7087 7089 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 213 7062 7064 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 212 7037 7039 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 211 7012 7014 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 210 6987 6989 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 209 6962 6964 "dgraph/xDot.ml" 232 7853 7912
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 235 7946 7950 "dgraph/xDot.ml" 235 7946 7967
+type(
+  string -> (float * float) * (float * float)
+)
+ident(
+  def read_bounding_box "dgraph/xDot.ml" 241 8199 8199 --
+)
+"dgraph/xDot.ml" 235 7946 7968 "dgraph/xDot.ml" 235 7946 7971
+type(
+  string
+)
+ident(
+  def str "dgraph/xDot.ml" 236 7974 7976 "dgraph/xDot.ml" 239 8173 8197
+)
+"dgraph/xDot.ml" 236 7974 7980 "dgraph/xDot.ml" 236 7974 7982
+type(
+  float
+)
+"dgraph/xDot.ml" 236 7974 7983 "dgraph/xDot.ml" 236 7974 7985
+type(
+  float
+)
+"dgraph/xDot.ml" 236 7974 7986 "dgraph/xDot.ml" 236 7974 7988
+type(
+  float
+)
+"dgraph/xDot.ml" 236 7974 7989 "dgraph/xDot.ml" 236 7974 7991
+type(
+  float
+)
+"dgraph/xDot.ml" 236 7974 7980 "dgraph/xDot.ml" 236 7974 7991
+type(
+  float * float * float * float
+)
+"dgraph/xDot.ml" 236 7974 7994 "dgraph/xDot.ml" 236 7974 8006
+type(
+  string ->
+  (float -> float -> float -> float -> float * float * float * float, '_a,
+   (float -> float -> float -> float -> float * float * float * float) ->
+   float * float * float * float, float * float * float * float)
+  Scanf.scanner
+)
+ident(
+  ext_ref Scanf.sscanf
+)
+"dgraph/xDot.ml" 236 7974 8007 "dgraph/xDot.ml" 236 7974 8010
+type(
+  string
+)
+ident(
+  int_ref str "dgraph/xDot.ml" 235 7946 7968 "dgraph/xDot.ml" 235 7946 7971
+)
+"dgraph/xDot.ml" 236 7974 8011 "dgraph/xDot.ml" 236 7974 8024
+type(
+  (float -> float -> float -> float -> float * float * float * float,
+   Scanf.Scanning.scanbuf, '_a,
+   (float -> float -> float -> float -> float * float * float * float) ->
+   float * float * float * float,
+   (float -> float -> float -> float -> float * float * float * float) ->
+   float * float * float * float, float * float * float * float)
+  format6
+)
+"dgraph/xDot.ml" 236 7974 8030 "dgraph/xDot.ml" 236 7974 8031
+type(
+  float
+)
+ident(
+  def a "dgraph/xDot.ml" 236 7974 8032 "dgraph/xDot.ml" 236 7974 8048
+)
+"dgraph/xDot.ml" 236 7974 8032 "dgraph/xDot.ml" 236 7974 8033
+type(
+  float
+)
+ident(
+  def b "dgraph/xDot.ml" 236 7974 8034 "dgraph/xDot.ml" 236 7974 8048
+)
+"dgraph/xDot.ml" 236 7974 8034 "dgraph/xDot.ml" 236 7974 8035
+type(
+  float
+)
+ident(
+  def c "dgraph/xDot.ml" 236 7974 8036 "dgraph/xDot.ml" 236 7974 8048
+)
+"dgraph/xDot.ml" 236 7974 8036 "dgraph/xDot.ml" 236 7974 8037
+type(
+  float
+)
+ident(
+  def d "dgraph/xDot.ml" 236 7974 8041 "dgraph/xDot.ml" 236 7974 8048
+)
+"dgraph/xDot.ml" 236 7974 8041 "dgraph/xDot.ml" 236 7974 8042
+type(
+  float
+)
+ident(
+  int_ref a "dgraph/xDot.ml" 236 7974 8030 "dgraph/xDot.ml" 236 7974 8031
+)
+"dgraph/xDot.ml" 236 7974 8043 "dgraph/xDot.ml" 236 7974 8044
+type(
+  float
+)
+ident(
+  int_ref b "dgraph/xDot.ml" 236 7974 8032 "dgraph/xDot.ml" 236 7974 8033
+)
+"dgraph/xDot.ml" 236 7974 8045 "dgraph/xDot.ml" 236 7974 8046
+type(
+  float
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 236 7974 8034 "dgraph/xDot.ml" 236 7974 8035
+)
+"dgraph/xDot.ml" 236 7974 8047 "dgraph/xDot.ml" 236 7974 8048
+type(
+  float
+)
+ident(
+  int_ref d "dgraph/xDot.ml" 236 7974 8036 "dgraph/xDot.ml" 236 7974 8037
+)
+"dgraph/xDot.ml" 236 7974 8041 "dgraph/xDot.ml" 236 7974 8048
+type(
+  float * float * float * float
+)
+"dgraph/xDot.ml" 236 7974 8025 "dgraph/xDot.ml" 236 7974 8049
+type(
+  float -> float -> float -> float -> float * float * float * float
+)
+"dgraph/xDot.ml" 236 7974 7994 "dgraph/xDot.ml" 236 7974 8049
+call(
+  stack
+)
+type(
+  float * float * float * float
+)
+"dgraph/xDot.ml" 238 8113 8119 "dgraph/xDot.ml" 238 8113 8129
+type(
+  float * float
+)
+"dgraph/xDot.ml" 238 8113 8133 "dgraph/xDot.ml" 238 8113 8135
+type(
+  float
+)
+ident(
+  int_ref x1 "dgraph/xDot.ml" 236 7974 7980 "dgraph/xDot.ml" 236 7974 7982
+)
+"dgraph/xDot.ml" 238 8113 8137 "dgraph/xDot.ml" 238 8113 8139
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"dgraph/xDot.ml" 238 8113 8139 "dgraph/xDot.ml" 238 8113 8141
+type(
+  float
+)
+ident(
+  int_ref y2 "dgraph/xDot.ml" 236 7974 7989 "dgraph/xDot.ml" 236 7974 7991
+)
+"dgraph/xDot.ml" 238 8113 8137 "dgraph/xDot.ml" 238 8113 8141
+type(
+  float
+)
+"dgraph/xDot.ml" 238 8113 8132 "dgraph/xDot.ml" 238 8113 8142
+type(
+  float * float
+)
+"dgraph/xDot.ml" 238 8113 8147 "dgraph/xDot.ml" 238 8113 8158
+type(
+  float * float
+)
+"dgraph/xDot.ml" 238 8113 8161 "dgraph/xDot.ml" 238 8113 8163
+type(
+  float
+)
+ident(
+  int_ref x2 "dgraph/xDot.ml" 236 7974 7986 "dgraph/xDot.ml" 236 7974 7988
+)
+"dgraph/xDot.ml" 238 8113 8165 "dgraph/xDot.ml" 238 8113 8167
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"dgraph/xDot.ml" 238 8113 8167 "dgraph/xDot.ml" 238 8113 8169
+type(
+  float
+)
+ident(
+  int_ref y1 "dgraph/xDot.ml" 236 7974 7983 "dgraph/xDot.ml" 236 7974 7985
+)
+"dgraph/xDot.ml" 238 8113 8165 "dgraph/xDot.ml" 238 8113 8169
+type(
+  float
+)
+"dgraph/xDot.ml" 238 8113 8161 "dgraph/xDot.ml" 238 8113 8169
+type(
+  float * float
+)
+"dgraph/xDot.ml" 239 8173 8175 "dgraph/xDot.ml" 239 8173 8185
+type(
+  float * float
+)
+ident(
+  int_ref lower_left "dgraph/xDot.ml" 238 8113 8119 "dgraph/xDot.ml" 238 8113 8129
+)
+"dgraph/xDot.ml" 239 8173 8186 "dgraph/xDot.ml" 239 8173 8197
+type(
+  float * float
+)
+ident(
+  int_ref upper_right "dgraph/xDot.ml" 238 8113 8147 "dgraph/xDot.ml" 238 8113 8158
+)
+"dgraph/xDot.ml" 239 8173 8175 "dgraph/xDot.ml" 239 8173 8197
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 238 8113 8115 "dgraph/xDot.ml" 239 8173 8197
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 236 7974 7976 "dgraph/xDot.ml" 239 8173 8197
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 243 8259 8273 "dgraph/xDot.ml" 243 8259 8290
+call(
+  stack
+)
+"dgraph/xDot.ml" 248 8352 8357 "dgraph/xDot.ml" 248 8352 8362
+type(
+  G.E.t -> G.E.t -> bool
+)
+ident(
+  def equal "dgraph/xDot.ml" 249 8389 8390 "dgraph/xDot.ml" 250 8414 8424
+)
+"dgraph/xDot.ml" 248 8352 8363 "dgraph/xDot.ml" 248 8352 8364
+type(
+  G.E.t
+)
+ident(
+  def x "dgraph/xDot.ml" 248 8352 8365 "dgraph/xDot.ml" 248 8352 8388
+)
+"dgraph/xDot.ml" 248 8352 8365 "dgraph/xDot.ml" 248 8352 8366
+type(
+  G.E.t
+)
+ident(
+  def y "dgraph/xDot.ml" 248 8352 8369 "dgraph/xDot.ml" 248 8352 8388
+)
+"dgraph/xDot.ml" 248 8352 8369 "dgraph/xDot.ml" 248 8352 8380
+type(
+  G.E.t -> G.E.t -> int
+)
+ident(
+  ext_ref G.E.compare
+)
+"dgraph/xDot.ml" 248 8352 8381 "dgraph/xDot.ml" 248 8352 8382
+type(
+  G.E.t
+)
+ident(
+  int_ref x "dgraph/xDot.ml" 248 8352 8363 "dgraph/xDot.ml" 248 8352 8364
+)
+"dgraph/xDot.ml" 248 8352 8383 "dgraph/xDot.ml" 248 8352 8384
+type(
+  G.E.t
+)
+ident(
+  int_ref y "dgraph/xDot.ml" 248 8352 8365 "dgraph/xDot.ml" 248 8352 8366
+)
+"dgraph/xDot.ml" 248 8352 8369 "dgraph/xDot.ml" 248 8352 8384
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/xDot.ml" 248 8352 8385 "dgraph/xDot.ml" 248 8352 8386
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 248 8352 8387 "dgraph/xDot.ml" 248 8352 8388
+type(
+  int
+)
+"dgraph/xDot.ml" 248 8352 8369 "dgraph/xDot.ml" 248 8352 8388
+type(
+  bool
+)
+"dgraph/xDot.ml" 249 8389 8394 "dgraph/xDot.ml" 249 8389 8398
+type(
+  'a -> int
+)
+ident(
+  def hash "dgraph/xDot.ml" 249 8389 8413 "dgraph/xDot.ml" 250 8414 8424
+)
+"dgraph/xDot.ml" 249 8389 8401 "dgraph/xDot.ml" 249 8389 8413
+type(
+  'a -> int
+)
+ident(
+  ext_ref Hashtbl.hash
+)
+"dgraph/xDot.ml" 245 8305 8309 "dgraph/xDot.ml" 250 8414 8425
+call(
+  stack
+)
+"dgraph/xDot.ml" 255 8480 8483 "dgraph/xDot.ml" 255 8480 8502
+call(
+  stack
+)
+"dgraph/xDot.ml" 255 8480 8483 "dgraph/xDot.ml" 255 8480 8507
+call(
+  stack
+)
+"dgraph/xDot.ml" 254 8458 8465 "dgraph/xDot.ml" 255 8480 8508
+call(
+  stack
+)
+"dgraph/xDot.ml" 256 8509 8539 "dgraph/xDot.ml" 256 8509 8544
+type(
+  'b -> 'b -> bool
+)
+ident(
+  def equal "dgraph/xDot.ml" 256 8509 8551 "dgraph/xDot.ml" 256 8509 8578
+)
+"dgraph/xDot.ml" 256 8509 8547 "dgraph/xDot.ml" 256 8509 8550
+type(
+  'b -> 'b -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 256 8509 8555 "dgraph/xDot.ml" 256 8509 8559
+type(
+  'c -> int
+)
+ident(
+  def hash "dgraph/xDot.ml" 256 8509 8574 "dgraph/xDot.ml" 256 8509 8578
+)
+"dgraph/xDot.ml" 256 8509 8562 "dgraph/xDot.ml" 256 8509 8574
+type(
+  'c -> int
+)
+ident(
+  ext_ref Hashtbl.hash
+)
+"dgraph/xDot.ml" 254 8458 8465 "dgraph/xDot.ml" 256 8509 8579
+call(
+  stack
+)
+"dgraph/xDot.ml" 253 8441 8445 "dgraph/xDot.ml" 256 8509 8580
+call(
+  stack
+)
+"dgraph/xDot.ml" 266 8793 8799 "dgraph/xDot.ml" 266 8793 8815
+type(
+  G.E.t -> string option
+)
+ident(
+  def get_edge_comment "dgraph/xDot.ml" 274 8980 8982 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 266 8793 8816 "dgraph/xDot.ml" 266 8793 8817
+type(
+  G.E.t
+)
+ident(
+  def e "dgraph/xDot.ml" 267 8820 8824 "dgraph/xDot.ml" 272 8966 8978
+)
+"dgraph/xDot.ml" 267 8820 8828 "dgraph/xDot.ml" 267 8820 8830
+type(
+  Graph.Graphviz.DotAttributes.edge list
+)
+"dgraph/xDot.ml" 267 8820 8833 "dgraph/xDot.ml" 267 8820 8850
+type(
+  G.E.t -> Graph.Graphviz.DotAttributes.edge list
+)
+ident(
+  ext_ref G.edge_attributes
+)
+"dgraph/xDot.ml" 267 8820 8851 "dgraph/xDot.ml" 267 8820 8852
+type(
+  G.E.t
+)
+ident(
+  int_ref e "dgraph/xDot.ml" 266 8793 8816 "dgraph/xDot.ml" 266 8793 8817
+)
+"dgraph/xDot.ml" 267 8820 8833 "dgraph/xDot.ml" 267 8820 8852
+call(
+  stack
+)
+type(
+  Graph.Graphviz.DotAttributes.edge list
+)
+"dgraph/xDot.ml" 269 8864 8870 "dgraph/xDot.ml" 269 8864 8879
+type(
+  (Graph.Graphviz.DotAttributes.edge -> unit) ->
+  Graph.Graphviz.DotAttributes.edge list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 269 8864 8899 "dgraph/xDot.ml" 269 8864 8900
+type(
+  string
+)
+ident(
+  def c "dgraph/xDot.ml" 269 8864 8904 "dgraph/xDot.ml" 269 8864 8919
+)
+"dgraph/xDot.ml" 269 8864 8890 "dgraph/xDot.ml" 269 8864 8900
+type(
+  Graph.Graphviz.DotAttributes.edge
+)
+"dgraph/xDot.ml" 269 8864 8904 "dgraph/xDot.ml" 269 8864 8909
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/xDot.ml" 269 8864 8917 "dgraph/xDot.ml" 269 8864 8918
+type(
+  string
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 269 8864 8899 "dgraph/xDot.ml" 269 8864 8900
+)
+"dgraph/xDot.ml" 269 8864 8910 "dgraph/xDot.ml" 269 8864 8919
+type(
+  exn
+)
+"dgraph/xDot.ml" 269 8864 8904 "dgraph/xDot.ml" 269 8864 8919
+type(
+  unit
+)
+"dgraph/xDot.ml" 269 8864 8922 "dgraph/xDot.ml" 269 8864 8923
+type(
+  Graph.Graphviz.DotAttributes.edge
+)
+"dgraph/xDot.ml" 269 8864 8927 "dgraph/xDot.ml" 269 8864 8929
+type(
+  unit
+)
+"dgraph/xDot.ml" 269 8864 8880 "dgraph/xDot.ml" 269 8864 8930
+type(
+  Graph.Graphviz.DotAttributes.edge -> unit
+)
+"dgraph/xDot.ml" 269 8864 8931 "dgraph/xDot.ml" 269 8864 8933
+type(
+  Graph.Graphviz.DotAttributes.edge list
+)
+ident(
+  int_ref al "dgraph/xDot.ml" 267 8820 8828 "dgraph/xDot.ml" 267 8820 8830
+)
+"dgraph/xDot.ml" 269 8864 8870 "dgraph/xDot.ml" 269 8864 8933
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 270 8935 8941 "dgraph/xDot.ml" 270 8935 8945
+type(
+  string option
+)
+"dgraph/xDot.ml" 269 8864 8870 "dgraph/xDot.ml" 270 8935 8945
+type(
+  string option
+)
+"dgraph/xDot.ml" 271 8946 8961 "dgraph/xDot.ml" 271 8946 8962
+type(
+  string
+)
+ident(
+  def c "dgraph/xDot.ml" 272 8966 8972 "dgraph/xDot.ml" 272 8966 8978
+)
+"dgraph/xDot.ml" 271 8946 8955 "dgraph/xDot.ml" 271 8946 8962
+type(
+  exn
+)
+"dgraph/xDot.ml" 272 8966 8977 "dgraph/xDot.ml" 272 8966 8978
+type(
+  string
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 271 8946 8961 "dgraph/xDot.ml" 271 8946 8962
+)
+"dgraph/xDot.ml" 272 8966 8972 "dgraph/xDot.ml" 272 8966 8978
+type(
+  string option
+)
+"dgraph/xDot.ml" 268 8856 8860 "dgraph/xDot.ml" 272 8966 8978
+type(
+  string option
+)
+"dgraph/xDot.ml" 267 8820 8824 "dgraph/xDot.ml" 272 8966 8978
+type(
+  string option
+)
+"dgraph/xDot.ml" 274 8980 8986 "dgraph/xDot.ml" 274 8980 9001
+type(
+  Graph.Dot_ast.attr list -> string
+)
+ident(
+  def get_dot_comment "dgraph/xDot.ml" 286 9211 9213 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 274 8980 9003 "dgraph/xDot.ml" 274 8980 9005
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  def al "dgraph/xDot.ml" 275 9029 9033 "dgraph/xDot.ml" 284 9202 9209
+)
+"dgraph/xDot.ml" 276 9037 9043 "dgraph/xDot.ml" 276 9037 9052
+type(
+  (Graph.Dot_ast.attr -> unit) -> Graph.Dot_ast.attr list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 277 9053 9055 "dgraph/xDot.ml" 277 9053 9064
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit) ->
+  Graph.Dot_ast.attr -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 279 9079 9092 "dgraph/xDot.ml" 279 9079 9101
+type(
+  string
+)
+"dgraph/xDot.ml" 279 9079 9086 "dgraph/xDot.ml" 279 9079 9101
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 279 9079 9108 "dgraph/xDot.ml" 279 9079 9109
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  def c "dgraph/xDot.ml" 279 9079 9113 "dgraph/xDot.ml" 279 9079 9145
+)
+"dgraph/xDot.ml" 279 9079 9103 "dgraph/xDot.ml" 279 9079 9109
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 279 9079 9086 "dgraph/xDot.ml" 279 9079 9109
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 279 9079 9113 "dgraph/xDot.ml" 279 9079 9118
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/xDot.ml" 279 9079 9127 "dgraph/xDot.ml" 279 9079 9141
+type(
+  Graph.Dot_ast.id -> string
+)
+ident(
+  int_ref get_dot_string "dgraph/xDot.ml" 125 4286 4290 "dgraph/xDot.ml" 125 4286 4304
+)
+"dgraph/xDot.ml" 279 9079 9142 "dgraph/xDot.ml" 279 9079 9143
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 279 9079 9108 "dgraph/xDot.ml" 279 9079 9109
+)
+"dgraph/xDot.ml" 279 9079 9126 "dgraph/xDot.ml" 279 9079 9144
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 279 9079 9119 "dgraph/xDot.ml" 279 9079 9145
+type(
+  exn
+)
+"dgraph/xDot.ml" 279 9079 9113 "dgraph/xDot.ml" 279 9079 9145
+type(
+  unit
+)
+"dgraph/xDot.ml" 280 9146 9153 "dgraph/xDot.ml" 280 9146 9154
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 280 9146 9158 "dgraph/xDot.ml" 280 9146 9160
+type(
+  unit
+)
+"dgraph/xDot.ml" 278 9065 9069 "dgraph/xDot.ml" 280 9146 9161
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+"dgraph/xDot.ml" 277 9053 9054 "dgraph/xDot.ml" 280 9146 9162
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.attr -> unit
+)
+"dgraph/xDot.ml" 281 9163 9169 "dgraph/xDot.ml" 281 9163 9171
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref al "dgraph/xDot.ml" 274 8980 9003 "dgraph/xDot.ml" 274 8980 9005
+)
+"dgraph/xDot.ml" 276 9037 9043 "dgraph/xDot.ml" 281 9163 9171
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 282 9173 9179 "dgraph/xDot.ml" 282 9173 9181
+type(
+  string
+)
+"dgraph/xDot.ml" 276 9037 9043 "dgraph/xDot.ml" 282 9173 9181
+type(
+  string
+)
+"dgraph/xDot.ml" 283 9182 9197 "dgraph/xDot.ml" 283 9182 9198
+type(
+  string
+)
+ident(
+  def c "dgraph/xDot.ml" 284 9202 9208 "dgraph/xDot.ml" 284 9202 9209
+)
+"dgraph/xDot.ml" 283 9182 9191 "dgraph/xDot.ml" 283 9182 9198
+type(
+  exn
+)
+"dgraph/xDot.ml" 284 9202 9208 "dgraph/xDot.ml" 284 9202 9209
+type(
+  string
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 283 9182 9197 "dgraph/xDot.ml" 283 9182 9198
+)
+"dgraph/xDot.ml" 275 9029 9033 "dgraph/xDot.ml" 284 9202 9209
+type(
+  string
+)
+"dgraph/xDot.ml" 286 9211 9217 "dgraph/xDot.ml" 286 9211 9229
+type(
+  string -> string
+)
+ident(
+  def strip_quotes "dgraph/xDot.ml" 294 9458 9460 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 287 9241 9247 "dgraph/xDot.ml" 287 9241 9249
+type(
+  string
+)
+"dgraph/xDot.ml" 287 9241 9253 "dgraph/xDot.ml" 287 9241 9255
+type(
+  string
+)
+"dgraph/xDot.ml" 288 9256 9262 "dgraph/xDot.ml" 288 9256 9263
+type(
+  string
+)
+ident(
+  def s "dgraph/xDot.ml" 289 9267 9273 "dgraph/xDot.ml" 291 9373 9385
+)
+"dgraph/xDot.ml" 289 9267 9277 "dgraph/xDot.ml" 289 9267 9280
+type(
+  int
+)
+"dgraph/xDot.ml" 289 9267 9283 "dgraph/xDot.ml" 289 9267 9296
+type(
+  string -> int
+)
+ident(
+  ext_ref String.length
+)
+"dgraph/xDot.ml" 289 9267 9297 "dgraph/xDot.ml" 289 9267 9298
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 288 9256 9262 "dgraph/xDot.ml" 288 9256 9263
+)
+"dgraph/xDot.ml" 289 9267 9283 "dgraph/xDot.ml" 289 9267 9298
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9311 "dgraph/xDot.ml" 290 9302 9312
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 288 9256 9262 "dgraph/xDot.ml" 288 9256 9263
+)
+"dgraph/xDot.ml" 290 9302 9314 "dgraph/xDot.ml" 290 9302 9315
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9311 "dgraph/xDot.ml" 290 9302 9316
+type(
+  char
+)
+"dgraph/xDot.ml" 290 9302 9317 "dgraph/xDot.ml" 290 9302 9318
+type(
+  char -> char -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 290 9302 9319 "dgraph/xDot.ml" 290 9302 9322
+type(
+  char
+)
+"dgraph/xDot.ml" 290 9302 9311 "dgraph/xDot.ml" 290 9302 9322
+type(
+  bool
+)
+"dgraph/xDot.ml" 290 9302 9323 "dgraph/xDot.ml" 290 9302 9325
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"dgraph/xDot.ml" 290 9302 9326 "dgraph/xDot.ml" 290 9302 9327
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 288 9256 9262 "dgraph/xDot.ml" 288 9256 9263
+)
+"dgraph/xDot.ml" 290 9302 9329 "dgraph/xDot.ml" 290 9302 9332
+type(
+  int
+)
+ident(
+  int_ref len "dgraph/xDot.ml" 289 9267 9277 "dgraph/xDot.ml" 289 9267 9280
+)
+"dgraph/xDot.ml" 290 9302 9333 "dgraph/xDot.ml" 290 9302 9334
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/xDot.ml" 290 9302 9334 "dgraph/xDot.ml" 290 9302 9335
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9329 "dgraph/xDot.ml" 290 9302 9335
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9326 "dgraph/xDot.ml" 290 9302 9336
+type(
+  char
+)
+"dgraph/xDot.ml" 290 9302 9337 "dgraph/xDot.ml" 290 9302 9338
+type(
+  char -> char -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 290 9302 9339 "dgraph/xDot.ml" 290 9302 9342
+type(
+  char
+)
+"dgraph/xDot.ml" 290 9302 9326 "dgraph/xDot.ml" 290 9302 9342
+type(
+  bool
+)
+"dgraph/xDot.ml" 290 9302 9311 "dgraph/xDot.ml" 290 9302 9342
+type(
+  bool
+)
+"dgraph/xDot.ml" 290 9302 9348 "dgraph/xDot.ml" 290 9302 9358
+type(
+  string -> int -> int -> string
+)
+ident(
+  ext_ref String.sub
+)
+"dgraph/xDot.ml" 290 9302 9359 "dgraph/xDot.ml" 290 9302 9360
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 288 9256 9262 "dgraph/xDot.ml" 288 9256 9263
+)
+"dgraph/xDot.ml" 290 9302 9361 "dgraph/xDot.ml" 290 9302 9362
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9364 "dgraph/xDot.ml" 290 9302 9367
+type(
+  int
+)
+ident(
+  int_ref len "dgraph/xDot.ml" 289 9267 9277 "dgraph/xDot.ml" 289 9267 9280
+)
+"dgraph/xDot.ml" 290 9302 9368 "dgraph/xDot.ml" 290 9302 9369
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/xDot.ml" 290 9302 9370 "dgraph/xDot.ml" 290 9302 9371
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9363 "dgraph/xDot.ml" 290 9302 9372
+type(
+  int
+)
+"dgraph/xDot.ml" 290 9302 9348 "dgraph/xDot.ml" 290 9302 9372
+call(
+  tail
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 291 9373 9384 "dgraph/xDot.ml" 291 9373 9385
+type(
+  string
+)
+ident(
+  int_ref s "dgraph/xDot.ml" 288 9256 9262 "dgraph/xDot.ml" 288 9256 9263
+)
+"dgraph/xDot.ml" 290 9302 9308 "dgraph/xDot.ml" 291 9373 9385
+type(
+  string
+)
+"dgraph/xDot.ml" 289 9267 9273 "dgraph/xDot.ml" 291 9373 9385
+type(
+  string
+)
+"dgraph/xDot.ml" 286 9211 9232 "dgraph/xDot.ml" 291 9373 9385
+type(
+  string -> string
+)
+"dgraph/xDot.ml" 294 9458 9464 "dgraph/xDot.ml" 294 9458 9480
+type(
+  string -> (string -> 'd) -> Graph.Dot_ast.stmt list -> 'd
+)
+ident(
+  def parse_graph_attr "dgraph/xDot.ml" 310 9896 9898 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 294 9458 9481 "dgraph/xDot.ml" 294 9458 9483
+type(
+  string
+)
+ident(
+  def id "dgraph/xDot.ml" 294 9458 9484 "dgraph/xDot.ml" 308 9879 9894
+)
+"dgraph/xDot.ml" 294 9458 9484 "dgraph/xDot.ml" 294 9458 9488
+type(
+  string -> 'd
+)
+ident(
+  def conv "dgraph/xDot.ml" 294 9458 9489 "dgraph/xDot.ml" 308 9879 9894
+)
+"dgraph/xDot.ml" 294 9458 9489 "dgraph/xDot.ml" 294 9458 9494
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  def stmts "dgraph/xDot.ml" 295 9497 9501 "dgraph/xDot.ml" 308 9879 9894
+)
+"dgraph/xDot.ml" 295 9497 9505 "dgraph/xDot.ml" 295 9497 9514
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+"dgraph/xDot.ml" 296 9526 9540 "dgraph/xDot.ml" 296 9526 9545
+type(
+  string
+)
+ident(
+  def ident "dgraph/xDot.ml" 296 9526 9567 "dgraph/xDot.ml" 297 9586 9607
+)
+"dgraph/xDot.ml" 296 9526 9534 "dgraph/xDot.ml" 296 9526 9545
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 296 9526 9561 "dgraph/xDot.ml" 296 9526 9565
+type(
+  string
+)
+ident(
+  def attr "dgraph/xDot.ml" 296 9526 9567 "dgraph/xDot.ml" 297 9586 9607
+)
+"dgraph/xDot.ml" 296 9526 9553 "dgraph/xDot.ml" 296 9526 9566
+type(
+  Graph.Dot_ast.id
+)
+"dgraph/xDot.ml" 296 9526 9548 "dgraph/xDot.ml" 296 9526 9566
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 296 9526 9534 "dgraph/xDot.ml" 296 9526 9566
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 296 9526 9572 "dgraph/xDot.ml" 296 9526 9577
+type(
+  string
+)
+ident(
+  int_ref ident "dgraph/xDot.ml" 296 9526 9540 "dgraph/xDot.ml" 296 9526 9545
+)
+"dgraph/xDot.ml" 296 9526 9578 "dgraph/xDot.ml" 296 9526 9579
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/xDot.ml" 296 9526 9580 "dgraph/xDot.ml" 296 9526 9582
+type(
+  string
+)
+ident(
+  int_ref id "dgraph/xDot.ml" 294 9458 9481 "dgraph/xDot.ml" 294 9458 9483
+)
+"dgraph/xDot.ml" 296 9526 9572 "dgraph/xDot.ml" 296 9526 9582
+type(
+  bool
+)
+"dgraph/xDot.ml" 297 9586 9589 "dgraph/xDot.ml" 297 9586 9594
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/xDot.ml" 297 9586 9602 "dgraph/xDot.ml" 297 9586 9606
+type(
+  string
+)
+ident(
+  int_ref attr "dgraph/xDot.ml" 296 9526 9561 "dgraph/xDot.ml" 296 9526 9565
+)
+"dgraph/xDot.ml" 297 9586 9595 "dgraph/xDot.ml" 297 9586 9607
+type(
+  exn
+)
+"dgraph/xDot.ml" 297 9586 9589 "dgraph/xDot.ml" 297 9586 9607
+type(
+  unit
+)
+"dgraph/xDot.ml" 296 9526 9567 "dgraph/xDot.ml" 297 9586 9607
+type(
+  unit
+)
+"dgraph/xDot.ml" 298 9608 9616 "dgraph/xDot.ml" 298 9608 9617
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 298 9608 9621 "dgraph/xDot.ml" 298 9608 9623
+type(
+  unit
+)
+"dgraph/xDot.ml" 295 9497 9517 "dgraph/xDot.ml" 298 9608 9623
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+"dgraph/xDot.ml" 300 9631 9639 "dgraph/xDot.ml" 300 9631 9648
+type(
+  Graph.Dot_ast.stmt -> unit
+)
+"dgraph/xDot.ml" 301 9660 9679 "dgraph/xDot.ml" 301 9660 9684
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  def attrs "dgraph/xDot.ml" 301 9660 9688 "dgraph/xDot.ml" 301 9660 9725
+)
+"dgraph/xDot.ml" 301 9660 9668 "dgraph/xDot.ml" 301 9660 9684
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 301 9660 9688 "dgraph/xDot.ml" 301 9660 9697
+type(
+  (Graph.Dot_ast.attr -> unit) -> Graph.Dot_ast.attr list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 301 9660 9699 "dgraph/xDot.ml" 301 9660 9708
+type(
+  (Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit) ->
+  Graph.Dot_ast.attr -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 301 9660 9709 "dgraph/xDot.ml" 301 9660 9718
+type(
+  Graph.Dot_ast.id * Graph.Dot_ast.id option -> unit
+)
+ident(
+  int_ref read_attr "dgraph/xDot.ml" 295 9497 9505 "dgraph/xDot.ml" 295 9497 9514
+)
+"dgraph/xDot.ml" 301 9660 9698 "dgraph/xDot.ml" 301 9660 9719
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.attr -> unit
+)
+"dgraph/xDot.ml" 301 9660 9720 "dgraph/xDot.ml" 301 9660 9725
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref attrs "dgraph/xDot.ml" 301 9660 9679 "dgraph/xDot.ml" 301 9660 9684
+)
+"dgraph/xDot.ml" 301 9660 9688 "dgraph/xDot.ml" 301 9660 9725
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 302 9726 9734 "dgraph/xDot.ml" 302 9726 9735
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 302 9726 9739 "dgraph/xDot.ml" 302 9726 9741
+type(
+  unit
+)
+"dgraph/xDot.ml" 300 9631 9651 "dgraph/xDot.ml" 302 9726 9741
+type(
+  Graph.Dot_ast.stmt -> unit
+)
+"dgraph/xDot.ml" 305 9757 9763 "dgraph/xDot.ml" 305 9757 9772
+type(
+  (Graph.Dot_ast.stmt -> unit) -> Graph.Dot_ast.stmt list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 305 9757 9773 "dgraph/xDot.ml" 305 9757 9782
+type(
+  Graph.Dot_ast.stmt -> unit
+)
+ident(
+  int_ref read_stmt "dgraph/xDot.ml" 300 9631 9639 "dgraph/xDot.ml" 300 9631 9648
+)
+"dgraph/xDot.ml" 305 9757 9783 "dgraph/xDot.ml" 305 9757 9788
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  int_ref stmts "dgraph/xDot.ml" 294 9458 9489 "dgraph/xDot.ml" 294 9458 9494
+)
+"dgraph/xDot.ml" 305 9757 9763 "dgraph/xDot.ml" 305 9757 9788
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 306 9790 9796 "dgraph/xDot.ml" 306 9790 9804
+type(
+  string -> 'd
+)
+ident(
+  ext_ref Pervasives.failwith
+)
+"dgraph/xDot.ml" 306 9790 9806 "dgraph/xDot.ml" 306 9790 9849
+type(
+  string
+)
+"dgraph/xDot.ml" 306 9790 9850 "dgraph/xDot.ml" 306 9790 9851
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"dgraph/xDot.ml" 306 9790 9852 "dgraph/xDot.ml" 306 9790 9854
+type(
+  string
+)
+ident(
+  int_ref id "dgraph/xDot.ml" 294 9458 9481 "dgraph/xDot.ml" 294 9458 9483
+)
+"dgraph/xDot.ml" 306 9790 9805 "dgraph/xDot.ml" 306 9790 9855
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 306 9790 9796 "dgraph/xDot.ml" 306 9790 9855
+call(
+  stack
+)
+type(
+  'd
+)
+"dgraph/xDot.ml" 305 9757 9763 "dgraph/xDot.ml" 306 9790 9855
+type(
+  'd
+)
+"dgraph/xDot.ml" 307 9856 9871 "dgraph/xDot.ml" 307 9856 9875
+type(
+  string
+)
+ident(
+  def attr "dgraph/xDot.ml" 308 9879 9885 "dgraph/xDot.ml" 308 9879 9894
+)
+"dgraph/xDot.ml" 307 9856 9865 "dgraph/xDot.ml" 307 9856 9875
+type(
+  exn
+)
+"dgraph/xDot.ml" 308 9879 9885 "dgraph/xDot.ml" 308 9879 9889
+type(
+  string -> 'd
+)
+ident(
+  int_ref conv "dgraph/xDot.ml" 294 9458 9484 "dgraph/xDot.ml" 294 9458 9488
+)
+"dgraph/xDot.ml" 308 9879 9890 "dgraph/xDot.ml" 308 9879 9894
+type(
+  string
+)
+ident(
+  int_ref attr "dgraph/xDot.ml" 307 9856 9871 "dgraph/xDot.ml" 307 9856 9875
+)
+"dgraph/xDot.ml" 308 9879 9885 "dgraph/xDot.ml" 308 9879 9894
+call(
+  tail
+)
+type(
+  'd
+)
+"dgraph/xDot.ml" 304 9749 9753 "dgraph/xDot.ml" 308 9879 9894
+type(
+  'd
+)
+"dgraph/xDot.ml" 300 9631 9635 "dgraph/xDot.ml" 308 9879 9894
+type(
+  'd
+)
+"dgraph/xDot.ml" 295 9497 9501 "dgraph/xDot.ml" 308 9879 9894
+type(
+  'd
+)
+"dgraph/xDot.ml" 310 9896 9902 "dgraph/xDot.ml" 310 9896 9920
+type(
+  Graph.Dot_ast.stmt list -> (float * float) * (float * float)
+)
+ident(
+  def parse_bounding_box "dgraph/xDot.ml" 313 10042 10044 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 310 9896 9923 "dgraph/xDot.ml" 310 9896 9939
+type(
+  string ->
+  (string -> (float * float) * (float * float)) ->
+  Graph.Dot_ast.stmt list -> (float * float) * (float * float)
+)
+ident(
+  int_ref parse_graph_attr "dgraph/xDot.ml" 294 9458 9464 "dgraph/xDot.ml" 294 9458 9480
+)
+"dgraph/xDot.ml" 310 9896 9940 "dgraph/xDot.ml" 310 9896 9944
+type(
+  string
+)
+"dgraph/xDot.ml" 310 9896 9945 "dgraph/xDot.ml" 310 9896 9962
+type(
+  string -> (float * float) * (float * float)
+)
+ident(
+  int_ref read_bounding_box "dgraph/xDot.ml" 235 7946 7950 "dgraph/xDot.ml" 235 7946 7967
+)
+"dgraph/xDot.ml" 310 9896 9923 "dgraph/xDot.ml" 310 9896 9962
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.stmt list -> (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 313 10042 10048 "dgraph/xDot.ml" 313 10042 10061
+type(
+  G.t ->
+  Graph.Dot_ast.stmt list ->
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+ident(
+  def parse_layouts "dgraph/xDot.ml" 381 12145 12146 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 313 10042 10062 "dgraph/xDot.ml" 313 10042 10063
+type(
+  G.t
+)
+ident(
+  def g "dgraph/xDot.ml" 313 10042 10064 "dgraph/xDot.ml" 379 12094 12143
+)
+"dgraph/xDot.ml" 313 10042 10064 "dgraph/xDot.ml" 313 10042 10069
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  def stmts "dgraph/xDot.ml" 314 10072 10076 "dgraph/xDot.ml" 379 12094 12143
+)
+"dgraph/xDot.ml" 314 10072 10080 "dgraph/xDot.ml" 314 10072 10094
+type(
+  (string, G.vertex) Hashtbl.t
+)
+"dgraph/xDot.ml" 314 10072 10097 "dgraph/xDot.ml" 314 10072 10111
+type(
+  int -> (string, G.vertex) Hashtbl.t
+)
+ident(
+  ext_ref Hashtbl.create
+)
+"dgraph/xDot.ml" 314 10072 10112 "dgraph/xDot.ml" 314 10072 10114
+type(
+  int
+)
+"dgraph/xDot.ml" 314 10072 10097 "dgraph/xDot.ml" 314 10072 10114
+call(
+  stack
+)
+type(
+  (string, G.vertex) Hashtbl.t
+)
+"dgraph/xDot.ml" 315 10118 10126 "dgraph/xDot.ml" 315 10118 10150
+type(
+  G.edge HT.t
+)
+"dgraph/xDot.ml" 315 10118 10153 "dgraph/xDot.ml" 315 10118 10162
+type(
+  int -> G.edge HT.t
+)
+ident(
+  ext_ref HT.create
+)
+"dgraph/xDot.ml" 315 10118 10163 "dgraph/xDot.ml" 315 10118 10165
+type(
+  int
+)
+"dgraph/xDot.ml" 315 10118 10153 "dgraph/xDot.ml" 315 10118 10165
+call(
+  stack
+)
+type(
+  G.edge HT.t
+)
+"dgraph/xDot.ml" 317 10170 10178 "dgraph/xDot.ml" 317 10170 10192
+type(
+  node_layout HV.t
+)
+"dgraph/xDot.ml" 317 10170 10195 "dgraph/xDot.ml" 317 10170 10204
+type(
+  int -> node_layout HV.t
+)
+ident(
+  ext_ref HV.create
+)
+"dgraph/xDot.ml" 317 10170 10205 "dgraph/xDot.ml" 317 10170 10207
+type(
+  int
+)
+"dgraph/xDot.ml" 317 10170 10195 "dgraph/xDot.ml" 317 10170 10207
+call(
+  stack
+)
+type(
+  node_layout HV.t
+)
+"dgraph/xDot.ml" 318 10211 10219 "dgraph/xDot.ml" 318 10211 10231
+type(
+  edge_layout HE.t
+)
+"dgraph/xDot.ml" 318 10211 10234 "dgraph/xDot.ml" 318 10211 10243
+type(
+  int -> edge_layout HE.t
+)
+ident(
+  ext_ref HE.create
+)
+"dgraph/xDot.ml" 318 10211 10244 "dgraph/xDot.ml" 318 10211 10246
+type(
+  int
+)
+"dgraph/xDot.ml" 318 10211 10234 "dgraph/xDot.ml" 318 10211 10246
+call(
+  stack
+)
+type(
+  edge_layout HE.t
+)
+"dgraph/xDot.ml" 319 10250 10258 "dgraph/xDot.ml" 319 10250 10273
+type(
+  (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 319 10250 10276 "dgraph/xDot.ml" 319 10250 10290
+type(
+  int -> (string, cluster_layout) Hashtbl.t
+)
+ident(
+  ext_ref Hashtbl.create
+)
+"dgraph/xDot.ml" 319 10250 10291 "dgraph/xDot.ml" 319 10250 10293
+type(
+  int
+)
+"dgraph/xDot.ml" 319 10250 10276 "dgraph/xDot.ml" 319 10250 10293
+call(
+  stack
+)
+type(
+  (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 321 10298 10302 "dgraph/xDot.ml" 321 10298 10315
+type(
+  (G.vertex -> unit) -> G.t -> unit
+)
+ident(
+  ext_ref G.iter_vertex
+)
+"dgraph/xDot.ml" 322 10316 10327 "dgraph/xDot.ml" 322 10316 10328
+type(
+  G.vertex
+)
+ident(
+  def v "dgraph/xDot.ml" 323 10332 10334 "dgraph/xDot.ml" 324 10379 10414
+)
+"dgraph/xDot.ml" 323 10332 10338 "dgraph/xDot.ml" 323 10332 10342
+type(
+  string
+)
+"dgraph/xDot.ml" 323 10332 10345 "dgraph/xDot.ml" 323 10332 10357
+type(
+  string -> string
+)
+ident(
+  int_ref strip_quotes "dgraph/xDot.ml" 286 9211 9217 "dgraph/xDot.ml" 286 9211 9229
+)
+"dgraph/xDot.ml" 323 10332 10359 "dgraph/xDot.ml" 323 10332 10372
+type(
+  G.vertex -> string
+)
+ident(
+  ext_ref G.vertex_name
+)
+"dgraph/xDot.ml" 323 10332 10373 "dgraph/xDot.ml" 323 10332 10374
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/xDot.ml" 322 10316 10327 "dgraph/xDot.ml" 322 10316 10328
+)
+"dgraph/xDot.ml" 323 10332 10358 "dgraph/xDot.ml" 323 10332 10375
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 323 10332 10345 "dgraph/xDot.ml" 323 10332 10375
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 324 10379 10381 "dgraph/xDot.ml" 324 10379 10392
+type(
+  (string, G.vertex) Hashtbl.t -> string -> G.vertex -> unit
+)
+ident(
+  ext_ref Hashtbl.add
+)
+"dgraph/xDot.ml" 324 10379 10393 "dgraph/xDot.ml" 324 10379 10407
+type(
+  (string, G.vertex) Hashtbl.t
+)
+ident(
+  int_ref name_to_vertex "dgraph/xDot.ml" 314 10072 10080 "dgraph/xDot.ml" 314 10072 10094
+)
+"dgraph/xDot.ml" 324 10379 10408 "dgraph/xDot.ml" 324 10379 10412
+type(
+  string
+)
+ident(
+  int_ref name "dgraph/xDot.ml" 323 10332 10338 "dgraph/xDot.ml" 323 10332 10342
+)
+"dgraph/xDot.ml" 324 10379 10413 "dgraph/xDot.ml" 324 10379 10414
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/xDot.ml" 322 10316 10327 "dgraph/xDot.ml" 322 10316 10328
+)
+"dgraph/xDot.ml" 324 10379 10381 "dgraph/xDot.ml" 324 10379 10414
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 323 10332 10334 "dgraph/xDot.ml" 324 10379 10414
+type(
+  unit
+)
+"dgraph/xDot.ml" 322 10316 10322 "dgraph/xDot.ml" 324 10379 10415
+type(
+  G.vertex -> unit
+)
+"dgraph/xDot.ml" 325 10416 10422 "dgraph/xDot.ml" 325 10416 10423
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/xDot.ml" 313 10042 10062 "dgraph/xDot.ml" 313 10042 10063
+)
+"dgraph/xDot.ml" 321 10298 10302 "dgraph/xDot.ml" 325 10416 10423
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 327 10426 10430 "dgraph/xDot.ml" 327 10426 10444
+type(
+  (G.edge -> unit) -> G.t -> unit
+)
+ident(
+  ext_ref G.iter_edges_e
+)
+"dgraph/xDot.ml" 328 10445 10456 "dgraph/xDot.ml" 328 10445 10457
+type(
+  G.edge
+)
+ident(
+  def e "dgraph/xDot.ml" 329 10461 10463 "dgraph/xDot.ml" 334 10595 10644
+)
+"dgraph/xDot.ml" 329 10461 10467 "dgraph/xDot.ml" 329 10461 10474
+type(
+  string
+)
+"dgraph/xDot.ml" 329 10461 10483 "dgraph/xDot.ml" 329 10461 10499
+type(
+  G.edge -> string option
+)
+ident(
+  int_ref get_edge_comment "dgraph/xDot.ml" 266 8793 8799 "dgraph/xDot.ml" 266 8793 8815
+)
+"dgraph/xDot.ml" 329 10461 10500 "dgraph/xDot.ml" 329 10461 10501
+type(
+  G.edge
+)
+ident(
+  int_ref e "dgraph/xDot.ml" 328 10445 10456 "dgraph/xDot.ml" 328 10445 10457
+)
+"dgraph/xDot.ml" 329 10461 10483 "dgraph/xDot.ml" 329 10461 10501
+call(
+  stack
+)
+type(
+  string option
+)
+"dgraph/xDot.ml" 330 10507 10518 "dgraph/xDot.ml" 330 10507 10519
+type(
+  string
+)
+ident(
+  def c "dgraph/xDot.ml" 330 10507 10523 "dgraph/xDot.ml" 330 10507 10537
+)
+"dgraph/xDot.ml" 330 10507 10513 "dgraph/xDot.ml" 330 10507 10519
+type(
+  string option
+)
+"dgraph/xDot.ml" 330 10507 10523 "dgraph/xDot.ml" 330 10507 10535
+type(
+  string -> string
+)
+ident(
+  int_ref strip_quotes "dgraph/xDot.ml" 286 9211 9217 "dgraph/xDot.ml" 286 9211 9229
+)
+"dgraph/xDot.ml" 330 10507 10536 "dgraph/xDot.ml" 330 10507 10537
+type(
+  string
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 330 10507 10518 "dgraph/xDot.ml" 330 10507 10519
+)
+"dgraph/xDot.ml" 330 10507 10523 "dgraph/xDot.ml" 330 10507 10537
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 331 10538 10544 "dgraph/xDot.ml" 331 10538 10548
+type(
+  string option
+)
+"dgraph/xDot.ml" 331 10538 10552 "dgraph/xDot.ml" 331 10538 10554
+type(
+  string
+)
+"dgraph/xDot.ml" 329 10461 10477 "dgraph/xDot.ml" 331 10538 10554
+type(
+  string
+)
+"dgraph/xDot.ml" 333 10560 10566 "dgraph/xDot.ml" 333 10560 10568
+type(
+  G.E.vertex * G.E.vertex
+)
+"dgraph/xDot.ml" 333 10560 10571 "dgraph/xDot.ml" 333 10560 10578
+type(
+  G.edge -> G.E.vertex
+)
+ident(
+  ext_ref G.E.src
+)
+"dgraph/xDot.ml" 333 10560 10579 "dgraph/xDot.ml" 333 10560 10580
+type(
+  G.edge
+)
+ident(
+  int_ref e "dgraph/xDot.ml" 328 10445 10456 "dgraph/xDot.ml" 328 10445 10457
+)
+"dgraph/xDot.ml" 333 10560 10571 "dgraph/xDot.ml" 333 10560 10580
+call(
+  stack
+)
+type(
+  G.E.vertex
+)
+"dgraph/xDot.ml" 333 10560 10582 "dgraph/xDot.ml" 333 10560 10589
+type(
+  G.edge -> G.E.vertex
+)
+ident(
+  ext_ref G.E.dst
+)
+"dgraph/xDot.ml" 333 10560 10590 "dgraph/xDot.ml" 333 10560 10591
+type(
+  G.edge
+)
+ident(
+  int_ref e "dgraph/xDot.ml" 328 10445 10456 "dgraph/xDot.ml" 328 10445 10457
+)
+"dgraph/xDot.ml" 333 10560 10582 "dgraph/xDot.ml" 333 10560 10591
+call(
+  stack
+)
+type(
+  G.E.vertex
+)
+"dgraph/xDot.ml" 333 10560 10571 "dgraph/xDot.ml" 333 10560 10591
+type(
+  G.E.vertex * G.E.vertex
+)
+"dgraph/xDot.ml" 334 10595 10597 "dgraph/xDot.ml" 334 10595 10603
+type(
+  G.edge HT.t -> HT.key -> G.edge -> unit
+)
+ident(
+  ext_ref HT.add
+)
+"dgraph/xDot.ml" 334 10595 10604 "dgraph/xDot.ml" 334 10595 10628
+type(
+  G.edge HT.t
+)
+ident(
+  int_ref vertices_comment_to_edge "dgraph/xDot.ml" 315 10118 10126 "dgraph/xDot.ml" 315 10118 10150
+)
+"dgraph/xDot.ml" 334 10595 10630 "dgraph/xDot.ml" 334 10595 10632
+type(
+  Graph.Util.HTProduct(G.V)(G.V).t
+)
+ident(
+  int_ref vs "dgraph/xDot.ml" 333 10560 10566 "dgraph/xDot.ml" 333 10560 10568
+)
+"dgraph/xDot.ml" 334 10595 10634 "dgraph/xDot.ml" 334 10595 10641
+type(
+  string
+)
+ident(
+  int_ref comment "dgraph/xDot.ml" 329 10461 10467 "dgraph/xDot.ml" 329 10461 10474
+)
+"dgraph/xDot.ml" 334 10595 10629 "dgraph/xDot.ml" 334 10595 10642
+type(
+  HT.key
+)
+"dgraph/xDot.ml" 334 10595 10643 "dgraph/xDot.ml" 334 10595 10644
+type(
+  G.edge
+)
+ident(
+  int_ref e "dgraph/xDot.ml" 328 10445 10456 "dgraph/xDot.ml" 328 10445 10457
+)
+"dgraph/xDot.ml" 334 10595 10597 "dgraph/xDot.ml" 334 10595 10644
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 333 10560 10562 "dgraph/xDot.ml" 334 10595 10644
+type(
+  unit
+)
+"dgraph/xDot.ml" 329 10461 10463 "dgraph/xDot.ml" 334 10595 10644
+type(
+  unit
+)
+"dgraph/xDot.ml" 328 10445 10451 "dgraph/xDot.ml" 334 10595 10645
+type(
+  G.edge -> unit
+)
+"dgraph/xDot.ml" 335 10646 10652 "dgraph/xDot.ml" 335 10646 10653
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/xDot.ml" 313 10042 10062 "dgraph/xDot.ml" 313 10042 10063
+)
+"dgraph/xDot.ml" 327 10426 10430 "dgraph/xDot.ml" 335 10646 10653
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 337 10656 10664 "dgraph/xDot.ml" 337 10656 10675
+type(
+  Graph.Dot_ast.id * 'e -> G.vertex
+)
+"dgraph/xDot.ml" 337 10656 10677 "dgraph/xDot.ml" 337 10656 10679
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  def id "dgraph/xDot.ml" 338 10685 10691 "dgraph/xDot.ml" 340 10766 10838
+)
+"dgraph/xDot.ml" 337 10656 10680 "dgraph/xDot.ml" 337 10656 10681
+type(
+  'e
+)
+"dgraph/xDot.ml" 337 10656 10676 "dgraph/xDot.ml" 337 10656 10682
+type(
+  Graph.Dot_ast.id * 'e
+)
+"dgraph/xDot.ml" 338 10685 10695 "dgraph/xDot.ml" 338 10685 10699
+type(
+  string
+)
+"dgraph/xDot.ml" 338 10685 10702 "dgraph/xDot.ml" 338 10685 10716
+type(
+  Graph.Dot_ast.id -> string
+)
+ident(
+  int_ref get_dot_string "dgraph/xDot.ml" 125 4286 4290 "dgraph/xDot.ml" 125 4286 4304
+)
+"dgraph/xDot.ml" 338 10685 10717 "dgraph/xDot.ml" 338 10685 10719
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  int_ref id "dgraph/xDot.ml" 337 10656 10677 "dgraph/xDot.ml" 337 10656 10679
+)
+"dgraph/xDot.ml" 338 10685 10702 "dgraph/xDot.ml" 338 10685 10719
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 339 10723 10733 "dgraph/xDot.ml" 339 10723 10745
+type(
+  (string, G.vertex) Hashtbl.t -> string -> G.vertex
+)
+ident(
+  ext_ref Hashtbl.find
+)
+"dgraph/xDot.ml" 339 10723 10746 "dgraph/xDot.ml" 339 10723 10760
+type(
+  (string, G.vertex) Hashtbl.t
+)
+ident(
+  int_ref name_to_vertex "dgraph/xDot.ml" 314 10072 10080 "dgraph/xDot.ml" 314 10072 10094
+)
+"dgraph/xDot.ml" 339 10723 10761 "dgraph/xDot.ml" 339 10723 10765
+type(
+  string
+)
+ident(
+  int_ref name "dgraph/xDot.ml" 338 10685 10695 "dgraph/xDot.ml" 338 10685 10699
+)
+"dgraph/xDot.ml" 339 10723 10733 "dgraph/xDot.ml" 339 10723 10765
+call(
+  stack
+)
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 340 10766 10777 "dgraph/xDot.ml" 340 10766 10786
+type(
+  exn
+)
+"dgraph/xDot.ml" 340 10766 10790 "dgraph/xDot.ml" 340 10766 10798
+type(
+  string -> G.vertex
+)
+ident(
+  ext_ref Pervasives.failwith
+)
+"dgraph/xDot.ml" 340 10766 10800 "dgraph/xDot.ml" 340 10766 10830
+type(
+  string
+)
+"dgraph/xDot.ml" 340 10766 10831 "dgraph/xDot.ml" 340 10766 10832
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"dgraph/xDot.ml" 340 10766 10833 "dgraph/xDot.ml" 340 10766 10837
+type(
+  string
+)
+ident(
+  int_ref name "dgraph/xDot.ml" 338 10685 10695 "dgraph/xDot.ml" 338 10685 10699
+)
+"dgraph/xDot.ml" 340 10766 10799 "dgraph/xDot.ml" 340 10766 10838
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 340 10766 10790 "dgraph/xDot.ml" 340 10766 10838
+call(
+  tail
+)
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 339 10723 10729 "dgraph/xDot.ml" 340 10766 10838
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 338 10685 10691 "dgraph/xDot.ml" 340 10766 10838
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 343 10847 10855 "dgraph/xDot.ml" 343 10847 10864
+type(
+  G.V.t -> G.V.t -> string -> G.edge
+)
+"dgraph/xDot.ml" 343 10847 10865 "dgraph/xDot.ml" 343 10847 10866
+type(
+  G.V.t
+)
+ident(
+  def v "dgraph/xDot.ml" 343 10847 10867 "dgraph/xDot.ml" 349 11131 11147
+)
+"dgraph/xDot.ml" 343 10847 10867 "dgraph/xDot.ml" 343 10847 10869
+type(
+  G.V.t
+)
+ident(
+  def v' "dgraph/xDot.ml" 343 10847 10870 "dgraph/xDot.ml" 349 11131 11147
+)
+"dgraph/xDot.ml" 343 10847 10870 "dgraph/xDot.ml" 343 10847 10877
+type(
+  string
+)
+ident(
+  def comment "dgraph/xDot.ml" 344 10880 10886 "dgraph/xDot.ml" 349 11131 11147
+)
+"dgraph/xDot.ml" 344 10880 10890 "dgraph/xDot.ml" 344 10880 10897
+type(
+  G.edge HT.t -> HT.key -> G.edge
+)
+ident(
+  ext_ref HT.find
+)
+"dgraph/xDot.ml" 344 10880 10898 "dgraph/xDot.ml" 344 10880 10922
+type(
+  G.edge HT.t
+)
+ident(
+  int_ref vertices_comment_to_edge "dgraph/xDot.ml" 315 10118 10126 "dgraph/xDot.ml" 315 10118 10150
+)
+"dgraph/xDot.ml" 344 10880 10925 "dgraph/xDot.ml" 344 10880 10926
+type(
+  G.V.t
+)
+ident(
+  int_ref v "dgraph/xDot.ml" 343 10847 10865 "dgraph/xDot.ml" 343 10847 10866
+)
+"dgraph/xDot.ml" 344 10880 10928 "dgraph/xDot.ml" 344 10880 10930
+type(
+  G.V.t
+)
+ident(
+  int_ref v' "dgraph/xDot.ml" 343 10847 10867 "dgraph/xDot.ml" 343 10847 10869
+)
+"dgraph/xDot.ml" 344 10880 10924 "dgraph/xDot.ml" 344 10880 10931
+type(
+  Graph.Util.HTProduct(G.V)(G.V).t
+)
+"dgraph/xDot.ml" 344 10880 10933 "dgraph/xDot.ml" 344 10880 10940
+type(
+  string
+)
+ident(
+  int_ref comment "dgraph/xDot.ml" 343 10847 10870 "dgraph/xDot.ml" 343 10847 10877
+)
+"dgraph/xDot.ml" 344 10880 10923 "dgraph/xDot.ml" 344 10880 10941
+type(
+  HT.key
+)
+"dgraph/xDot.ml" 344 10880 10890 "dgraph/xDot.ml" 344 10880 10941
+call(
+  stack
+)
+type(
+  G.edge
+)
+"dgraph/xDot.ml" 345 10942 10953 "dgraph/xDot.ml" 345 10942 10962
+type(
+  exn
+)
+"dgraph/xDot.ml" 349 11131 11132 "dgraph/xDot.ml" 349 11131 11137
+type(
+  exn -> G.edge
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/xDot.ml" 349 11131 11138 "dgraph/xDot.ml" 349 11131 11147
+type(
+  exn
+)
+"dgraph/xDot.ml" 349 11131 11132 "dgraph/xDot.ml" 349 11131 11147
+type(
+  G.edge
+)
+"dgraph/xDot.ml" 344 10880 10886 "dgraph/xDot.ml" 349 11131 11147
+type(
+  G.edge
+)
+"dgraph/xDot.ml" 352 11156 11168 "dgraph/xDot.ml" 352 11156 11183
+type(
+  string option -> Graph.Dot_ast.stmt -> unit
+)
+"dgraph/xDot.ml" 352 11156 11184 "dgraph/xDot.ml" 352 11156 11191
+type(
+  string option
+)
+ident(
+  def cluster "dgraph/xDot.ml" 352 11156 11192 "dgraph/xDot.ml" 376 12039 12042
+)
+"dgraph/xDot.ml" 352 11156 11192 "dgraph/xDot.ml" 352 11156 11196
+type(
+  Graph.Dot_ast.stmt
+)
+ident(
+  def stmt "dgraph/xDot.ml" 353 11199 11205 "dgraph/xDot.ml" 376 12039 12042
+)
+"dgraph/xDot.ml" 354 11209 11216 "dgraph/xDot.ml" 354 11209 11220
+type(
+  Graph.Dot_ast.stmt
+)
+ident(
+  int_ref stmt "dgraph/xDot.ml" 352 11156 11192 "dgraph/xDot.ml" 352 11156 11196
+)
+"dgraph/xDot.ml" 355 11226 11240 "dgraph/xDot.ml" 355 11226 11247
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  def node_id "dgraph/xDot.ml" 356 11256 11261 "dgraph/xDot.ml" 357 11292 11350
+)
+"dgraph/xDot.ml" 355 11226 11249 "dgraph/xDot.ml" 355 11226 11251
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  def al "dgraph/xDot.ml" 356 11256 11261 "dgraph/xDot.ml" 357 11292 11350
+)
+"dgraph/xDot.ml" 355 11226 11229 "dgraph/xDot.ml" 355 11226 11252
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 356 11256 11265 "dgraph/xDot.ml" 356 11256 11266
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 356 11256 11269 "dgraph/xDot.ml" 356 11256 11280
+type(
+  Graph.Dot_ast.node_id -> G.vertex
+)
+ident(
+  int_ref find_vertex "dgraph/xDot.ml" 337 10656 10664 "dgraph/xDot.ml" 337 10656 10675
+)
+"dgraph/xDot.ml" 356 11256 11281 "dgraph/xDot.ml" 356 11256 11288
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  int_ref node_id "dgraph/xDot.ml" 355 11226 11240 "dgraph/xDot.ml" 355 11226 11247
+)
+"dgraph/xDot.ml" 356 11256 11269 "dgraph/xDot.ml" 356 11256 11288
+call(
+  stack
+)
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 357 11292 11297 "dgraph/xDot.ml" 357 11292 11303
+type(
+  node_layout HV.t -> HV.key -> node_layout -> unit
+)
+ident(
+  ext_ref HV.add
+)
+"dgraph/xDot.ml" 357 11292 11304 "dgraph/xDot.ml" 357 11292 11318
+type(
+  node_layout HV.t
+)
+ident(
+  int_ref vertex_layouts "dgraph/xDot.ml" 317 10170 10178 "dgraph/xDot.ml" 317 10170 10192
+)
+"dgraph/xDot.ml" 357 11292 11319 "dgraph/xDot.ml" 357 11292 11320
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/xDot.ml" 356 11256 11265 "dgraph/xDot.ml" 356 11256 11266
+)
+"dgraph/xDot.ml" 357 11292 11322 "dgraph/xDot.ml" 357 11292 11338
+type(
+  Graph.Dot_ast.node_id -> Graph.Dot_ast.attr list -> node_layout
+)
+ident(
+  int_ref read_node_layout "dgraph/xDot.ml" 187 6304 6308 "dgraph/xDot.ml" 187 6304 6324
+)
+"dgraph/xDot.ml" 357 11292 11339 "dgraph/xDot.ml" 357 11292 11346
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  int_ref node_id "dgraph/xDot.ml" 355 11226 11240 "dgraph/xDot.ml" 355 11226 11247
+)
+"dgraph/xDot.ml" 357 11292 11347 "dgraph/xDot.ml" 357 11292 11349
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref al "dgraph/xDot.ml" 355 11226 11249 "dgraph/xDot.ml" 355 11226 11251
+)
+"dgraph/xDot.ml" 357 11292 11321 "dgraph/xDot.ml" 357 11292 11350
+call(
+  stack
+)
+type(
+  node_layout
+)
+"dgraph/xDot.ml" 357 11292 11297 "dgraph/xDot.ml" 357 11292 11350
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 356 11256 11261 "dgraph/xDot.ml" 357 11292 11350
+type(
+  unit
+)
+"dgraph/xDot.ml" 358 11351 11372 "dgraph/xDot.ml" 358 11351 11374
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  def id "dgraph/xDot.ml" 359 11397 11402 "dgraph/xDot.ml" 363 11543 11591
+)
+"dgraph/xDot.ml" 358 11351 11365 "dgraph/xDot.ml" 358 11351 11374
+type(
+  Graph.Dot_ast.node
+)
+"dgraph/xDot.ml" 358 11351 11384 "dgraph/xDot.ml" 358 11351 11387
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  def id' "dgraph/xDot.ml" 359 11397 11402 "dgraph/xDot.ml" 363 11543 11591
+)
+"dgraph/xDot.ml" 358 11351 11377 "dgraph/xDot.ml" 358 11351 11387
+type(
+  Graph.Dot_ast.node
+)
+"dgraph/xDot.ml" 358 11351 11376 "dgraph/xDot.ml" 358 11351 11388
+type(
+  Graph.Dot_ast.node list
+)
+"dgraph/xDot.ml" 358 11351 11390 "dgraph/xDot.ml" 358 11351 11392
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  def al "dgraph/xDot.ml" 359 11397 11402 "dgraph/xDot.ml" 363 11543 11591
+)
+"dgraph/xDot.ml" 358 11351 11354 "dgraph/xDot.ml" 358 11351 11393
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 359 11397 11406 "dgraph/xDot.ml" 359 11397 11407
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 359 11397 11411 "dgraph/xDot.ml" 359 11397 11422
+type(
+  Graph.Dot_ast.node_id -> G.vertex
+)
+ident(
+  int_ref find_vertex "dgraph/xDot.ml" 337 10656 10664 "dgraph/xDot.ml" 337 10656 10675
+)
+"dgraph/xDot.ml" 359 11397 11423 "dgraph/xDot.ml" 359 11397 11425
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  int_ref id "dgraph/xDot.ml" 358 11351 11372 "dgraph/xDot.ml" 358 11351 11374
+)
+"dgraph/xDot.ml" 359 11397 11411 "dgraph/xDot.ml" 359 11397 11425
+call(
+  stack
+)
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 360 11430 11439 "dgraph/xDot.ml" 360 11430 11441
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 360 11430 11444 "dgraph/xDot.ml" 360 11430 11455
+type(
+  Graph.Dot_ast.node_id -> G.vertex
+)
+ident(
+  int_ref find_vertex "dgraph/xDot.ml" 337 10656 10664 "dgraph/xDot.ml" 337 10656 10675
+)
+"dgraph/xDot.ml" 360 11430 11456 "dgraph/xDot.ml" 360 11430 11459
+type(
+  Graph.Dot_ast.node_id
+)
+ident(
+  int_ref id' "dgraph/xDot.ml" 358 11351 11384 "dgraph/xDot.ml" 358 11351 11387
+)
+"dgraph/xDot.ml" 360 11430 11444 "dgraph/xDot.ml" 360 11430 11459
+call(
+  stack
+)
+type(
+  G.vertex
+)
+"dgraph/xDot.ml" 361 11463 11472 "dgraph/xDot.ml" 361 11463 11479
+type(
+  string
+)
+"dgraph/xDot.ml" 361 11463 11482 "dgraph/xDot.ml" 361 11463 11497
+type(
+  Graph.Dot_ast.attr list -> string
+)
+ident(
+  int_ref get_dot_comment "dgraph/xDot.ml" 274 8980 8986 "dgraph/xDot.ml" 274 8980 9001
+)
+"dgraph/xDot.ml" 361 11463 11498 "dgraph/xDot.ml" 361 11463 11500
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref al "dgraph/xDot.ml" 358 11351 11390 "dgraph/xDot.ml" 358 11351 11392
+)
+"dgraph/xDot.ml" 361 11463 11482 "dgraph/xDot.ml" 361 11463 11500
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 362 11504 11513 "dgraph/xDot.ml" 362 11504 11514
+type(
+  G.edge
+)
+"dgraph/xDot.ml" 362 11504 11517 "dgraph/xDot.ml" 362 11504 11526
+type(
+  G.vertex -> G.vertex -> string -> G.edge
+)
+ident(
+  int_ref find_edge "dgraph/xDot.ml" 343 10847 10855 "dgraph/xDot.ml" 343 10847 10864
+)
+"dgraph/xDot.ml" 362 11504 11527 "dgraph/xDot.ml" 362 11504 11528
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/xDot.ml" 359 11397 11406 "dgraph/xDot.ml" 359 11397 11407
+)
+"dgraph/xDot.ml" 362 11504 11529 "dgraph/xDot.ml" 362 11504 11531
+type(
+  G.vertex
+)
+ident(
+  int_ref v' "dgraph/xDot.ml" 360 11430 11439 "dgraph/xDot.ml" 360 11430 11441
+)
+"dgraph/xDot.ml" 362 11504 11532 "dgraph/xDot.ml" 362 11504 11539
+type(
+  string
+)
+ident(
+  int_ref comment "dgraph/xDot.ml" 361 11463 11472 "dgraph/xDot.ml" 361 11463 11479
+)
+"dgraph/xDot.ml" 362 11504 11517 "dgraph/xDot.ml" 362 11504 11539
+call(
+  stack
+)
+type(
+  G.edge
+)
+"dgraph/xDot.ml" 363 11543 11548 "dgraph/xDot.ml" 363 11543 11554
+type(
+  edge_layout HE.t -> HE.key -> edge_layout -> unit
+)
+ident(
+  ext_ref HE.add
+)
+"dgraph/xDot.ml" 363 11543 11555 "dgraph/xDot.ml" 363 11543 11567
+type(
+  edge_layout HE.t
+)
+ident(
+  int_ref edge_layouts "dgraph/xDot.ml" 318 10211 10219 "dgraph/xDot.ml" 318 10211 10231
+)
+"dgraph/xDot.ml" 363 11543 11568 "dgraph/xDot.ml" 363 11543 11569
+type(
+  G.edge
+)
+ident(
+  int_ref e "dgraph/xDot.ml" 362 11504 11513 "dgraph/xDot.ml" 362 11504 11514
+)
+"dgraph/xDot.ml" 363 11543 11571 "dgraph/xDot.ml" 363 11543 11587
+type(
+  Graph.Dot_ast.attr list -> edge_layout
+)
+ident(
+  int_ref read_edge_layout "dgraph/xDot.ml" 208 6929 6933 "dgraph/xDot.ml" 208 6929 6949
+)
+"dgraph/xDot.ml" 363 11543 11588 "dgraph/xDot.ml" 363 11543 11590
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref al "dgraph/xDot.ml" 358 11351 11390 "dgraph/xDot.ml" 358 11351 11392
+)
+"dgraph/xDot.ml" 363 11543 11570 "dgraph/xDot.ml" 363 11543 11591
+call(
+  stack
+)
+type(
+  edge_layout
+)
+"dgraph/xDot.ml" 363 11543 11548 "dgraph/xDot.ml" 363 11543 11591
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 362 11504 11509 "dgraph/xDot.ml" 363 11543 11591
+type(
+  unit
+)
+"dgraph/xDot.ml" 361 11463 11468 "dgraph/xDot.ml" 363 11543 11591
+type(
+  unit
+)
+"dgraph/xDot.ml" 360 11430 11435 "dgraph/xDot.ml" 363 11543 11591
+type(
+  unit
+)
+"dgraph/xDot.ml" 359 11397 11402 "dgraph/xDot.ml" 363 11543 11591
+type(
+  unit
+)
+"dgraph/xDot.ml" 364 11592 11630 "dgraph/xDot.ml" 364 11592 11632
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  def id "dgraph/xDot.ml" 365 11645 11650 "dgraph/xDot.ml" 366 11685 11738
+)
+"dgraph/xDot.ml" 364 11592 11625 "dgraph/xDot.ml" 364 11592 11632
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 364 11592 11634 "dgraph/xDot.ml" 364 11592 11639
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  def stmts "dgraph/xDot.ml" 365 11645 11650 "dgraph/xDot.ml" 366 11685 11738
+)
+"dgraph/xDot.ml" 364 11592 11611 "dgraph/xDot.ml" 364 11592 11641
+type(
+  Graph.Dot_ast.subgraph
+)
+"dgraph/xDot.ml" 364 11592 11602 "dgraph/xDot.ml" 364 11592 11641
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 365 11645 11654 "dgraph/xDot.ml" 365 11645 11661
+type(
+  string
+)
+"dgraph/xDot.ml" 365 11645 11664 "dgraph/xDot.ml" 365 11645 11678
+type(
+  Graph.Dot_ast.id -> string
+)
+ident(
+  int_ref get_dot_string "dgraph/xDot.ml" 125 4286 4290 "dgraph/xDot.ml" 125 4286 4304
+)
+"dgraph/xDot.ml" 365 11645 11679 "dgraph/xDot.ml" 365 11645 11681
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  int_ref id "dgraph/xDot.ml" 364 11592 11630 "dgraph/xDot.ml" 364 11592 11632
+)
+"dgraph/xDot.ml" 365 11645 11664 "dgraph/xDot.ml" 365 11645 11681
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 366 11685 11690 "dgraph/xDot.ml" 366 11685 11699
+type(
+  (Graph.Dot_ast.stmt -> unit) -> Graph.Dot_ast.stmt list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 366 11685 11701 "dgraph/xDot.ml" 366 11685 11716
+type(
+  string option -> Graph.Dot_ast.stmt -> unit
+)
+ident(
+  int_ref collect_layouts "dgraph/xDot.ml" 352 11156 11168 "dgraph/xDot.ml" 352 11156 11183
+)
+"dgraph/xDot.ml" 366 11685 11723 "dgraph/xDot.ml" 366 11685 11730
+type(
+  string
+)
+ident(
+  int_ref cluster "dgraph/xDot.ml" 365 11645 11654 "dgraph/xDot.ml" 365 11645 11661
+)
+"dgraph/xDot.ml" 366 11685 11717 "dgraph/xDot.ml" 366 11685 11731
+type(
+  string option
+)
+"dgraph/xDot.ml" 366 11685 11700 "dgraph/xDot.ml" 366 11685 11732
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.stmt -> unit
+)
+"dgraph/xDot.ml" 366 11685 11733 "dgraph/xDot.ml" 366 11685 11738
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  int_ref stmts "dgraph/xDot.ml" 364 11592 11634 "dgraph/xDot.ml" 364 11592 11639
+)
+"dgraph/xDot.ml" 366 11685 11690 "dgraph/xDot.ml" 366 11685 11738
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 365 11645 11650 "dgraph/xDot.ml" 366 11685 11738
+type(
+  unit
+)
+"dgraph/xDot.ml" 368 11778 11804 "dgraph/xDot.ml" 368 11778 11805
+type(
+  Graph.Dot_ast.id option
+)
+"dgraph/xDot.ml" 368 11778 11807 "dgraph/xDot.ml" 368 11778 11812
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  def stmts "dgraph/xDot.ml" 369 11818 11823 "dgraph/xDot.ml" 369 11818 11864
+)
+"dgraph/xDot.ml" 368 11778 11790 "dgraph/xDot.ml" 368 11778 11814
+type(
+  Graph.Dot_ast.subgraph
+)
+"dgraph/xDot.ml" 368 11778 11781 "dgraph/xDot.ml" 368 11778 11814
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 369 11818 11823 "dgraph/xDot.ml" 369 11818 11832
+type(
+  (Graph.Dot_ast.stmt -> unit) -> Graph.Dot_ast.stmt list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 369 11818 11834 "dgraph/xDot.ml" 369 11818 11849
+type(
+  string option -> Graph.Dot_ast.stmt -> unit
+)
+ident(
+  int_ref collect_layouts "dgraph/xDot.ml" 352 11156 11168 "dgraph/xDot.ml" 352 11156 11183
+)
+"dgraph/xDot.ml" 369 11818 11850 "dgraph/xDot.ml" 369 11818 11857
+type(
+  string option
+)
+ident(
+  int_ref cluster "dgraph/xDot.ml" 352 11156 11184 "dgraph/xDot.ml" 352 11156 11191
+)
+"dgraph/xDot.ml" 369 11818 11833 "dgraph/xDot.ml" 369 11818 11858
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.stmt -> unit
+)
+"dgraph/xDot.ml" 369 11818 11859 "dgraph/xDot.ml" 369 11818 11864
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  int_ref stmts "dgraph/xDot.ml" 368 11778 11807 "dgraph/xDot.ml" 368 11778 11812
+)
+"dgraph/xDot.ml" 369 11818 11823 "dgraph/xDot.ml" 369 11818 11864
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 370 11865 11879 "dgraph/xDot.ml" 370 11865 11881
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  def al "dgraph/xDot.ml" 371 11885 11890 "dgraph/xDot.ml" 373 11983 12002
+)
+"dgraph/xDot.ml" 370 11865 11868 "dgraph/xDot.ml" 370 11865 11881
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 371 11885 11897 "dgraph/xDot.ml" 371 11885 11904
+type(
+  string option
+)
+ident(
+  int_ref cluster "dgraph/xDot.ml" 352 11156 11184 "dgraph/xDot.ml" 352 11156 11191
+)
+"dgraph/xDot.ml" 372 11910 11923 "dgraph/xDot.ml" 372 11910 11924
+type(
+  string
+)
+ident(
+  def c "dgraph/xDot.ml" 372 11910 11928 "dgraph/xDot.ml" 372 11910 11982
+)
+"dgraph/xDot.ml" 372 11910 11918 "dgraph/xDot.ml" 372 11910 11924
+type(
+  string option
+)
+"dgraph/xDot.ml" 372 11910 11928 "dgraph/xDot.ml" 372 11910 11939
+type(
+  (string, cluster_layout) Hashtbl.t -> string -> cluster_layout -> unit
+)
+ident(
+  ext_ref Hashtbl.add
+)
+"dgraph/xDot.ml" 372 11910 11940 "dgraph/xDot.ml" 372 11910 11955
+type(
+  (string, cluster_layout) Hashtbl.t
+)
+ident(
+  int_ref cluster_layouts "dgraph/xDot.ml" 319 10250 10258 "dgraph/xDot.ml" 319 10250 10273
+)
+"dgraph/xDot.ml" 372 11910 11956 "dgraph/xDot.ml" 372 11910 11957
+type(
+  string
+)
+ident(
+  int_ref c "dgraph/xDot.ml" 372 11910 11923 "dgraph/xDot.ml" 372 11910 11924
+)
+"dgraph/xDot.ml" 372 11910 11959 "dgraph/xDot.ml" 372 11910 11978
+type(
+  Graph.Dot_ast.attr list -> cluster_layout
+)
+ident(
+  int_ref read_cluster_layout "dgraph/xDot.ml" 192 6489 6493 "dgraph/xDot.ml" 192 6489 6512
+)
+"dgraph/xDot.ml" 372 11910 11979 "dgraph/xDot.ml" 372 11910 11981
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref al "dgraph/xDot.ml" 370 11865 11879 "dgraph/xDot.ml" 370 11865 11881
+)
+"dgraph/xDot.ml" 372 11910 11958 "dgraph/xDot.ml" 372 11910 11982
+call(
+  stack
+)
+type(
+  cluster_layout
+)
+"dgraph/xDot.ml" 372 11910 11928 "dgraph/xDot.ml" 372 11910 11982
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 373 11983 11991 "dgraph/xDot.ml" 373 11983 11995
+type(
+  string option
+)
+"dgraph/xDot.ml" 373 11983 11999 "dgraph/xDot.ml" 373 11983 12001
+type(
+  unit
+)
+"dgraph/xDot.ml" 371 11885 11890 "dgraph/xDot.ml" 373 11983 12002
+type(
+  unit
+)
+"dgraph/xDot.ml" 374 12003 12007 "dgraph/xDot.ml" 374 12003 12008
+type(
+  Graph.Dot_ast.stmt
+)
+"dgraph/xDot.ml" 374 12003 12012 "dgraph/xDot.ml" 374 12003 12014
+type(
+  unit
+)
+"dgraph/xDot.ml" 354 11209 11210 "dgraph/xDot.ml" 374 12003 12014
+type(
+  unit
+)
+"dgraph/xDot.ml" 375 12015 12026 "dgraph/xDot.ml" 375 12015 12035
+type(
+  exn
+)
+"dgraph/xDot.ml" 376 12039 12040 "dgraph/xDot.ml" 376 12039 12042
+type(
+  unit
+)
+"dgraph/xDot.ml" 353 11199 11205 "dgraph/xDot.ml" 376 12039 12042
+type(
+  unit
+)
+"dgraph/xDot.ml" 378 12050 12054 "dgraph/xDot.ml" 378 12050 12063
+type(
+  (Graph.Dot_ast.stmt -> unit) -> Graph.Dot_ast.stmt list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/xDot.ml" 378 12050 12065 "dgraph/xDot.ml" 378 12050 12080
+type(
+  string option -> Graph.Dot_ast.stmt -> unit
+)
+ident(
+  int_ref collect_layouts "dgraph/xDot.ml" 352 11156 11168 "dgraph/xDot.ml" 352 11156 11183
+)
+"dgraph/xDot.ml" 378 12050 12081 "dgraph/xDot.ml" 378 12050 12085
+type(
+  string option
+)
+"dgraph/xDot.ml" 378 12050 12064 "dgraph/xDot.ml" 378 12050 12086
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.stmt -> unit
+)
+"dgraph/xDot.ml" 378 12050 12087 "dgraph/xDot.ml" 378 12050 12092
+type(
+  Graph.Dot_ast.stmt list
+)
+ident(
+  int_ref stmts "dgraph/xDot.ml" 313 10042 10064 "dgraph/xDot.ml" 313 10042 10069
+)
+"dgraph/xDot.ml" 378 12050 12054 "dgraph/xDot.ml" 378 12050 12092
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/xDot.ml" 379 12094 12098 "dgraph/xDot.ml" 379 12094 12112
+type(
+  node_layout HV.t
+)
+ident(
+  int_ref vertex_layouts "dgraph/xDot.ml" 317 10170 10178 "dgraph/xDot.ml" 317 10170 10192
+)
+"dgraph/xDot.ml" 379 12094 12114 "dgraph/xDot.ml" 379 12094 12126
+type(
+  edge_layout HE.t
+)
+ident(
+  int_ref edge_layouts "dgraph/xDot.ml" 318 10211 10219 "dgraph/xDot.ml" 318 10211 10231
+)
+"dgraph/xDot.ml" 379 12094 12128 "dgraph/xDot.ml" 379 12094 12143
+type(
+  (string, cluster_layout) Hashtbl.t
+)
+ident(
+  int_ref cluster_layouts "dgraph/xDot.ml" 319 10250 10258 "dgraph/xDot.ml" 319 10250 10273
+)
+"dgraph/xDot.ml" 379 12094 12098 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 378 12050 12054 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 352 11156 11160 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 343 10847 10851 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 337 10656 10660 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 327 10426 10430 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 321 10298 10302 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 319 10250 10254 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 318 10211 10215 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 317 10170 10174 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 315 10118 10122 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 314 10072 10076 "dgraph/xDot.ml" 379 12094 12143
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 381 12145 12150 "dgraph/xDot.ml" 381 12145 12155
+type(
+  G.t -> Graph.Dot_ast.file -> graph_layout
+)
+ident(
+  def parse "dgraph/xDot.ml" 390 12467 12468 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 381 12145 12156 "dgraph/xDot.ml" 381 12145 12157
+type(
+  G.t
+)
+ident(
+  def g "dgraph/xDot.ml" 381 12145 12158 "dgraph/xDot.ml" 388 12447 12465
+)
+"dgraph/xDot.ml" 381 12145 12158 "dgraph/xDot.ml" 381 12145 12165
+type(
+  Graph.Dot_ast.file
+)
+ident(
+  def dot_ast "dgraph/xDot.ml" 382 12168 12171 "dgraph/xDot.ml" 388 12447 12465
+)
+"dgraph/xDot.ml" 382 12168 12175 "dgraph/xDot.ml" 382 12168 12184
+type(
+  node_layout HV.t
+)
+"dgraph/xDot.ml" 382 12168 12186 "dgraph/xDot.ml" 382 12168 12195
+type(
+  edge_layout HE.t
+)
+"dgraph/xDot.ml" 382 12168 12197 "dgraph/xDot.ml" 382 12168 12206
+type(
+  (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 382 12168 12175 "dgraph/xDot.ml" 382 12168 12206
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 382 12168 12209 "dgraph/xDot.ml" 382 12168 12222
+type(
+  G.t ->
+  Graph.Dot_ast.stmt list ->
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+ident(
+  int_ref parse_layouts "dgraph/xDot.ml" 313 10042 10048 "dgraph/xDot.ml" 313 10042 10061
+)
+"dgraph/xDot.ml" 382 12168 12223 "dgraph/xDot.ml" 382 12168 12224
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/xDot.ml" 381 12145 12156 "dgraph/xDot.ml" 381 12145 12157
+)
+"dgraph/xDot.ml" 382 12168 12225 "dgraph/xDot.ml" 382 12168 12232
+type(
+  Graph.Dot_ast.file
+)
+ident(
+  int_ref dot_ast "dgraph/xDot.ml" 381 12145 12158 "dgraph/xDot.ml" 381 12145 12165
+)
+"dgraph/xDot.ml" 382 12168 12225 "dgraph/xDot.ml" 382 12168 12238
+type(
+  Graph.Dot_ast.stmt list
+)
+"dgraph/xDot.ml" 382 12168 12209 "dgraph/xDot.ml" 382 12168 12238
+call(
+  stack
+)
+type(
+  node_layout HV.t * edge_layout HE.t * (string, cluster_layout) Hashtbl.t
+)
+"dgraph/xDot.ml" 383 12242 12249 "dgraph/xDot.ml" 383 12242 12253
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 383 12242 12256 "dgraph/xDot.ml" 383 12242 12274
+type(
+  Graph.Dot_ast.stmt list -> (float * float) * (float * float)
+)
+ident(
+  int_ref parse_bounding_box "dgraph/xDot.ml" 310 9896 9902 "dgraph/xDot.ml" 310 9896 9920
+)
+"dgraph/xDot.ml" 383 12242 12275 "dgraph/xDot.ml" 383 12242 12282
+type(
+  Graph.Dot_ast.file
+)
+ident(
+  int_ref dot_ast "dgraph/xDot.ml" 381 12145 12158 "dgraph/xDot.ml" 381 12145 12165
+)
+"dgraph/xDot.ml" 383 12242 12275 "dgraph/xDot.ml" 383 12242 12288
+type(
+  Graph.Dot_ast.stmt list
+)
+"dgraph/xDot.ml" 383 12242 12256 "dgraph/xDot.ml" 383 12242 12288
+call(
+  stack
+)
+type(
+  (float * float) * (float * float)
+)
+"dgraph/xDot.ml" 385 12345 12368 "dgraph/xDot.ml" 385 12345 12377
+type(
+  node_layout HV.t
+)
+ident(
+  int_ref v_layouts "dgraph/xDot.ml" 382 12168 12175 "dgraph/xDot.ml" 382 12168 12184
+)
+"dgraph/xDot.ml" 386 12379 12402 "dgraph/xDot.ml" 386 12379 12411
+type(
+  edge_layout HE.t
+)
+ident(
+  int_ref e_layouts "dgraph/xDot.ml" 382 12168 12186 "dgraph/xDot.ml" 382 12168 12195
+)
+"dgraph/xDot.ml" 387 12413 12436 "dgraph/xDot.ml" 387 12413 12445
+type(
+  (string, cluster_layout) Hashtbl.t
+)
+ident(
+  int_ref c_layouts "dgraph/xDot.ml" 382 12168 12197 "dgraph/xDot.ml" 382 12168 12206
+)
+"dgraph/xDot.ml" 388 12447 12459 "dgraph/xDot.ml" 388 12447 12463
+type(
+  bounding_box
+)
+ident(
+  int_ref bbox "dgraph/xDot.ml" 383 12242 12249 "dgraph/xDot.ml" 383 12242 12253
+)
+"dgraph/xDot.ml" 385 12345 12348 "dgraph/xDot.ml" 388 12447 12465
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 383 12242 12245 "dgraph/xDot.ml" 388 12447 12465
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 382 12168 12171 "dgraph/xDot.ml" 388 12447 12465
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 392 12498 12503 "dgraph/xDot.ml" 392 12498 12517
+type(
+  xdot_file:string -> G.t -> graph_layout
+)
+ident(
+  def layout_of_xdot "dgraph/xDot.ml" 396 12601 12602 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 392 12498 12519 "dgraph/xDot.ml" 392 12498 12528
+type(
+  string
+)
+ident(
+  def xdot_file "dgraph/xDot.ml" 392 12498 12529 "dgraph/xDot.ml" 394 12581 12599
+)
+"dgraph/xDot.ml" 392 12498 12529 "dgraph/xDot.ml" 392 12498 12530
+type(
+  G.t
+)
+ident(
+  def g "dgraph/xDot.ml" 393 12533 12536 "dgraph/xDot.ml" 394 12581 12599
+)
+"dgraph/xDot.ml" 393 12533 12540 "dgraph/xDot.ml" 393 12533 12547
+type(
+  Graph.Dot_ast.file
+)
+"dgraph/xDot.ml" 393 12533 12550 "dgraph/xDot.ml" 393 12533 12567
+type(
+  string -> Graph.Dot_ast.file
+)
+ident(
+  ext_ref Graph.Dot.parse_dot_ast
+)
+"dgraph/xDot.ml" 393 12533 12568 "dgraph/xDot.ml" 393 12533 12577
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/xDot.ml" 392 12498 12519 "dgraph/xDot.ml" 392 12498 12528
+)
+"dgraph/xDot.ml" 393 12533 12550 "dgraph/xDot.ml" 393 12533 12577
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.file
+)
+"dgraph/xDot.ml" 394 12581 12584 "dgraph/xDot.ml" 394 12581 12589
+type(
+  G.t -> Graph.Dot_ast.file -> graph_layout
+)
+ident(
+  int_ref parse "dgraph/xDot.ml" 381 12145 12150 "dgraph/xDot.ml" 381 12145 12155
+)
+"dgraph/xDot.ml" 394 12581 12590 "dgraph/xDot.ml" 394 12581 12591
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/xDot.ml" 392 12498 12529 "dgraph/xDot.ml" 392 12498 12530
+)
+"dgraph/xDot.ml" 394 12581 12592 "dgraph/xDot.ml" 394 12581 12599
+type(
+  Graph.Dot_ast.file
+)
+ident(
+  int_ref dot_ast "dgraph/xDot.ml" 393 12533 12540 "dgraph/xDot.ml" 393 12533 12547
+)
+"dgraph/xDot.ml" 394 12581 12584 "dgraph/xDot.ml" 394 12581 12599
+call(
+  tail
+)
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 393 12533 12536 "dgraph/xDot.ml" 394 12581 12599
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 396 12601 12606 "dgraph/xDot.ml" 396 12601 12619
+type(
+  ?cmd:string -> dot_file:string -> G.t -> graph_layout
+)
+ident(
+  def layout_of_dot "dgraph/xDot.ml" 411 13111 13163 "dgraph/xDot.ml" 413 13165 13168
+)
+"dgraph/xDot.ml" 396 12601 12622 "dgraph/xDot.ml" 396 12601 12625
+type(
+  string
+)
+"dgraph/xDot.ml" 396 12601 12626 "dgraph/xDot.ml" 396 12601 12631
+type(
+  string
+)
+type(
+  string
+)
+type(
+  string
+)
+ident(
+  int_ref *sth* "dgraph/xDot.ml" 396 12601 12626 "dgraph/xDot.ml" 396 12601 12631
+)
+type(
+  string option
+)
+type(
+  string option
+)
+type(
+  string
+)
+ident(
+  def *sth* "dgraph/xDot.ml" 396 12601 12626 "dgraph/xDot.ml" 396 12601 12631
+)
+type(
+  string option
+)
+ident(
+  int_ref *opt* "dgraph/xDot.ml" 396 12601 12626 "dgraph/xDot.ml" 396 12601 12631
+)
+type(
+  string option
+)
+ident(
+  def *opt* "dgraph/xDot.ml" 396 12601 12620 "dgraph/xDot.ml" 411 13111 13163
+)
+"dgraph/xDot.ml" 396 12601 12634 "dgraph/xDot.ml" 396 12601 12642
+type(
+  string
+)
+ident(
+  def dot_file "dgraph/xDot.ml" 396 12601 12643 "dgraph/xDot.ml" 411 13111 13163
+)
+"dgraph/xDot.ml" 396 12601 12643 "dgraph/xDot.ml" 396 12601 12644
+type(
+  G.t
+)
+ident(
+  def g "dgraph/xDot.ml" 397 12647 12650 "dgraph/xDot.ml" 411 13111 13163
+)
+"dgraph/xDot.ml" 397 12647 12654 "dgraph/xDot.ml" 397 12647 12663
+type(
+  string
+)
+"dgraph/xDot.ml" 398 12666 12675 "dgraph/xDot.ml" 398 12666 12692
+type(
+  string -> string
+)
+ident(
+  ext_ref Filename.basename
+)
+"dgraph/xDot.ml" 398 12666 12694 "dgraph/xDot.ml" 398 12666 12717
+type(
+  string -> string
+)
+ident(
+  ext_ref Filename.chop_extension
+)
+"dgraph/xDot.ml" 398 12666 12718 "dgraph/xDot.ml" 398 12666 12726
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/xDot.ml" 396 12601 12634 "dgraph/xDot.ml" 396 12601 12642
+)
+"dgraph/xDot.ml" 398 12666 12693 "dgraph/xDot.ml" 398 12666 12727
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 398 12666 12675 "dgraph/xDot.ml" 398 12666 12727
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 399 12728 12755 "dgraph/xDot.ml" 399 12728 12756
+type(
+  string
+)
+"dgraph/xDot.ml" 399 12728 12738 "dgraph/xDot.ml" 399 12728 12756
+type(
+  exn
+)
+"dgraph/xDot.ml" 399 12728 12760 "dgraph/xDot.ml" 399 12728 12768
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/xDot.ml" 396 12601 12634 "dgraph/xDot.ml" 396 12601 12642
+)
+"dgraph/xDot.ml" 398 12666 12671 "dgraph/xDot.ml" 399 12728 12768
+type(
+  string
+)
+"dgraph/xDot.ml" 401 12775 12782 "dgraph/xDot.ml" 401 12775 12791
+type(
+  string
+)
+"dgraph/xDot.ml" 401 12775 12794 "dgraph/xDot.ml" 401 12775 12812
+type(
+  ?temp_dir:string -> string -> string -> string
+)
+ident(
+  ext_ref Filename.temp_file
+)
+"dgraph/xDot.ml" 401 12775 12813 "dgraph/xDot.ml" 401 12775 12822
+type(
+  string
+)
+ident(
+  int_ref base_name "dgraph/xDot.ml" 397 12647 12654 "dgraph/xDot.ml" 397 12647 12663
+)
+"dgraph/xDot.ml" 401 12775 12823 "dgraph/xDot.ml" 401 12775 12830
+type(
+  string
+)
+"dgraph/xDot.ml" 401 12775 12794 "dgraph/xDot.ml" 401 12775 12830
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 403 12873 12880 "dgraph/xDot.ml" 403 12873 12887
+type(
+  string
+)
+"dgraph/xDot.ml" 403 12873 12890 "dgraph/xDot.ml" 403 12873 12897
+type(
+  (string -> string -> string -> string, unit, string) format ->
+  string -> string -> string -> string
+)
+ident(
+  ext_ref Printf.sprintf
+)
+"dgraph/xDot.ml" 403 12873 12898 "dgraph/xDot.ml" 403 12873 12917
+type(
+  (string -> string -> string -> string, unit, string) format
+)
+"dgraph/xDot.ml" 403 12873 12918 "dgraph/xDot.ml" 403 12873 12921
+type(
+  string
+)
+ident(
+  int_ref cmd "dgraph/xDot.ml" 396 12601 12622 "dgraph/xDot.ml" 396 12601 12625
+)
+"dgraph/xDot.ml" 403 12873 12922 "dgraph/xDot.ml" 403 12873 12930
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/xDot.ml" 396 12601 12634 "dgraph/xDot.ml" 396 12601 12642
+)
+"dgraph/xDot.ml" 403 12873 12931 "dgraph/xDot.ml" 403 12873 12940
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/xDot.ml" 401 12775 12782 "dgraph/xDot.ml" 401 12775 12791
+)
+"dgraph/xDot.ml" 403 12873 12890 "dgraph/xDot.ml" 403 12873 12940
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/xDot.ml" 404 12944 12953 "dgraph/xDot.ml" 404 12944 12964
+type(
+  string -> int
+)
+ident(
+  ext_ref Sys.command
+)
+"dgraph/xDot.ml" 404 12944 12965 "dgraph/xDot.ml" 404 12944 12972
+type(
+  string
+)
+ident(
+  int_ref dot_cmd "dgraph/xDot.ml" 403 12873 12880 "dgraph/xDot.ml" 403 12873 12887
+)
+"dgraph/xDot.ml" 404 12944 12953 "dgraph/xDot.ml" 404 12944 12972
+type(
+  int
+)
+"dgraph/xDot.ml" 405 12978 12983 "dgraph/xDot.ml" 405 12978 12984
+type(
+  int
+)
+"dgraph/xDot.ml" 406 12988 12999 "dgraph/xDot.ml" 406 12988 13000
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 406 12988 13003 "dgraph/xDot.ml" 406 12988 13017
+type(
+  xdot_file:string -> G.t -> graph_layout
+)
+ident(
+  int_ref layout_of_xdot "dgraph/xDot.ml" 392 12498 12503 "dgraph/xDot.ml" 392 12498 12517
+)
+"dgraph/xDot.ml" 406 12988 13019 "dgraph/xDot.ml" 406 12988 13028
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/xDot.ml" 401 12775 12782 "dgraph/xDot.ml" 401 12775 12791
+)
+"dgraph/xDot.ml" 406 12988 13029 "dgraph/xDot.ml" 406 12988 13030
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/xDot.ml" 396 12601 12643 "dgraph/xDot.ml" 396 12601 12644
+)
+"dgraph/xDot.ml" 406 12988 13003 "dgraph/xDot.ml" 406 12988 13030
+call(
+  stack
+)
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 407 13034 13041 "dgraph/xDot.ml" 407 13034 13051
+type(
+  string -> unit
+)
+ident(
+  ext_ref Sys.remove
+)
+"dgraph/xDot.ml" 407 13034 13052 "dgraph/xDot.ml" 407 13034 13061
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/xDot.ml" 401 12775 12782 "dgraph/xDot.ml" 401 12775 12791
+)
+"dgraph/xDot.ml" 407 13034 13041 "dgraph/xDot.ml" 407 13034 13061
+type(
+  unit
+)
+"dgraph/xDot.ml" 408 13063 13070 "dgraph/xDot.ml" 408 13063 13071
+type(
+  graph_layout
+)
+ident(
+  int_ref l "dgraph/xDot.ml" 406 12988 12999 "dgraph/xDot.ml" 406 12988 13000
+)
+"dgraph/xDot.ml" 407 13034 13041 "dgraph/xDot.ml" 408 13063 13071
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 406 12988 12995 "dgraph/xDot.ml" 408 13063 13071
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 409 13072 13077 "dgraph/xDot.ml" 409 13072 13078
+type(
+  int
+)
+"dgraph/xDot.ml" 410 13082 13089 "dgraph/xDot.ml" 410 13082 13099
+type(
+  string -> unit
+)
+ident(
+  ext_ref Sys.remove
+)
+"dgraph/xDot.ml" 410 13082 13100 "dgraph/xDot.ml" 410 13082 13109
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/xDot.ml" 401 12775 12782 "dgraph/xDot.ml" 401 12775 12791
+)
+"dgraph/xDot.ml" 410 13082 13089 "dgraph/xDot.ml" 410 13082 13109
+type(
+  unit
+)
+"dgraph/xDot.ml" 411 13111 13118 "dgraph/xDot.ml" 411 13111 13123
+type(
+  exn -> graph_layout
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/xDot.ml" 411 13111 13134 "dgraph/xDot.ml" 411 13111 13162
+type(
+  string
+)
+"dgraph/xDot.ml" 411 13111 13124 "dgraph/xDot.ml" 411 13111 13163
+type(
+  exn
+)
+"dgraph/xDot.ml" 411 13111 13118 "dgraph/xDot.ml" 411 13111 13163
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 410 13082 13089 "dgraph/xDot.ml" 411 13111 13163
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 404 12944 12947 "dgraph/xDot.ml" 411 13111 13163
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 403 12873 12876 "dgraph/xDot.ml" 411 13111 13163
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 401 12775 12778 "dgraph/xDot.ml" 411 13111 13163
+type(
+  graph_layout
+)
+"dgraph/xDot.ml" 397 12647 12650 "dgraph/xDot.ml" 411 13111 13163
+type(
+  graph_layout
+)

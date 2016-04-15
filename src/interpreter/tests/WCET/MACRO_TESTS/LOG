@@ -1,0 +1,537 @@
+Important note:
+
++++ The results (Table 1 and Table 2) in the draft submitted to CAV10
+have been significantly modified in some cases due to a change in the
+implementation of TRACER.
+
+The change was done and registered in trunk/src/clpr:
+
+  2010-02-10 12:58:50
+    tracer.clp.gpp
+    tracer_loops.clp.gpp
+  Log: added a new clause in the unfold/23. Now it is the 6th clause.
+
+This change deals with break and other unstructured exits from
+loops. It changes the WCET estimates obtained for some of those
+programs:
+
+------------------------------------------------------------------------------------
+                                         |               | New       | Improvement |
+                           PS w/ witness |      PI       |Improvement|reported     |
+                         WCET    #states | WCET  #states |           |in submission|
+------------------------------------------------------------------------------------
+adpcm_prep.c             757      524    |  901     590  |    16%    |      25%    |
+------------------------------------------------------------------------------------
+linpack_abstract_prep.c    1357   3060   | 1372    5546  |    1.1%   |      1.1%   |
+linpack_abstract_prep_OK.c 1303   2214   | 1372    5546  |     5%    |      N/A    |
+------------------------------------------------------------------------------------
+(w/  non-linear)                         |               |           |             | 
+mpeg.c                   623     2229    |  743    2386  |    16%    |      16%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             |
+mpeg.c                   623     1745    |  743    2386  |    16%    |      16%    |
+------------------------------------------------------------------------------------
+statemate_prep           260    11097    |  292     790  |    11%    |      11%    |
+------------------------------------------------------------------------------------
+(w/ non-linear)                          |               |           |             | 
+susan_thin_prep.c        3205     871    | 5349   11655??|    41%    |      41%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             | 
+susan_thin_prep.c        3205     772    | 5349    1295  |    41%    |      41%    |  
+------------------------------------------------------------------------------------
+                             Table 1 (02/12/2010)
+
+
+----------------------------------------------------------------------------------
+                                 PS w/ witness        |       PS w/o witnesses   |
+                         WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+----------------------------------------------------------------------------------
+adpcm_prep.c              757     524      30     5   |  759     495     28      | 
+----------------------------------------------------------------------------------
+linpack_abstract_prep.c    1357    3060   587    24   | 1357    3036    587      | 
+linpack_abstract_prep_OK.c 1303    2214   326     0   | 1303    2214    326      | 
+----------------------------------------------------------------------------------
+(w/ non-linear)                                       |                          |
+mpeg.c                    623    2229     309    37   |  623    2198    303      |  
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+mpeg.c                    623    1745     311    37   |  623    1714    305      |   
+----------------------------------------------------------------------------------
+statemate_prep            260   11097    6486   396   |  262    9869   5694      |
+----------------------------------------------------------------------------------
+(w/ non-linear)                                       |                          |
+susan_thin_prep.c        3205    871      173     0   | 3205     783    163      |
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+susan_thin_prep.c        3205    772      170     1   | 3205     771    170      |
+----------------------------------------------------------------------------------
+                            Table 2 (02/12/2010)
+
+
+NOTE: some problems with path-insensitive and non-linear
+constraints. It seems looking at susan_thin_prep.c output that
+subsumption fails but it should always succeed. One reason might be
+the presence of non-linear constraints which are not projected out by
+dump/3
+
+**********************************************
+Statistics 
+**********************************************
+	 WCET                        : 5349 
+	 States visited              : 11655 
+	 Analysis time               : 462.19 seconds 
+	 Analysis throughput         : 25.2169 states/seconds 
+	 # subsumed nodes            : 302 
+	 # calls to solver during interpolation : 0 
+	 --------------------------------------------------------------- 
+	 Generation of interpolants information: 
+		 Interpolation time           : 0 seconds 
+		 Ground filtered constraints  : 0  
+		 Average Marked/Length of constraints list: 0 perc.
+	 Pre-operator                          
+		 Pre-operator time (retract child's answer) : 3.9 seconds 
+		 Pre-operator time (update witnesses)       : 0.2 seconds 
+			 Evaluate constraints                     : 0.07 seconds 
+			 Update witnesses                         : 0.13 seconds 
+		 Pre-operator time (add WCET transition)    : 7.95 seconds 
+		 Pre-operator time (assert answer)          : 0.64 seconds 
+		 Total                                      : 12.93 seconds 
+	 Combine                        : 0.96 seconds 
+	 --------------------------------------------------------------- 
+	 Assert  answers (not memo)     : 0.44 seconds 
+	 Retract answers (not memo)     : 0.44 seconds 
+	 --------------------------------------------------------------- 
+	 Forward propagation            : 0.03 seconds 
+	 Storing in the memo table      
+		 Evaluate constraints selectively  : 0.17 seconds 
+		 Negate constraints                : 3.62 seconds 
+		 Store in the memo table           : 6.18 seconds 
+		 Total                             : 9.97 seconds 
+	 Conversion (partition->naive)  : 0.18 seconds 
+	 Subsumption information         
+		 Subsumption failed 
+			 # searches for entries failed        : 8991 
+			 Timing searching for entries failed  : 419.51 seconds
+			 # subsumption tests failed           : - 
+			 Timing subsumption test failed       : 334.8 seconds
+		 Subsumption OK 
+			 # searches for entries succeed       : - 
+			 Timing searching for entries succeed : - 
+			 # subsumption tests succeed          : 302 
+			 Timing subsumption test succeed      : 0.03 seconds
+			 Timing for reuse/store answers       : 0.01 seconds 
+		 Total                        : 754.35 seconds 
+	 Witnesses information: 
+		 Witnesses failed 
+			 # witnesses failed                         : 0
+			 Timing for checking witnesses when failed  : 0 seconds 
+		 Witnesses succeed 
+			 # witnesses succeed                        : 0
+			 Timing for checking witnesses when succeed : 0 seconds 
+		 # witnesses are checked              : 0 
+		 Average # witnesses checked          : 0 
+		 Total                                : 0 seconds 
+	 --------------------------------------------------------------- 
+	 Loop information: 
+		 Time for generation of loop invariants: 0.06 seconds
+		 Time for interpolant at the loop entry: 0 seconds
+		 Time for wrapping loops               : 0.15 seconds
+	 --------------------------------------------------------------- 
+	 Feasibility information: 
+		 # total transitions         : 1102
+		 # of alive transitions      : 1102
+		 # of dead  transitions      : 0
+		 # infeasible paths          : 0 
+		 # feasible paths            : 1 
+		 # TRUE branches             : 11625 
+		 # FALSE branches            : 0 
+
+
++++ The results (Table 1 and Table 2) shown above have been again
+modified after the integration of array solver in TRACER and fixing
+some important bugs related to neq/2 constraints.
+
+The change was done and registered in trunk/src/clpr:
+
+> r1493 | andrews | 2010-03-02 15:31:37 +0800 (Tue, 02 Mar 2010) | 4 lines
+> Changed paths:
+>    M /trunk/src/clpr/Makefile
+>    M /trunk/src/clpr/tests/WCET/CAV10/statemate_prep.c
+>    M /trunk/src/clpr/tracer.clp.gpp
+>    M /trunk/src/clpr/tracer_constraints.clp.gpp
+>    M /trunk/src/clpr/tracer_loops.clp.gpp
+>    M /trunk/src/clpr/tracer_paths.clp.gpp
+>    M /trunk/src/clpr/tracer_solver.clp.gpp
+
+> CAV10 version's bug fix
+
+
+Here it's the new results (with array_solver to 'n'):
+
+------------------------------------------------------------------------------------
+                                         |               | New       | Improvement |
+                           PS w/ witness |      PI       |Improvement|reported     |
+                         WCET    #states | WCET  #states |           |in submission|
+------------------------------------------------------------------------------------
+adpcm_prep.c             584      467    |  901     602  |    35%    |      25%    |
+------------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c               | 1372    5546  |    N/A    |      N/A    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             |
+mpeg.c                   623     1745    |  743    2388  |    16%    |      16%    |
+------------------------------------------------------------------------------------
+statemate_prep           260    11097    |  292     790  |    11%    |      11%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             | 
+susan_thin_prep.c        3205     801    | 5349    1298  |    41%    |      41%    |  
+------------------------------------------------------------------------------------
+                             Table 1 (07/02/2010)
+  
+
+----------------------------------------------------------------------------------
+                                 PS w/ witness        |       PS w/o witnesses   |
+                         WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+----------------------------------------------------------------------------------
+adpcm_prep.c              584      467     30    11   |   586     410     28     | 
+----------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214    326     0   |  1303    2214    326     | 
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+mpeg.c                    623     1748    312    40   |   623    1715    306     |   
+----------------------------------------------------------------------------------
+statemate_prep            260    11097   6486   396   |   262    9869   5694     |
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+susan_thin_prep.c        3205      801    173     1   |  3205     801    173     |
+----------------------------------------------------------------------------------
+                            Table 2 (07/02/2010)
+
+Options for linpack_abstract_prep_OK.c
+
+  set_tracer_flag(formula_path,naive).
+  set_tracer_flag(formula_path_slicing,y).
+  CLPR (stable version)
+
+[03/17/10]: IMPORTANT Fixed bug. Interpolants for loops were always true!
+
+The following tables use a strong interpolant for loops. Basically, it
+uses the loop invariant.
+
+------------------------------------------------------------------------------------
+                                         |               | New       | Improvement |
+                           PS w/ witness |      PI       |Improvement|reported     |
+                         WCET    #states | WCET  #states |           |in submission|
+------------------------------------------------------------------------------------
+adpcm_prep.c             581     3155    |  901     602  |    35%    |      25%    |
+------------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214   | 1372    5546  |     5%    |       1%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             |
+mpeg.c                   690     4079    |  743    2388  |     8%    |      16%    |
+------------------------------------------------------------------------------------
+statemate_prep               N/A         |  292     790  |    N/A    |      11%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             | 
+susan_thin_prep.c        3205    1030    | 5349    1298  |    41%    |      41%    |  
+------------------------------------------------------------------------------------
+                             Table 1 (03/17/2010)
+
+----------------------------------------------------------------------------------
+                                 PS w/ witness        |       PS w/o witnesses   |
+                         WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+----------------------------------------------------------------------------------
+adpcm_prep.c              581     3155    354     7   |   582    3109    351     | 
+----------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214    326     0   |  1303    2214    326     | 
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+mpeg.c                    690     4079    850    168  |   694    3940    780     |   
+----------------------------------------------------------------------------------
+statemate_prep            260    11097   6486    396  |   262    9869   5694     |
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+susan_thin_prep.c        3205     1030    232     1   |  3205    1029    232     |
+----------------------------------------------------------------------------------
+                            Table 2 (03/17/2010)
+
+linpack and susan_thin executed with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+[03/22/10]: IMPORTANT improvement. The loop interpolant is weaker and sound!.
+
+------------------------------------------------------------------------------------
+                                         |               | New       | Improvement |
+                           PS w/ witness |      PI       |Improvement|reported     |
+                         WCET    #states | WCET  #states |           |in submission|
+------------------------------------------------------------------------------------
+adpcm_prep.c             581      634    |  901     602  |    35%    |      25%    |
+------------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214   | 1372    5546  |     5%    |       1%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             |
+mpeg.c                   690      2216   |  743    2388  |     8%    |      16%    |
+------------------------------------------------------------------------------------
+statemate_prep           260     18327   |  292     790  |    11%    |      11%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             | 
+susan_thin_prep.c       3205      801    | 5349    1298  |    41%    |      41%    |  
+------------------------------------------------------------------------------------
+                             Table 1 (03/22/2010)
+
+----------------------------------------------------------------------------------
+                                 PS w/ witness        |       PS w/o witnesses   |
+                         WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+----------------------------------------------------------------------------------
+adpcm_prep.c              581      634     46     15  |   586     1709    159    | 
+----------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214    326     0   |  1303     2214    326    | 
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+mpeg.c                    690     2216    511    146  |   694     2077    411    |   
+----------------------------------------------------------------------------------
+statemate_prep            260    18327   10493   735  |   262    16351   9269    |
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+susan_thin_prep.c        3205      801    173     1   |  3205     800     173    |
+----------------------------------------------------------------------------------
+                            Table 2 (03/22/2010)
+
+linpack and susan_thin executed with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+
+[03/30/10]: BUG FIXED.
+  int *x; int a[5];
+  x = a; ___is replace with___ x = &(a[0])
+
+------------------------------------------------------------------------------------
+                                         |               | New       | Improvement |
+                           PS w/ witness |      PI       |Improvement|reported     |
+                         WCET    #states | WCET  #states |           |in submission|
+------------------------------------------------------------------------------------
+adpcm_prep.c             764      578    |  906     602  |    15%    |      25%    |
+------------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214   | 1372    5546  |     5%    |       1%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             |
+mpeg.c                   690      2216   |  743    2388  |     8%    |      16%    |
+------------------------------------------------------------------------------------
+statemate_prep           260     18327   |  292     790  |    11%    |      11%    |
+------------------------------------------------------------------------------------
+(w/o non-linear)                         |               |           |             | 
+susan_thin_prep.c       3205      801    | 5349    1298  |    41%    |      41%    |  
+------------------------------------------------------------------------------------
+                             Table 1 (03/30/2010)
+
+----------------------------------------------------------------------------------
+                                 PS w/ witness        |       PS w/o witnesses   |
+                         WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+----------------------------------------------------------------------------------
+adpcm_prep.c              764      578     38     9  |    766     536     37     | 
+----------------------------------------------------------------------------------
+linpack_abstract_prep_OK.c 1303   2214    326     0   |  1303     2214    326    | 
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+mpeg.c                    690     2216    511    146  |   694     2077    411    |   
+----------------------------------------------------------------------------------
+statemate_prep            260    18327   10493   735  |   262    16351   9269    |
+----------------------------------------------------------------------------------
+(w/o non-linear)                                      |                          |
+susan_thin_prep.c        3205      801    173     1   |  3205     800     173    |
+----------------------------------------------------------------------------------
+                            Table 2 (03/30/2010)
+
+linpack and susan_thin executed with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+[04/08/10]
+
+Found an error in adpcm_prep.c: there were many variables declared as
+both global and local. Our compiler does not cover this case. New
+results for adpcm_prep.c with problem fixed:
+
+--------------------------------------------------------------------------
+                               |               | New       | Improvement |
+                 PS w/ witness |      PI       |Improvement|reported     |
+               WCET    #states | WCET  #states |           |in submission|
+--------------------------------------------------------------------------
+adpcm_prep.c    894     863    |  906     602  |    2%     |      25%    |
+--------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------
+                        PS w/ witness        |       PS w/o witnesses   |
+                WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+-------------------------------------------------------------------------
+adpcm_prep.c     894     863     65      8   |   898     771    61      |
+-------------------------------------------------------------------------
+
+
+
+[04/09/10]
+
+TRACER does not work properly with statements like if (foo() == x).
+
+Makefile options: -DPROFILE
+
+adpcm_prep.c
+linpack_abstract_prep_OK.c
+mpeg.c             /* compiled w/o non-linear */
+statemate_prep.c
+susan_thin_prep.c  /* compiled w/o non-linear */
+
+----------------------------------------------------------------------
+                           |               | New       | Improvement |
+             PS w/ witness |      PI       |Improvement|reported     |
+           WCET    #states | WCET  #states |           |in submission|
+----------------------------------------------------------------------
+adpcm       906     872    |   918     613 |     2%    |      25%    |
+----------------------------------------------------------------------
+linpack    1303    2214    |  1372    5546 |     5%    |       1%    |
+----------------------------------------------------------------------
+mpeg        690    2216    |   743    2384 |     8%    |      16%    |
+----------------------------------------------------------------------
+statemate   260   18327    |   292     790 |    11%    |      11%    |
+----------------------------------------------------------------------
+susan_thin 3221     801    |  5365    1298 |    40%    |      41%    |
+----------------------------------------------------------------------
+                            Table 1 (04/13/2010)
+
+--------------------------------------------------------------------
+                   PS w/ witness        |       PS w/o witnesses   |
+           WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+--------------------------------------------------------------------
+adpcm       906     872      64     8   |   910     780     60     |
+--------------------------------------------------------------------
+linpack    1303    2214     326     0   |  1303    2214    326     |  
+--------------------------------------------------------------------
+mpeg        690    2216     511   146   |   694    2077    411     |   
+--------------------------------------------------------------------
+statemate   260   18327   10493   735   |   262   16351   9269     |
+--------------------------------------------------------------------
+susan_thin 3221     801     173     1   |  3221     800    173     |
+--------------------------------------------------------------------
+                            Table 2 (04/13/2010)
+
+susan_thin executed with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+  OR   default with 32 bit CLPR
+
+linpack with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+
+[04/09/10]
+
+BUG in the compilation: problems with break's that affect to mpeg and
+susan_thin.
+
+Makefile options: -DPROFILE
+
+adpcm_prep.c
+linpack_abstract_prep_OK.c
+mpeg.c             /* compiled w/o non-linear */
+statemate_prep.c
+susan_thin_prep.c  /* compiled w/o non-linear */
+
+----------------------------------------------------------------------
+                           |               | New       | Improvement |
+             PS w/ witness |      PI       |Improvement|reported     |
+           WCET    #states | WCET  #states |           |in submission|
+----------------------------------------------------------------------
+adpcm       906     872    |   918     613 |     2%    |      25%    |
+----------------------------------------------------------------------
+linpack    1303    2214    |  1372    5546 |     5%    |       1%    |
+----------------------------------------------------------------------
+mpeg        690    2218    |   743    2385 |     8%    |      16%    |
+----------------------------------------------------------------------
+statemate   260   18327    |   292     790 |    11%    |      11%    |
+----------------------------------------------------------------------
+susan_thin 3194     802    |  5338    1299 |    40%    |      41%    |
+----------------------------------------------------------------------
+                            Table 1 (04/14/2010)
+
+--------------------------------------------------------------------
+                   PS w/ witness        |       PS w/o witnesses   |
+           WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+--------------------------------------------------------------------
+adpcm       906     872      64     8   |   910     780     60     |
+--------------------------------------------------------------------
+linpack    1303    2214     326     0   |  1303    2214    326     |  
+--------------------------------------------------------------------
+mpeg        690    2218     512   146   |   694    2079    442     |   
+--------------------------------------------------------------------
+statemate   260   18327   10493   735   |   262   16351   9269     |
+--------------------------------------------------------------------
+susan_thin 3194     802     174     1   |  3194     801    174     |
+--------------------------------------------------------------------
+                            Table 2 (04/14/2010)
+
+susan_thin executed with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+  OR   default with 32 bit CLPR
+
+linpack with the following options:
+
+  set_tracer_flag(path_datastructure,naive).
+  set_tracer_flag(path_slicing,y).
+  CLPR (stable version)
+
+
+[05/26/10]
+
+MAJOR BUG: Subsumption was incorrect in presence of function calls.
+The major change is in statemate!
+
+----------------------------------------------------------------------
+                           |               | New       | Improvement |
+             PS w/ witness |      PI       |Improvement|reported     |
+           WCET    #states | WCET  #states |           |in submission|
+----------------------------------------------------------------------
+adpcm       906     872    |   918     613 |     2%    |      25%    |
+----------------------------------------------------------------------
+linpack    1303    2214    |  1372    5546 |     5%    |       1%    |
+----------------------------------------------------------------------
+mpeg        690    2254    |   743    2385 |     8%    |      16%    |
+----------------------------------------------------------------------
+statemate   260   51023    |   292     790 |    11%    |      11%    |
+----------------------------------------------------------------------
+susan_thin 3202     803    |  5346    1300 |    40%    |      41%    |
+----------------------------------------------------------------------
+                            Table 1 (05/26/2010)
+
+--------------------------------------------------------------------
+                   PS w/ witness        |       PS w/o witnesses   |
+           WCET  #states #covered UNSAT |  WCET  #states  #covered |  
+--------------------------------------------------------------------
+adpcm       906     872      64     8   |   906    1034     96    |
+--------------------------------------------------------------------
+linpack    1303    2214     326     0   |  1303    2214    326     |  
+--------------------------------------------------------------------
+mpeg        690    2254     519   140   |   694    2172    436     |   
+--------------------------------------------------------------------
+statemate   260   51023   30046   2112  |   262   44831  26254     |
+--------------------------------------------------------------------
+susan_thin 3202     803     174     1   |  3202     802    174     |
+--------------------------------------------------------------------
+                            Table 2 (05/26/2010)

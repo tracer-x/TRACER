@@ -1,0 +1,33 @@
+
+REGALLOC:
+
+   Benchmark            Original         Decompiled
+                     Regs   Spills      Regs    Spills
+---------------------------------------------------
+tcas                 15       8         17        6
+statemate(part)       4      72         11       49
+statemate(full)       4      93          7       91
+wuftpd parser        48      76         42       75
+mpeg                 30      31         31       30
+
+
+ALIAS:
+
+privoxy
+mpeg
+tlan
+wuftpd parser
+
+
+DEAD CODE:
+statemate (line 500) B13 and B15 are the same (few lines above)
+mpeg (line 1141, 1408) data_stat == 3 is always false at those PPs (check few branches above)
+tlan (line 1153, 1487) temp1 = builtin_constant checks if temp1 is a constant (which it is), so else is never taken
+wuftpd parser (line 480) that condition is always false (just check)
+compress (line 115) block_compress has been set to 0x80 above. so else branch is dead
+linpack_abstract (line 1301) condition is always true and function returns. rest of it is dead code
+
+
+LIVE ANALYSIS :
+statemate (lots of cases)
+mpeg (line 1141, due to dead code)

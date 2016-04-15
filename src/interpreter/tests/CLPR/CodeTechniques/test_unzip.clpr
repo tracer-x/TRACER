@@ -1,0 +1,91 @@
+% Tests with zip and unzip with difference lists
+
+% clpr -hs 8000000 -ts 8000000 -ss 8000000 test_unzip.clpr
+
+% main_unzip_dl(200000,_,_).
+% Finished in 0.27 seconds.
+
+% main_unzip(200000,_,_).
+% Finished in 0.04 seconds.
+
+% main_zip_dl(200000,CP).
+% Finished in 0.15 seconds.
+
+% main_zip(200000,CP).
+% Finished in 0.04 seconds.
+
+main_unzip_dl(N,CL,ML) :- 
+     create_unzip_list([],0,N,CP),
+     ztime,
+     unzip_constraints1(CP,CL,ML),
+     ctime(Time),
+     printf("Finished in % seconds.\n",[Time]).
+
+main_unzip(N,CL,ML):-
+     create_unzip_list([],0,N,CP),
+     ztime,
+     unzip_constraints2(CP,CL,ML),
+     ctime(Time),
+     printf("Finished in % seconds.\n",[Time]).
+
+main_zip_dl(N,CP) :- 
+     create_zip_list([],CL,[],ML,0,N),
+     ztime,
+     zip_constraints1(CL,ML,CP),
+     ctime(Time),
+     printf("Finished in % seconds.\n",[Time]).
+
+main_zip(N,CP):-
+     create_zip_list([],CL,[],ML,0,N),	
+     ztime,
+     zip_constraints2(CL,ML,CP),
+     ctime(Time),
+     printf("Finished in % seconds.\n",[Time]).
+
+
+create_unzip_list(Acc,N,N,Acc):-!.
+create_unzip_list(Acc,I,N,L):-
+	I < N, !,	
+        create_unzip_list([c(I,I)|Acc],I+1,N,L).	
+
+create_zip_list(CL,CL,ML,ML,N,N):-!.
+create_zip_list(AccCL,CL,AccML,ML,I,N):-
+	I < N, !,
+	create_zip_list([I|AccCL],CL,[I|AccML],ML,I+1,N).
+
+
+unzip_constraints2([],[],[]).
+unzip_constraints2([c(C,M)|CL],[C|Xs],[M|Ys]):- unzip_constraints2(CL,Xs,Ys).
+
+unzip_constraints1(CP,CL,ML):-
+	unzip_constraints_dl(CP,X,X,CL,[],Y,Y,ML,[]).
+unzip_constraints_dl([],CL,TCL,CL,TCL,ML,TML,ML,TML).
+unzip_constraints_dl([c(C,M)|Xs],
+		     AccCL,[C|TNAccCL],
+		     CL,TCL,
+		     AccML,[M|TNAccML],
+		     ML,TML):-
+	unzip_constraints_dl(Xs,AccCL,TNAccCL,CL,TCL,AccML,TNAccML,ML,TML).
+
+% unzip_constraints_dl([],CL,TCL,CL,TCL,ML,TML,ML,TML).
+% unzip_constraints_dl([c(C,M)|Xs],AccCL,TAccCL,CL,TCL,AccML,TAccML,ML,TML):-
+% 	append_dl(AccCL,TAccCL,[C|TC],TC,NAccCL,TNAccCL),
+% 	append_dl(AccML,TAccML,[M|TM],TM,NAccML,TNAccML),		
+% 	unzip_constraints_dl(Xs,NAccCL,TNAccCL,CL,TCL,NAccML,TNAccML,ML,TML).
+% append_dl(A,B,B,C,A,C).
+
+
+zip_constraints2([],[],[]).
+zip_constraints2([C|Xs],[M|Ys],[c(C,M)|Zs])  :- zip_constraints2(Xs,Ys,Zs).
+
+zip_constraints1(CL,ML,CP):-
+	zip_constraints_dl(CL,ML,X,X,CP,[]).
+zip_constraints_dl([],[],CP,TCP,CP,TCP).
+zip_constraints_dl([C|Xs],[M|Ys],NAcc,[c(C,M)|TNAcc],Zs,TZs)  :-
+	zip_constraints_dl(Xs,Ys,NAcc,TNAcc,Zs,TZs).
+
+% zip_constraints_dl([],[],CP,TCP,CP,TCP).
+% zip_constraints_dl([C|Xs],[M|Ys],Acc,TAcc,Zs,TZs)  :-
+% 	append_dl(Acc,TAcc,[c(C,M)|TC],TC,NAcc,TNAcc),
+% 	zip_constraints_dl(Xs,Ys,NAcc,TNAcc,Zs,TZs).
+

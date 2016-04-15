@@ -1,0 +1,41 @@
+#!/bin/bash
+
+if [ $# -ne 1 ] ;
+then
+	echo "Usage: runcil <Program>.c (the .c is compulsory)"
+	exit 1
+fi
+
+if [ -z $TRACER_PATH ]; then
+    echo "Environment variable TRACER_PATH unspecified: Using current path"
+    export TRACER_PATH="."
+fi
+cil="$TRACER_PATH/bin/cilly"
+args="--keepunused --noWrap --noPrintLn"
+prog=$1
+nosuffix=${1%.c}
+
+#Jorge: cilly cannot be found in my machine
+#hash $cil 2>&- || { echo >&2 "CIL driver not found in PATH!"; exit 1; }
+
+
+if [ -f $cil ]
+then
+    if [ -f $prog ] ;
+    then
+	$cil $prog --out ${nosuffix}.CIL $args
+	if [ $? -ne 0 ] ;
+	then
+	    echo "running CIL failed!"
+	else
+	    echo "CIL succeeded! file created: ${nosuffix}.CIL"
+	fi
+    else
+	echo "runcil: cannot find file $prog"
+    fi
+else
+    echo >&2 "CIL driver not found in PATH!"; 
+    exit 1; 
+fi    
+
+

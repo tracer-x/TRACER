@@ -1,0 +1,187 @@
+%------------------------------------------------------------------------------
+% In this example, black_pixel and pixel_count are computed within the loop
+% and they are important for subsequent control, we need to keep some
+% information on them when abstracting the loop.
+%------------------------------------------------------------------------------
+
+% :- codegen_debug.
+
+:- dynamic(temp_depth, 4), assert(temp_depth(noname, _, _, _)).
+:- dynamic(table_loop2, 2).
+
+
+loop1(_Simulation, _Depth, [X,Y,Pixel_Count,Black_Pixel,
+       X,Y,Pixel_Count,Black_Pixel], 0) :- 
+	add_counter(nodecount, 1),
+	Y>=10, 
+	!.
+loop1(Simulation, Depth, [_X,Y,Pixel_Count,Black_Pixel,
+       Xf,Yf,Pixel_Countf,Black_Pixelf], T+U) :-
+	loop2(Simulation, Depth+1, [Y/2,Y,Pixel_Count,Black_Pixel,
+                        Xf1,Yf1,Pixel_Countf1,Black_Pixelf1], U),
+	loop1(Simulation, Depth+1, [Xf1,Yf1+1,Pixel_Countf1,Black_Pixelf1,
+                        Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+loop2(Simulation, _Depth, [X,Y,Pixel_Count,Black_Pixel,
+	       Xf,Yf,Pixel_Countf,Black_Pixelf], T) :-
+	add_counter(nodecount, 1),
+	Simulation <= 0, % Not a simulation, check table.
+	stored_loop2([X,Y,Pixel_Count,Black_Pixel,
+	              Xf,Yf,Pixel_Countf,Black_Pixelf], T), !.
+loop2(_Simulation, _Depth, [X,Y,Pixel_Count,Black_Pixel,
+               X,Y,Pixel_Count,Black_Pixel], 0) :- 
+	X>=32-Y/2,
+		!.
+
+%------------------------------------------------------------------------------
+
+loop2(Simulation, Depth, [X,Y,Pixel_Count,Black_Pixel,
+              Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+ 	Simulation > 0, % A simulation, simply traverse
+	loop2(Simulation, Depth+1, [X+1,Y,Pixel_Count,Black_Pixel,
+	                Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+loop2(Simulation, Depth, [X,Y,Pixel_Count,_Black_Pixel,
+              Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Simulation > 0, % A simulation, simply traverse
+	Black_Pixel1 > 0,
+	loop2(Simulation, Depth+1, [X+1,Y,Pixel_Count,Black_Pixel1,
+               Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+%------------------------------------------------------------------------------
+
+loop2(Simulation, Depth, [X,Y,Pixel_Count,Black_Pixel,
+              Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Simulation <= 0, % Not a simulation, collate answers
+	loop2(Simulation, Depth+1, [X+1,Y,Pixel_Count,Black_Pixel,
+	                Xf,Yf,Pixel_Countf,Black_Pixelf], T),
+	store_max(loop2, Depth, 
+	          [X,Y,Pixel_Count,Black_Pixel,
+		   Xf,Yf,Pixel_Countf,Black_Pixelf], T+1), fail.
+loop2(Simulation, Depth, [X,Y,Pixel_Count,Black_Pixel,
+              Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Simulation <= 0, % Not a simulation, collate answers
+	Black_Pixel1 > 0,
+	loop2(Simulation, Depth+1, [X+1,Y,Pixel_Count,Black_Pixel1,
+               Xf,Yf,Pixel_Countf,Black_Pixelf], T),
+	store_max(loop2, Depth, 
+                  [X,Y,Pixel_Count,Black_Pixel,
+                   Xf,Yf,Pixel_Countf,Black_Pixelf], T+1), fail.	       
+loop2(Simulation, Depth, [X,Y,Pixel_Count,Black_Pixel,
+	      Xf,Yf,Pixel_Countf,Black_Pixelf], T) :-
+	Simulation <= 0, % Not a simulation, store table
+	retract_rule(temp_depth(loop2, Depth, State, T)),
+        State = [X,Y,Pixel_Count,Black_Pixel,Xf,Yf,Pixel_Countf,Black_Pixelf],
+	store_loop2(State, T).
+
+%------------------------------------------------------------------------------
+
+store_max(Name, Depth, State, T) :-
+	not temp_depth(Name, Depth, _, _), !,
+	assert(temp_depth(Name, Depth, State, T)).
+store_max(Name, Depth, State, T) :-
+	temp_depth(Name, Depth, State, U),
+	T > U, !,
+	retract_rule(temp_depth(Name, Depth, State, U)),
+	assert(temp_depth(Name, Depth, State, T)).
+store_max(_Name, _Depth, _State, _T).
+
+
+retract_rule(A) :-
+	rule(A,B), retract_rule_aux(A,B).
+
+retract_rule_aux(A,true) :-
+	retract(A), !.
+retract_rule_aux(A,Body) :-
+	retract(A :- Body).
+
+
+store_loop2([X,Y,Pixel_Count,Black_Pixel,
+             Xf,Yf,Pixel_Countf,Black_Pixelf], T) :-
+	not Black_Pixel > 0, 
+        Black_Pixel1 > 0, 
+	assert(table_loop2([X,Y,Pixel_Count,Black_Pixel1,
+                            Xf,Yf,Pixel_Countf,Black_Pixelf], T)).
+store_loop2([X,Y,Pixel_Count,Black_Pixel,
+             Xf,Yf,Pixel_Countf,Black_Pixelf], T) :-
+	not Black_Pixel=0, 
+        Black_Pixel1=0, 
+	assert(table_loop2([X,Y,Pixel_Count,Black_Pixel1,
+                            Xf,Yf,Pixel_Countf,Black_Pixelf], T)).
+
+% We note here that the 'f' variables are not checked for subsumption,
+% but they are returned answers.
+stored_loop2([X,Y,Pixel_Count,Black_Pixel,
+              Xf,Yf,Pixel_Countf,Black_Pixelf], T) :-
+	table_loop2([X,Y,Pixel_Count,Black_Pixel1,
+                     Xf,Yf,Pixel_Countf,Black_Pixelf], T), 
+        not Black_Pixel=Black_Pixel1.
+
+%------------------------------------------------------------------------------
+
+straightline1(Simulation, Depth, 0, [X,Y,_Pixel_Count,_Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	add_counter(nodecount, 1),
+	straightline1(Simulation, Depth+1, 1, [X,Y,0,0,
+                         Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 1, [X,_Y,Pixel_Count,Black_Pixel,
+                  Xf,Yf,Pixel_Countf,Black_Pixelf], T+U) :-
+	add_counter(nodecount, 1),
+	loop1(Simulation, Depth+1, [X,0,Pixel_Count,Black_Pixel,
+               Xf1,Yf1,Pixel_Countf1,Black_Pixelf1], U),
+	straightline1(Simulation,Depth+1, 2, [Xf1,Yf1,Pixel_Countf1,Black_Pixelf1,
+                          Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+straightline1(Simulation,Depth, 2, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	add_counter(nodecount, 1),
+	Pixel_Count=0,
+	straightline1(Simulation,Depth+1, 3, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 2, [X,Y,Pixel_Count,Black_Pixel,
+                  Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Pixel_Count<0,
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 4, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 2, [X,Y,Pixel_Count,Black_Pixel,
+                  Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Pixel_Count>0,
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 4, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 3, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 5, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 4, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 5, [X,Y,Pixel_Count,Black_Pixel,
+                          Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 5, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+100) :-
+	Black_Pixel=0,
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 7, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 5, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Black_Pixel<0,
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 7, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(Simulation,Depth, 5, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Black_Pixel>0,
+	add_counter(nodecount, 1),
+	straightline1(Simulation,Depth+1, 7, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(_Simulation,_Depth, 7, [X,Y,Pixel_Count,Black_Pixel,
+	          X,Y,Pixel_Count,Black_Pixel], 0).
+
+
+execute(Simulation, T,S) :- straightline1(Simulation, 0, 0, S, T).
+
+:- consult('test_engine.clpr').
+

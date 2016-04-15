@@ -1,0 +1,2 @@
+time pblast.opt -nofp -bddcov -nocache -block  -predH 7 -bfs    s3_clnt.blast.1.c 
+time pblast.opt -nofp -bddcov -nocache -block  -predH 7 -bfs    s3_srvr.blast.2.c 

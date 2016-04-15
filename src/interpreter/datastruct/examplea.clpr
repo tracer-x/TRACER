@@ -1,0 +1,55 @@
+%% This is the first program of the message below.
+%% It can be proven automatically.
+
+%% From: Joxan Jaffar <joxan@comp.nus.edu.sg>
+%% Subject: still on the stuff
+%% To: andrews@comp.nus.edu.sg
+%% Cc: Joxan Jaffar <joxan@comp.nus.edu.sg>
+%% Date: Fri, 1 Oct 2010 02:42:58 +0800
+
+%% Dido, can u prove (auto) this:
+
+%%     {true} s = 0; for ( ; l <= r; l++) s++; {s = r-l+1}
+
+%%     p(L, R, 0) :- L > R.
+%%     p(L, R, S+1) :- L <= R, p(L+1, R, S).
+
+%% Prove: p(L, R, S) \models S = max(R-L+1, 0)
+
+%% If so, then can u confirm your algm would also prove:
+
+%%     {true} s = 0; for ( ; l <= r; r--) s++; {s = r-l+1}
+
+%% Hope you can see what I'm driving at ...
+
+%% JJ
+
+coinductionlimit(2).   % Limit coinduction to depth 2.
+unfolddepthbound(3).
+solver(arith).
+
+% The sequential program's loop
+
+unfold(p(L,R,S),
+       [
+	body([], [geq(L,plus(R,1)), eq(S,0)]),
+	body([p(L1,R,S1)], [geq(R,L), eq(L1,plus(L,1)), eq(S,plus(S1,1))])
+       ]).
+
+% To Prove:
+%
+% p(L,R,S), L<=R+1 |= S=R-L+1
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [p(L,R,S)], UnfoldableGAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [geq(plus(R,1),L)],
+		     [], [], [eq(S,plus(minus(R,L),1))], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

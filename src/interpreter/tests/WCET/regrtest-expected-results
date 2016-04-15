@@ -1,0 +1,122 @@
+function showAllVars(){
+    echo "WCET                  : $wcet" >> $log
+    echo "Total states          : $states"     >> $log
+    echo "Analysis time         : $time"       >> $log
+    echo "Num of subsumptions   : $subsumed"   >> $log
+    echo "Num of unsat witnesses: $unsat"      >> $log
+}
+
+function myeval {
+ wcet_int="${wcet%\.*}"
+ states_int="${states%\.*}"
+ subsumed_int="${subsumed%\.*}"
+ unsat_int="${unsat%\.*}"
+
+ if [ $wcet_int -eq $2 ] && [ $states_int -eq $3 ] && [ $subsumed_int -eq $4 ] && [ $unsat_int -eq $5 ]; then 
+    echo "$1 OK" >> $log
+ else
+    echo "$1 FAILED" >> $log
+    showAllVars
+ fi	  
+}
+
+function checkstats {
+# Check four numbers: wcet states subsumed unsat
+ case "$1"   in
+   "foo")
+      myeval "$1" 11  18 1 0 
+      ;;
+    "foo1")
+      myeval "$1" 14 19 1 0 
+      ;;
+    "foo2")
+      myeval "$1" 21 24 1 0 
+      ;;
+    "foo3")
+      myeval "$1" 22 25 1 0 
+      ;;
+    "foo4")
+      myeval "$1" 30 31 1 0 
+      ;;
+    "foo5")
+      myeval "$1" 17 17 0 0 
+      ;;
+    "foo6")
+      myeval "$1" 23 21 0 0 
+      ;;
+    "foo7")
+      myeval "$1" 23 20 0 0 
+      ;;
+    "suhendra")
+      myeval "$1" 11 37 7 0 
+      ;;
+    "bar3")
+      myeval "$1" 22 25 1 0
+      ;;
+    "foo_bar")
+      myeval "$1" 29 28 1 0 
+      ;;
+    "function1")
+      myeval "$1" 7 12 0 0 
+      ;;
+    "function2")
+      myeval "$1" 9 13 0 0 
+      ;;
+    "bubblesort")
+      myeval "$1" 14 22 1 0 
+      ;;
+    "nested_loops")
+      myeval "$1" 16 32 4 0 
+      ;;
+    "test-loop-1")
+      myeval "$1" 11 26 1 0 
+      ;;
+    "test-loop-2")
+      myeval "$1" 10 28 1 0 
+      ;;
+    "test-loop-3")
+      myeval "$1" 9 16 2 0
+      ;;
+    "test_unstruct_loop")
+      myeval "$1" 6 17 1 0
+      ;;
+    "test_witness-1")
+      myeval "$1" 9 19 2 1
+      ;;
+    "test_witness-2")
+      myeval "$1" 10 18 2 0
+      ;;
+    "test_witness_functions-1")
+      myeval "$1" 17 36 2 1
+      ;;
+    "test_witness_functions-2")
+      myeval "$1" 20 35 2 0
+      ;;
+    "test_witness_loops-1")
+      myeval "$1" 11 24 3 1
+      ;;
+    "test_witness_loops-2")
+      myeval "$1" 12 23 3 0 
+      ;;
+# -intp sp
+    "test-subsumption-1-1")
+      myeval "$1" 26 40 10 0 
+      ;;
+# -intp none 
+    "test-subsumption-1-2")
+      myeval "$1" 26 6148 0 0 
+      ;;
+# -intp sp
+    "test-subsumption-2-1")
+      myeval "$1" 25 184 55 0 
+      ;;
+# -intp ndwp
+    "test-subsumption-2-2")
+      myeval "$1" 25 39 10 0 
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+

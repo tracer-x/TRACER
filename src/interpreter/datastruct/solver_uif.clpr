@@ -1,0 +1,85 @@
+%------------------------------------------------------------------------------
+% Below is the congruence-closure-based solver and simple arithmetic
+% sanity test. Enough to run "function idempotence" proof automatically
+%------------------------------------------------------------------------------
+
+% test :- constraintproof_aux([eq(X, X), neq(Y, error), eq(p(Y), 0)], [neq(Y, error), eq(p(Y), 0)], [eq(h(Y), h(Y)), eq(W, Z), eq(W, Z), eq(Xf, Xf)], [W]).
+
+satisfiable_negation(GConstraints, HConstraints) :-
+	once(negate_list(HConstraints, NegHConstraints)),
+	label_variables(0, GConstraints, N),
+	label_variables(N, NegHConstraints, _),
+	satisfiable_negation_aux(GConstraints, NegHConstraints).
+
+satisfiable_negation_aux(G, [C|_]) :-
+%	printf("congruence_closure(%, Closure, Ineq)\n", [[C|G]]),
+	once(congruence_closure([C|G], Closure, Inequalities)),
+	%----------------------------------------------------------------------
+	% Test sanity: we don't want different numeric values
+	% in one congruence class, not required for uif-only problems
+	%----------------------------------------------------------------------
+	test_arithmetic_sanity(Closure),
+	test_inequalities(Closure, Inequalities).
+satisfiable_negation_aux(G, [_|R]) :-
+	satisfiable_negation_aux(G, R).
+
+congruence_closure([], [], []).
+congruence_closure([neq(A,B)|R], Closure, [neq(A,B)|S]) :-
+	congruence_closure(R, Closure, S).
+congruence_closure([eq(A,B)|R], Closure1, S) :-
+	congruence_closure(R, Closure, S),
+	once(update_closure(A, B, Closure, Closure1)).
+
+update_closure(A, B, Closure, Closure1) :-
+	once(find(A, Closure, AClass, ClosureNoA)),
+	once(update_closure_aux(B, AClass, ClosureNoA, Closure1)).
+
+update_closure_aux(B, AClass, ClosureNoA, [AClass|ClosureNoA]) :-
+	once(contain(B, AClass)).
+update_closure_aux(B, AClass, ClosureNoA, [ABClass|ClosureNoAB]) :-
+	once(find(B, ClosureNoA, BClass, ClosureNoAB)),
+	append(AClass, BClass, ABClass).
+
+find(A, [], [A], []).
+find(A, [Class|R], Class, R) :- once(contain(A, Class)).
+find(A, [C|R], Class, [C|S]) :- find(A, R, Class, S).
+
+contain(A, [A|_]).
+contain(A, [_|R]) :- contain(A, R).
+
+negate_list([], []).
+negate_list([eq(A,B)|R], [neq(A,B)|S]) :- negate_list(R, S).
+negate_list([neq(A,B)|R], [eq(A,B)|S]) :- negate_list(R, S).
+negate_list([_|R], [tt|S]) :- negate_list(R, S).
+
+test_inequalities(_, []).
+test_inequalities(Closure, [neq(A,B)|R]) :-
+	%----------------------------------------------------------------------
+	% We try to find A in any of congruence closures. find/4 also succeeds
+	% in case there is no such class, in which case it returns [] as
+	% AClass.
+	%----------------------------------------------------------------------
+	once(find(A, Closure, AClass, _)),
+	%----------------------------------------------------------------------
+	% Here we make sure that B is not in AClass (which can be []).
+	%----------------------------------------------------------------------
+	not contain(B, AClass),
+	test_inequalities(Closure, R).
+
+%------------------------------------------------------------------------------
+% test_arithmetic_sanity/1: Tests whether different numeric values exist
+% in the same congruence class. Can be expanded in the future to more
+% complex arithmetic expressions instead of just numeric constant
+%------------------------------------------------------------------------------
+test_arithmetic_sanity([]).
+test_arithmetic_sanity([Class|R]) :-
+	test_arithmetic_sanity_aux(Class, _),
+	test_arithmetic_sanity(R).
+
+test_arithmetic_sanity_aux([], _).
+test_arithmetic_sanity_aux([A|R], A) :-
+	arithmetic(A),
+	test_arithmetic_sanity_aux(R, A).
+test_arithmetic_sanity_aux([A|R], X) :-
+	not arithmetic(A),
+	test_arithmetic_sanity_aux(R, X).

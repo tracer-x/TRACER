@@ -1,0 +1,57 @@
+
+ Crystal: a program analysis system for C. 
+ -----------------------------------------
+
+Crystal is a program analysis system for C written in Java.
+The system is aimed at making it easier to write program analyses 
+by providing a canonical program representation; standard program 
+analyses; and support for whole-program analysis.
+
+The system is developed at Cornell University. Contributors include:
+
+  Radu Rugina        <rugina@cs.cornell.edu>
+  Siggi Cherem       <siggi@cs.cornell.edu>
+  Maksim Orlovich    <maksim@cs.cornell.edu>
+  Lonnie Princehouse <lonnie@cs.cornell.edu>
+  Xin Zheng          <xinz@cs.cornell.edu>
+
+
+Directory structure
+------------------
+
+The directory structure is:
+ - /src: source files
+ - /jars: the JFlex and CUP jar files
+ - /classes: the generated class files 
+
+The source code directory /src includes:
+ - parser: the lexer and parser.
+ - ast: the Crystal AST classes for expressions and statements.
+ - general: the other IR components: symbols, symbol tables, and types.
+ - cfg: the control-flow graph representation. 
+ - core: a canonical representation of expressions.
+ - analysis: general-purpose program analyses. Currently includes:
+     - pointer : memory partitioning via unification-based pointer analysis.
+     - alias : alias analysis interface.
+     - callgraph : call graph construction.
+     - dataflow: standard intra-procedural dataflow analyses.
+     - ipa : a generic inter-procedural analysis engine.
+
+The lexer and parser are generated using the JFlex and java_cup tools:
+ - JFlex: the fast scanner generator for Java (http://flex.de)
+ - CUP : LALR parser generator for Java (http://www2.cs.tum.edu/projects/cup)
+ 
+Building and running Crystal
+-----------------------------
+
+Requirements: Java 1.5 or higher, and Apache Ant must be available
+on your system.
+
+To build Crystal: go to the base installation directory where this
+README file is located (we'll refer to this dir as $CRYSTAL) and run ant.
+To run Crystal: execute the generated 'bin/crystal' script.
+   
+      > cd $CRYSTAL
+      > ant
+      > bin/crystal
+     

@@ -1,0 +1,217 @@
+trans(func_foo, 1,
+	[0],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[1],[H],[],[SH],[],[],[ReturnValue,N,INext,Sum,Product,Z],[],[SReturnValue,SN,SINext,SSum,SProduct,SZ],
+	[eq(SINext,1)],
+	[],
+	[],
+	not_branch) :-
+	INext=1.
+trans(func_foo, 2,
+	[1],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,SumNext,Product,Z],[],[SReturnValue,SN,SI,SSumNext,SProduct,SZ],
+	[eq(SSumNext,0)],
+	[],
+	[],
+	not_branch) :-
+	SumNext=0.
+trans(func_foo, 3,
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,ProductNext,Z],[],[SReturnValue,SN,SI,SSum,SProductNext,SZ],
+	[eq(SProductNext,1)],
+	[],
+	[],
+	not_branch) :-
+	ProductNext=1.
+trans(func_foo, 4,
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,ZNext],[],[SReturnValue,SN,SI,SSum,SProduct,SZNext],
+	[eq(SZNext,SSum)],
+	[],
+	[],
+	not_branch) :-
+	ZNext=Sum.
+trans(func_foo, 5,
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,ZNext],[],[SReturnValue,SN,SI,SSum,SProduct,SZNext],
+	[eq(SZNext,SRV0)],
+	[call(func_bar,[RV0,Sum,Product,I|_],[SRV0,_V1,_V2,_V3|_],[eq(_V1,SSum),eq(_V2,SProduct),eq(_V3,SI)])],
+	[],
+	not_branch) :-
+	ZNext=RV0.
+trans(func_foo, 6,
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[geq(SN,SI)],
+	[],
+	[],
+	branch) :-
+	I<=N.
+trans(func_foo, 7,
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[gt(SI,SN)],
+	[],
+	[],
+	branch) :-
+	I>N.
+trans(func_foo, 8,
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product,Z],[],[SReturnValue,SN,SI,SSum,SProduct,SZ],
+	[7],[H],[],[SH],[],[],[ReturnValueNext,N,I,Sum,Product,Z],[],[SReturnValueNext,SN,SI,SSum,SProduct,SZ],
+	[eq(SReturnValueNext,SZ)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Z.
+trans(func_bar, 9,
+	[0],[H],[],[SH],[],[],[ReturnValue,Sum,Product,I],[],[SReturnValue,SSum,SProduct,SI],
+	[1],[H],[],[SH],[],[],[ReturnValue,SumNext,Product,I],[],[SReturnValue,SSumNext,SProduct,SI],
+	[eq(SSumNext,plus(SSum,SI))],
+	[],
+	[],
+	not_branch) :-
+	SumNext=Sum+I.
+trans(func_bar, 10,
+	[1],[H],[],[SH],[],[],[ReturnValue,Sum,Product,I],[],[SReturnValue,SSum,SProduct,SI],
+	[2],[H],[],[SH],[],[],[ReturnValue,Sum,ProductNext,I],[],[SReturnValue,SSum,SProductNext,SI],
+	[eq(SProductNext,mult(SProduct,SI))],
+	[],
+	[],
+	not_branch) :-
+	ProductNext=Product*I.
+trans(func_bar, 11,
+	[2],[H],[],[SH],[],[],[ReturnValue,Sum,Product,I],[],[SReturnValue,SSum,SProduct,SI],
+	[3],[H],[],[SH],[],[],[ReturnValue,Sum,Product,INext],[],[SReturnValue,SSum,SProduct,SINext],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[],
+	not_branch) :-
+	INext=I+1.
+trans(func_bar, 12,
+	[3],[H],[],[SH],[],[],[ReturnValue,Sum,Product,I],[],[SReturnValue,SSum,SProduct,SI],
+	[4],[H],[],[SH],[],[],[ReturnValueNext,Sum,Product,I],[],[SReturnValueNext,SSum,SProduct,SI],
+	[eq(SReturnValueNext,SSum)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Sum.
+trans(func_main, 13,
+	[0],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[1],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z],[],[SReturnValue,SXNext,SY,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 14,
+	[1],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[2],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 15,
+	[2],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext],[],[SReturnValue,SX,SY,SZNext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 16,
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[5],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[eq(SYNext,plus(SY,1))],
+	[],
+	[],
+	not_branch) :-
+	YNext=Y+1.
+trans(func_main, 17,
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[7],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[eq(SYNext,minus(SRV0,1))],
+	[call(func_foo,[RV0,Y|_],[SRV0,_V1|_],[eq(_V1,SY)])],
+	[],
+	not_branch) :-
+	YNext=RV0-1.
+trans(func_main, 18,
+	[7],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[8],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z],[],[SReturnValue,SXNext,SY,SZ],
+	[eq(SXNext,4)],
+	[],
+	[],
+	not_branch) :-
+	XNext=4.
+trans(func_main, 19,
+	[8],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[9],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[eq(SYNext,plus(SRV2,5))],
+	[call(func_foo,[RV2,X|_],[SRV2,_V2|_],[eq(_V2,SX)])],
+	[],
+	not_branch) :-
+	YNext=RV2+5.
+trans(func_main, 20,
+	[5],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[9],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 21,
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[gt(SY,0)],
+	[],
+	[],
+	branch) :-
+	Y>0.
+trans(func_main, 22,
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[geq(0,SY)],
+	[],
+	[],
+	branch) :-
+	Y<=0.
+trans(func_main, 23,
+	[9],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[10],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext],[],[SReturnValue,SX,SY,SZNext],
+	[eq(SZNext,SX)],
+	[],
+	[],
+	not_branch) :-
+	ZNext=X.
+trans(func_main, 24,
+	[10],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[11],[H],[],[SH],[],[],[ReturnValueNext,X,Y,Z],[],[SReturnValueNext,SX,SY,SZ],
+	[eq(SReturnValueNext,SZ)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Z.
+%--------------------------------------------------
+%--------------------------------------------------
+start(func_foo, [0]).
+start(func_bar, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_foo, [7]).
+bottom(func_bar, [4]).
+bottom(func_main, [11]).
+%--------------------------------------------------
+freshlocalarrays(func_foo,[]).
+freshlocalarrays(func_bar,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_foo,[_,_,_,_,_,_]).
+freshlocalvars(func_bar,[_,_,_,_]).
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+%--------------------------------------------------
+% For slicing
+%--------------------------------------------------
+init_slicing_goal(func_main,SA,SV,[],[SR,SY]):-	
+	freshlocalarrays(func_main, SA), 
+	freshlocalvars(func_main, SV),
+	SV = [SR,_SX,SY,_SZ].

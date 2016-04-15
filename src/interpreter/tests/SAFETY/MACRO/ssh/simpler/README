@@ -1,0 +1,6 @@
+This directory has been used for RV'11 and CAV'12 submissions.
+
+For CAV'12 two directories were added: stats_s3_clnt and stats_s3_srvr. All
+programs in these dirs were run with -clean-after-dump y -intp ndwp -h 1.
+Those programs that don't have TRACER statistics printed at the end didn't
+terminate (segfaulted).

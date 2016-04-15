@@ -1,0 +1,83 @@
+
+
+:- dynamic(cproof_t, 1).
+
+constraintproof_aux(GConstraints, HConstraints, Unifier, ExtVar) :-
+	assert(cproof_t(t(GConstraints, HConstraints, Unifier, ExtVar))),
+	retract(cproof_t(t(GConstraints1, HConstraints1, Unifier1, ExtVar1))),
+
+	%----------------------------------------------------------------------
+	% We try to find out which are the unifiers of existential variables.
+	% In general, in ExtUnifier we may get eq(A,B) and eq(A,C), that is,
+	% an existential variable A being unified with both object B and C.
+	%----------------------------------------------------------------------
+	printf("existential_unifier(%,%,ExtUnifier,NonExtUnifier)\n", [ExtVar1,Unifier1]),
+	existential_unifier(ExtVar1, Unifier1, ExtUnifier, NonExtUnifier),
+	%----------------------------------------------------------------------
+	% Remove all existential variables by substituting them with one of
+	% their (possibly several) unifiers.
+	%----------------------------------------------------------------------
+	printf("substitute_terms(%,%,HConstraints2)\n",
+	       [ExtUnifier, HConstraints1]),
+	substitute_terms(ExtUnifier, HConstraints1, HConstraints2),
+	%----------------------------------------------------------------------
+	% We compute all things that are made equal by earlier substitution.
+	% For things in ExtUnifier, an existential variable can be unified
+	% with several objects. That is, if there exists X s.t. X=Exp1,
+	% X=Exp2, ..., X=Expn, this means that Exp1=Exp2=...=Expn. We
+	% construct equality between these objects in NewUnifier.
+	%----------------------------------------------------------------------
+	existential_unifier_closure(ExtUnifier, [], TClosure),
+	closure_to_constraints(TClosure, NewUnifier),
+
+	printf("satisfiable_negation(%,%)\n", [GConstraints1,HConstraints2]),
+	not satisfiable_negation(GConstraints1, HConstraints2),
+	printf("satisfiable_negation(%,%)\n", [GConstraints1,NonExtUnifier]),
+	not satisfiable_negation(GConstraints1, NonExtUnifier),
+	printf("satisfiable_negation(%,%)\n", [GConstraints1,NewUnifier]),
+	not satisfiable_negation(GConstraints1, NewUnifier),
+	printf("PROOF OK\n", []).
+
+%------------------------------------------------------------------------------
+% existential_unifier(V, A, B, C):
+% Split the list a of elements eq(X,Y) into two lists:
+% The list B containing eq(X,Y) in A when X is in V, and
+% the list C contains eq(X,Y) in A when X is not in V.
+% Essentially, B is the "existential unifiers" when V is the set of
+% existential variables, and C other unifiers.
+%------------------------------------------------------------------------------
+existential_unifier(_ExtVar, [], [], []) :- !.
+existential_unifier(ExtVar, [Equality|R], [Equality|S], T) :-
+	Equality =.. [_,A,_],
+	existential_unifier_in(A, ExtVar), !,
+	existential_unifier(ExtVar, R, S, T).
+existential_unifier(ExtVar, [Equality|R], S, [Equality|T]) :-
+	existential_unifier(ExtVar, R, S, T).
+
+existential_unifier_in(A, [B|_]) :- A==B, !.
+existential_unifier_in(A, [_|R]) :- existential_unifier_in(A, R).
+
+%------------------------------------------------------------------------------
+% existential_unifier_closure(+A,+B,-C):
+% Compute the "closure" C of the existential unifier. The "closure" C simply
+% stores the association of existential variable with a set of substitutes.
+% B is always [].
+%------------------------------------------------------------------------------
+existential_unifier_closure([], Closure, Closure).
+existential_unifier_closure([Equality|R], Closure, Closure2) :-
+	Equality =.. [Symb,A,B],
+	update_eu_closure(Symb, A, B, Closure, Closure1),
+	existential_unifier_closure(R, Closure1, Closure2).
+
+%------------------------------------------------------------------------------
+% update_eu_closure(+A,+B,+C,-D):
+% New association of existential variable A with B is found, update list C
+% containing associations found earlier resulting in the list D.
+%------------------------------------------------------------------------------
+update_eu_closure(Symb, A, B, [], [t(Symb,A,[B])]).
+update_eu_closure(Symb, A, B, [t(Symb,A,Class)|R], [t(Symb,A,[B|Class])|R]) :-
+	!.
+update_eu_closure(Symb, A, B, [TClass|R], [TClass|S]) :-
+	update_eu_closure(Symb, A, B, R, S).
+
+

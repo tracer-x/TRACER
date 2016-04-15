@@ -1,0 +1,1156 @@
+#!/bin/bash
+
+#----------------------------------------------------------------------------#
+# This script runs TRACER on a C program. 
+# Run "tracer -help" to see all options
+#----------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------#
+# Begin auxiliary functions
+#----------------------------------------------------------------------------#
+function usage(){
+cat <<EOF
+usage: $0 safety|slicer|live|wcet|tester program [options]
+  General options:
+
+  -help                       print this message
+  -sts-dot             [n|y]  output the state transition system
+                              in dot format       (default n)
+  -tree-dot            [n|y]  output the final symbolic execution 
+                              tree in dot format  (default n)
+  -profiling           [n|y]  output statistics   (default y)
+  -debug                  x   debug mode          (default 0)
+                              x=0 --  quiet
+                              x=1 --  full verbose mode
+                              x=2 --  partial verbose mode
+  -states-bound           x   set maximum number of states      (incomplete search)
+  -path-datastructure         define the representation of a formula path 
+                              options: naive    : simple list
+                                       partition: union-find    (default value)
+  -alias               [n|y]  turn on/off alias analysis        (default y)
+                              If n then it may be UNSOUND!
+  -mccarthy            [n|y]  turn on/off mccarthy solver       (default n)
+                              Note: if -mccarthy n then pointer and
+                                    array expressions are not compiled
+                                    unless -include-pointers y
+  -mccarthy-limit         x   set maximum of different flattened expressions
+                              obtained using mccarthy axioms to test 
+                              satisfiability
+                              x=-1  -- no limit (complete!)
+                              x>=0  --          (incomplete!)
+  -convert-strict-ineq [n|y]  convert strict inequalities to greater or 
+                              than equal and less or equal than (default n)
+                              If y then it may be UNSOUND!. If -z3 y then this option 
+                              is not needed.
+  -convert-eq-to-ineq  [n|y]  convert equality into two inequalities (default n)
+  -search-order           x   set the order of the symbolic execution 
+                              traversal
+                              x=l   -- left to right (default)
+                              x=r   -- right to left
+                              x=?   -- random
+  Loop Invariants
+  -loop-inv               x   use loop invariants (default none)
+                              x=none      -- none
+                              x=octagon   -- octagon   abstract domain
+                              x=polyhedra -- polyhedra abstract domain
+                              x=invgen    -- InvGen tool
+
+  External solvers
+  -z3                  [n|y]  turn on/off Z3 solver
+
+  Performance flags (sometimes vital!) :
+  -clean-after-dump    [n|y]  restart solver after each dump (default n)
+  -optim-interpolants  [n|y]  interpolants are stored in a different memory 
+                              area to allow garbage collection during symbolic
+                              execution                      (default n)
+  -optim-memotable     [n|y]  memotable entries are stored in a different 
+                              memory area                    (default n)
+                       
+  Interpolation flags:
+  -intp                    x  Choose interpolation method
+                              x=none   -- no interpolation  
+                              x=sp     -- Use of strongest postconditions  (default)
+                              x=dwp    -- Use of exact weakest preconditions.
+                                          The formulas can be disjunctive.
+                              x=ndwp   -- Use of weakest preconditions.
+                                          The formulas are only conjunctive.
+                              x=clp    -- Use of CLP-Prover for interpolants
+                              x=notp   -- syntactic algorithm without calling TP.
+  -dwp-limit               x  If -intp=dwp then
+                              x<0  -- no limit of the size of wp
+                              x>=0 -- x is the size limit of wp info
+                                      before switching automatically 
+                                      to deletion-based interpolation
+
+  (Minmax) Safety flags:
+
+  -minmax              [n|y]  use minmax algorithm for safety (default y)
+                              For details see "Unbounded Symbolic
+                              Execution for Program Verification,
+                              RV'11". If -minmax n then it uses
+                              inductive invariants from abstract
+                              interpretation but without refinement.
+  -h                      x   choose a heuristic during refinement
+                              (only if -minmax y)
+                              x is an integer between 1 and 4.
+  -minmax-optimist-subs[n|y]  optimistic subsumption by pessimistically
+                              making non-invariant constraints  (default y)
+  -minmax-cs-reuse     [n|y]  allow minmax to reuse CLP(R) code space across 
+                              different restarts. (default y)
+  -reuse-intp-infeasible[n|y] allow reusing interpolants from siblings rather
+                              than generating new ones for the infeasible path
+  -delete-subsumed-memo [n|y] delete subsumed memo table entries
+
+  WCET, live, and slicing flags:
+  -path-sensitive      [n|y]  turn on/off path-sensitiveness     (default y)
+  -witnesses           [n|y]  turn on/off witnesses              (default y)
+  -only-linear-witness [n|y]  keep only witnesses that can be    (default n)
+                              represented by linear arithmetic constraints
+                              (incomplete!)
+
+  Only live and slicing flags:
+  -witnesses-threshold    x   maximum number of witnesses        (default no limit)
+
+  Only slicing flags:
+  -slicer-control-dep  [n|y]  turn on/off control dependencies   (default y)
+  -slicer-data-dep     [n|y]  turn on/off data dependencies      (default y)
+  -sliced-sts-dot      [n|y]  output the sliced state transition (default y)
+                              system in dot format
+
+  Special output:
+  -decomp              [n|y]  turn on/off to produce a C program (default n)
+                              from the symbolic execution tree
+  -tree-traces         [n|y]  output the final symbolic execution 
+                              tree in raw format.                (default n)
+
+  Experimental flags:  
+  -ignore-comp-errors  [n|y]  ignore some compilation errors     (default n)
+                              due to weird array and pointers 
+                              expressions, e.g., with Microsoft Visual C
+  -include-pointers    [n|y]  include pointer and array expressions
+                              even if -mccarthy n                (default n)
+                              (needed for faithful wcet and slicer)
+  -ignore-nonlinear    [n|y]  ignore nonlinear operators 
+                              If y then it may be UNSOUND!
+  -slicing-before      [n|y]  perform slicing before proving safety  (default n)
+
+  CLP(R) flags:
+  -cs                     n   set code space size     (n x 4=total num of bytes)
+  -ts                     n   set trail stack size    (n x 4=total num of bytes)
+  -ls                     n   set local stack size    (n x 4=total num of bytes)
+  -hs                     n   set heap size           (n x 4=total num of bytes)
+  -ss                     n   set solver tableau size (n x 4=total num of bytes)
+
+EOF
+}
+
+function check_yes_not_arg(){
+    if [ "$2" != "y" ] && [ "$2" != "n" ]; then
+	echo "unexpected value for -$1 $2"
+	exit 2
+    fi	
+}
+
+function setup_environment(){
+    if [ -z "$TRACER_PATH" ]; then
+	echo "Environment variable TRACER_PATH unspecified: Using current path"
+	export TRACER_PATH="."
+    fi
+    
+    if [ -z "$CLPR_BASE_PATH" ]; then
+	echo "Environment variable CLPR_BASE_PATH unspecified: Using current path"
+	export CLPR_BASE_PATH="."
+    fi
+
+    CLPR_PATH=${CLPR_BASE_PATH}"/clpr-1.2b"
+    CLPR32_PATH=${CLPR_BASE_PATH}"/clpr-1.2-bigheap"
+
+    if [ ! -z ${OS} ]; then
+	if [ $OS == "Windows_NT" ]; then
+	    export WINDOWS_TRACER_PATH=`cygpath --windows $TRACER_PATH`
+	fi
+    fi
+
+}
+
+#---------------------------------------------------------------------#
+# Function to change Makefile
+#---------------------------------------------------------------------#
+# TRACER provides a Makefile which allows to setup some options.  We
+# don't know a clear and elegant way of modifying the Makefile from
+# this script. For now, we simply rewrite it.
+#---------------------------------------------------------------------#
+function change_Makefile() {
+   Make="${TRACER_PATH}/src/interpreter/Makefile"
+    while [ "$1" != "" ]; do
+	case "$1" in
+	    -options)
+		shift
+		options="$1"
+		cat ${Make} | sed 's:OPTIONS\( *\)=\( *\)\(.*\):OPTIONS='"${options}"':g' > ${Make}.tmp
+		mv ${Make}.tmp ${Make}
+		;;	    	    
+	    *)
+		echo "unknown arg Makefile: $1"
+		exit 2
+		;;
+	esac
+	shift
+    done
+}
+#---------------------------------------------------------------------#
+# Function to choose which options will be modified in Makefile
+#---------------------------------------------------------------------#
+function setup_Makefile(){
+    makefile_opts=" "
+    if [ $tree_dot -eq 1 ]; then
+	makefile_opts="-DTREEDOT $makefile_opts"
+    fi
+    if [ $sts_dot -eq 1 ]; then
+	makefile_opts="-DSTSDOT $makefile_opts"
+    fi
+    if [ $only_linear_witness -eq 1 ]; then
+	makefile_opts="-DONLY_LINEAR_WITNESSES $makefile_opts"
+    fi
+    if [ $sliced_sts_dot -eq 1 ] && [ $app == slicer ]; then
+	makefile_opts="-DSLICESTSDOT $makefile_opts"
+    fi
+    if [ $print_sym_graph -eq 1 ]; then
+	makefile_opts="-DPRINT_SYM_GRAPH $makefile_opts"
+    fi
+    if [ $slice_pscfg -eq 1 ]; then
+	makefile_opts="-DSLICE_PSCFG $makefile_opts"
+    fi
+    if [ $profile_use -eq 1 ]; then
+	makefile_opts="-DPROFILE $makefile_opts"
+    fi
+    if [ $debug_use -eq 1 ]; then
+	makefile_opts="-DDEBUG_USE $makefile_opts"
+    fi
+    if [ $debug_use -eq 2 ]; then
+	makefile_opts="-DMINI_DEBUG_USE $makefile_opts"
+    fi
+#     if [ $encode_child_parent -eq 1 ]; then
+# 	makefile_opts="-DENCODE_CHILD_PARENT $makefile_opts"
+#     fi
+#     if [ $encode_memo -eq 1 ]; then
+# 	makefile_opts="-DENCODE_MEMO $makefile_opts"
+#     fi
+    if [ $recursive -eq 1 ]; then
+	makefile_opts="-DRECURSIVE_SOLVER $makefile_opts"
+    fi
+    if [ $external_solver -eq 1 ]; then
+        makefile_opts="-DEXTERNAL_SOLVER $makefile_opts"
+    fi
+
+    if [ $app == "safety" ] && [ $minmax_use -eq 1 ]; then
+	makefile_opts="-DUSEWP $makefile_opts"
+    fi
+
+    if [ $use_other_intp -eq 1 ]; then
+    	if [ $app != "safety" ] ; then
+    	    echo "Options -intp=[dwp|ndwp|clp] only available with safety"
+    	    exit 2	    
+        else
+    	    makefile_opts="-DUSEWP $makefile_opts"
+    	fi
+    fi
+
+    # Note: PIPEMEMO includes PIPEDUMP_AND_ANSWERS includes PIPEDUMP
+    if [ $pipememo -eq 1 ]; then
+	makefile_opts="-DPIPEMEMO $makefile_opts"	    
+    else
+	if [ $pipedump_and_answers -eq 1 ]; then
+	    makefile_opts="-DPIPEDUMP_AND_ANSWERS $makefile_opts"
+	else
+	    if [ $pipedump -eq 1 ]; then
+		makefile_opts="-DPIPEDUMP $makefile_opts"
+	    fi
+	fi
+    fi
+    #----------------------------------------------------------------#
+    # Z3
+    #----------------------------------------------------------------#
+    if [ $external_solver -eq 1 ]; then
+	if [ $minmax_use -eq 1 ]; then
+	    echo "Use of Z3 with minmax is not implemented yet"
+	    exit 2	   
+	fi 
+	if [ $witnesses_use -eq 1 ] && [ $app != "safety" ]; then
+	    echo "Use of Z3 with witnesses is not implemented yet"
+	    exit 2	   
+	fi 
+	if [ $use_other_intp -eq 1 ]; then
+	    echo "Use of Z3 with -intp [dwp|ndwp|clp] is not implemented yet"
+	    exit 2	   
+	fi 		
+    fi
+    #----------------------------------------------------------------#
+    # Minmax
+    #----------------------------------------------------------------#
+    if [ $app == "safety" ] && [ $minmax_use -eq 1 ]; then
+        # To catch errors
+	if [ $app != "safety" ]; then
+	    use_minmax=0
+        fi	    
+	if [ $external_solver -eq 1 ]; then
+	    echo "Option -minmax only available if -z3 n"
+	    exit 2
+        fi	    
+	if [ $pipememo -eq 1 ]; then
+	    echo "Option -minmax only available if -optim-memotable n"
+	    exit 2
+	fi
+	if [ $minmax_cs_reuse -eq 1 ]; then
+	    if [ $tree_dot -eq 1 ] || [ $sts_dot -eq 1 ] || [ $print_sym_graph -eq 1 ]; then
+		echo "Sorry you need to turn off minmax-cs-reuse option"
+		exit 2		
+	    fi		    
+        fi
+	makefile_opts="-DMINMAX $makefile_opts"
+        if [ $mm_refine_topdown -eq 1 ]; then
+            makefile_opts="-DMM_REFINE_TOPDOWN $makefile_opts"
+	    fi
+        if [ $ground_explanation -eq 1 ]; then
+            makefile_opts="-DGROUND_EXPLANATION $makefile_opts"
+	    fi
+        if [ $gc_intp_infeasible -eq 1 ]; then
+            makefile_opts="-DGC_INTP_INFEASIBLE $makefile_opts"
+        else
+        if [ $testing_crest -eq 1 ]; then
+            makefile_opts="-DTESTING_CREST $makefile_opts"
+	    fi
+    fi
+    else
+	if [ $minmax_heuristics -eq 1 ]; then
+	    echo "Option -h only available if -minmax y"
+	    exit 2
+	fi
+    fi
+
+    # Modify the Makefile
+    change_Makefile -options "$makefile_opts"
+}
+
+#----------------------------------------------------------------------#
+# Get absolute paths of the C and CLP programs
+#----------------------------------------------------------------------#
+function get_absolute_paths(){
+
+    if  [ -f ${prog} ] 
+    then       
+	filename=`basename ${prog}`
+	dirname=`dirname ${prog}`
+	basename_NOSUFFIX=${filename%.c}
+	
+	basename_C=${basename_NOSUFFIX}.c
+	basename_CLP=${basename_NOSUFFIX}.clp
+	
+	abspath_C="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_C"
+	abspath_CLP="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_CLP"
+    else
+	echo "${prog} does not exist"
+	exit 2
+    fi  	
+}
+
+function compile_in_Linux(){
+    compile_command="ant compi -Darg1=${abspath_C} -Darg2=${abspath_CLP} -Darg3=\"$compiler_opts\""
+    tee_command="tee -a $compiler_output"
+    exec $compile_command | exec $tee_command
+}
+
+function compile_in_Windows(){
+    compile_command="ant compi -buildfile $WINDOWS_TRACER_PATH\\build.xml -Darg1=`cygpath --windows $abspath_C` -Darg2=`cygpath --windows ${abspath_CLP}` -Darg3=\"$compiler_opts\""
+    tee_command="tee -a $compiler_output"
+    echo $compile_command "|" $tee_command
+    exec $compile_command | exec $tee_command
+}
+#----------------------------------------------------------------------------#
+# End auxiliary functions
+#----------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------#
+#                              MAIN 
+#----------------------------------------------------------------------------#
+
+if [ $# -lt 2 ] 
+then
+    usage
+    exit 2
+fi
+
+CLP_SYS="CLPR"     # Stable version of CLPR
+#CLP_SYS="CLPR32"  # Experimental CLPR with heap extended to 32 bits
+#CLP_SYS="SWI"     # SWI-Prolog
+
+app=$1   
+prog=$2
+
+if [ $app != safety ] && [ $app != wcet ] && [ $app != slicer ] && [ $app != tester ] && [ $app != live ]
+then
+    echo " $app is an unknown application"
+    echo " Available applications: safety, wcet, slicer, tester, and live."
+    exit 2
+fi
+
+# Options for C/CLP compilation and initial values
+compiler_output=compiler.out  # To redirect compiler output
+use_interpolation=1           # true
+use_alias=1                   # true
+include_arrays=0              # false
+include_only_sym_arrays=0     # false
+compile_nonlinear=1           # true
+search_order=0                # 0,1,2
+ignore_comp_errors=0          # false
+decompile=0                   # false
+# Options for makefile and initial values
+tree_dot=0                    # false
+sts_dot=0                     # false
+sliced_sts_dot=1              # true
+print_sym_graph=0             # false
+slice_pscfg=0                 # false
+profile_use=1                 # true
+debug_use=0                   # (no debug)
+encode_child_parent=0         # false
+encode_memo=0                 # false
+pipedump=0                    # false
+pipedump_and_answers=0        # false
+recursive=0                   # false
+external_solver=0             # false
+pipememo=0                    # false 
+use_other_intp=0              # false
+minmax_use=1                  # true
+minmax_heuristics=0           # false
+only_linear_witness=0         # false
+witnesses_use=1               # true
+convert_strict_inequalities=0 # false
+convert_eq_to_ineq=0          # false 
+slicing=0                     # false 
+testing_crest=0               # false
+mm_refine_topdown=0           # false
+ground_explanation=0          # false
+gc_intp_infeasible=0          # false
+# basic | pplloose | polka | pplstrict | invgen
+loop_inv="nil"      
+# Options for TRACER 
+tracer_opts="nil"     
+###-----------------------------------------------------------------------#
+### For large programs it's vital to run with
+### -DMINMAX_CS_REUSE to reuse code space from one restart to
+### another.  However, there is an (unsolved) conflict between
+### -DMINMAX_CS_REUSE and -DGRAPHVIZ_USE and
+### -PIPEDUMP_AND_ANSWER. Thus, by default we run without
+### -DMINMAX_CS_REUSE
+###-----------------------------------------------------------------------#
+# For large programs comment the following line:
+# minmax_cs_reuse=0     # false
+# For large programs uncomment the following line:
+minmax_cs_reuse=1       # true
+
+#-------------------------------------------------------------------------#
+# Default CLP(R) parameters
+#-------------------------------------------------------------------------#
+# Note: local stack and heap size are allocated together
+# Note: -ss is not the size of the solver. The solver allocates
+# dynamically memory. Instead -ss is the number of variables handled
+# by tableau.
+if [ ! -z ${OS} ] && [ $OS == "Windows_NT" ]; then
+# Windows parameters
+    CLPR_OPT_CS=65000000    #520Mb  # Code space  x 4 in bytes
+    CLPR_OPT_TS=2500000     #20Mb   # Trail stack x 4 in btyes
+    CLPR_OPT_LS=3500000             # Local stack x 4 in bytes
+    CLPR_OPT_HS=4000000     #60Mb   # Heap x 4 in bytes
+    CLPR_OPT_SS=2500000     #20Mb   # Tableau space x 4 in bytes
+    CLPR32_OPT_CS=160000000    
+    CLPR32_OPT_TS=80000000     
+    CLPR32_OPT_LS=8000000      
+    CLPR32_OPT_HS=40000000     
+    CLPR32_OPT_SS=5000000      
+else
+# Linux parameters
+    CLPR_OPT_CS=130000000   #520Mb  # Code space  x 4 in bytes
+    CLPR_OPT_TS=5000000     #20Mb   # Trail stack x 4 in btyes
+    CLPR_OPT_LS=7000000             # Local stack x 4 in bytes
+    CLPR_OPT_HS=8000000     #60Mb   # Heap x 4 in bytes
+    CLPR_OPT_SS=5000000     #20Mb   # Tableau space x 4 in bytes
+    CLPR32_OPT_CS=160000000    
+    CLPR32_OPT_TS=80000000     
+    CLPR32_OPT_LS=8000000      
+    CLPR32_OPT_HS=40000000     
+    CLPR32_OPT_SS=5000000      
+fi
+
+setup_environment            # setup environment variables
+
+
+#-------------------------------------------------------------------------#
+# Read options from user
+#-------------------------------------------------------------------------#
+while [ "$3" != "" ]; do
+    case "$3" in
+	-states-bound)
+	    shift
+	    tracer_opts="option(states_bound,$3),$tracer_opts"
+	    ;;	    	
+	-witnesses)
+	    shift
+	    check_yes_not_arg "witnesses" $3
+	    if [ "$3" == "n" ]; then
+		witnesses_use=0
+	    fi
+	    tracer_opts="option(witnesses,$3),$tracer_opts"
+	    ;;	    
+	-witnesses-threshold)
+	    shift
+	    tracer_opts="option(witnesses_threshold,$3),$tracer_opts"
+	    ;;	  
+	-only-linear-witness)
+	    shift
+	    check_yes_not_arg "only-linear-witness" $3
+	    if [ "$3" == "y" ]; then
+		only_linear_witness=1
+	    fi
+	    ;;	    
+	-path-sensitive)
+	    shift
+	    check_yes_not_arg "path-sensitive" $3
+	    tracer_opts="option(path_sensitive,$3),$tracer_opts"
+	    ;;	    
+	-mccarthy)
+	    shift
+	    check_yes_not_arg "mccarthy" $3
+	    if [ "$3" == "y" ]; then
+		include_arrays=1
+	    fi 	
+	    tracer_opts="option(array_solver,$3),$tracer_opts"
+	    ;;	    
+	-mccarthy-limit)
+	    shift
+	    tracer_opts="option(array_solver_backtrack,$3),$tracer_opts"
+	    ;;	    
+	-alias)
+	    shift
+	    check_yes_not_arg "alias" $3
+	    tracer_opts="option(alias,$3),$tracer_opts"
+	    if [ "$3" == "n" ]; then
+		use_alias=0
+	    fi
+	    ;;	    
+	-convert-strict-ineq)
+	    shift
+	    check_yes_not_arg "convert-strict-inequality" $3
+	    tracer_opts="option(convert_strict_inequality,$3),$tracer_opts"
+	    if [ "$3" == "y" ]; then
+		convert_strict_inequalities=1
+	    fi
+	    ;;	    
+	-convert-eq-to-ineq)
+	    shift
+	    check_yes_not_arg "convert-eq-to-ineq" $3
+	    if [ "$3" == "y" ]; then
+		convert_eq_to_ineq=1
+	    fi
+	    ;;	    
+	-path-datastructure)
+	    shift
+	    if [ "$3" != "naive" ] && [ "$3" != "partition" ]; then
+		echo "unexpected value for -path_datastructure $3"
+		exit 2
+	    fi	
+	    if [ "$3" == "naive" ]; then
+		tracer_opts="option(path_slicing,y),$tracer_opts"
+	    fi	
+	    tracer_opts="option(path_datastructure,$3),$tracer_opts"
+	    ;;
+	# -recursive)
+	#     shift
+	#     check_yes_not_arg "recursive" $3
+	#     if [ "$3" == "y" ]; then
+	# 	recursive=1
+	#     fi 	
+	#     ;;	    
+	-z3)
+	    shift
+	    check_yes_not_arg "z3" $3
+	    if [ "$3" == "y" ]; then
+		external_solver=1
+	    fi 	
+	    ;;	    
+	-loop-inv)
+	    shift
+	    if [ "$3" == "none" ]; then
+		loop_inv="nil"
+	    else 
+		if [ "$3" == "octagon" ]; then
+		    loop_inv="basic"
+		else
+		    if [ "$3" == "polyhedra" ]; then
+			loop_inv="polka"
+		    else
+			if [ "$3" == "invgen" ]; then
+			    loop_inv="invgen"
+			else
+ 			    echo "unexpected value for -loop-inv: $3"
+			    exit 2
+			fi
+		    fi
+		fi
+	    fi 	
+	    ;;	    
+# Makefile options
+	-tree-dot)
+	    shift
+	    check_yes_not_arg "tree-dot" $3
+	    if [ "$3" == "y" ]; then
+		tree_dot=1
+	    fi	
+	    ;;	    
+	-tree-traces)
+	    shift
+	    check_yes_not_arg "tree-traces" $3
+	    if [ "$3" == "y" ]; then
+		print_sym_graph=1
+	    fi	
+	    ;;	    
+	-slice-pscfg)
+	    shift
+	    check_yes_not_arg "slice-pscfg" $3
+	    if [ "$3" == "y" ]; then
+		slice_pscfg=1
+	    fi	
+	    ;;	    
+	-sts-dot)
+	    shift
+	    check_yes_not_arg "sts-dot" $3
+	    if [ "$3" == "y" ]; then
+		sts_dot=1
+	    fi	
+	    ;;	    
+	-profiling)
+	    shift
+	    check_yes_not_arg "profiling" $3
+	    if [ "$3" == "n" ]; then
+		profile_use=0
+	    fi
+	    ;;	    
+	-debug)
+	    shift
+	    if [ "$3" != "0" ] && [ "$3" != "1" ] && [ "$3" != "2" ]; then
+		echo "unexpected value for -debug $3"
+		exit 2
+	    fi	
+	    if [ "$3" == "1" ]; then
+		debug_use=1
+	    else
+		if [ "$3" == "2" ]; then
+		    debug_use=2
+		fi	    
+	    fi     
+	    ;;	    
+# 	-encode-tree)
+# 	    shift
+# 	    check_yes_not_arg "encode-tree" $3
+# 	    if [ "$3" == "y" ]; then
+# 		encode_child_parent=1
+# 	    fi	
+# 	    ;;	    
+# 	-encode-memo)
+# 	    shift
+# 	    check_yes_not_arg "encode-memo" $3
+# 	    if [ "$3" == "y" ]; then
+# 		encode_memo=1
+# 	    fi	
+# 	    ;;	    
+## Optimizations
+	-clean-after-dump)
+	    shift
+	    check_yes_not_arg "clean-after-dump" $3
+	    if [ "$3" == "y" ]; then
+		pipedump=1
+	    fi	
+ 	    ;;	    
+	-optim-interpolants)
+	    shift
+	    check_yes_not_arg "optim-interpolants" $3
+	    if [ "$3" == "y" ]; then
+		pipedump_and_answers=1	
+	    fi	
+	    ;;
+	-optim-memotable)
+	    shift
+	    check_yes_not_arg "optim-memotable" $3
+	    if [ "$3" == "y" ]; then
+		pipememo=1
+	    fi	
+ 	    ;;	    
+# Interpolation methods
+	-intp)
+	    shift
+	    case "$3" in
+		"none")
+		    use_interpolation=0;
+		    ;;
+		"dwp" )
+		    use_other_intp=1
+		    tracer_opts="option(other_interp,y),option(other_interp_method,disjunctive),$tracer_opts"
+		    ;;
+		"ndwp" )
+		    use_other_intp=1
+		    tracer_opts="option(other_interp,y),option(other_interp_method,non_disjunctive),$tracer_opts"
+		    ;;
+		"clp" )
+		    use_other_intp=1
+		    tracer_opts="option(other_interp,y),option(other_interp_method,rybal),$tracer_opts"
+		    ;;
+		"sp" )
+		    tracer_opts="option(interpolant,deletion),$tracer_opts"
+		    ;;
+		"notp" )
+		    tracer_opts="option(interpolant,partition),$tracer_opts"
+		    ;;
+		*)
+		    echo "unexpected value for -intp $3"
+		    exit 2
+
+	    esac		
+ 	    ;;	    
+	-dwp-limit)
+# This option makes sense only if -intp=dwp
+	    shift
+	    tracer_opts="option(wp_max_structure_size,$3),$tracer_opts"
+ 	    ;;	  
+# Minmax options  
+	-minmax)
+	    shift
+	    check_yes_not_arg "minmax" $3
+	    if [ "$3" == "n" ]; then
+		minmax_use=0
+	    else 
+		minmax_use=1
+	    fi
+ 	    ;;	    
+	-h)
+	    shift
+	    tracer_opts="option(refinement_heuristics,$3),$tracer_opts"
+	    ;;    
+ 	-mm-refine-topdown)
+ 	    shift
+ 	    if [ "$3" == "y" ]; then
+ 		mm_refine_topdown=1
+ 	    fi	
+ 	    ;;	    
+ 	-ground-explanation)
+ 	    shift
+ 	    if [ "$3" == "y" ]; then
+ 		ground_explanation=1
+ 	    fi	
+ 	    ;;	    
+	-minmax-optimist-subs)
+	    shift
+	    check_yes_not_arg "minmax-optimistic-subs" $3
+	    if [ "$3" == "n" ]; then
+		tracer_opts="option(allow_become_non_invariant_to_subsume,n),$tracer_opts"
+	    else 
+		tracer_opts="option(allow_become_non_invariant_to_subsume,y),$tracer_opts"
+	    fi
+ 	    ;;
+	-minmax-cs-reuse)
+	    shift
+	    check_yes_not_arg "minmax-cs-reuse" $3
+	    if [ "$3" == "n" ]; then
+		minmax_cs_reuse=0
+	    else 
+		minmax_cs_reuse=1
+	    fi
+ 	    ;;
+	-reuse-intp-infeasible)
+	    shift
+	    check_yes_not_arg "reuse-intp-infeasible" $3
+	    if [ "$3" == "y" ]; then
+		tracer_opts="option(reuse_interp_infeasible,y),$tracer_opts"
+	    else 
+		tracer_opts="option(reuse_interp_infeasible,n),$tracer_opts"
+	    fi
+ 	    ;;
+	-delete-subsumed-memo)
+	    shift
+	    check_yes_not_arg "delete-subsumed-memo" $3
+	    if [ "$3" == "y" ]; then
+		tracer_opts="option(delete_subsumed_memo,y),$tracer_opts"
+	    else 
+		tracer_opts="option(delete_subsumed_memo,n),$tracer_opts"
+	    fi
+ 	    ;;
+# CLP(R) parameters
+	-ts)
+	    shift
+	    CLPR_OPT_TS=$3
+	    CLPR32_OPT_TS=$3
+	    ;;	    
+	-ls)
+	    shift
+	    CLPR_OPT_LS=$3
+	    CLPR32_OPT_LS=$3
+	    ;;	    
+	-cs)
+	    shift
+	    CLPR_OPT_CS=$3
+	    CLPR32_OPT_CS=$3
+	    ;;	    
+	-hs)
+	    shift
+	    CLPR_OPT_HS=$3
+	    CLPR32_OPT_HS=$3
+	    ;;	    
+	-ss)
+	    shift
+	    CLPR_OPT_SS=$3
+	    CLPR32_OPT_SS=$3
+	    ;;	    
+# For slicing
+	-slicer-control-dep)
+	    shift
+	    check_yes_not_arg "slicer-control-dep" $3
+	    tracer_opts="option(slicer_control_dep,$3),$tracer_opts"
+	    ;;	    
+	-slicer-data-dep)
+	    shift
+	    check_yes_not_arg "slicer-control-data" $3
+	    tracer_opts="option(slicer_data_dep,$3),$tracer_opts"
+	    ;;	    
+	-sliced-sts-dot)
+	    shift
+	    check_yes_not_arg "sliced-sts-dot" $3
+	    if [ "$3" == "n" ]; then
+		sliced_sts_dot=0
+	    fi	
+	    ;;	    
+# For using GC for infeasible path interpolation
+ 	-gc-intp-infeasible)
+ 	    shift
+ 	    if [ "$3" == "y" ]; then
+ 		gc_intp_infeasible=1
+ 	    fi	
+ 	    ;;	    
+# For testing running CREST
+ 	-testing_crest)
+ 	    shift
+ 	    if [ "$3" == "y" ]; then
+ 		testing_crest=1
+ 	    fi	
+ 	    ;;	    
+# HERE EXPERIMENTAL OPTIONS AND OTHERS
+	-decomp)
+	    shift
+	    check_yes_not_arg "tree-traces" $3
+	    if [ "$3" == "y" ]; then
+		decompile=1
+	    fi	
+	    ;;	    
+	-include-pointers)
+	    shift
+	    check_yes_not_arg "include-pointers" $3
+	    if [ "$3" == "y" ]; then
+		include_only_sym_arrays=1
+	    fi	
+	    ;;	    
+	-ignore-comp-errors)
+	    shift
+	    check_yes_not_arg "ignore-comp-errors" $3
+	    if [ "$3" == "y" ]; then
+		ignore_comp_errors=1
+	    fi	
+	    ;;	    
+ 	-ignore-nonlinear)
+ 	    shift
+ 	    if [ "$3" == "y" ]; then
+ 		compile_nonlinear=0
+ 	    fi	
+ 	    ;;	    
+ 	-slicing-before)
+ 	    shift
+ 	    if [ "$3" == "y" ]; then
+ 		slicing=1
+ 	    fi	
+ 	    ;;	    
+	-search-order)
+	    shift
+	    if [ "$3" != "l" ] && [ "$3" != "r" ] && [ "$3" != "?" ] ; then
+		echo "unexpected value for -search-order $3"
+		exit 2
+	    fi	
+	    if [ "$3" == "r" ]; then
+		search_order=1
+	    else 
+		if [ "$3" == "?" ]; then
+		    search_order=2
+		fi
+	    fi	
+	    ;;
+	-help)
+	    shift
+	    usage
+	    exit 2
+	    ;;	    	
+	*)
+	    echo "unknown option $3"
+	    exit 2
+	    ;;
+    esac
+    shift
+done
+
+
+get_absolute_paths
+
+# if [ $recursive -eq 1 ]; then
+#     # Recursive assertions
+#     recursive_assertion_file=`echo -n $abspath_C | sed s/\.c$/_recursive\.clp/`
+#     # echo Recursive assertion file: $recursive_assertion_file
+#     if [ -e $recursive_assertion_file ]; then
+# 	tracer_opts="option(recursive_def,'$recursive_assertion_file'), $tracer_opts"
+#     fi
+# fi
+
+if [ $use_interpolation -eq 0 ]; then
+    tracer_opts="option(interpolation,n),$tracer_opts"
+else
+    tracer_opts="option(interpolation,y),$tracer_opts"
+fi
+
+if [ $app == "safety" ] && [ $minmax_use -eq 1 ]; then
+    if [ $minmax_cs_reuse -eq 1 ]; then
+	tracer_opts="option(minmax_cs_reuse,y),$tracer_opts"
+    else
+	tracer_opts="option(minmax_cs_reuse,n),$tracer_opts"
+    fi
+else 
+    # To avoid failing sanity checks if TRACER analyses are run
+    minmax_cs_reuse=0
+fi
+
+# If external solver is used then it replaces our custom mccarthy
+# solver
+# if [ $include_arrays -eq 1 ]; then
+#     if [ $external_solver -eq 1 ]; then
+# 	tracer_opts="option(array_solver,n),$tracer_opts"
+#     else
+# 	tracer_opts="option(array_solver,y),$tracer_opts"
+#     fi
+# fi
+
+#-------------------------------------------------------------------------#
+# Options handled by the compiler from C to CLP 
+#-------------------------------------------------------------------------#
+#compiler_opts="run_cil=false"                      
+compiler_opts=""                      
+
+if [ $use_alias -eq 1 ]; then
+# To use alias analysis to partition heap and detect which variables
+# "have been taken" via & operator.
+    compiler_opts="alias_analysis=true,$compiler_opts" 
+fi	
+
+if [ $include_arrays -eq 1 ]; then
+# Include array constraints for full reasoning
+    compiler_opts="include_array_constraints=true,$compiler_opts" 
+fi
+	
+if [ $include_only_sym_arrays -eq 1 ] && [ $include_arrays -eq 0 ]; then
+    # Include only symbolic array constraints. Not for reasoning. 
+    # Needed for WCET and slicing to compute answers.
+    compiler_opts="include_array_constraints=true,$compiler_opts" 
+    compiler_opts="include_only_sym_array_constraints=true,$compiler_opts" 
+fi	
+
+if [ $compile_nonlinear -eq 0 ]; then
+# DEBUGGING flag
+# To avoid nonlinear constraints if problems arise
+    compiler_opts="allow_nonlinear=false,$compiler_opts" 
+fi	
+
+if [ $ignore_comp_errors -eq 1 ]; then
+# Continue with the compilation even if errors due to complex array or
+# pointer expression
+    compiler_opts="ignore_struct_errors=true,$compiler_opts" 
+fi	
+
+# Convert x < y into x<= y-1 and x > y into x>= y+1
+if [ $convert_strict_inequalities -eq 1 ]; then
+# Convert strict inequalities to greater or equal than and less or
+# equal than. Needed if we reason about integers. 
+    compiler_opts="convert_strict_inequalities=true,$compiler_opts" 
+fi	
+
+if [ $search_order -eq 1 ]; then
+# Reverse the order of the transitions in the CLP program
+    compiler_opts="reverse_trans_order=true,$compiler_opts" 
+else 
+    if [ $search_order -eq 2 ]; then
+    # Random order	
+	compiler_opts="random_trans_order=true,$compiler_opts" 	
+    fi
+fi	
+
+if [ $decompile -eq 1 ]; then
+# Produce a C program from the symbolic execution tree
+    compiler_opts="decomp_run=true,$compiler_opts" 
+fi	
+
+if [ $use_other_intp -eq 1 ]; then
+    if [ $include_only_sym_arrays -eq 1 ] || [ $include_arrays -eq 1 ]; then
+	echo "Sorry this kind of interpolant is not implement for arrays/pointers."	
+	exit 2
+    fi
+    ## Special compilation for wp: 
+    ## All formal params and return values are converted to global
+    ##compiler_opts="wp_compilation=true,$compiler_opts" 
+fi	
+
+if [ $slicing -eq 1 ]; then
+    if [ $app == "safety" ]; then
+	compiler_opts="slice_before_compilation=true,$compiler_opts" 	
+    else
+	echo "Sorry -slicing y only if safety."	
+	exit 2
+    fi
+fi
+
+# If safety w/ minmax: we always compile the program by converting
+# all formal parameters and return values to global values (needed
+# for correctness).
+#
+# If safety w/o minmax or TRACER analyses: we don't need because
+# we do some adhoc steps.
+if [ $app == "safety" ]; then
+    if [ $minmax_use -eq 1 ]; then
+	compiler_opts="wp_compilation=true,$compiler_opts" 
+    else
+	if [ $use_other_intp -eq 1 ]; then
+	    compiler_opts="wp_compilation=true,$compiler_opts" 
+	fi	
+    fi
+fi
+
+### Loop invariants from external tools
+if [ $loop_inv == "invgen" ]; then
+    # we use invgen + polyhedra
+    # we could use invgen + octagon but invgen is already quite
+    # expensive so better run with polyhedra
+    compiler_opts="abstract_domain=polka,heavyweight_invariants=true,$compiler_opts"
+else
+    if [ $loop_inv != "nil" ]; then    
+	compiler_opts="abstract_domain=$loop_inv,$compiler_opts"	
+    fi	
+fi
+
+### Convert x=y into y>=x and x<=y
+if [ $convert_eq_to_ineq -eq 1 ]; then
+    if [ $app == slicer ]; then
+	echo "Warning: cannot convert equalities to inequalities."
+	convert_eq_to_ineq=0
+    else
+	if [ $app == safety ] && [ $use_other_intp -eq 1 ]; then
+	    echo "Warning: cannot convert equalities to inequalities."
+	    convert_eq_to_ineq=0
+	else
+	    compiler_opts="eq_to_ineq=true,$compiler_opts"
+	    tracer_opts="option(convert_eq_to_ineq,y),$tracer_opts"
+	fi
+    fi
+fi
+
+# Here we put all tracer options into a list
+tracer_opts="[$tracer_opts]"
+
+case $app in
+    safety)
+#	compiler_opts="include_block_hierarchy=false,$compiler_opts"
+	compiler_opts="include_block_hierarchy=true,$compiler_opts"
+	;;
+    tester)
+	compiler_opts="include_test_input_vars=true,$compiler_opts"
+	compiler_opts="include_block_hierarchy=false,$compiler_opts"
+	;;
+    wcet)
+	compiler_opts="include_block_hierarchy=false,$compiler_opts"
+	;;
+    live)
+	compiler_opts="include_block_hierarchy=true,$compiler_opts"
+	;;
+    slicer)
+        # For slicing, we need to know about the structure of the C
+        # program
+	compiler_opts="include_block_hierarchy=true,$compiler_opts"
+	;;
+esac
+shift
+#-------------------------------------------------------------------------#
+# Options handled by Makefile
+#-------------------------------------------------------------------------#
+setup_Makefile
+
+cd "${TRACER_PATH}"
+if [ ! -z ${OS} ]; then
+    if [ $OS == "Windows_NT" ]; then
+	compile_in_Windows
+    else
+	compile_in_Linux
+    fi
+else
+    compile_in_Linux
+fi
+
+
+# Catch errors from ANTLR, CRYSTAL, or CIL
+if ( (grep "Fatal error" $compiler_output) || (grep " Error:" $compiler_output) || (grep "CIL failed" $compiler_output) ); then
+   echo -e "\nTRACER: compilation of ${basename_C} failed.\n"
+   rm -f $compiler_output
+   exit 0
+else
+   rm -f $compiler_output
+fi
+
+echo "cd ${TRACER_PATH}/src/interpreter; make ${app}"
+cd "${TRACER_PATH}/src/interpreter"; make ${app}
+
+if [ ${CLP_SYS} == "SWI" ] 
+then    
+    echo -e "\n\nLoading SWI-Prolog ...\n"
+    SWI_EXEC=swi     
+    SWI_OPT_LS=16M   # Local  stack
+    SWI_OPT_GS=32M   # Global stack
+    SWI_OPT_TS=32M   # Trail  stack
+    ${SWI_EXEC} -L${SWI_OPT_LS} -G${SWI_OPT_GS} -T${SWI_OPT_TS} -f ${app}.clp
+else  
+    if [ $testing_crest == 1 ]
+    then
+        # when using CREST, don't run the program now. just save the user options to be run later.
+        echo -e ":- store_program_and_user_options('${abspath_CLP}',$tracer_opts).\n" >> ${app}.clp
+    else
+        # Execute run/1
+        echo -e ":- run_with_user_options('${abspath_CLP}',$tracer_opts).\n" >> ${app}.clp	    
+        # and halt (if non-interactive mode) 
+            echo -e "% Needed when used from the GUI front-end." >> ${app}.clp
+            echo -e ":- halt.\n" >> ${app}.clp	    
+    fi
+
+    if [ ${CLP_SYS} ==  "CLPR32" ] 
+    then
+	echo -e "Loading experimental version of CLPR with heap extended to 32 bits...\n"
+	export CLPRLIB=${CLPR32_PATH}
+
+	clpr_command="${CLPR32_PATH}/clpr -cs ${CLPR32_OPT_CS} -ts ${CLPR32_OPT_TS} -ls ${CLPR32_OPT_LS} -hs ${CLPR32_OPT_HS} -ss ${CLPR32_OPT_SS} ${app}.clp"
+	echo $clpr_command
+	exec $clpr_command
+    else
+	echo -e "Loading stable version of CLPR...\n"
+	export CLPRLIB=${CLPR_PATH}
+	clpr_command="${CLPR_PATH}/clpr -cs ${CLPR_OPT_CS} -ts ${CLPR_OPT_TS} -ls ${CLPR_OPT_LS} -hs ${CLPR_OPT_HS} -ss ${CLPR_OPT_SS} ${app}.clp"
+	echo $clpr_command
+	exec $clpr_command
+    fi    
+fi 
+
+

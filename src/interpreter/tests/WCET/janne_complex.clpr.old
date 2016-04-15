@@ -1,0 +1,315 @@
+trans(func_complex, 1,
+	[0],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[2],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[gt(30,SA)],
+	[],
+	[],
+	branch) :-
+	A<30.
+trans(func_complex, 2,
+	[2],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[4],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[gt(SA,SB)],
+	[],
+	[],
+	branch) :-
+	B<A.
+trans(func_complex, 3,
+	[5],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[6],[H],[],[SH],[],[],[ReturnValue,A,BNext],[],[SReturnValue,SA,SBNext],
+	[assign(SBNext,mult(SB,3))],
+	[],
+	[],
+	not_branch) :-
+	BNext=B*3.
+trans(func_complex, 4,
+	[7],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[8],[H],[],[SH],[],[],[ReturnValue,A,BNext],[],[SReturnValue,SA,SBNext],
+	[assign(SBNext,plus(SB,2))],
+	[],
+	[],
+	not_branch) :-
+	BNext=B+2.
+trans(func_complex, 5,
+	[6],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[8],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_complex, 6,
+	[4],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[5],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[gt(SB,5)],
+	[],
+	[],
+	branch) :-
+	B>5.
+trans(func_complex, 7,
+	[4],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[7],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[geq(5,SB)],
+	[],
+	[],
+	branch) :-
+	B<=5.
+trans(func_complex, 8,
+	[9],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[10],[H],[],[SH],[],[],[ReturnValue,ANext,B],[],[SReturnValue,SANext,SB],
+	[assign(SANext,plus(SA,10))],
+	[],
+	[],
+	not_branch) :-
+	ANext=A+10.
+trans(func_complex, 9,
+	[11],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[12],[H],[],[SH],[],[],[ReturnValue,ANext,B],[],[SReturnValue,SANext,SB],
+	[assign(SANext,plus(SA,1))],
+	[],
+	[],
+	not_branch) :-
+	ANext=A+1.
+trans(func_complex, 10,
+	[10],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[12],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_complex, 11,
+	[8],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[9],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[geq(SB,10),geq(12,SB)],
+	[],
+	[],
+	branch) :-
+	B>=10,B<=12.
+trans(func_complex, 12,
+	[8],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[11],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[gt(10,SB)],
+	[],
+	[],
+	not_branch) :-
+	B<10.
+trans(func_complex, 13,
+	[8],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[11],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[gt(SB,12)],
+	[],
+	[],
+	branch) :-
+	B>12.
+trans(func_complex, 14,
+	[2],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[3],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[geq(SB,SA)],
+	[],
+	[],
+	branch) :-
+	B>=A.
+trans(func_complex, 15,
+	[12],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[2],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_complex, 16,
+	[3],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[13],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_complex, 17,
+	[13],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[14],[H],[],[SH],[],[],[ReturnValue,ANext,B],[],[SReturnValue,SANext,SB],
+	[assign(SANext,plus(SA,2))],
+	[],
+	[],
+	not_branch) :-
+	ANext=A+2.
+trans(func_complex, 18,
+	[14],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[15],[H],[],[SH],[],[],[ReturnValue,A,BNext],[],[SReturnValue,SA,SBNext],
+	[assign(SBNext,minus(SB,10))],
+	[],
+	[],
+	not_branch) :-
+	BNext=B-10.
+trans(func_complex, 19,
+	[0],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[1],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[geq(SA,30)],
+	[],
+	[],
+	branch) :-
+	A>=30.
+trans(func_complex, 20,
+	[15],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[0],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_complex, 21,
+	[1],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[16],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_complex, 22,
+	[16],[H],[],[SH],[],[],[ReturnValue,A,B],[],[SReturnValue,SA,SB],
+	[17],[H],[],[SH],[],[],[ReturnValueNext,A,B],[],[SReturnValueNext,SA,SB],
+	[assign(SReturnValueNext,1)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=1.
+trans(func_main, 23,
+	[0],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[1],[H],[],[SH],[],[],[ReturnValue,ANext,B,Answer],[],[SReturnValue,SANext,SB,SAnswer],
+	[assign(SANext,1)],
+	[],
+	[],
+	not_branch) :-
+	ANext=1.
+trans(func_main, 24,
+	[1],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[2],[H],[],[SH],[],[],[ReturnValue,A,BNext,Answer],[],[SReturnValue,SA,SBNext,SAnswer],
+	[assign(SBNext,1)],
+	[],
+	[],
+	not_branch) :-
+	BNext=1.
+trans(func_main, 25,
+	[2],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[3],[H],[],[SH],[],[],[ReturnValue,A,B,AnswerNext],[],[SReturnValue,SA,SB,SAnswerNext],
+	[assign(SAnswerNext,1)],
+	[],
+	[],
+	not_branch) :-
+	AnswerNext=1.
+trans(func_main, 26,
+	[4],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[5],[H],[],[SH],[],[],[ReturnValue,ANext,B,Answer],[],[SReturnValue,SANext,SB,SAnswer],
+	[assign(SANext,1)],
+	[],
+	[],
+	not_branch) :-
+	ANext=1.
+trans(func_main, 27,
+	[5],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[6],[H],[],[SH],[],[],[ReturnValue,A,BNext,Answer],[],[SReturnValue,SA,SBNext,SAnswer],
+	[assign(SBNext,1)],
+	[],
+	[],
+	not_branch) :-
+	BNext=1.
+trans(func_main, 28,
+	[7],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[8],[H],[],[SH],[],[],[ReturnValue,ANext,B,Answer],[],[SReturnValue,SANext,SB,SAnswer],
+	[assign(SANext,30)],
+	[],
+	[],
+	not_branch) :-
+	ANext=30.
+trans(func_main, 29,
+	[8],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[9],[H],[],[SH],[],[],[ReturnValue,A,BNext,Answer],[],[SReturnValue,SA,SBNext,SAnswer],
+	[assign(SBNext,30)],
+	[],
+	[],
+	not_branch) :-
+	BNext=30.
+trans(func_main, 30,
+	[6],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[9],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 31,
+	[3],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[4],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[gt(SAnswer,0)],
+	[],
+	[],
+	not_branch) :-
+	Answer>0.
+trans(func_main, 32,
+	[3],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[4],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[gt(0,SAnswer)],
+	[],
+	[],
+	branch) :-
+	Answer<0.
+trans(func_main, 33,
+	[3],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[7],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[eq(SAnswer,0)],
+	[],
+	[],
+	branch) :-
+	Answer=0.
+trans(func_main, 34,
+	[9],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[10],[H],[],[SH],[],[],[ReturnValue,A,B,AnswerNext],[],[SReturnValue,SA,SB,SAnswerNext],
+	[assign(SAnswerNext,SRV0)],
+	[call(func_complex,[RV0,A,B|_],[SRV0,_V1,_V2|_],[assign(_V1,SA),assign(_V2,SB)])],
+	[],
+	not_branch) :-
+	AnswerNext=RV0.
+trans(func_main, 35,
+	[10],[H],[],[SH],[],[],[ReturnValue,A,B,Answer],[],[SReturnValue,SA,SB,SAnswer],
+	[11],[H],[],[SH],[],[],[ReturnValueNext,A,B,Answer],[],[SReturnValueNext,SA,SB,SAnswer],
+	[assign(SReturnValueNext,SAnswer)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Answer.
+%--------------------------------------------------
+block(3, func_complex, [_],[_], _, nl, [6,3], [nc],[],[],[nc,nc,c], [n],[],[],[n,n,u]).
+block(4, func_complex, [_],[_], _, nl, [7,4], [nc],[],[],[nc,nc,c], [n],[],[],[n,n,u]).
+block(5, func_complex, [_],[_], _, nl, [11,8], [nc],[],[],[nc,nc,c], [n],[],[],[n,u,n]).
+block(6, func_complex, [_],[_], _, nl, [12,13,9], [nc],[],[],[nc,nc,c], [n],[],[],[n,u,n]).
+block(2, func_complex, [2],[3], _, l, [2,5,10,14,15,16], [nc],[],[],[nc,c,c], [n],[],[],[n,u,u]).
+block(1, func_complex, [0],[1], _, l, [1,17,18,19,20,21], [nc],[],[],[nc,c,nc], [n],[],[],[n,u,u]).
+block(0,func_complex,_,_,_,nl,[22],_,_,_,_,_,_,_,_).
+block(8, func_main, [_],[_], _, nl, [31,32,26,27], [nc],[],[],[nc,nc,nc,c], [n],[],[],[n,u,u,n]).
+block(9, func_main, [_],[_], _, nl, [33,28,29], [nc],[],[],[nc,nc,nc,c], [n],[],[],[n,u,u,n]).
+block(7,func_main,_,_,_,nl,[23,24,25,30,34,35],_,_,_,_,_,_,_,_).
+%--------------------------------------------------
+block_hierarchy(0,1).
+block_hierarchy(1,2).
+block_hierarchy(2,3).
+block_hierarchy(3,3).
+block_hierarchy(2,4).
+block_hierarchy(4,4).
+block_hierarchy(2,5).
+block_hierarchy(5,5).
+block_hierarchy(2,6).
+block_hierarchy(6,6).
+block_hierarchy(7,8).
+block_hierarchy(8,8).
+block_hierarchy(7,9).
+block_hierarchy(9,9).
+%--------------------------------------------------
+start(func_complex, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_complex, [17]).
+bottom(func_main, [11]).
+%--------------------------------------------------
+freshlocalarrays(func_complex,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_complex,[_,_,_]).
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).

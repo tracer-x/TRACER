@@ -1,0 +1,276 @@
+trans(func_InitSeed,
+	[0],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[1],[H,ArrayA,ArrayB,ResultArray],[SeedNext],[SH,SArrayA,SArrayB,SResultArray],[SSeedNext],[],[ReturnValue],[],[SReturnValue],
+	[eq(SSeedNext,0)],
+	[],
+	[]) :-
+	SeedNext=0.
+trans(func_Test,
+	[0],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue,A,B,Res],[],[SReturnValue,SA,SB,SRes],
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue,A,B,Res],[],[SReturnValue,SA,SB,SRes],
+	[],
+	[call(func_Initialize,[RV0,A|_],[SRV0,_V1|_],[eq(_V1,SA)])],
+	[]).
+trans(func_Test,
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue,A,B,Res],[],[SReturnValue,SA,SB,SRes],
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue,A,B,Res],[],[SReturnValue,SA,SB,SRes],
+	[],
+	[call(func_Initialize,[RV2,B|_],[SRV2,_V2|_],[eq(_V2,SB)])],
+	[]).
+trans(func_Test,
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue,A,B,Res],[],[SReturnValue,SA,SB,SRes],
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue,A,B,Res],[],[SReturnValue,SA,SB,SRes],
+	[],
+	[call(func_Multiply,[RV4,A,B,Res|_],[SRV4,_V3,_V4,_V5|_],[eq(_V3,SA),eq(_V4,SB),eq(_V5,SRes)])],
+	[]).
+trans(func_RandomInteger,
+	[0],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[1],[H,ArrayA,ArrayB,ResultArray],[SeedNext],[SH,SArrayA,SArrayB,SResultArray],[SSeedNext],[],[ReturnValue],[],[SReturnValue],
+	[eq(SSeedNext,mult(plus(mult(SSeed,133),81),8095))],
+	[],
+	[]) :-
+	SeedNext=((Seed*133)+81)-8095.
+trans(func_RandomInteger,
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValueNext],[],[SReturnValueNext],
+	[eq(SReturnValueNext,SSeed)],
+	[],
+	[]) :-
+	ReturnValueNext=(Seed).
+trans(func_Initialize,
+	[0],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndexNext],[ReturnValue,Array,InnerIndex],[SOuterIndexNext],[SReturnValue,SArray,SInnerIndex],
+	[],
+	[],
+	[]).
+trans(func_Initialize,
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndexNext],[ReturnValue,Array,InnerIndexNext],[SOuterIndexNext],[SReturnValue,SArray,SInnerIndexNext],
+	[eq(SOuterIndexNext,0)],
+	[],
+	[]) :-
+	OuterIndexNext=0.
+trans(func_Initialize,
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[4],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndexNext],[SOuterIndex],[SReturnValue,SArray,SInnerIndexNext],
+	[gt(SUPPERLIMIT,SOuterIndex),eq(SInnerIndexNext,0)],
+	[],
+	[]) :-
+	OuterIndex<UPPERLIMIT,InnerIndexNext=0.
+trans(func_Initialize,
+	[4],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[6],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[gt(SUPPERLIMIT,SInnerIndex)],
+	[],
+	[]) :-
+	InnerIndex<UPPERLIMIT.
+trans(func_Initialize,
+	[6],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[7],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,ArrayNext,InnerIndex],[SOuterIndex],[SReturnValue,SArrayNext,SInnerIndex],
+	[eq(SArrayNext,upd(SArray,SInnerIndex,SRV0))],
+	[call(func_RandomInteger,[RV0|_],[SRV0|_],[])],
+	[]) :-
+	ArrayNext=upd(Array,InnerIndex,RV0).
+trans(func_Initialize,
+	[4],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[5],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[geq(SInnerIndex,SUPPERLIMIT)],
+	[],
+	[]) :-
+	InnerIndex>=UPPERLIMIT.
+trans(func_Initialize,
+	[7],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[4],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndexNext],[SOuterIndex],[SReturnValue,SArray,SInnerIndexNext],
+	[eq(SInnerIndexNext,plus(SInnerIndex,1))],
+	[],
+	[]) :-
+	InnerIndexNext=InnerIndex+1.
+trans(func_Initialize,
+	[5],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[8],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[],
+	[],
+	[]).
+trans(func_Initialize,
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[geq(SOuterIndex,SUPPERLIMIT)],
+	[],
+	[]) :-
+	OuterIndex>=UPPERLIMIT.
+trans(func_Initialize,
+	[8],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndexNext],[ReturnValue,Array,InnerIndex],[SOuterIndexNext],[SReturnValue,SArray,SInnerIndex],
+	[eq(SOuterIndexNext,plus(SOuterIndex,1))],
+	[],
+	[]) :-
+	OuterIndexNext=OuterIndex+1.
+trans(func_Initialize,
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[9],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterIndex],[ReturnValue,Array,InnerIndex],[SOuterIndex],[SReturnValue,SArray,SInnerIndex],
+	[],
+	[],
+	[]).
+trans(func_Multiply,
+	[0],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterNext],[ReturnValue,A,B,Res,Inner,Index],[SOuterNext],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[],
+	[],
+	[]).
+trans(func_Multiply,
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,InnerNext,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInnerNext,SIndex],
+	[],
+	[],
+	[]).
+trans(func_Multiply,
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterNext],[ReturnValue,A,B,Res,Inner,IndexNext],[SOuterNext],[SReturnValue,SA,SB,SRes,SInner,SIndexNext],
+	[eq(SOuterNext,0)],
+	[],
+	[]) :-
+	OuterNext=0.
+trans(func_Multiply,
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[5],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,InnerNext,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInnerNext,SIndex],
+	[gt(SUPPERLIMIT,SOuter),eq(SInnerNext,0)],
+	[],
+	[]) :-
+	Outer<UPPERLIMIT,InnerNext=0.
+trans(func_Multiply,
+	[5],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[7],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[gt(SUPPERLIMIT,SInner)],
+	[],
+	[]) :-
+	Inner<UPPERLIMIT.
+trans(func_Multiply,
+	[7],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[8],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,ResNext,Inner,IndexNext],[SOuter],[SReturnValue,SA,SB,SResNext,SInner,SIndexNext],
+	[eq(SResNext,upd(SRes,SInner,0)),eq(SIndexNext,0)],
+	[],
+	[]) :-
+	ResNext=upd(Res,Inner,0),IndexNext=0.
+trans(func_Multiply,
+	[8],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[10],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[gt(SUPPERLIMIT,SIndex)],
+	[],
+	[]) :-
+	Index<UPPERLIMIT.
+trans(func_Multiply,
+	[10],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[11],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[],
+	[],
+	[]).
+trans(func_Multiply,
+	[8],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[9],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[geq(SIndex,SUPPERLIMIT)],
+	[],
+	[]) :-
+	Index>=UPPERLIMIT.
+trans(func_Multiply,
+	[11],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[8],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,IndexNext],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndexNext],
+	[eq(SIndexNext,plus(SIndex,1))],
+	[],
+	[]) :-
+	IndexNext=Index+1.
+trans(func_Multiply,
+	[9],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[12],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[],
+	[],
+	[]).
+trans(func_Multiply,
+	[5],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[6],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[geq(SInner,SUPPERLIMIT)],
+	[],
+	[]) :-
+	Inner>=UPPERLIMIT.
+trans(func_Multiply,
+	[12],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[5],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,InnerNext,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInnerNext,SIndex],
+	[eq(SInnerNext,plus(SInner,1))],
+	[],
+	[]) :-
+	InnerNext=Inner+1.
+trans(func_Multiply,
+	[6],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[13],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[],
+	[],
+	[]).
+trans(func_Multiply,
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[4],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[geq(SOuter,SUPPERLIMIT)],
+	[],
+	[]) :-
+	Outer>=UPPERLIMIT.
+trans(func_Multiply,
+	[13],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[3],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[OuterNext],[ReturnValue,A,B,Res,Inner,Index],[SOuterNext],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[eq(SOuterNext,plus(SOuter,1))],
+	[],
+	[]) :-
+	OuterNext=Outer+1.
+trans(func_Multiply,
+	[4],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[14],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[Outer],[ReturnValue,A,B,Res,Inner,Index],[SOuter],[SReturnValue,SA,SB,SRes,SInner,SIndex],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[0],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[],
+	[call(func_InitSeed,[RV0|_],[SRV0|_],[])],
+	[]).
+trans(func_main,
+	[1],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[2],[H,ArrayA,ArrayB,ResultArray],[Seed],[SH,SArrayA,SArrayB,SResultArray],[SSeed],[],[ReturnValue],[],[SReturnValue],
+	[],
+	[call(func_Test,[RV1,ArrayA,ArrayB,ResultArray|_],[SRV1,_V1,_V2,_V3|_],[eq(_V1,SArrayA),eq(_V2,SArrayB),eq(_V3,SResultArray)])],
+	[]).
+%--------------------------------------------------
+loop(func_Initialize, [4],[5], _, [n,n,n,n],[n],[n],[n,u,u]).
+loop(func_Initialize, [2],[3], _, [n,n,n,n],[n],[u],[n,u,u]).
+loop(func_Multiply, [8],[9], _, [n,n,n,n],[n],[n],[n,n,n,n,n,u]).
+loop(func_Multiply, [5],[6], _, [n,n,n,n],[n],[n],[n,n,n,u,u,u]).
+loop(func_Multiply, [3],[4], _, [n,n,n,n],[n],[u],[n,n,n,u,u,u]).
+%--------------------------------------------------
+start(func_InitSeed, [0]).
+start(func_Test, [0]).
+start(func_RandomInteger, [0]).
+start(func_Initialize, [0]).
+start(func_Multiply, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_InitSeed, [1]).
+bottom(func_Test, [3]).
+bottom(func_RandomInteger, [2]).
+bottom(func_Initialize, [9]).
+bottom(func_Multiply, [14]).
+bottom(func_main, [2]).
+%--------------------------------------------------
+freshlocalarrays(func_InitSeed,[]).
+freshlocalarrays(func_Test,[]).
+freshlocalarrays(func_RandomInteger,[]).
+freshlocalarrays(func_Initialize,[_]).
+freshlocalarrays(func_Multiply,[_]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_InitSeed,[_]).
+freshlocalvars(func_Test,[_,_,_,_]).
+freshlocalvars(func_RandomInteger,[_]).
+freshlocalvars(func_Initialize,[_,_,_]).
+freshlocalvars(func_Multiply,[_,_,_,_,_,_]).
+freshlocalvars(func_main,[_]).
+%--------------------------------------------------
+init_goal(func_main, [0], [_,_,_,_],[0],[_,_,_,_],[SSeed],A,L,SA,SL,[eq(SSeed,0)]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).

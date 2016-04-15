@@ -1,0 +1,4 @@
+lockStatus==0 ;
+lockStatus==1 ; 
+in_irq==0 ;
+lockStatus*2<=0 ;

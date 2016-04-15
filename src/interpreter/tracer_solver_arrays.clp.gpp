@@ -1,0 +1,1666 @@
+% tracer_solver_arrays.clp.gpp
+
+%=============================================================================%
+%                      Solver for the theory of arrays
+%=============================================================================%
+% export
+%
+%   Specialized versions to evaluate array constraints
+%   constraint_symbolic_arrays_SAT_check_form/3      
+%   constraint_symbolic_with_array_update_subst/3     
+%
+%   Satisfiability check
+%   satisfiable_array_references/1,              % for checking SAT of arrays
+%   satisfiable_array_references_only_if_guard/2 % only if guard
+%   satisfiable_array_references_profiled/1      % recording profiling info
+%
+%   Projection
+%   project_array_solver_context/2
+%
+%   Manipulation of array constraints for generation of interpolants
+%   substitute_arrays/2,              % used before interpolation
+%   substitute_arrays_disjunct/2      % used before interpolation
+%
+%============================================================================%
+% CLP(R) provides a solver to decide linear arithmetic formulas over
+% reals. However, C programs often use pointers and arrays, and hence,
+% we also implement a custom solver for array and pointer expressions.
+%
+% We model the heap as an array.  A flow-insensitive pointer analysis
+% is then used to partition updates and reads into alias classes where
+% each class is modeled by a different array. Static arrays are also
+% considered by compiling them as regular pointers. For instance,
+% assume the following C fragment:
+%
+%     int *x,*y,*z;
+%     <1> x=y; *z=20; *x=5; *y=10; 
+%     <2>  _TRACER_abort(*z == 5); <ERROR>
+%     <3> ...
+%
+% is compiled into:
+%
+%     <1> X' = Y,
+%         H0'  = upd(H0 , Z ,20),
+%         H1'  = upd(H1 , X', 5),
+%         H1'' = upd(H1', Y ,10),
+%     <2> RefZ=5, where ref(H0',Z,RefZ) <ERROR>
+%     <3> ...
+%
+% The key operation is to decide if the sequence of constraints
+%
+%    ref(H0',Z,RefZ), RefZ=5
+%
+% is satisfiable or not.
+%
+% To do this, we need first to replace H0' with all its updates done
+% previously (this is done by substitute_arrays/2). After this step,
+% we obtain:
+%
+%    ref(upd(H0,Z,20),Z,RefZ), RefZ=5
+%
+% The second step is to flatten the above expression until we obtain
+% linear arithmetic formulas over reals which can be decided by
+% CLP(R). The whole process is done by
+% satisfiable_array_references/1. We first flatten the expression
+% using the classical McCarthy axioms:
+%
+% (1) ref(upd(A,I,X),J) =  X        if I=J
+% (2) ref(upd(A,I,X),J) =  ref(A,J) otherwise
+%
+% Each possible flattened term is returned as a different solution in
+% simplify_array_reference_list/2. Then, simple_arrref_consistency/1
+% will attempt to prove unsatisfiability of the expression. If not, it
+% will fail and try another flattened expression. The satisfiability
+% is basically if same array and same indexes, then their values
+% should be the same.
+%
+% For our example:
+% 
+%   ref(upd(H0,Z,20),Z,RefZ) is reduced by (1) to RefZ=20.
+%
+% Then, the sequence RefZ=20,Ref=5 is given to CLP(R) which will
+% return unsatisfiable. Therefore, we can claim the program is safe.
+%
+% FIXME:
+%
+% - The other key operation is project array constraints done in
+%   project_solver_context/2. There is no explanation.
+%
+%================================================================================%
+
+%================================================================================%
+%                       Evaluation of constraints
+%================================================================================%
+
+%--------------------------------------------------------------------------------%
+% constraint_symbolic_arrays_SAT_check_form(+CL,+InArrRef,-OutArrRef)
+%--------------------------------------------------------------------------------%
+% Its purpose is to check satisfiability of the constraints in
+% CL. Basic constraints are evaluated as usual by
+% constraint_symbolic/3. Moreover, this predicate generates all array
+% references needed by satisfiable_array_references/1 but keep in mind
+% that this predicate does not call directly to
+% satisfiable_array_references/1. 
+%
+% The special treatment is with eq/gt/geq constraints that involve
+% array references (e.g., eq(ref(A,X),50)). The variable A must be
+% substituted for its corresponding array updates. As a side-effect
+% array assignments (arrassign) are replaced with 'tt' to avoid
+% breaking constraint_symbolic/3 (see substitute_arrays/2 for
+% details).
+%================================================================================
+% VERY IMPORTANT:
+%================================================================================
+% ?- constraint_symbolic_arrays_SAT_check_form([arrassign(A1,upd(A0,X,5)),
+%                                               arrassign(A2,upd(A1,Y,10))],[],
+%                                               OutArrRef),
+% OutArrRef=[]
+%
+% The reason of an **empty** list of array references is that there is
+% no eq/gt/geq constraints with array references in CL. Therefore,
+% ***don't use*** this predicate if the purpose is to project the
+% constraints of CL.
+%--------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_constraint_symbolic_arrays_SAT_check_form:-
+	set_tracer_flag(array_solver,y),
+	CL=[arrassign(A1,upd(_A0,_X,5)),arrassign(A2,upd(A1,Y,10)),
+	    arrassign(A3,upd(A2,Y,333)), eq(ref(A3,Y),333)],
+	constraint_symbolic_arrays_SAT_check_form(CL,[],ArrRef),
+	satisfiable_array_references(ArrRef),
+	print_message("ArrRef:%\n",[ArrRef]).
+#endif  /*DEBUG_USE*/
+%--------------------------------------------------------------------------------%
+constraint_symbolic_arrays_SAT_check_form(CL,InArrRef,InArrRef):-
+	current_tracer_flag(path_sensitive,n),
+	CL = [],
+	!.
+constraint_symbolic_arrays_SAT_check_form(CL1,InArrRef,OutArrRef):-
+	substitute_arrays(CL1, CL2),
+	constraint_symbolic(CL2, InArrRef, OutArrRef),
+	!.
+
+%--------------------------------------------------------------------------------%
+% substitute_arrays(+CL,-OutCL)
+%--------------------------------------------------------------------------------%
+% Substitute all array references using corresponding array updates
+% and then all arrassign are replaced with tt. substitute_arrays_aux/4
+% is a double-reverse procedure that reverses the 1st argument into
+% 2nd argument then copied to 3rd argument which is then reversed back
+% in generating output in 4th argument
+%--------------------------------------------------------------------------------%
+#ifdef DEBUG_USE
+test_substitute_arrays_1 :-
+% The following should fail.
+	set_tracer_flag(array_solver, y),
+	substitute_arrays([gt(0, ref(A, X)), arrassign(A, upd(B, X, 255)),
+			   gt(ref(B, X), 255),
+			   arrassign(B,upd(GA2,X,plus(ref(GA2,X),ref(_GA3,X)))),
+			   geq(63, X), assign(X, 0)],L),
+	print_message("L=%\n", [L]),	
+	constraint_symbolic(L, [], ArrRef),
+	satisfiable_array_references(ArrRef).
+#endif  /*DEBUG_USE*/
+%--------------------------------------------------------------------------------%
+substitute_arrays(CL, OutCL) :-
+	current_tracer_flag(array_solver, y),!,
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	substitute_arrays_aux(CL, [], _, OutCL),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(array_solver_subst_arrays_time,Time1-Time0),
+#endif  /*PROFILE*/
+        true.	
+substitute_arrays(CL, CL):-!.
+
+substitute_arrays_aux([], RevCL, RevCL, []).
+substitute_arrays_aux([arrassign(A,Exp)|R], S, T, [C|U]):-
+	!,
+	% Apply the subtitution backward: constraints already visited
+	substitute_terms(arrassign(A,Exp), S, S1),
+	% Apply the subtitution forward : constraints not already
+	% visited
+	substitute_terms(arrassign(A,Exp), R, R1),	
+	substitute_arrays_aux(R1, [tt|S1], [C|T], U).                              
+substitute_arrays_aux([C|R], S, T, [D|U]) :-
+	substitute_arrays_aux(R, [C|S], [D|T], U).
+
+%------------------------------------------------------------------------------%
+% substitute_terms/3:
+%------------------------------------------------------------------------------%
+substitute_terms(_Unifier, [], []).
+substitute_terms(Unifier, [A|R], [B|S]) :-
+	get_matching_term(A, Unifier, B), !,
+	substitute_terms(Unifier, R, S).
+substitute_terms(Unifier, [A|R], [A|S]) :-
+	myvar(A), !,
+	substitute_terms(Unifier, R, S).
+substitute_terms(Unifier, [A|R], [B|S]) :-
+	A =.. [Name|M], !,
+	substitute_terms(Unifier, M, N),
+	B =.. [Name|N],
+	substitute_terms(Unifier, R, S).
+
+get_matching_term(A, [Atom|_], C):- Atom=..[_,B,C], A==B, !.
+get_matching_term(A, [_|R], B):- !, get_matching_term(A, R, B).
+get_matching_term(A, Atom, C):- functor(Atom), Atom=..[_,B,C], A==B.
+	
+%------------------------------------------------------------------------------%
+% substitute_arrays_disjunct(+,-)
+%------------------------------------------------------------------------------%
+% Substitute arrays in a disjunction of formulas, used for
+% interpolation, NegImplied.
+%------------------------------------------------------------------------------%
+substitute_arrays_disjunct(NegImplied,NegImplied1):-
+	is_dnf(NegImplied),!,
+	substitute_arrays_disjunct_aux(NegImplied,NegImplied1).
+substitute_arrays_disjunct(NegImplied,NegImplied1):-
+	substitute_arrays(NegImplied,NegImplied1),!.
+
+substitute_arrays_disjunct_aux([],[]):-!.
+substitute_arrays_disjunct_aux([Xs|Xss],[Xs1|Yss]):-
+	substitute_arrays(Xs,Xs1),
+	substitute_arrays_disjunct_aux(Xss,Yss).
+
+%-------------------------------------------------------------------------------%
+% constraint_symbolic_with_array_update_subst(+CL,+InArrRef,+OutArrRef)
+%-------------------------------------------------------------------------------%
+% The main difference wrt constraint_symbolic_arrays_SAT_check_form/3
+% is the treatment of arrassign/2 constraints.
+%-------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_constraint_symbolic_with_array_update_subst_1:-
+	set_tracer_flag(array_solver,y),
+	CL=[arrassign(A1,upd(_A0,_X,5)),arrassign(A2,upd(A1,Y,10)),
+	    arrassign(A3,upd(A2,Y,333)), eq(ref(A3,Y),333)],
+	constraint_symbolic_with_array_update_subst(CL,[],ArrRef),
+	print_message("ArrRef:%\n",[ArrRef]),	
+	satisfiable_array_references(ArrRef).
+test_constraint_symbolic_with_array_update_subst_2:-
+	set_tracer_flag(array_solver,y),
+	CL = [arrassign(SA1,upd(_SA0,SX,5)),
+	      arrassign(SA2,upd(SA1,SX,plus(ref(SA1,SX),1))),
+	      arrassign(SA3,upd(SA2,SY,plus(ref(SA2,SX),3)))],
+	constraint_symbolic_with_array_update_subst(CL,[],OutArrRef),
+	% Dictionary
+	%SA3='a3',SA2='a2',SA1='a1',SA0='a0',SX='x',SY='y',
+	dump([SA3,SX,SY]),
+	print_message("OutArrRef: %\n",[OutArrRef]).
+#endif  /*DEBUG_USE*/
+%-------------------------------------------------------------------------------%
+constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef):-
+	current_tracer_flag(array_solver,n),!,
+	constraint_symbolic(CL,InArrRef,OutArrRef).
+constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef):-
+	current_tracer_flag(array_solver,y),!,	
+	%-----------------------------------------------------------------------
+	% Step   1: split CL into arrassign and the rest
+	%-----------------------------------------------------------------------	
+	split_arrassign_and_rest(CL,AACL,_),
+	%-----------------------------------------------------------------------
+	% Step   2: Substitute all array names with their corresponding
+	%           updates.
+	%----------------------------------------------------------------------	
+	%-----------------------------------------------------------------------
+	%       Step 2.1: Do first with arrassign/2 constraints and
+	%       convert them to eq/2 because constraint_symbolic/3
+	%       does not support arrassign/2 constraints.
+	%-----------------------------------------------------------------------
+	substitute_arrayvars_with_updates(AACL,AACL1),
+	%-----------------------------------------------------------------------
+	%       Step 2.2: then do it with the rest of constraints. Use
+	%       the information from arrassign/2 constraints to
+	%       substitute all array names in the rest of constraints
+	%       (i.e., eq, gt, and geq) with their corresponding array
+	%       updates.
+	%-----------------------------------------------------------------------
+	substitute_arrays(CL,CL0),
+	delete(CL0,tt,RestCL),	
+	%-----------------------------------------------------------------------
+	% Step   3: evaluate basic constraints and do for each C \in CL1:	
+	%   replace all subexpression ref(A,I) with a fresh variable
+	%   Tmp and add a term ref(A,I,Tmp) into InArrRef
+	%-----------------------------------------------------------------------
+	append(AACL1,RestCL,CL1),	
+	constraint_symbolic(CL1,InArrRef,OutArrRef),
+        !.
+
+% constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef1):-
+% 	%-----------------------------------------------------------------------
+% 	% Step   1: split CL into arrassign and the rest
+% 	%-----------------------------------------------------------------------	
+% 	split_arrassign_and_rest(CL,AACL,_),
+% 	%-----------------------------------------------------------------------
+% 	% Step   2: Substitute all array names with their corresponding
+% 	%           updates.
+% 	%----------------------------------------------------------------------	
+% 	%-----------------------------------------------------------------------
+% 	%       Step 2.1: Do first with arrassign/2 constraints and
+% 	%       convert them to eq/2 because constraint_symbolic/3
+% 	%       does not support arrassign/2 constraints.
+% 	%-----------------------------------------------------------------------
+% 	substitute_arrayvars_with_updates(AACL,AACL1),
+% 	flatten_array_updates(AACL1,[],AACL2,_),	
+% 	%-----------------------------------------------------------------------
+% 	%       Step 2.2: then do it with the rest of constraints. Use
+% 	%       the information from arrassign/2 constraints to
+% 	%       substitute all array names in the rest of constraints
+% 	%       (i.e., eq, gt, and geq) with their corresponding array
+% 	%       updates.
+% 	%-----------------------------------------------------------------------
+% 	substitute_arrays(CL,CL0),
+% 	delete(CL0,tt,RestCL),	
+% 	%-----------------------------------------------------------------------
+% 	% Step   3: evaluate basic constraints and do for each C \in CL1:	
+% 	%   replace all subexpression ref(A,I) with a fresh variable
+% 	%   Tmp and add a term ref(A,I,Tmp) into InArrRef
+% 	%-----------------------------------------------------------------------
+% 	append(AACL2,RestCL,CL1),	
+% 	constraint_symbolic(CL1,InArrRef,OutArrRef),
+% 	%-----------------------------------------------------------------------
+% 	% Step   4: apply Mccarthy axioms to eliminate array updates.
+% 	%-----------------------------------------------------------------------	
+% 	simplify_array_reference_list(OutArrRef, OutArrRef1),	
+% %	unify_identical_arrref(OutArrRef),
+%         !.
+
+%---------------------------------------------------------------------------------%
+% split_arrassign_and_rest(+CL,-AAL,-RestL)
+%---------------------------------------------------------------------------------%
+% CL is a list of arbitrary terms accepted by constraint_symbolic/3.
+% AAL is a lit only with arrassign/2 terms and RestL is the rest
+% of constraints.
+%---------------------------------------------------------------------------------%
+split_arrassign_and_rest([],[],[]):-!.
+split_arrassign_and_rest([arrassign(A, B)|R],[arrassign(A, B)|S], Z):-
+	!,
+	split_arrassign_and_rest(R, S, Z).
+split_arrassign_and_rest([C|R], S, [C|Z]):-
+	split_arrassign_and_rest(R, S, Z).
+
+%---------------------------------------------------------------------------------%
+% substitute_arrayvars_with_updates(+L1, -L2):
+%---------------------------------------------------------------------------------%
+% L1 is a list of arrassign/2 terms and L2 is a list of eq/2 terms.
+%---------------------------------------------------------------------------------%
+% All intermediate variables are substituted explicitly for
+% updates. Thus, only the newest and the oldest array names should
+% appear in L2 after this transformation.
+%
+% L2 is like L1 but the following rewriting rule has been applied
+% exhaustively:
+%
+% forall C1:arrassign(X,upd(Y...)) in L1 do
+%     if exists another C2:arrassign(Y,RhsY) in L1 then
+%        replace Y with RhsY in C1
+%
+% No ordering is assumed about L1.
+%---------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_substitute_arrayvars_with_updates_1:-
+	set_tracer_flag(array_solver,y),
+	ArrAssign = [arrassign(A,upd(B,_,_)),arrassign(B,upd(D,_,_)),
+		     arrassign(C,upd(Z,_,_)),arrassign(E,upd(C,_,_))],	
+        % Dictionary to make debugging easier
+	A='a',B='b',C='c',D='d',E='e',Z='z',
+	substitute_arrayvars_with_updates(ArrAssign,AAL),
+	print_message("Array assignments: % \n",[ArrAssign]),
+	print_message("% \n",[AAL]).
+test_substitute_arrayvars_with_updates_2:-
+	set_tracer_flag(array_solver,y),	
+	ArrAssign = [arrassign(A1,upd(A0,X,0)),
+		     arrassign(A2,upd(A1,Y,5))],		
+        % Dictionary to make debugging easier
+	A0='a0',A1='a1',A2='a2', X='x',Y='y',	
+	substitute_arrayvars_with_updates(ArrAssign,AAL),
+	print_message("Array assignments: % \n",[ArrAssign]),
+	print_message("% \n",[AAL]).
+test_substitute_arrayvars_with_updates_3:-
+	set_tracer_flag(array_solver,y),
+	ArrAssign = [arrassign(A1,upd(A0,X,0)),
+		     arrassign(A2,upd(A1,Y,5)),
+		     arrassign(A3,upd(A2,Y,15))],		
+        % Dictionary to make debugging easier
+	A0='a0',A1='a1',A2='a2', A3='a3',X='x',Y='y',	
+	substitute_arrayvars_with_updates(ArrAssign,AAL),
+	print_message("Array assignments: % \n",[ArrAssign]),
+	print_message("% \n",[AAL]).
+test_substitute_arrayvars_with_updates_4:-
+	set_tracer_flag(array_solver,y),
+	ArrAssign = [arrassign(A1,upd(A0,X,5)),
+		     arrassign(A2,upd(A1,X,plus(ref(A1,X),1))),
+		     arrassign(A3,upd(A2,Y,plus(ref(A2,X),3)))],
+        % Dictionary to make debugging easier
+	A0='a0',A1='a1',A2='a2', A3='a3',X='x',Y='y',	
+	substitute_arrayvars_with_updates(ArrAssign,AAL),
+	print_message("Array assignments: % \n",[ArrAssign]),
+	print_message("% \n",[AAL]).
+#endif  /*DEBUG_USE*/
+%--------------------------------------------------------------------------------%
+substitute_arrayvars_with_updates(_,[]):-
+        current_tracer_flag(array_solver, n), !.
+substitute_arrayvars_with_updates(AAs,FlattenedAAs):-
+	prep_arrassign_list(AAs, DepList),
+	substitute_arrayvars_with_updates0(DepList,FoldedDepList),
+	post_arrassign_list(FoldedDepList,FlattenedAAs).	
+
+%-----------------------------------------------------------------------
+% pre-processing
+%-----------------------------------------------------------------------
+prep_arrassign_list([],[]).
+prep_arrassign_list([  arrassign(A,upd(B,IExp,VExp))|As],
+		    [d(arrassign(A,upd(X,NIExp,NVExp)),B,X)|Zs]):-
+	%-----------------------------------------------------------------------
+	% These replacements may cause a size explosion of the formula
+	%-----------------------------------------------------------------------
+	replace_variable2([IExp],B,X,[NIExp]),
+	replace_variable2([VExp],B,X,[NVExp]),
+	% NIExp=IExp, NVExp=VExp,
+	prep_arrassign_list(As, Zs).
+
+%-----------------------------------------------------------------------%
+% FIXME: unify version with replace_variable/4 from
+% tracer_external.clp.gpp to avoid code duplication!
+%-----------------------------------------------------------------------%
+replace_variable2([],_,_,[]):-!.
+replace_variable2([X|Xs],Y,Val,[Val|Ys]):-
+	X == Y, !,
+	replace_variable2(Xs,Y,Val,Ys).
+replace_variable2([Y|Ys],X,Val,[Z|Zs]):-
+	functor(Y,_,Arity), Arity > 0,
+	!,
+	Y=..[A|Args],
+	replace_variable2(Args,X,Val,NArgs),
+	Z=..[A|NArgs],
+	replace_variable2(Ys,X,Val,Zs).
+replace_variable2([X|Xs],Y,Val,[X|Ys]):-
+	replace_variable2(Xs,Y,Val,Ys).
+
+%-----------------------------------------------------------------------
+% Post-processsing: convert arrassign/2 into eq/2
+%-----------------------------------------------------------------------
+post_arrassign_list([],[]).
+% post_arrassign_list([d(arrassign(A,Upd),X,X)|Zs],[arrassign(A,Upd)|As]):-
+% 	post_arrassign_list(Zs, As).
+post_arrassign_list([d(arrassign(A,Upd),X,X)|Zs],[eq(A,Upd)|As]):-
+	post_arrassign_list(Zs, As).
+
+substitute_arrayvars_with_updates0(AAs, FoldedAAs):-
+	substitute_arrayvars_with_updates_aux(AAs,1, AAs, FoldedAAs).
+substitute_arrayvars_with_updates_aux([],_, FoldedAll, FoldedAll).
+substitute_arrayvars_with_updates_aux([D|_],Index, AAs, FoldedAll):-
+	deletenth(AAs,Index,Rest),
+	% print_message("Trying to fold % with % \n",[D,Rest]),
+	fold_one_arrassign_list(D, Rest, FoldedOne),
+	!,
+	% print_message("Folded one step % \n",[FoldedOne]),
+	substitute_arrayvars_with_updates0(FoldedOne, FoldedAll).
+substitute_arrayvars_with_updates_aux([_|Ds],Index, AAs,Folded):-
+	substitute_arrayvars_with_updates_aux(Ds,Index+1, AAs,Folded).
+				
+fold_one_arrassign_list(D, Ds,  [NewD|Rest]):-
+	D    = d(arrassign(A2,Rhs2),A1,Unifier2),
+	select_dependant_arrassign(Ds,A1,Elem,Rest),!,
+	Elem = d(arrassign(A1,Rhs1),A0,Unifier1),
+	Unifier2 = Rhs1,
+	NewD = d(arrassign(A2,Rhs2),A0,Unifier1).
+	
+select_dependant_arrassign([d(arrassign(A1,Upd),A0,X)|Rest],
+			   B,
+			   d(arrassign(A1,Upd),A0,X),
+			   Rest):-
+	A1 == B, !.
+select_dependant_arrassign([D|Ds],B,X,[D|Rest]):-
+	select_dependant_arrassign(Ds,B,X,Rest).
+
+%---------------------------------------------------------------------------------%
+% flatten_array_updates(+CL,+AccL,-OutL,-Substitutions)
+%---------------------------------------------------------------------------------%
+% CL is an input list of symbolic constraints and OutL is the output
+% list whose tail is AccL.
+%
+% The constraints of interest in CL are arrassign/2 or eq/2 that
+% involves array updates. All array names **MUST** be first
+% substituted with their corresponding updates. That is,
+% arrassign(B,upd(...(upd(A_0.....),...,Ind,Val))) Then, for each
+% index like Ind we produce a constraint like eq(ref(B,I),Val).
+%
+% Substitutions is a dictionary list of pairs
+% NewArrayName-OldArrayName ([t(B,A0),t(B,A1),...]
+%---------------------------------------------------------------------------------%
+% The key step is given multiple nested updates related to the same
+% index, make sure we just keep the outermost update (i.e., the latest
+% update). E.g., given the constraints
+% arrassign(A1,upd(upd(upd(A0,X,5),X,15),X,20)) we should return
+% eq(ref(A1,X,20))
+%---------------------------------------------------------------------------------%
+% FIXME: I believe we may need to use here McCarthy axioms somehow.
+%---------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_flatten_array_updates_0:-
+	A1='a1',A0='a0',
+	L0 = [arrassign(A1, upd(upd(A0, 1, 0), 1, 5))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % % \n",[L0,L1,Ss]).
+test_flatten_array_updates_1:-
+	A1='a1',A0='a0',X='x',	
+	L0 = [arrassign(A1, upd(upd(A0, X, 0), X, 5))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+test_flatten_array_updates_2:-
+	A1='a1',A0='a0',X='x',Y='y',		
+	L0 = [arrassign(A1, upd(upd(A0, X, 0), Y, 5))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+test_flatten_array_updates_3:-
+	A1='a1',A0='a0',X='x',Z='z',			
+	L0 = [arrassign(A1, upd(upd(upd(A0, X, 0), X, 5),Z,4))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+test_flatten_array_updates_4:-
+	B1='b1',B0='b0',T='t',
+	L0 = [arrassign(B1, upd(B0, T, 300))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+test_flatten_array_updates_5:-
+	A3='a3',A0='a0',X='x',Y='y',Ref0='ref0',Ref1='ref1',
+	L0 = [arrassign(A3, upd(upd(upd(A0, X, 5), X, plus(Ref0,1)),Y,plus(Ref1,3)))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+test_flatten_array_updates_6:-
+	A2='a2',A1='a1', A0='a0',X='x',Ref0='ref0',
+	L0 = [arrassign(A2, upd(upd(A0, X, 5), X, plus(Ref0,1))),
+	      arrassign(A1, upd(A0,X,5))],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+test_flatten_array_updates_7:-
+	A3='a3', A0='a0',X='x',Y='y',Ref0='ref0',Ref1='ref1',	
+	L0 = [eq(upd(upd(upd(A0,X,5),X,plus(Ref0, 1)), Y, plus(Ref1, 3)),A3)],
+	flatten_array_updates(L0,[],L1,Ss),
+	print_message("% --> % %\n",[L0,L1,Ss]).
+#endif  /*DEBUG_USE*/
+%-------------------------------------------------------------------------%
+flatten_array_updates([], OutL, OutL,[]):-!.
+flatten_array_updates([arrassign(A,Updates)|R],L,OutL,[t(A,OldA)|RestSubst]):-
+	!,
+	flatten_array_updates_aux(A, Updates, [], L, NewL,OldA), 
+	flatten_array_updates(R, NewL, OutL, RestSubst).
+flatten_array_updates([eq(A,Updates)|R],L,OutL,[t(A,OldA)|RestSubst]):-
+	mynonvar(Updates),
+	Updates = upd(_,_,_),
+	!,	
+	flatten_array_updates_aux(A, Updates, [], L, NewL,OldA), 
+	flatten_array_updates(R, NewL, OutL, RestSubst).
+flatten_array_updates([eq(Updates,A)|R],L,OutL,[t(A,OldA)|RestSubst]):-
+	mynonvar(Updates),	
+	Updates = upd(_,_,_),	
+	!,	
+	flatten_array_updates_aux(A, Updates, [], L, NewL,OldA), 
+	flatten_array_updates(R, NewL, OutL, RestSubst).
+flatten_array_updates([C|R],L,OutL,RestSubst):-
+	flatten_array_updates(R, [C|L], OutL, RestSubst).
+/* Buggy version:  
+flatten_array_updates_aux(_, B, L, L) :-
+	var(B), !.
+flatten_array_updates_aux(_, B, L, L) :-
+	atomic(B), !.
+flatten_array_updates_aux(A, upd(B, I, E), L, OutL) :- !,
+	flatten_array_updates_aux(A, B, [eq(ref(A,I),E)|L], OutL).
+*/
+%========================================================================%
+% IMPORTANT FIX: e.g., arrassign(A1,upd(upd(A0,X,0),X,5)) we produced
+% [eq(ref(A1,X),0), eq(ref(A1,X),5)] which is not clearly equivalent
+% (we should only [eq(ref(A1,X),5)]). This was introducing spurious
+% (unsound) false paths. The problem was that we were keeping older
+% values of the index X instead of replacing them with the newest.
+%========================================================================%
+flatten_array_updates_aux(_, B, _, L, L, B) :-
+	myvar(B), !.
+flatten_array_updates_aux(_, B, _, L, L, B) :-
+	atomic(B), !.
+flatten_array_updates_aux(A, upd(B, V, _E), Visited, L, Out, OldA) :-	
+	memberGndchk(V,Visited),!,
+	flatten_array_updates_aux(A,B,Visited,L,Out, OldA).	
+flatten_array_updates_aux(A, upd(B, I, E), Visited, L, OutL, OldA) :- !,
+	insert_index(I,Visited,NewVisited),
+	flatten_array_updates_aux(A, B, NewVisited, [eq(ref(A,I),E)|L], OutL, OldA).
+
+insert_index(V,L,[V|L]):- myvar(V) ,!.
+insert_index(V,L,[V|L]):- atomic(V),!.
+insert_index(_V,L,L)   :- !.
+
+				    		   
+% % This version is too complicated!!
+% subst_aa([], ToBeDefinedL, OutToBeDefinedL) :-
+% 	%% Case: the list has been scanned from left to right
+% 	%%       still more work to do ... 
+% #ifdef  SUBST_AA_DEBUG			
+%         print_message("ToBeDefinedL=%\n", [ToBeDefinedL]),
+% #endif	/*SUBST_AA_DEBUG*/
+% 	subst_aa_final([], ToBeDefinedL, ToBeDefinedL1),
+% #ifdef  SUBST_AA_DEBUG			
+%         print_message("ToBeDefinedL1=%\n", [ToBeDefinedL1]),
+% #endif	/*SUBST_AA_DEBUG*/	
+% 	unpack_aa_term(ToBeDefinedL1, OutToBeDefinedL), !.
+% subst_aa([AA|R], ToBeDefinedL, OutToBeDefinedL) :-
+% 	%% Case: apply the rewriting 
+% 	define_aa(AA, ToBeDefinedL, ToBeDefinedL1), !,
+% #ifdef  SUBST_AA_DEBUG		
+%         print_message("define_aa(%, %, %)\n", [AA,ToBeDefinedL,ToBeDefinedL1]),
+% #endif  /*SUBST_AA_DEBUG*/
+% 	subst_aa(R, ToBeDefinedL1, OutToBeDefinedL).
+% subst_aa([AA|R], ToBeDefinedL, OutToBeDefinedL) :-
+% 	%% Case: add in the ToBeDefined list
+% 	AA = arrassign(A, upd(B, IExp, VExp)),
+% #ifdef  SUBST_AA_DEBUG	
+%         print_message("AA=% A=%\n", [AA, A]),
+% #endif	/*SUBST_AA_DEBUG*/
+% 	ToBeDefinedL1 =
+%             [t(arrassign(A, upd(X, IExp, VExp)), B, X)|ToBeDefinedL],
+% #ifdef  SUBST_AA_DEBUG		    
+%         print_message("AA=% ToBeDefinedL1=%\n", [AA, ToBeDefinedL1]),
+% #endif	/*SUBST_AA_DEBUG*/
+% 	subst_aa(R, ToBeDefinedL1, OutToBeDefinedL).
+
+% subst_aa_final(Prefix, [], Prefix).
+% subst_aa_final(Prefix, [t(AA, ArrV, Unifier)|Suffix], L) :-
+% 	define_aa(AA, Prefix, Prefix1), !,
+% 	ArrV = Unifier, 
+% 	subst_aa_final_aux(Prefix1, AA, Suffix, L).
+% subst_aa_final(Prefix, [t(AA, ArrV, Unifier)|Suffix], L) :-
+% 	define_aa(AA, Suffix, Suffix1), !,
+% 	ArrV = Unifier,
+% 	subst_aa_final(Prefix, Suffix1, L).
+% subst_aa_final(Prefix, [E|Suffix], L) :-
+% 	subst_aa_final([E|Prefix], Suffix, L).
+
+% subst_aa_final_aux(Prefix, AA, Suffix, L) :-
+% 	define_aa(AA, Suffix, Suffix1), !,
+% 	subst_aa_final(Prefix, Suffix1, L).
+% subst_aa_final_aux(Prefix, _, Suffix, L) :-
+% 	subst_aa_final(Prefix, Suffix, L).
+
+% unpack_aa_term([], []).
+% unpack_aa_term([t(AA, B, X)|R], [AA|S]) :-
+% 	% stdout_printf("NN: % % %\n", [AA, B, X]),
+% 	% We re-unify the unifier and array
+% 	B = X,          
+% 	unpack_aa_term(R, S).
+
+% % apply the rewriting rule
+% define_aa(AA, ToBeDefinedL, ToBeDefinedL1) :-
+% 	define_aa_aux(_, AA, ToBeDefinedL, ToBeDefinedL1).
+
+% define_aa_aux(X, AA, [t(BB, C, Y)|R], [t(BB, E, X)|S]) :-
+% 	AA = arrassign(D, Upd),
+% 	D==C,
+% 	!,
+% 	Y=Upd,
+% 	Upd=upd(E, _, _),
+%         define_aa_aux2(X, AA, R, S).
+% define_aa_aux(X, AA, [E|R], [E|S]) :-
+% 	define_aa_aux(X, AA, R, S).
+
+% define_aa_aux2(_, _, [], []).
+% define_aa_aux2(X, AA, [t(BB, C, Y)|R], [t(BB, E, X)|S]) :-
+% 	AA = arrassign(D, Upd), D==C, !, Y=Upd, Upd=upd(E, _, _),
+% 	define_aa_aux2(X, AA, R, S).
+% define_aa_aux2(X, AA, [E|R], [E|S]) :-
+% 	define_aa_aux2(X, AA, R, S).
+
+%-------------------------------------------------------------------------------%
+% unify_identical_arrref(?L)
+%-------------------------------------------------------------------------------%
+% \forall ref(A,I,V1), ref(B,J,V2) \in L, if A==B and I==J then V1=V2.
+%-------------------------------------------------------------------------------%
+% unify_identical_arrref(L):-
+% 	unify_identical_arrref_aux(L,L).
+% unify_identical_arrref_aux([], _).
+% unify_identical_arrref_aux([ref(A,I,V)|R], S):-
+% 	unify_arrref_list(S, ref(A,I,V)),
+% 	!,			
+% 	unify_identical_arrref_aux(R, S).                              
+% unify_identical_arrref_aux([_|R], S) :-
+% 	!,
+% 	unify_identical_arrref_aux(R, S).
+
+% unify_arrref_list([],_):-!.
+% unify_arrref_list([ref(A,I,V)|As],ref(B,J,V)):-
+% 	A == B, I == J, !, unify_arrref_list(As,ref(B,J,V)).
+% unify_arrref_list([_|As],ArrRef):- unify_arrref_list(As,ArrRef).
+
+%==============================================================================%
+%                         Satisfiability Test
+%==============================================================================%
+
+%------------------------------------------------------------------------------%
+% satisfiable_array_references/1: Wrapper for simplify_array_reference_list
+% and simple_arrref_consistency. This version does not add ordering on the
+% variables.
+%
+% IMPORTANT: satisfiable_array_references/1 does not put anything into the
+% store. When ArrRef1 and ArrRef2 conflicts,
+%
+% :- satisfiable_array_references(ArrRef1),
+%    satisfiable_array_references(ArrRef2).
+%
+% may succeed although
+%
+% :- append(ArrRef1, ArrRef2, ArrRef3),
+%    satisfiable_array_references(ArrRef3).
+%
+% fails.
+%------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_satisfiable_array_references_1 :-
+	M>0, N<=0,
+	satisfiable_array_references([ref(A,[X,Y,Z],M),
+				      ref(A,[X,Y,Z],N)]).
+test_satisfiable_array_references_2 :-
+	satisfiable_array_references([ref(upd(upd(A,11,0),17,0),19,0),
+				      ref(upd(A,11,0),16,0),ref(A,10,0)]).
+test_satisfiable_array_references_3 :-
+	RefP1 < 1, RefP2 < 1,
+	satisfiable_array_references([
+		ref(upd(upd(upd(H,P1+0,0),P2+0,0),P+0,1),P1+0,RefP1),
+		ref(upd(upd(upd(H,P1+0,0),P2+0,0),P+0,1),P2+0,RefP2)]).
+				     
+test_satisfiable_array_references_4 :-
+	A1 <= 0, 5 <= A2, 
+	satisfiable_array_references([ref(A,Z,A1),ref(A,Z,A2)]).
+#endif  /*DEBUG_USE*/
+%------------------------------------------------------------------------------%
+
+#ifdef  PROFILE
+%-----------------------------------------------------------------------------%
+% satisfiable_array_references_profiled(+ArrRef)
+% Succeed if list of array references ArrRef is satisfiable.
+% In addition, it profiles the predicate.
+%-----------------------------------------------------------------------------%
+satisfiable_array_references_profiled(ArrRef) :-
+	satisfiable_array_references(ArrRef),!.
+satisfiable_array_references_profiled(_) :-
+	add_counter(infeasible_due_to_array,1),
+	!,
+	fail.
+#endif 	/*PROFILE*/
+
+%-----------------------------------------------------------------------------%
+% satisfiable_array_references(+ArrRef)
+% Succeed if list of array references ArrRef is satisfiable.
+%-----------------------------------------------------------------------------%
+satisfiable_array_references(ArrRef) :-
+	current_tracer_flag(array_solver, y),
+#ifdef  PROFILE
+        ctime(Time0),
+#endif	/*PROFILE*/
+	unsatisfiable_array_references(ArrRef),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(array_solver_sat_array_ref_time,Time1-Time0),
+#endif	/*PROFILE*/
+	!,
+        fail.
+satisfiable_array_references(_).
+
+%-----------------------------------------------------------------------------%
+% satisfiable_array_references_only_if_guard(+Statement,+ArrRef)
+%-----------------------------------------------------------------------------%
+% Check satisfiability of the array references only if the transition
+% is a guard. Otherwise, it is always satisfiable.
+%-----------------------------------------------------------------------------%
+satisfiable_array_references_only_if_guard(Statement,_ArrRef):-
+	% if statement then satisfiable
+	Statement == not_branch,
+	!.              
+satisfiable_array_references_only_if_guard(_,ArrRef):-
+	% if guard, then check satisfiability
+#ifdef  PROFILE
+        satisfiable_array_references_profiled(ArrRef),
+#else
+	satisfiable_array_references(ArrRef),
+#endif  /*PROFILE*/
+        !.
+
+%-----------------------------------------------------------------------------%
+% Core operation to check satisfiability of a list of array references.
+%-----------------------------------------------------------------------------%
+% simplify_array_reference_list/2 returns by failure all possible
+% combination of flattened expressions. Then,
+% simple_arrref_consistency/1 checks if any of them is unsatisfiable.
+%-----------------------------------------------------------------------------%
+unsatisfiable_array_references(ArrRef) :-
+	simplify_array_reference_list(ArrRef, ArrRef1),
+	simple_arrref_consistency(ArrRef1),
+	!,
+	fail.
+unsatisfiable_array_references(_).
+
+%-----------------------------------------------------------------------------%
+% simplify_array_reference_list(+InArrRef,-OutArrRef)
+% Simplify array references, while applying ordering on indices
+%-----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_simplify_array_reference_list :-
+	simplify_array_reference_list(
+		[ref(upd(upd(upd(_H, A, 0), _B, 0), _C, 1), A, 1)], L),
+	dump([L]).
+#endif  /*DEBUG_USE*/
+simplify_array_reference_list(InArrRef, OutArrRef) :-
+	simplify_array_reference_list_aux(InArrRef, [], OutArrRef).
+
+simplify_array_reference_list_aux([], OutArrRef, OutArrRef).
+simplify_array_reference_list_aux([ARef|R], InArrRef, OutArrRef) :-
+	simplify_array_reference(ARef, X),
+	append(X, InArrRef, ArrRef1),
+	simplify_array_reference_list_aux(R, ArrRef1, OutArrRef).
+
+%------------------------------------------------------------------------------%
+% simplify_array_reference
+%------------------------------------------------------------------------------%
+simplify_array_reference(ref(A,I,X), [ref(A,I,X)]) :- var(A), !.
+simplify_array_reference(ref(A,I,X), [ref(A,I,X)]) :- atomic(A), !.
+simplify_array_reference(ref(upd(A,I,X),J,Y), Z) :-
+	var(I), !,
+        simplify_array_reference_single(ref(upd(A,I,X),J,Y), Z).
+simplify_array_reference(ref(upd(A,I,X),J,Y), Z) :-
+        atomic(I), !,
+        simplify_array_reference_single(ref(upd(A,I,X),J,Y), Z).
+simplify_array_reference(ref(upd(A,I,X),J,Y), Z) :-
+	I=[_|_], !,
+	simplify_array_reference_multi(ref(upd(A,I,X),J,Y), Z).
+
+%------------------------------------------------------------------------------%
+% For 1-dimension arrays
+%------------------------------------------------------------------------------%
+simplify_array_reference_single(ref(A,I,X), [ref(A,I,X)]) :- var(A), !.
+simplify_array_reference_single(ref(A,I,X), [ref(A,I,X)]) :- atomic(A), !.
+simplify_array_reference_single(ref(upd(_,I,X),J,Y), []) :- I=J, X=Y.
+simplify_array_reference_single(ref(upd(A,I,_),J,Y), Z) :-	
+	% We use this instead of I>J since indices are integers	
+#if     (CLP_SYS==CLPR)
+	I>=J+1, 
+#elif   (CLP_SYS=SWI)
+        {I>=J+1},
+#endif
+	simplify_array_reference_single(ref(A,J,Y), Z). 
+simplify_array_reference_single(ref(upd(A,I,_),J,Y), Z) :-
+	% We use this instead of J>I since indices are integers
+#if     (CLP_SYS==CLPR)
+	J>=I+1, 
+#else
+        {J>=I+1},
+#endif
+	simplify_array_reference_single(ref(A,J,Y), Z).
+
+%------------------------------------------------------------------------------%
+% Routine to handle the simplification of multidimensional array references
+%------------------------------------------------------------------------------%
+simplify_array_reference_multi(ref(A,I,X), [ref(A,I,X)]) :- var(A), !.
+simplify_array_reference_multi(ref(A,I,X), [ref(A,I,X)]) :- atomic(A), !.
+simplify_array_reference_multi(ref(upd(_,I,X),J,Y), []) :- I=J, X=Y.
+simplify_array_reference_multi(ref(upd(A,I,_),J,Y), Z) :-
+	some_unequal(I,J),
+	simplify_array_reference_multi(ref(A,J,Y), Z).
+
+%------------------------------------------------------------------------------%
+% A routine to make at least one element unequal in two lists. Again,
+% we use X>=Y+1 instead of X>Y since array indices are integers
+%------------------------------------------------------------------------------%
+some_unequal([X|_], [Y|_]) :-
+#if     (CLP_SYS==CLPR)
+	X>=Y+1.
+#elif   (CLP_SYS==SWI)
+        {X>=Y+1}.
+#else
+        true.
+#endif
+some_unequal([X|_], [Y|_]) :-
+#if     (CLP_SYS==CLPR)
+	Y>=X+1.
+#elif   (CLP_SYS==SWI)
+        {Y>=X+1}.
+#else
+        true.
+#endif
+some_unequal([X|R], [X|S]) :- some_unequal(R, S).
+
+%------------------------------------------------------------------------------%
+% simple_arrref_consistency/1: Checking consistency of array references
+%------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_simple_arrref_consistency1 :-
+    X<0,
+    simple_arrref_consistency([ref(A,B,X),ref(A,B,0)]).
+#endif  /*DEBUG_USE*/
+simple_arrref_consistency(ArrRef) :-
+	set_counter(simple_arrref_consistency_backtrack_count, 0),
+	simple_arrref_consistency_aux3(ArrRef).
+
+simple_arrref_consistency_aux3([]).
+simple_arrref_consistency_aux3([ref(A,I,X)|R]) :-
+	simple_arrref_consistency_aux(ref(A,I,X),R),
+	simple_arrref_consistency_aux3(R).
+%------------------------------------------------------------------------------%
+% Incomplete solver: We give up after more than N backtracks,
+% declaring consistency (satisfiability). N is given by the
+% user-definable flag array_solver_backtrack.
+%------------------------------------------------------------------------------%
+simple_arrref_consistency_aux3(_) :-
+	current_tracer_flag(array_solver_backtrack,MaxNumOfAttemps),
+	MaxNumOfAttemps = -1,
+	% Here we always force backtracking
+	!,fail.
+simple_arrref_consistency_aux3(_) :-
+	current_tracer_flag(array_solver_backtrack,MaxNumOfAttemps),
+	N > MaxNumOfAttemps, 
+	counter_value(simple_arrref_consistency_backtrack_count, N), !.
+simple_arrref_consistency_aux3(_) :-
+	% Here we force backtracking
+	add_counter(simple_arrref_consistency_backtrack_count, 1),
+	!, fail.
+
+%simple_arrref_consistency_aux(_, R) :-
+%	length(R, N), writeln(N), read(_), fail.
+simple_arrref_consistency_aux(_,[]).
+simple_arrref_consistency_aux(ref(A,I,X),[ref(B,J,Y)|R]) :-
+	%----------------------------------------------------------------------%
+	% Array A and B are equal
+	%----------------------------------------------------------------------%
+	A==B, !,
+	simple_arrref_consistency_aux2(I,X,J,Y),
+	simple_arrref_consistency_aux(ref(A,I,X),R).
+simple_arrref_consistency_aux(ArrRef,[_|R]) :-
+	simple_arrref_consistency_aux(ArrRef,R).
+
+%------------------------------------------------------------------------------%
+% simple_arrref_consistency_aux2:
+% Apply some ordering to the indices, s.t. if the indices are equal, the
+% values have to be equal
+%------------------------------------------------------------------------------%
+simple_arrref_consistency_aux2(I,X,J,Y) :-
+	var(I), !,
+	simple_arrref_consistency_aux2_single(I,X,J,Y).
+simple_arrref_consistency_aux2(I,X,J,Y) :-
+        atomic(I), !,
+        simple_arrref_consistency_aux2_single(I,X,J,Y).
+
+%------------------------------------------------------------------------------%
+% Multidimensional case
+%------------------------------------------------------------------------------%
+simple_arrref_consistency_aux2(I,X,J,Y) :-
+	I=[_|_], I=J,
+#if     (CLP_SYS==CLPR)
+	X=Y.
+#elif   (CLP_SYS==SWI)
+        {X=:=Y}.
+#endif
+simple_arrref_consistency_aux2(I,_,J,_) :-
+	I=[_|_], !, some_unequal(I,J).
+simple_arrref_consistency_aux2(_, _, _, _) :-
+	writeln(unsat), !, fail.
+
+%------------------------------------------------------------------------------%
+% 1-Dimension case
+%------------------------------------------------------------------------------%
+simple_arrref_consistency_aux2_single(I,X,J,Y) :-
+#if     (CLP_SYS==CLPR)
+	I=J, X=Y.
+#elif   (CLP_SYS==SWI)
+        {I=:=J, X=:=Y}.
+#endif
+simple_arrref_consistency_aux2_single(I,_,J,_) :-
+#if     (CLP_SYS==CLPR)
+	I+1<=J.
+#elif   (CLP_SYS==SWI)
+        {I+1<=J}.
+#endif
+simple_arrref_consistency_aux2_single(I,_,J,_) :-
+#if     (CLP_SYS==CLPR)
+	I>=J+1.
+#elif   (CLP_SYS==SWI)
+        {I>=J+1}.
+#endif
+simple_arref_consistency_aux2_single(_, _, _, _) :-
+	writeln(unsat), !, fail.
+
+
+%================================================================================%
+%                                 Projection
+%================================================================================%
+#ifdef  DEBUG_USE
+% Example 1
+test_project_array_solver_context_1:-
+	set_tracer_flag(array_solver,y),
+	
+	CL = [assign(SZ,5),arrassign(SA1,upd(_,SX,SZ)),
+	      arrassign(SA2,upd(SA1,SX,plus(SZ,2))),
+	      arrassign(SA,upd(SA2,SY,plus(SZ,4)))],
+	InArrRef=[],
+	constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef),	
+	project_array_solver_context(state([],[],[SA],[SX,SY,SZ],OutArrRef),
+				     state([],[],[A],[X,Y,Z],ProjCL)),
+	% Dictionary
+	A='a',X='x',Y='y',Z='z', print_message("Proj: %\n",[ProjCL]).
+% Example 2
+test_project_array_solver_context_2:-
+	set_tracer_flag(array_solver,y),
+	InArrRef=[],
+	CL = [arrassign(SA1,upd(_SA0,SX,5)),
+	      arrassign(SA2,upd(SA1,SX,plus(ref(SA1,SX),1))),
+	      arrassign(SA3,upd(SA2,SY,plus(ref(SA2,SX),3)))],
+	constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef),
+	project_array_solver_context(state([],[],[SA3],[SX,SY],OutArrRef),
+				     state([],[],[A],[X,Y],ProjCL)),
+	% Dictionary
+	A='a',X='x',Y='y',
+	print_message("Proj: %\n",[ProjCL]).
+% Example 3
+test_project_array_solver_context_3:-
+	set_tracer_flag(array_solver,y),
+	InArrRef=[],
+	CL = [arrassign(SA1,upd(_SA0,SX,SZ)),
+	      gt(ref(SA1,SX),10),
+	      arrassign(SA2,upd(SA1,SX,plus(ref(SA1,SX),1))),
+	      arrassign(SA3,upd(SA2,SY,plus(ref(SA2,SX),3)))],
+	constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef),
+	% Dictionary
+	% SA1='a1',SA2='a2', SA3='a3', SX='x',SY='y',SZ='z',
+	%print_message("OutArrRef: %\n",[OutArrRef]),
+	project_array_solver_context(state([],[],[SA3],[SX,SY,SZ],OutArrRef),
+				     state([],[],[A],[X,Y,Z],ProjCL)),
+	% Dictionary
+	A='a',X='x',Y='y',Z='z',
+	print_message("Proj: %\n",[ProjCL]).
+% Example 4
+test_project_array_solver_context_4:-
+	set_tracer_flag(array_solver,y),
+	InArrRef=[],
+	project_array_solver_context(state([],[],
+					   [upd(upd(_SA,SX,5),SY,7)],[SX,SY,_SZ],InArrRef),
+				     state([],[],[A],[X,Y,Z],ProjCL)),
+	% Dictionary
+	A='a',X='x',Y='y',Z='z',
+	print_message("Proj: %\n",[ProjCL]).
+% Example 5
+test_project_array_solver_context_5:-
+	set_tracer_flag(array_solver,y),
+	InArrRef=[ref(A1,X,Ref0),ref(A2,X,Ref1)],
+	A1 = upd(_A0,X,5),
+	A2 = upd(A1,X,Ref0+1),
+	A3 = upd(A2,Y,Ref1+3),	  
+	project_array_solver_context(state([],[],
+					   [A3],[X,Y],InArrRef),
+				     state([],[],[SA],[SX,SY],ProjCL)),
+	% Dictionary
+	SA='a',SX='x',SY='y',
+	print_message("Proj: %\n",[ProjCL]).
+% Example 6
+test_project_array_solver_context_6:-
+	%---------------------------------------------------------------------
+	% This case is key when we unroll loops with minmax
+	%---------------------------------------------------------------------	
+	set_tracer_flag(array_solver,y),
+	InArrRef=[ref(A0,X,3)], % from previous iteration:
+	                        % this "read" means actually a "write"
+	                        % from a previous projection.
+	A1 = upd(A0,X+1,5),     % from current  iteration	
+	project_array_solver_context(state([],[],
+					   [A1],[X,_Y],InArrRef),
+				     state([],[],[SA],[SX,SY],ProjCL)),
+	% Dictionary
+	SA='a',SX='x',SY='y',
+	print_message("Proj: %\n",[ProjCL]).
+test_project_array_solver_context_7:-
+	set_tracer_flag(array_solver,y),
+	InArrRef=[],
+	CL = [arrassign(A1, upd(_A0, plus(Addr_b, X), 5)),
+	      arrassign(B1, upd(_B0, plus(Addr_a, ref(A1, plus(Addr_b, X))), 2))],
+	constraint_symbolic_with_array_update_subst(CL,InArrRef,OutArrRef),
+	project_array_solver_context(state([],[],[A1,B1],[Addr_a,Addr_b,X],OutArrRef),
+				     state([],[],[AOut,BOut],[AddrAOut,AddrBOut,XOut],ProjCL)),
+	% Dictionary
+	AOut='A',BOut='B',AddrAOut='a',AddrBOut='b',XOut='x',
+	print_message("Proj: %\n",[ProjCL]).
+#endif  /*DEBUG_USE*/
+
+%==============================================================================%
+% project_array_solver_context/2 can be called from two different
+% scenarios: 
+%==============================================================================%
+% Usage 1: Executing first a CLP transition
+%	InArrRef=[ref(A1,X,Ref0),ref(A2,X,Ref1)],
+%	A1 = upd(_A0,X,5),
+%	A2 = upd(A1,X,Ref0+1),
+%	A3 = upd(A2,Y,Ref1+3),	  
+%	project_array_solver_context(state([],[],
+%					   [A3],[X,Y],InArrRef),
+%				     state([],[],[SA],[SX,SY],ProjCL)).
+% Usage 2: Evaluating first a list of symbolic constraints.
+%	CL = [arrassign(SA1,upd(_SA0,SX,SZ)),
+%	      gt(ref(SA1,SX),10),
+%	      arrassign(SA2,upd(SA1,SX,plus(ref(SA1,SX),1))),
+%	      arrassign(SA3,upd(SA2,SY,plus(ref(SA2,SX),3)))],
+%	constraint_symbolic_with_array_update_subst(CL,[],OutArrRef),
+%	project_array_solver_context(state([],[],[SA3],[SX,SY,SZ],OutArrRef),
+%				     state([],[],[A],[X,Y,Z],ProjCL)).
+%==============================================================================%
+% - If Usage 1 then no precondition is needed.
+% - If Usage 2 then we require that all array variables are
+%   substituted with their corresponding array updates, and then a
+%   call to constraint_symbolic/3 is a must. These steps are done by
+%   constraint_symbolic_with_array_update_subst/3.
+%==============================================================================%
+project_array_solver_context(state(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+			     state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,SProjCL)):-
+#ifdef  PROJECTION_DEBUG
+        dump([GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef]),
+#endif  /*PROJECTION_DEBUG*/
+        %======================================================================
+        % Hook to convert ref(A,I,V) to updates because they are
+        % actually updates converted to reads by a previous
+        % projection
+        %======================================================================
+        convert_reads_to_writes(ArrRef,GlobalArr,GlobalArr1),
+        convert_reads_to_writes(ArrRef,LocalArr ,LocalArr1),
+#ifdef  PROJECTION_DEBUG
+        print_message("Original vars: % % % % \n",[GlobalArr1,GlobalVar,LocalArr1,LocalVar]),		     
+        dump([GlobalArr1,GlobalVar,LocalArr1,LocalVar,ArrRef]),
+#endif  /*PROJECTION_DEBUG*/
+	%----------------------------------------------------------------------
+	% Split ArrRef which is a list of ref(A,I,V) into three lists
+	% of As, Is, and Vs.
+	%----------------------------------------------------------------------	
+	get_aref_variables(ArrRef, ArrayList, IndexList, RefList),	
+#ifdef  PROJECTION_DEBUG
+	print_message("get_aref_variables(%,%,%,%) \n",
+		      [ArrRef,ArrayList,IndexList,RefList]),
+#endif  /*PROJECTION_DEBUG*/	
+	copy_to_unbound_list(GlobalArr1, SGlobalArr),
+	copy_to_unbound_list(GlobalVar , SGlobalVar), 
+	copy_to_unbound_list(LocalArr1 , SLocalArr),
+	copy_to_unbound_list(LocalVar  , SLocalVar),			
+	copy_to_unbound_list(ArrayList , SArrayList),
+	copy_to_unbound_list(IndexList , SIndexList),
+	copy_to_unbound_list(RefList   , SRefList),
+#ifdef  PROJECTION_DEBUG
+        print_message("Copy vars: % % % % \n",
+		      [SGlobalArr,SGlobalVar,SLocalArr,SLocalVar]),
+#endif  /*PROJECTION_DEBUG*/	
+ 	%----------------------------------------------------------------------
+	append(LocalArr1 , LocalVar, S1),
+	append(GlobalVar , S1, S2),
+	append(GlobalArr1, S2, S3),
+ 	%----------------------------------------------------------------------
+	append(RefList   , S3, S4),
+	append(IndexList , S4, S5),
+	append(ArrayList , S5, S6),
+ 	%----------------------------------------------------------------------
+	append(SLocalArr , SLocalVar, T1),
+	append(SGlobalVar, T1, T2),
+	append(SGlobalArr, T2, T3),
+ 	%----------------------------------------------------------------------
+	append(SRefList  , T3, T4),
+	append(SIndexList, T4, T5),
+	append(SArrayList, T5, T6),
+ 	%----------------------------------------------------------------------
+        %----------------------------------------------------------------------	
+	% Project using dump/3
+        %----------------------------------------------------------------------	
+#if     (CLP_SYS==CLPR)	
+	dump(S6, T6, CL0),
+#elif   (CLP_SYS==SWI)
+	swi_dump(S6, T6, CL0),
+#endif  /*(CLP_SYS==CLPR)*/
+	%----------------------------------------------------------------------	
+	% Convert from dump/3 format to ours, and
+        % construct list of symbolic constraints eq(V,ref(A,I)) from
+        % lists of arrays, the list of indices, and the list of values
+        % of the same length.
+	%----------------------------------------------------------------------	
+	make_symbolic(CL0, CL1, _),
+	construct_arrref_list(SArrayList,SIndexList,SRefList,SArrRef),	
+#ifdef  PROJECTION_DEBUG			
+        print_message("After dump and reconstructing constraints \n",[]),
+	print_message("% % \n",[CL1,SArrRef]),
+#endif  /*PROJECTION_DEBUG*/
+        %---------------------------------------------------------------------- 
+        % Split constraints between primaries and non-primaries
+        %---------------------------------------------------------------------- 
+        split_primary_nonprimary_equalities(CL1, T3, NonPrimaryEqCL, RestCL),
+        %======================================================================
+        % Usage 1:
+        %
+        % NonPrimaryEqCL=[eq(A2,upd(upd(A0,X,5),X,plus(Ref0,1))),
+        %                 eq(A1,upd(A0,X,5)), eq(X,_),eq(X,_)]
+        %
+        % RestCL=[eq(A3,upd(upd(upd(A0,X,5),X,plus(Ref0,1)),Y,plus(Ref1,3)))] 
+        %======================================================================
+#ifdef  PROJECTION_DEBUG			
+        print_message("NonPrimaryEqCL:%\n RestCL:%\n\n",[NonPrimaryEqCL, RestCL]),
+#endif  /*PROJECTION_DEBUG*/
+        %----------------------------------------------------------------------
+        % Flatten constraints to eliminate array updates
+        %----------------------------------------------------------------------
+	flatten_array_updates(NonPrimaryEqCL,[],FlatNonPrimaryEqCL,_),
+	flatten_array_updates(RestCL,[],FlatRestCL,_),
+        %======================================================================
+        % Usage 1:
+        % FlatNonPrimaryEqCL=[eq(ref(A2,X),plus(Ref0,1)), eq(ref(A1,X),5),
+	%                     eq(X,X'),eq(X,X'')]
+	% FlatRestCL=[eq(ref(A3,X),plus(Ref0,1)),eq(ref(A3,Y),plus(Ref1,3))]
+	%
+	% FlatPrimaryCL = [eq(ref(A3,X),plus(Ref0,1)),eq(ref(A3,Y),plus(Ref1,3)),
+	%                  eq(Ref0,ref(A1,X'),eq(Ref1,ref(A2,X''))]
+        %======================================================================
+#ifdef PROJECTION_DEBUG				
+        print_message("FlatNonPrimaryEqCL:%\nFlatRestCL:%\n\n",
+		      [FlatNonPrimaryEqCL,FlatRestCL]),
+#endif /*PROJECTION_DEBUG*/
+        append(FlatRestCL,SArrRef,FlatPrimaryCL),
+#ifdef PROJECTION_DEBUG				
+        print_message("FlatPrimaryCL:% \n\n",[	FlatPrimaryCL]),
+#endif /*PROJECTION_DEBUG*/		
+        %----------------------------------------------------------------------
+        % Substitute in FlatPrimaryCL using equalities from FlatNonPrimaryEqCL
+        %----------------------------------------------------------------------
+	substitute_terms_until_fixpoint(FlatNonPrimaryEqCL,FlatPrimaryCL,SProjCL0),
+        %======================================================================
+        % Usage 1:
+	% SProjCL = [eq(ref(A3,X),plus(Ref0,1)),eq(ref(A3,Y),plus(Ref1,3)),
+	%            eq(Ref0,5), eq(Ref1,plus(Ref0,1)) ] 
+        %======================================================================
+	%----------------------------------------------------------------------
+	% Remove those array reads that behaved as writes
+	%----------------------------------------------------------------------	
+	filter_nonprimary_arrref(SProjCL0,T3,SProjCL),
+#ifdef PROJECTION_DEBUG						
+        print_message("SProjCL:%\n",[SProjCL]),
+#endif /*PROJECTION_DEBUG*/		
+	!.
+project_array_solver_context(_,_) :-
+	error_message("project_array_solver_context/2 failed\n",[]).
+
+filter_nonprimary_arrref([],_,[]):-!.
+filter_nonprimary_arrref([eq(X,_Y)|T],PrimaryVs,R):-
+	mynonvar(X),
+	X=ref(A,_),
+	nonmemberGndchk(A,PrimaryVs),
+	!,
+	filter_nonprimary_arrref(T,PrimaryVs,R).
+filter_nonprimary_arrref([eq(_Y,X)|T],PrimaryVs,R):-
+	mynonvar(X),
+	X=ref(A,_),
+	nonmemberGndchk(A,PrimaryVs),
+	!,
+	filter_nonprimary_arrref(T,PrimaryVs,R).
+filter_nonprimary_arrref([C|T],PrimaryVs,[C|R]):-
+	filter_nonprimary_arrref(T,PrimaryVs,R).
+
+% convert_reads_to_writes([ref(A0,X-1,3),ref(B0,Y+1,45)],
+%                         [upd(A0,X, 5),upd(B0,Y,7)],Res).
+convert_reads_to_writes([],Vars,Vars):- !.
+convert_reads_to_writes(_,[],[]):- !.
+convert_reads_to_writes([ref(A,Ind,Val)|T],Vars,NVars1):-
+	convert_reads_to_writes_aux(Vars,A,Ind,Val,NVars),
+	convert_reads_to_writes(T,NVars,NVars1).
+convert_reads_to_writes([_|T],Vars,NVars):-
+	convert_reads_to_writes(T,Vars,NVars),!.
+
+convert_reads_to_writes_aux([C|R],A,Ind,Val,[upd(C,Ind,Val)|R]):-
+	A == C,
+	!.
+convert_reads_to_writes_aux([C|R],A,Ind,Val,[upd(C,Ind,Val)|R]):-
+	C= upd(_,_,_),
+	extract_var_from_nested_update_term(C,D),
+	D == A,
+	!.
+convert_reads_to_writes_aux([C|T],A,Ind,Val,[C|R]):-
+	convert_reads_to_writes_aux(T,A,Ind,Val,R).
+
+extract_var_from_nested_update_term(A,A):-
+	myvar(A),
+	!.
+extract_var_from_nested_update_term(upd(A,_,_),B):-
+	extract_var_from_nested_update_term(A,B).
+
+% %-------------------------------------------------------------------------%
+% % convert_aeq_to_arrref(+GlobalArr,+LocalArr,CL,-NewCL,-Subst)
+% %-------------------------------------------------------------------------%
+% % Convert equalities that involves array updates into array
+% % references. All array references will be defined in terms of current
+% % variables (GlobalArr and LocalArr). Subst is a dictionary of pairs
+% % NewName-OldName for array variables.
+% %
+% % This version is used to store in the memo table.
+% %-------------------------------------------------------------------------%
+% % e.g., convert_aeq_to_arrref([A1],[],[eq(upd(A0,I,0),A1)],
+% % [eq(ref(A1,I),0)], [t(A1,A0)])
+% %-------------------------------------------------------------------------%
+% #ifdef  DEBUG_USE
+% test_convert_aeq_to_arrref_1:-
+% 	CL = [eq(upd(_A0,_I,0),A1)],
+% 	convert_aeq_to_arrref([A1],[],CL,NewCL,Substs),
+% 	print_message("% -> % w/ subst % \n",[CL,NewCL,Substs]).	
+% #endif  /*DEBUG_USE*/
+% %-------------------------------------------------------------------------%
+% % convert_aeq_to_arrref(GlobalArr, LocalArr, CL, NewCL, Substs) :-
+% %         %print_message("% % % % % \n",[GlobalArr, LocalArr,CL,NewCL, Substs]),
+% % 	extract_aeq_and_convert_to_aa(CL, AAL, RestCL), 
+% %         %print_message("AAL: %\nRestCL:%\n",[AAL,RestCL]),
+% % 	substitute_arrayvars_with_updates(AAL, AAL1),
+% %         %print_message("AAL1:%\n",[AAL1]),
+% % 	select_primary_aa(AAL1, GlobalArr, LocalArr, [] , AAL2),
+% %         %print_message("GlobalArr: % LocalArr: % AAL2:%\n",[GlobalArr,LocalArr,AAL2]),
+% % 	flatten_array_updates(AAL2, [], OutCL, Substs),
+% %         %print_message("OutCL:%\n",[OutCL]),
+% % 	append(OutCL,RestCL,NewCL),
+% % 	!.
+
+% %---------------------------------------------------------------------------%
+% % extract_aeq_and_convert_to_aa(+CL,-AAL,-RestCL)
+% %---------------------------------------------------------------------------%
+% % CL is a list of terms returned by make_symbolic/3 (i.e., only tt/0,
+% % geq/2, gt/2, eq/2, ff/0). AAL is a list that contains only eq/2
+% % terms that involve array updates and convert them into arrassign/2
+% % terms. RestCL is the rest of constraints from CL.
+% %---------------------------------------------------------------------------%
+% extract_aeq_and_convert_to_aa([], [], []).
+% extract_aeq_and_convert_to_aa([eq(A, B)|R], [arrassign(B, A)|S], T) :- 
+% 	mynonvar(A),
+% 	myvar(B),
+% 	A=upd(_, _, _), !,
+% 	extract_aeq_and_convert_to_aa(R, S, T).
+% extract_aeq_and_convert_to_aa([eq(A, B)|R], [arrassign(A, B)|S], T) :-
+% 	mynonvar(B),
+% 	myvar(A),
+% 	B=upd(_, _, _), !,
+% 	extract_aeq_and_convert_to_aa(R, S, T).
+% extract_aeq_and_convert_to_aa([C|R], S, [C|T]) :-
+% 	extract_aeq_and_convert_to_aa(R, S, T).
+
+% %----------------------------------------------------------------------------%
+% % select_primary_aa(+CL,+GlobalArr,+LocalArr,-AccAAL,-AAL)
+% %----------------------------------------------------------------------------%
+% % AAL containts those arrassign constraints in CL which are defined in
+% % terms of the primary variables (GlobalArr and LocalArr).
+% %----------------------------------------------------------------------------%
+% select_primary_aa([], _, _,  OutAAL, OutAAL).
+% select_primary_aa([AA|R], GlobalArr, LocalArr,  CrntAAL, OutAAL) :-
+% 	AA = arrassign(Y,_),
+% 	memberGndchk(Y,GlobalArr),!,
+% 	select_primary_aa(R, GlobalArr, LocalArr,  [AA|CrntAAL], OutAAL).
+% select_primary_aa([AA|R], GlobalArr, LocalArr,  CrntAAL, OutAAL) :-
+% 	AA = arrassign(Y,_),
+% 	memberGndchk(Y,LocalArr),!,	
+% 	select_primary_aa(R, GlobalArr, LocalArr,  [AA|CrntAAL], OutAAL).
+% select_primary_aa([_|R], GlobalArr, LocalArr,  CrntAAL, OutAAL) :-
+% 	select_primary_aa(R, GlobalArr, LocalArr,  CrntAAL, OutAAL).
+
+%------------------------------------------------------------------------------
+% split_primary_nonprimary_equalities(+CL,+PrimaryVs,-NonPrimaryCL,-PrimaryCL)
+%------------------------------------------------------------------------------
+% NonPrimaryCL is a sublist from CL with constraints of the form
+% eq(A,_) or eq(_,A), where A is not a primary variable (is not in
+% PrimaryVs). PrimaryCL is the remaining constraints from CL.
+%------------------------------------------------------------------------------
+split_primary_nonprimary_equalities([],_,[],[]).
+split_primary_nonprimary_equalities([eq(A,B)|R],PrimaryVs,[eq(A,B)|S],Rest) :-
+	myvar(A),
+	nonmemberGndchk(A,PrimaryVs),
+	!,
+	split_primary_nonprimary_equalities(R,PrimaryVs,S,Rest).
+split_primary_nonprimary_equalities([eq(A,B)|R],PrimaryVs,[eq(B,A)|S],Rest) :-
+	myvar(B),
+	nonmemberGndchk(B,PrimaryVs),
+	!,
+	split_primary_nonprimary_equalities(R,PrimaryVs,S,Rest).
+split_primary_nonprimary_equalities([C|R],PrimaryVs,S,[C|Rest]) :-
+	split_primary_nonprimary_equalities(R,PrimaryVs,S,Rest).
+
+%------------------------------------------------------------------------------
+% substitute_terms_until_fixpoint/3: Use Unifier to substitute formula until
+% fixpoint is reached.
+%------------------------------------------------------------------------------
+substitute_terms_until_fixpoint(Unifier,A,B) :-
+	substitute_terms_until_fixpoint_aux(Unifier,A,x,B).
+substitute_terms_until_fixpoint_aux(_Unifier,A,C,A) :-
+	A==C, !.
+substitute_terms_until_fixpoint_aux(Unifier,A,_,B) :-
+	substitute_terms(Unifier,A,C),
+	substitute_terms_until_fixpoint_aux(Unifier,C,A,B).
+
+%------------------------------------------------------------------------------
+% get_aref_variables(+ArrRefList,-ArrList,-IndList,-ValList)
+% ------------------------------------------------------------------------------
+% Split references list ref(A,I,V) found into lists of As, Is, and Vs.
+% E.g., get_aref_variables([ref(A, Ind1, Val), ref(B, Ind2, 2),ref(A, Ind1, 5)],
+%                          [A,B,A],[Ind1,Ind2,Ind1],[Val,2,5])
+%------------------------------------------------------------------------------
+get_aref_variables(_,[],[],[]):-
+	current_tracer_flag(array_solver,n),!.
+get_aref_variables(Rs,As,Is,Vs):-	
+	get_aref_variables_aux(Rs,As,Is,Vs),!.
+
+get_aref_variables_aux([], [], [], []).
+get_aref_variables_aux([ref(A,I,V)|R], [A|U], [I|T], [V|S]) :-
+	get_aref_variables_aux(R, U, T, S).
+
+%------------------------------------------------------------------------------
+% construct_arrref_list(+,+,+,+,-)
+%------------------------------------------------------------------------------
+% The counterpart of get_aref_variables/4.
+% Construct a list of eq(V,ref(A,I)) from lists of As, Is, and Vs
+%-----------------------------------------------------------------------------
+construct_arrref_list([], [], [], []).
+construct_arrref_list([A|R], [I|S], [X|T], [eq(X,ref(A,I))|U]) :-
+	construct_arrref_list(R, S, T, U).
+
+
+% %------------------------------------------------------------------------------
+% % construct_arrref_list(+,+,+,+,-)
+% %------------------------------------------------------------------------------
+% % The counterpart of get_aref_variables/4.
+% % Construct a list of eq(V,ref(A,I)) from lists of As, Is, and Vs
+% %-----------------------------------------------------------------------------
+% construct_arrref_list([], [], [], _, []).
+% construct_arrref_list([A|R], [I|S], [X|T], ArrNameSubst,[eq(X,ref(NewA,I))|U]) :-
+%         replace_arrname(ArrNameSubst, A, NewA),
+% 	construct_arrref_list(R, S, T, ArrNameSubst, U).
+
+% replace_arrname([],A,A):-!.
+% replace_arrname([t(NewA,OldX)|_], OldA,NewA):-
+% 	OldA == OldX,!.
+% replace_arrname([_|Ts], OldA,NewA):-
+% 	replace_arrname(Ts, OldA,NewA).
+
+%============================================================================%
+%                       Manipulation of constraints
+%============================================================================%
+
+%----------------------------------------------------------------------------%
+% negate_list_array2/2: Produce a negation of symbolic array constraints
+%----------------------------------------------------------------------------%
+negate_list_array2(CL,NCL1):-
+	negate_list_array2_aux(CL,[],NCL1).
+	% Note that we use reverse/2 to keep the order of the constraints.	 	
+	% reverse(NCL0,NCL1).
+			       
+negate_list_array2_aux([],NL,NL):-!.
+negate_list_array2_aux([C|R],Acc,NL):-
+	negate_array2(C,NCs), !,
+	% append_constraints(NCs,Acc,NAcc),
+	append(NCs,Acc,NAcc),
+	negate_list_array2_aux(R,NAcc,NL).
+
+negate_array2(arreq(A,B), [arrneq(A,B)]).
+negate_array2(arrassign(A,B), [arrneq(A,B)]).
+negate_array2(arrneq(A,B), [arreq(A,B)]) :-
+negate_array2(ff, [tt]).
+negate_array2(tt, []).
+
+%=============================================================================%
+% NOTE: the below predicates are either not used or used in the old
+% days for compositional which is outdated and obsolete currently.
+%=============================================================================%
+
+%-----------------------------------------------------------------------------%
+% Make symbolic list from array constraints
+% Not used!
+%-----------------------------------------------------------------------------%
+make_symbolic_list_array(QL,SL1):-
+	make_symbolic_list_array_aux(QL,[],SL1).
+	% Note that we use reverse/2 to keep the order of the constraints.	 	
+	% reverse(SL0,SL1).
+				    
+make_symbolic_list_array_aux([],L,L):-!.
+make_symbolic_list_array_aux([C|R],Acc,L):-
+	make_symbolic_array_constraint(C, Cs),!,
+	% append_constraints(Cs,Acc,NAcc),
+	append(Cs,Acc,NAcc),
+	make_symbolic_list_array_aux(R,NAcc,L).
+#if     (CLP_SYS == CLPR)
+make_symbolic_array_constraint(quote(A = B), [arreq(M,N)]) :-
+	make_symbolic_array_term(A,M),
+	make_symbolic_array_term(B,N).
+make_symbolic_array_constraint(ff, [ff]).
+make_symbolic_array_constraint(quote(real(_)), []).
+make_symbolic_array_constraint(tt, []).
+#elif   (CLP_SYS == SWI)
+make_symbolic_array_constraint('='(A,B), [arreq(M,N)]) :-
+	make_symbolic_array_term(A,M),
+	make_symbolic_array_term(B,N).
+make_symbolic_array_constraint(ff, [ff]).
+make_symbolic_array_constraint(tt, []).
+make_symbolic_array_constraint(_, []).
+#endif
+
+%-----------------------------------------------------------------------------%
+% Convert array constraints into terms.
+%-----------------------------------------------------------------------------%
+make_symbolic_array_term(A,A) :- var(A), !.
+make_symbolic_array_term(A,A) :- atomic(A), !.
+make_symbolic_array_term(upd(A,B,C), upd(A1,B1,C1)) :-
+	make_symbolic_array_term(A, A1),
+	make_symbolic_numeric_term(B, B1),
+	make_symbolic_numeric_term(C, C1), !.
+
+%=============================================================================%
+%=============================================================================%
+#ifdef  UNUSED_CODE
+%=============================================================================%
+%=============================================================================%
+% %------------------------------------------------------------------------------%
+% % negate_list_array/2: Produce a negation of the dumped array
+% % constraints to be stored in the table.
+% % -----------------------------------------------------------------------------%
+% % NOTE: This predicate has been replaced with
+% % make_symbolic/3. However, it's still used in
+% % neg_proj_sym_constraints/9 which is outdated and obsolete. Thus, we
+% % should delete this predicate at some point.
+% %------------------------------------------------------------------------------%
+% negate_list_array(CL,NCL1):-
+% 	negate_list_array_aux(CL,[],NCL1).
+% 	% Note that we use reverse/2 to keep the order of the constraints.
+% 	% reverse(NCL0,NCL1).
+% negate_list_array_aux([],NL,NL):-!.
+% negate_list_array_aux([C|R],Acc,NL):-
+% 	negate_array(C,NCs),!,
+% 	% append_constraints(NCs,Acc,NAcc),
+% 	append(NCs,Acc,NAcc),
+% 	negate_list_array_aux(R,NAcc,NL).
+% #if     (CLP_SYS == CLPR)
+% negate_array(quote(A = B), [arrneq(M,N)]) :-
+% 	make_symbolic_array_term(A,M),
+% 	make_symbolic_array_term(B,N).
+% negate_array(ff, [tt]).
+% negate_array(quote(real(_)), []).
+% negate_array(tt, []).
+% #elif   (CLP_SYS == SWI)
+% negate_array('='(A,B), [arrneq(M,N)]) :-
+% 	make_symbolic_array_term(A,M),
+% 	make_symbolic_array_term(B,N).
+% negate_array(ff, [tt]).
+% negate_array(tt, []).
+% negate_array(_, []).
+% #endif
+#endif /*UNUSED_CODE*/
+
+
+
+
+% project_array_solver_context(state(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+% 			     state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,SProjCL)) :-
+% #ifdef  PROJECTION_DEBUG	
+%         dump([GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef]),
+% #endif  /*PROJECTION_DEBUG*/
+
+% 	copy_to_unbound_list(GlobalArr, SGlobalArr),
+% 	copy_to_unbound_list(GlobalVar, SGlobalVar), 
+% 	copy_to_unbound_list(LocalArr , SLocalArr),
+% 	copy_to_unbound_list(LocalVar , SLocalVar),
+
+% 	% Split ArrRef which is a list of ref(A,I,V) into three lists
+% 	% of As, Is, and Vs.
+% 	get_aref_variables(ArrRef, ArrayList, IndexList, RefList),
+	
+% #ifdef  PROJECTION_DEBUG		
+% 	print_message("get_aref_variables(%,%,%,%) \n",
+% 		      [ArrRef,ArrayList,IndexList,RefList]),
+% #endif  /*PROJECTION_DEBUG*/
+
+%  	% Note: ArrayList may have duplicated array names. If we use
+%  	% copy_to_unbound_list/2 then we lose the relationships. For
+%  	% programs like test-loop-allzeros.c we need to keep the
+%  	% sharing.
+% 	copy_list_preserve_bindings(ArrayList, SArrayList),
+% 	copy_to_unbound_list(IndexList, SIndexList),
+% 	copy_to_unbound_list(RefList  , SRefList),
+%  	%----------------------------------------------------------------------
+% 	append(LocalArr  , LocalVar, S1),
+% 	append(GlobalVar , S1, S2),
+% 	append(GlobalArr , S2, S3),
+%  	%----------------------------------------------------------------------
+% 	append(RefList   , S3, S4),
+% 	append(IndexList , S4, S5),
+% 	append(ArrayList , S5, S6),
+%  	%----------------------------------------------------------------------
+% 	append(SLocalArr , SLocalVar, T1),
+% 	append(SGlobalVar, T1, T2),
+% 	append(SGlobalArr, T2, T3),
+%  	%----------------------------------------------------------------------
+% 	append(SRefList  , T3, T4),
+% 	append(SIndexList, T4, T5),
+% 	append(SArrayList, T5, T6),	
+%  	%----------------------------------------------------------------------
+
+%         %----------------------------------------------------------------------	
+% 	% Project using dump/3
+%         %----------------------------------------------------------------------	
+% #if     (CLP_SYS==CLPR)	
+% 	dump(S6, T6, SProjCL0),
+% #elif   (CLP_SYS==SWI)
+% 	swi_dump(S6, T6, SProjCL0),
+% #endif
+% 	%----------------------------------------------------------------------	
+% 	% Convert from dump/3 format to ours
+% 	%----------------------------------------------------------------------	
+% 	make_symbolic(SProjCL0, SProjCL1, _),
+	
+% #ifdef  PROJECTION_DEBUG			
+%         print_message("AFTER dump SProjCL1: %\n\n",[SProjCL1]),
+% #endif  /*PROJECTION_DEBUG*/
+% 	%----------------------------------------------------------------------
+%         % Convert equalities of array updates into array references
+%         % renamed in terms of current variables: SGlobalArr and
+%         % SLocalArr. ArrVerDict contains the substitutions done.
+%         %----------------------------------------------------------------------
+%         convert_aeq_to_arrref(SGlobalArr,SLocalArr,SProjCL1,SProjCL2,ArrVerDict),
+	
+% #ifdef  PROJECTION_DEBUG				
+%         print_message("after converting array equalities to references:\n",[]),
+% 	print_message("\t % % % % % \n",[SGlobalArr, SLocalArr,
+% 					 SProjCL1,SProjCL2, ArrVerDict]),
+% #endif  /*PROJECTION_DEBUG*/
+
+% 	%----------------------------------------------------------------------
+%         % Construct list of symbolic constraints eq(V,ref(A,I)) from
+%         % lists of arrays, the list of indices, and the list of values
+%         % of the same length.
+%         %----------------------------------------------------------------------
+%         % Note that convert_aeq_to_arrref/5 renamed array names to
+%         % current version.  construct_arrref_list/5 performs also
+%         % those substitutions so that ArrRefEq and SProjCL2 are
+%         % synchronized.
+%         %----------------------------------------------------------------------
+% 	construct_arrref_list(SArrayList,SIndexList,SRefList,ArrVerDict,ArrRefEq),
+
+% % #ifdef  PROJECTION_DEBUG				
+% %         print_message("%\n\n",[construct_arrref_list(SArrayList, SIndexList, SRefList,
+% % 						     ArrVerDict, ArrRefEq)]),	
+% % #endif  /*PROJECTION_DEBUG*/
+% 	%----------------------------------------------------------------------
+% 	% Get equalities with nonprimary array variables
+% 	%----------------------------------------------------------------------
+% 	split_primary_nonprimary_equalities(SProjCL2, T3, SubstList, Rest),
+% 	append(ArrRefEq, Rest, SProjCL3),
+	
+% % #ifdef  PROJECTION_DEBUG					
+% %         print_message("split_primary_nonprimary_equalities(%,%,%,%). \n\n",
+% % 		      [SProjCL2, T3, SubstList, Rest]),
+% % #endif  /*PROJECTION_DEBUG*/
+% 	%----------------------------------------------------------------------
+% 	% Apply exhaustively the substitutions to SProjCL3
+% 	%----------------------------------------------------------------------	
+% 	substitute_terms_until_fixpoint(SubstList, SProjCL3, SProjCL),
+% 	!.	
+% % #ifdef  PROJECTION_DEBUG						
+% % 	print_message("% % % %\nSProjCL0:%\nSubstList:%\nCList:%\n",
+% % 	      [SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,SProjCL0,SubstList,SProjCL]).
+% % #else
+% %         true.
+% % #endif  /*PROJECTION_DEBUG*/						
+% project_array_solver_context(_,_) :-
+% 	error_message("project_array_solver_context/2 failed\n",[]).

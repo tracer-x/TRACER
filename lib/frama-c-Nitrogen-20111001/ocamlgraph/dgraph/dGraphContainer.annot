@@ -1,0 +1,5967 @@
+"dgraph/dGraphContainer.ml" 28 1861 1865 "dgraph/dGraphContainer.ml" 28 1861 1868
+type(
+  ('a -> 'b) -> 'a -> 'b
+)
+ident(
+  def $ "dgraph/dGraphContainer.ml" 30 1880 1880 --
+)
+"dgraph/dGraphContainer.ml" 28 1861 1869 "dgraph/dGraphContainer.ml" 28 1861 1870
+type(
+  'a -> 'b
+)
+ident(
+  def f "dgraph/dGraphContainer.ml" 28 1861 1871 "dgraph/dGraphContainer.ml" 28 1861 1878
+)
+"dgraph/dGraphContainer.ml" 28 1861 1871 "dgraph/dGraphContainer.ml" 28 1861 1872
+type(
+  'a
+)
+ident(
+  def x "dgraph/dGraphContainer.ml" 28 1861 1875 "dgraph/dGraphContainer.ml" 28 1861 1878
+)
+"dgraph/dGraphContainer.ml" 28 1861 1875 "dgraph/dGraphContainer.ml" 28 1861 1876
+type(
+  'a -> 'b
+)
+ident(
+  int_ref f "dgraph/dGraphContainer.ml" 28 1861 1869 "dgraph/dGraphContainer.ml" 28 1861 1870
+)
+"dgraph/dGraphContainer.ml" 28 1861 1877 "dgraph/dGraphContainer.ml" 28 1861 1878
+type(
+  'a
+)
+ident(
+  int_ref x "dgraph/dGraphContainer.ml" 28 1861 1871 "dgraph/dGraphContainer.ml" 28 1861 1872
+)
+"dgraph/dGraphContainer.ml" 28 1861 1875 "dgraph/dGraphContainer.ml" 28 1861 1878
+call(
+  tail
+)
+type(
+  'b
+)
+"dgraph/dGraphContainer.ml" 96 3445 3449 "dgraph/dGraphContainer.ml" 96 3445 3462
+type(
+  ?packing:(GObj.widget -> unit) ->
+  (packing:(GObj.widget -> unit) ->
+   'a ->
+   (< set_depth_backward : int -> unit; set_depth_forward : int -> unit;
+      switch : status -> unit; .. >
+    as 'b)) ->
+  'a -> GPack.table * 'b
+)
+ident(
+  def with_commands "dgraph/dGraphContainer.ml" 158 5722 5722 --
+)
+"dgraph/dGraphContainer.ml" 96 3445 3464 "dgraph/dGraphContainer.ml" 96 3445 3471
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 96 3445 3472 "dgraph/dGraphContainer.ml" 154 5684 5702
+)
+"dgraph/dGraphContainer.ml" 96 3445 3472 "dgraph/dGraphContainer.ml" 96 3445 3479
+type(
+  packing:(GObj.widget -> unit) -> 'a -> 'b
+)
+ident(
+  def mk_view "dgraph/dGraphContainer.ml" 96 3445 3480 "dgraph/dGraphContainer.ml" 154 5684 5702
+)
+"dgraph/dGraphContainer.ml" 96 3445 3480 "dgraph/dGraphContainer.ml" 96 3445 3485
+type(
+  'a
+)
+ident(
+  def model "dgraph/dGraphContainer.ml" 97 3488 3490 "dgraph/dGraphContainer.ml" 154 5684 5702
+)
+"dgraph/dGraphContainer.ml" 97 3488 3494 "dgraph/dGraphContainer.ml" 97 3488 3504
+type(
+  GPack.table
+)
+"dgraph/dGraphContainer.ml" 97 3488 3507 "dgraph/dGraphContainer.ml" 97 3488 3518
+type(
+  ?columns:int ->
+  ?rows:int ->
+  ?homogeneous:bool ->
+  ?row_spacings:int ->
+  ?col_spacings:int ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.table
+)
+ident(
+  ext_ref GPack.table
+)
+"dgraph/dGraphContainer.ml" 97 3488 3528 "dgraph/dGraphContainer.ml" 97 3488 3529
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 97 3488 3536 "dgraph/dGraphContainer.ml" 97 3488 3537
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 97 3488 3539 "dgraph/dGraphContainer.ml" 97 3488 3546
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 96 3445 3464 "dgraph/dGraphContainer.ml" 96 3445 3471
+)
+"dgraph/dGraphContainer.ml" 97 3488 3547 "dgraph/dGraphContainer.ml" 97 3488 3549
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 97 3488 3507 "dgraph/dGraphContainer.ml" 97 3488 3549
+call(
+  stack
+)
+type(
+  GPack.table
+)
+"dgraph/dGraphContainer.ml" 98 3553 3559 "dgraph/dGraphContainer.ml" 98 3553 3563
+type(
+  'b
+)
+"dgraph/dGraphContainer.ml" 99 3566 3574 "dgraph/dGraphContainer.ml" 99 3566 3581
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 99 3566 3582 "dgraph/dGraphContainer.ml" 99 3566 3583
+type(
+  GObj.widget
+)
+ident(
+  def w "dgraph/dGraphContainer.ml" 99 3566 3586 "dgraph/dGraphContainer.ml" 99 3566 3643
+)
+"dgraph/dGraphContainer.ml" 99 3566 3586 "dgraph/dGraphContainer.ml" 99 3566 3596
+type(
+  GPack.table
+)
+ident(
+  int_ref main_table "dgraph/dGraphContainer.ml" 97 3488 3494 "dgraph/dGraphContainer.ml" 97 3488 3504
+)
+"dgraph/dGraphContainer.ml" 99 3566 3586 "dgraph/dGraphContainer.ml" 99 3566 3603
+type(
+  left:int ->
+  top:int ->
+  ?right:int ->
+  ?bottom:int ->
+  ?expand:Gtk.Tags.expand_type ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 99 3566 3610 "dgraph/dGraphContainer.ml" 99 3566 3611
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 99 3566 3619 "dgraph/dGraphContainer.ml" 99 3566 3620
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 99 3566 3626 "dgraph/dGraphContainer.ml" 99 3566 3627
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 99 3566 3636 "dgraph/dGraphContainer.ml" 99 3566 3641
+type(
+  Gtk.Tags.expand_type
+)
+"dgraph/dGraphContainer.ml" 99 3566 3642 "dgraph/dGraphContainer.ml" 99 3566 3643
+type(
+  GObj.widget
+)
+ident(
+  int_ref w "dgraph/dGraphContainer.ml" 99 3566 3582 "dgraph/dGraphContainer.ml" 99 3566 3583
+)
+"dgraph/dGraphContainer.ml" 99 3566 3586 "dgraph/dGraphContainer.ml" 99 3566 3643
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 100 3647 3651 "dgraph/dGraphContainer.ml" 100 3647 3658
+type(
+  packing:(GObj.widget -> unit) -> 'a -> 'b
+)
+ident(
+  int_ref mk_view "dgraph/dGraphContainer.ml" 96 3445 3472 "dgraph/dGraphContainer.ml" 96 3445 3479
+)
+"dgraph/dGraphContainer.ml" 100 3647 3660 "dgraph/dGraphContainer.ml" 100 3647 3667
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 99 3566 3574 "dgraph/dGraphContainer.ml" 99 3566 3581
+)
+"dgraph/dGraphContainer.ml" 100 3647 3668 "dgraph/dGraphContainer.ml" 100 3647 3673
+type(
+  'a
+)
+ident(
+  int_ref model "dgraph/dGraphContainer.ml" 96 3445 3480 "dgraph/dGraphContainer.ml" 96 3445 3485
+)
+"dgraph/dGraphContainer.ml" 100 3647 3651 "dgraph/dGraphContainer.ml" 100 3647 3673
+call(
+  stack
+)
+type(
+  'b
+)
+"dgraph/dGraphContainer.ml" 99 3566 3570 "dgraph/dGraphContainer.ml" 100 3647 3673
+type(
+  'b
+)
+"dgraph/dGraphContainer.ml" 103 3699 3705 "dgraph/dGraphContainer.ml" 103 3699 3716
+type(
+  GPack.button_box
+)
+"dgraph/dGraphContainer.ml" 104 3719 3723 "dgraph/dGraphContainer.ml" 104 3719 3739
+type(
+  Gtk.Tags.orientation ->
+  ?spacing:int ->
+  ?child_width:int ->
+  ?child_height:int ->
+  ?child_ipadx:int ->
+  ?child_ipady:int ->
+  ?layout:GtkPack.BBox.bbox_style ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.button_box
+)
+ident(
+  ext_ref GPack.button_box
+)
+"dgraph/dGraphContainer.ml" 105 3740 3746 "dgraph/dGraphContainer.ml" 105 3740 3757
+type(
+  Gtk.Tags.orientation
+)
+"dgraph/dGraphContainer.ml" 106 3758 3778 "dgraph/dGraphContainer.ml" 106 3758 3779
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 107 3780 3800 "dgraph/dGraphContainer.ml" 107 3780 3802
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 108 3803 3822 "dgraph/dGraphContainer.ml" 108 3803 3824
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 109 3825 3840 "dgraph/dGraphContainer.ml" 109 3825 3842
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 110 3843 3857 "dgraph/dGraphContainer.ml" 110 3843 3863
+type(
+  GtkPack.BBox.bbox_style
+)
+"dgraph/dGraphContainer.ml" 111 3864 3880 "dgraph/dGraphContainer.ml" 111 3864 3890
+type(
+  GPack.table
+)
+ident(
+  int_ref main_table "dgraph/dGraphContainer.ml" 97 3488 3494 "dgraph/dGraphContainer.ml" 97 3488 3504
+)
+"dgraph/dGraphContainer.ml" 111 3864 3880 "dgraph/dGraphContainer.ml" 111 3864 3897
+type(
+  left:int ->
+  top:int ->
+  ?right:int ->
+  ?bottom:int ->
+  ?expand:Gtk.Tags.expand_type ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 111 3864 3903 "dgraph/dGraphContainer.ml" 111 3864 3904
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 111 3864 3911 "dgraph/dGraphContainer.ml" 111 3864 3912
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 111 3864 3921 "dgraph/dGraphContainer.ml" 111 3864 3923
+type(
+  Gtk.Tags.expand_type
+)
+"dgraph/dGraphContainer.ml" 111 3864 3879 "dgraph/dGraphContainer.ml" 111 3864 3924
+call(
+  tail
+)
+type(
+  GObj.widget -> unit
+)
+type(
+  ?right:int ->
+  ?bottom:int ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 111 3864 3925 "dgraph/dGraphContainer.ml" 111 3864 3927
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 104 3719 3723 "dgraph/dGraphContainer.ml" 111 3864 3927
+call(
+  stack
+)
+type(
+  GPack.button_box
+)
+"dgraph/dGraphContainer.ml" 113 3933 3939 "dgraph/dGraphContainer.ml" 113 3933 3949
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 113 3933 3952 "dgraph/dGraphContainer.ml" 113 3933 3963
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"dgraph/dGraphContainer.ml" 113 3933 3972 "dgraph/dGraphContainer.ml" 113 3933 3985
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 113 3933 3986 "dgraph/dGraphContainer.ml" 113 3933 3988
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 113 3933 3952 "dgraph/dGraphContainer.ml" 113 3933 3988
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 114 3992 3994 "dgraph/dGraphContainer.ml" 114 3992 4005
+type(
+  GPack.button_box
+)
+ident(
+  int_ref buttons_box "dgraph/dGraphContainer.ml" 103 3699 3705 "dgraph/dGraphContainer.ml" 103 3699 3716
+)
+"dgraph/dGraphContainer.ml" 114 3992 3994 "dgraph/dGraphContainer.ml" 114 3992 4010
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 114 3992 4019 "dgraph/dGraphContainer.ml" 114 3992 4024
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 114 3992 4025 "dgraph/dGraphContainer.ml" 114 3992 4035
+type(
+  GMisc.label
+)
+ident(
+  int_ref view_label "dgraph/dGraphContainer.ml" 113 3933 3939 "dgraph/dGraphContainer.ml" 113 3933 3949
+)
+"dgraph/dGraphContainer.ml" 114 3992 4025 "dgraph/dGraphContainer.ml" 114 3992 4042
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 114 3992 3994 "dgraph/dGraphContainer.ml" 114 3992 4042
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 115 4044 4050 "dgraph/dGraphContainer.ml" 115 4044 4060
+type(
+  string -> status -> unit
+)
+"dgraph/dGraphContainer.ml" 115 4044 4061 "dgraph/dGraphContainer.ml" 115 4044 4066
+type(
+  string
+)
+ident(
+  def label "dgraph/dGraphContainer.ml" 115 4044 4067 "dgraph/dGraphContainer.ml" 117 4140 4208
+)
+"dgraph/dGraphContainer.ml" 115 4044 4067 "dgraph/dGraphContainer.ml" 115 4044 4071
+type(
+  status
+)
+ident(
+  def mode "dgraph/dGraphContainer.ml" 116 4074 4078 "dgraph/dGraphContainer.ml" 117 4140 4208
+)
+"dgraph/dGraphContainer.ml" 116 4074 4082 "dgraph/dGraphContainer.ml" 116 4074 4083
+type(
+  GButton.button
+)
+"dgraph/dGraphContainer.ml" 116 4074 4086 "dgraph/dGraphContainer.ml" 116 4074 4100
+type(
+  ?label:string ->
+  ?use_mnemonic:bool ->
+  ?stock:GtkStock.id ->
+  ?relief:Gtk.Tags.relief_style ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GButton.button
+)
+ident(
+  ext_ref GButton.button
+)
+"dgraph/dGraphContainer.ml" 116 4074 4102 "dgraph/dGraphContainer.ml" 116 4074 4107
+type(
+  string
+)
+ident(
+  int_ref label "dgraph/dGraphContainer.ml" 115 4044 4061 "dgraph/dGraphContainer.ml" 115 4044 4066
+)
+"dgraph/dGraphContainer.ml" 116 4074 4117 "dgraph/dGraphContainer.ml" 116 4074 4128
+type(
+  GPack.button_box
+)
+ident(
+  int_ref buttons_box "dgraph/dGraphContainer.ml" 103 3699 3705 "dgraph/dGraphContainer.ml" 103 3699 3716
+)
+"dgraph/dGraphContainer.ml" 116 4074 4117 "dgraph/dGraphContainer.ml" 116 4074 4133
+type(
+  GObj.widget -> unit
+)
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 116 4074 4134 "dgraph/dGraphContainer.ml" 116 4074 4136
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 116 4074 4086 "dgraph/dGraphContainer.ml" 116 4074 4136
+call(
+  stack
+)
+type(
+  GButton.button
+)
+"dgraph/dGraphContainer.ml" 117 4140 4144 "dgraph/dGraphContainer.ml" 117 4140 4150
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphContainer.ml" 117 4140 4152 "dgraph/dGraphContainer.ml" 117 4140 4153
+type(
+  GButton.button
+)
+ident(
+  int_ref b "dgraph/dGraphContainer.ml" 116 4074 4082 "dgraph/dGraphContainer.ml" 116 4074 4083
+)
+"dgraph/dGraphContainer.ml" 117 4140 4152 "dgraph/dGraphContainer.ml" 117 4140 4161
+type(
+  GButton.button_signals
+)
+"dgraph/dGraphContainer.ml" 117 4140 4152 "dgraph/dGraphContainer.ml" 117 4140 4169
+type(
+  callback:(unit -> unit) -> GtkSignal.id
+)
+"dgraph/dGraphContainer.ml" 117 4140 4185 "dgraph/dGraphContainer.ml" 117 4140 4186
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 117 4140 4190 "dgraph/dGraphContainer.ml" 117 4140 4194
+type(
+  'b
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 98 3553 3559 "dgraph/dGraphContainer.ml" 98 3553 3563
+)
+"dgraph/dGraphContainer.ml" 117 4140 4190 "dgraph/dGraphContainer.ml" 117 4140 4201
+type(
+  status -> unit
+)
+"dgraph/dGraphContainer.ml" 117 4140 4202 "dgraph/dGraphContainer.ml" 117 4140 4206
+type(
+  status
+)
+ident(
+  int_ref mode "dgraph/dGraphContainer.ml" 115 4044 4067 "dgraph/dGraphContainer.ml" 115 4044 4071
+)
+"dgraph/dGraphContainer.ml" 117 4140 4190 "dgraph/dGraphContainer.ml" 117 4140 4206
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 117 4140 4180 "dgraph/dGraphContainer.ml" 117 4140 4207
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 117 4140 4151 "dgraph/dGraphContainer.ml" 117 4140 4208
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphContainer.ml" 117 4140 4144 "dgraph/dGraphContainer.ml" 117 4140 4208
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 116 4074 4078 "dgraph/dGraphContainer.ml" 117 4140 4208
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 119 4214 4216 "dgraph/dGraphContainer.ml" 119 4214 4226
+type(
+  string -> status -> unit
+)
+ident(
+  int_ref add_button "dgraph/dGraphContainer.ml" 115 4044 4050 "dgraph/dGraphContainer.ml" 115 4044 4060
+)
+"dgraph/dGraphContainer.ml" 119 4214 4227 "dgraph/dGraphContainer.ml" 119 4214 4235
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 119 4214 4236 "dgraph/dGraphContainer.ml" 119 4214 4242
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 119 4214 4216 "dgraph/dGraphContainer.ml" 119 4214 4242
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 120 4244 4246 "dgraph/dGraphContainer.ml" 120 4244 4256
+type(
+  string -> status -> unit
+)
+ident(
+  int_ref add_button "dgraph/dGraphContainer.ml" 115 4044 4050 "dgraph/dGraphContainer.ml" 115 4044 4060
+)
+"dgraph/dGraphContainer.ml" 120 4244 4257 "dgraph/dGraphContainer.ml" 120 4244 4263
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 120 4244 4264 "dgraph/dGraphContainer.ml" 120 4244 4268
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 120 4244 4246 "dgraph/dGraphContainer.ml" 120 4244 4268
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 121 4270 4272 "dgraph/dGraphContainer.ml" 121 4270 4282
+type(
+  string -> status -> unit
+)
+ident(
+  int_ref add_button "dgraph/dGraphContainer.ml" 115 4044 4050 "dgraph/dGraphContainer.ml" 115 4044 4060
+)
+"dgraph/dGraphContainer.ml" 121 4270 4283 "dgraph/dGraphContainer.ml" 121 4270 4289
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 121 4270 4290 "dgraph/dGraphContainer.ml" 121 4270 4294
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 121 4270 4272 "dgraph/dGraphContainer.ml" 121 4270 4294
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 124 4335 4341 "dgraph/dGraphContainer.ml" 124 4335 4351
+type(
+  GPack.box
+)
+"dgraph/dGraphContainer.ml" 125 4354 4358 "dgraph/dGraphContainer.ml" 125 4354 4368
+type(
+  ?homogeneous:bool ->
+  ?spacing:int ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.box
+)
+ident(
+  ext_ref GPack.hbox
+)
+"dgraph/dGraphContainer.ml" 125 4354 4379 "dgraph/dGraphContainer.ml" 125 4354 4389
+type(
+  GPack.table
+)
+ident(
+  int_ref main_table "dgraph/dGraphContainer.ml" 97 3488 3494 "dgraph/dGraphContainer.ml" 97 3488 3504
+)
+"dgraph/dGraphContainer.ml" 125 4354 4379 "dgraph/dGraphContainer.ml" 125 4354 4396
+type(
+  left:int ->
+  top:int ->
+  ?right:int ->
+  ?bottom:int ->
+  ?expand:Gtk.Tags.expand_type ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 125 4354 4405 "dgraph/dGraphContainer.ml" 125 4354 4407
+type(
+  Gtk.Tags.expand_type
+)
+"dgraph/dGraphContainer.ml" 125 4354 4413 "dgraph/dGraphContainer.ml" 125 4354 4414
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 125 4354 4421 "dgraph/dGraphContainer.ml" 125 4354 4422
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 125 4354 4378 "dgraph/dGraphContainer.ml" 125 4354 4423
+call(
+  tail
+)
+type(
+  GObj.widget -> unit
+)
+type(
+  ?right:int ->
+  ?bottom:int ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 125 4354 4424 "dgraph/dGraphContainer.ml" 125 4354 4426
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 125 4354 4358 "dgraph/dGraphContainer.ml" 125 4354 4426
+call(
+  stack
+)
+type(
+  GPack.box
+)
+"dgraph/dGraphContainer.ml" 127 4432 4438 "dgraph/dGraphContainer.ml" 127 4432 4455
+type(
+  GData.adjustment
+)
+"dgraph/dGraphContainer.ml" 127 4432 4458 "dgraph/dGraphContainer.ml" 127 4432 4474
+type(
+  ?value:float ->
+  ?lower:float ->
+  ?upper:float ->
+  ?step_incr:float ->
+  ?page_incr:float -> ?page_size:float -> unit -> GData.adjustment
+)
+ident(
+  ext_ref GData.adjustment
+)
+"dgraph/dGraphContainer.ml" 127 4432 4482 "dgraph/dGraphContainer.ml" 127 4432 4484
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 127 4432 4496 "dgraph/dGraphContainer.ml" 127 4432 4498
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 127 4432 4499 "dgraph/dGraphContainer.ml" 127 4432 4501
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 127 4432 4458 "dgraph/dGraphContainer.ml" 127 4432 4501
+call(
+  stack
+)
+type(
+  GData.adjustment
+)
+"dgraph/dGraphContainer.ml" 128 4505 4511 "dgraph/dGraphContainer.ml" 128 4505 4529
+type(
+  GData.adjustment
+)
+"dgraph/dGraphContainer.ml" 128 4505 4532 "dgraph/dGraphContainer.ml" 128 4505 4548
+type(
+  ?value:float ->
+  ?lower:float ->
+  ?upper:float ->
+  ?step_incr:float ->
+  ?page_incr:float -> ?page_size:float -> unit -> GData.adjustment
+)
+ident(
+  ext_ref GData.adjustment
+)
+"dgraph/dGraphContainer.ml" 128 4505 4556 "dgraph/dGraphContainer.ml" 128 4505 4558
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 128 4505 4570 "dgraph/dGraphContainer.ml" 128 4505 4572
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 128 4505 4573 "dgraph/dGraphContainer.ml" 128 4505 4575
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 128 4505 4532 "dgraph/dGraphContainer.ml" 128 4505 4575
+call(
+  stack
+)
+type(
+  GData.adjustment
+)
+"dgraph/dGraphContainer.ml" 129 4579 4585 "dgraph/dGraphContainer.ml" 129 4579 4605
+type(
+  < value : float; .. > ->
+  < set_depth_forward : int -> 'c; .. > -> unit -> 'c
+)
+"dgraph/dGraphContainer.ml" 129 4579 4606 "dgraph/dGraphContainer.ml" 129 4579 4609
+type(
+  < value : float; .. > as 'd
+)
+ident(
+  def adj "dgraph/dGraphContainer.ml" 129 4579 4610 "dgraph/dGraphContainer.ml" 130 4623 4678
+)
+"dgraph/dGraphContainer.ml" 129 4579 4610 "dgraph/dGraphContainer.ml" 129 4579 4617
+type(
+  < set_depth_forward : int -> 'c; .. > as 'e
+)
+ident(
+  def content "dgraph/dGraphContainer.ml" 129 4579 4618 "dgraph/dGraphContainer.ml" 130 4623 4678
+)
+"dgraph/dGraphContainer.ml" 129 4579 4618 "dgraph/dGraphContainer.ml" 129 4579 4620
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 130 4623 4627 "dgraph/dGraphContainer.ml" 130 4623 4634
+type(
+  'e
+)
+ident(
+  int_ref content "dgraph/dGraphContainer.ml" 129 4579 4610 "dgraph/dGraphContainer.ml" 129 4579 4617
+)
+"dgraph/dGraphContainer.ml" 130 4623 4627 "dgraph/dGraphContainer.ml" 130 4623 4652
+type(
+  int -> 'c
+)
+"dgraph/dGraphContainer.ml" 130 4623 4654 "dgraph/dGraphContainer.ml" 130 4623 4666
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.int_of_float
+)
+"dgraph/dGraphContainer.ml" 130 4623 4667 "dgraph/dGraphContainer.ml" 130 4623 4670
+type(
+  'd
+)
+ident(
+  int_ref adj "dgraph/dGraphContainer.ml" 129 4579 4606 "dgraph/dGraphContainer.ml" 129 4579 4609
+)
+"dgraph/dGraphContainer.ml" 130 4623 4667 "dgraph/dGraphContainer.ml" 130 4623 4676
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 130 4623 4653 "dgraph/dGraphContainer.ml" 130 4623 4677
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 130 4623 4627 "dgraph/dGraphContainer.ml" 130 4623 4678
+type(
+  'c
+)
+"dgraph/dGraphContainer.ml" 132 4684 4690 "dgraph/dGraphContainer.ml" 132 4684 4711
+type(
+  < value : float; .. > ->
+  < set_depth_backward : int -> 'f; .. > -> unit -> 'f
+)
+"dgraph/dGraphContainer.ml" 132 4684 4712 "dgraph/dGraphContainer.ml" 132 4684 4715
+type(
+  < value : float; .. > as 'g
+)
+ident(
+  def adj "dgraph/dGraphContainer.ml" 132 4684 4716 "dgraph/dGraphContainer.ml" 133 4729 4784
+)
+"dgraph/dGraphContainer.ml" 132 4684 4716 "dgraph/dGraphContainer.ml" 132 4684 4723
+type(
+  < set_depth_backward : int -> 'f; .. > as 'h
+)
+ident(
+  def content "dgraph/dGraphContainer.ml" 132 4684 4724 "dgraph/dGraphContainer.ml" 133 4729 4784
+)
+"dgraph/dGraphContainer.ml" 132 4684 4724 "dgraph/dGraphContainer.ml" 132 4684 4726
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 133 4729 4733 "dgraph/dGraphContainer.ml" 133 4729 4740
+type(
+  'h
+)
+ident(
+  int_ref content "dgraph/dGraphContainer.ml" 132 4684 4716 "dgraph/dGraphContainer.ml" 132 4684 4723
+)
+"dgraph/dGraphContainer.ml" 133 4729 4733 "dgraph/dGraphContainer.ml" 133 4729 4759
+type(
+  int -> 'f
+)
+"dgraph/dGraphContainer.ml" 133 4729 4761 "dgraph/dGraphContainer.ml" 133 4729 4773
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.int_of_float
+)
+"dgraph/dGraphContainer.ml" 133 4729 4774 "dgraph/dGraphContainer.ml" 133 4729 4777
+type(
+  'g
+)
+ident(
+  int_ref adj "dgraph/dGraphContainer.ml" 132 4684 4712 "dgraph/dGraphContainer.ml" 132 4684 4715
+)
+"dgraph/dGraphContainer.ml" 133 4729 4774 "dgraph/dGraphContainer.ml" 133 4729 4783
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 133 4729 4760 "dgraph/dGraphContainer.ml" 133 4729 4784
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 133 4729 4733 "dgraph/dGraphContainer.ml" 133 4729 4784
+type(
+  'f
+)
+"dgraph/dGraphContainer.ml" 135 4790 4792 "dgraph/dGraphContainer.ml" 135 4790 4798
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphContainer.ml" 135 4790 4799 "dgraph/dGraphContainer.ml" 135 4790 4800
+type(
+  (GtkSignal.id -> unit) -> GtkSignal.id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphContainer.ml" 28 1861 1865 "dgraph/dGraphContainer.ml" 28 1861 1868
+)
+"dgraph/dGraphContainer.ml" 135 4790 4801 "dgraph/dGraphContainer.ml" 135 4790 4818
+type(
+  GData.adjustment
+)
+ident(
+  int_ref depth_forward_adj "dgraph/dGraphContainer.ml" 127 4432 4438 "dgraph/dGraphContainer.ml" 127 4432 4455
+)
+"dgraph/dGraphContainer.ml" 135 4790 4801 "dgraph/dGraphContainer.ml" 135 4790 4826
+type(
+  GData.adjustment_signals
+)
+"dgraph/dGraphContainer.ml" 135 4790 4801 "dgraph/dGraphContainer.ml" 135 4790 4840
+type(
+  callback:(unit -> unit) -> GtkSignal.id
+)
+"dgraph/dGraphContainer.ml" 136 4841 4856 "dgraph/dGraphContainer.ml" 136 4841 4876
+type(
+  GData.adjustment -> 'b -> unit -> unit
+)
+ident(
+  int_ref change_depth_forward "dgraph/dGraphContainer.ml" 129 4579 4585 "dgraph/dGraphContainer.ml" 129 4579 4605
+)
+"dgraph/dGraphContainer.ml" 136 4841 4877 "dgraph/dGraphContainer.ml" 136 4841 4894
+type(
+  GData.adjustment
+)
+ident(
+  int_ref depth_forward_adj "dgraph/dGraphContainer.ml" 127 4432 4438 "dgraph/dGraphContainer.ml" 127 4432 4455
+)
+"dgraph/dGraphContainer.ml" 136 4841 4895 "dgraph/dGraphContainer.ml" 136 4841 4899
+type(
+  'b
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 98 3553 3559 "dgraph/dGraphContainer.ml" 98 3553 3563
+)
+"dgraph/dGraphContainer.ml" 136 4841 4855 "dgraph/dGraphContainer.ml" 136 4841 4900
+call(
+  stack
+)
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 135 4790 4801 "dgraph/dGraphContainer.ml" 136 4841 4900
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphContainer.ml" 135 4790 4792 "dgraph/dGraphContainer.ml" 136 4841 4900
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 137 4902 4904 "dgraph/dGraphContainer.ml" 137 4902 4910
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphContainer.ml" 137 4902 4911 "dgraph/dGraphContainer.ml" 137 4902 4912
+type(
+  (GtkSignal.id -> unit) -> GtkSignal.id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphContainer.ml" 28 1861 1865 "dgraph/dGraphContainer.ml" 28 1861 1868
+)
+"dgraph/dGraphContainer.ml" 137 4902 4913 "dgraph/dGraphContainer.ml" 137 4902 4931
+type(
+  GData.adjustment
+)
+ident(
+  int_ref depth_backward_adj "dgraph/dGraphContainer.ml" 128 4505 4511 "dgraph/dGraphContainer.ml" 128 4505 4529
+)
+"dgraph/dGraphContainer.ml" 137 4902 4913 "dgraph/dGraphContainer.ml" 137 4902 4939
+type(
+  GData.adjustment_signals
+)
+"dgraph/dGraphContainer.ml" 137 4902 4913 "dgraph/dGraphContainer.ml" 137 4902 4953
+type(
+  callback:(unit -> unit) -> GtkSignal.id
+)
+"dgraph/dGraphContainer.ml" 138 4954 4969 "dgraph/dGraphContainer.ml" 138 4954 4990
+type(
+  GData.adjustment -> 'b -> unit -> unit
+)
+ident(
+  int_ref change_depth_backward "dgraph/dGraphContainer.ml" 132 4684 4690 "dgraph/dGraphContainer.ml" 132 4684 4711
+)
+"dgraph/dGraphContainer.ml" 138 4954 4991 "dgraph/dGraphContainer.ml" 138 4954 5009
+type(
+  GData.adjustment
+)
+ident(
+  int_ref depth_backward_adj "dgraph/dGraphContainer.ml" 128 4505 4511 "dgraph/dGraphContainer.ml" 128 4505 4529
+)
+"dgraph/dGraphContainer.ml" 138 4954 5010 "dgraph/dGraphContainer.ml" 138 4954 5014
+type(
+  'b
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 98 3553 3559 "dgraph/dGraphContainer.ml" 98 3553 3563
+)
+"dgraph/dGraphContainer.ml" 138 4954 4968 "dgraph/dGraphContainer.ml" 138 4954 5015
+call(
+  stack
+)
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 137 4902 4913 "dgraph/dGraphContainer.ml" 138 4954 5015
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphContainer.ml" 137 4902 4904 "dgraph/dGraphContainer.ml" 138 4954 5015
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 139 5017 5023 "dgraph/dGraphContainer.ml" 139 5017 5034
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 139 5017 5037 "dgraph/dGraphContainer.ml" 139 5017 5048
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"dgraph/dGraphContainer.ml" 139 5017 5057 "dgraph/dGraphContainer.ml" 139 5017 5071
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 139 5017 5072 "dgraph/dGraphContainer.ml" 139 5017 5074
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 139 5017 5037 "dgraph/dGraphContainer.ml" 139 5017 5074
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 140 5078 5084 "dgraph/dGraphContainer.ml" 140 5078 5103
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 140 5078 5106 "dgraph/dGraphContainer.ml" 140 5078 5117
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"dgraph/dGraphContainer.ml" 140 5078 5124 "dgraph/dGraphContainer.ml" 140 5078 5136
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 140 5078 5137 "dgraph/dGraphContainer.ml" 140 5078 5139
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 140 5078 5106 "dgraph/dGraphContainer.ml" 140 5078 5139
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 141 5143 5149 "dgraph/dGraphContainer.ml" 141 5143 5169
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 141 5143 5172 "dgraph/dGraphContainer.ml" 141 5143 5183
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"dgraph/dGraphContainer.ml" 141 5143 5190 "dgraph/dGraphContainer.ml" 141 5143 5203
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 141 5143 5204 "dgraph/dGraphContainer.ml" 141 5143 5206
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 141 5143 5172 "dgraph/dGraphContainer.ml" 141 5143 5206
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"dgraph/dGraphContainer.ml" 142 5210 5216 "dgraph/dGraphContainer.ml" 142 5210 5234
+type(
+  GEdit.spin_button
+)
+"dgraph/dGraphContainer.ml" 143 5237 5241 "dgraph/dGraphContainer.ml" 143 5237 5258
+type(
+  ?adjustment:GData.adjustment ->
+  ?rate:float ->
+  ?digits:int ->
+  ?numeric:bool ->
+  ?snap_to_ticks:bool ->
+  ?update_policy:[ `ALWAYS | `IF_VALID ] ->
+  ?value:float ->
+  ?wrap:bool ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GEdit.spin_button
+)
+ident(
+  ext_ref GEdit.spin_button
+)
+"dgraph/dGraphContainer.ml" 143 5237 5266 "dgraph/dGraphContainer.ml" 143 5237 5268
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 143 5237 5281 "dgraph/dGraphContainer.ml" 143 5237 5298
+type(
+  GData.adjustment
+)
+ident(
+  int_ref depth_forward_adj "dgraph/dGraphContainer.ml" 127 4432 4438 "dgraph/dGraphContainer.ml" 127 4432 4455
+)
+"dgraph/dGraphContainer.ml" 143 5237 5299 "dgraph/dGraphContainer.ml" 143 5237 5301
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 143 5237 5241 "dgraph/dGraphContainer.ml" 143 5237 5301
+call(
+  stack
+)
+type(
+  GEdit.spin_button
+)
+"dgraph/dGraphContainer.ml" 145 5307 5313 "dgraph/dGraphContainer.ml" 145 5307 5332
+type(
+  GEdit.spin_button
+)
+"dgraph/dGraphContainer.ml" 146 5335 5339 "dgraph/dGraphContainer.ml" 146 5335 5356
+type(
+  ?adjustment:GData.adjustment ->
+  ?rate:float ->
+  ?digits:int ->
+  ?numeric:bool ->
+  ?snap_to_ticks:bool ->
+  ?update_policy:[ `ALWAYS | `IF_VALID ] ->
+  ?value:float ->
+  ?wrap:bool ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GEdit.spin_button
+)
+ident(
+  ext_ref GEdit.spin_button
+)
+"dgraph/dGraphContainer.ml" 146 5335 5364 "dgraph/dGraphContainer.ml" 146 5335 5366
+type(
+  float
+)
+"dgraph/dGraphContainer.ml" 146 5335 5379 "dgraph/dGraphContainer.ml" 146 5335 5397
+type(
+  GData.adjustment
+)
+ident(
+  int_ref depth_backward_adj "dgraph/dGraphContainer.ml" 128 4505 4511 "dgraph/dGraphContainer.ml" 128 4505 4529
+)
+"dgraph/dGraphContainer.ml" 146 5335 5398 "dgraph/dGraphContainer.ml" 146 5335 5400
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 146 5335 5339 "dgraph/dGraphContainer.ml" 146 5335 5400
+call(
+  stack
+)
+type(
+  GEdit.spin_button
+)
+"dgraph/dGraphContainer.ml" 148 5406 5408 "dgraph/dGraphContainer.ml" 148 5406 5418
+type(
+  GPack.box
+)
+ident(
+  int_ref depth_hbox "dgraph/dGraphContainer.ml" 124 4335 4341 "dgraph/dGraphContainer.ml" 124 4335 4351
+)
+"dgraph/dGraphContainer.ml" 148 5406 5408 "dgraph/dGraphContainer.ml" 148 5406 5423
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 148 5406 5430 "dgraph/dGraphContainer.ml" 148 5406 5434
+type(
+  Gtk.Tags.pack_type
+)
+"dgraph/dGraphContainer.ml" 148 5406 5435 "dgraph/dGraphContainer.ml" 148 5406 5454
+type(
+  GEdit.spin_button
+)
+ident(
+  int_ref depth_backward_spin "dgraph/dGraphContainer.ml" 145 5307 5313 "dgraph/dGraphContainer.ml" 145 5307 5332
+)
+"dgraph/dGraphContainer.ml" 148 5406 5435 "dgraph/dGraphContainer.ml" 148 5406 5461
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 148 5406 5408 "dgraph/dGraphContainer.ml" 148 5406 5461
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 149 5463 5465 "dgraph/dGraphContainer.ml" 149 5463 5475
+type(
+  GPack.box
+)
+ident(
+  int_ref depth_hbox "dgraph/dGraphContainer.ml" 124 4335 4341 "dgraph/dGraphContainer.ml" 124 4335 4351
+)
+"dgraph/dGraphContainer.ml" 149 5463 5465 "dgraph/dGraphContainer.ml" 149 5463 5480
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 149 5463 5487 "dgraph/dGraphContainer.ml" 149 5463 5491
+type(
+  Gtk.Tags.pack_type
+)
+"dgraph/dGraphContainer.ml" 149 5463 5492 "dgraph/dGraphContainer.ml" 149 5463 5512
+type(
+  GMisc.label
+)
+ident(
+  int_ref depth_backward_label "dgraph/dGraphContainer.ml" 141 5143 5149 "dgraph/dGraphContainer.ml" 141 5143 5169
+)
+"dgraph/dGraphContainer.ml" 149 5463 5492 "dgraph/dGraphContainer.ml" 149 5463 5519
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 149 5463 5465 "dgraph/dGraphContainer.ml" 149 5463 5519
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 150 5521 5523 "dgraph/dGraphContainer.ml" 150 5521 5533
+type(
+  GPack.box
+)
+ident(
+  int_ref depth_hbox "dgraph/dGraphContainer.ml" 124 4335 4341 "dgraph/dGraphContainer.ml" 124 4335 4351
+)
+"dgraph/dGraphContainer.ml" 150 5521 5523 "dgraph/dGraphContainer.ml" 150 5521 5538
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 150 5521 5545 "dgraph/dGraphContainer.ml" 150 5521 5549
+type(
+  Gtk.Tags.pack_type
+)
+"dgraph/dGraphContainer.ml" 150 5521 5550 "dgraph/dGraphContainer.ml" 150 5521 5568
+type(
+  GEdit.spin_button
+)
+ident(
+  int_ref depth_forward_spin "dgraph/dGraphContainer.ml" 142 5210 5216 "dgraph/dGraphContainer.ml" 142 5210 5234
+)
+"dgraph/dGraphContainer.ml" 150 5521 5550 "dgraph/dGraphContainer.ml" 150 5521 5575
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 150 5521 5523 "dgraph/dGraphContainer.ml" 150 5521 5575
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 151 5577 5579 "dgraph/dGraphContainer.ml" 151 5577 5589
+type(
+  GPack.box
+)
+ident(
+  int_ref depth_hbox "dgraph/dGraphContainer.ml" 124 4335 4341 "dgraph/dGraphContainer.ml" 124 4335 4351
+)
+"dgraph/dGraphContainer.ml" 151 5577 5579 "dgraph/dGraphContainer.ml" 151 5577 5594
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 151 5577 5601 "dgraph/dGraphContainer.ml" 151 5577 5605
+type(
+  Gtk.Tags.pack_type
+)
+"dgraph/dGraphContainer.ml" 151 5577 5606 "dgraph/dGraphContainer.ml" 151 5577 5625
+type(
+  GMisc.label
+)
+ident(
+  int_ref depth_forward_label "dgraph/dGraphContainer.ml" 140 5078 5084 "dgraph/dGraphContainer.ml" 140 5078 5103
+)
+"dgraph/dGraphContainer.ml" 151 5577 5606 "dgraph/dGraphContainer.ml" 151 5577 5632
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 151 5577 5579 "dgraph/dGraphContainer.ml" 151 5577 5632
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 152 5634 5636 "dgraph/dGraphContainer.ml" 152 5634 5646
+type(
+  GPack.box
+)
+ident(
+  int_ref depth_hbox "dgraph/dGraphContainer.ml" 124 4335 4341 "dgraph/dGraphContainer.ml" 124 4335 4351
+)
+"dgraph/dGraphContainer.ml" 152 5634 5636 "dgraph/dGraphContainer.ml" 152 5634 5651
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 152 5634 5658 "dgraph/dGraphContainer.ml" 152 5634 5662
+type(
+  Gtk.Tags.pack_type
+)
+"dgraph/dGraphContainer.ml" 152 5634 5663 "dgraph/dGraphContainer.ml" 152 5634 5674
+type(
+  GMisc.label
+)
+ident(
+  int_ref depth_label "dgraph/dGraphContainer.ml" 139 5017 5023 "dgraph/dGraphContainer.ml" 139 5017 5034
+)
+"dgraph/dGraphContainer.ml" 152 5634 5663 "dgraph/dGraphContainer.ml" 152 5634 5681
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 152 5634 5636 "dgraph/dGraphContainer.ml" 152 5634 5681
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 154 5684 5686 "dgraph/dGraphContainer.ml" 154 5684 5696
+type(
+  GPack.table
+)
+ident(
+  int_ref main_table "dgraph/dGraphContainer.ml" 97 3488 3494 "dgraph/dGraphContainer.ml" 97 3488 3504
+)
+"dgraph/dGraphContainer.ml" 154 5684 5698 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  'b
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 98 3553 3559 "dgraph/dGraphContainer.ml" 98 3553 3563
+)
+"dgraph/dGraphContainer.ml" 154 5684 5686 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 152 5634 5636 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 151 5577 5579 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 150 5521 5523 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 149 5463 5465 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 148 5406 5408 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 145 5307 5309 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 142 5210 5212 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 141 5143 5145 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 140 5078 5080 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 139 5017 5019 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 137 4902 4904 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 135 4790 4792 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 132 4684 4686 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 129 4579 4581 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 128 4505 4507 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 127 4432 4434 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 124 4335 4337 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 121 4270 4272 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 120 4244 4246 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 119 4214 4216 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 115 4044 4046 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 114 3992 3994 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 113 3933 3935 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 103 3699 3701 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 98 3553 3555 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 97 3488 3490 "dgraph/dGraphContainer.ml" 154 5684 5702
+type(
+  GPack.table * 'b
+)
+"dgraph/dGraphContainer.ml" 160 5764 5770 "dgraph/dGraphContainer.ml" 160 5764 5775
+type(
+  'a -> 'a -> bool
+)
+ident(
+  def equal "dgraph/dGraphContainer.ml" 161 5782 5784 "dgraph/dGraphContainer.ml" 162 5808 5811
+)
+"dgraph/dGraphContainer.ml" 160 5764 5778 "dgraph/dGraphContainer.ml" 160 5764 5781
+type(
+  'a -> 'a -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/dGraphContainer.ml" 161 5782 5788 "dgraph/dGraphContainer.ml" 161 5782 5792
+type(
+  'b -> int
+)
+ident(
+  def hash "dgraph/dGraphContainer.ml" 161 5782 5807 "dgraph/dGraphContainer.ml" 162 5808 5811
+)
+"dgraph/dGraphContainer.ml" 161 5782 5795 "dgraph/dGraphContainer.ml" 161 5782 5807
+type(
+  'b -> int
+)
+ident(
+  ext_ref Hashtbl.hash
+)
+"dgraph/dGraphContainer.ml" 177 6097 6105 "dgraph/dGraphContainer.ml" 177 6097 6110
+type(
+  E.t -> E.t -> bool
+)
+ident(
+  def equal "dgraph/dGraphContainer.ml" 178 6135 6139 "dgraph/dGraphContainer.ml" 179 6163 6168
+)
+"dgraph/dGraphContainer.ml" 177 6097 6111 "dgraph/dGraphContainer.ml" 177 6097 6112
+type(
+  E.t
+)
+ident(
+  def x "dgraph/dGraphContainer.ml" 177 6097 6113 "dgraph/dGraphContainer.ml" 177 6097 6134
+)
+"dgraph/dGraphContainer.ml" 177 6097 6113 "dgraph/dGraphContainer.ml" 177 6097 6114
+type(
+  E.t
+)
+ident(
+  def y "dgraph/dGraphContainer.ml" 177 6097 6117 "dgraph/dGraphContainer.ml" 177 6097 6134
+)
+"dgraph/dGraphContainer.ml" 177 6097 6117 "dgraph/dGraphContainer.ml" 177 6097 6126
+type(
+  E.t -> E.t -> int
+)
+ident(
+  ext_ref E.compare
+)
+"dgraph/dGraphContainer.ml" 177 6097 6127 "dgraph/dGraphContainer.ml" 177 6097 6128
+type(
+  E.t
+)
+ident(
+  int_ref x "dgraph/dGraphContainer.ml" 177 6097 6111 "dgraph/dGraphContainer.ml" 177 6097 6112
+)
+"dgraph/dGraphContainer.ml" 177 6097 6129 "dgraph/dGraphContainer.ml" 177 6097 6130
+type(
+  E.t
+)
+ident(
+  int_ref y "dgraph/dGraphContainer.ml" 177 6097 6113 "dgraph/dGraphContainer.ml" 177 6097 6114
+)
+"dgraph/dGraphContainer.ml" 177 6097 6117 "dgraph/dGraphContainer.ml" 177 6097 6130
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 177 6097 6131 "dgraph/dGraphContainer.ml" 177 6097 6132
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/dGraphContainer.ml" 177 6097 6133 "dgraph/dGraphContainer.ml" 177 6097 6134
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 177 6097 6117 "dgraph/dGraphContainer.ml" 177 6097 6134
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 178 6135 6143 "dgraph/dGraphContainer.ml" 178 6135 6147
+type(
+  'a -> int
+)
+ident(
+  def hash "dgraph/dGraphContainer.ml" 178 6135 6162 "dgraph/dGraphContainer.ml" 179 6163 6168
+)
+"dgraph/dGraphContainer.ml" 178 6135 6150 "dgraph/dGraphContainer.ml" 178 6135 6162
+type(
+  'a -> int
+)
+ident(
+  ext_ref Hashtbl.hash
+)
+"dgraph/dGraphContainer.ml" 180 6169 6186 "dgraph/dGraphContainer.ml" 180 6169 6206
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 180 6169 6207 "dgraph/dGraphContainer.ml" 180 6169 6214
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 180 6169 6186 "dgraph/dGraphContainer.ml" 180 6169 6215
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 180 6169 6186 "dgraph/dGraphContainer.ml" 180 6169 6224
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 181 6225 6242 "dgraph/dGraphContainer.ml" 181 6225 6265
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 181 6225 6266 "dgraph/dGraphContainer.ml" 181 6225 6276
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 181 6225 6242 "dgraph/dGraphContainer.ml" 181 6225 6277
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 181 6225 6242 "dgraph/dGraphContainer.ml" 181 6225 6286
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 187 6436 6441 "dgraph/dGraphContainer.ml" 187 6436 6448
+type(
+  (GObj.widget -> unit) option
+)
+"dgraph/dGraphContainer.ml" 188 6449 6455 "dgraph/dGraphContainer.ml" 188 6449 6461
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 188 6449 6462 "dgraph/dGraphContainer.ml" 188 6449 6468
+type(
+  status
+)
+type(
+  status
+)
+type(
+  status
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 188 6449 6462 "dgraph/dGraphContainer.ml" 188 6449 6468
+)
+type(
+  status option
+)
+type(
+  status option
+)
+type(
+  status
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 188 6449 6462 "dgraph/dGraphContainer.ml" 188 6449 6468
+)
+type(
+  status option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 188 6449 6462 "dgraph/dGraphContainer.ml" 188 6449 6468
+)
+type(
+  status option
+)
+"dgraph/dGraphContainer.ml" 189 6470 6476 "dgraph/dGraphContainer.ml" 189 6470 6493
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 189 6470 6494 "dgraph/dGraphContainer.ml" 189 6470 6498
+type(
+  bool
+)
+type(
+  bool
+)
+type(
+  bool
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 189 6470 6494 "dgraph/dGraphContainer.ml" 189 6470 6498
+)
+type(
+  bool option
+)
+type(
+  bool option
+)
+type(
+  bool
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 189 6470 6494 "dgraph/dGraphContainer.ml" 189 6470 6498
+)
+type(
+  bool option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 189 6470 6494 "dgraph/dGraphContainer.ml" 189 6470 6498
+)
+type(
+  bool option
+)
+"dgraph/dGraphContainer.ml" 190 6500 6505 "dgraph/dGraphContainer.ml" 190 6500 6519
+type(
+  unit -> global_view
+)
+"dgraph/dGraphContainer.ml" 191 6520 6525 "dgraph/dGraphContainer.ml" 191 6520 6537
+type(
+  depth_backward:int ->
+  depth_forward:int -> Gtk.widget Gtk.obj -> T.Tree.V.label -> tree_view
+)
+"dgraph/dGraphContainer.ml" 192 6538 6542 "dgraph/dGraphContainer.ml" 192 6538 6559
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 196 6585 6593 "dgraph/dGraphContainer.ml" 196 6585 6602
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 196 6585 6605 "dgraph/dGraphContainer.ml" 196 6585 6616
+type(
+  Gtk.Tags.orientation ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.paned
+)
+ident(
+  ext_ref GPack.paned
+)
+"dgraph/dGraphContainer.ml" 196 6585 6617 "dgraph/dGraphContainer.ml" 196 6585 6626
+type(
+  Gtk.Tags.orientation
+)
+"dgraph/dGraphContainer.ml" 196 6585 6628 "dgraph/dGraphContainer.ml" 196 6585 6635
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 187 6436 6441 "dgraph/dGraphContainer.ml" 187 6436 6448
+)
+"dgraph/dGraphContainer.ml" 196 6585 6636 "dgraph/dGraphContainer.ml" 196 6585 6638
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 196 6585 6605 "dgraph/dGraphContainer.ml" 196 6585 6638
+call(
+  stack
+)
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 197 6642 6650 "dgraph/dGraphContainer.ml" 197 6642 6662
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 197 6642 6665 "dgraph/dGraphContainer.ml" 197 6642 6675
+type(
+  ?label:string ->
+  ?label_xalign:Gtk.clampf ->
+  ?label_yalign:Gtk.clampf ->
+  ?shadow_type:Gtk.Tags.shadow_type ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GBin.frame
+)
+ident(
+  ext_ref GBin.frame
+)
+"dgraph/dGraphContainer.ml" 197 6642 6683 "dgraph/dGraphContainer.ml" 197 6642 6696
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 197 6642 6697 "dgraph/dGraphContainer.ml" 197 6642 6699
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 197 6642 6665 "dgraph/dGraphContainer.ml" 197 6642 6699
+call(
+  stack
+)
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 198 6703 6711 "dgraph/dGraphContainer.ml" 198 6703 6721
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 198 6703 6724 "dgraph/dGraphContainer.ml" 198 6703 6734
+type(
+  ?label:string ->
+  ?label_xalign:Gtk.clampf ->
+  ?label_yalign:Gtk.clampf ->
+  ?shadow_type:Gtk.Tags.shadow_type ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GBin.frame
+)
+ident(
+  ext_ref GBin.frame
+)
+"dgraph/dGraphContainer.ml" 198 6703 6742 "dgraph/dGraphContainer.ml" 198 6703 6753
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 198 6703 6754 "dgraph/dGraphContainer.ml" 198 6703 6756
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 198 6703 6724 "dgraph/dGraphContainer.ml" 198 6703 6756
+call(
+  stack
+)
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 201 6790 6798 "dgraph/dGraphContainer.ml" 201 6790 6819
+type(
+  < global_view : global_view option; set_tree_root : T.Tree.V.label -> 'b;
+    .. > ->
+  < connect_event : callback:([> `BUTTON_PRESS of 'c
+                               | `LEAVE_NOTIFY of 'd
+                               | `MOTION_NOTIFY of 'e ] ->
+                              bool) ->
+                    'f;
+    item : T.Tree.V.t; .. > ->
+  'f
+)
+"dgraph/dGraphContainer.ml" 201 6790 6820 "dgraph/dGraphContainer.ml" 201 6790 6824
+type(
+  < global_view : global_view option; set_tree_root : T.Tree.V.label -> 'b;
+    .. >
+  as 'g
+)
+ident(
+  def view "dgraph/dGraphContainer.ml" 201 6790 6825 "dgraph/dGraphContainer.ml" 221 7421 7455
+)
+"dgraph/dGraphContainer.ml" 201 6790 6825 "dgraph/dGraphContainer.ml" 201 6790 6829
+type(
+  < connect_event : callback:([> `BUTTON_PRESS of 'c
+                               | `LEAVE_NOTIFY of 'd
+                               | `MOTION_NOTIFY of 'e ] ->
+                              bool) ->
+                    'f;
+    item : T.Tree.V.t; .. >
+  as 'h
+)
+ident(
+  def node "dgraph/dGraphContainer.ml" 202 6832 6838 "dgraph/dGraphContainer.ml" 221 7421 7455
+)
+"dgraph/dGraphContainer.ml" 202 6832 6842 "dgraph/dGraphContainer.ml" 202 6832 6846
+type(
+  T.Tree.V.t
+)
+"dgraph/dGraphContainer.ml" 202 6832 6849 "dgraph/dGraphContainer.ml" 202 6832 6853
+type(
+  'h
+)
+ident(
+  int_ref node "dgraph/dGraphContainer.ml" 201 6790 6825 "dgraph/dGraphContainer.ml" 201 6790 6829
+)
+"dgraph/dGraphContainer.ml" 202 6832 6849 "dgraph/dGraphContainer.ml" 202 6832 6858
+type(
+  T.Tree.V.t
+)
+"dgraph/dGraphContainer.ml" 203 6862 6872 "dgraph/dGraphContainer.ml" 203 6862 6880
+type(
+  [> `BUTTON_PRESS of 'i | `LEAVE_NOTIFY of 'j | `MOTION_NOTIFY of 'k ] ->
+  bool
+)
+"dgraph/dGraphContainer.ml" 203 6862 6881 "dgraph/dGraphContainer.ml" 203 6862 6883
+type(
+  [> `BUTTON_PRESS of 'i | `LEAVE_NOTIFY of 'j | `MOTION_NOTIFY of 'k ] as 'l
+)
+ident(
+  def ev "dgraph/dGraphContainer.ml" 204 6886 6887 "dgraph/dGraphContainer.ml" 219 7398 7411
+)
+"dgraph/dGraphContainer.ml" 204 6886 6891 "dgraph/dGraphContainer.ml" 204 6886 6896
+type(
+  (global_view -> T.Tree.V.label DGraphViewItem.view_item -> 'm) -> bool
+)
+"dgraph/dGraphContainer.ml" 204 6886 6897 "dgraph/dGraphContainer.ml" 204 6886 6898
+type(
+  global_view -> T.Tree.V.label DGraphViewItem.view_item -> 'm
+)
+ident(
+  def f "dgraph/dGraphContainer.ml" 204 6886 6901 "dgraph/dGraphContainer.ml" 210 7113 7123
+)
+"dgraph/dGraphContainer.ml" 204 6886 6907 "dgraph/dGraphContainer.ml" 204 6886 6911
+type(
+  'g
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 201 6790 6820 "dgraph/dGraphContainer.ml" 201 6790 6824
+)
+"dgraph/dGraphContainer.ml" 204 6886 6907 "dgraph/dGraphContainer.ml" 204 6886 6923
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 205 6929 6934 "dgraph/dGraphContainer.ml" 205 6929 6938
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 205 6929 6942 "dgraph/dGraphContainer.ml" 205 6929 6947
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 206 6948 6958 "dgraph/dGraphContainer.ml" 206 6948 6963
+type(
+  global_view
+)
+ident(
+  def gview "dgraph/dGraphContainer.ml" 207 6967 6972 "dgraph/dGraphContainer.ml" 210 7113 7123
+)
+"dgraph/dGraphContainer.ml" 206 6948 6953 "dgraph/dGraphContainer.ml" 206 6948 6963
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 207 6967 6976 "dgraph/dGraphContainer.ml" 207 6967 6980
+type(
+  T.TreeManipulation.t
+)
+"dgraph/dGraphContainer.ml" 207 6967 6983 "dgraph/dGraphContainer.ml" 207 6967 6989
+type(
+  unit -> T.TreeManipulation.t
+)
+ident(
+  ext_ref T.tree
+)
+"dgraph/dGraphContainer.ml" 207 6967 6990 "dgraph/dGraphContainer.ml" 207 6967 6992
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 207 6967 6983 "dgraph/dGraphContainer.ml" 207 6967 6992
+call(
+  stack
+)
+type(
+  T.TreeManipulation.t
+)
+"dgraph/dGraphContainer.ml" 208 6996 7005 "dgraph/dGraphContainer.ml" 208 6996 7010
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 208 6996 7013 "dgraph/dGraphContainer.ml" 208 6996 7048
+type(
+  T.Tree.V.t -> T.TreeManipulation.t -> T.Tree.V.label
+)
+ident(
+  ext_ref T.TreeManipulation.get_graph_vertex
+)
+"dgraph/dGraphContainer.ml" 208 6996 7049 "dgraph/dGraphContainer.ml" 208 6996 7053
+type(
+  T.Tree.V.t
+)
+ident(
+  int_ref item "dgraph/dGraphContainer.ml" 202 6832 6842 "dgraph/dGraphContainer.ml" 202 6832 6846
+)
+"dgraph/dGraphContainer.ml" 208 6996 7054 "dgraph/dGraphContainer.ml" 208 6996 7058
+type(
+  T.TreeManipulation.t
+)
+ident(
+  int_ref tree "dgraph/dGraphContainer.ml" 207 6967 6976 "dgraph/dGraphContainer.ml" 207 6967 6980
+)
+"dgraph/dGraphContainer.ml" 208 6996 7013 "dgraph/dGraphContainer.ml" 208 6996 7058
+call(
+  stack
+)
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 209 7062 7067 "dgraph/dGraphContainer.ml" 209 7062 7068
+type(
+  global_view -> T.Tree.V.label DGraphViewItem.view_item -> 'm
+)
+ident(
+  int_ref f "dgraph/dGraphContainer.ml" 204 6886 6897 "dgraph/dGraphContainer.ml" 204 6886 6898
+)
+"dgraph/dGraphContainer.ml" 209 7062 7070 "dgraph/dGraphContainer.ml" 209 7062 7075
+type(
+  global_view
+)
+type(
+  global_view
+)
+ident(
+  int_ref gview "dgraph/dGraphContainer.ml" 206 6948 6958 "dgraph/dGraphContainer.ml" 206 6948 6963
+)
+"dgraph/dGraphContainer.ml" 209 7062 7090 "dgraph/dGraphContainer.ml" 209 7062 7095
+type(
+  global_view
+)
+ident(
+  int_ref gview "dgraph/dGraphContainer.ml" 206 6948 6958 "dgraph/dGraphContainer.ml" 206 6948 6963
+)
+"dgraph/dGraphContainer.ml" 209 7062 7090 "dgraph/dGraphContainer.ml" 209 7062 7104
+type(
+  T.Tree.V.label -> T.Tree.V.label DGraphViewItem.view_item
+)
+"dgraph/dGraphContainer.ml" 209 7062 7105 "dgraph/dGraphContainer.ml" 209 7062 7110
+type(
+  T.Tree.V.label
+)
+ident(
+  int_ref vlist "dgraph/dGraphContainer.ml" 208 6996 7005 "dgraph/dGraphContainer.ml" 208 6996 7010
+)
+"dgraph/dGraphContainer.ml" 209 7062 7089 "dgraph/dGraphContainer.ml" 209 7062 7111
+type(
+  T.Tree.V.label DGraphViewItem.view_item
+)
+"dgraph/dGraphContainer.ml" 209 7062 7067 "dgraph/dGraphContainer.ml" 209 7062 7111
+call(
+  stack
+)
+type(
+  'm
+)
+"dgraph/dGraphContainer.ml" 210 7113 7118 "dgraph/dGraphContainer.ml" 210 7113 7123
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 209 7062 7067 "dgraph/dGraphContainer.ml" 210 7113 7123
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 208 6996 7001 "dgraph/dGraphContainer.ml" 210 7113 7123
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 207 6967 6972 "dgraph/dGraphContainer.ml" 210 7113 7123
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 204 6886 6901 "dgraph/dGraphContainer.ml" 210 7113 7123
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 212 7128 7135 "dgraph/dGraphContainer.ml" 212 7128 7137
+type(
+  'l
+)
+ident(
+  int_ref ev "dgraph/dGraphContainer.ml" 203 6862 6881 "dgraph/dGraphContainer.ml" 203 6862 6883
+)
+"dgraph/dGraphContainer.ml" 213 7143 7160 "dgraph/dGraphContainer.ml" 213 7143 7161
+type(
+  'i
+)
+"dgraph/dGraphContainer.ml" 213 7143 7146 "dgraph/dGraphContainer.ml" 213 7143 7161
+type(
+  'l
+)
+"dgraph/dGraphContainer.ml" 215 7210 7213 "dgraph/dGraphContainer.ml" 215 7210 7217
+type(
+  'g
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 201 6790 6820 "dgraph/dGraphContainer.ml" 201 6790 6824
+)
+"dgraph/dGraphContainer.ml" 215 7210 7213 "dgraph/dGraphContainer.ml" 215 7210 7231
+type(
+  T.Tree.V.label -> 'b
+)
+"dgraph/dGraphContainer.ml" 215 7210 7233 "dgraph/dGraphContainer.ml" 215 7210 7247
+type(
+  T.Tree.V.t -> T.Tree.V.label
+)
+ident(
+  ext_ref T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 215 7210 7248 "dgraph/dGraphContainer.ml" 215 7210 7252
+type(
+  T.Tree.V.t
+)
+ident(
+  int_ref item "dgraph/dGraphContainer.ml" 202 6832 6842 "dgraph/dGraphContainer.ml" 202 6832 6846
+)
+"dgraph/dGraphContainer.ml" 215 7210 7232 "dgraph/dGraphContainer.ml" 215 7210 7253
+call(
+  stack
+)
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 215 7210 7213 "dgraph/dGraphContainer.ml" 215 7210 7253
+type(
+  'b
+)
+"dgraph/dGraphContainer.ml" 216 7255 7258 "dgraph/dGraphContainer.ml" 216 7255 7263
+type(
+  (global_view -> T.Tree.V.label DGraphViewItem.view_item -> unit) -> bool
+)
+ident(
+  int_ref apply "dgraph/dGraphContainer.ml" 204 6886 6891 "dgraph/dGraphContainer.ml" 204 6886 6896
+)
+"dgraph/dGraphContainer.ml" 216 7255 7269 "dgraph/dGraphContainer.ml" 216 7255 7270
+type(
+  global_view
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 216 7255 7274 "dgraph/dGraphContainer.ml" 216 7255 7287
+)
+"dgraph/dGraphContainer.ml" 216 7255 7274 "dgraph/dGraphContainer.ml" 216 7255 7275
+type(
+  global_view
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 216 7255 7269 "dgraph/dGraphContainer.ml" 216 7255 7270
+)
+"dgraph/dGraphContainer.ml" 216 7255 7274 "dgraph/dGraphContainer.ml" 216 7255 7287
+type(
+  T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 216 7255 7264 "dgraph/dGraphContainer.ml" 216 7255 7288
+type(
+  global_view -> T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 216 7255 7258 "dgraph/dGraphContainer.ml" 216 7255 7288
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 215 7210 7213 "dgraph/dGraphContainer.ml" 216 7255 7288
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 217 7289 7307 "dgraph/dGraphContainer.ml" 217 7289 7308
+type(
+  'k
+)
+"dgraph/dGraphContainer.ml" 217 7289 7292 "dgraph/dGraphContainer.ml" 217 7289 7308
+type(
+  'l
+)
+"dgraph/dGraphContainer.ml" 217 7289 7312 "dgraph/dGraphContainer.ml" 217 7289 7317
+type(
+  (global_view -> T.Tree.V.label DGraphViewItem.view_item -> unit) -> bool
+)
+ident(
+  int_ref apply "dgraph/dGraphContainer.ml" 204 6886 6891 "dgraph/dGraphContainer.ml" 204 6886 6896
+)
+"dgraph/dGraphContainer.ml" 217 7289 7323 "dgraph/dGraphContainer.ml" 217 7289 7324
+type(
+  global_view
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 217 7289 7325 "dgraph/dGraphContainer.ml" 217 7289 7343
+)
+"dgraph/dGraphContainer.ml" 217 7289 7325 "dgraph/dGraphContainer.ml" 217 7289 7326
+type(
+  T.Tree.V.label DGraphViewItem.view_item
+)
+ident(
+  def n "dgraph/dGraphContainer.ml" 217 7289 7330 "dgraph/dGraphContainer.ml" 217 7289 7343
+)
+"dgraph/dGraphContainer.ml" 217 7289 7330 "dgraph/dGraphContainer.ml" 217 7289 7331
+type(
+  global_view
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 217 7289 7323 "dgraph/dGraphContainer.ml" 217 7289 7324
+)
+"dgraph/dGraphContainer.ml" 217 7289 7330 "dgraph/dGraphContainer.ml" 217 7289 7341
+type(
+  ?color:int32 * int32 -> T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 217 7289 7342 "dgraph/dGraphContainer.ml" 217 7289 7343
+type(
+  T.Tree.V.label DGraphViewItem.view_item
+)
+ident(
+  int_ref n "dgraph/dGraphContainer.ml" 217 7289 7325 "dgraph/dGraphContainer.ml" 217 7289 7326
+)
+"dgraph/dGraphContainer.ml" 217 7289 7330 "dgraph/dGraphContainer.ml" 217 7289 7343
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 217 7289 7318 "dgraph/dGraphContainer.ml" 217 7289 7344
+type(
+  global_view -> T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 217 7289 7312 "dgraph/dGraphContainer.ml" 217 7289 7344
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 218 7345 7362 "dgraph/dGraphContainer.ml" 218 7345 7363
+type(
+  'j
+)
+"dgraph/dGraphContainer.ml" 218 7345 7348 "dgraph/dGraphContainer.ml" 218 7345 7363
+type(
+  'l
+)
+"dgraph/dGraphContainer.ml" 218 7345 7367 "dgraph/dGraphContainer.ml" 218 7345 7372
+type(
+  (global_view -> T.Tree.V.label DGraphViewItem.view_item -> unit) -> bool
+)
+ident(
+  int_ref apply "dgraph/dGraphContainer.ml" 204 6886 6891 "dgraph/dGraphContainer.ml" 204 6886 6896
+)
+"dgraph/dGraphContainer.ml" 218 7345 7378 "dgraph/dGraphContainer.ml" 218 7345 7379
+type(
+  global_view
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 218 7345 7383 "dgraph/dGraphContainer.ml" 218 7345 7396
+)
+"dgraph/dGraphContainer.ml" 218 7345 7383 "dgraph/dGraphContainer.ml" 218 7345 7384
+type(
+  global_view
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 218 7345 7378 "dgraph/dGraphContainer.ml" 218 7345 7379
+)
+"dgraph/dGraphContainer.ml" 218 7345 7383 "dgraph/dGraphContainer.ml" 218 7345 7396
+type(
+  T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 218 7345 7373 "dgraph/dGraphContainer.ml" 218 7345 7397
+type(
+  global_view -> T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 218 7345 7367 "dgraph/dGraphContainer.ml" 218 7345 7397
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 219 7398 7401 "dgraph/dGraphContainer.ml" 219 7398 7402
+type(
+  'l
+)
+"dgraph/dGraphContainer.ml" 219 7398 7406 "dgraph/dGraphContainer.ml" 219 7398 7411
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 212 7128 7129 "dgraph/dGraphContainer.ml" 219 7398 7411
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 204 6886 6887 "dgraph/dGraphContainer.ml" 219 7398 7411
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 221 7421 7427 "dgraph/dGraphContainer.ml" 221 7421 7431
+type(
+  'h
+)
+ident(
+  int_ref node "dgraph/dGraphContainer.ml" 201 6790 6825 "dgraph/dGraphContainer.ml" 201 6790 6829
+)
+"dgraph/dGraphContainer.ml" 221 7421 7427 "dgraph/dGraphContainer.ml" 221 7421 7445
+type(
+  callback:(([> `BUTTON_PRESS of 'c
+              | `LEAVE_NOTIFY of 'd
+              | `MOTION_NOTIFY of 'e ]
+             as 'n) ->
+            bool) ->
+  'f
+)
+"dgraph/dGraphContainer.ml" 221 7421 7447 "dgraph/dGraphContainer.ml" 221 7421 7455
+type(
+  'n -> bool
+)
+ident(
+  int_ref callback "dgraph/dGraphContainer.ml" 203 6862 6872 "dgraph/dGraphContainer.ml" 203 6862 6880
+)
+"dgraph/dGraphContainer.ml" 221 7421 7427 "dgraph/dGraphContainer.ml" 221 7421 7455
+type(
+  'f
+)
+"dgraph/dGraphContainer.ml" 203 6862 6868 "dgraph/dGraphContainer.ml" 221 7421 7455
+type(
+  'f
+)
+"dgraph/dGraphContainer.ml" 202 6832 6838 "dgraph/dGraphContainer.ml" 221 7421 7455
+type(
+  'f
+)
+"dgraph/dGraphContainer.ml" 223 7463 7471 "dgraph/dGraphContainer.ml" 223 7463 7494
+type(
+  < global_view : < center_node : (< connect_event : callback:([> `BUTTON_PRESS of
+                                                                    'p
+                                                                | `LEAVE_NOTIFY of
+                                                                    'q
+                                                                | `MOTION_NOTIFY of
+                                                                    'r ] ->
+                                                               bool) ->
+                                                     's;
+                                     item : T.Tree.V.label; .. >
+                                   as 'o) ->
+                                  unit;
+                    .. >
+                  option;
+    set_tree_root : T.Tree.V.label -> 't; tree_view : tree_view option; .. > ->
+  'o -> 's
+)
+"dgraph/dGraphContainer.ml" 223 7463 7495 "dgraph/dGraphContainer.ml" 223 7463 7499
+type(
+  < global_view : < center_node : 'o -> unit; .. > option;
+    set_tree_root : T.Tree.V.label -> 't; tree_view : tree_view option; .. >
+  as 'u
+)
+ident(
+  def view "dgraph/dGraphContainer.ml" 223 7463 7500 "dgraph/dGraphContainer.ml" 248 8317 8351
+)
+"dgraph/dGraphContainer.ml" 223 7463 7500 "dgraph/dGraphContainer.ml" 223 7463 7504
+type(
+  'o
+)
+ident(
+  def node "dgraph/dGraphContainer.ml" 224 7507 7513 "dgraph/dGraphContainer.ml" 248 8317 8351
+)
+"dgraph/dGraphContainer.ml" 224 7507 7517 "dgraph/dGraphContainer.ml" 224 7507 7521
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 224 7507 7524 "dgraph/dGraphContainer.ml" 224 7507 7528
+type(
+  'o
+)
+ident(
+  int_ref node "dgraph/dGraphContainer.ml" 223 7463 7500 "dgraph/dGraphContainer.ml" 223 7463 7504
+)
+"dgraph/dGraphContainer.ml" 224 7507 7524 "dgraph/dGraphContainer.ml" 224 7507 7533
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 225 7537 7547 "dgraph/dGraphContainer.ml" 225 7537 7555
+type(
+  [> `BUTTON_PRESS of 'v | `LEAVE_NOTIFY of 'w | `MOTION_NOTIFY of 'x ] ->
+  bool
+)
+"dgraph/dGraphContainer.ml" 225 7537 7556 "dgraph/dGraphContainer.ml" 225 7537 7558
+type(
+  [> `BUTTON_PRESS of 'v | `LEAVE_NOTIFY of 'w | `MOTION_NOTIFY of 'x ] as 'y
+)
+ident(
+  def ev "dgraph/dGraphContainer.ml" 226 7561 7562 "dgraph/dGraphContainer.ml" 246 8295 8307
+)
+"dgraph/dGraphContainer.ml" 226 7561 7566 "dgraph/dGraphContainer.ml" 226 7561 7571
+type(
+  (tree_view -> Tree.V.t DGraphViewItem.view_item -> unit) -> bool
+)
+"dgraph/dGraphContainer.ml" 226 7561 7572 "dgraph/dGraphContainer.ml" 226 7561 7573
+type(
+  tree_view -> Tree.V.t DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphContainer.ml" 226 7561 7576 "dgraph/dGraphContainer.ml" 232 7808 7818
+)
+"dgraph/dGraphContainer.ml" 226 7561 7582 "dgraph/dGraphContainer.ml" 226 7561 7586
+type(
+  'u
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 223 7463 7495 "dgraph/dGraphContainer.ml" 223 7463 7499
+)
+"dgraph/dGraphContainer.ml" 226 7561 7582 "dgraph/dGraphContainer.ml" 226 7561 7596
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 227 7602 7607 "dgraph/dGraphContainer.ml" 227 7602 7611
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 227 7602 7615 "dgraph/dGraphContainer.ml" 227 7602 7620
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 228 7621 7631 "dgraph/dGraphContainer.ml" 228 7621 7636
+type(
+  tree_view
+)
+ident(
+  def tview "dgraph/dGraphContainer.ml" 229 7640 7645 "dgraph/dGraphContainer.ml" 232 7808 7818
+)
+"dgraph/dGraphContainer.ml" 228 7621 7626 "dgraph/dGraphContainer.ml" 228 7621 7636
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 229 7640 7649 "dgraph/dGraphContainer.ml" 229 7640 7653
+type(
+  T.TreeManipulation.t
+)
+"dgraph/dGraphContainer.ml" 229 7640 7656 "dgraph/dGraphContainer.ml" 229 7640 7662
+type(
+  unit -> T.TreeManipulation.t
+)
+ident(
+  ext_ref T.tree
+)
+"dgraph/dGraphContainer.ml" 229 7640 7663 "dgraph/dGraphContainer.ml" 229 7640 7665
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 229 7640 7656 "dgraph/dGraphContainer.ml" 229 7640 7665
+call(
+  stack
+)
+type(
+  T.TreeManipulation.t
+)
+"dgraph/dGraphContainer.ml" 230 7669 7678 "dgraph/dGraphContainer.ml" 230 7669 7683
+type(
+  T.Tree.V.t list
+)
+"dgraph/dGraphContainer.ml" 230 7669 7686 "dgraph/dGraphContainer.ml" 230 7669 7722
+type(
+  T.Tree.V.label -> T.TreeManipulation.t -> T.Tree.V.t list
+)
+ident(
+  ext_ref T.TreeManipulation.get_tree_vertices
+)
+"dgraph/dGraphContainer.ml" 230 7669 7723 "dgraph/dGraphContainer.ml" 230 7669 7727
+type(
+  T.Tree.V.label
+)
+ident(
+  int_ref item "dgraph/dGraphContainer.ml" 224 7507 7517 "dgraph/dGraphContainer.ml" 224 7507 7521
+)
+"dgraph/dGraphContainer.ml" 230 7669 7728 "dgraph/dGraphContainer.ml" 230 7669 7732
+type(
+  T.TreeManipulation.t
+)
+ident(
+  int_ref tree "dgraph/dGraphContainer.ml" 229 7640 7649 "dgraph/dGraphContainer.ml" 229 7640 7653
+)
+"dgraph/dGraphContainer.ml" 230 7669 7686 "dgraph/dGraphContainer.ml" 230 7669 7732
+call(
+  stack
+)
+type(
+  T.Tree.V.t list
+)
+"dgraph/dGraphContainer.ml" 231 7736 7741 "dgraph/dGraphContainer.ml" 231 7736 7750
+type(
+  (Tree.V.t -> unit) -> Tree.V.t list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/dGraphContainer.ml" 231 7736 7756 "dgraph/dGraphContainer.ml" 231 7736 7757
+type(
+  Tree.V.t
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 231 7736 7761 "dgraph/dGraphContainer.ml" 231 7736 7799
+)
+"dgraph/dGraphContainer.ml" 231 7736 7761 "dgraph/dGraphContainer.ml" 231 7736 7762
+type(
+  tree_view -> Tree.V.t DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphContainer.ml" 226 7561 7572 "dgraph/dGraphContainer.ml" 226 7561 7573
+)
+"dgraph/dGraphContainer.ml" 231 7736 7764 "dgraph/dGraphContainer.ml" 231 7736 7769
+type(
+  tree_view
+)
+type(
+  tree_view
+)
+ident(
+  int_ref tview "dgraph/dGraphContainer.ml" 228 7621 7631 "dgraph/dGraphContainer.ml" 228 7621 7636
+)
+"dgraph/dGraphContainer.ml" 231 7736 7782 "dgraph/dGraphContainer.ml" 231 7736 7787
+type(
+  tree_view
+)
+ident(
+  int_ref tview "dgraph/dGraphContainer.ml" 228 7621 7631 "dgraph/dGraphContainer.ml" 228 7621 7636
+)
+"dgraph/dGraphContainer.ml" 231 7736 7782 "dgraph/dGraphContainer.ml" 231 7736 7796
+type(
+  Tree.V.t -> Tree.V.t DGraphViewItem.view_item
+)
+"dgraph/dGraphContainer.ml" 231 7736 7797 "dgraph/dGraphContainer.ml" 231 7736 7798
+type(
+  Tree.V.t
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 231 7736 7756 "dgraph/dGraphContainer.ml" 231 7736 7757
+)
+"dgraph/dGraphContainer.ml" 231 7736 7781 "dgraph/dGraphContainer.ml" 231 7736 7799
+type(
+  Tree.V.t DGraphViewItem.view_item
+)
+"dgraph/dGraphContainer.ml" 231 7736 7761 "dgraph/dGraphContainer.ml" 231 7736 7799
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 231 7736 7751 "dgraph/dGraphContainer.ml" 231 7736 7800
+type(
+  Tree.V.t -> unit
+)
+"dgraph/dGraphContainer.ml" 231 7736 7801 "dgraph/dGraphContainer.ml" 231 7736 7806
+type(
+  Tree.V.t list
+)
+ident(
+  int_ref vlist "dgraph/dGraphContainer.ml" 230 7669 7678 "dgraph/dGraphContainer.ml" 230 7669 7683
+)
+"dgraph/dGraphContainer.ml" 231 7736 7741 "dgraph/dGraphContainer.ml" 231 7736 7806
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 232 7808 7813 "dgraph/dGraphContainer.ml" 232 7808 7818
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 231 7736 7741 "dgraph/dGraphContainer.ml" 232 7808 7818
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 230 7669 7674 "dgraph/dGraphContainer.ml" 232 7808 7818
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 229 7640 7645 "dgraph/dGraphContainer.ml" 232 7808 7818
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 226 7561 7576 "dgraph/dGraphContainer.ml" 232 7808 7818
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 234 7823 7830 "dgraph/dGraphContainer.ml" 234 7823 7832
+type(
+  'y
+)
+ident(
+  int_ref ev "dgraph/dGraphContainer.ml" 225 7537 7556 "dgraph/dGraphContainer.ml" 225 7537 7558
+)
+"dgraph/dGraphContainer.ml" 235 7838 7855 "dgraph/dGraphContainer.ml" 235 7838 7856
+type(
+  'v
+)
+"dgraph/dGraphContainer.ml" 235 7838 7841 "dgraph/dGraphContainer.ml" 235 7838 7856
+type(
+  'y
+)
+"dgraph/dGraphContainer.ml" 237 7953 7956 "dgraph/dGraphContainer.ml" 237 7953 7960
+type(
+  'u
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 223 7463 7495 "dgraph/dGraphContainer.ml" 223 7463 7499
+)
+"dgraph/dGraphContainer.ml" 237 7953 7956 "dgraph/dGraphContainer.ml" 237 7953 7974
+type(
+  T.Tree.V.label -> 't
+)
+"dgraph/dGraphContainer.ml" 237 7953 7975 "dgraph/dGraphContainer.ml" 237 7953 7979
+type(
+  'o
+)
+ident(
+  int_ref node "dgraph/dGraphContainer.ml" 223 7463 7500 "dgraph/dGraphContainer.ml" 223 7463 7504
+)
+"dgraph/dGraphContainer.ml" 237 7953 7975 "dgraph/dGraphContainer.ml" 237 7953 7984
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 237 7953 7956 "dgraph/dGraphContainer.ml" 237 7953 7984
+type(
+  't
+)
+"dgraph/dGraphContainer.ml" 239 8046 8068 "dgraph/dGraphContainer.ml" 239 8046 8072
+type(
+  'u
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 223 7463 7495 "dgraph/dGraphContainer.ml" 223 7463 7499
+)
+"dgraph/dGraphContainer.ml" 239 8046 8068 "dgraph/dGraphContainer.ml" 239 8046 8084
+type(
+  (< center_node : 'o -> unit; .. > as 'z) option
+)
+"dgraph/dGraphContainer.ml" 240 8091 8103 "dgraph/dGraphContainer.ml" 240 8091 8107
+type(
+  'z option
+)
+"dgraph/dGraphContainer.ml" 240 8091 8111 "dgraph/dGraphContainer.ml" 240 8091 8113
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 241 8114 8131 "dgraph/dGraphContainer.ml" 241 8114 8132
+type(
+  'z
+)
+ident(
+  def w "dgraph/dGraphContainer.ml" 241 8114 8136 "dgraph/dGraphContainer.ml" 241 8114 8154
+)
+"dgraph/dGraphContainer.ml" 241 8114 8126 "dgraph/dGraphContainer.ml" 241 8114 8132
+type(
+  'z option
+)
+"dgraph/dGraphContainer.ml" 241 8114 8136 "dgraph/dGraphContainer.ml" 241 8114 8137
+type(
+  'z
+)
+ident(
+  int_ref w "dgraph/dGraphContainer.ml" 241 8114 8131 "dgraph/dGraphContainer.ml" 241 8114 8132
+)
+"dgraph/dGraphContainer.ml" 241 8114 8136 "dgraph/dGraphContainer.ml" 241 8114 8149
+type(
+  'o -> unit
+)
+"dgraph/dGraphContainer.ml" 241 8114 8150 "dgraph/dGraphContainer.ml" 241 8114 8154
+type(
+  'o
+)
+ident(
+  int_ref node "dgraph/dGraphContainer.ml" 223 7463 7500 "dgraph/dGraphContainer.ml" 223 7463 7504
+)
+"dgraph/dGraphContainer.ml" 241 8114 8136 "dgraph/dGraphContainer.ml" 241 8114 8154
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 239 8046 8056 "dgraph/dGraphContainer.ml" 242 8155 8168
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 243 8170 8180 "dgraph/dGraphContainer.ml" 243 8170 8185
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 239 8046 8056 "dgraph/dGraphContainer.ml" 243 8170 8185
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 237 7953 7956 "dgraph/dGraphContainer.ml" 243 8170 8185
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 244 8186 8204 "dgraph/dGraphContainer.ml" 244 8186 8205
+type(
+  'x
+)
+"dgraph/dGraphContainer.ml" 244 8186 8189 "dgraph/dGraphContainer.ml" 244 8186 8205
+type(
+  'y
+)
+"dgraph/dGraphContainer.ml" 244 8186 8209 "dgraph/dGraphContainer.ml" 244 8186 8214
+type(
+  (tree_view -> Tree.V.t DGraphViewItem.view_item -> unit) -> bool
+)
+ident(
+  int_ref apply "dgraph/dGraphContainer.ml" 226 7561 7566 "dgraph/dGraphContainer.ml" 226 7561 7571
+)
+"dgraph/dGraphContainer.ml" 244 8186 8220 "dgraph/dGraphContainer.ml" 244 8186 8221
+type(
+  tree_view
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 244 8186 8222 "dgraph/dGraphContainer.ml" 244 8186 8240
+)
+"dgraph/dGraphContainer.ml" 244 8186 8222 "dgraph/dGraphContainer.ml" 244 8186 8223
+type(
+  Tree.V.t DGraphViewItem.view_item
+)
+ident(
+  def n "dgraph/dGraphContainer.ml" 244 8186 8227 "dgraph/dGraphContainer.ml" 244 8186 8240
+)
+"dgraph/dGraphContainer.ml" 244 8186 8227 "dgraph/dGraphContainer.ml" 244 8186 8228
+type(
+  tree_view
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 244 8186 8220 "dgraph/dGraphContainer.ml" 244 8186 8221
+)
+"dgraph/dGraphContainer.ml" 244 8186 8227 "dgraph/dGraphContainer.ml" 244 8186 8238
+type(
+  ?color:int32 * int32 -> Tree.V.t DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 244 8186 8239 "dgraph/dGraphContainer.ml" 244 8186 8240
+type(
+  Tree.V.t DGraphViewItem.view_item
+)
+ident(
+  int_ref n "dgraph/dGraphContainer.ml" 244 8186 8222 "dgraph/dGraphContainer.ml" 244 8186 8223
+)
+"dgraph/dGraphContainer.ml" 244 8186 8227 "dgraph/dGraphContainer.ml" 244 8186 8240
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 244 8186 8215 "dgraph/dGraphContainer.ml" 244 8186 8241
+type(
+  tree_view -> Tree.V.t DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 244 8186 8209 "dgraph/dGraphContainer.ml" 244 8186 8241
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 245 8242 8259 "dgraph/dGraphContainer.ml" 245 8242 8260
+type(
+  'w
+)
+"dgraph/dGraphContainer.ml" 245 8242 8245 "dgraph/dGraphContainer.ml" 245 8242 8260
+type(
+  'y
+)
+"dgraph/dGraphContainer.ml" 245 8242 8264 "dgraph/dGraphContainer.ml" 245 8242 8269
+type(
+  (tree_view -> Tree.V.t DGraphViewItem.view_item -> unit) -> bool
+)
+ident(
+  int_ref apply "dgraph/dGraphContainer.ml" 226 7561 7566 "dgraph/dGraphContainer.ml" 226 7561 7571
+)
+"dgraph/dGraphContainer.ml" 245 8242 8275 "dgraph/dGraphContainer.ml" 245 8242 8276
+type(
+  tree_view
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 245 8242 8280 "dgraph/dGraphContainer.ml" 245 8242 8293
+)
+"dgraph/dGraphContainer.ml" 245 8242 8280 "dgraph/dGraphContainer.ml" 245 8242 8281
+type(
+  tree_view
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 245 8242 8275 "dgraph/dGraphContainer.ml" 245 8242 8276
+)
+"dgraph/dGraphContainer.ml" 245 8242 8280 "dgraph/dGraphContainer.ml" 245 8242 8293
+type(
+  Tree.V.t DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 245 8242 8270 "dgraph/dGraphContainer.ml" 245 8242 8294
+type(
+  tree_view -> Tree.V.t DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 245 8242 8264 "dgraph/dGraphContainer.ml" 245 8242 8294
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 246 8295 8297 "dgraph/dGraphContainer.ml" 246 8295 8298
+type(
+  'y
+)
+"dgraph/dGraphContainer.ml" 246 8295 8302 "dgraph/dGraphContainer.ml" 246 8295 8307
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 234 7823 7824 "dgraph/dGraphContainer.ml" 246 8295 8307
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 226 7561 7562 "dgraph/dGraphContainer.ml" 246 8295 8307
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 248 8317 8323 "dgraph/dGraphContainer.ml" 248 8317 8327
+type(
+  'o
+)
+ident(
+  int_ref node "dgraph/dGraphContainer.ml" 223 7463 7500 "dgraph/dGraphContainer.ml" 223 7463 7504
+)
+"dgraph/dGraphContainer.ml" 248 8317 8323 "dgraph/dGraphContainer.ml" 248 8317 8341
+type(
+  callback:(([> `BUTTON_PRESS of 'p
+              | `LEAVE_NOTIFY of 'q
+              | `MOTION_NOTIFY of 'r ]
+             as 'a1) ->
+            bool) ->
+  's
+)
+"dgraph/dGraphContainer.ml" 248 8317 8343 "dgraph/dGraphContainer.ml" 248 8317 8351
+type(
+  'a1 -> bool
+)
+ident(
+  int_ref callback "dgraph/dGraphContainer.ml" 225 7537 7547 "dgraph/dGraphContainer.ml" 225 7537 7555
+)
+"dgraph/dGraphContainer.ml" 248 8317 8323 "dgraph/dGraphContainer.ml" 248 8317 8351
+type(
+  's
+)
+"dgraph/dGraphContainer.ml" 225 7537 7543 "dgraph/dGraphContainer.ml" 248 8317 8351
+type(
+  's
+)
+"dgraph/dGraphContainer.ml" 224 7507 7513 "dgraph/dGraphContainer.ml" 248 8317 8351
+type(
+  's
+)
+"dgraph/dGraphContainer.ml" 251 8360 8369 "dgraph/dGraphContainer.ml" 251 8360 8375
+type(
+  < adapt_zoom : unit -> unit; depth_backward : int; depth_forward : 
+    int; global_view : global_view option; set_depth_backward : int -> unit;
+    set_depth_forward : int -> unit; set_tree_root : T.Tree.V.label -> unit;
+    status : status; switch : status -> unit;
+    tree_root : T.Tree.V.label option; tree_view : tree_view option; .. >
+)
+"dgraph/dGraphContainer.ml" 253 8377 8427 "dgraph/dGraphContainer.ml" 253 8377 8431
+type(
+  global_view option
+)
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 254 8432 8478 "dgraph/dGraphContainer.ml" 254 8432 8482
+type(
+  tree_view option
+)
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 255 8483 8513 "dgraph/dGraphContainer.ml" 255 8483 8518
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 256 8550 8578 "dgraph/dGraphContainer.ml" 256 8550 8595
+type(
+  T.Tree.V.label option
+)
+ident(
+  int_ref default_tree_root "dgraph/dGraphContainer.ml" 192 6538 6542 "dgraph/dGraphContainer.ml" 192 6538 6559
+)
+"dgraph/dGraphContainer.ml" 257 8596 8621 "dgraph/dGraphContainer.ml" 257 8596 8627
+type(
+  status
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 188 6449 6455 "dgraph/dGraphContainer.ml" 188 6449 6461
+)
+"dgraph/dGraphContainer.ml" 258 8628 8660 "dgraph/dGraphContainer.ml" 258 8628 8661
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 259 8662 8695 "dgraph/dGraphContainer.ml" 259 8662 8696
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 263 8717 8737 "dgraph/dGraphContainer.ml" 263 8717 8743
+type(
+  status
+)
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 264 8744 8769 "dgraph/dGraphContainer.ml" 264 8744 8780
+type(
+  global_view option
+)
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 265 8781 8804 "dgraph/dGraphContainer.ml" 265 8781 8813
+type(
+  tree_view option
+)
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 266 8814 8837 "dgraph/dGraphContainer.ml" 266 8814 8846
+type(
+  T.Tree.V.label option
+)
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 267 8847 8874 "dgraph/dGraphContainer.ml" 267 8847 8887
+type(
+  int
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 268 8888 8916 "dgraph/dGraphContainer.ml" 268 8888 8930
+type(
+  int
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 272 8951 8980 "dgraph/dGraphContainer.ml" 272 8951 8981
+type(
+  int
+)
+ident(
+  def i "dgraph/dGraphContainer.ml" 273 8984 8990 "dgraph/dGraphContainer.ml" 275 9037 9057
+)
+"dgraph/dGraphContainer.ml" 273 8984 9007 "dgraph/dGraphContainer.ml" 273 8984 9008
+type(
+  int
+)
+ident(
+  int_ref i "dgraph/dGraphContainer.ml" 272 8951 8980 "dgraph/dGraphContainer.ml" 272 8951 8981
+)
+"dgraph/dGraphContainer.ml" 273 8984 8990 "dgraph/dGraphContainer.ml" 273 8984 9008
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 274 9010 9031 "dgraph/dGraphContainer.ml" 274 9010 9035
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 274 9010 9016 "dgraph/dGraphContainer.ml" 274 9010 9035
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 275 9037 9043 "dgraph/dGraphContainer.ml" 275 9037 9047
+type(
+  < adapt_zoom : unit -> unit; depth_backward : int; depth_forward : 
+    int; global_view : global_view option; set_depth_backward : int -> unit;
+    set_depth_forward : int -> unit; set_tree_root : T.Tree.V.label -> unit;
+    status : status; switch : status -> unit;
+    tree_root : T.Tree.V.label option; tree_view : tree_view option; .. >
+  as 'b1
+)
+"dgraph/dGraphContainer.ml" 275 9037 9043 "dgraph/dGraphContainer.ml" 275 9037 9054
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 275 9037 9055 "dgraph/dGraphContainer.ml" 275 9037 9057
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 275 9037 9043 "dgraph/dGraphContainer.ml" 275 9037 9057
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 274 9010 9016 "dgraph/dGraphContainer.ml" 275 9037 9057
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 273 8984 8990 "dgraph/dGraphContainer.ml" 275 9037 9057
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 277 9059 9089 "dgraph/dGraphContainer.ml" 277 9059 9090
+type(
+  int
+)
+ident(
+  def i "dgraph/dGraphContainer.ml" 278 9093 9099 "dgraph/dGraphContainer.ml" 280 9147 9167
+)
+"dgraph/dGraphContainer.ml" 278 9093 9117 "dgraph/dGraphContainer.ml" 278 9093 9118
+type(
+  int
+)
+ident(
+  int_ref i "dgraph/dGraphContainer.ml" 277 9059 9089 "dgraph/dGraphContainer.ml" 277 9059 9090
+)
+"dgraph/dGraphContainer.ml" 278 9093 9099 "dgraph/dGraphContainer.ml" 278 9093 9118
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 279 9120 9141 "dgraph/dGraphContainer.ml" 279 9120 9145
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 279 9120 9126 "dgraph/dGraphContainer.ml" 279 9120 9145
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 280 9147 9153 "dgraph/dGraphContainer.ml" 280 9147 9157
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 280 9147 9153 "dgraph/dGraphContainer.ml" 280 9147 9164
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 280 9147 9165 "dgraph/dGraphContainer.ml" 280 9147 9167
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 280 9147 9153 "dgraph/dGraphContainer.ml" 280 9147 9167
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 279 9120 9126 "dgraph/dGraphContainer.ml" 280 9147 9167
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 278 9093 9099 "dgraph/dGraphContainer.ml" 280 9147 9167
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 282 9169 9194 "dgraph/dGraphContainer.ml" 282 9169 9195
+type(
+  T.Tree.V.label
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 283 9198 9204 "dgraph/dGraphContainer.ml" 286 9259 9279
+)
+"dgraph/dGraphContainer.ml" 283 9198 9222 "dgraph/dGraphContainer.ml" 283 9198 9223
+type(
+  T.Tree.V.label
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 282 9169 9194 "dgraph/dGraphContainer.ml" 282 9169 9195
+)
+"dgraph/dGraphContainer.ml" 283 9198 9217 "dgraph/dGraphContainer.ml" 283 9198 9223
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 283 9198 9204 "dgraph/dGraphContainer.ml" 283 9198 9223
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 284 9225 9246 "dgraph/dGraphContainer.ml" 284 9225 9250
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 284 9225 9231 "dgraph/dGraphContainer.ml" 284 9225 9250
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 286 9259 9265 "dgraph/dGraphContainer.ml" 286 9259 9269
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 286 9259 9265 "dgraph/dGraphContainer.ml" 286 9259 9276
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 286 9259 9277 "dgraph/dGraphContainer.ml" 286 9259 9279
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 286 9259 9265 "dgraph/dGraphContainer.ml" 286 9259 9279
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 284 9225 9231 "dgraph/dGraphContainer.ml" 286 9259 9279
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 283 9198 9204 "dgraph/dGraphContainer.ml" 286 9259 9279
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 288 9281 9299 "dgraph/dGraphContainer.ml" 288 9281 9300
+type(
+  status
+)
+ident(
+  def s "dgraph/dGraphContainer.ml" 289 9303 9309 "dgraph/dGraphContainer.ml" 290 9322 9342
+)
+"dgraph/dGraphContainer.ml" 289 9303 9319 "dgraph/dGraphContainer.ml" 289 9303 9320
+type(
+  status
+)
+ident(
+  int_ref s "dgraph/dGraphContainer.ml" 288 9281 9299 "dgraph/dGraphContainer.ml" 288 9281 9300
+)
+"dgraph/dGraphContainer.ml" 289 9303 9309 "dgraph/dGraphContainer.ml" 289 9303 9320
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 290 9322 9328 "dgraph/dGraphContainer.ml" 290 9322 9332
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 290 9322 9328 "dgraph/dGraphContainer.ml" 290 9322 9339
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 290 9322 9340 "dgraph/dGraphContainer.ml" 290 9322 9342
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 290 9322 9328 "dgraph/dGraphContainer.ml" 290 9322 9342
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 289 9303 9309 "dgraph/dGraphContainer.ml" 290 9322 9342
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 294 9373 9407 "dgraph/dGraphContainer.ml" 294 9373 9409
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 295 9412 9421 "dgraph/dGraphContainer.ml" 295 9412 9432
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 296 9444 9459 "dgraph/dGraphContainer.ml" 296 9444 9468
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 297 9474 9487 "dgraph/dGraphContainer.ml" 297 9474 9491
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 297 9474 9495 "dgraph/dGraphContainer.ml" 297 9474 9497
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 298 9498 9516 "dgraph/dGraphContainer.ml" 298 9498 9520
+type(
+  tree_view
+)
+ident(
+  def view "dgraph/dGraphContainer.ml" 299 9524 9539 "dgraph/dGraphContainer.ml" 301 9626 9655
+)
+"dgraph/dGraphContainer.ml" 298 9498 9511 "dgraph/dGraphContainer.ml" 298 9498 9520
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 299 9524 9545 "dgraph/dGraphContainer.ml" 299 9524 9549
+type(
+  tree_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 298 9498 9516 "dgraph/dGraphContainer.ml" 298 9498 9520
+)
+"dgraph/dGraphContainer.ml" 299 9524 9545 "dgraph/dGraphContainer.ml" 299 9524 9554
+type(
+  GObj.misc_ops
+)
+"dgraph/dGraphContainer.ml" 299 9524 9545 "dgraph/dGraphContainer.ml" 299 9524 9561
+type(
+  GObj.widget option
+)
+"dgraph/dGraphContainer.ml" 300 9567 9591 "dgraph/dGraphContainer.ml" 300 9567 9597
+type(
+  GObj.widget
+)
+ident(
+  def parent "dgraph/dGraphContainer.ml" 300 9567 9601 "dgraph/dGraphContainer.ml" 300 9567 9625
+)
+"dgraph/dGraphContainer.ml" 300 9567 9586 "dgraph/dGraphContainer.ml" 300 9567 9597
+type(
+  GObj.widget option
+)
+"dgraph/dGraphContainer.ml" 300 9567 9601 "dgraph/dGraphContainer.ml" 300 9567 9611
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 300 9567 9601 "dgraph/dGraphContainer.ml" 300 9567 9618
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 300 9567 9619 "dgraph/dGraphContainer.ml" 300 9567 9625
+type(
+  GObj.widget
+)
+ident(
+  int_ref parent "dgraph/dGraphContainer.ml" 300 9567 9591 "dgraph/dGraphContainer.ml" 300 9567 9597
+)
+"dgraph/dGraphContainer.ml" 300 9567 9601 "dgraph/dGraphContainer.ml" 300 9567 9625
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 301 9626 9645 "dgraph/dGraphContainer.ml" 301 9626 9649
+type(
+  GObj.widget option
+)
+"dgraph/dGraphContainer.ml" 301 9626 9653 "dgraph/dGraphContainer.ml" 301 9626 9655
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 299 9524 9539 "dgraph/dGraphContainer.ml" 301 9626 9655
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 296 9444 9452 "dgraph/dGraphContainer.ml" 302 9656 9665
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 303 9667 9674 "dgraph/dGraphContainer.ml" 303 9667 9683
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 304 9689 9692 "dgraph/dGraphContainer.ml" 304 9689 9696
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 304 9689 9700 "dgraph/dGraphContainer.ml" 304 9689 9712
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 305 9713 9721 "dgraph/dGraphContainer.ml" 305 9713 9722
+type(
+  T.Tree.V.label
+)
+ident(
+  def r "dgraph/dGraphContainer.ml" 306 9726 9729 "dgraph/dGraphContainer.ml" 321 10135 10160
+)
+"dgraph/dGraphContainer.ml" 305 9713 9716 "dgraph/dGraphContainer.ml" 305 9713 9722
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 306 9726 9733 "dgraph/dGraphContainer.ml" 306 9726 9737
+type(
+  tree_view
+)
+"dgraph/dGraphContainer.ml" 307 9740 9745 "dgraph/dGraphContainer.ml" 307 9740 9757
+type(
+  depth_backward:int ->
+  depth_forward:int -> Gtk.widget Gtk.obj -> T.Tree.V.label -> tree_view
+)
+"dgraph/dGraphContainer.ml" 307 9740 9759 "dgraph/dGraphContainer.ml" 307 9740 9773
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 307 9740 9775 "dgraph/dGraphContainer.ml" 307 9740 9788
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 307 9740 9789 "dgraph/dGraphContainer.ml" 307 9740 9798
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 307 9740 9789 "dgraph/dGraphContainer.ml" 307 9740 9808
+type(
+  Gtk.widget Gtk.obj
+)
+"dgraph/dGraphContainer.ml" 307 9740 9809 "dgraph/dGraphContainer.ml" 307 9740 9810
+type(
+  T.Tree.V.label
+)
+ident(
+  int_ref r "dgraph/dGraphContainer.ml" 305 9713 9721 "dgraph/dGraphContainer.ml" 305 9713 9722
+)
+"dgraph/dGraphContainer.ml" 307 9740 9745 "dgraph/dGraphContainer.ml" 307 9740 9810
+call(
+  stack
+)
+type(
+  tree_view
+)
+"dgraph/dGraphContainer.ml" 309 9817 9838 "dgraph/dGraphContainer.ml" 309 9817 9842
+type(
+  tree_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 306 9726 9733 "dgraph/dGraphContainer.ml" 306 9726 9737
+)
+"dgraph/dGraphContainer.ml" 309 9817 9833 "dgraph/dGraphContainer.ml" 309 9817 9842
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 309 9817 9820 "dgraph/dGraphContainer.ml" 309 9817 9842
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 310 9844 9850 "dgraph/dGraphContainer.ml" 310 9844 9867
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 311 9879 9884 "dgraph/dGraphContainer.ml" 311 9879 9888
+type(
+  tree_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 306 9726 9733 "dgraph/dGraphContainer.ml" 306 9726 9737
+)
+"dgraph/dGraphContainer.ml" 311 9879 9884 "dgraph/dGraphContainer.ml" 311 9879 9915
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 311 9879 9915 "dgraph/dGraphContainer.ml" 311 9879 9917
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 311 9879 9884 "dgraph/dGraphContainer.ml" 311 9879 9917
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 312 9919 9931 "dgraph/dGraphContainer.ml" 312 9919 9935
+type(
+  tree_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 306 9726 9733 "dgraph/dGraphContainer.ml" 306 9726 9737
+)
+"dgraph/dGraphContainer.ml" 312 9919 9931 "dgraph/dGraphContainer.ml" 312 9919 9946
+type(
+  (Tree.V.t DGraphViewItem.view_item -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 312 9919 9948 "dgraph/dGraphContainer.ml" 312 9919 9969
+type(
+  'b1 -> Tree.V.t DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 312 9919 9970 "dgraph/dGraphContainer.ml" 312 9919 9974
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 312 9919 9947 "dgraph/dGraphContainer.ml" 312 9919 9975
+call(
+  stack
+)
+type(
+  Tree.V.t DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 312 9919 9931 "dgraph/dGraphContainer.ml" 312 9919 9976
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 310 9844 9873 "dgraph/dGraphContainer.ml" 313 9977 9990
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 310 9844 9847 "dgraph/dGraphContainer.ml" 313 9977 9990
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 314 9992 9999 "dgraph/dGraphContainer.ml" 314 9992 10005
+type(
+  GBin.scrolled_window
+)
+"dgraph/dGraphContainer.ml" 315 10008 10013 "dgraph/dGraphContainer.ml" 315 10008 10033
+type(
+  ?hadjustment:GData.adjustment ->
+  ?vadjustment:GData.adjustment ->
+  ?hpolicy:Gtk.Tags.policy_type ->
+  ?vpolicy:Gtk.Tags.policy_type ->
+  ?placement:Gtk.Tags.corner_type ->
+  ?shadow_type:Gtk.Tags.shadow_type ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool -> unit -> GBin.scrolled_window
+)
+ident(
+  ext_ref GBin.scrolled_window
+)
+"dgraph/dGraphContainer.ml" 316 10034 10050 "dgraph/dGraphContainer.ml" 316 10034 10060
+type(
+  Gtk.Tags.policy_type
+)
+"dgraph/dGraphContainer.ml" 317 10061 10077 "dgraph/dGraphContainer.ml" 317 10061 10087
+type(
+  Gtk.Tags.policy_type
+)
+"dgraph/dGraphContainer.ml" 318 10088 10104 "dgraph/dGraphContainer.ml" 318 10088 10114
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 318 10088 10104 "dgraph/dGraphContainer.ml" 318 10088 10118
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 319 10119 10126 "dgraph/dGraphContainer.ml" 319 10119 10128
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 315 10008 10013 "dgraph/dGraphContainer.ml" 319 10119 10128
+call(
+  stack
+)
+type(
+  GBin.scrolled_window
+)
+"dgraph/dGraphContainer.ml" 321 10135 10138 "dgraph/dGraphContainer.ml" 321 10135 10144
+type(
+  GBin.scrolled_window
+)
+ident(
+  int_ref scroll "dgraph/dGraphContainer.ml" 314 9992 9999 "dgraph/dGraphContainer.ml" 314 9992 10005
+)
+"dgraph/dGraphContainer.ml" 321 10135 10138 "dgraph/dGraphContainer.ml" 321 10135 10148
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 321 10135 10149 "dgraph/dGraphContainer.ml" 321 10135 10153
+type(
+  tree_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 306 9726 9733 "dgraph/dGraphContainer.ml" 306 9726 9737
+)
+"dgraph/dGraphContainer.ml" 321 10135 10149 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 321 10135 10138 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 314 9992 9995 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 310 9844 9847 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 309 9817 9820 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 306 9726 9729 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 303 9667 9668 "dgraph/dGraphContainer.ml" 321 10135 10160
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 295 9412 9438 "dgraph/dGraphContainer.ml" 322 10161 10170
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 295 9412 9418 "dgraph/dGraphContainer.ml" 322 10161 10170
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 324 10172 10208 "dgraph/dGraphContainer.ml" 324 10172 10210
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 324 10172 10219 "dgraph/dGraphContainer.ml" 324 10172 10230
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 325 10236 10242 "dgraph/dGraphContainer.ml" 325 10236 10246
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 326 10250 10260 "dgraph/dGraphContainer.ml" 326 10250 10264
+type(
+  global_view
+)
+"dgraph/dGraphContainer.ml" 326 10250 10267 "dgraph/dGraphContainer.ml" 326 10250 10281
+type(
+  unit -> global_view
+)
+"dgraph/dGraphContainer.ml" 326 10250 10282 "dgraph/dGraphContainer.ml" 326 10250 10284
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 326 10250 10267 "dgraph/dGraphContainer.ml" 326 10250 10284
+call(
+  stack
+)
+type(
+  global_view
+)
+"dgraph/dGraphContainer.ml" 327 10288 10314 "dgraph/dGraphContainer.ml" 327 10288 10318
+type(
+  global_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 326 10250 10260 "dgraph/dGraphContainer.ml" 326 10250 10264
+)
+"dgraph/dGraphContainer.ml" 327 10288 10309 "dgraph/dGraphContainer.ml" 327 10288 10318
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 327 10288 10294 "dgraph/dGraphContainer.ml" 327 10288 10318
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 328 10320 10329 "dgraph/dGraphContainer.ml" 328 10320 10346
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 329 10358 10366 "dgraph/dGraphContainer.ml" 329 10358 10370
+type(
+  global_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 326 10250 10260 "dgraph/dGraphContainer.ml" 326 10250 10264
+)
+"dgraph/dGraphContainer.ml" 329 10358 10366 "dgraph/dGraphContainer.ml" 329 10358 10397
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 329 10358 10398 "dgraph/dGraphContainer.ml" 329 10358 10400
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 329 10358 10366 "dgraph/dGraphContainer.ml" 329 10358 10400
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 330 10402 10410 "dgraph/dGraphContainer.ml" 330 10402 10414
+type(
+  global_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 326 10250 10260 "dgraph/dGraphContainer.ml" 326 10250 10264
+)
+"dgraph/dGraphContainer.ml" 330 10402 10410 "dgraph/dGraphContainer.ml" 330 10402 10425
+type(
+  (T.Tree.V.label DGraphViewItem.view_item -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 330 10402 10427 "dgraph/dGraphContainer.ml" 330 10402 10450
+type(
+  'b1 -> T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 330 10402 10451 "dgraph/dGraphContainer.ml" 330 10402 10455
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 330 10402 10426 "dgraph/dGraphContainer.ml" 330 10402 10456
+call(
+  stack
+)
+type(
+  T.Tree.V.label DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphContainer.ml" 330 10402 10410 "dgraph/dGraphContainer.ml" 330 10402 10457
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 328 10320 10352 "dgraph/dGraphContainer.ml" 331 10458 10467
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 328 10320 10326 "dgraph/dGraphContainer.ml" 331 10458 10467
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 332 10469 10479 "dgraph/dGraphContainer.ml" 332 10469 10485
+type(
+  GBin.scrolled_window
+)
+"dgraph/dGraphContainer.ml" 333 10488 10489 "dgraph/dGraphContainer.ml" 333 10488 10509
+type(
+  ?hadjustment:GData.adjustment ->
+  ?vadjustment:GData.adjustment ->
+  ?hpolicy:Gtk.Tags.policy_type ->
+  ?vpolicy:Gtk.Tags.policy_type ->
+  ?placement:Gtk.Tags.corner_type ->
+  ?shadow_type:Gtk.Tags.shadow_type ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool -> unit -> GBin.scrolled_window
+)
+ident(
+  ext_ref GBin.scrolled_window
+)
+"dgraph/dGraphContainer.ml" 334 10510 10522 "dgraph/dGraphContainer.ml" 334 10510 10532
+type(
+  Gtk.Tags.policy_type
+)
+"dgraph/dGraphContainer.ml" 335 10533 10545 "dgraph/dGraphContainer.ml" 335 10533 10555
+type(
+  Gtk.Tags.policy_type
+)
+"dgraph/dGraphContainer.ml" 336 10556 10568 "dgraph/dGraphContainer.ml" 336 10556 10580
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 336 10556 10568 "dgraph/dGraphContainer.ml" 336 10556 10584
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 337 10585 10588 "dgraph/dGraphContainer.ml" 337 10585 10590
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 333 10488 10489 "dgraph/dGraphContainer.ml" 337 10585 10590
+call(
+  stack
+)
+type(
+  GBin.scrolled_window
+)
+"dgraph/dGraphContainer.ml" 339 10600 10606 "dgraph/dGraphContainer.ml" 339 10600 10612
+type(
+  GBin.scrolled_window
+)
+ident(
+  int_ref scroll "dgraph/dGraphContainer.ml" 332 10469 10479 "dgraph/dGraphContainer.ml" 332 10469 10485
+)
+"dgraph/dGraphContainer.ml" 339 10600 10606 "dgraph/dGraphContainer.ml" 339 10600 10616
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 339 10600 10617 "dgraph/dGraphContainer.ml" 339 10600 10621
+type(
+  global_view
+)
+ident(
+  int_ref view "dgraph/dGraphContainer.ml" 326 10250 10260 "dgraph/dGraphContainer.ml" 326 10250 10264
+)
+"dgraph/dGraphContainer.ml" 339 10600 10617 "dgraph/dGraphContainer.ml" 339 10600 10628
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 339 10600 10606 "dgraph/dGraphContainer.ml" 339 10600 10628
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 332 10469 10475 "dgraph/dGraphContainer.ml" 339 10600 10628
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 328 10320 10326 "dgraph/dGraphContainer.ml" 339 10600 10628
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 327 10288 10294 "dgraph/dGraphContainer.ml" 339 10600 10628
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 326 10250 10256 "dgraph/dGraphContainer.ml" 339 10600 10628
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 340 10629 10640 "dgraph/dGraphContainer.ml" 340 10629 10641
+type(
+  global_view
+)
+"dgraph/dGraphContainer.ml" 340 10629 10635 "dgraph/dGraphContainer.ml" 340 10629 10641
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 341 10645 10651 "dgraph/dGraphContainer.ml" 341 10645 10653
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 324 10172 10213 "dgraph/dGraphContainer.ml" 341 10645 10653
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 343 10655 10677 "dgraph/dGraphContainer.ml" 343 10655 10679
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 344 10682 10692 "dgraph/dGraphContainer.ml" 344 10682 10694
+type(
+  < adapt_zoom : unit -> unit; .. > option -> unit
+)
+"dgraph/dGraphContainer.ml" 345 10706 10709 "dgraph/dGraphContainer.ml" 345 10706 10713
+type(
+  (< adapt_zoom : unit -> unit; .. > as 'c1) option
+)
+"dgraph/dGraphContainer.ml" 345 10706 10717 "dgraph/dGraphContainer.ml" 345 10706 10719
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 346 10720 10728 "dgraph/dGraphContainer.ml" 346 10720 10729
+type(
+  'c1
+)
+ident(
+  def w "dgraph/dGraphContainer.ml" 346 10720 10733 "dgraph/dGraphContainer.ml" 346 10720 10748
+)
+"dgraph/dGraphContainer.ml" 346 10720 10723 "dgraph/dGraphContainer.ml" 346 10720 10729
+type(
+  'c1 option
+)
+"dgraph/dGraphContainer.ml" 346 10720 10733 "dgraph/dGraphContainer.ml" 346 10720 10734
+type(
+  'c1
+)
+ident(
+  int_ref w "dgraph/dGraphContainer.ml" 346 10720 10728 "dgraph/dGraphContainer.ml" 346 10720 10729
+)
+"dgraph/dGraphContainer.ml" 346 10720 10733 "dgraph/dGraphContainer.ml" 346 10720 10745
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 346 10720 10746 "dgraph/dGraphContainer.ml" 346 10720 10748
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 346 10720 10733 "dgraph/dGraphContainer.ml" 346 10720 10748
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 344 10682 10697 "dgraph/dGraphContainer.ml" 346 10720 10748
+type(
+  'c1 option -> unit
+)
+"dgraph/dGraphContainer.ml" 348 10758 10764 "dgraph/dGraphContainer.ml" 348 10758 10766
+type(
+  tree_view option -> unit
+)
+ident(
+  int_ref az "dgraph/dGraphContainer.ml" 344 10682 10692 "dgraph/dGraphContainer.ml" 344 10682 10694
+)
+"dgraph/dGraphContainer.ml" 348 10758 10767 "dgraph/dGraphContainer.ml" 348 10758 10776
+type(
+  tree_view option
+)
+"dgraph/dGraphContainer.ml" 348 10758 10764 "dgraph/dGraphContainer.ml" 348 10758 10776
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 349 10778 10784 "dgraph/dGraphContainer.ml" 349 10778 10786
+type(
+  global_view option -> unit
+)
+ident(
+  int_ref az "dgraph/dGraphContainer.ml" 344 10682 10692 "dgraph/dGraphContainer.ml" 344 10682 10694
+)
+"dgraph/dGraphContainer.ml" 349 10778 10787 "dgraph/dGraphContainer.ml" 349 10778 10798
+type(
+  global_view option
+)
+"dgraph/dGraphContainer.ml" 349 10778 10784 "dgraph/dGraphContainer.ml" 349 10778 10798
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 348 10758 10764 "dgraph/dGraphContainer.ml" 349 10778 10798
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 344 10682 10688 "dgraph/dGraphContainer.ml" 349 10778 10798
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 351 10800 10835 "dgraph/dGraphContainer.ml" 351 10800 10837
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 352 10840 10846 "dgraph/dGraphContainer.ml" 352 10840 10850
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 352 10840 10846 "dgraph/dGraphContainer.ml" 352 10840 10867
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 352 10840 10868 "dgraph/dGraphContainer.ml" 352 10840 10870
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 352 10840 10846 "dgraph/dGraphContainer.ml" 352 10840 10870
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 353 10872 10878 "dgraph/dGraphContainer.ml" 353 10872 10887
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 353 10872 10878 "dgraph/dGraphContainer.ml" 353 10872 10893
+type(
+  ?resize:bool -> ?shrink:bool -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 353 10872 10894 "dgraph/dGraphContainer.ml" 353 10872 10906
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 353 10872 10894 "dgraph/dGraphContainer.ml" 353 10872 10913
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 353 10872 10878 "dgraph/dGraphContainer.ml" 353 10872 10913
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 352 10840 10846 "dgraph/dGraphContainer.ml" 353 10872 10913
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 355 10915 10948 "dgraph/dGraphContainer.ml" 355 10915 10950
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 356 10953 10959 "dgraph/dGraphContainer.ml" 356 10953 10963
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 356 10953 10959 "dgraph/dGraphContainer.ml" 356 10953 10978
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 356 10953 10979 "dgraph/dGraphContainer.ml" 356 10953 10981
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 356 10953 10959 "dgraph/dGraphContainer.ml" 356 10953 10981
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 357 10983 10989 "dgraph/dGraphContainer.ml" 357 10983 10998
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 357 10983 10989 "dgraph/dGraphContainer.ml" 357 10983 11004
+type(
+  ?resize:bool -> ?shrink:bool -> GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 357 10983 11005 "dgraph/dGraphContainer.ml" 357 10983 11015
+type(
+  GBin.frame
+)
+"dgraph/dGraphContainer.ml" 357 10983 11005 "dgraph/dGraphContainer.ml" 357 10983 11022
+type(
+  GObj.widget
+)
+"dgraph/dGraphContainer.ml" 357 10983 10989 "dgraph/dGraphContainer.ml" 357 10983 11022
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 356 10953 10959 "dgraph/dGraphContainer.ml" 357 10983 11022
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 359 11024 11050 "dgraph/dGraphContainer.ml" 359 11024 11052
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 360 11055 11061 "dgraph/dGraphContainer.ml" 360 11055 11070
+type(
+  (GObj.widget -> unit) -> GObj.widget list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"dgraph/dGraphContainer.ml" 360 11055 11071 "dgraph/dGraphContainer.ml" 360 11055 11080
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 360 11055 11071 "dgraph/dGraphContainer.ml" 360 11055 11087
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphContainer.ml" 360 11055 11088 "dgraph/dGraphContainer.ml" 360 11055 11097
+type(
+  GPack.paned
+)
+"dgraph/dGraphContainer.ml" 360 11055 11088 "dgraph/dGraphContainer.ml" 360 11055 11110
+type(
+  GObj.widget list
+)
+"dgraph/dGraphContainer.ml" 360 11055 11061 "dgraph/dGraphContainer.ml" 360 11055 11110
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 361 11112 11125 "dgraph/dGraphContainer.ml" 361 11112 11131
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 361 11112 11133 "dgraph/dGraphContainer.ml" 361 11112 11142
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 361 11112 11125 "dgraph/dGraphContainer.ml" 361 11112 11142
+type(
+  status * T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 362 11148 11156 "dgraph/dGraphContainer.ml" 362 11148 11162
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 362 11148 11164 "dgraph/dGraphContainer.ml" 362 11148 11165
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 362 11148 11156 "dgraph/dGraphContainer.ml" 362 11148 11165
+type(
+  status * T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 362 11148 11168 "dgraph/dGraphContainer.ml" 362 11148 11169
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 362 11148 11171 "dgraph/dGraphContainer.ml" 362 11148 11175
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 362 11148 11168 "dgraph/dGraphContainer.ml" 362 11148 11175
+type(
+  status * T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 362 11148 11156 "dgraph/dGraphContainer.ml" 362 11148 11175
+type(
+  status * T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 362 11148 11179 "dgraph/dGraphContainer.ml" 362 11148 11183
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 362 11148 11179 "dgraph/dGraphContainer.ml" 362 11148 11199
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 362 11148 11200 "dgraph/dGraphContainer.ml" 362 11148 11202
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 362 11148 11179 "dgraph/dGraphContainer.ml" 362 11148 11202
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 363 11203 11211 "dgraph/dGraphContainer.ml" 363 11203 11215
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 363 11203 11222 "dgraph/dGraphContainer.ml" 363 11203 11223
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 363 11203 11217 "dgraph/dGraphContainer.ml" 363 11203 11223
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 363 11203 11211 "dgraph/dGraphContainer.ml" 363 11203 11223
+type(
+  status * T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 363 11203 11227 "dgraph/dGraphContainer.ml" 363 11203 11231
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 363 11203 11227 "dgraph/dGraphContainer.ml" 363 11203 11245
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 363 11203 11246 "dgraph/dGraphContainer.ml" 363 11203 11248
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 363 11203 11227 "dgraph/dGraphContainer.ml" 363 11203 11248
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11257 "dgraph/dGraphContainer.ml" 364 11249 11261
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 364 11249 11268 "dgraph/dGraphContainer.ml" 364 11249 11269
+type(
+  T.Tree.V.label
+)
+"dgraph/dGraphContainer.ml" 364 11249 11263 "dgraph/dGraphContainer.ml" 364 11249 11269
+type(
+  T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 364 11249 11257 "dgraph/dGraphContainer.ml" 364 11249 11269
+type(
+  status * T.Tree.V.label option
+)
+"dgraph/dGraphContainer.ml" 364 11249 11273 "dgraph/dGraphContainer.ml" 364 11249 11277
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 364 11249 11273 "dgraph/dGraphContainer.ml" 364 11249 11293
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11294 "dgraph/dGraphContainer.ml" 364 11249 11296
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11273 "dgraph/dGraphContainer.ml" 364 11249 11296
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11298 "dgraph/dGraphContainer.ml" 364 11249 11302
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 364 11249 11298 "dgraph/dGraphContainer.ml" 364 11249 11316
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11317 "dgraph/dGraphContainer.ml" 364 11249 11319
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11298 "dgraph/dGraphContainer.ml" 364 11249 11319
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 364 11249 11273 "dgraph/dGraphContainer.ml" 364 11249 11319
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 361 11112 11118 "dgraph/dGraphContainer.ml" 364 11249 11320
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 360 11055 11061 "dgraph/dGraphContainer.ml" 364 11249 11320
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 367 11338 11344 "dgraph/dGraphContainer.ml" 367 11338 11348
+type(
+  'b1
+)
+"dgraph/dGraphContainer.ml" 367 11338 11344 "dgraph/dGraphContainer.ml" 367 11338 11355
+type(
+  unit -> unit
+)
+"dgraph/dGraphContainer.ml" 367 11338 11356 "dgraph/dGraphContainer.ml" 367 11338 11358
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 367 11338 11344 "dgraph/dGraphContainer.ml" 367 11338 11358
+type(
+  'b1 -> unit
+)
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 375 11425 11450 "dgraph/dGraphContainer.ml" 375 11425 11480
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 376 11481 11491 "dgraph/dGraphContainer.ml" 376 11481 11499
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 376 11481 11491 "dgraph/dGraphContainer.ml" 376 11481 11514
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 377 11515 11538 "dgraph/dGraphContainer.ml" 377 11515 11557
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 379 11559 11565 "dgraph/dGraphContainer.ml" 379 11559 11575
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((GView.vertex, GView.edge, GView.cluster)
+                   DGraphModel.abstract_model ->
+                   (GView.vertex, GView.edge, GView.cluster) DGraphView.view) ->
+  ?mk_tree_view:((TView.vertex, TView.edge, TView.cluster)
+                 DGraphModel.abstract_model ->
+                 (TView.vertex, TView.edge, TView.cluster) DGraphView.view) ->
+  ?root:FullTreeModel.Tree.V.label -> G.t -> view_container
+)
+ident(
+  def from_graph "dgraph/dGraphContainer.ml" 404 12265 12267 "dgraph/dGraphContainer.ml" 413 12563 12566
+)
+"dgraph/dGraphContainer.ml" 380 11576 11583 "dgraph/dGraphContainer.ml" 380 11576 11590
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 381 11591 11597 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 381 11591 11598 "dgraph/dGraphContainer.ml" 381 11591 11604
+type(
+  status option
+)
+ident(
+  def status "dgraph/dGraphContainer.ml" 382 11605 11611 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 382 11605 11613 "dgraph/dGraphContainer.ml" 382 11605 11630
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 382 11605 11631 "dgraph/dGraphContainer.ml" 382 11605 11635
+type(
+  bool
+)
+type(
+  bool
+)
+type(
+  bool
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 382 11605 11631 "dgraph/dGraphContainer.ml" 382 11605 11635
+)
+type(
+  bool option
+)
+type(
+  bool option
+)
+type(
+  bool
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 382 11605 11631 "dgraph/dGraphContainer.ml" 382 11605 11635
+)
+type(
+  bool option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 382 11605 11631 "dgraph/dGraphContainer.ml" 382 11605 11635
+)
+type(
+  bool option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 382 11605 11611 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 383 11637 11645 "dgraph/dGraphContainer.ml" 383 11637 11659
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 383 11637 11666 "dgraph/dGraphContainer.ml" 383 11637 11671
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model
+)
+ident(
+  def model "dgraph/dGraphContainer.ml" 383 11637 11675 "dgraph/dGraphContainer.ml" 383 11637 11700
+)
+"dgraph/dGraphContainer.ml" 383 11637 11675 "dgraph/dGraphContainer.ml" 383 11637 11685
+type(
+  ?aa:bool ->
+  ?delay_node:(GView.vertex -> bool) ->
+  ?delay_edge:(GView.edge -> bool) ->
+  ?delay_cluster:(GView.cluster -> bool) ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  ext_ref GView.view
+)
+"dgraph/dGraphContainer.ml" 383 11637 11690 "dgraph/dGraphContainer.ml" 383 11637 11694
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 383 11637 11695 "dgraph/dGraphContainer.ml" 383 11637 11700
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model
+)
+ident(
+  int_ref model "dgraph/dGraphContainer.ml" 383 11637 11666 "dgraph/dGraphContainer.ml" 383 11637 11671
+)
+"dgraph/dGraphContainer.ml" 383 11637 11675 "dgraph/dGraphContainer.ml" 383 11637 11700
+call(
+  tail
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 383 11637 11662 "dgraph/dGraphContainer.ml" 383 11637 11700
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 383 11637 11662 "dgraph/dGraphContainer.ml" 383 11637 11700
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 383 11637 11662 "dgraph/dGraphContainer.ml" 383 11637 11700
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 383 11637 11662 "dgraph/dGraphContainer.ml" 383 11637 11700
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 383 11637 11643 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 384 11702 11710 "dgraph/dGraphContainer.ml" 384 11702 11722
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 384 11702 11729 "dgraph/dGraphContainer.ml" 384 11702 11734
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model
+)
+ident(
+  def model "dgraph/dGraphContainer.ml" 384 11702 11738 "dgraph/dGraphContainer.ml" 384 11702 11763
+)
+"dgraph/dGraphContainer.ml" 384 11702 11738 "dgraph/dGraphContainer.ml" 384 11702 11748
+type(
+  ?aa:bool ->
+  ?delay_node:(TView.vertex -> bool) ->
+  ?delay_edge:(TView.edge -> bool) ->
+  ?delay_cluster:(TView.cluster -> bool) ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  ext_ref TView.view
+)
+"dgraph/dGraphContainer.ml" 384 11702 11753 "dgraph/dGraphContainer.ml" 384 11702 11757
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 384 11702 11758 "dgraph/dGraphContainer.ml" 384 11702 11763
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model
+)
+ident(
+  int_ref model "dgraph/dGraphContainer.ml" 384 11702 11729 "dgraph/dGraphContainer.ml" 384 11702 11734
+)
+"dgraph/dGraphContainer.ml" 384 11702 11738 "dgraph/dGraphContainer.ml" 384 11702 11763
+call(
+  tail
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 384 11702 11725 "dgraph/dGraphContainer.ml" 384 11702 11763
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 384 11702 11725 "dgraph/dGraphContainer.ml" 384 11702 11763
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 384 11702 11725 "dgraph/dGraphContainer.ml" 384 11702 11763
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 384 11702 11725 "dgraph/dGraphContainer.ml" 384 11702 11763
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 384 11702 11708 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 385 11765 11772 "dgraph/dGraphContainer.ml" 385 11765 11776
+type(
+  FullTreeModel.Tree.V.label option
+)
+ident(
+  def root "dgraph/dGraphContainer.ml" 386 11777 11783 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 386 11777 11783 "dgraph/dGraphContainer.ml" 386 11777 11784
+type(
+  G.t
+)
+ident(
+  def g "dgraph/dGraphContainer.ml" 387 11787 11791 "dgraph/dGraphContainer.ml" 402 12253 12263
+)
+"dgraph/dGraphContainer.ml" 387 11787 11795 "dgraph/dGraphContainer.ml" 387 11787 11801
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 387 11787 11810 "dgraph/dGraphContainer.ml" 387 11787 11816
+type(
+  status option
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 381 11591 11598 "dgraph/dGraphContainer.ml" 381 11591 11604
+)
+"dgraph/dGraphContainer.ml" 388 11822 11830 "dgraph/dGraphContainer.ml" 388 11822 11834
+type(
+  status option
+)
+"dgraph/dGraphContainer.ml" 389 11838 11842 "dgraph/dGraphContainer.ml" 389 11838 11853
+type(
+  G.t -> int
+)
+ident(
+  ext_ref G.nb_vertex
+)
+"dgraph/dGraphContainer.ml" 389 11838 11854 "dgraph/dGraphContainer.ml" 389 11838 11855
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 386 11777 11783 "dgraph/dGraphContainer.ml" 386 11777 11784
+)
+"dgraph/dGraphContainer.ml" 389 11838 11842 "dgraph/dGraphContainer.ml" 389 11838 11855
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 389 11838 11856 "dgraph/dGraphContainer.ml" 389 11838 11857
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"dgraph/dGraphContainer.ml" 389 11838 11858 "dgraph/dGraphContainer.ml" 389 11838 11861
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 389 11838 11842 "dgraph/dGraphContainer.ml" 389 11838 11861
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 389 11838 11862 "dgraph/dGraphContainer.ml" 389 11838 11864
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"dgraph/dGraphContainer.ml" 389 11838 11865 "dgraph/dGraphContainer.ml" 389 11838 11875
+type(
+  G.t -> int
+)
+ident(
+  ext_ref G.nb_edges
+)
+"dgraph/dGraphContainer.ml" 389 11838 11876 "dgraph/dGraphContainer.ml" 389 11838 11877
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 386 11777 11783 "dgraph/dGraphContainer.ml" 386 11777 11784
+)
+"dgraph/dGraphContainer.ml" 389 11838 11865 "dgraph/dGraphContainer.ml" 389 11838 11877
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 389 11838 11878 "dgraph/dGraphContainer.ml" 389 11838 11879
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"dgraph/dGraphContainer.ml" 389 11838 11880 "dgraph/dGraphContainer.ml" 389 11838 11884
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 389 11838 11865 "dgraph/dGraphContainer.ml" 389 11838 11884
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 389 11838 11842 "dgraph/dGraphContainer.ml" 389 11838 11884
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 389 11838 11890 "dgraph/dGraphContainer.ml" 389 11838 11896
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 389 11838 11902 "dgraph/dGraphContainer.ml" 389 11838 11906
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 389 11838 11839 "dgraph/dGraphContainer.ml" 389 11838 11906
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 390 11907 11920 "dgraph/dGraphContainer.ml" 390 11907 11921
+type(
+  status
+)
+ident(
+  def s "dgraph/dGraphContainer.ml" 390 11907 11925 "dgraph/dGraphContainer.ml" 390 11907 11926
+)
+"dgraph/dGraphContainer.ml" 390 11907 11915 "dgraph/dGraphContainer.ml" 390 11907 11921
+type(
+  status option
+)
+"dgraph/dGraphContainer.ml" 390 11907 11925 "dgraph/dGraphContainer.ml" 390 11907 11926
+type(
+  status
+)
+ident(
+  int_ref s "dgraph/dGraphContainer.ml" 390 11907 11920 "dgraph/dGraphContainer.ml" 390 11907 11921
+)
+"dgraph/dGraphContainer.ml" 387 11787 11804 "dgraph/dGraphContainer.ml" 390 11907 11926
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 392 11934 11938 "dgraph/dGraphContainer.ml" 392 11934 11956
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  mk_global_view:(unit -> global_view) ->
+  mk_tree_view:(depth_backward:int ->
+                depth_forward:int ->
+                Gtk.widget Gtk.obj -> FullTreeModel.Tree.V.label -> tree_view) ->
+  FullTreeModel.Tree.V.label option -> view_container
+)
+"dgraph/dGraphContainer.ml" 393 11957 11964 "dgraph/dGraphContainer.ml" 393 11957 11971
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 380 11576 11583 "dgraph/dGraphContainer.ml" 380 11576 11590
+)
+"dgraph/dGraphContainer.ml" 394 11972 11979 "dgraph/dGraphContainer.ml" 394 11972 11996
+type(
+  bool
+)
+ident(
+  int_ref default_callbacks "dgraph/dGraphContainer.ml" 382 11605 11613 "dgraph/dGraphContainer.ml" 382 11605 11630
+)
+"dgraph/dGraphContainer.ml" 395 11997 12004 "dgraph/dGraphContainer.ml" 395 11997 12010
+type(
+  status
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 387 11787 11795 "dgraph/dGraphContainer.ml" 387 11787 11801
+)
+"dgraph/dGraphContainer.ml" 396 12011 12038 "dgraph/dGraphContainer.ml" 396 12011 12040
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 396 12011 12044 "dgraph/dGraphContainer.ml" 396 12011 12058
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  int_ref mk_global_view "dgraph/dGraphContainer.ml" 383 11637 11645 "dgraph/dGraphContainer.ml" 383 11637 11659
+)
+"dgraph/dGraphContainer.ml" 396 12011 12060 "dgraph/dGraphContainer.ml" 396 12011 12082
+type(
+  ?cmd:string -> ?tmp_name:string -> G.t -> GlobalModel.model
+)
+ident(
+  ext_ref GlobalModel.from_graph
+)
+"dgraph/dGraphContainer.ml" 396 12011 12083 "dgraph/dGraphContainer.ml" 396 12011 12084
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 386 11777 11783 "dgraph/dGraphContainer.ml" 386 11777 11784
+)
+"dgraph/dGraphContainer.ml" 396 12011 12059 "dgraph/dGraphContainer.ml" 396 12011 12085
+call(
+  stack
+)
+type(
+  GlobalModel.model
+)
+"dgraph/dGraphContainer.ml" 396 12011 12044 "dgraph/dGraphContainer.ml" 396 12011 12085
+call(
+  tail
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 396 12011 12033 "dgraph/dGraphContainer.ml" 396 12011 12086
+type(
+  unit -> global_view
+)
+"dgraph/dGraphContainer.ml" 397 12087 12113 "dgraph/dGraphContainer.ml" 397 12087 12127
+type(
+  int
+)
+ident(
+  def depth_backward "dgraph/dGraphContainer.ml" 397 12087 12128 "dgraph/dGraphContainer.ml" 401 12232 12251
+)
+"dgraph/dGraphContainer.ml" 397 12087 12129 "dgraph/dGraphContainer.ml" 397 12087 12142
+type(
+  int
+)
+ident(
+  def depth_forward "dgraph/dGraphContainer.ml" 397 12087 12143 "dgraph/dGraphContainer.ml" 401 12232 12251
+)
+"dgraph/dGraphContainer.ml" 397 12087 12143 "dgraph/dGraphContainer.ml" 397 12087 12144
+type(
+  Gtk.widget Gtk.obj
+)
+ident(
+  def w "dgraph/dGraphContainer.ml" 397 12087 12145 "dgraph/dGraphContainer.ml" 401 12232 12251
+)
+"dgraph/dGraphContainer.ml" 397 12087 12145 "dgraph/dGraphContainer.ml" 397 12087 12146
+type(
+  FullTreeModel.Tree.V.label
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 398 12150 12151 "dgraph/dGraphContainer.ml" 401 12232 12251
+)
+"dgraph/dGraphContainer.ml" 398 12150 12155 "dgraph/dGraphContainer.ml" 398 12150 12160
+type(
+  FullTreeModel.tree_model
+)
+"dgraph/dGraphContainer.ml" 399 12163 12166 "dgraph/dGraphContainer.ml" 399 12163 12190
+type(
+  ?depth_forward:int ->
+  ?depth_backward:int ->
+  Gtk.widget Gtk.obj ->
+  G.t -> FullTreeModel.Tree.V.label -> FullTreeModel.tree_model
+)
+ident(
+  ext_ref FullTreeModel.from_graph
+)
+"dgraph/dGraphContainer.ml" 399 12163 12192 "dgraph/dGraphContainer.ml" 399 12163 12205
+type(
+  int
+)
+ident(
+  int_ref depth_forward "dgraph/dGraphContainer.ml" 397 12087 12129 "dgraph/dGraphContainer.ml" 397 12087 12142
+)
+"dgraph/dGraphContainer.ml" 399 12163 12207 "dgraph/dGraphContainer.ml" 399 12163 12221
+type(
+  int
+)
+ident(
+  int_ref depth_backward "dgraph/dGraphContainer.ml" 397 12087 12113 "dgraph/dGraphContainer.ml" 397 12087 12127
+)
+"dgraph/dGraphContainer.ml" 399 12163 12222 "dgraph/dGraphContainer.ml" 399 12163 12223
+type(
+  Gtk.widget Gtk.obj
+)
+ident(
+  int_ref w "dgraph/dGraphContainer.ml" 397 12087 12143 "dgraph/dGraphContainer.ml" 397 12087 12144
+)
+"dgraph/dGraphContainer.ml" 399 12163 12224 "dgraph/dGraphContainer.ml" 399 12163 12225
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 386 11777 11783 "dgraph/dGraphContainer.ml" 386 11777 11784
+)
+"dgraph/dGraphContainer.ml" 399 12163 12226 "dgraph/dGraphContainer.ml" 399 12163 12227
+type(
+  FullTreeModel.Tree.V.label
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 397 12087 12145 "dgraph/dGraphContainer.ml" 397 12087 12146
+)
+"dgraph/dGraphContainer.ml" 399 12163 12166 "dgraph/dGraphContainer.ml" 399 12163 12227
+call(
+  stack
+)
+type(
+  FullTreeModel.tree_model
+)
+"dgraph/dGraphContainer.ml" 401 12232 12233 "dgraph/dGraphContainer.ml" 401 12232 12245
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  int_ref mk_tree_view "dgraph/dGraphContainer.ml" 384 11702 11710 "dgraph/dGraphContainer.ml" 384 11702 11722
+)
+"dgraph/dGraphContainer.ml" 401 12232 12246 "dgraph/dGraphContainer.ml" 401 12232 12251
+type(
+  FullTreeModel.tree_model
+)
+ident(
+  int_ref model "dgraph/dGraphContainer.ml" 398 12150 12155 "dgraph/dGraphContainer.ml" 398 12150 12160
+)
+"dgraph/dGraphContainer.ml" 401 12232 12233 "dgraph/dGraphContainer.ml" 401 12232 12251
+call(
+  tail
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 398 12150 12151 "dgraph/dGraphContainer.ml" 401 12232 12251
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 397 12087 12107 "dgraph/dGraphContainer.ml" 401 12232 12252
+type(
+  depth_backward:int ->
+  depth_forward:int ->
+  Gtk.widget Gtk.obj -> FullTreeModel.Tree.V.label -> tree_view
+)
+"dgraph/dGraphContainer.ml" 402 12253 12259 "dgraph/dGraphContainer.ml" 402 12253 12263
+type(
+  FullTreeModel.Tree.V.label option
+)
+ident(
+  int_ref root "dgraph/dGraphContainer.ml" 385 11765 11772 "dgraph/dGraphContainer.ml" 385 11765 11776
+)
+"dgraph/dGraphContainer.ml" 392 11934 11938 "dgraph/dGraphContainer.ml" 402 12253 12263
+call(
+  tail
+)
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 387 11787 11791 "dgraph/dGraphContainer.ml" 402 12253 12263
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 404 12265 12271 "dgraph/dGraphContainer.ml" 404 12265 12295
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((GView.vertex, GView.edge, GView.cluster)
+                   DGraphModel.abstract_model ->
+                   (GView.vertex, GView.edge, GView.cluster) DGraphView.view) ->
+  ?mk_tree_view:((TView.vertex, TView.edge, TView.cluster)
+                 DGraphModel.abstract_model ->
+                 (TView.vertex, TView.edge, TView.cluster) DGraphView.view) ->
+  ?root:FullTreeModel.Tree.V.label -> G.t -> GPack.table * view_container
+)
+ident(
+  def from_graph_with_commands "dgraph/dGraphContainer.ml" 411 12554 12561 "dgraph/dGraphContainer.ml" 413 12563 12566
+)
+"dgraph/dGraphContainer.ml" 404 12265 12297 "dgraph/dGraphContainer.ml" 404 12265 12304
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 404 12265 12305 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 404 12265 12306 "dgraph/dGraphContainer.ml" 404 12265 12312
+type(
+  status option
+)
+ident(
+  def status "dgraph/dGraphContainer.ml" 404 12265 12313 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 404 12265 12315 "dgraph/dGraphContainer.ml" 404 12265 12332
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 404 12265 12333 "dgraph/dGraphContainer.ml" 404 12265 12337
+type(
+  bool
+)
+type(
+  bool
+)
+type(
+  bool
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 404 12265 12333 "dgraph/dGraphContainer.ml" 404 12265 12337
+)
+type(
+  bool option
+)
+type(
+  bool option
+)
+type(
+  bool
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 404 12265 12333 "dgraph/dGraphContainer.ml" 404 12265 12337
+)
+type(
+  bool option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 404 12265 12333 "dgraph/dGraphContainer.ml" 404 12265 12337
+)
+type(
+  bool option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 404 12265 12313 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 404 12265 12340 "dgraph/dGraphContainer.ml" 404 12265 12354
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def mk_global_view "dgraph/dGraphContainer.ml" 404 12265 12355 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 404 12265 12356 "dgraph/dGraphContainer.ml" 404 12265 12368
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def mk_tree_view "dgraph/dGraphContainer.ml" 404 12265 12369 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 404 12265 12370 "dgraph/dGraphContainer.ml" 404 12265 12374
+type(
+  FullTreeModel.Tree.V.label option
+)
+ident(
+  def root "dgraph/dGraphContainer.ml" 404 12265 12375 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 404 12265 12375 "dgraph/dGraphContainer.ml" 404 12265 12376
+type(
+  G.t
+)
+ident(
+  def g "dgraph/dGraphContainer.ml" 405 12379 12383 "dgraph/dGraphContainer.ml" 411 12554 12561
+)
+"dgraph/dGraphContainer.ml" 405 12379 12383 "dgraph/dGraphContainer.ml" 405 12379 12396
+type(
+  ?packing:(GObj.widget -> unit) ->
+  (packing:(GObj.widget -> unit) -> G.t -> view_container) ->
+  G.t -> GPack.table * view_container
+)
+ident(
+  int_ref with_commands "dgraph/dGraphContainer.ml" 96 3445 3449 "dgraph/dGraphContainer.ml" 96 3445 3462
+)
+"dgraph/dGraphContainer.ml" 406 12397 12404 "dgraph/dGraphContainer.ml" 406 12397 12411
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 404 12265 12297 "dgraph/dGraphContainer.ml" 404 12265 12304
+)
+"dgraph/dGraphContainer.ml" 407 12412 12424 "dgraph/dGraphContainer.ml" 407 12412 12431
+type(
+  GObj.widget -> unit
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 407 12412 12432 "dgraph/dGraphContainer.ml" 410 12534 12552
+)
+"dgraph/dGraphContainer.ml" 407 12412 12432 "dgraph/dGraphContainer.ml" 407 12412 12433
+type(
+  G.t
+)
+ident(
+  def g "dgraph/dGraphContainer.ml" 408 12437 12446 "dgraph/dGraphContainer.ml" 410 12534 12552
+)
+"dgraph/dGraphContainer.ml" 408 12437 12446 "dgraph/dGraphContainer.ml" 408 12437 12456
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((GView.vertex, GView.edge, GView.cluster)
+                   DGraphModel.abstract_model ->
+                   (GView.vertex, GView.edge, GView.cluster) DGraphView.view) ->
+  ?mk_tree_view:((TView.vertex, TView.edge, TView.cluster)
+                 DGraphModel.abstract_model ->
+                 (TView.vertex, TView.edge, TView.cluster) DGraphView.view) ->
+  ?root:FullTreeModel.Tree.V.label -> G.t -> view_container
+)
+ident(
+  int_ref from_graph "dgraph/dGraphContainer.ml" 379 11559 11565 "dgraph/dGraphContainer.ml" 379 11559 11575
+)
+"dgraph/dGraphContainer.ml" 409 12457 12469 "dgraph/dGraphContainer.ml" 409 12457 12476
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 407 12412 12424 "dgraph/dGraphContainer.ml" 407 12412 12431
+)
+"dgraph/dGraphContainer.ml" 409 12457 12478 "dgraph/dGraphContainer.ml" 409 12457 12484
+type(
+  status option
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 404 12265 12306 "dgraph/dGraphContainer.ml" 404 12265 12312
+)
+"dgraph/dGraphContainer.ml" 409 12457 12486 "dgraph/dGraphContainer.ml" 409 12457 12503
+type(
+  bool
+)
+ident(
+  int_ref default_callbacks "dgraph/dGraphContainer.ml" 404 12265 12315 "dgraph/dGraphContainer.ml" 404 12265 12332
+)
+"dgraph/dGraphContainer.ml" 409 12457 12505 "dgraph/dGraphContainer.ml" 409 12457 12519
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref mk_global_view "dgraph/dGraphContainer.ml" 404 12265 12340 "dgraph/dGraphContainer.ml" 404 12265 12354
+)
+"dgraph/dGraphContainer.ml" 409 12457 12521 "dgraph/dGraphContainer.ml" 409 12457 12533
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref mk_tree_view "dgraph/dGraphContainer.ml" 404 12265 12356 "dgraph/dGraphContainer.ml" 404 12265 12368
+)
+"dgraph/dGraphContainer.ml" 410 12534 12546 "dgraph/dGraphContainer.ml" 410 12534 12550
+type(
+  FullTreeModel.Tree.V.label option
+)
+ident(
+  int_ref root "dgraph/dGraphContainer.ml" 404 12265 12370 "dgraph/dGraphContainer.ml" 404 12265 12374
+)
+"dgraph/dGraphContainer.ml" 410 12534 12551 "dgraph/dGraphContainer.ml" 410 12534 12552
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 407 12412 12432 "dgraph/dGraphContainer.ml" 407 12412 12433
+)
+"dgraph/dGraphContainer.ml" 408 12437 12446 "dgraph/dGraphContainer.ml" 410 12534 12552
+call(
+  tail
+)
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 407 12412 12418 "dgraph/dGraphContainer.ml" 410 12534 12553
+type(
+  packing:(GObj.widget -> unit) -> G.t -> view_container
+)
+"dgraph/dGraphContainer.ml" 411 12554 12560 "dgraph/dGraphContainer.ml" 411 12554 12561
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 404 12265 12375 "dgraph/dGraphContainer.ml" 404 12265 12376
+)
+"dgraph/dGraphContainer.ml" 405 12379 12383 "dgraph/dGraphContainer.ml" 411 12554 12561
+call(
+  tail
+)
+type(
+  GPack.table * view_container
+)
+"dgraph/dGraphContainer.ml" 419 12605 12615 "dgraph/dGraphContainer.ml" 419 12605 12638
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 419 12605 12615 "dgraph/dGraphContainer.ml" 419 12605 12675
+call(
+  stack
+)
+"dgraph/dGraphContainer.ml" 423 12720 12726 "dgraph/dGraphContainer.ml" 423 12720 12734
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((GView.vertex, GView.edge, GView.cluster)
+                   DGraphModel.abstract_model ->
+                   (GView.vertex, GView.edge, GView.cluster) DGraphView.view) ->
+  ?mk_tree_view:((TView.vertex, TView.edge, TView.cluster)
+                 DGraphModel.abstract_model ->
+                 (TView.vertex, TView.edge, TView.cluster) DGraphView.view) ->
+  string -> view_container
+)
+ident(
+  def from_dot "dgraph/dGraphContainer.ml" 470 13819 13821 "dgraph/dGraphContainer.ml" 478 14095 14098
+)
+"dgraph/dGraphContainer.ml" 424 12735 12742 "dgraph/dGraphContainer.ml" 424 12735 12749
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 425 12750 12756 "dgraph/dGraphContainer.ml" 468 13801 13817
+)
+"dgraph/dGraphContainer.ml" 425 12750 12757 "dgraph/dGraphContainer.ml" 425 12750 12763
+type(
+  status option
+)
+ident(
+  def status "dgraph/dGraphContainer.ml" 426 12764 12770 "dgraph/dGraphContainer.ml" 468 13801 13817
+)
+"dgraph/dGraphContainer.ml" 426 12764 12772 "dgraph/dGraphContainer.ml" 426 12764 12789
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 426 12764 12790 "dgraph/dGraphContainer.ml" 426 12764 12794
+type(
+  bool
+)
+type(
+  bool
+)
+type(
+  bool
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 426 12764 12790 "dgraph/dGraphContainer.ml" 426 12764 12794
+)
+type(
+  bool option
+)
+type(
+  bool option
+)
+type(
+  bool
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 426 12764 12790 "dgraph/dGraphContainer.ml" 426 12764 12794
+)
+type(
+  bool option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 426 12764 12790 "dgraph/dGraphContainer.ml" 426 12764 12794
+)
+type(
+  bool option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 426 12764 12770 "dgraph/dGraphContainer.ml" 468 13801 13817
+)
+"dgraph/dGraphContainer.ml" 427 12796 12804 "dgraph/dGraphContainer.ml" 427 12796 12818
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 427 12796 12825 "dgraph/dGraphContainer.ml" 427 12796 12830
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model
+)
+ident(
+  def model "dgraph/dGraphContainer.ml" 427 12796 12834 "dgraph/dGraphContainer.ml" 427 12796 12859
+)
+"dgraph/dGraphContainer.ml" 427 12796 12834 "dgraph/dGraphContainer.ml" 427 12796 12844
+type(
+  ?aa:bool ->
+  ?delay_node:(GView.vertex -> bool) ->
+  ?delay_edge:(GView.edge -> bool) ->
+  ?delay_cluster:(GView.cluster -> bool) ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  ext_ref GView.view
+)
+"dgraph/dGraphContainer.ml" 427 12796 12849 "dgraph/dGraphContainer.ml" 427 12796 12853
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 427 12796 12854 "dgraph/dGraphContainer.ml" 427 12796 12859
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model
+)
+ident(
+  int_ref model "dgraph/dGraphContainer.ml" 427 12796 12825 "dgraph/dGraphContainer.ml" 427 12796 12830
+)
+"dgraph/dGraphContainer.ml" 427 12796 12834 "dgraph/dGraphContainer.ml" 427 12796 12859
+call(
+  tail
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 427 12796 12821 "dgraph/dGraphContainer.ml" 427 12796 12859
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 427 12796 12821 "dgraph/dGraphContainer.ml" 427 12796 12859
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 427 12796 12821 "dgraph/dGraphContainer.ml" 427 12796 12859
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 427 12796 12821 "dgraph/dGraphContainer.ml" 427 12796 12859
+)
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 427 12796 12802 "dgraph/dGraphContainer.ml" 468 13801 13817
+)
+"dgraph/dGraphContainer.ml" 428 12861 12869 "dgraph/dGraphContainer.ml" 428 12861 12881
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 428 12861 12888 "dgraph/dGraphContainer.ml" 428 12861 12893
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model
+)
+ident(
+  def model "dgraph/dGraphContainer.ml" 428 12861 12897 "dgraph/dGraphContainer.ml" 428 12861 12922
+)
+"dgraph/dGraphContainer.ml" 428 12861 12897 "dgraph/dGraphContainer.ml" 428 12861 12907
+type(
+  ?aa:bool ->
+  ?delay_node:(TView.vertex -> bool) ->
+  ?delay_edge:(TView.edge -> bool) ->
+  ?delay_cluster:(TView.cluster -> bool) ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  ext_ref TView.view
+)
+"dgraph/dGraphContainer.ml" 428 12861 12912 "dgraph/dGraphContainer.ml" 428 12861 12916
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 428 12861 12917 "dgraph/dGraphContainer.ml" 428 12861 12922
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model
+)
+ident(
+  int_ref model "dgraph/dGraphContainer.ml" 428 12861 12888 "dgraph/dGraphContainer.ml" 428 12861 12893
+)
+"dgraph/dGraphContainer.ml" 428 12861 12897 "dgraph/dGraphContainer.ml" 428 12861 12922
+call(
+  tail
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 428 12861 12884 "dgraph/dGraphContainer.ml" 428 12861 12922
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 428 12861 12884 "dgraph/dGraphContainer.ml" 428 12861 12922
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 428 12861 12884 "dgraph/dGraphContainer.ml" 428 12861 12922
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 428 12861 12884 "dgraph/dGraphContainer.ml" 428 12861 12922
+)
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 428 12861 12867 "dgraph/dGraphContainer.ml" 468 13801 13817
+)
+"dgraph/dGraphContainer.ml" 429 12924 12930 "dgraph/dGraphContainer.ml" 429 12924 12938
+type(
+  string
+)
+ident(
+  def dot_file "dgraph/dGraphContainer.ml" 430 12941 12945 "dgraph/dGraphContainer.ml" 468 13801 13817
+)
+"dgraph/dGraphContainer.ml" 430 12941 12949 "dgraph/dGraphContainer.ml" 430 12941 12955
+type(
+  DGraphModel.dotg_model
+)
+"dgraph/dGraphContainer.ml" 431 12958 12967 "dgraph/dGraphContainer.ml" 431 12958 12988
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Filename.check_suffix
+)
+"dgraph/dGraphContainer.ml" 431 12958 12989 "dgraph/dGraphContainer.ml" 431 12958 12997
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphContainer.ml" 429 12924 12930 "dgraph/dGraphContainer.ml" 429 12924 12938
+)
+"dgraph/dGraphContainer.ml" 431 12958 12998 "dgraph/dGraphContainer.ml" 431 12958 13004
+type(
+  string
+)
+"dgraph/dGraphContainer.ml" 431 12958 12967 "dgraph/dGraphContainer.ml" 431 12958 13004
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 432 13010 13011 "dgraph/dGraphContainer.ml" 432 13010 13032
+type(
+  string -> DGraphModel.dotg_model
+)
+ident(
+  ext_ref DGraphModel.read_xdot
+)
+"dgraph/dGraphContainer.ml" 432 13010 13033 "dgraph/dGraphContainer.ml" 432 13010 13041
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphContainer.ml" 429 12924 12930 "dgraph/dGraphContainer.ml" 429 12924 12938
+)
+"dgraph/dGraphContainer.ml" 432 13010 13011 "dgraph/dGraphContainer.ml" 432 13010 13041
+call(
+  stack
+)
+type(
+  DGraphModel.dotg_model
+)
+"dgraph/dGraphContainer.ml" 434 13053 13054 "dgraph/dGraphContainer.ml" 434 13053 13074
+type(
+  ?cmd:string -> string -> DGraphModel.dotg_model
+)
+ident(
+  ext_ref DGraphModel.read_dot
+)
+"dgraph/dGraphContainer.ml" 434 13053 13075 "dgraph/dGraphContainer.ml" 434 13053 13083
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphContainer.ml" 429 12924 12930 "dgraph/dGraphContainer.ml" 429 12924 12938
+)
+"dgraph/dGraphContainer.ml" 434 13053 13054 "dgraph/dGraphContainer.ml" 434 13053 13083
+call(
+  stack
+)
+type(
+  DGraphModel.dotg_model
+)
+"dgraph/dGraphContainer.ml" 431 12958 12964 "dgraph/dGraphContainer.ml" 434 13053 13083
+type(
+  DGraphModel.dotg_model
+)
+"dgraph/dGraphContainer.ml" 436 13091 13099 "dgraph/dGraphContainer.ml" 436 13091 13109
+type(
+  DGraphModel.DotG.V.t option
+)
+"dgraph/dGraphContainer.ml" 438 13122 13123 "dgraph/dGraphContainer.ml" 438 13122 13129
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  int_ref gmodel "dgraph/dGraphContainer.ml" 430 12941 12949 "dgraph/dGraphContainer.ml" 430 12941 12955
+)
+"dgraph/dGraphContainer.ml" 438 13122 13123 "dgraph/dGraphContainer.ml" 438 13122 13141
+type(
+  (DGraphModel.DotG.vertex -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 438 13122 13147 "dgraph/dGraphContainer.ml" 438 13122 13148
+type(
+  DGraphModel.DotG.vertex
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 438 13122 13152 "dgraph/dGraphContainer.ml" 438 13122 13167
+)
+"dgraph/dGraphContainer.ml" 438 13122 13152 "dgraph/dGraphContainer.ml" 438 13122 13157
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/dGraphContainer.ml" 438 13122 13165 "dgraph/dGraphContainer.ml" 438 13122 13166
+type(
+  DGraphModel.DotG.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 438 13122 13147 "dgraph/dGraphContainer.ml" 438 13122 13148
+)
+"dgraph/dGraphContainer.ml" 438 13122 13158 "dgraph/dGraphContainer.ml" 438 13122 13167
+type(
+  exn
+)
+"dgraph/dGraphContainer.ml" 438 13122 13152 "dgraph/dGraphContainer.ml" 438 13122 13167
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 438 13122 13142 "dgraph/dGraphContainer.ml" 438 13122 13168
+type(
+  DGraphModel.DotG.vertex -> unit
+)
+"dgraph/dGraphContainer.ml" 438 13122 13123 "dgraph/dGraphContainer.ml" 438 13122 13168
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 439 13170 13171 "dgraph/dGraphContainer.ml" 439 13170 13175
+type(
+  DGraphModel.DotG.V.t option
+)
+"dgraph/dGraphContainer.ml" 438 13122 13123 "dgraph/dGraphContainer.ml" 439 13170 13175
+type(
+  DGraphModel.DotG.V.t option
+)
+"dgraph/dGraphContainer.ml" 440 13176 13193 "dgraph/dGraphContainer.ml" 440 13176 13194
+type(
+  DGraphModel.DotG.V.t
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 441 13198 13199 "dgraph/dGraphContainer.ml" 441 13198 13205
+)
+"dgraph/dGraphContainer.ml" 440 13176 13187 "dgraph/dGraphContainer.ml" 440 13176 13194
+type(
+  exn
+)
+"dgraph/dGraphContainer.ml" 441 13198 13204 "dgraph/dGraphContainer.ml" 441 13198 13205
+type(
+  DGraphModel.DotG.V.t
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 440 13176 13193 "dgraph/dGraphContainer.ml" 440 13176 13194
+)
+"dgraph/dGraphContainer.ml" 441 13198 13199 "dgraph/dGraphContainer.ml" 441 13198 13205
+type(
+  DGraphModel.DotG.V.t option
+)
+"dgraph/dGraphContainer.ml" 437 13112 13118 "dgraph/dGraphContainer.ml" 441 13198 13205
+type(
+  DGraphModel.DotG.V.t option
+)
+"dgraph/dGraphContainer.ml" 443 13213 13221 "dgraph/dGraphContainer.ml" 443 13213 13227
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 443 13213 13236 "dgraph/dGraphContainer.ml" 443 13213 13242
+type(
+  status option
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 425 12750 12757 "dgraph/dGraphContainer.ml" 425 12750 12763
+)
+"dgraph/dGraphContainer.ml" 444 13248 13256 "dgraph/dGraphContainer.ml" 444 13248 13260
+type(
+  status option
+)
+"dgraph/dGraphContainer.ml" 445 13264 13269 "dgraph/dGraphContainer.ml" 445 13264 13271
+type(
+  (DGraphModel.dotg_model -> ('a -> unit) -> 'b) -> int
+)
+"dgraph/dGraphContainer.ml" 445 13264 13272 "dgraph/dGraphContainer.ml" 445 13264 13273
+type(
+  DGraphModel.dotg_model -> ('a -> unit) -> 'b
+)
+ident(
+  def f "dgraph/dGraphContainer.ml" 446 13276 13279 "dgraph/dGraphContainer.ml" 448 13331 13338
+)
+"dgraph/dGraphContainer.ml" 446 13276 13283 "dgraph/dGraphContainer.ml" 446 13276 13286
+type(
+  int ref
+)
+"dgraph/dGraphContainer.ml" 446 13276 13289 "dgraph/dGraphContainer.ml" 446 13276 13292
+type(
+  int -> int ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/dGraphContainer.ml" 446 13276 13293 "dgraph/dGraphContainer.ml" 446 13276 13294
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 446 13276 13289 "dgraph/dGraphContainer.ml" 446 13276 13294
+type(
+  int ref
+)
+"dgraph/dGraphContainer.ml" 447 13298 13301 "dgraph/dGraphContainer.ml" 447 13298 13302
+type(
+  DGraphModel.dotg_model -> ('a -> unit) -> 'b
+)
+ident(
+  int_ref f "dgraph/dGraphContainer.ml" 445 13264 13272 "dgraph/dGraphContainer.ml" 445 13264 13273
+)
+"dgraph/dGraphContainer.ml" 447 13298 13303 "dgraph/dGraphContainer.ml" 447 13298 13309
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  int_ref gmodel "dgraph/dGraphContainer.ml" 430 12941 12949 "dgraph/dGraphContainer.ml" 430 12941 12955
+)
+"dgraph/dGraphContainer.ml" 447 13298 13315 "dgraph/dGraphContainer.ml" 447 13298 13316
+type(
+  'a
+)
+"dgraph/dGraphContainer.ml" 447 13298 13320 "dgraph/dGraphContainer.ml" 447 13298 13324
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.incr
+)
+"dgraph/dGraphContainer.ml" 447 13298 13325 "dgraph/dGraphContainer.ml" 447 13298 13328
+type(
+  int ref
+)
+ident(
+  int_ref cpt "dgraph/dGraphContainer.ml" 446 13276 13283 "dgraph/dGraphContainer.ml" 446 13276 13286
+)
+"dgraph/dGraphContainer.ml" 447 13298 13320 "dgraph/dGraphContainer.ml" 447 13298 13328
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 447 13298 13310 "dgraph/dGraphContainer.ml" 447 13298 13329
+type(
+  'a -> unit
+)
+"dgraph/dGraphContainer.ml" 447 13298 13301 "dgraph/dGraphContainer.ml" 447 13298 13329
+call(
+  stack
+)
+type(
+  'b
+)
+"dgraph/dGraphContainer.ml" 448 13331 13334 "dgraph/dGraphContainer.ml" 448 13331 13335
+type(
+  int ref -> int
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphContainer.ml" 448 13331 13335 "dgraph/dGraphContainer.ml" 448 13331 13338
+type(
+  int ref
+)
+ident(
+  int_ref cpt "dgraph/dGraphContainer.ml" 446 13276 13283 "dgraph/dGraphContainer.ml" 446 13276 13286
+)
+"dgraph/dGraphContainer.ml" 448 13331 13334 "dgraph/dGraphContainer.ml" 448 13331 13338
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 447 13298 13301 "dgraph/dGraphContainer.ml" 448 13331 13338
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 446 13276 13279 "dgraph/dGraphContainer.ml" 448 13331 13338
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 450 13343 13347 "dgraph/dGraphContainer.ml" 450 13343 13349
+type(
+  (DGraphModel.dotg_model -> (DGraphModel.DotG.vertex -> unit) -> unit) ->
+  int
+)
+ident(
+  int_ref nb "dgraph/dGraphContainer.ml" 445 13264 13269 "dgraph/dGraphContainer.ml" 445 13264 13271
+)
+"dgraph/dGraphContainer.ml" 450 13343 13355 "dgraph/dGraphContainer.ml" 450 13343 13356
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  def g "dgraph/dGraphContainer.ml" 450 13343 13360 "dgraph/dGraphContainer.ml" 450 13343 13373
+)
+"dgraph/dGraphContainer.ml" 450 13343 13360 "dgraph/dGraphContainer.ml" 450 13343 13361
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 450 13343 13355 "dgraph/dGraphContainer.ml" 450 13343 13356
+)
+"dgraph/dGraphContainer.ml" 450 13343 13360 "dgraph/dGraphContainer.ml" 450 13343 13373
+type(
+  (DGraphModel.DotG.vertex -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 450 13343 13350 "dgraph/dGraphContainer.ml" 450 13343 13374
+type(
+  DGraphModel.dotg_model -> (DGraphModel.DotG.vertex -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 450 13343 13347 "dgraph/dGraphContainer.ml" 450 13343 13374
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 450 13343 13375 "dgraph/dGraphContainer.ml" 450 13343 13376
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"dgraph/dGraphContainer.ml" 450 13343 13377 "dgraph/dGraphContainer.ml" 450 13343 13380
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 450 13343 13347 "dgraph/dGraphContainer.ml" 450 13343 13380
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 451 13381 13384 "dgraph/dGraphContainer.ml" 451 13381 13386
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"dgraph/dGraphContainer.ml" 451 13381 13387 "dgraph/dGraphContainer.ml" 451 13381 13389
+type(
+  (DGraphModel.dotg_model -> (DGraphModel.DotG.edge -> unit) -> unit) -> int
+)
+ident(
+  int_ref nb "dgraph/dGraphContainer.ml" 445 13264 13269 "dgraph/dGraphContainer.ml" 445 13264 13271
+)
+"dgraph/dGraphContainer.ml" 451 13381 13395 "dgraph/dGraphContainer.ml" 451 13381 13396
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  def g "dgraph/dGraphContainer.ml" 451 13381 13400 "dgraph/dGraphContainer.ml" 451 13381 13414
+)
+"dgraph/dGraphContainer.ml" 451 13381 13400 "dgraph/dGraphContainer.ml" 451 13381 13401
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  int_ref g "dgraph/dGraphContainer.ml" 451 13381 13395 "dgraph/dGraphContainer.ml" 451 13381 13396
+)
+"dgraph/dGraphContainer.ml" 451 13381 13400 "dgraph/dGraphContainer.ml" 451 13381 13414
+type(
+  (DGraphModel.DotG.edge -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 451 13381 13390 "dgraph/dGraphContainer.ml" 451 13381 13415
+type(
+  DGraphModel.dotg_model -> (DGraphModel.DotG.edge -> unit) -> unit
+)
+"dgraph/dGraphContainer.ml" 451 13381 13387 "dgraph/dGraphContainer.ml" 451 13381 13415
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 451 13381 13416 "dgraph/dGraphContainer.ml" 451 13381 13417
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"dgraph/dGraphContainer.ml" 451 13381 13418 "dgraph/dGraphContainer.ml" 451 13381 13422
+type(
+  int
+)
+"dgraph/dGraphContainer.ml" 451 13381 13387 "dgraph/dGraphContainer.ml" 451 13381 13422
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 450 13343 13347 "dgraph/dGraphContainer.ml" 451 13381 13422
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 452 13423 13429 "dgraph/dGraphContainer.ml" 452 13423 13435
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 453 13436 13442 "dgraph/dGraphContainer.ml" 453 13436 13446
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 450 13343 13344 "dgraph/dGraphContainer.ml" 453 13436 13446
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 445 13264 13265 "dgraph/dGraphContainer.ml" 453 13436 13446
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 454 13447 13460 "dgraph/dGraphContainer.ml" 454 13447 13461
+type(
+  status
+)
+ident(
+  def s "dgraph/dGraphContainer.ml" 454 13447 13465 "dgraph/dGraphContainer.ml" 454 13447 13466
+)
+"dgraph/dGraphContainer.ml" 454 13447 13455 "dgraph/dGraphContainer.ml" 454 13447 13461
+type(
+  status option
+)
+"dgraph/dGraphContainer.ml" 454 13447 13465 "dgraph/dGraphContainer.ml" 454 13447 13466
+type(
+  status
+)
+ident(
+  int_ref s "dgraph/dGraphContainer.ml" 454 13447 13460 "dgraph/dGraphContainer.ml" 454 13447 13461
+)
+"dgraph/dGraphContainer.ml" 443 13213 13230 "dgraph/dGraphContainer.ml" 454 13447 13466
+type(
+  status
+)
+"dgraph/dGraphContainer.ml" 456 13474 13478 "dgraph/dGraphContainer.ml" 456 13474 13496
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  mk_global_view:(unit -> global_view) ->
+  mk_tree_view:(depth_backward:int ->
+                depth_forward:int ->
+                Gtk.widget Gtk.obj ->
+                DGraphTreeModel.SubTreeDotModelMake.Tree.V.label -> tree_view) ->
+  DGraphTreeModel.SubTreeDotModelMake.Tree.V.label option -> view_container
+)
+"dgraph/dGraphContainer.ml" 457 13497 13504 "dgraph/dGraphContainer.ml" 457 13497 13511
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 424 12735 12742 "dgraph/dGraphContainer.ml" 424 12735 12749
+)
+"dgraph/dGraphContainer.ml" 458 13512 13519 "dgraph/dGraphContainer.ml" 458 13512 13525
+type(
+  status
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 443 13213 13221 "dgraph/dGraphContainer.ml" 443 13213 13227
+)
+"dgraph/dGraphContainer.ml" 459 13526 13533 "dgraph/dGraphContainer.ml" 459 13526 13550
+type(
+  bool
+)
+ident(
+  int_ref default_callbacks "dgraph/dGraphContainer.ml" 426 12764 12772 "dgraph/dGraphContainer.ml" 426 12764 12789
+)
+"dgraph/dGraphContainer.ml" 460 13551 13578 "dgraph/dGraphContainer.ml" 460 13551 13580
+type(
+  unit
+)
+"dgraph/dGraphContainer.ml" 460 13551 13584 "dgraph/dGraphContainer.ml" 460 13551 13598
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+ident(
+  int_ref mk_global_view "dgraph/dGraphContainer.ml" 427 12796 12804 "dgraph/dGraphContainer.ml" 427 12796 12818
+)
+"dgraph/dGraphContainer.ml" 460 13551 13599 "dgraph/dGraphContainer.ml" 460 13551 13605
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  int_ref gmodel "dgraph/dGraphContainer.ml" 430 12941 12949 "dgraph/dGraphContainer.ml" 430 12941 12955
+)
+"dgraph/dGraphContainer.ml" 460 13551 13584 "dgraph/dGraphContainer.ml" 460 13551 13605
+call(
+  tail
+)
+type(
+  (GView.vertex, GView.edge, GView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 460 13551 13573 "dgraph/dGraphContainer.ml" 460 13551 13606
+type(
+  unit -> global_view
+)
+"dgraph/dGraphContainer.ml" 461 13607 13633 "dgraph/dGraphContainer.ml" 461 13607 13647
+type(
+  int
+)
+ident(
+  def depth_backward "dgraph/dGraphContainer.ml" 461 13607 13648 "dgraph/dGraphContainer.ml" 467 13791 13799
+)
+"dgraph/dGraphContainer.ml" 461 13607 13649 "dgraph/dGraphContainer.ml" 461 13607 13662
+type(
+  int
+)
+ident(
+  def depth_forward "dgraph/dGraphContainer.ml" 461 13607 13663 "dgraph/dGraphContainer.ml" 467 13791 13799
+)
+"dgraph/dGraphContainer.ml" 461 13607 13663 "dgraph/dGraphContainer.ml" 461 13607 13664
+type(
+  Gtk.widget Gtk.obj
+)
+"dgraph/dGraphContainer.ml" 461 13607 13665 "dgraph/dGraphContainer.ml" 461 13607 13666
+type(
+  DGraphTreeModel.SubTreeDotModelMake.Tree.V.label
+)
+ident(
+  def v "dgraph/dGraphContainer.ml" 462 13670 13671 "dgraph/dGraphContainer.ml" 467 13791 13799
+)
+"dgraph/dGraphContainer.ml" 462 13670 13671 "dgraph/dGraphContainer.ml" 462 13670 13683
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+ident(
+  int_ref mk_tree_view "dgraph/dGraphContainer.ml" 428 12861 12869 "dgraph/dGraphContainer.ml" 428 12861 12881
+)
+"dgraph/dGraphContainer.ml" 463 13684 13688 "dgraph/dGraphContainer.ml" 463 13684 13734
+type(
+  ?depth_forward:int ->
+  ?depth_backward:int ->
+  DGraphModel.dotg_model ->
+  DGraphTreeModel.SubTreeDotModelMake.Tree.V.label ->
+  DGraphTreeModel.SubTreeDotModelMake.tree_model
+)
+ident(
+  ext_ref DGraphTreeModel.SubTreeDotModelMake.from_model
+)
+"dgraph/dGraphContainer.ml" 464 13735 13742 "dgraph/dGraphContainer.ml" 464 13735 13755
+type(
+  int
+)
+ident(
+  int_ref depth_forward "dgraph/dGraphContainer.ml" 461 13607 13649 "dgraph/dGraphContainer.ml" 461 13607 13662
+)
+"dgraph/dGraphContainer.ml" 465 13756 13763 "dgraph/dGraphContainer.ml" 465 13756 13777
+type(
+  int
+)
+ident(
+  int_ref depth_backward "dgraph/dGraphContainer.ml" 461 13607 13633 "dgraph/dGraphContainer.ml" 461 13607 13647
+)
+"dgraph/dGraphContainer.ml" 466 13778 13784 "dgraph/dGraphContainer.ml" 466 13778 13790
+type(
+  DGraphModel.dotg_model
+)
+ident(
+  int_ref gmodel "dgraph/dGraphContainer.ml" 430 12941 12949 "dgraph/dGraphContainer.ml" 430 12941 12955
+)
+"dgraph/dGraphContainer.ml" 467 13791 13797 "dgraph/dGraphContainer.ml" 467 13791 13798
+type(
+  DGraphTreeModel.SubTreeDotModelMake.Tree.V.label
+)
+ident(
+  int_ref v "dgraph/dGraphContainer.ml" 461 13607 13665 "dgraph/dGraphContainer.ml" 461 13607 13666
+)
+"dgraph/dGraphContainer.ml" 463 13684 13687 "dgraph/dGraphContainer.ml" 467 13791 13799
+call(
+  stack
+)
+type(
+  DGraphTreeModel.SubTreeDotModelMake.tree_model
+)
+"dgraph/dGraphContainer.ml" 462 13670 13671 "dgraph/dGraphContainer.ml" 467 13791 13799
+call(
+  tail
+)
+type(
+  (TView.vertex, TView.edge, TView.cluster) DGraphView.view
+)
+"dgraph/dGraphContainer.ml" 461 13607 13627 "dgraph/dGraphContainer.ml" 467 13791 13800
+type(
+  depth_backward:int ->
+  depth_forward:int ->
+  Gtk.widget Gtk.obj ->
+  DGraphTreeModel.SubTreeDotModelMake.Tree.V.label -> tree_view
+)
+"dgraph/dGraphContainer.ml" 468 13801 13807 "dgraph/dGraphContainer.ml" 468 13801 13817
+type(
+  DGraphTreeModel.SubTreeDotModelMake.Tree.V.label option
+)
+ident(
+  int_ref one_vertex "dgraph/dGraphContainer.ml" 436 13091 13099 "dgraph/dGraphContainer.ml" 436 13091 13109
+)
+"dgraph/dGraphContainer.ml" 456 13474 13478 "dgraph/dGraphContainer.ml" 468 13801 13817
+call(
+  tail
+)
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 443 13213 13217 "dgraph/dGraphContainer.ml" 468 13801 13817
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 436 13091 13095 "dgraph/dGraphContainer.ml" 468 13801 13817
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 430 12941 12945 "dgraph/dGraphContainer.ml" 468 13801 13817
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 470 13819 13825 "dgraph/dGraphContainer.ml" 470 13819 13847
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((GView.vertex, GView.edge, GView.cluster)
+                   DGraphModel.abstract_model ->
+                   (GView.vertex, GView.edge, GView.cluster) DGraphView.view) ->
+  ?mk_tree_view:((TView.vertex, TView.edge, TView.cluster)
+                 DGraphModel.abstract_model ->
+                 (TView.vertex, TView.edge, TView.cluster) DGraphView.view) ->
+  string -> GPack.table * view_container
+)
+ident(
+  def from_dot_with_commands "dgraph/dGraphContainer.ml" 476 14079 14093 "dgraph/dGraphContainer.ml" 478 14095 14098
+)
+"dgraph/dGraphContainer.ml" 470 13819 13849 "dgraph/dGraphContainer.ml" 470 13819 13856
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 470 13819 13857 "dgraph/dGraphContainer.ml" 476 14079 14093
+)
+"dgraph/dGraphContainer.ml" 470 13819 13858 "dgraph/dGraphContainer.ml" 470 13819 13864
+type(
+  status option
+)
+ident(
+  def status "dgraph/dGraphContainer.ml" 470 13819 13865 "dgraph/dGraphContainer.ml" 476 14079 14093
+)
+"dgraph/dGraphContainer.ml" 470 13819 13867 "dgraph/dGraphContainer.ml" 470 13819 13884
+type(
+  bool
+)
+"dgraph/dGraphContainer.ml" 470 13819 13885 "dgraph/dGraphContainer.ml" 470 13819 13889
+type(
+  bool
+)
+type(
+  bool
+)
+type(
+  bool
+)
+ident(
+  int_ref *sth* "dgraph/dGraphContainer.ml" 470 13819 13885 "dgraph/dGraphContainer.ml" 470 13819 13889
+)
+type(
+  bool option
+)
+type(
+  bool option
+)
+type(
+  bool
+)
+ident(
+  def *sth* "dgraph/dGraphContainer.ml" 470 13819 13885 "dgraph/dGraphContainer.ml" 470 13819 13889
+)
+type(
+  bool option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphContainer.ml" 470 13819 13885 "dgraph/dGraphContainer.ml" 470 13819 13889
+)
+type(
+  bool option
+)
+ident(
+  def *opt* "dgraph/dGraphContainer.ml" 470 13819 13865 "dgraph/dGraphContainer.ml" 476 14079 14093
+)
+"dgraph/dGraphContainer.ml" 470 13819 13892 "dgraph/dGraphContainer.ml" 470 13819 13906
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def mk_global_view "dgraph/dGraphContainer.ml" 470 13819 13907 "dgraph/dGraphContainer.ml" 476 14079 14093
+)
+"dgraph/dGraphContainer.ml" 470 13819 13908 "dgraph/dGraphContainer.ml" 470 13819 13920
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  def mk_tree_view "dgraph/dGraphContainer.ml" 470 13819 13921 "dgraph/dGraphContainer.ml" 476 14079 14093
+)
+"dgraph/dGraphContainer.ml" 470 13819 13921 "dgraph/dGraphContainer.ml" 470 13819 13929
+type(
+  string
+)
+ident(
+  def dot_file "dgraph/dGraphContainer.ml" 471 13932 13936 "dgraph/dGraphContainer.ml" 476 14079 14093
+)
+"dgraph/dGraphContainer.ml" 471 13932 13936 "dgraph/dGraphContainer.ml" 471 13932 13949
+type(
+  ?packing:(GObj.widget -> unit) ->
+  (packing:(GObj.widget -> unit) -> string -> view_container) ->
+  string -> GPack.table * view_container
+)
+ident(
+  int_ref with_commands "dgraph/dGraphContainer.ml" 96 3445 3449 "dgraph/dGraphContainer.ml" 96 3445 3462
+)
+"dgraph/dGraphContainer.ml" 472 13950 13957 "dgraph/dGraphContainer.ml" 472 13950 13964
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 470 13819 13849 "dgraph/dGraphContainer.ml" 470 13819 13856
+)
+"dgraph/dGraphContainer.ml" 473 13965 13977 "dgraph/dGraphContainer.ml" 473 13965 13984
+type(
+  GObj.widget -> unit
+)
+ident(
+  def packing "dgraph/dGraphContainer.ml" 473 13965 13985 "dgraph/dGraphContainer.ml" 475 14000 14077
+)
+"dgraph/dGraphContainer.ml" 473 13965 13985 "dgraph/dGraphContainer.ml" 473 13965 13986
+type(
+  string
+)
+ident(
+  def d "dgraph/dGraphContainer.ml" 474 13990 13991 "dgraph/dGraphContainer.ml" 475 14000 14077
+)
+"dgraph/dGraphContainer.ml" 474 13990 13991 "dgraph/dGraphContainer.ml" 474 13990 13999
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((GView.vertex, GView.edge, GView.cluster)
+                   DGraphModel.abstract_model ->
+                   (GView.vertex, GView.edge, GView.cluster) DGraphView.view) ->
+  ?mk_tree_view:((TView.vertex, TView.edge, TView.cluster)
+                 DGraphModel.abstract_model ->
+                 (TView.vertex, TView.edge, TView.cluster) DGraphView.view) ->
+  string -> view_container
+)
+ident(
+  int_ref from_dot "dgraph/dGraphContainer.ml" 423 12720 12726 "dgraph/dGraphContainer.ml" 423 12720 12734
+)
+"dgraph/dGraphContainer.ml" 475 14000 14011 "dgraph/dGraphContainer.ml" 475 14000 14018
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphContainer.ml" 473 13965 13977 "dgraph/dGraphContainer.ml" 473 13965 13984
+)
+"dgraph/dGraphContainer.ml" 475 14000 14020 "dgraph/dGraphContainer.ml" 475 14000 14026
+type(
+  status option
+)
+ident(
+  int_ref status "dgraph/dGraphContainer.ml" 470 13819 13858 "dgraph/dGraphContainer.ml" 470 13819 13864
+)
+"dgraph/dGraphContainer.ml" 475 14000 14028 "dgraph/dGraphContainer.ml" 475 14000 14045
+type(
+  bool
+)
+ident(
+  int_ref default_callbacks "dgraph/dGraphContainer.ml" 470 13819 13867 "dgraph/dGraphContainer.ml" 470 13819 13884
+)
+"dgraph/dGraphContainer.ml" 475 14000 14047 "dgraph/dGraphContainer.ml" 475 14000 14061
+type(
+  ((GView.vertex, GView.edge, GView.cluster) DGraphModel.abstract_model ->
+   (GView.vertex, GView.edge, GView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref mk_global_view "dgraph/dGraphContainer.ml" 470 13819 13892 "dgraph/dGraphContainer.ml" 470 13819 13906
+)
+"dgraph/dGraphContainer.ml" 475 14000 14063 "dgraph/dGraphContainer.ml" 475 14000 14075
+type(
+  ((TView.vertex, TView.edge, TView.cluster) DGraphModel.abstract_model ->
+   (TView.vertex, TView.edge, TView.cluster) DGraphView.view)
+  option
+)
+ident(
+  int_ref mk_tree_view "dgraph/dGraphContainer.ml" 470 13819 13908 "dgraph/dGraphContainer.ml" 470 13819 13920
+)
+"dgraph/dGraphContainer.ml" 475 14000 14076 "dgraph/dGraphContainer.ml" 475 14000 14077
+type(
+  string
+)
+ident(
+  int_ref d "dgraph/dGraphContainer.ml" 473 13965 13985 "dgraph/dGraphContainer.ml" 473 13965 13986
+)
+"dgraph/dGraphContainer.ml" 474 13990 13991 "dgraph/dGraphContainer.ml" 475 14000 14077
+call(
+  tail
+)
+type(
+  view_container
+)
+"dgraph/dGraphContainer.ml" 473 13965 13971 "dgraph/dGraphContainer.ml" 475 14000 14078
+type(
+  packing:(GObj.widget -> unit) -> string -> view_container
+)
+"dgraph/dGraphContainer.ml" 476 14079 14085 "dgraph/dGraphContainer.ml" 476 14079 14093
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphContainer.ml" 470 13819 13921 "dgraph/dGraphContainer.ml" 470 13819 13929
+)
+"dgraph/dGraphContainer.ml" 471 13932 13936 "dgraph/dGraphContainer.ml" 476 14079 14093
+call(
+  tail
+)
+type(
+  GPack.table * view_container
+)

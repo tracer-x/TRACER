@@ -1,0 +1,429 @@
+#ifdef  GROUND_EXPLANATION
+collect_ground_trace(Depth, Id, FName, PP, 
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, AbsPtFlag,
+       TableSpace, LoopStack, PathStack) :-
+    fassert(ground_trace([])),
+    set_counter(ground_trace_collection_mode, 1),
+
+    unfold(Depth, Id, FName, PP, 
+       GlobalArr, GlobalVar, LocalArr, LocalVar,	
+       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+       CL, ML, CallStack, ArrRef, Loops, UnknownVars, AbsPtFlag,
+       TableSpace, LoopStack, PathStack), !,
+
+    ground_trace(T),
+    debug_message("Ground trace choice-points: %\n", [T]),
+    length(T, L), print_message("Ground trace choice-points length: %\n",[L]),
+    set_counter(ground_trace_collection_mode, 0),
+    set_counter(ground_trace_ptr, 1),
+    set_counter(follow_ground_trace, 1).
+collect_ground_trace(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+    error_message("Ground trace collection failed!\n",[]).
+
+% If at a branch point and following the ground trace, get the next PP
+% from trace
+get_trans_ground(FName, Id,  PP, 
+      GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1, 
+      LocalArr1 , LocalVar1 , SLocalArr1 ,  SLocalVar1,
+      PostPP,
+      PostGlobalArr , PostGlobalVar ,
+      PostSGlobalArr, PostSGlobalVar,
+      PostLocalArr  , PostLocalVar  ,
+      PostSLocalArr , PostSLocalVar ,
+      XCL, [], ArrRefX, BranchMode,
+      Disabled) :-
+    % should be following ground trace, relaxed (C=1) or strictly (C=2)
+    counter_value(follow_ground_trace, C), C>0,
+    is_branch_pp(FName, PP),
+
+    % the following code should not fail (see checkpoint_get_... for more info)
+    checkpoint_get_next_pp_from_trace(FName, PP),
+    get_next_pp_from_trace(FName, PostPP),
+    sanity_check_get_trans(FName, PP, PostPP), % whenever get_next_pp_from_trace gives
+                            % a PostPP, there must be a valid trans from PP to PostPP
+    get_trans(FName, Id,  PP, 
+      GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1, 
+      LocalArr1 , LocalVar1 , SLocalArr1 ,  SLocalVar1,
+      PostPP,
+      PostGlobalArr , PostGlobalVar ,
+      PostSGlobalArr, PostSGlobalVar,
+      PostLocalArr  , PostLocalVar  ,
+      PostSLocalArr , PostSLocalVar ,
+      XCL, [], ArrRefX, BranchMode,
+      Disabled), !,
+    debug_message("Following trace from %@% to %@%\n", [FName,PP,FName,PostPP]).
+
+% If either NOT at branch point (straight line code) or not following
+% the trace, use default method of getting next trans
+get_trans_ground(FName, Id,  PP, 
+      GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1, 
+      LocalArr1 , LocalVar1 , SLocalArr1 ,  SLocalVar1,
+      PostPP,
+      PostGlobalArr , PostGlobalVar ,
+      PostSGlobalArr, PostSGlobalVar,
+      PostLocalArr  , PostLocalVar  ,
+      PostSLocalArr , PostSLocalVar ,
+      XCL, [], ArrRefX, BranchMode,
+      Disabled) :-
+    get_trans(FName, Id,  PP, 
+      GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1, 
+      LocalArr1 , LocalVar1 , SLocalArr1 ,  SLocalVar1,
+      PostPP,
+      PostGlobalArr , PostGlobalVar ,
+      PostSGlobalArr, PostSGlobalVar,
+      PostLocalArr  , PostLocalVar  ,
+      PostSLocalArr , PostSLocalVar ,
+      XCL, [], ArrRefX, BranchMode,
+      Disabled).
+
+get_next_pp_from_trace(FName, PostPP) :-
+    counter_value(ground_trace_ptr, P),
+    ground_trace(T),
+    length(T, L), P <= L,
+    find_position(T, P, cp(FName,PostPP)),
+    add_counter(ground_trace_ptr, 1), !.
+
+checkpoint_get_next_pp_from_trace(_,_).
+% If the checkpoint failed, it means get_next_pp_from_trace failed (P>L above). Thus we MUST
+% be at the error check PP (assumption: error check is the last choice point in the program)
+checkpoint_get_next_pp_from_trace(FName, PP) :-
+    is_error_check_pp(FName,PP), !, fail.
+checkpoint_get_next_pp_from_trace(FName, PP) :-
+    counter_value(ground_trace_ptr, P),
+    error_message("checkpoint_get_next_pp_from_trace failed at %@%. Trace ptr: %\n",
+        [FName,PP,P]).
+
+sanity_check_get_trans(_,_,_).
+sanity_check_get_trans(FName, PP, PostPP) :-
+    error_message("sanity_check_get_trans failed! No feasible trans from %@% to %@%\n",
+        [FName,PP,FName,PostPP]).
+
+check_level_zero_and_add_trace_length:-
+    counter_value(ground_trace_collection_mode, 0), % if we are not collecting ground trace
+    not(level_zero(_,_)), % and we are at level zero (level_zero fact does not exist)
+    counter_value(follow_ground_trace,1), % and we are following ground trace RELAXED
+    add_counter(compressed_trace_length, 1). % then add to length of compressed trace
+check_level_zero_and_add_trace_length.
+
+check_level_zero_and_assert(_, _, _) :-
+    level_zero(_,_), !. % if level_zero fact exists, we are NOT at level 0 - don't do anything
+check_level_zero_and_assert(Depth, FName, PP) :-
+    block(_, FName, PP, ExitPP,_,l,_,_, _,_,_),
+    not(find_loop_exit_along_trace(FName, ExitPP, _)), % if cannot find loop exit along trace
+                     % we could not compress any previous iteration so no use compressing now
+    print_message("Ignoring compressing last iteration of loop at %@% (Depth %)\n",
+        [FName,PP,Depth], red),
+    !, fail.
+check_level_zero_and_assert(Depth, FName, PP) :-
+    block(_, FName, PP, ExitPP,_,l,_,_, _,_,_),
+    fassert(level_zero(FName, ExitPP)),
+    print_message("Departing from level 0 at %@% (Depth %) with exit PP %@%\n", 
+        [FName,PP,Depth,FName,ExitPP], magenta),
+    set_counter(follow_ground_trace, 0),
+    %add_counter(ground_trace_ptr, 1), % taking loop header->body transition along the trace
+    !.
+check_level_zero_and_assert(_, FName, PP) :-
+    error_message("Could not find loop at %@% while checking level zero\n", [FName,PP]).
+
+% check_level_zero_and_push_invariant ----------------------------------------------------
+%
+% This predicate attempts to push the invariant along the trace. 3 things can happen:
+%
+% 1) The invariant was SAFE - the predicate suceeds, resets minmax's memory and continues
+%    symbolic execution from the loop's exit along the trace
+%
+% 2) The invariant was UNSAFE - the predicate fails, asserting a conflict at Depth-1 (the
+%    loop header's PP). Thus, unfold_enabled will fail and minmax's memory will be reset
+%    in unfold_loop_redo_on_conflict_aux. SE will continue from current PP along the trace
+%    (unrolling).
+%
+% 3) We didn't even push the invariant because we're not yet at the loop's ExitPP along
+%    the trace. Don't reset anything, just continue as though nothing happened (2nd clause)
+% ----------------------------------------------------------------------------------------
+check_level_zero_and_push_invariant(Depth, Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, CallStack, ArrRef, Loops,
+        AbsPtFlag, TableSpace, LoopStack, PathStack,
+        % ------ new minmax state variables ------
+        NewCL, NewML, NewLoops, NewAbsPtFlag, NewTableSpace,
+        NewLoopStack, NewPathStack) :-
+    level_zero(FName, ExitPP), ExitPP=PP,
+    !,
+    print_message("Back to level 0 at %@%. Pushing inv along trace.. ", [FName,PP], cyan),
+    retract(level_zero(FName, ExitPP)),
+
+    % If inv failed, we need to come back to this point along the trace (and unroll)
+    counter_value(ground_trace_ptr, FailPtr),
+
+    % If inv passed, we need to continue sym exec from the loop's exit along the trace
+    find_loop_exit_along_trace(FName, PP, ExitPtr),
+    PassPtr=ExitPtr+1,
+
+    print_message("trace index: %(if pass) %(if fail), ", [PassPtr,FailPtr], cyan),
+#ifdef GRAPHVIZ_USE
+    twice_top_context_stack([PassPPContext], [FailPPContext]),
+    print_message("PPcontext: %(if pass) %(if fail)\n",[PassPPContext,FailPPContext],cyan),
+#else
+    FailPPContext=_, PassPPContext=_, % to avoid warnings
+#endif /*GRAPHVIZ_USE*/
+
+    push_invariant_along_trace(Depth, Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, CallStack, ArrRef, Loops,
+        AbsPtFlag, TableSpace, LoopStack, PathStack,
+        FailPtr, PassPtr, FailPPContext, PassPPContext), !,
+
+    % If push_invariant_along_trace passed, then invariant was SAFE. Clear minmax memory..
+    clear_minmax_memory(Depth, CL, ML, Loops, AbsPtFlag, TableSpace, LoopStack, PathStack,
+        NewCL, NewML, NewLoops, NewAbsPtFlag, NewTableSpace,NewLoopStack, NewPathStack).
+
+check_level_zero_and_push_invariant(_Depth, _Id, _FName, _PP,
+        _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+        _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+        CL, ML, _CallStack, _ArrRef, Loops,
+        AbsPtFlag, TableSpace, LoopStack, PathStack,
+        % ------ new minmax state variables (unchanged if we did not push inv above) ------
+        CL, ML, Loops, AbsPtFlag, TableSpace,
+        LoopStack, PathStack).
+
+% Push the invariant along the trace to check if it's safe
+push_invariant_along_trace(Depth, Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, CallStack, ArrRef, Loops,
+        AbsPtFlag, TableSpace, LoopStack, PathStack,
+        _FailPtr, PassPtr, _FailPPContext, _PassPPContext) :-
+    
+    set_counter(ground_safe_invariant, 555), % sanity check value, should be replaced with 0/1
+    set_counter(follow_ground_trace, 2), % Push invariant along trace (STRICTLY) ...
+    set_counter(ground_trace_ptr, PassPtr), % ..starting from PassPtr (loop exit along trace)
+
+    % This call will always fail, setting ground_safe_invariant to 0/1
+    unfold_check_safe_invariant(Depth, Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, CallStack, ArrRef, Loops,
+        AbsPtFlag, TableSpace, LoopStack, PathStack).
+
+% Invariant was SAFE!
+push_invariant_along_trace(_Depth, _Id, FName, _PP,
+        _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+        _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+        _CL, _ML, _CallStack, _ArrRef, _Loops,
+        _AbsPtFlag, _TableSpace, _LoopStack, _PathStack,
+        _FailPtr, PassPtr, _FailPPContext, PassPPContext) :-
+    counter_value(ground_safe_invariant, 1), !,
+    set_counter(follow_ground_trace, 1), % follow ground trace RELAXED
+    print_message("Invariant was SAFE! Continuing SE from %\n", [PassPtr], green),
+    set_counter(ground_trace_ptr, PassPtr),
+#ifdef GRAPHVIZ_USE
+    pop_context_stack,
+    push_context_stack(FName, PassPPContext),
+#else
+    FName=_, PassPPContext=_, % to avoid warnings
+#endif /*GRAPHVIZ_USE*/
+    % Also, permanently store the number of triples in this explanation
+    counter_value(num_triples, N1), set_counter(num_triples,0),
+    add_counter(n_triples, N1),
+
+    counter_value(num_nontrivial_triples, N2), set_counter(num_nontrivial_triples,0),
+    add_counter(n_nontrivial_triples, N2),
+
+    % Also, convert all sym_graph facts asserted during exploration of the loop
+    % (when follow_ground_trace was 0) to avoid retracting them in future
+    convert_sym_graph_facts.
+
+% Invariant was UNSAFE
+push_invariant_along_trace(Depth, _Id, FName, _PP,
+        _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+        _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+        _CL, _ML, _CallStack, _ArrRef, _Loops,
+        _AbsPtFlag, _TableSpace, _LoopStack, _PathStack,
+        FailPtr, _PassPtr, FailPPContext, _PassPPContext) :-
+    counter_value(ground_safe_invariant, 0), !,
+    set_counter(follow_ground_trace, 1), % follow ground trace RELAXED
+    print_message("Invariant was UNSAFE. Unrolling from trace index %\n", [FailPtr], red),
+    set_counter(ground_trace_ptr, FailPtr),
+#ifdef GRAPHVIZ_USE
+    pop_context_stack,
+    push_context_stack(FName, FailPPContext),
+#else
+    FName=_, FailPPContext=_, % to avoid warnings
+#endif /*GRAPHVIZ_USE*/
+    % Also, reset the number of triples in this explanation since it failed
+    set_counter(num_triples, 0), set_counter(num_nontrivial_triples, 0),
+    % In addition, here we need to record a conflict at Depth-1 (the loop header PP) as
+    % check_level_zero_and_push_inv would be called when unfolding the ExitPP of loop
+    fassert(conflict(Depth-1, _)),
+    % Also, retract all sym_graph facts asserted during exploration of the loop
+    % (i.e, follow_ground_trace was 0) as they are discarded from explanation
+    clear_sym_graph_facts, !,
+    fail.
+
+push_invariant_along_trace(_Depth, _Id, FName, PP,
+        _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+        _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+        _CL, _ML, _CallStack, _ArrRef, _Loops,
+        _AbsPtFlag, _TableSpace, _LoopStack, _PathStack,
+        _FailPtr, _PassPtr, _FailPPContext, _PassPPContext) :-
+    error_message("Something went wrong when pushing invariant along trace from %@%\n",
+        [FName,PP]).
+
+unfold_check_safe_invariant(Depth, Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, CallStack, ArrRef, Loops,
+        AbsPtFlag, TableSpace, LoopStack, PathStack) :-
+    unfold(Depth, Id, FName, PP,
+        GlobalArr, GlobalVar, LocalArr, LocalVar,
+        SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+        CL, ML, CallStack, ArrRef, Loops,
+        _UnknownVars, AbsPtFlag, TableSpace, LoopStack, PathStack),
+    !, fail.
+
+clear_minmax_memory(_Depth, CL, ML, Loops, AbsPtFlag, TableSpace, LoopStack, PathStack,
+        CL, ML, Loops, AbsPtFlag, TableSpace, LoopStack, PathStack) :-
+    counter_value(dont_clear_minmax_memory, 1), !,
+    set_counter(dont_clear_minmax_memory, 0).
+% Comment the following clause if you want minmax memory to be fully cleared
+clear_minmax_memory(Depth, CL, ML, Loops, AbsPtFlag, TableSpace, LoopStack, PathStack,
+        CL, ML, Loops, AbsPtFlag, TableSpace, LoopStack, PathStack) :-
+    !, print_message("Trace compressed till depth %\n", [Depth]),
+    cleanup_memo_table,
+    set_counter(trace_compressed_till_depth, Depth).
+clear_minmax_memory(_Depth, _CL, _ML, _Loops, _AbsPtFlag, _TableSpace, _LoopStack, _PathStack,
+        NewCL, NewML, NewLoops, NewAbsPtFlag, NewTableSpace, NewLoopStack, NewPathStack) :-
+    print_message("clearing minmax memory... ",[]),
+    NewCL=[], NewML=[], NewLoops=[], NewAbsPtFlag=0, NewTableSpace=_,
+    NewLoopStack=[], NewPathStack=[],
+    mm_cleanup, cleanup_memo_table,
+    print_message("OK\n",[]), !.
+clear_minmax_memory(_Depth, _CL, _ML, _Loops, _AbsPtFlag, _TableSpace, _LoopStack, _PathStack,
+        _NewCL,_NewML,_NewLoops,_NewAbsPtFlag,_NewTableSpace,_NewLoopStack,_NewPathStack):-
+    error_message("Clearing memory error!\n",[]).
+
+no_compression_after_depth(Depth):-
+    counter_value(trace_compressed_till_depth, Depth1),
+    Depth1<Depth.
+
+clear_sym_graph_facts:-
+    retract(sym_graph(FName1,FName2,_,PP0,PP1,_,_,_,_,_,_,_,_,_,_,_,0)),
+    debug_message("retracting symgraph fact: %@% -> %@%\n",[FName1,PP0,FName2,PP1]),
+    fail.
+clear_sym_graph_facts:-
+    retract(nodes_subsumed(_,_,_,0)),
+    fail.
+clear_sym_graph_facts.
+
+convert_sym_graph_facts:-
+    retract(sym_graph(A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16,0)),
+    fassert(sym_graph(A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15,A16,zero)),
+    fail.
+convert_sym_graph_facts:-
+    retract(nodes_subsumed(A1,A2,A3,0)),
+    fassert(nodes_subsumed(A1,A2,A3,zero)),
+    fail.
+convert_sym_graph_facts.
+
+find_loop_exit_along_trace(FName, ExitPP, P+N) :-
+    counter_value(ground_trace_ptr, P),
+    ground_trace(T),
+    delete_first_n(T, P, T1),
+    find_position(T1, N, cp(FName,ExitPP)), !.
+%find_loop_exit_along_trace(_FName, _ExitPP, L+1) :-
+%    counter_value(ground_trace_ptr, P),
+%    ground_trace(T),
+%    length(T, L), P==L, !.
+
+restart_if_invgen_failed(Depth, ML) :- % do nothing first
+    debug_message("Will restart at Depth % with ML % if ii failed\n", [Depth,ML]).
+restart_if_invgen_failed(Depth, ML) :- % if ii failed (backtracking) assert conflict and fail
+    convert_max_to_min(ML, MLBar),
+    print_message("Restarting at Depth % with ML % since ii failed\n", [Depth,MLBar], red),
+    fassert(conflict(Depth, MLBar)),
+    set_counter(dont_clear_minmax_memory, 1), % Assert conflict but don't clear minmax memory
+                                              % since this is NOT a restart due to unsafe inv
+    fail.
+
+convert_max_to_min([],[]):- !.
+convert_max_to_min([M|R],[x|R1]):- M==o, !, convert_max_to_min(R,R1).
+convert_max_to_min([M|_],_):- M==x, !, error_message("encountered x in Max list\n",[]).
+convert_max_to_min([_|R],[_|R1]):- !, convert_max_to_min(R,R1).
+
+add_ground_transition(FName, PostPP, branch):- % add transition only if it's a branch or loop
+    counter_value(ground_trace_collection_mode, 1), !,
+    retract(ground_trace(T)),
+    append(T, [cp(FName,PostPP)], T1),
+    %print_message("choice point: cp(%,%) in ground trace\n", [FName,PostPP]),
+    fassert(ground_trace(T1)).
+add_ground_transition(_,_,_). % no need to keep track of straight line code
+
+check_mark_triple(_,_,_,_,_,_,_) :- counter_value(explanation_success,1), !.
+check_mark_triple(FNameOfChild, FNameOfParent,_,_,_,_,_) :- 
+    my_nonunifiable(FNameOfChild, FNameOfParent), !.
+check_mark_triple(_,_,_,_,PreLoopContext, _,PostLoopContext) :-
+    debug_message("Loopcontext pre-op % :: %\n", [PostLoopContext,PreLoopContext]), fail.
+check_mark_triple(_,_,_,CL,_, PostCL,_) :-
+    length(CL, L), length(PostCL, L), !. % empty trans - don't do anything
+check_mark_triple(_,_,BranchMode,_,_,_,_) :-
+    BranchMode == branch, !. % branch statement - don't do anything
+check_mark_triple(_,_,BranchMode, _, PreLoopContext, _, PostLoopContext) :-
+    BranchMode == not_branch,
+    add_counter(num_triples, 1),
+    length(PreLoopContext, 1), length(PostLoopContext, 1),
+    PreLoopContext = [lc(NodeId,Depth,MTList1)|_],
+    PostLoopContext= [lc(NodeId,Depth,MTList2)|_],
+    length(MTList1, L), length(MTList2, L),
+    mtlists_updated(MTList1, MTList2), !,
+    counter_value(n_nontrivial_triples, N1),
+    counter_value(n_triples, N2),
+    debug_message("Num non-trivial triples: %/%\n", [N1, N2]).
+check_mark_triple(_,_,_, _, PreLoopContext, _, PostLoopContext) :-
+    print_message("\nPreLoopContext: %\nPostLoopContext: %\n",
+        [PreLoopContext,PostLoopContext]),
+    error_message("something went wrong when marking triple..\n",[]).
+
+mtlists_updated([], []).
+mtlists_updated([mt(M,RPList1) |_], [mt(M,RPList2) |_]) :-
+    length(RPList1, L), length(RPList2, L),
+    RPList1=[r(MarkedList1) |_],
+    RPList2=[r(MarkedList2) |_],
+    num_marked(MarkedList1, M1),
+    num_marked(MarkedList2, M2),
+    M1<M2, !, add_counter(num_nontrivial_triples,1).
+mtlists_updated([mt(M,_) |MTList1], [mt(M,_) |MTList2]) :-
+    mtlists_updated(MTList1, MTList2).
+
+num_marked([], 0) :- !.
+num_marked([X|R], N+1) :- X==o, !, num_marked(R, N).
+num_marked([_|R], N) :- num_marked(R, N).
+
+#ifndef  DEBUG_USE
+print_ground_transition(Depth,FName,PP,PostPP,Id) :-
+    counter_value(ground_trace_collection_mode, 1), !,
+    print_message("---- Transition depth % in % from % to % with id %\n",
+            [Depth,FName,PP,PostPP,Id]).
+#endif
+print_ground_transition(_,_,_,_,_).
+
+my_nonunifiable(A,B):- A==B, !, fail.
+my_nonunifiable(_,_).
+
+get_next_pp_from_trace_checkpoint.
+get_next_pp_from_trace_checkpoint:- error_message("get_next_pp_from_trace_checkpoint failed!\n",[]).
+
+is_error_check_pp(FName,PP):-
+	trans(FName, _,
+		PP,  _,  _,  _,  _,  _,  _,  _,  _,
+		[$unsafe], _, _, _, _, _, _, _, _,
+		_, _, _, branch).
+is_branch_pp(FName,PP):-
+	trans(FName, _,
+		PP,  _,  _,  _,  _,  _,  _,  _,  _,
+		_, _, _, _, _, _, _, _, _,
+		_, _, _, branch).
+#endif

@@ -1,0 +1,150 @@
+trans(func_main,
+	[0],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[1],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z,K],[],[SReturnValue,SXNext,SY,SZ,SK],
+	[eq(SXNext,1)],
+	[],
+	[]) :-
+	XNext=1.
+trans(func_main,
+	[1],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[2],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z,K],[],[SReturnValue,SX,SYNext,SZ,SK],
+	[eq(SYNext,2)],
+	[],
+	[]) :-
+	YNext=2.
+trans(func_main,
+	[2],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext,K],[],[SReturnValue,SX,SY,SZNext,SK],
+	[eq(SZNext,3)],
+	[],
+	[]) :-
+	ZNext=3.
+trans(func_main,
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,KNext],[],[SReturnValue,SX,SY,SZ,SKNext],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[gt(SZ,SX)],
+	[],
+	[]) :-
+	X<Z.
+trans(func_main,
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[7],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z,K],[],[SReturnValue,SX,SYNext,SZ,SK],
+	[eq(SYNext,plus(SX,SZ))],
+	[],
+	[]) :-
+	YNext=X+Z.
+trans(func_main,
+	[7],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[8],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,KNext],[],[SReturnValue,SX,SY,SZ,SKNext],
+	[eq(SKNext,plus(SY,SY))],
+	[],
+	[]) :-
+	KNext=Y+Y.
+trans(func_main,
+	[8],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[9],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z,K],[],[SReturnValue,SXNext,SY,SZ,SK],
+	[eq(SXNext,plus(SX,1))],
+	[],
+	[]) :-
+	XNext=X+1.
+trans(func_main,
+	[10],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[11],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z,K],[],[SReturnValue,SXNext,SY,SZ,SK],
+	[eq(SXNext,plus(SX,1))],
+	[],
+	[]) :-
+	XNext=X+1.
+trans(func_main,
+	[11],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[12],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,KNext],[],[SReturnValue,SX,SY,SZ,SKNext],
+	[eq(SKNext,plus(SZ,SY))],
+	[],
+	[]) :-
+	KNext=Z+Y.
+trans(func_main,
+	[9],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[10],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[eq(SX,SZ)],
+	[],
+	[]) :-
+	X=Z.
+trans(func_main,
+	[9],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[12],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[gt(SZ,SX)],
+	[],
+	[]) :-
+	X<Z.
+trans(func_main,
+	[9],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[12],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[gt(SX,SZ)],
+	[],
+	[]) :-
+	X>Z.
+trans(func_main,
+	[12],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[13],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z,K],[],[SReturnValue,SX,SYNext,SZ,SK],
+	[eq(SYNext,plus(SY,SY))],
+	[],
+	[]) :-
+	YNext=Y+Y.
+trans(func_main,
+	[13],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[14],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,KNext],[],[SReturnValue,SX,SY,SZ,SKNext],
+	[eq(SKNext,plus(SK,SK))],
+	[],
+	[]) :-
+	KNext=K+K.
+trans(func_main,
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[5],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[geq(SX,SZ)],
+	[],
+	[]) :-
+	X>=Z.
+trans(func_main,
+	[14],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[5],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[15],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[15],[H],[],[SH],[],[],[ReturnValue,X,Y,Z,K],[],[SReturnValue,SX,SY,SZ,SK],
+	[16],[H],[],[SH],[],[],[ReturnValueNext,X,Y,Z,K],[],[SReturnValueNext,SX,SY,SZ,SK],
+	[eq(SReturnValueNext,0)],
+	[],
+	[]) :-
+	ReturnValueNext=0.
+%--------------------------------------------------
+loop(func_main, [4],[5], _, [n],[],[],[n,u,u,n,u]).
+%--------------------------------------------------
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_main, [16]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_main,[_,_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+run :- gen_simplified_trans(func_main, [0]), fail.
+run.
+
+:- consult('shorten_trans.clpr').
+

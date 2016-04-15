@@ -1,0 +1,13 @@
+p(0,X,Y) :- X<100,p(1,X,Y).
+p(0,X,Y) :- not (X<100),p(7,X,Y).
+p(6,X,Y) :- X<100,p(1,X,Y).
+p(6,X,Y) :- not (X<100),p(7,X,Y).
+p(1,X,Y) :- XNext=X+1,p(2,XNext,Y).
+p(2,X,Y) :- YNext=10,p(3,X,YNext).
+p(3,X,Y) :- Y>0,p(4,X,Y).
+p(3,X,Y) :- not (Y>0),p(6,X,Y).
+p(5,X,Y) :- Y>0,p(4,X,Y).
+p(5,X,Y) :- not (Y>0),p(6,X,Y).
+p(4,X,Y) :- YNext=Y-1,p(5,X,YNext).
+p(7,X,Y) :- write(["X=",X,"Y=",Y]),nl.
+:- p(0,0,0).

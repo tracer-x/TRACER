@@ -1,0 +1,388 @@
+
+%==============================================================================
+% "Monocut" Tactics
+%==============================================================================
+
+init_counters :-
+	set_counter(prove_call_count, 0),
+	set_counter(lprove_counter, 0),
+	set_counter(target_config, 0),
+	set_counter(coinduction_counter, 0),
+	set_counter(right_unfold_counter, 0),
+	set_counter(left_unfold_counter, 0),
+	set_counter(ok_lprove, 0).
+
+show_counters :-
+	counter_value(coinduction_counter, C3),
+	counter_value(left_unfold_counter, C4),
+	counter_value(right_unfold_counter, C5),
+	printf("Coinduction: %\n", [C3]),
+	printf("Left Unfold: %\n", [C4]),
+	printf("Right Unfold: %\n", [C5]),
+	counter_value(prove_call_count, X),
+	counter_value(lprove_counter, Y),
+	printf("Calls to prove: %\n", [X]),
+	printf("Calls to lprove: %\n", [Y]),
+	counter_value(ok_lprove,Z),
+	printf("Succesful lprove: %\n", [Z]).
+
+prove(Depth, CoindLevel,
+      GAtomList, GConstraints, HAtomList, HConstraints,
+      Table) :-
+	init_counters,
+	addunfoldlevel(0, GAtomList, UnfoldableGAtomList),
+	addunfoldlevel(0, HAtomList, UnfoldableHAtomList),
+	printf("Calling prove_aux 1\n", []),
+	prove_aux(Depth, CoindLevel,
+		  UnfoldableGAtomList, GConstraints,
+		  UnfoldableHAtomList, HConstraints,
+		  Table).
+
+configuration_included(C, [C|R], R).
+configuration_included(C, [V|R], [V|S]) :-
+	configuration_included(C, R, S).
+
+match_with_configuration(_, []).
+match_with_configuration(AtomList, [C|R]) :-
+	configuration_included(C, AtomList, RestAtomList),
+	match_with_configuration(RestAtomList, R).
+
+
+prove_aux(1, 0,
+	  GAtomList, GConstraints, HAtomList, HConstraints,
+	  []) :-
+	add_counter(prove_call_count,1),
+	desired_configuration(GAtomList1, HAtomList1),
+	match_with_configuration(GAtomList, GAtomList1),
+	match_with_configuration(HAtomList, HAtomList1),
+	add_counter(target_config,1),
+	printf("DESIRED CONFIGURATION REACHED, PROVING:\n", []),
+	printf("%, % |= %, %\n", [GAtomList, GConstraints,
+				  HAtomList, HConstraints]),
+	!,
+	prove_aux1(1, 0,
+		   GAtomList, GConstraints, HAtomList, HConstraints,
+		   []).
+prove_aux(Depth, CoindLevel,
+	  GAtomList, GConstraints, HAtomList, HConstraints,
+	  Table) :-
+	prove_aux1(Depth, CoindLevel,
+		   GAtomList, GConstraints, HAtomList, HConstraints,
+		   Table).
+
+prove_aux1(Depth, CoindLevel,
+	  GAtomList, GConstraints, HAtomList, HConstraints,
+	  Table) :-
+	printf("ATTEMPTING MONOCUT AT LEVEL %\n", [Depth]),
+	find_existential_variables(GAtomList, GConstraints,
+	                           HAtomList, HConstraints, EV),
+
+	%----------------------------------------------------------------------
+	% We prove each lhs atom first
+	%----------------------------------------------------------------------
+	writeln(xxx),
+	printf("X HAtomList=%\n", [HAtomList]),
+	printf("PROVING RHS ATOMS AT LEVEL %\n", [Depth]),
+	prove_rhs_atoms(Depth, CoindLevel,
+			GAtomList, GConstraints,
+			HAtomList,
+			EV, Table, NewGConstraints),
+	writeln(yyy),
+	%----------------------------------------------------------------------
+	% With the binding obtained we prove the lhs constraints
+	%----------------------------------------------------------------------
+
+	printf("PROVING RHS CONSTRAINTS AT LEVEL %\n", [Depth]),
+	prove_rhs_constraints(Depth, CoindLevel,
+			      GAtomList, NewGConstraints,
+			      HConstraints,
+			      Table),
+	writeln(zzz).
+prove_aux1(Depth, CoindLevel,
+	  GAtomList, GConstraints, HAtomList, HConstraints,
+	  Table) :-
+	tracedepthbound(X), Depth < X,
+	
+	printf("ATTEMPTING RIGHT UNFOLD AT LEVEL %\n", [Depth]),
+	right_unfold([], HAtomList, HConstraints,
+	             NonUnfoldableHAtomList1,
+		     UnfoldableHAtomList1,
+		     HConstraints1),
+	add_counter(right_unfold_counter, 1),
+	append(NonUnfoldableHAtomList1, UnfoldableHAtomList1, HAtomList1),
+	printf("%, % is right unfolded to %, %\n",
+	       [HAtomList, HConstraints, HAtomList1, HConstraints1]),
+	printf("Calling prove_aux 2\n", []),
+	prove_aux(Depth+1, CoindLevel,
+		  GAtomList, GConstraints,
+		  HAtomList1, HConstraints1,
+		  Table),
+	!.
+prove_aux1(Depth, CoindLevel,
+	  GAtomList, GConstraints, HAtomList, HConstraints,
+	  Table) :-
+	tracedepthbound(X), Depth < X,
+
+	printf("ATTEMPTING LEFT UNFOLD AT LEVEL %\n", [Depth]),
+	left_unfold([], GAtomList, GConstraints, GList),
+	add_counter(left_unfold_counter, 1),
+	printf("GList=%\n", [GList]),
+	prove_all_goals(Depth+1, CoindLevel,
+			GList, HAtomList, HConstraints,
+			Table),
+	!.
+
+
+prove_all_goals(_Depth, _CoindLevel, [],
+		_HAtomList, _HConstraints, _Table).
+
+% Case when one of the resulting obligations is succesful
+prove_all_goals(Depth, CoindLevel,
+		[goal(NonUnfoldableGAtomList,
+		      UnfoldableGAtomList, GConstraints)|R],
+		HAtomList, HConstraints,
+		Table) :-
+	append(NonUnfoldableGAtomList, UnfoldableGAtomList, GAtomList),
+	printf("Calling prove_aux 3\n", []),
+	prove_aux(Depth, CoindLevel,
+		  GAtomList, GConstraints,
+		  HAtomList, HConstraints, Table),
+	!,
+	printf("prove_aux3 succeed, proving next goal.\n", []),
+	prove_all_goals(Depth, CoindLevel, R,
+			HAtomList, HConstraints,
+			[obligation([], GAtomList, GConstraints,
+				    [], HAtomList, HConstraints)|Table]).
+
+%------------------------------------------------------------------------------
+% Iterate until all rhs atoms are proved
+%------------------------------------------------------------------------------
+prove_rhs_atoms(Depth, CoindLevel,
+		GAtomList, GConstraints, HAtomList,
+		EV, Table, NewGConstraints) :-
+	printf("HAtomList=%\n", [HAtomList]),
+	HAtomList = [HAtom|RestHAtomList],
+	!,
+	monocut(Depth, CoindLevel,
+		GAtomList, GConstraints, [HAtom],
+		EV, Table, ExtUnifier),
+	printf("A: adding unifier % to %\n", [ExtUnifier, GConstraints]),
+	append(ExtUnifier, GConstraints, GConstraints1),
+	prove_rhs_atoms(Depth, CoindLevel,
+			GAtomList, GConstraints1, RestHAtomList,
+			EV, Table, NewGConstraints).
+prove_rhs_atoms(_, _, _, GConstraints, _, _, _, GConstraints) :-
+	%----------------------------------------------------------------------
+	% No RHS atom to pick, proof succeeds
+	%----------------------------------------------------------------------
+	true.
+
+
+prove_rhs_constraints(Depth, CoindLevel,
+		      GAtoms, GConstraints, HConstraints,
+		      Table) :-
+	printf("A: lprove(%,%,\n [],%,%,\n [],[],%,%)\n",
+	       [Depth, CoindLevel,
+		GAtoms, GConstraints,
+		HConstraints,Table]),
+	lprove1(Depth, CoindLevel,
+	       [], GAtoms, GConstraints,
+	       [], [], HConstraints,
+	       Table),
+	printf("A: lprove failed\n", []),
+	!, fail.
+prove_rhs_constraints(_, _, _, _, _, _) :-
+	add_counter(ok_lprove, 1),
+	printf("A: lprove succeed\n", []).
+	
+
+%------------------------------------------------------------------------------
+% Attempt monocut 
+%------------------------------------------------------------------------------
+monocut(Depth, CoindLevel,
+	GAtomList, GConstraints, [HAtom],
+	EV, Table, ExtUnifierThatWorks) :-
+
+%	printf("append_signature([], %, GAtomList, GSigList)\n",
+%	       [GAtomList]),
+	append_signature([], GAtomList, _, GSigList),
+	append_signature([], [HAtom], _, [HSig]),
+
+%	printf("GSigList=%\n", [GSigList]),
+%	printf("HSig=%\n", [HSig]),
+%	printf("find_signature(%, %, %, GAtom, RestGAtomList)\n",
+%	       [HSig, GSigList, GAtomList]),
+	find_signature(HSig, GSigList, GAtomList, GAtom, RestGAtomList),
+	!,
+	%----------------------------------------------------------------------
+	% Same signature found in the lhs
+	%----------------------------------------------------------------------
+	% We match the arguments of both lhs and rhs atoms in Unifier
+	%----------------------------------------------------------------------
+	build_binding(EV, GAtom, HAtom, ExtUnifier, _),
+	
+	printf("Calling monocut_aux1\n", []),
+	monocut_aux1(Depth, CoindLevel,
+		     GAtom, RestGAtomList, GConstraints, ExtUnifier,
+		     HAtom,
+		     EV, Table, ExtUnifierThatWorks).
+monocut(Depth, CoindLevel,
+	GAtomList, GConstraints, [HAtom], 
+	_, Table, []) :-
+	%----------------------------------------------------------------------
+	% Same-signature atom not found in the lhs
+	%----------------------------------------------------------------------
+	printf("Calling monocut_aux2(%,%,%,%,%,%)\n",
+	       [Depth, CoindLevel,
+		GAtomList, GConstraints, [HAtom], Table]),
+	monocut_aux2(Depth, CoindLevel,
+		     GAtomList, GConstraints,
+		     [HAtom],
+		     Table).
+
+find_signature(HSig, [HSig|_], [GAtom|S], GAtom, S).
+find_signature(HSig, [_|R], [GAtom|S], OutGAtom, [GAtom|T]) :-
+	find_signature(HSig, R, S, OutGAtom, T).
+
+build_binding(EV, atm(_, GAtom), atm(_, HAtom), ExtUnifier, UnivUnifier) :-
+	GAtom =.. [Name|GArgList],
+	HAtom =.. [Name|HArgList],
+	match_signature_aux(Name, HArgList, GArgList, Unifier),
+	split_unifier(EV, Unifier, ExtUnifier, UnivUnifier).
+
+
+split_unifier(_, [], [], []).
+split_unifier(EV, [Equality|R], [Equality|S], T) :-
+	is_existential_unifier(Equality, EV), !,
+	split_unifier(EV, R, S, T).
+split_unifier(EV, [Equality|R], S, [Equality|T]) :-
+	split_unifier(EV, R, S, T).
+
+is_existential_unifier(Equality, [W|_]) :-
+	Equality =.. [_,V|_], V==W, !.
+is_existential_unifier(Equality, [_|R]) :-
+	is_existential_unifier(Equality, R).
+
+monocut_aux1(Depth, CoindLevel,
+	     GAtom, RestGAtomList, GConstraints, ExtUnifier,
+	     HAtom, 
+	     EV, Table, ExtUnifierThatWorks) :-
+	%----------------------------------------------------------------------
+	% Make unifier lhs constraints
+	% In a sense this is redundant since lprove will regenerate the
+	% unifier, however, we therefore have a handle of the existential
+	% unifier and can pass it on to the next proof
+	%----------------------------------------------------------------------
+	printf("B: adding unifier % to %\n", [ExtUnifier, GConstraints]),
+	append(ExtUnifier, GConstraints, GConstraints1),
+
+	printf("B: lprove(%,%,\n [],%,%,\n [],%,[],\n %)\n",
+	       [Depth, CoindLevel, [GAtom], GConstraints1,
+		[HAtom], Table]),
+	lprove1(Depth, CoindLevel,
+	       [], [GAtom], GConstraints1,
+	       [], [HAtom], [],
+	       Table),
+	printf("B: lprove failed\n", []),
+	!,
+
+	%----------------------------------------------------------------------
+	% We failed to prove, check if more monocuts are possible
+	%----------------------------------------------------------------------
+	RestGAtomList = [_|_], % Make sure this is nonempty. Otherwise, fail.
+
+	%----------------------------------------------------------------------
+	% Continue with the next possible lhs atom
+	%----------------------------------------------------------------------
+	printf("Calling monocut recursively\n", []),
+	
+	monocut(Depth, CoindLevel,
+		RestGAtomList, GConstraints,
+		[HAtom],
+		EV, Table, ExtUnifierThatWorks).
+monocut_aux1(_, _, _, _, _, ExtUnifier, _, _, _, ExtUnifier) :-
+	add_counter(ok_lprove, 1),
+	printf("B: lprove succeed\n", []).
+
+
+%------------------------------------------------------------------------------
+% monocut_aux2: When same-signature atom not found in the lhs
+%------------------------------------------------------------------------------
+monocut_aux2(Depth, CoindLevel,
+	     GAtomList, GConstraints,
+	     HAtomList,
+	     Table) :-
+	printf("C: lprove(%,%,\n [],%,%,\n [],%,[],\n %)\n",
+	       [Depth, CoindLevel, GAtomList, GConstraints,
+		HAtomList, Table]),
+	lprove1(Depth, CoindLevel,
+	       [], GAtomList, GConstraints,
+	       [], HAtomList, [],
+	       Table),
+	printf("C: lprove failed\n", []),
+	!, fail.
+monocut_aux2(_, _, _, _, _, _) :-
+	add_counter(ok_lprove, 1),
+	printf("C: lprove succeed\n", []).
+
+
+
+
+
+lprove1(A, B,
+	GAtomList1, GAtomList2, GConstraints,
+	HAtomList1, HAtomList2, HConstraints,
+	Table) :-
+	add_counter(lprove_counter,1),
+	printf("Unfold Depth=% Coinduction Level=%\n", [A, B]),
+	append(GAtomList1, GAtomList2, GAtomList),
+	append(HAtomList1, HAtomList2, HAtomList),
+	printf("Proving %, % |= %, %\n",
+	       [GAtomList, GConstraints, HAtomList, HConstraints]),
+	counter_value(target_config, F), F>0, !,
+	lprove2(A, B,
+		GAtomList1, GAtomList2, GConstraints,
+		HAtomList1, HAtomList2, HConstraints,
+		Table),
+	printf("True (y/n)?\n", []),
+	read(Ans),
+	Ans = n.
+lprove1(_A, _B,
+	_GAtomList1, _GAtomList2, _GConstraints,
+	_HAtomList1, _HAtomList2, _HConstraints,
+	_Table).
+
+
+lprove2(_A, _B,
+	_GAtomList1, _GAtomList2, _GConstraints,
+	_HAtomList1, _HAtomList2, _HConstraints,
+	_Table) :- !.
+lprove2(A, B,
+	GAtomList1, GAtomList2, GConstraints,
+	HAtomList1, HAtomList2, HConstraints,
+	Table) :-
+	lprove(A, B,
+	       GAtomList1, GAtomList2, GConstraints,
+	       HAtomList1, HAtomList2, HConstraints,
+	       Table),
+	printf("LPROVE SAYS NO\n", []).
+lprove2(_, _,
+	_, _, _,
+	_, _, _,
+	_) :-
+	printf("LPROVE SAYS YES\n", []).
+
+lprove3(A, B,
+       GAtomList1, GAtomList2, GConstraints,
+       HAtomList1, HAtomList2, HConstraints,
+       _Table) :-
+	printf("Unfold Depth=% Coinduction Level=%\n", [A, B]),
+	append(GAtomList1, GAtomList2, GAtomList),
+	append(HAtomList1, HAtomList2, HAtomList),
+	printf("Proving %, % |= %, %\n",
+	       [GAtomList, GConstraints, HAtomList, HConstraints]),
+	printf("True (y/n)?\n", []),
+	read(Ans),
+	Ans = n.
+
+:- consult('recursive.clpr').

@@ -1,0 +1,35 @@
+% This is a simple example that demonstrates that we can induct after
+% several steps. Suggested by Faranak Heidarian
+
+coinductionlimit(2).   % Limit coinduction to depth 2.
+unfolddepthbound(3).
+solver(arith).
+
+unfold(p(X,Y),
+       [
+	body([q(X,Y)], [])
+       ]).
+
+unfold(q(X,Y),
+       [
+	body([p(X,Y)], [])
+       ]).
+       
+% To Prove:
+%
+% p(X,Y) |= X<=Y
+
+run :-
+	set_counter(assertionnumber, 0),
+	addunfoldlevel(0, [p(X,Y)], UnfoldableGAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [],
+		     [], [], [geq(Y,X)], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	counter_value(assertionnumber, X),
+	printf("Proof succeed\n", []),
+	printf("Number of assertions: %\n", [X]).
+
+
+:- consult('recursive.clpr').
+

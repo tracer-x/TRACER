@@ -1,0 +1,3699 @@
+"editor/ed_draw.ml" 24 1326 1330 "editor/ed_draw.ml" 24 1326 1343
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.t
+)
+ident(
+  def make_subgraph "editor/ed_draw.ml" 37 1568 1568 --
+)
+"editor/ed_draw.ml" 24 1326 1344 "editor/ed_draw.ml" 24 1326 1345
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  def l "editor/ed_draw.ml" 25 1348 1350 "editor/ed_draw.ml" 35 1562 1566
+)
+"editor/ed_draw.ml" 25 1348 1354 "editor/ed_draw.ml" 25 1348 1356
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 25 1348 1359 "editor/ed_draw.ml" 25 1348 1367
+type(
+  ?size:int -> unit -> Ed_graph.G.t
+)
+ident(
+  ext_ref Ed_graph.G.create
+)
+"editor/ed_draw.ml" 25 1348 1368 "editor/ed_draw.ml" 25 1348 1370
+type(
+  unit
+)
+"editor/ed_draw.ml" 25 1348 1359 "editor/ed_draw.ml" 25 1348 1370
+call(
+  stack
+)
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 26 1374 1376 "editor/ed_draw.ml" 26 1374 1385
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.G.vertex list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"editor/ed_draw.ml" 26 1374 1391 "editor/ed_draw.ml" 26 1374 1392
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 26 1374 1396 "editor/ed_draw.ml" 26 1374 1413
+)
+"editor/ed_draw.ml" 26 1374 1396 "editor/ed_draw.ml" 26 1374 1408
+type(
+  Ed_graph.G.t -> Ed_graph.G.vertex -> unit
+)
+ident(
+  ext_ref Ed_graph.G.add_vertex
+)
+"editor/ed_draw.ml" 26 1374 1409 "editor/ed_draw.ml" 26 1374 1411
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gl "editor/ed_draw.ml" 25 1348 1354 "editor/ed_draw.ml" 25 1348 1356
+)
+"editor/ed_draw.ml" 26 1374 1412 "editor/ed_draw.ml" 26 1374 1413
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 26 1374 1391 "editor/ed_draw.ml" 26 1374 1392
+)
+"editor/ed_draw.ml" 26 1374 1396 "editor/ed_draw.ml" 26 1374 1413
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 26 1374 1386 "editor/ed_draw.ml" 26 1374 1414
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 26 1374 1415 "editor/ed_draw.ml" 26 1374 1416
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 24 1326 1344 "editor/ed_draw.ml" 24 1326 1345
+)
+"editor/ed_draw.ml" 26 1374 1376 "editor/ed_draw.ml" 26 1374 1416
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 27 1418 1420 "editor/ed_draw.ml" 27 1418 1429
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.G.vertex list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"editor/ed_draw.ml" 28 1431 1440 "editor/ed_draw.ml" 28 1431 1441
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 29 1445 1452 "editor/ed_draw.ml" 32 1523 1526
+)
+"editor/ed_draw.ml" 29 1445 1452 "editor/ed_draw.ml" 29 1445 1461
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.G.vertex list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"editor/ed_draw.ml" 29 1445 1467 "editor/ed_draw.ml" 29 1445 1468
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def w "editor/ed_draw.ml" 30 1473 1479 "editor/ed_draw.ml" 31 1492 1520
+)
+"editor/ed_draw.ml" 30 1473 1482 "editor/ed_draw.ml" 30 1473 1486
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.vertex -> bool
+)
+ident(
+  ext_ref Ed_graph.edge
+)
+"editor/ed_draw.ml" 30 1473 1487 "editor/ed_draw.ml" 30 1473 1488
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 28 1431 1440 "editor/ed_draw.ml" 28 1431 1441
+)
+"editor/ed_draw.ml" 30 1473 1489 "editor/ed_draw.ml" 30 1473 1490
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 29 1445 1467 "editor/ed_draw.ml" 29 1445 1468
+)
+"editor/ed_draw.ml" 30 1473 1482 "editor/ed_draw.ml" 30 1473 1490
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_draw.ml" 31 1492 1503 "editor/ed_draw.ml" 31 1492 1513
+type(
+  Ed_graph.G.t -> Ed_graph.G.vertex -> Ed_graph.G.vertex -> unit
+)
+ident(
+  ext_ref Ed_graph.G.add_edge
+)
+"editor/ed_draw.ml" 31 1492 1514 "editor/ed_draw.ml" 31 1492 1516
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gl "editor/ed_draw.ml" 25 1348 1354 "editor/ed_draw.ml" 25 1348 1356
+)
+"editor/ed_draw.ml" 31 1492 1517 "editor/ed_draw.ml" 31 1492 1518
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 28 1431 1440 "editor/ed_draw.ml" 28 1431 1441
+)
+"editor/ed_draw.ml" 31 1492 1519 "editor/ed_draw.ml" 31 1492 1520
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 29 1445 1467 "editor/ed_draw.ml" 29 1445 1468
+)
+"editor/ed_draw.ml" 31 1492 1503 "editor/ed_draw.ml" 31 1492 1520
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 30 1473 1479 "editor/ed_draw.ml" 31 1492 1520
+type(
+  unit
+)
+"editor/ed_draw.ml" 29 1445 1462 "editor/ed_draw.ml" 31 1492 1521
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 32 1523 1525 "editor/ed_draw.ml" 32 1523 1526
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 24 1326 1344 "editor/ed_draw.ml" 24 1326 1345
+)
+"editor/ed_draw.ml" 29 1445 1452 "editor/ed_draw.ml" 32 1523 1526
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 28 1431 1435 "editor/ed_draw.ml" 32 1523 1527
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 33 1529 1533 "editor/ed_draw.ml" 33 1529 1534
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 24 1326 1344 "editor/ed_draw.ml" 24 1326 1345
+)
+"editor/ed_draw.ml" 27 1418 1420 "editor/ed_draw.ml" 33 1529 1534
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 35 1562 1564 "editor/ed_draw.ml" 35 1562 1566
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gl "editor/ed_draw.ml" 25 1348 1354 "editor/ed_draw.ml" 25 1348 1356
+)
+"editor/ed_draw.ml" 27 1418 1420 "editor/ed_draw.ml" 35 1562 1566
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 26 1374 1376 "editor/ed_draw.ml" 35 1562 1566
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 25 1348 1350 "editor/ed_draw.ml" 35 1562 1566
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 37 1568 1572 "editor/ed_draw.ml" 37 1568 1586
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.V.t list
+)
+ident(
+  def order_children "editor/ed_draw.ml" 64 2165 2165 --
+)
+"editor/ed_draw.ml" 37 1568 1587 "editor/ed_draw.ml" 37 1568 1588
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  def l "editor/ed_draw.ml" 38 1591 1593 "editor/ed_draw.ml" 59 2110 2128
+)
+"editor/ed_draw.ml" 38 1591 1597 "editor/ed_draw.ml" 38 1591 1599
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 38 1591 1602 "editor/ed_draw.ml" 38 1591 1615
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.t
+)
+ident(
+  int_ref make_subgraph "editor/ed_draw.ml" 24 1326 1330 "editor/ed_draw.ml" 24 1326 1343
+)
+"editor/ed_draw.ml" 38 1591 1616 "editor/ed_draw.ml" 38 1591 1617
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 37 1568 1587 "editor/ed_draw.ml" 37 1568 1588
+)
+"editor/ed_draw.ml" 38 1591 1602 "editor/ed_draw.ml" 38 1591 1617
+call(
+  stack
+)
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 39 1621 1627 "editor/ed_draw.ml" 39 1621 1630
+type(
+  Ed_graph.G.V.t list list
+)
+"editor/ed_draw.ml" 39 1621 1633 "editor/ed_draw.ml" 39 1621 1652
+type(
+  Ed_graph.G.t -> Ed_graph.G.V.t list list
+)
+ident(
+  ext_ref Ed_graph.Components.scc_list
+)
+"editor/ed_draw.ml" 39 1621 1653 "editor/ed_draw.ml" 39 1621 1655
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gl "editor/ed_draw.ml" 38 1591 1597 "editor/ed_draw.ml" 38 1591 1599
+)
+"editor/ed_draw.ml" 39 1621 1633 "editor/ed_draw.ml" 39 1621 1655
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.t list list
+)
+"editor/ed_draw.ml" 40 1659 1665 "editor/ed_draw.ml" 40 1659 1680
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 40 1659 1681 "editor/ed_draw.ml" 40 1659 1682
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  def c "editor/ed_draw.ml" 41 1685 1689 "editor/ed_draw.ml" 56 2054 2060
+)
+"editor/ed_draw.ml" 41 1685 1693 "editor/ed_draw.ml" 41 1685 1695
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 41 1685 1698 "editor/ed_draw.ml" 41 1685 1711
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.t
+)
+ident(
+  int_ref make_subgraph "editor/ed_draw.ml" 24 1326 1330 "editor/ed_draw.ml" 24 1326 1343
+)
+"editor/ed_draw.ml" 41 1685 1712 "editor/ed_draw.ml" 41 1685 1713
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref c "editor/ed_draw.ml" 40 1659 1681 "editor/ed_draw.ml" 40 1659 1682
+)
+"editor/ed_draw.ml" 41 1685 1698 "editor/ed_draw.ml" 41 1685 1713
+call(
+  stack
+)
+type(
+  Ed_graph.G.t
+)
+"editor/ed_draw.ml" 43 1767 1775 "editor/ed_draw.ml" 43 1767 1776
+type(
+  Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 43 1767 1785 "editor/ed_draw.ml" 43 1767 1786
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref c "editor/ed_draw.ml" 40 1659 1681 "editor/ed_draw.ml" 40 1659 1682
+)
+"editor/ed_draw.ml" 44 1792 1800 "editor/ed_draw.ml" 44 1792 1801
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 45 1810 1813 "editor/ed_draw.ml" 50 1929 1937
+)
+"editor/ed_draw.ml" 44 1792 1805 "editor/ed_draw.ml" 44 1792 1806
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  def l "editor/ed_draw.ml" 45 1810 1813 "editor/ed_draw.ml" 50 1929 1937
+)
+"editor/ed_draw.ml" 44 1792 1800 "editor/ed_draw.ml" 44 1792 1806
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 45 1810 1813 "editor/ed_draw.ml" 45 1810 1827
+type(
+  (Ed_graph.G.vertex -> Ed_graph.G.vertex -> Ed_graph.G.vertex) ->
+  Ed_graph.G.vertex -> Ed_graph.G.vertex list -> Ed_graph.G.vertex
+)
+ident(
+  ext_ref List.fold_left
+)
+"editor/ed_draw.ml" 46 1829 1839 "editor/ed_draw.ml" 46 1829 1840
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def m "editor/ed_draw.ml" 46 1829 1841 "editor/ed_draw.ml" 49 1913 1927
+)
+"editor/ed_draw.ml" 46 1829 1841 "editor/ed_draw.ml" 46 1829 1842
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 47 1847 1855 "editor/ed_draw.ml" 49 1913 1927
+)
+"editor/ed_draw.ml" 47 1847 1858 "editor/ed_draw.ml" 47 1847 1870
+type(
+  Ed_graph.G.t -> Ed_graph.G.vertex -> int
+)
+ident(
+  ext_ref Ed_graph.G.out_degree
+)
+"editor/ed_draw.ml" 47 1847 1871 "editor/ed_draw.ml" 47 1847 1873
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gc "editor/ed_draw.ml" 41 1685 1693 "editor/ed_draw.ml" 41 1685 1695
+)
+"editor/ed_draw.ml" 47 1847 1874 "editor/ed_draw.ml" 47 1847 1875
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 46 1829 1841 "editor/ed_draw.ml" 46 1829 1842
+)
+"editor/ed_draw.ml" 47 1847 1858 "editor/ed_draw.ml" 47 1847 1875
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 47 1847 1876 "editor/ed_draw.ml" 47 1847 1877
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"editor/ed_draw.ml" 47 1847 1878 "editor/ed_draw.ml" 47 1847 1890
+type(
+  Ed_graph.G.t -> Ed_graph.G.vertex -> int
+)
+ident(
+  ext_ref Ed_graph.G.out_degree
+)
+"editor/ed_draw.ml" 47 1847 1891 "editor/ed_draw.ml" 47 1847 1893
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gc "editor/ed_draw.ml" 41 1685 1693 "editor/ed_draw.ml" 41 1685 1695
+)
+"editor/ed_draw.ml" 47 1847 1894 "editor/ed_draw.ml" 47 1847 1895
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref m "editor/ed_draw.ml" 46 1829 1839 "editor/ed_draw.ml" 46 1829 1840
+)
+"editor/ed_draw.ml" 47 1847 1878 "editor/ed_draw.ml" 47 1847 1895
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 47 1847 1858 "editor/ed_draw.ml" 47 1847 1895
+type(
+  bool
+)
+"editor/ed_draw.ml" 48 1897 1910 "editor/ed_draw.ml" 48 1897 1911
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 46 1829 1841 "editor/ed_draw.ml" 46 1829 1842
+)
+"editor/ed_draw.ml" 49 1913 1926 "editor/ed_draw.ml" 49 1913 1927
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref m "editor/ed_draw.ml" 46 1829 1839 "editor/ed_draw.ml" 46 1829 1840
+)
+"editor/ed_draw.ml" 47 1847 1855 "editor/ed_draw.ml" 49 1913 1927
+type(
+  Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 46 1829 1834 "editor/ed_draw.ml" 49 1913 1928
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.vertex -> Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 50 1929 1934 "editor/ed_draw.ml" 50 1929 1935
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 44 1792 1800 "editor/ed_draw.ml" 44 1792 1801
+)
+"editor/ed_draw.ml" 50 1929 1936 "editor/ed_draw.ml" 50 1929 1937
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 44 1792 1805 "editor/ed_draw.ml" 44 1792 1806
+)
+"editor/ed_draw.ml" 45 1810 1813 "editor/ed_draw.ml" 50 1929 1937
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 51 1938 1946 "editor/ed_draw.ml" 51 1938 1948
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 52 1953 1956 "editor/ed_draw.ml" 52 1953 1968
+type(
+  Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 43 1767 1779 "editor/ed_draw.ml" 52 1953 1968
+type(
+  Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 54 1977 1985 "editor/ed_draw.ml" 54 1977 1986
+type(
+  Ed_graph.G.V.t list ref
+)
+"editor/ed_draw.ml" 54 1977 1989 "editor/ed_draw.ml" 54 1977 1992
+type(
+  Ed_graph.G.V.t list -> Ed_graph.G.V.t list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_draw.ml" 54 1977 1993 "editor/ed_draw.ml" 54 1977 1995
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 54 1977 1989 "editor/ed_draw.ml" 54 1977 1995
+type(
+  Ed_graph.G.V.t list ref
+)
+"editor/ed_draw.ml" 55 1999 2003 "editor/ed_draw.ml" 55 1999 2023
+type(
+  (Ed_graph.G.V.t -> unit) -> Ed_graph.G.t -> Ed_graph.G.vertex -> unit
+)
+ident(
+  ext_ref Ed_graph.Dfs.prefix_component
+)
+"editor/ed_draw.ml" 55 1999 2029 "editor/ed_draw.ml" 55 1999 2030
+type(
+  Ed_graph.G.V.t
+)
+ident(
+  def w "editor/ed_draw.ml" 55 1999 2034 "editor/ed_draw.ml" 55 1999 2046
+)
+"editor/ed_draw.ml" 55 1999 2034 "editor/ed_draw.ml" 55 1999 2035
+type(
+  Ed_graph.G.V.t list ref
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 54 1977 1985 "editor/ed_draw.ml" 54 1977 1986
+)
+"editor/ed_draw.ml" 55 1999 2036 "editor/ed_draw.ml" 55 1999 2038
+type(
+  Ed_graph.G.V.t list ref -> Ed_graph.G.V.t list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_draw.ml" 55 1999 2039 "editor/ed_draw.ml" 55 1999 2040
+type(
+  Ed_graph.G.V.t
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 55 1999 2029 "editor/ed_draw.ml" 55 1999 2030
+)
+"editor/ed_draw.ml" 55 1999 2044 "editor/ed_draw.ml" 55 1999 2045
+type(
+  Ed_graph.G.V.t list ref -> Ed_graph.G.V.t list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 55 1999 2045 "editor/ed_draw.ml" 55 1999 2046
+type(
+  Ed_graph.G.V.t list ref
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 54 1977 1985 "editor/ed_draw.ml" 54 1977 1986
+)
+"editor/ed_draw.ml" 55 1999 2044 "editor/ed_draw.ml" 55 1999 2046
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 55 1999 2039 "editor/ed_draw.ml" 55 1999 2046
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 55 1999 2034 "editor/ed_draw.ml" 55 1999 2046
+type(
+  unit
+)
+"editor/ed_draw.ml" 55 1999 2024 "editor/ed_draw.ml" 55 1999 2047
+type(
+  Ed_graph.G.V.t -> unit
+)
+"editor/ed_draw.ml" 55 1999 2048 "editor/ed_draw.ml" 55 1999 2050
+type(
+  Ed_graph.G.t
+)
+ident(
+  int_ref gc "editor/ed_draw.ml" 41 1685 1693 "editor/ed_draw.ml" 41 1685 1695
+)
+"editor/ed_draw.ml" 55 1999 2051 "editor/ed_draw.ml" 55 1999 2052
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 43 1767 1775 "editor/ed_draw.ml" 43 1767 1776
+)
+"editor/ed_draw.ml" 55 1999 2003 "editor/ed_draw.ml" 55 1999 2052
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 56 2054 2058 "editor/ed_draw.ml" 56 2054 2059
+type(
+  Ed_graph.G.V.t list ref -> Ed_graph.G.V.t list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 56 2054 2059 "editor/ed_draw.ml" 56 2054 2060
+type(
+  Ed_graph.G.V.t list ref
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 54 1977 1985 "editor/ed_draw.ml" 54 1977 1986
+)
+"editor/ed_draw.ml" 56 2054 2058 "editor/ed_draw.ml" 56 2054 2060
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 55 1999 2003 "editor/ed_draw.ml" 56 2054 2060
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 54 1977 1981 "editor/ed_draw.ml" 56 2054 2060
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 43 1767 1771 "editor/ed_draw.ml" 56 2054 2060
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 41 1685 1689 "editor/ed_draw.ml" 56 2054 2060
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 58 2066 2072 "editor/ed_draw.ml" 58 2066 2075
+type(
+  Ed_graph.G.V.t list list
+)
+"editor/ed_draw.ml" 58 2066 2078 "editor/ed_draw.ml" 58 2066 2086
+type(
+  (Ed_graph.G.vertex list -> Ed_graph.G.V.t list) ->
+  Ed_graph.G.vertex list list -> Ed_graph.G.V.t list list
+)
+ident(
+  ext_ref List.map
+)
+"editor/ed_draw.ml" 58 2066 2087 "editor/ed_draw.ml" 58 2066 2102
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.V.t list
+)
+ident(
+  int_ref order_component "editor/ed_draw.ml" 40 1659 1665 "editor/ed_draw.ml" 40 1659 1680
+)
+"editor/ed_draw.ml" 58 2066 2103 "editor/ed_draw.ml" 58 2066 2106
+type(
+  Ed_graph.G.vertex list list
+)
+ident(
+  int_ref scc "editor/ed_draw.ml" 39 1621 1627 "editor/ed_draw.ml" 39 1621 1630
+)
+"editor/ed_draw.ml" 58 2066 2078 "editor/ed_draw.ml" 58 2066 2106
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.t list list
+)
+"editor/ed_draw.ml" 59 2110 2112 "editor/ed_draw.ml" 59 2110 2124
+type(
+  Ed_graph.G.V.t list list -> Ed_graph.G.V.t list
+)
+ident(
+  ext_ref List.flatten
+)
+"editor/ed_draw.ml" 59 2110 2125 "editor/ed_draw.ml" 59 2110 2128
+type(
+  Ed_graph.G.V.t list list
+)
+ident(
+  int_ref scc "editor/ed_draw.ml" 58 2066 2072 "editor/ed_draw.ml" 58 2066 2075
+)
+"editor/ed_draw.ml" 59 2110 2112 "editor/ed_draw.ml" 59 2110 2128
+call(
+  tail
+)
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 58 2066 2068 "editor/ed_draw.ml" 59 2110 2128
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 40 1659 1661 "editor/ed_draw.ml" 59 2110 2128
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 39 1621 1623 "editor/ed_draw.ml" 59 2110 2128
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 38 1591 1593 "editor/ed_draw.ml" 59 2110 2128
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 64 2165 2173 "editor/ed_draw.ml" 64 2165 2181
+type(
+  int -> Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+ident(
+  def draw_dfs "editor/ed_draw.ml" 64 2165 2165 --
+)
+"editor/ed_draw.ml" 64 2165 2182 "editor/ed_draw.ml" 64 2165 2187
+type(
+  int
+)
+ident(
+  def depth "editor/ed_draw.ml" 64 2165 2188 "editor/ed_draw.ml" 84 2957 2962
+)
+"editor/ed_draw.ml" 64 2165 2188 "editor/ed_draw.ml" 64 2165 2192
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def node "editor/ed_draw.ml" 64 2165 2193 "editor/ed_draw.ml" 84 2957 2962
+)
+"editor/ed_draw.ml" 64 2165 2193 "editor/ed_draw.ml" 64 2165 2199
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_draw.ml" 65 2202 2204 "editor/ed_draw.ml" 84 2957 2962
+)
+"editor/ed_draw.ml" 65 2202 2208 "editor/ed_draw.ml" 65 2202 2211
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 65 2202 2214 "editor/ed_draw.ml" 65 2202 2223
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 65 2202 2224 "editor/ed_draw.ml" 65 2202 2228
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref node "editor/ed_draw.ml" 64 2165 2188 "editor/ed_draw.ml" 64 2165 2192
+)
+"editor/ed_draw.ml" 65 2202 2214 "editor/ed_draw.ml" 65 2202 2228
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 66 2232 2234 "editor/ed_draw.ml" 66 2232 2237
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 65 2202 2208 "editor/ed_draw.ml" 65 2202 2211
+)
+"editor/ed_draw.ml" 66 2232 2248 "editor/ed_draw.ml" 66 2232 2254
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 64 2165 2193 "editor/ed_draw.ml" 64 2165 2199
+)
+"editor/ed_draw.ml" 66 2232 2234 "editor/ed_draw.ml" 66 2232 2254
+type(
+  unit
+)
+"editor/ed_draw.ml" 67 2256 2258 "editor/ed_draw.ml" 67 2256 2261
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 65 2202 2208 "editor/ed_draw.ml" 65 2202 2211
+)
+"editor/ed_draw.ml" 67 2256 2271 "editor/ed_draw.ml" 67 2256 2276
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 64 2165 2182 "editor/ed_draw.ml" 64 2165 2187
+)
+"editor/ed_draw.ml" 67 2256 2258 "editor/ed_draw.ml" 67 2256 2276
+type(
+  unit
+)
+"editor/ed_draw.ml" 68 2278 2283 "editor/ed_draw.ml" 68 2278 2298
+type(
+  Ed_hyper.turtle -> float
+)
+ident(
+  ext_ref Ed_hyper.hspace_dist_sqr
+)
+"editor/ed_draw.ml" 68 2278 2299 "editor/ed_draw.ml" 68 2278 2305
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 64 2165 2193 "editor/ed_draw.ml" 64 2165 2199
+)
+"editor/ed_draw.ml" 68 2278 2283 "editor/ed_draw.ml" 68 2278 2305
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_draw.ml" 68 2278 2306 "editor/ed_draw.ml" 68 2278 2308
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.<=
+)
+"editor/ed_draw.ml" 68 2278 2309 "editor/ed_draw.ml" 68 2278 2319
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.rlimit_sqr
+)
+"editor/ed_draw.ml" 68 2278 2283 "editor/ed_draw.ml" 68 2278 2319
+type(
+  bool
+)
+"editor/ed_draw.ml" 69 2331 2335 "editor/ed_draw.ml" 69 2331 2338
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 65 2202 2208 "editor/ed_draw.ml" 65 2202 2211
+)
+"editor/ed_draw.ml" 69 2331 2350 "editor/ed_draw.ml" 69 2331 2357
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 69 2331 2335 "editor/ed_draw.ml" 69 2331 2357
+type(
+  unit
+)
+"editor/ed_draw.ml" 70 2359 2367 "editor/ed_draw.ml" 70 2359 2368
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 70 2359 2371 "editor/ed_draw.ml" 70 2359 2377
+type(
+  Ed_graph.B.G.t -> Ed_graph.G.vertex -> Ed_graph.G.vertex list
+)
+ident(
+  ext_ref Ed_graph.G.succ
+)
+"editor/ed_draw.ml" 70 2359 2378 "editor/ed_draw.ml" 70 2359 2379
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 70 2359 2379 "editor/ed_draw.ml" 70 2359 2384
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_draw.ml" 70 2359 2378 "editor/ed_draw.ml" 70 2359 2384
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_draw.ml" 70 2359 2385 "editor/ed_draw.ml" 70 2359 2389
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref node "editor/ed_draw.ml" 64 2165 2188 "editor/ed_draw.ml" 64 2165 2192
+)
+"editor/ed_draw.ml" 70 2359 2371 "editor/ed_draw.ml" 70 2359 2389
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 71 2394 2402 "editor/ed_draw.ml" 71 2394 2403
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 71 2394 2406 "editor/ed_draw.ml" 71 2394 2417
+type(
+  (Ed_graph.G.vertex -> bool) ->
+  Ed_graph.G.vertex list -> Ed_graph.G.vertex list
+)
+ident(
+  ext_ref List.filter
+)
+"editor/ed_draw.ml" 71 2394 2423 "editor/ed_draw.ml" 71 2394 2424
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def x "editor/ed_draw.ml" 71 2394 2428 "editor/ed_draw.ml" 71 2394 2458
+)
+"editor/ed_draw.ml" 71 2394 2429 "editor/ed_draw.ml" 71 2394 2438
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 71 2394 2439 "editor/ed_draw.ml" 71 2394 2440
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref x "editor/ed_draw.ml" 71 2394 2423 "editor/ed_draw.ml" 71 2394 2424
+)
+"editor/ed_draw.ml" 71 2394 2428 "editor/ed_draw.ml" 71 2394 2441
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 71 2394 2428 "editor/ed_draw.ml" 71 2394 2449
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 71 2394 2450 "editor/ed_draw.ml" 71 2394 2451
+type(
+  Ed_graph.visibility -> Ed_graph.visibility -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 71 2394 2452 "editor/ed_draw.ml" 71 2394 2458
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 71 2394 2428 "editor/ed_draw.ml" 71 2394 2458
+type(
+  bool
+)
+"editor/ed_draw.ml" 71 2394 2418 "editor/ed_draw.ml" 71 2394 2459
+type(
+  Ed_graph.G.vertex -> bool
+)
+"editor/ed_draw.ml" 71 2394 2460 "editor/ed_draw.ml" 71 2394 2461
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 70 2359 2367 "editor/ed_draw.ml" 70 2359 2368
+)
+"editor/ed_draw.ml" 71 2394 2406 "editor/ed_draw.ml" 71 2394 2461
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 72 2465 2469 "editor/ed_draw.ml" 72 2465 2478
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.G.vertex list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"editor/ed_draw.ml" 72 2465 2484 "editor/ed_draw.ml" 72 2465 2485
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def w "editor/ed_draw.ml" 72 2465 2489 "editor/ed_draw.ml" 72 2465 2524
+)
+"editor/ed_draw.ml" 72 2465 2490 "editor/ed_draw.ml" 72 2465 2499
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 72 2465 2500 "editor/ed_draw.ml" 72 2465 2501
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 72 2465 2484 "editor/ed_draw.ml" 72 2465 2485
+)
+"editor/ed_draw.ml" 72 2465 2489 "editor/ed_draw.ml" 72 2465 2502
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 72 2465 2514 "editor/ed_draw.ml" 72 2465 2524
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 72 2465 2489 "editor/ed_draw.ml" 72 2465 2524
+type(
+  unit
+)
+"editor/ed_draw.ml" 72 2465 2479 "editor/ed_draw.ml" 72 2465 2525
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 72 2465 2526 "editor/ed_draw.ml" 72 2465 2527
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 71 2394 2402 "editor/ed_draw.ml" 71 2394 2403
+)
+"editor/ed_draw.ml" 72 2465 2469 "editor/ed_draw.ml" 72 2465 2527
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 73 2529 2537 "editor/ed_draw.ml" 73 2529 2538
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 73 2529 2541 "editor/ed_draw.ml" 73 2529 2555
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.V.t list
+)
+ident(
+  int_ref order_children "editor/ed_draw.ml" 37 1568 1572 "editor/ed_draw.ml" 37 1568 1586
+)
+"editor/ed_draw.ml" 73 2529 2556 "editor/ed_draw.ml" 73 2529 2557
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 71 2394 2402 "editor/ed_draw.ml" 71 2394 2403
+)
+"editor/ed_draw.ml" 73 2529 2541 "editor/ed_draw.ml" 73 2529 2557
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 74 2561 2569 "editor/ed_draw.ml" 74 2561 2570
+type(
+  int
+)
+"editor/ed_draw.ml" 74 2561 2573 "editor/ed_draw.ml" 74 2561 2584
+type(
+  Ed_graph.G.V.t list -> int
+)
+ident(
+  ext_ref List.length
+)
+"editor/ed_draw.ml" 74 2561 2585 "editor/ed_draw.ml" 74 2561 2586
+type(
+  Ed_graph.G.V.t list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 73 2529 2537 "editor/ed_draw.ml" 73 2529 2538
+)
+"editor/ed_draw.ml" 74 2561 2573 "editor/ed_draw.ml" 74 2561 2586
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 75 2590 2597 "editor/ed_draw.ml" 75 2590 2598
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 74 2561 2569 "editor/ed_draw.ml" 74 2561 2570
+)
+"editor/ed_draw.ml" 75 2590 2599 "editor/ed_draw.ml" 75 2590 2600
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"editor/ed_draw.ml" 75 2590 2601 "editor/ed_draw.ml" 75 2590 2602
+type(
+  int
+)
+"editor/ed_draw.ml" 75 2590 2597 "editor/ed_draw.ml" 75 2590 2602
+type(
+  bool
+)
+"editor/ed_draw.ml" 76 2614 2624 "editor/ed_draw.ml" 76 2614 2632
+type(
+  float
+)
+"editor/ed_draw.ml" 76 2614 2635 "editor/ed_draw.ml" 76 2614 2644
+type(
+  int -> float
+)
+ident(
+  ext_ref Ed_hyper.step_from
+)
+"editor/ed_draw.ml" 76 2614 2649 "editor/ed_draw.ml" 76 2614 2654
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 64 2165 2182 "editor/ed_draw.ml" 64 2165 2187
+)
+"editor/ed_draw.ml" 76 2614 2655 "editor/ed_draw.ml" 76 2614 2656
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 76 2614 2657 "editor/ed_draw.ml" 76 2614 2658
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2649 "editor/ed_draw.ml" 76 2614 2658
+type(
+  bool
+)
+"editor/ed_draw.ml" 76 2614 2664 "editor/ed_draw.ml" 76 2614 2667
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.max
+)
+"editor/ed_draw.ml" 76 2614 2668 "editor/ed_draw.ml" 76 2614 2669
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2670 "editor/ed_draw.ml" 76 2614 2671
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 74 2561 2569 "editor/ed_draw.ml" 74 2561 2570
+)
+"editor/ed_draw.ml" 76 2614 2664 "editor/ed_draw.ml" 76 2614 2671
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2677 "editor/ed_draw.ml" 76 2614 2678
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2679 "editor/ed_draw.ml" 76 2614 2680
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.*
+)
+"editor/ed_draw.ml" 76 2614 2681 "editor/ed_draw.ml" 76 2614 2684
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.max
+)
+"editor/ed_draw.ml" 76 2614 2685 "editor/ed_draw.ml" 76 2614 2686
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2687 "editor/ed_draw.ml" 76 2614 2688
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 74 2561 2569 "editor/ed_draw.ml" 74 2561 2570
+)
+"editor/ed_draw.ml" 76 2614 2681 "editor/ed_draw.ml" 76 2614 2688
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2677 "editor/ed_draw.ml" 76 2614 2688
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2645 "editor/ed_draw.ml" 76 2614 2689
+type(
+  int
+)
+"editor/ed_draw.ml" 76 2614 2635 "editor/ed_draw.ml" 76 2614 2689
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2700 "editor/ed_draw.ml" 77 2690 2705
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2712 "editor/ed_draw.ml" 77 2690 2717
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 64 2165 2182 "editor/ed_draw.ml" 64 2165 2187
+)
+"editor/ed_draw.ml" 77 2690 2718 "editor/ed_draw.ml" 77 2690 2719
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 77 2690 2720 "editor/ed_draw.ml" 77 2690 2721
+type(
+  int
+)
+"editor/ed_draw.ml" 77 2690 2712 "editor/ed_draw.ml" 77 2690 2721
+type(
+  bool
+)
+"editor/ed_draw.ml" 77 2690 2727 "editor/ed_draw.ml" 77 2690 2729
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2735 "editor/ed_draw.ml" 77 2690 2737
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2708 "editor/ed_draw.ml" 77 2690 2738
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2739 "editor/ed_draw.ml" 77 2690 2741
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_draw.ml" 77 2690 2742 "editor/ed_draw.ml" 77 2690 2744
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.pi
+)
+"editor/ed_draw.ml" 77 2690 2708 "editor/ed_draw.ml" 77 2690 2744
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2745 "editor/ed_draw.ml" 77 2690 2747
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_draw.ml" 77 2690 2749 "editor/ed_draw.ml" 77 2690 2761
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float_of_int
+)
+"editor/ed_draw.ml" 77 2690 2762 "editor/ed_draw.ml" 77 2690 2763
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 74 2561 2569 "editor/ed_draw.ml" 74 2561 2570
+)
+"editor/ed_draw.ml" 77 2690 2748 "editor/ed_draw.ml" 77 2690 2764
+type(
+  float
+)
+"editor/ed_draw.ml" 77 2690 2708 "editor/ed_draw.ml" 77 2690 2764
+type(
+  float
+)
+"editor/ed_draw.ml" 78 2768 2778 "editor/ed_draw.ml" 78 2768 2784
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 79 2788 2792 "editor/ed_draw.ml" 79 2788 2797
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 64 2165 2182 "editor/ed_draw.ml" 64 2165 2187
+)
+"editor/ed_draw.ml" 79 2788 2798 "editor/ed_draw.ml" 79 2788 2799
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 79 2788 2800 "editor/ed_draw.ml" 79 2788 2801
+type(
+  int
+)
+"editor/ed_draw.ml" 79 2788 2792 "editor/ed_draw.ml" 79 2788 2801
+type(
+  bool
+)
+"editor/ed_draw.ml" 79 2788 2807 "editor/ed_draw.ml" 79 2788 2813
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 64 2165 2193 "editor/ed_draw.ml" 64 2165 2199
+)
+"editor/ed_draw.ml" 79 2788 2819 "editor/ed_draw.ml" 79 2788 2829
+type(
+  Ed_hyper.turtle -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.turn_right
+)
+"editor/ed_draw.ml" 79 2788 2830 "editor/ed_draw.ml" 79 2788 2836
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 64 2165 2193 "editor/ed_draw.ml" 64 2165 2199
+)
+"editor/ed_draw.ml" 79 2788 2839 "editor/ed_draw.ml" 79 2788 2841
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.pi
+)
+"editor/ed_draw.ml" 79 2788 2842 "editor/ed_draw.ml" 79 2788 2844
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_draw.ml" 79 2788 2845 "editor/ed_draw.ml" 79 2788 2850
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_draw.ml" 77 2690 2700 "editor/ed_draw.ml" 77 2690 2705
+)
+"editor/ed_draw.ml" 79 2788 2838 "editor/ed_draw.ml" 79 2788 2851
+type(
+  float
+)
+"editor/ed_draw.ml" 79 2788 2852 "editor/ed_draw.ml" 79 2788 2854
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_draw.ml" 79 2788 2855 "editor/ed_draw.ml" 79 2788 2857
+type(
+  float
+)
+"editor/ed_draw.ml" 79 2788 2837 "editor/ed_draw.ml" 79 2788 2858
+type(
+  float
+)
+"editor/ed_draw.ml" 79 2788 2819 "editor/ed_draw.ml" 79 2788 2858
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 79 2788 2789 "editor/ed_draw.ml" 79 2788 2858
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 81 2869 2879 "editor/ed_draw.ml" 81 2869 2880
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 81 2869 2883 "editor/ed_draw.ml" 81 2869 2897
+type(
+  Ed_graph.G.vertex ->
+  int ->
+  Ed_hyper.turtle ->
+  float ->
+  float ->
+  Ed_graph.G.vertex list -> (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+ident(
+  int_ref draw_edges_dfs "editor/ed_draw.ml" 86 2964 2968 "editor/ed_draw.ml" 86 2964 2982
+)
+"editor/ed_draw.ml" 81 2869 2898 "editor/ed_draw.ml" 81 2869 2902
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref node "editor/ed_draw.ml" 64 2165 2188 "editor/ed_draw.ml" 64 2165 2192
+)
+"editor/ed_draw.ml" 81 2869 2904 "editor/ed_draw.ml" 81 2869 2909
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 64 2165 2182 "editor/ed_draw.ml" 64 2165 2187
+)
+"editor/ed_draw.ml" 81 2869 2909 "editor/ed_draw.ml" 81 2869 2910
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"editor/ed_draw.ml" 81 2869 2910 "editor/ed_draw.ml" 81 2869 2911
+type(
+  int
+)
+"editor/ed_draw.ml" 81 2869 2903 "editor/ed_draw.ml" 81 2869 2912
+type(
+  int
+)
+"editor/ed_draw.ml" 81 2869 2913 "editor/ed_draw.ml" 81 2869 2919
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 78 2768 2778 "editor/ed_draw.ml" 78 2768 2784
+)
+"editor/ed_draw.ml" 81 2869 2920 "editor/ed_draw.ml" 81 2869 2928
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_draw.ml" 76 2614 2624 "editor/ed_draw.ml" 76 2614 2632
+)
+"editor/ed_draw.ml" 81 2869 2929 "editor/ed_draw.ml" 81 2869 2934
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_draw.ml" 77 2690 2700 "editor/ed_draw.ml" 77 2690 2705
+)
+"editor/ed_draw.ml" 81 2869 2935 "editor/ed_draw.ml" 81 2869 2936
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 73 2529 2537 "editor/ed_draw.ml" 73 2529 2538
+)
+"editor/ed_draw.ml" 81 2869 2883 "editor/ed_draw.ml" 81 2869 2936
+call(
+  stack
+)
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 82 2940 2946 "editor/ed_draw.ml" 82 2940 2948
+type(
+  unit
+)
+"editor/ed_draw.ml" 81 2869 2875 "editor/ed_draw.ml" 82 2940 2948
+type(
+  unit
+)
+"editor/ed_draw.ml" 78 2768 2774 "editor/ed_draw.ml" 82 2940 2948
+type(
+  unit
+)
+"editor/ed_draw.ml" 75 2590 2608 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 75 2590 2594 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 74 2561 2565 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 73 2529 2533 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 72 2465 2469 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 71 2394 2398 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 70 2359 2363 "editor/ed_draw.ml" 83 2949 2956
+type(
+  unit
+)
+"editor/ed_draw.ml" 68 2278 2325 "editor/ed_draw.ml" 84 2957 2962
+type(
+  unit
+)
+"editor/ed_draw.ml" 68 2278 2280 "editor/ed_draw.ml" 84 2957 2962
+type(
+  unit
+)
+"editor/ed_draw.ml" 67 2256 2258 "editor/ed_draw.ml" 84 2957 2962
+type(
+  unit
+)
+"editor/ed_draw.ml" 66 2232 2234 "editor/ed_draw.ml" 84 2957 2962
+type(
+  unit
+)
+"editor/ed_draw.ml" 65 2202 2204 "editor/ed_draw.ml" 84 2957 2962
+type(
+  unit
+)
+"editor/ed_draw.ml" 86 2964 2968 "editor/ed_draw.ml" 86 2964 2982
+type(
+  Ed_graph.G.vertex ->
+  int ->
+  Ed_hyper.turtle ->
+  float ->
+  float ->
+  Ed_graph.G.vertex list -> (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+ident(
+  def draw_edges_dfs "editor/ed_draw.ml" 64 2165 2165 --
+)
+"editor/ed_draw.ml" 86 2964 2983 "editor/ed_draw.ml" 86 2964 2987
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def node "editor/ed_draw.ml" 86 2964 2988 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 86 2964 2988 "editor/ed_draw.ml" 86 2964 2993
+type(
+  int
+)
+ident(
+  def depth "editor/ed_draw.ml" 86 2964 2994 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 86 2964 2994 "editor/ed_draw.ml" 86 2964 3000
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_draw.ml" 86 2964 3001 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 86 2964 3001 "editor/ed_draw.ml" 86 2964 3009
+type(
+  float
+)
+ident(
+  def distance "editor/ed_draw.ml" 86 2964 3010 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 86 2964 3010 "editor/ed_draw.ml" 86 2964 3015
+type(
+  float
+)
+ident(
+  def angle "editor/ed_draw.ml" 86 2964 3018 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 87 3027 3031 "editor/ed_draw.ml" 87 3027 3033
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 88 3038 3044 "editor/ed_draw.ml" 88 3038 3046
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 89 3047 3051 "editor/ed_draw.ml" 89 3047 3052
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 90 3062 3068 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 89 3047 3056 "editor/ed_draw.ml" 89 3047 3057
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  def l "editor/ed_draw.ml" 90 3062 3068 "editor/ed_draw.ml" 100 3464 3471
+)
+"editor/ed_draw.ml" 89 3047 3051 "editor/ed_draw.ml" 89 3047 3057
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 90 3062 3072 "editor/ed_draw.ml" 90 3062 3073
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 90 3062 3076 "editor/ed_draw.ml" 90 3062 3085
+type(
+  Ed_graph.G.edge -> Ed_graph.G.E.label
+)
+ident(
+  ext_ref Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 90 3062 3087 "editor/ed_draw.ml" 90 3062 3098
+type(
+  Ed_graph.B.G.t -> Ed_graph.G.vertex -> Ed_graph.G.vertex -> Ed_graph.G.edge
+)
+ident(
+  ext_ref Ed_graph.G.find_edge
+)
+"editor/ed_draw.ml" 90 3062 3099 "editor/ed_draw.ml" 90 3062 3100
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 90 3062 3100 "editor/ed_draw.ml" 90 3062 3105
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_draw.ml" 90 3062 3099 "editor/ed_draw.ml" 90 3062 3105
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_draw.ml" 90 3062 3106 "editor/ed_draw.ml" 90 3062 3110
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref node "editor/ed_draw.ml" 86 2964 2983 "editor/ed_draw.ml" 86 2964 2987
+)
+"editor/ed_draw.ml" 90 3062 3111 "editor/ed_draw.ml" 90 3062 3112
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 89 3047 3051 "editor/ed_draw.ml" 89 3047 3052
+)
+"editor/ed_draw.ml" 90 3062 3086 "editor/ed_draw.ml" 90 3062 3113
+call(
+  stack
+)
+type(
+  Ed_graph.G.edge
+)
+"editor/ed_draw.ml" 90 3062 3076 "editor/ed_draw.ml" 90 3062 3113
+call(
+  stack
+)
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 91 3117 3123 "editor/ed_draw.ml" 91 3117 3124
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 90 3062 3072 "editor/ed_draw.ml" 90 3062 3073
+)
+"editor/ed_draw.ml" 91 3117 3136 "editor/ed_draw.ml" 91 3117 3140
+type(
+  bool
+)
+"editor/ed_draw.ml" 91 3117 3123 "editor/ed_draw.ml" 91 3117 3140
+type(
+  unit
+)
+"editor/ed_draw.ml" 92 3142 3148 "editor/ed_draw.ml" 92 3142 3149
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 90 3062 3072 "editor/ed_draw.ml" 90 3062 3073
+)
+"editor/ed_draw.ml" 92 3142 3165 "editor/ed_draw.ml" 92 3142 3171
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 86 2964 2994 "editor/ed_draw.ml" 86 2964 3000
+)
+"editor/ed_draw.ml" 92 3142 3148 "editor/ed_draw.ml" 92 3142 3171
+type(
+  unit
+)
+"editor/ed_draw.ml" 93 3173 3179 "editor/ed_draw.ml" 93 3173 3180
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 90 3062 3072 "editor/ed_draw.ml" 90 3062 3073
+)
+"editor/ed_draw.ml" 93 3173 3198 "editor/ed_draw.ml" 93 3173 3206
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_draw.ml" 86 2964 3001 "editor/ed_draw.ml" 86 2964 3009
+)
+"editor/ed_draw.ml" 93 3173 3179 "editor/ed_draw.ml" 93 3173 3206
+type(
+  unit
+)
+"editor/ed_draw.ml" 94 3208 3218 "editor/ed_draw.ml" 94 3208 3223
+type(
+  int
+)
+"editor/ed_draw.ml" 94 3208 3226 "editor/ed_draw.ml" 94 3208 3228
+type(
+  int
+)
+"editor/ed_draw.ml" 95 3232 3238 "editor/ed_draw.ml" 95 3232 3239
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 90 3062 3072 "editor/ed_draw.ml" 90 3062 3073
+)
+"editor/ed_draw.ml" 95 3232 3254 "editor/ed_draw.ml" 95 3232 3259
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_draw.ml" 94 3208 3218 "editor/ed_draw.ml" 94 3208 3223
+)
+"editor/ed_draw.ml" 95 3232 3238 "editor/ed_draw.ml" 95 3232 3259
+type(
+  unit
+)
+"editor/ed_draw.ml" 96 3261 3271 "editor/ed_draw.ml" 96 3261 3273
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 96 3261 3276 "editor/ed_draw.ml" 96 3261 3288
+type(
+  Ed_hyper.turtle -> float -> int -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.advance_many
+)
+"editor/ed_draw.ml" 96 3261 3289 "editor/ed_draw.ml" 96 3261 3295
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 86 2964 2994 "editor/ed_draw.ml" 86 2964 3000
+)
+"editor/ed_draw.ml" 96 3261 3296 "editor/ed_draw.ml" 96 3261 3304
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_draw.ml" 86 2964 3001 "editor/ed_draw.ml" 86 2964 3009
+)
+"editor/ed_draw.ml" 96 3261 3305 "editor/ed_draw.ml" 96 3261 3310
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_draw.ml" 94 3208 3218 "editor/ed_draw.ml" 94 3208 3223
+)
+"editor/ed_draw.ml" 96 3261 3276 "editor/ed_draw.ml" 96 3261 3310
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 97 3315 3325 "editor/ed_draw.ml" 97 3315 3331
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 97 3315 3334 "editor/ed_draw.ml" 97 3315 3343
+type(
+  Ed_hyper.turtle -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.turn_left
+)
+"editor/ed_draw.ml" 97 3315 3344 "editor/ed_draw.ml" 97 3315 3350
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 86 2964 2994 "editor/ed_draw.ml" 86 2964 3000
+)
+"editor/ed_draw.ml" 97 3315 3351 "editor/ed_draw.ml" 97 3315 3356
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_draw.ml" 86 2964 3010 "editor/ed_draw.ml" 86 2964 3015
+)
+"editor/ed_draw.ml" 97 3315 3334 "editor/ed_draw.ml" 97 3315 3356
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 98 3360 3370 "editor/ed_draw.ml" 98 3360 3371
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 98 3360 3375 "editor/ed_draw.ml" 98 3360 3376
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 89 3047 3051 "editor/ed_draw.ml" 89 3047 3052
+)
+"editor/ed_draw.ml" 98 3360 3377 "editor/ed_draw.ml" 98 3360 3379
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_draw.ml" 96 3261 3271 "editor/ed_draw.ml" 96 3261 3273
+)
+"editor/ed_draw.ml" 98 3360 3374 "editor/ed_draw.ml" 98 3360 3380
+type(
+  Ed_graph.G.vertex * Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 98 3360 3384 "editor/ed_draw.ml" 98 3360 3398
+type(
+  Ed_graph.G.vertex ->
+  int ->
+  Ed_hyper.turtle ->
+  float ->
+  float ->
+  Ed_graph.G.vertex list -> (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+ident(
+  int_ref draw_edges_dfs "editor/ed_draw.ml" 86 2964 2968 "editor/ed_draw.ml" 86 2964 2982
+)
+"editor/ed_draw.ml" 98 3360 3399 "editor/ed_draw.ml" 98 3360 3403
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref node "editor/ed_draw.ml" 86 2964 2983 "editor/ed_draw.ml" 86 2964 2987
+)
+"editor/ed_draw.ml" 98 3360 3404 "editor/ed_draw.ml" 98 3360 3409
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 86 2964 2988 "editor/ed_draw.ml" 86 2964 2993
+)
+"editor/ed_draw.ml" 98 3360 3410 "editor/ed_draw.ml" 98 3360 3416
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 97 3315 3325 "editor/ed_draw.ml" 97 3315 3331
+)
+"editor/ed_draw.ml" 98 3360 3417 "editor/ed_draw.ml" 98 3360 3425
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_draw.ml" 86 2964 3001 "editor/ed_draw.ml" 86 2964 3009
+)
+"editor/ed_draw.ml" 98 3360 3426 "editor/ed_draw.ml" 98 3360 3431
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_draw.ml" 86 2964 3010 "editor/ed_draw.ml" 86 2964 3015
+)
+"editor/ed_draw.ml" 98 3360 3432 "editor/ed_draw.ml" 98 3360 3433
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 89 3047 3056 "editor/ed_draw.ml" 89 3047 3057
+)
+"editor/ed_draw.ml" 98 3360 3384 "editor/ed_draw.ml" 98 3360 3433
+call(
+  stack
+)
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 98 3360 3374 "editor/ed_draw.ml" 98 3360 3433
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 99 3437 3443 "editor/ed_draw.ml" 99 3437 3451
+type(
+  int -> Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref draw_dfs "editor/ed_draw.ml" 64 2165 2173 "editor/ed_draw.ml" 64 2165 2181
+)
+"editor/ed_draw.ml" 99 3437 3452 "editor/ed_draw.ml" 99 3437 3457
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 86 2964 2988 "editor/ed_draw.ml" 86 2964 2993
+)
+"editor/ed_draw.ml" 99 3437 3458 "editor/ed_draw.ml" 99 3437 3459
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 89 3047 3051 "editor/ed_draw.ml" 89 3047 3052
+)
+"editor/ed_draw.ml" 99 3437 3460 "editor/ed_draw.ml" 99 3437 3462
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_draw.ml" 96 3261 3271 "editor/ed_draw.ml" 96 3261 3273
+)
+"editor/ed_draw.ml" 99 3437 3443 "editor/ed_draw.ml" 99 3437 3462
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 100 3464 3470 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 98 3360 3370 "editor/ed_draw.ml" 98 3360 3371
+)
+"editor/ed_draw.ml" 99 3437 3443 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 98 3360 3366 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 97 3315 3321 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 96 3261 3267 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 95 3232 3238 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 94 3208 3214 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 93 3173 3179 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 92 3142 3148 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 91 3117 3123 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 90 3062 3068 "editor/ed_draw.ml" 100 3464 3471
+type(
+  (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 86 2964 3018 "editor/ed_draw.ml" 100 3464 3471
+type(
+  Ed_graph.G.vertex list -> (Ed_graph.G.vertex * Ed_hyper.turtle) list
+)
+"editor/ed_draw.ml" 106 3511 3515 "editor/ed_draw.ml" 106 3511 3523
+type(
+  Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+ident(
+  def draw_bfs "editor/ed_draw.ml" 152 4975 4975 --
+)
+"editor/ed_draw.ml" 106 3511 3524 "editor/ed_draw.ml" 106 3511 3528
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def root "editor/ed_draw.ml" 106 3511 3529 "editor/ed_draw.ml" 149 4938 4944
+)
+"editor/ed_draw.ml" 106 3511 3529 "editor/ed_draw.ml" 106 3511 3535
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_draw.ml" 107 3538 3540 "editor/ed_draw.ml" 149 4938 4944
+)
+"editor/ed_draw.ml" 107 3538 3544 "editor/ed_draw.ml" 107 3538 3545
+type(
+  Ed_graph.G.vertex Queue.t
+)
+"editor/ed_draw.ml" 107 3538 3548 "editor/ed_draw.ml" 107 3538 3560
+type(
+  unit -> Ed_graph.G.vertex Queue.t
+)
+ident(
+  ext_ref Queue.create
+)
+"editor/ed_draw.ml" 107 3538 3561 "editor/ed_draw.ml" 107 3538 3563
+type(
+  unit
+)
+"editor/ed_draw.ml" 107 3538 3548 "editor/ed_draw.ml" 107 3538 3563
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex Queue.t
+)
+"editor/ed_draw.ml" 108 3567 3573 "editor/ed_draw.ml" 108 3567 3576
+type(
+  Ed_graph.G.vertex -> int -> Ed_hyper.turtle -> unit
+)
+"editor/ed_draw.ml" 108 3567 3577 "editor/ed_draw.ml" 108 3567 3578
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 108 3567 3579 "editor/ed_draw.ml" 112 3655 3673
+)
+"editor/ed_draw.ml" 108 3567 3579 "editor/ed_draw.ml" 108 3567 3580
+type(
+  int
+)
+ident(
+  def n "editor/ed_draw.ml" 108 3567 3581 "editor/ed_draw.ml" 112 3655 3673
+)
+"editor/ed_draw.ml" 108 3567 3581 "editor/ed_draw.ml" 108 3567 3582
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def t "editor/ed_draw.ml" 109 3585 3589 "editor/ed_draw.ml" 112 3655 3673
+)
+"editor/ed_draw.ml" 109 3585 3589 "editor/ed_draw.ml" 109 3585 3599
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.vertex Queue.t -> unit
+)
+ident(
+  ext_ref Queue.push
+)
+"editor/ed_draw.ml" 109 3585 3600 "editor/ed_draw.ml" 109 3585 3601
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 108 3567 3577 "editor/ed_draw.ml" 108 3567 3578
+)
+"editor/ed_draw.ml" 109 3585 3602 "editor/ed_draw.ml" 109 3585 3603
+type(
+  Ed_graph.G.vertex Queue.t
+)
+ident(
+  int_ref q "editor/ed_draw.ml" 107 3538 3544 "editor/ed_draw.ml" 107 3538 3545
+)
+"editor/ed_draw.ml" 109 3585 3589 "editor/ed_draw.ml" 109 3585 3603
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 110 3605 3613 "editor/ed_draw.ml" 110 3605 3616
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 110 3605 3619 "editor/ed_draw.ml" 110 3605 3628
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 110 3605 3629 "editor/ed_draw.ml" 110 3605 3630
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 108 3567 3577 "editor/ed_draw.ml" 108 3567 3578
+)
+"editor/ed_draw.ml" 110 3605 3619 "editor/ed_draw.ml" 110 3605 3630
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 111 3634 3638 "editor/ed_draw.ml" 111 3634 3641
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 110 3605 3613 "editor/ed_draw.ml" 110 3605 3616
+)
+"editor/ed_draw.ml" 111 3634 3652 "editor/ed_draw.ml" 111 3634 3653
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref t "editor/ed_draw.ml" 108 3567 3581 "editor/ed_draw.ml" 108 3567 3582
+)
+"editor/ed_draw.ml" 111 3634 3638 "editor/ed_draw.ml" 111 3634 3653
+type(
+  unit
+)
+"editor/ed_draw.ml" 112 3655 3659 "editor/ed_draw.ml" 112 3655 3662
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 110 3605 3613 "editor/ed_draw.ml" 110 3605 3616
+)
+"editor/ed_draw.ml" 112 3655 3672 "editor/ed_draw.ml" 112 3655 3673
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 108 3567 3579 "editor/ed_draw.ml" 108 3567 3580
+)
+"editor/ed_draw.ml" 112 3655 3659 "editor/ed_draw.ml" 112 3655 3673
+type(
+  unit
+)
+"editor/ed_draw.ml" 111 3634 3638 "editor/ed_draw.ml" 112 3655 3673
+type(
+  unit
+)
+"editor/ed_draw.ml" 110 3605 3609 "editor/ed_draw.ml" 112 3655 3673
+type(
+  unit
+)
+"editor/ed_draw.ml" 109 3585 3589 "editor/ed_draw.ml" 112 3655 3673
+type(
+  unit
+)
+"editor/ed_draw.ml" 114 3679 3681 "editor/ed_draw.ml" 114 3679 3684
+type(
+  Ed_graph.G.vertex -> int -> Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref add "editor/ed_draw.ml" 108 3567 3573 "editor/ed_draw.ml" 108 3567 3576
+)
+"editor/ed_draw.ml" 114 3679 3685 "editor/ed_draw.ml" 114 3679 3689
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref root "editor/ed_draw.ml" 106 3511 3524 "editor/ed_draw.ml" 106 3511 3528
+)
+"editor/ed_draw.ml" 114 3679 3690 "editor/ed_draw.ml" 114 3679 3691
+type(
+  int
+)
+"editor/ed_draw.ml" 114 3679 3692 "editor/ed_draw.ml" 114 3679 3698
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 106 3511 3529 "editor/ed_draw.ml" 106 3511 3535
+)
+"editor/ed_draw.ml" 114 3679 3681 "editor/ed_draw.ml" 114 3679 3698
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 115 3700 3708 "editor/ed_draw.ml" 115 3700 3711
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"editor/ed_draw.ml" 115 3700 3713 "editor/ed_draw.ml" 115 3700 3727
+type(
+  Ed_graph.G.vertex Queue.t -> bool
+)
+ident(
+  ext_ref Queue.is_empty
+)
+"editor/ed_draw.ml" 115 3700 3728 "editor/ed_draw.ml" 115 3700 3729
+type(
+  Ed_graph.G.vertex Queue.t
+)
+ident(
+  int_ref q "editor/ed_draw.ml" 107 3538 3544 "editor/ed_draw.ml" 107 3538 3545
+)
+"editor/ed_draw.ml" 115 3700 3712 "editor/ed_draw.ml" 115 3700 3730
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_draw.ml" 115 3700 3708 "editor/ed_draw.ml" 115 3700 3730
+type(
+  bool
+)
+"editor/ed_draw.ml" 116 3734 3742 "editor/ed_draw.ml" 116 3734 3743
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 117 3761 3765 "editor/ed_draw.ml" 148 4930 4937
+)
+"editor/ed_draw.ml" 116 3734 3746 "editor/ed_draw.ml" 116 3734 3755
+type(
+  Ed_graph.G.vertex Queue.t -> Ed_graph.G.vertex
+)
+ident(
+  ext_ref Queue.pop
+)
+"editor/ed_draw.ml" 116 3734 3756 "editor/ed_draw.ml" 116 3734 3757
+type(
+  Ed_graph.G.vertex Queue.t
+)
+ident(
+  int_ref q "editor/ed_draw.ml" 107 3538 3544 "editor/ed_draw.ml" 107 3538 3545
+)
+"editor/ed_draw.ml" 116 3734 3746 "editor/ed_draw.ml" 116 3734 3757
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex
+)
+"editor/ed_draw.ml" 117 3761 3769 "editor/ed_draw.ml" 117 3761 3772
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  def lab "editor/ed_draw.ml" 118 3790 3794 "editor/ed_draw.ml" 148 4930 4937
+)
+"editor/ed_draw.ml" 117 3761 3775 "editor/ed_draw.ml" 117 3761 3784
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 117 3761 3785 "editor/ed_draw.ml" 117 3761 3786
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 116 3734 3742 "editor/ed_draw.ml" 116 3734 3743
+)
+"editor/ed_draw.ml" 117 3761 3775 "editor/ed_draw.ml" 117 3761 3786
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 118 3790 3798 "editor/ed_draw.ml" 118 3790 3803
+type(
+  int
+)
+ident(
+  def depth "editor/ed_draw.ml" 119 3819 3823 "editor/ed_draw.ml" 148 4930 4937
+)
+"editor/ed_draw.ml" 118 3790 3806 "editor/ed_draw.ml" 118 3790 3809
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 117 3761 3769 "editor/ed_draw.ml" 117 3761 3772
+)
+"editor/ed_draw.ml" 118 3790 3806 "editor/ed_draw.ml" 118 3790 3815
+type(
+  int
+)
+"editor/ed_draw.ml" 119 3819 3827 "editor/ed_draw.ml" 119 3819 3829
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def tv "editor/ed_draw.ml" 120 3846 3850 "editor/ed_draw.ml" 148 4930 4937
+)
+"editor/ed_draw.ml" 119 3819 3832 "editor/ed_draw.ml" 119 3819 3835
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 117 3761 3769 "editor/ed_draw.ml" 117 3761 3772
+)
+"editor/ed_draw.ml" 119 3819 3832 "editor/ed_draw.ml" 119 3819 3842
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 120 3846 3854 "editor/ed_draw.ml" 120 3846 3858
+type(
+  float
+)
+ident(
+  def dist "editor/ed_draw.ml" 122 3967 3971 "editor/ed_draw.ml" 148 4930 4937
+)
+"editor/ed_draw.ml" 120 3846 3861 "editor/ed_draw.ml" 120 3846 3876
+type(
+  Ed_hyper.turtle -> float
+)
+ident(
+  ext_ref Ed_hyper.hspace_dist_sqr
+)
+"editor/ed_draw.ml" 120 3846 3877 "editor/ed_draw.ml" 120 3846 3879
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_draw.ml" 119 3819 3827 "editor/ed_draw.ml" 119 3819 3829
+)
+"editor/ed_draw.ml" 120 3846 3861 "editor/ed_draw.ml" 120 3846 3879
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_draw.ml" 122 3967 3974 "editor/ed_draw.ml" 122 3967 3978
+type(
+  float
+)
+ident(
+  int_ref dist "editor/ed_draw.ml" 120 3846 3854 "editor/ed_draw.ml" 120 3846 3858
+)
+"editor/ed_draw.ml" 122 3967 3979 "editor/ed_draw.ml" 122 3967 3981
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.<=
+)
+"editor/ed_draw.ml" 122 3967 3982 "editor/ed_draw.ml" 122 3967 3992
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.rlimit_sqr
+)
+"editor/ed_draw.ml" 122 3967 3974 "editor/ed_draw.ml" 122 3967 3992
+type(
+  bool
+)
+"editor/ed_draw.ml" 123 4004 4010 "editor/ed_draw.ml" 123 4004 4013
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref lab "editor/ed_draw.ml" 117 3761 3769 "editor/ed_draw.ml" 117 3761 3772
+)
+"editor/ed_draw.ml" 123 4004 4025 "editor/ed_draw.ml" 123 4004 4032
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 123 4004 4010 "editor/ed_draw.ml" 123 4004 4032
+type(
+  unit
+)
+"editor/ed_draw.ml" 124 4034 4044 "editor/ed_draw.ml" 124 4034 4045
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 124 4034 4054 "editor/ed_draw.ml" 124 4034 4060
+type(
+  Ed_graph.B.G.t -> Ed_graph.G.vertex -> Ed_graph.G.vertex list
+)
+ident(
+  ext_ref Ed_graph.G.succ
+)
+"editor/ed_draw.ml" 124 4034 4061 "editor/ed_draw.ml" 124 4034 4062
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 124 4034 4062 "editor/ed_draw.ml" 124 4034 4067
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_draw.ml" 124 4034 4061 "editor/ed_draw.ml" 124 4034 4067
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_draw.ml" 124 4034 4068 "editor/ed_draw.ml" 124 4034 4069
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 116 3734 3742 "editor/ed_draw.ml" 116 3734 3743
+)
+"editor/ed_draw.ml" 124 4034 4054 "editor/ed_draw.ml" 124 4034 4069
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 124 4034 4093 "editor/ed_draw.ml" 124 4034 4094
+type(
+  string
+)
+"editor/ed_draw.ml" 124 4034 4076 "editor/ed_draw.ml" 124 4034 4094
+type(
+  exn
+)
+"editor/ed_draw.ml" 124 4034 4098 "editor/ed_draw.ml" 124 4034 4100
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 124 4034 4048 "editor/ed_draw.ml" 124 4034 4100
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 125 4105 4115 "editor/ed_draw.ml" 125 4105 4116
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 125 4105 4119 "editor/ed_draw.ml" 125 4105 4130
+type(
+  (Ed_graph.G.vertex -> bool) ->
+  Ed_graph.G.vertex list -> Ed_graph.G.vertex list
+)
+ident(
+  ext_ref List.filter
+)
+"editor/ed_draw.ml" 125 4105 4136 "editor/ed_draw.ml" 125 4105 4137
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def x "editor/ed_draw.ml" 125 4105 4141 "editor/ed_draw.ml" 125 4105 4171
+)
+"editor/ed_draw.ml" 125 4105 4142 "editor/ed_draw.ml" 125 4105 4151
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 125 4105 4152 "editor/ed_draw.ml" 125 4105 4153
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref x "editor/ed_draw.ml" 125 4105 4136 "editor/ed_draw.ml" 125 4105 4137
+)
+"editor/ed_draw.ml" 125 4105 4141 "editor/ed_draw.ml" 125 4105 4154
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 125 4105 4141 "editor/ed_draw.ml" 125 4105 4162
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 125 4105 4163 "editor/ed_draw.ml" 125 4105 4164
+type(
+  Ed_graph.visibility -> Ed_graph.visibility -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 125 4105 4165 "editor/ed_draw.ml" 125 4105 4171
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 125 4105 4141 "editor/ed_draw.ml" 125 4105 4171
+type(
+  bool
+)
+"editor/ed_draw.ml" 125 4105 4131 "editor/ed_draw.ml" 125 4105 4172
+type(
+  Ed_graph.G.vertex -> bool
+)
+"editor/ed_draw.ml" 125 4105 4173 "editor/ed_draw.ml" 125 4105 4174
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 124 4034 4044 "editor/ed_draw.ml" 124 4034 4045
+)
+"editor/ed_draw.ml" 125 4105 4119 "editor/ed_draw.ml" 125 4105 4174
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex list
+)
+"editor/ed_draw.ml" 126 4178 4184 "editor/ed_draw.ml" 126 4178 4193
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.G.vertex list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"editor/ed_draw.ml" 126 4178 4199 "editor/ed_draw.ml" 126 4178 4200
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def w "editor/ed_draw.ml" 126 4178 4204 "editor/ed_draw.ml" 126 4178 4239
+)
+"editor/ed_draw.ml" 126 4178 4205 "editor/ed_draw.ml" 126 4178 4214
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 126 4178 4215 "editor/ed_draw.ml" 126 4178 4216
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 126 4178 4199 "editor/ed_draw.ml" 126 4178 4200
+)
+"editor/ed_draw.ml" 126 4178 4204 "editor/ed_draw.ml" 126 4178 4217
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 126 4178 4229 "editor/ed_draw.ml" 126 4178 4239
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 126 4178 4204 "editor/ed_draw.ml" 126 4178 4239
+type(
+  unit
+)
+"editor/ed_draw.ml" 126 4178 4194 "editor/ed_draw.ml" 126 4178 4240
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 126 4178 4241 "editor/ed_draw.ml" 126 4178 4242
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 125 4105 4115 "editor/ed_draw.ml" 125 4105 4116
+)
+"editor/ed_draw.ml" 126 4178 4184 "editor/ed_draw.ml" 126 4178 4242
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 127 4244 4254 "editor/ed_draw.ml" 127 4244 4255
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 127 4244 4258 "editor/ed_draw.ml" 127 4244 4272
+type(
+  Ed_graph.G.vertex list -> Ed_graph.G.V.t list
+)
+ident(
+  int_ref order_children "editor/ed_draw.ml" 37 1568 1572 "editor/ed_draw.ml" 37 1568 1586
+)
+"editor/ed_draw.ml" 127 4244 4273 "editor/ed_draw.ml" 127 4244 4274
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 125 4105 4115 "editor/ed_draw.ml" 125 4105 4116
+)
+"editor/ed_draw.ml" 127 4244 4258 "editor/ed_draw.ml" 127 4244 4274
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.t list
+)
+"editor/ed_draw.ml" 128 4278 4288 "editor/ed_draw.ml" 128 4278 4289
+type(
+  int
+)
+"editor/ed_draw.ml" 128 4278 4292 "editor/ed_draw.ml" 128 4278 4303
+type(
+  Ed_graph.G.V.t list -> int
+)
+ident(
+  ext_ref List.length
+)
+"editor/ed_draw.ml" 128 4278 4304 "editor/ed_draw.ml" 128 4278 4305
+type(
+  Ed_graph.G.V.t list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 127 4244 4254 "editor/ed_draw.ml" 127 4244 4255
+)
+"editor/ed_draw.ml" 128 4278 4292 "editor/ed_draw.ml" 128 4278 4305
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 129 4309 4318 "editor/ed_draw.ml" 129 4309 4319
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 128 4278 4288 "editor/ed_draw.ml" 128 4278 4289
+)
+"editor/ed_draw.ml" 129 4309 4320 "editor/ed_draw.ml" 129 4309 4321
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"editor/ed_draw.ml" 129 4309 4322 "editor/ed_draw.ml" 129 4309 4323
+type(
+  int
+)
+"editor/ed_draw.ml" 129 4309 4318 "editor/ed_draw.ml" 129 4309 4323
+type(
+  bool
+)
+"editor/ed_draw.ml" 130 4335 4340 "editor/ed_draw.ml" 130 4335 4348
+type(
+  float
+)
+"editor/ed_draw.ml" 130 4335 4351 "editor/ed_draw.ml" 130 4335 4360
+type(
+  int -> float
+)
+ident(
+  ext_ref Ed_hyper.step_from
+)
+"editor/ed_draw.ml" 130 4335 4365 "editor/ed_draw.ml" 130 4335 4370
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 118 3790 3798 "editor/ed_draw.ml" 118 3790 3803
+)
+"editor/ed_draw.ml" 130 4335 4371 "editor/ed_draw.ml" 130 4335 4372
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 130 4335 4373 "editor/ed_draw.ml" 130 4335 4374
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4365 "editor/ed_draw.ml" 130 4335 4374
+type(
+  bool
+)
+"editor/ed_draw.ml" 130 4335 4380 "editor/ed_draw.ml" 130 4335 4383
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.max
+)
+"editor/ed_draw.ml" 130 4335 4384 "editor/ed_draw.ml" 130 4335 4385
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4386 "editor/ed_draw.ml" 130 4335 4387
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 128 4278 4288 "editor/ed_draw.ml" 128 4278 4289
+)
+"editor/ed_draw.ml" 130 4335 4380 "editor/ed_draw.ml" 130 4335 4387
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4393 "editor/ed_draw.ml" 130 4335 4394
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4395 "editor/ed_draw.ml" 130 4335 4396
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.*
+)
+"editor/ed_draw.ml" 130 4335 4397 "editor/ed_draw.ml" 130 4335 4400
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.max
+)
+"editor/ed_draw.ml" 130 4335 4401 "editor/ed_draw.ml" 130 4335 4402
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4403 "editor/ed_draw.ml" 130 4335 4404
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 128 4278 4288 "editor/ed_draw.ml" 128 4278 4289
+)
+"editor/ed_draw.ml" 130 4335 4397 "editor/ed_draw.ml" 130 4335 4404
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4393 "editor/ed_draw.ml" 130 4335 4404
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4361 "editor/ed_draw.ml" 130 4335 4405
+type(
+  int
+)
+"editor/ed_draw.ml" 130 4335 4351 "editor/ed_draw.ml" 130 4335 4405
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4411 "editor/ed_draw.ml" 131 4406 4416
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4423 "editor/ed_draw.ml" 131 4406 4428
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 118 3790 3798 "editor/ed_draw.ml" 118 3790 3803
+)
+"editor/ed_draw.ml" 131 4406 4429 "editor/ed_draw.ml" 131 4406 4430
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 131 4406 4431 "editor/ed_draw.ml" 131 4406 4432
+type(
+  int
+)
+"editor/ed_draw.ml" 131 4406 4423 "editor/ed_draw.ml" 131 4406 4432
+type(
+  bool
+)
+"editor/ed_draw.ml" 131 4406 4438 "editor/ed_draw.ml" 131 4406 4440
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4446 "editor/ed_draw.ml" 131 4406 4448
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4419 "editor/ed_draw.ml" 131 4406 4449
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4450 "editor/ed_draw.ml" 131 4406 4452
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_draw.ml" 131 4406 4453 "editor/ed_draw.ml" 131 4406 4455
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.pi
+)
+"editor/ed_draw.ml" 131 4406 4419 "editor/ed_draw.ml" 131 4406 4455
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4456 "editor/ed_draw.ml" 131 4406 4458
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_draw.ml" 131 4406 4460 "editor/ed_draw.ml" 131 4406 4472
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float_of_int
+)
+"editor/ed_draw.ml" 131 4406 4473 "editor/ed_draw.ml" 131 4406 4474
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_draw.ml" 128 4278 4288 "editor/ed_draw.ml" 128 4278 4289
+)
+"editor/ed_draw.ml" 131 4406 4459 "editor/ed_draw.ml" 131 4406 4475
+type(
+  float
+)
+"editor/ed_draw.ml" 131 4406 4419 "editor/ed_draw.ml" 131 4406 4475
+type(
+  float
+)
+"editor/ed_draw.ml" 132 4479 4484 "editor/ed_draw.ml" 132 4479 4490
+type(
+  Ed_hyper.turtle ref
+)
+"editor/ed_draw.ml" 133 4494 4497 "editor/ed_draw.ml" 133 4494 4500
+type(
+  Ed_hyper.turtle -> Ed_hyper.turtle ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_draw.ml" 133 4494 4505 "editor/ed_draw.ml" 133 4494 4510
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 118 3790 3798 "editor/ed_draw.ml" 118 3790 3803
+)
+"editor/ed_draw.ml" 133 4494 4511 "editor/ed_draw.ml" 133 4494 4512
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_draw.ml" 133 4494 4513 "editor/ed_draw.ml" 133 4494 4514
+type(
+  int
+)
+"editor/ed_draw.ml" 133 4494 4505 "editor/ed_draw.ml" 133 4494 4514
+type(
+  bool
+)
+"editor/ed_draw.ml" 133 4494 4520 "editor/ed_draw.ml" 133 4494 4522
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_draw.ml" 119 3819 3827 "editor/ed_draw.ml" 119 3819 3829
+)
+"editor/ed_draw.ml" 133 4494 4528 "editor/ed_draw.ml" 133 4494 4538
+type(
+  Ed_hyper.turtle -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.turn_right
+)
+"editor/ed_draw.ml" 133 4494 4539 "editor/ed_draw.ml" 133 4494 4541
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_draw.ml" 119 3819 3827 "editor/ed_draw.ml" 119 3819 3829
+)
+"editor/ed_draw.ml" 133 4494 4544 "editor/ed_draw.ml" 133 4494 4546
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.pi
+)
+"editor/ed_draw.ml" 133 4494 4547 "editor/ed_draw.ml" 133 4494 4549
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_draw.ml" 133 4494 4550 "editor/ed_draw.ml" 133 4494 4555
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_draw.ml" 131 4406 4411 "editor/ed_draw.ml" 131 4406 4416
+)
+"editor/ed_draw.ml" 133 4494 4543 "editor/ed_draw.ml" 133 4494 4556
+type(
+  float
+)
+"editor/ed_draw.ml" 133 4494 4557 "editor/ed_draw.ml" 133 4494 4559
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_draw.ml" 133 4494 4560 "editor/ed_draw.ml" 133 4494 4562
+type(
+  float
+)
+"editor/ed_draw.ml" 133 4494 4542 "editor/ed_draw.ml" 133 4494 4563
+type(
+  float
+)
+"editor/ed_draw.ml" 133 4494 4528 "editor/ed_draw.ml" 133 4494 4563
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 133 4494 4501 "editor/ed_draw.ml" 133 4494 4564
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 133 4494 4497 "editor/ed_draw.ml" 133 4494 4564
+type(
+  Ed_hyper.turtle ref
+)
+"editor/ed_draw.ml" 135 4569 4570 "editor/ed_draw.ml" 135 4569 4579
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.G.vertex list -> unit
+)
+ident(
+  ext_ref List.iter
+)
+"editor/ed_draw.ml" 136 4580 4588 "editor/ed_draw.ml" 136 4580 4589
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def w "editor/ed_draw.ml" 137 4594 4600 "editor/ed_draw.ml" 145 4874 4913
+)
+"editor/ed_draw.ml" 137 4594 4604 "editor/ed_draw.ml" 137 4594 4605
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 137 4594 4608 "editor/ed_draw.ml" 137 4594 4617
+type(
+  Ed_graph.G.edge -> Ed_graph.G.E.label
+)
+ident(
+  ext_ref Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 137 4594 4619 "editor/ed_draw.ml" 137 4594 4630
+type(
+  Ed_graph.B.G.t -> Ed_graph.G.vertex -> Ed_graph.G.vertex -> Ed_graph.G.edge
+)
+ident(
+  ext_ref Ed_graph.G.find_edge
+)
+"editor/ed_draw.ml" 137 4594 4631 "editor/ed_draw.ml" 137 4594 4632
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 137 4594 4632 "editor/ed_draw.ml" 137 4594 4637
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_draw.ml" 137 4594 4631 "editor/ed_draw.ml" 137 4594 4637
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_draw.ml" 137 4594 4638 "editor/ed_draw.ml" 137 4594 4639
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 116 3734 3742 "editor/ed_draw.ml" 116 3734 3743
+)
+"editor/ed_draw.ml" 137 4594 4640 "editor/ed_draw.ml" 137 4594 4641
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 136 4580 4588 "editor/ed_draw.ml" 136 4580 4589
+)
+"editor/ed_draw.ml" 137 4594 4618 "editor/ed_draw.ml" 137 4594 4642
+call(
+  stack
+)
+type(
+  Ed_graph.G.edge
+)
+"editor/ed_draw.ml" 137 4594 4608 "editor/ed_draw.ml" 137 4594 4642
+call(
+  stack
+)
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 138 4646 4652 "editor/ed_draw.ml" 138 4646 4653
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 137 4594 4604 "editor/ed_draw.ml" 137 4594 4605
+)
+"editor/ed_draw.ml" 138 4646 4665 "editor/ed_draw.ml" 138 4646 4669
+type(
+  bool
+)
+"editor/ed_draw.ml" 138 4646 4652 "editor/ed_draw.ml" 138 4646 4669
+type(
+  unit
+)
+"editor/ed_draw.ml" 139 4671 4677 "editor/ed_draw.ml" 139 4671 4678
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 137 4594 4604 "editor/ed_draw.ml" 137 4594 4605
+)
+"editor/ed_draw.ml" 139 4671 4694 "editor/ed_draw.ml" 139 4671 4695
+type(
+  Ed_hyper.turtle ref -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 139 4671 4695 "editor/ed_draw.ml" 139 4671 4701
+type(
+  Ed_hyper.turtle ref
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 132 4479 4484 "editor/ed_draw.ml" 132 4479 4490
+)
+"editor/ed_draw.ml" 139 4671 4694 "editor/ed_draw.ml" 139 4671 4701
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 139 4671 4677 "editor/ed_draw.ml" 139 4671 4701
+type(
+  unit
+)
+"editor/ed_draw.ml" 140 4703 4709 "editor/ed_draw.ml" 140 4703 4710
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 137 4594 4604 "editor/ed_draw.ml" 137 4594 4605
+)
+"editor/ed_draw.ml" 140 4703 4728 "editor/ed_draw.ml" 140 4703 4736
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_draw.ml" 130 4335 4340 "editor/ed_draw.ml" 130 4335 4348
+)
+"editor/ed_draw.ml" 140 4703 4709 "editor/ed_draw.ml" 140 4703 4736
+type(
+  unit
+)
+"editor/ed_draw.ml" 141 4738 4748 "editor/ed_draw.ml" 141 4738 4753
+type(
+  int
+)
+"editor/ed_draw.ml" 141 4738 4756 "editor/ed_draw.ml" 141 4738 4758
+type(
+  int
+)
+"editor/ed_draw.ml" 142 4762 4768 "editor/ed_draw.ml" 142 4762 4769
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 137 4594 4604 "editor/ed_draw.ml" 137 4594 4605
+)
+"editor/ed_draw.ml" 142 4762 4784 "editor/ed_draw.ml" 142 4762 4789
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_draw.ml" 141 4738 4748 "editor/ed_draw.ml" 141 4738 4753
+)
+"editor/ed_draw.ml" 142 4762 4768 "editor/ed_draw.ml" 142 4762 4789
+type(
+  unit
+)
+"editor/ed_draw.ml" 143 4791 4801 "editor/ed_draw.ml" 143 4791 4803
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 143 4791 4806 "editor/ed_draw.ml" 143 4791 4818
+type(
+  Ed_hyper.turtle -> float -> int -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.advance_many
+)
+"editor/ed_draw.ml" 143 4791 4819 "editor/ed_draw.ml" 143 4791 4820
+type(
+  Ed_hyper.turtle ref -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 143 4791 4820 "editor/ed_draw.ml" 143 4791 4826
+type(
+  Ed_hyper.turtle ref
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 132 4479 4484 "editor/ed_draw.ml" 132 4479 4490
+)
+"editor/ed_draw.ml" 143 4791 4819 "editor/ed_draw.ml" 143 4791 4826
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 143 4791 4827 "editor/ed_draw.ml" 143 4791 4835
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_draw.ml" 130 4335 4340 "editor/ed_draw.ml" 130 4335 4348
+)
+"editor/ed_draw.ml" 143 4791 4836 "editor/ed_draw.ml" 143 4791 4841
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_draw.ml" 141 4738 4748 "editor/ed_draw.ml" 141 4738 4753
+)
+"editor/ed_draw.ml" 143 4791 4806 "editor/ed_draw.ml" 143 4791 4841
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 144 4846 4852 "editor/ed_draw.ml" 144 4846 4855
+type(
+  Ed_graph.G.vertex -> int -> Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref add "editor/ed_draw.ml" 108 3567 3573 "editor/ed_draw.ml" 108 3567 3576
+)
+"editor/ed_draw.ml" 144 4846 4856 "editor/ed_draw.ml" 144 4846 4857
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref w "editor/ed_draw.ml" 136 4580 4588 "editor/ed_draw.ml" 136 4580 4589
+)
+"editor/ed_draw.ml" 144 4846 4859 "editor/ed_draw.ml" 144 4846 4864
+type(
+  int
+)
+ident(
+  int_ref depth "editor/ed_draw.ml" 118 3790 3798 "editor/ed_draw.ml" 118 3790 3803
+)
+"editor/ed_draw.ml" 144 4846 4865 "editor/ed_draw.ml" 144 4846 4866
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"editor/ed_draw.ml" 144 4846 4867 "editor/ed_draw.ml" 144 4846 4868
+type(
+  int
+)
+"editor/ed_draw.ml" 144 4846 4858 "editor/ed_draw.ml" 144 4846 4869
+type(
+  int
+)
+"editor/ed_draw.ml" 144 4846 4870 "editor/ed_draw.ml" 144 4846 4872
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tw "editor/ed_draw.ml" 143 4791 4801 "editor/ed_draw.ml" 143 4791 4803
+)
+"editor/ed_draw.ml" 144 4846 4852 "editor/ed_draw.ml" 144 4846 4872
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 145 4874 4880 "editor/ed_draw.ml" 145 4874 4886
+type(
+  Ed_hyper.turtle ref
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 132 4479 4484 "editor/ed_draw.ml" 132 4479 4490
+)
+"editor/ed_draw.ml" 145 4874 4887 "editor/ed_draw.ml" 145 4874 4889
+type(
+  Ed_hyper.turtle ref -> Ed_hyper.turtle -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_draw.ml" 145 4874 4890 "editor/ed_draw.ml" 145 4874 4899
+type(
+  Ed_hyper.turtle -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.turn_left
+)
+"editor/ed_draw.ml" 145 4874 4900 "editor/ed_draw.ml" 145 4874 4901
+type(
+  Ed_hyper.turtle ref -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 145 4874 4901 "editor/ed_draw.ml" 145 4874 4907
+type(
+  Ed_hyper.turtle ref
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 132 4479 4484 "editor/ed_draw.ml" 132 4479 4490
+)
+"editor/ed_draw.ml" 145 4874 4900 "editor/ed_draw.ml" 145 4874 4907
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 145 4874 4908 "editor/ed_draw.ml" 145 4874 4913
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_draw.ml" 131 4406 4411 "editor/ed_draw.ml" 131 4406 4416
+)
+"editor/ed_draw.ml" 145 4874 4890 "editor/ed_draw.ml" 145 4874 4913
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_draw.ml" 145 4874 4880 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 144 4846 4852 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 143 4791 4797 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 142 4762 4768 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 141 4738 4744 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 140 4703 4709 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 139 4671 4677 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 138 4646 4652 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 137 4594 4600 "editor/ed_draw.ml" 145 4874 4913
+type(
+  unit
+)
+"editor/ed_draw.ml" 136 4580 4583 "editor/ed_draw.ml" 145 4874 4914
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 146 4915 4918 "editor/ed_draw.ml" 146 4915 4919
+type(
+  Ed_graph.G.vertex list
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 127 4244 4254 "editor/ed_draw.ml" 127 4244 4255
+)
+"editor/ed_draw.ml" 135 4569 4570 "editor/ed_draw.ml" 146 4915 4919
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 132 4479 4480 "editor/ed_draw.ml" 146 4915 4919
+type(
+  unit
+)
+"editor/ed_draw.ml" 129 4309 4329 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 129 4309 4315 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 128 4278 4284 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 127 4244 4250 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 126 4178 4184 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 125 4105 4111 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 124 4034 4040 "editor/ed_draw.ml" 147 4920 4929
+type(
+  unit
+)
+"editor/ed_draw.ml" 122 3967 3998 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 122 3967 3971 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 120 3846 3850 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 119 3819 3823 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 118 3790 3794 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 117 3761 3765 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 116 3734 3738 "editor/ed_draw.ml" 148 4930 4937
+type(
+  unit
+)
+"editor/ed_draw.ml" 115 3700 3702 "editor/ed_draw.ml" 149 4938 4944
+type(
+  unit
+)
+"editor/ed_draw.ml" 114 3679 3681 "editor/ed_draw.ml" 149 4938 4944
+type(
+  unit
+)
+"editor/ed_draw.ml" 108 3567 3569 "editor/ed_draw.ml" 149 4938 4944
+type(
+  unit
+)
+"editor/ed_draw.ml" 107 3538 3540 "editor/ed_draw.ml" 149 4938 4944
+type(
+  unit
+)
+"editor/ed_draw.ml" 152 4975 4979 "editor/ed_draw.ml" 152 4975 4989
+type(
+  Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+ident(
+  def draw_graph "editor/ed_draw.ml" 155 5160 5213 --
+)
+"editor/ed_draw.ml" 152 4975 4990 "editor/ed_draw.ml" 152 4975 4994
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def root "editor/ed_draw.ml" 152 4975 4995 "editor/ed_draw.ml" 155 5160 5213
+)
+"editor/ed_draw.ml" 152 4975 4995 "editor/ed_draw.ml" 152 4975 5001
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_draw.ml" 153 5004 5006 "editor/ed_draw.ml" 155 5160 5213
+)
+"editor/ed_draw.ml" 153 5004 5006 "editor/ed_draw.ml" 153 5004 5019
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.B.G.t -> unit
+)
+ident(
+  ext_ref Ed_graph.G.iter_vertex
+)
+"editor/ed_draw.ml" 153 5004 5025 "editor/ed_draw.ml" 153 5004 5026
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_draw.ml" 153 5004 5030 "editor/ed_draw.ml" 153 5004 5072
+)
+"editor/ed_draw.ml" 153 5004 5034 "editor/ed_draw.ml" 153 5004 5035
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 153 5004 5038 "editor/ed_draw.ml" 153 5004 5047
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 153 5004 5048 "editor/ed_draw.ml" 153 5004 5049
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_draw.ml" 153 5004 5025 "editor/ed_draw.ml" 153 5004 5026
+)
+"editor/ed_draw.ml" 153 5004 5038 "editor/ed_draw.ml" 153 5004 5049
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_draw.ml" 153 5004 5053 "editor/ed_draw.ml" 153 5004 5054
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 153 5004 5034 "editor/ed_draw.ml" 153 5004 5035
+)
+"editor/ed_draw.ml" 153 5004 5066 "editor/ed_draw.ml" 153 5004 5072
+type(
+  Ed_graph.visibility
+)
+"editor/ed_draw.ml" 153 5004 5053 "editor/ed_draw.ml" 153 5004 5072
+type(
+  unit
+)
+"editor/ed_draw.ml" 153 5004 5030 "editor/ed_draw.ml" 153 5004 5072
+type(
+  unit
+)
+"editor/ed_draw.ml" 153 5004 5020 "editor/ed_draw.ml" 153 5004 5073
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_draw.ml" 153 5004 5074 "editor/ed_draw.ml" 153 5004 5075
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 153 5004 5075 "editor/ed_draw.ml" 153 5004 5080
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_draw.ml" 153 5004 5074 "editor/ed_draw.ml" 153 5004 5080
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_draw.ml" 153 5004 5006 "editor/ed_draw.ml" 153 5004 5080
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 154 5082 5084 "editor/ed_draw.ml" 154 5082 5098
+type(
+  (Ed_graph.G.edge -> unit) -> Ed_graph.B.G.t -> unit
+)
+ident(
+  ext_ref Ed_graph.G.iter_edges_e
+)
+"editor/ed_draw.ml" 154 5082 5104 "editor/ed_draw.ml" 154 5082 5105
+type(
+  Ed_graph.G.edge
+)
+ident(
+  def e "editor/ed_draw.ml" 154 5082 5109 "editor/ed_draw.ml" 154 5082 5150
+)
+"editor/ed_draw.ml" 154 5082 5113 "editor/ed_draw.ml" 154 5082 5114
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 154 5082 5117 "editor/ed_draw.ml" 154 5082 5126
+type(
+  Ed_graph.G.edge -> Ed_graph.G.E.label
+)
+ident(
+  ext_ref Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 154 5082 5127 "editor/ed_draw.ml" 154 5082 5128
+type(
+  Ed_graph.G.edge
+)
+ident(
+  int_ref e "editor/ed_draw.ml" 154 5082 5104 "editor/ed_draw.ml" 154 5082 5105
+)
+"editor/ed_draw.ml" 154 5082 5117 "editor/ed_draw.ml" 154 5082 5128
+call(
+  stack
+)
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_draw.ml" 154 5082 5132 "editor/ed_draw.ml" 154 5082 5133
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref l "editor/ed_draw.ml" 154 5082 5113 "editor/ed_draw.ml" 154 5082 5114
+)
+"editor/ed_draw.ml" 154 5082 5145 "editor/ed_draw.ml" 154 5082 5150
+type(
+  bool
+)
+"editor/ed_draw.ml" 154 5082 5132 "editor/ed_draw.ml" 154 5082 5150
+type(
+  unit
+)
+"editor/ed_draw.ml" 154 5082 5109 "editor/ed_draw.ml" 154 5082 5150
+type(
+  unit
+)
+"editor/ed_draw.ml" 154 5082 5099 "editor/ed_draw.ml" 154 5082 5151
+type(
+  Ed_graph.G.edge -> unit
+)
+"editor/ed_draw.ml" 154 5082 5152 "editor/ed_draw.ml" 154 5082 5153
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 154 5082 5153 "editor/ed_draw.ml" 154 5082 5158
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_draw.ml" 154 5082 5152 "editor/ed_draw.ml" 154 5082 5158
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_draw.ml" 154 5082 5084 "editor/ed_draw.ml" 154 5082 5158
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 155 5160 5166 "editor/ed_draw.ml" 155 5160 5167
+type(
+  bool ref -> bool
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_draw.ml" 155 5160 5167 "editor/ed_draw.ml" 155 5160 5170
+type(
+  bool ref
+)
+ident(
+  ext_ref Ed_graph.dfs
+)
+"editor/ed_draw.ml" 155 5160 5166 "editor/ed_draw.ml" 155 5160 5170
+type(
+  bool
+)
+"editor/ed_draw.ml" 155 5160 5176 "editor/ed_draw.ml" 155 5160 5184
+type(
+  int -> Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref draw_dfs "editor/ed_draw.ml" 64 2165 2173 "editor/ed_draw.ml" 64 2165 2181
+)
+"editor/ed_draw.ml" 155 5160 5185 "editor/ed_draw.ml" 155 5160 5186
+type(
+  int
+)
+"editor/ed_draw.ml" 155 5160 5176 "editor/ed_draw.ml" 155 5160 5186
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+"editor/ed_draw.ml" 155 5160 5192 "editor/ed_draw.ml" 155 5160 5200
+type(
+  Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref draw_bfs "editor/ed_draw.ml" 106 3511 3515 "editor/ed_draw.ml" 106 3511 3523
+)
+"editor/ed_draw.ml" 155 5160 5162 "editor/ed_draw.ml" 155 5160 5201
+type(
+  Ed_graph.G.vertex -> Ed_hyper.turtle -> unit
+)
+"editor/ed_draw.ml" 155 5160 5202 "editor/ed_draw.ml" 155 5160 5206
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref root "editor/ed_draw.ml" 152 4975 4990 "editor/ed_draw.ml" 152 4975 4994
+)
+"editor/ed_draw.ml" 155 5160 5207 "editor/ed_draw.ml" 155 5160 5213
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_draw.ml" 152 4975 4995 "editor/ed_draw.ml" 152 4975 5001
+)
+"editor/ed_draw.ml" 155 5160 5162 "editor/ed_draw.ml" 155 5160 5213
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_draw.ml" 154 5082 5084 "editor/ed_draw.ml" 155 5160 5213
+type(
+  unit
+)
+"editor/ed_draw.ml" 153 5004 5006 "editor/ed_draw.ml" 155 5160 5213
+type(
+  unit
+)

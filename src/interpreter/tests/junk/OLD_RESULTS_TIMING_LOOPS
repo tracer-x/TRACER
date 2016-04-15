@@ -1,0 +1,54 @@
+int main(){
+  int i, sum;  
+  sum = 0;
+  for (i = 1; i < 10; i++){
+  }
+  return 1;
+}
+
+% Options:
+% unroll_loop(y).
+% interpolation(y).
+% exact_wcet(y).
+
+#Iterations  WCET       #States   #subsumed     
+     20       44          45        0           
+     50      104         105        0           
+    100      204         205        0           
+    200      404         405        0           
+    300      604         605        0        
+    400      804         805        0        
+    500     1004        1005        0        
+    600     1204        1205        0        
+    700     1404        1405        0        
+
+
+0) Initial 
+1) Opt. #1:  no generation of interpolants for exit condition in a loop
+2) Opt. #2:  reducing number of dump calls when store solution.
+
+Summary:
+                Initial          Opt #1          Opt #2
+#Iterations  Time (seconds)  Time (seconds)  Time (seconds)
+     20          0.14             0.06            0.04
+     50          0.87             0.22            0.22
+    100          6.01             0.9             0.69
+    200         46.09             5.22            3.55
+    300         154.84           15.22           10.25
+    400         362.79           34.13           22.42
+    500         not tested       64.0            41.5
+    600         not tested      114.68           70.46
+    700         not tested      164.00          112.78
+
+
+Study for observing timing during the generation of
+interpolants (using Opt #1)
+
+# iterations    # interpolants    Interp. Time    Total Time (seconds)
+  100                  1              0.16              0.87
+  200                  1              0.63              4.73
+  300                  1              1.42             13.86
+  400                  1              2.47             30.56
+  500                  1              4.7              60.23 
+  600                  1              5.58             98.68
+ 

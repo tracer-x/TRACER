@@ -1,0 +1,137 @@
+<project name="crystal" default="install">
+
+	<!-- Install. -->
+
+	<target name="install" depends="init,compile,script">
+        <echo message="Installation complete."/>
+	</target>
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="classes"/>
+	</target>
+
+	
+	<!-- Build the JFlex lexer and the JavaCUP parser -->
+
+	<taskdef name="cup" 
+		classname="java_cup.anttask.CUPTask" 
+		classpath="jars/java-cup-11a.jar" />
+	
+	<taskdef name="jflex" 
+		classname="JFlex.anttask.JFlexTask" 
+		classpath="jars/JFlex.jar" />
+
+	<property name="parser" location="src/crystal/parser" />
+
+	<target name="lexcup">
+            <cup srcfile="${parser}/gnuc.cup" destdir="src" 
+	         interface="on" parser="parser" symbols="sym" 
+	         quiet="true" force="false" nonterms="true" />
+	
+            <jflex file="${parser}/gnuc.lex" />
+	</target>
+
+
+	<!-- Compile all java sources -->
+
+	<path id="project.classpath">
+		<pathelement location="classes" />
+		<pathelement location="jars/java-cup-11a.jar" />
+		<pathelement location="jars/JFlex.jar" />
+	</path>
+	
+	<target name="compile" depends="init,lexcup">
+		<javac srcdir="src" destdir="classes" 
+			   classpathref="project.classpath"/>
+	</target>
+
+
+	<!-- Build a wrapper script for Crystal (and tools, if present). -->
+
+	<property name="scriptname" value="crystal" />
+	<property name="mainclass" value="crystal.Main" />
+        
+	<available file="bin/${scriptname}" property="script.avail"/>
+	
+	<target name="script" unless="script.avail">
+		<echo message="Create wrapper script: '${scriptname}'"/>
+		<copy file="bin/template.sh" tofile="bin/${scriptname}">
+		<filterset>	
+			<filter token="JAVA" value="${java.home}/bin/java"/>
+			<filter token="TOP" value="${basedir}"/>
+			<filter token="MAIN" value="${mainclass}"/>
+			<filter token="SEP" value="${path.separator}"/>
+		</filterset>
+		</copy>
+		<chmod perm="+x" file="bin/${scriptname}"/>
+		<fixcrlf srcdir="bin" includes="**/${scriptname}" eol="lf"/> 
+
+		<antcall target="batch"/>
+	</target>
+		
+	<condition property="is.windows">
+		<os family="windows"/>
+	</condition>
+
+	<target name="batch" if="is.windows">
+		<echo message="Create batch file: '${scriptname}.bat'"/>
+		<copy file="bin/template.bat" tofile="bin/${scriptname}.bat">
+		<filterset>	
+			<filter token="JAVA" value="${java.home}/bin/java"/>
+			<filter token="TOP" value="${basedir}"/>
+			<filter token="MAIN" value="${mainclass}"/>
+			<filter token="SEP" value="${path.separator}"/>
+		</filterset>
+		</copy>
+	</target>	
+	
+	
+	<!-- Build the source code distribution. -->
+
+	<target name="dist">
+		<delete file="${basedir}/crystal.tgz"/>
+		<tar destfile="${basedir}/crystal.tgz" compression="gzip">
+			<tarfileset dir="${basedir}" >
+				
+				<include name="build.xml"/>
+				<include name="README"/>
+				<include name="LGPL.LICENSE"/>
+				<include name="LICENSES"/>
+				
+				<include name="bin/**"/>
+				<include name="jars/**"/>	
+				<include name="src/crystal/**"/>
+				
+				<exclude name="src/crystal/parser/Lexer.java"/>
+				<exclude name="src/crystal/parser/parser.java"/>
+				<exclude name="src/crystal/parser/sym.java"/>
+			</tarfileset>
+		</tar>
+	</target>
+
+	
+	<!-- Call ant recursively for each tool. -->
+
+	<available file="src/crystal/projects" type="dir" 
+		property="projects.avail"/>
+
+<!--
+	<target name="projects" if="projects.avail">
+        <subant>
+          <fileset dir="src/crystal/projects" includes="**/build.xml"/>
+        </subant>
+	</target>
+-->
+
+	<!-- Clean up. -->
+
+	<target name="clean">
+		<delete file="bin/${project.script}"/>
+		<delete file="bin/crystal"/>
+		<delete file="${parser}/sym.java"/>
+		<delete file="${parser}/Lexer.java"/>
+		<delete file="${parser}/parser.java"/>
+		<delete dir="classes"/>
+	</target>
+</project>

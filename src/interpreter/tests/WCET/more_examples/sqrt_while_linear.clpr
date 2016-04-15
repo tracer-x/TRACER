@@ -1,0 +1,297 @@
+trans(func_fabs, 1,
+	[1],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,Num],[],[SReturnValue,SNum],
+	[2],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValueNext,Num],[],[SReturnValueNext,SNum],
+	[eq(SReturnValueNext,minus(0,SNum))],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=0-(Num).
+trans(func_fabs, 2,
+	[0],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,Num],[],[SReturnValue,SNum],
+	[1],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,Num],[],[SReturnValue,SNum],
+	[gt(0,SNum)],
+	[],
+	[],
+	branch) :-
+	Num<0.
+trans(func_fabs, 3,
+	[0],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,Num],[],[SReturnValue,SNum],
+	[3],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,Num],[],[SReturnValue,SNum],
+	[geq(SNum,0)],
+	[],
+	[],
+	branch) :-
+	Num>=0.
+trans(func_fabs, 4,
+	[3],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,Num],[],[SReturnValue,SNum],
+	[4],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValueNext,Num],[],[SReturnValueNext,SNum],
+	[eq(SReturnValueNext,SNum)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Num.
+trans(func_sqrt_body, 5,
+	[1],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[2],[H],[Flag,Val,Min_tol,Diff,DxNext,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDxNext,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[eq(SDxNext,minus(plus(minus(SVal,SIn),SIn),plus(2.0,SIn)))],
+	[],
+	[],
+	not_branch) :-
+	DxNext=(Val-In+In)-(2.0+In).
+trans(func_sqrt_body, 6,
+	[2],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[3],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,InNext],[],[SReturnValue,SInNext],
+	[eq(SInNext,plus(SIn,SDx))],
+	[],
+	[],
+	not_branch) :-
+	InNext=In+Dx.
+trans(func_sqrt_body, 7,
+	[3],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[4],[H],[Flag,Val,Min_tol,DiffNext,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiffNext,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[eq(SDiffNext,minus(SVal,plus(SIn,SIn)))],
+	[call(func_fabs,[RV0,Diff|_],[SRV0,_V1|_],[eq(_V1,SDiff)])],
+	[],
+	not_branch) :-
+	DiffNext=Val-(In+In).
+trans(func_sqrt_body, 8,
+	[5],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[6],[H],[FlagNext,Val,Min_tol,Diff,Dx,Out],[SH],[SFlagNext,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[eq(SFlagNext,1)],
+	[],
+	[],
+	not_branch) :-
+	FlagNext=1.
+trans(func_sqrt_body, 9,
+	[4],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[5],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[geq(SMin_tol,SRV0)],
+	[],
+	[],
+	branch) :-
+	RV0<=Min_tol.
+trans(func_sqrt_body, 10,
+	[4],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[6],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[gt(SRV0,SMin_tol)],
+	[],
+	[],
+	branch) :-
+	RV0>Min_tol.
+trans(func_sqrt_body, 11,
+	[7],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[8],[H],[Flag,Val,Min_tol,Diff,Dx,OutNext],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOutNext],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[eq(SOutNext,SIn)],
+	[],
+	[],
+	not_branch) :-
+	OutNext=In.
+trans(func_sqrt_body, 12,
+	[6],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[8],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_sqrt_body, 13,
+	[0],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[1],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[eq(SFlag,0)],
+	[],
+	[],
+	branch) :-
+	Flag=0.
+trans(func_sqrt_body, 14,
+	[0],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[7],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[gt(SFlag,0)],
+	[],
+	[],
+	not_branch) :-
+	Flag>0.
+trans(func_sqrt_body, 15,
+	[0],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[7],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[gt(0,SFlag)],
+	[],
+	[],
+	branch) :-
+	Flag<0.
+trans(func_sqrt_body, 16,
+	[8],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,In],[],[SReturnValue,SIn],
+	[9],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValueNext,In],[],[SReturnValueNext,SIn],
+	[eq(SReturnValueNext,SOut)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Out.
+trans(func_main, 17,
+	[0],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[1],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,XNext,I],[],[SReturnValue,SXNext,SI],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 18,
+	[1],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[2],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,INext],[],[SReturnValue,SX,SINext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 19,
+	[2],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[3],[H],[Flag,ValNext,Min_tol,Diff,Dx,Out],[SH],[SFlag,SValNext,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[eq(SValNext,2)],
+	[],
+	[],
+	not_branch) :-
+	ValNext=2.
+trans(func_main, 20,
+	[3],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[4],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,XNext,I],[],[SReturnValue,SXNext,SI],
+	[eq(SXNext,minus(SVal,10))],
+	[],
+	[],
+	not_branch) :-
+	XNext=Val-10.
+trans(func_main, 21,
+	[4],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[5],[H],[Flag,Val,Min_tolNext,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tolNext,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[eq(SMin_tolNext,0.001)],
+	[],
+	[],
+	not_branch) :-
+	Min_tolNext=0.001.
+trans(func_main, 22,
+	[5],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[6],[H],[FlagNext,Val,Min_tol,Diff,Dx,Out],[SH],[SFlagNext,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[eq(SFlagNext,0)],
+	[],
+	[],
+	not_branch) :-
+	FlagNext=0.
+trans(func_main, 23,
+	[7],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[8],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,XNext,I],[],[SReturnValue,SXNext,SI],
+	[eq(SXNext,0)],
+	[],
+	[],
+	not_branch) :-
+	XNext=0.
+trans(func_main, 24,
+	[9],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[10],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,INext],[],[SReturnValue,SX,SINext],
+	[eq(SINext,1)],
+	[],
+	[],
+	not_branch) :-
+	INext=1.
+trans(func_main, 25,
+	[10],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[12],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[gt(3,SI)],
+	[],
+	[],
+	branch) :-
+	I<3.
+trans(func_main, 26,
+	[12],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[13],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,XNext,I],[],[SReturnValue,SXNext,SI],
+	[eq(SXNext,SRV0)],
+	[call(func_sqrt_body,[RV0,X|_],[SRV0,_V1|_],[eq(_V1,SX)])],
+	[],
+	not_branch) :-
+	XNext=RV0.
+trans(func_main, 27,
+	[13],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[14],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,INext],[],[SReturnValue,SX,SINext],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[],
+	not_branch) :-
+	INext=I+1.
+trans(func_main, 28,
+	[10],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[11],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[geq(SI,3)],
+	[],
+	[],
+	branch) :-
+	I>=3.
+trans(func_main, 29,
+	[14],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[10],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 30,
+	[11],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[15],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 31,
+	[8],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[15],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 32,
+	[6],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[7],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[eq(SVal,0)],
+	[],
+	[],
+	branch) :-
+	Val=0.
+trans(func_main, 33,
+	[6],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[9],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[gt(0,SVal)],
+	[],
+	[],
+	not_branch) :-
+	Val<0.
+trans(func_main, 34,
+	[6],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[9],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[gt(SVal,0)],
+	[],
+	[],
+	branch) :-
+	Val>0.
+trans(func_main, 35,
+	[15],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValue,X,I],[],[SReturnValue,SX,SI],
+	[16],[H],[Flag,Val,Min_tol,Diff,Dx,Out],[SH],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],[],[ReturnValueNext,X,I],[],[SReturnValueNext,SX,SI],
+	[eq(SReturnValueNext,0)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=0.
+%--------------------------------------------------
+loop(func_main, [10],[11], 2, [n],[n,n,n,n,n,n],[],[n,u,u]).
+%--------------------------------------------------
+start(func_fabs, [0]).
+start(func_sqrt_body, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_fabs, [2]).
+bottom(func_fabs, [4]).
+bottom(func_sqrt_body, [9]).
+bottom(func_main, [16]).
+%--------------------------------------------------
+freshlocalarrays(func_fabs,[]).
+freshlocalarrays(func_sqrt_body,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_fabs,[_,_]).
+freshlocalvars(func_sqrt_body,[_,_]).
+freshlocalvars(func_main,[_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[0,0,0,0,0,0],[_],[SFlag,SVal,SMin_tol,SDiff,SDx,SOut],A,L,SA,SL,[eq(SFlag,0),eq(SVal,0),eq(SMin_tol,0),eq(SDiff,0),eq(SDx,0),eq(SOut,0)]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).

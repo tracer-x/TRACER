@@ -1,0 +1,407 @@
+
+% We declare arreq to be a kind of equality to be used in unifiers,
+% denoting equality of arrays
+declare_equality(arreq).
+
+%------------------------------------------------------------------------------
+% The following should not be satisfiable
+%------------------------------------------------------------------------------
+% test :- satisfiable_negation([gt(0, X), eq(X, minus(Nf, plus(If, 2))), eq(Y, minus(Nf, plus(If, 1))), eq(Z, minus(Nf, 1)), eq(A, ref(H, Y)), eq(If, I), eq(Nf, N), geq(If, 0), gt(Nf, plus(If, 1))],[arreq(H, H), eq(X, Y), eq(Z, Z)]).
+
+%------------------------------------------------------------------------------
+% The following should not be satisfiable
+%------------------------------------------------------------------------------
+% test :- satisfiable_negation([eq(V5, plus(_, 1)), eq(V6, V3), geq(V5, 0), eq(V5, minus(V7, plus(V8, 2))), geq(V2, ref(V0, V5)), eq(V3, minus(V7, plus(V8, 1))), eq(V4, minus(V7, 1)), eq(V2, ref(V0, V3)), eq(V8, V9), eq(V7, V10), geq(V8, 0), gt(V7, plus(V8, 1))],[gt(V4, V5), eq(V8, V9), geq(ref(V0, plus(V5, 1)), ref(V0, V5)), eq(V7, V10), eq(V6, plus(V5, 1))]).
+
+% test :- satisfiable_negation([eq(_h2877, plus(_h2880, 1)), eq(_h2885, _h2886), geq(_h2877, 0), eq(_h2877, minus(_h2898, plus(_h2901, 2))), geq(_h2906, ref(_h2909, _h2877)), eq(_h2886, minus(_h2898, plus(_h2901, 1))), eq(_h2925, minus(_h2898, 1)), eq(_h2906, ref(_h2909, _h2886)), eq(_h2901, _h2942), eq(_h2898, _h2947), geq(_h2901, 0), gt(_h2898, plus(_h2901, 1))],[gt(_h2925, _h2877), eq(_h2901, _h2942), geq(ref(_h2909, plus(_h2877, 1)), ref(_h2909, _h2877)), eq(_h2898, _h2947), eq(_h2885, plus(_h2877, 1))])
+
+%------------------------------------------------------------------------------
+% Solver for linear arithmetic constraints and arrays
+%------------------------------------------------------------------------------
+
+satisfiable_negation(GConstraints, HConstraints) :-
+	satisfiable_negation_aux(GConstraints, HConstraints), !,
+% 	satisfiable_negation_askme,
+	true.
+
+satisfiable_negation_askme :-
+	printf("The solver says it does not hold. Agree?", []),
+	read(X), X==y.
+
+satisfiable_negation_aux(_GConstraints, []) :-
+	%----------------------------------------------------------------------
+	% [] means "true", so its negation is "false"
+	%----------------------------------------------------------------------
+	!, fail.
+satisfiable_negation_aux(GConstraints, HConstraints) :-
+	negate_list(HConstraints, NegHConstraints),
+	printf("TEST UNSAT % AND DISJ %\n", [GConstraints, NegHConstraints]),
+	constraint_symbolic_list(GConstraints, [], ArrRef1),
+%	writeln(nnn),
+%	dump([NegHConstraints, ArrRef1, ArrEq1, Indices1]),
+	satisfiable_disjunct(NegHConstraints, ArrRef1).
+
+% satisfiable_negation_aux(GConstraints, HConstraints) :-
+% 	%----------------------------------------------------------------------
+% 	% Symbolic
+% 	%----------------------------------------------------------------------
+% 	extract_equalities(GConstraints, GEqualities, GRemaining1),
+% 	printf("GEqualities=%\n", [GEqualities]),
+% 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 	% Rather than calling substitute_until_fixpoint, perhaps we should
+% 	% instead make the equalities disjoint by substituting each other,
+% 	% because the problem is that the equalities may refer to each other.
+% 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % 	printf("F substitute_until_fixpoint(%,%,GRemaining)\n",
+% % 	       [GEqualities, GRemaining1]),
+% % 	substitute_until_fixpoint(GEqualities, GRemaining1, GRemaining),
+% 	substitute_terms(GEqualities, GRemaining1, GRemaining),
+% % 	printf("G substitute_until_fixpoint(%,%,HConstraints1)\n",
+% % 	       [GEqualities, HConstraints]),
+% % 	substitute_until_fixpoint(GEqualities, HConstraints, HConstraints1),
+% 	substitute_terms(GEqualities, HConstraints, HConstraints1),
+% 	negate_list(HConstraints1, NegHConstraints),
+% %	dump([HConstraints, HConstraints1]),
+% 	%----------------------------------------------------------------------
+% 	% Evaluate
+% 	%----------------------------------------------------------------------
+% %	printf("Solver: Proving: % |= %\n", [GRemaining, HConstraints1]),
+% 	printf("TEST UNSAT % AND DISJ %\n", [GRemaining, NegHConstraints]),
+% 	constraint_symbolic_list(GRemaining,
+% 	                         [], ArrRef1, [], ArrEq1, [], Indices1),
+% %	writeln(nnn),
+% %	dump([NegHConstraints, ArrRef1, ArrEq1, Indices1]),
+% 	satisfiable_disjunct(NegHConstraints, ArrRef1, ArrEq1, Indices1).
+
+
+%------------------------------------------------------------------------------
+% negate_list
+% Negate constraints except array equalities
+%------------------------------------------------------------------------------
+
+negate_list([], []).
+negate_list([neq(A,B)|R], [eq(A,B)|S]) :-
+	!, negate_list(R, S).
+negate_list([eq(A,B)|R], [gt(A,B),gt(B,A)|S]) :-
+	!, negate_list(R, S).
+negate_list([gt(A,B)|R], [geq(B,A)|S]) :-
+	!, negate_list(R, S).
+negate_list([geq(A,B)|R], [gt(B,A)|S]) :-
+	!, negate_list(R, S).
+negate_list([arreq(A,B)|R], [gt(ref(A,I),ref(B,I)),
+			     gt(ref(B,J),ref(A,J))|S]) :-
+	!, negate_list(R, S).
+negate_list([_|R], [tt|S]) :- negate_list(R, S).
+
+%------------------------------------------------------------------------------
+% constraint_symbolic_list/1:
+% Evaluate list of symbolic constraints
+%------------------------------------------------------------------------------
+
+%test1 :- constraint_symbolic_list([gt(0, minus(Nf, plus(If, 2))), geq(If, 0), gt(Nf, plus(If, 1))], [], ArrRef, [], ArrEq, [], Indices).
+
+constraint_symbolic_list([],ArrRef,ArrRef).
+constraint_symbolic_list([C|R],InArrRef,OutArrRef) :-
+	constraint_symbolic(C,InArrRef,ArrRef1),
+	constraint_symbolic_list(R,ArrRef1,OutArrRef).
+
+%------------------------------------------------------------------------------
+% constraint_symbolic/1:
+% Evaluate symbolic constraint
+%
+% constraint_symbolic/1 should not handle neq constraints for
+% performance reasons (the corresponding clauses are commented
+% out). Backtracking here would be costly.
+%------------------------------------------------------------------------------
+
+constraint_symbolic(tt,ArrRef,ArrRef).
+constraint_symbolic(eq(A,B),InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+	M=N.
+constraint_symbolic(gt(A,B),InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+	M>=N+1.
+constraint_symbolic(geq(A,B),InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+	M>=N.
+constraint_symbolic(arreq(A,B),InArrRef,OutArrRef) :-
+	var(A), !,
+	numconstraint_symbolic(B,N,InArrRef,OutArrRef),
+	A=N.
+constraint_symbolic(arreq(A,B),InArrRef,OutArrRef) :-
+	var(B), !,
+	numconstraint_symbolic(A,M,InArrRef,OutArrRef),
+	M=B.
+constraint_symbolic(arreq(A,B),InArrRef,OutArrRef) :-
+        numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef).
+constraint_symbolic(ff,_,_) :- !, fail.
+
+%------------------------------------------------------------------------------
+% Numeric expression evaluator
+%------------------------------------------------------------------------------
+numconstraint_symbolic(A,A,ArrRef,ArrRef) :- var(A), !.
+numconstraint_symbolic(A,A,ArrRef,ArrRef) :- atomic(A), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic(I,J,ArrRef1,OutArrRef).
+numconstraint_symbolic(upd(A,I,X),upd(B,J,Y),InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic(I,J,ArrRef1,ArrRef2),
+	numconstraint_symbolic(X,Y,ArrRef2,OutArrRef).
+numconstraint_symbolic(minus(A),-N,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,N,InArrRef,OutArrRef).
+numconstraint_symbolic(plus(A,B),E+F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(minus(A,B),E-F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(mult(A,B),E*F,InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(div(A,B),E/F,InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+
+
+%------------------------------------------------------------------------------
+% Simplify array references
+%------------------------------------------------------------------------------
+
+simplify_array_reference_list([], []).
+simplify_array_reference_list([ARef|R], [X|S]) :-
+	simplify_array_reference(ARef, X),
+	simplify_array_reference_list(R, S).
+
+simplify_array_reference(ref(A,I,X), ref(A,I,X)) :- var(A), !.
+simplify_array_reference(ref(A,I,X), ref(A,I,X)) :- atomic(A), !.
+simplify_array_reference(ref(upd(_,I,X),J,Y), X) :- I=J, X=Y.
+simplify_array_reference(ref(upd(A,I,_),J,Y), Z) :-
+	I>=J+1, simplify_array_reference(ref(A,J,Y), Z). 
+simplify_array_reference(ref(upd(A,I,_),J,Y), Z) :-
+	J>=I+1, simplify_array_reference(ref(A,J,Y), Z).
+
+
+% %------------------------------------------------------------------------------
+% % extract_equalities/3: Here we extract equalities of the form
+% % variable = expression (not expression = expression) and use them for
+% % simplification later.
+% %------------------------------------------------------------------------------
+% extract_equalities(Constraints, Equalities, Remaining) :-
+% 	extract_equalities_aux(Constraints, Equalities1, Remaining),
+% 	%----------------------------------------------------------------------
+% 	% Here we ignore the third argument of the following call,
+% 	% since we do not specially treat cyclic equalities
+% 	%----------------------------------------------------------------------
+% 	substitute_until_fixpoint_or_cycle(Equalities1, Equalities, _).
+
+% extract_equalities_aux([], [], []).
+% extract_equalities_aux([eq(A,B)|R], [eq(A,B)|S], T) :-
+% 	var(A), !, extract_equalities_aux(R, S, T).
+% extract_equalities_aux([arreq(A,B)|R], [eq(A,B)|S], T) :-
+% 	var(A), !, extract_equalities_aux(R, S, T).
+% extract_equalities_aux([eq(A,B)|R], [eq(B,A)|S], T) :-
+% 	var(B), !, extract_equalities_aux(R, S, T).
+% extract_equalities_aux([arreq(A,B)|R], [eq(B,A)|S], T) :-
+% 	var(B), !, extract_equalities_aux(R, S, T).
+% extract_equalities_aux([C|R], S, [C|T]) :-
+% 	extract_equalities_aux(R, S, T).
+
+%test :- 0 < P1, 0 < P0, constraint_symbolic(gt(ref(H, plus(P0, 1)), ref(upd(H, P0, 0), plus(P0, 1))), [ref(upd(H, P0, 0), P0 + 1, P1)], ArrRef1, [], ArrEq1, [P0 + 1, P0], Indices1).
+
+%test1 :- A < B, simplify_array_reference_list([ref(upd(H, P0, 0), P0 + 1, A), ref(H, P0 + 1, B)], Out), simple_arrref_consistency(Out).
+
+%------------------------------------------------------------------------------
+% satisfiable_disjunct/4: Checking if each disjunct is satisfiable
+%------------------------------------------------------------------------------
+satisfiable_disjunct([C|_], ArrRef) :-
+	constraint_symbolic(C, ArrRef, ArrRef1),
+	simplify_array_reference_list(ArrRef1, ArrRef2),
+	simple_arrref_consistency(ArrRef2).
+satisfiable_disjunct([_|Constraints], ArrRef) :-
+	satisfiable_disjunct(Constraints, ArrRef).
+
+
+simple_arrref_consistency([]).
+simple_arrref_consistency([ref(A,I,X)|R]) :-
+	simple_arrref_consistency_aux(A,I,X,R),
+	simple_arrref_consistency(R).
+
+simple_arrref_consistency_aux(_,_,_,[]).
+simple_arrref_consistency_aux(A,I,X,[ref(B,J,Y)|R]) :-
+	A==B, !,
+	simple_arrref_consistency_aux2(A,I,X,J,Y,R).
+simple_arrref_consistency_aux(A,I,X,[ref(_,_,_)|R]) :-
+	simple_arrref_consistency_aux(A,I,X,R).
+
+simple_arrref_consistency_aux2(A,I,X,J,Y,R) :-
+	I=J, X=Y,
+	simple_arrref_consistency_aux(A,I,X,R).
+simple_arrref_consistency_aux2(A,I,X,J,_,R) :-
+	I+1<=J,
+	simple_arrref_consistency_aux(A,I,X,R).
+simple_arrref_consistency_aux2(A,I,X,J,_,R) :-
+	I>=J+1,
+	simple_arrref_consistency_aux(A,I,X,R).
+
+
+%------------------------------------------------------------------------------
+% Flatten array equalities
+% This is to be used later when implementing complete solver based on
+% paper
+%------------------------------------------------------------------------------
+
+% flatten_array_equality_list(InArrEqList, OutArrEqList,
+% 			    InArrRef, OutArrRef,
+% 			    InIndices, OutIndices) :-
+% 	%----------------------------------------------------------------------
+% 	% Flatten the RHS first
+% 	%----------------------------------------------------------------------
+% 	flatten_array_equality_list_aux(InArrEqList, ArrEqList1,
+% 	                                InArrRef, InArrRef1,
+%  					InIndices, Indices1),
+% 	%----------------------------------------------------------------------
+% 	% Then flatten the LHS
+% 	%----------------------------------------------------------------------
+% 	flatten_array_equality_list_aux(ArrEqList1, OutArrEqList,
+% 	                                InArrRef1, OutArrRef,
+% 					Indices1, OutIndices).
+
+% flatten_array_equality_list_aux([], [], ArrRef, ArrRef, Indices, Indices).
+% flatten_array_equality_list_aux([ArrEq|R], OutArrEqList,
+%         		        InArrRef, OutArrRef,
+% 				InIndices, OutIndices) :-
+% 	flatten_array_equality_list_aux(R, ArrEqList1,
+%                                         InArrRef, ArrRef1,
+% 					InIndices, Indices1),
+% 	flatten_right_update(ArrEq, 
+%                              ArrEqList1, OutArrEqList,
+%                              ArrRef1, OutArrRef,
+% 			     Indices1, OutIndices).
+
+% flatten_right_update(arreq(LB,LInftyFlag,UB,RInftyFlag,LHS,A),
+% 		     NewArrEq,
+% 		     [arreq(LB,LInftyFlag,UB,RInftyFlag,A,LHS)|NewArrEq],
+%                      ArrRef, ArrRef, Indices, Indices) :-
+% 	%----------------------------------------------------------------------
+% 	% We note that here we swap the position of LHS and RHS of equality,
+%  	% s.t. the procedure can be called twice to process both sides.
+% 	%----------------------------------------------------------------------
+% 	(var(A); atomic(A)), !.
+% flatten_right_update(arreq(LB,LInftyFlag,UB,bound,LHS,upd(A,I,_)),
+%                      InNewArrEq, OutNewArrEq,
+% 	             InArrRef, OutArrRef,
+% 		     InIndices, [I|OutIndices]) :-
+% 	I>=UB+1,
+% 	flatten_right_update(arreq(LB,LInftyFlag,UB,bound,LHS,A),
+% 	 		     InNewArrEq, OutNewArrEq,
+%                              InArrRef, OutArrRef,
+% 			     InIndices, OutIndices).
+% flatten_right_update(arreq(LB,bound,UB,UInftyFlag,LHS,upd(A,I,_)),
+% 		     InNewArrEq, OutNewArrEq,
+%                      InArrRef, OutArrRef,
+% 		     InIndices, [I|OutIndices]) :-
+% 	I+1<=LB,
+% 	flatten_right_update(arreq(LB,bound,UB,UInftyFlag,LHS,A),
+% 			     InNewArrEq, OutNewArrEq,
+%                              InArrRef, OutArrRef,
+% 			     InIndices, OutIndices).
+% flatten_right_update(arreq(LB,bound,UB,UInftyFlag,LHS,upd(A,I,X)),
+% 		     InNewArrEq, OutNewArrEq,
+%                      InArrRef, [ref(LHS,I,X)|OutArrRef],
+% 		     InIndices, [I|OutIndices]) :-
+% 	I=LB,
+% 	flatten_right_update(arreq(LB+1,bound,UB,UInftyFlag,LHS,A),
+% 	                     InNewArrEq, OutNewArrEq,
+%                              InArrRef, OutArrRef,
+% 			     InIndices, OutIndices).
+% flatten_right_update(arreq(LB,LInftyFlag,UB,bound,LHS,upd(A,I,X)),
+% 	             InNewArrEq, OutNewArrEq,
+%                      InArrRef, [ref(LHS,I,X)|OutArrRef],
+% 		     InIndices, [I|OutIndices]) :-
+% 	I=UB,
+% 	flatten_right_update(arreq(LB,LInftyFlag,UB-1,bound,LHS,A),
+% 	 		     InNewArrEq, OutNewArrEq,
+%                              InArrRef, OutArrRef,
+% 			     InIndices, OutIndices).
+% flatten_right_update(arreq(LB,bound,UB,bound,LHS,upd(A,I,X)),
+% 	  	     InNewArrEq, OutNewArrEq,
+%                      InArrRef, [ref(LHS,I,X)|OutArrRef],
+% 		     InIndices, [I|OutIndices]) :-
+% 	I>=LB+1, I+1<=UB,
+% 	flatten_right_update(arreq(LB,bound,I-1,bound,LHS,A),
+% 			     InNewArrEq, NewArrEq1,
+%                              InArrRef, ArrRef1,
+% 			     InIndices, Indices1),
+% 	flatten_right_update(arreq(I+1,bound,UB,bound,LHS,A),
+% 			     NewArrEq1, OutNewArrEq,
+%                              ArrRef1, OutArrRef,
+% 			     Indices1, OutIndices).
+% flatten_right_update(arreq(LB,infty,UB,infty,LHS,upd(A,I,X)),
+% 	             InNewArrEq, OutNewArrEq,
+% 		     InArrRef, [ref(LHS,I,X)|OutArrRef],
+% 		     InIndices, [I|OutIndices]) :- !,
+% 	flatten_right_update(arreq(I+1,bound,UB,infty,LHS,A),
+% 	                     InNewArrEq, NewArrEq1,
+% 			     InArrRef, ArrRef1,
+% 			     InIndices, Indices1),
+% 	flatten_right_update(arreq(LB,infty,I-1,bound,LHS,A),
+% 	                     NewArrEq1, OutNewArrEq,
+% 			     ArrRef1, OutArrRef,
+% 			     Indices1, OutIndices).
+% flatten_right_update(arreq(LB,infty,UB,bound,LHS,upd(A,I,X)),
+% 	             InNewArrEq, OutNewArrEq,
+% 		     InArrRef, [ref(LHS,I,X)|OutArrRef],
+% 		     InIndices, [I|OutIndices]) :-
+% 	I+1<=UB,
+% 	flatten_right_update(arreq(I+1,bound,UB,bound,LHS,A),
+% 	                     InNewArrEq, NewArrEq1,
+% 			     InArrRef, ArrRef1,
+% 			     InIndices, Indices1),
+% 	flatten_right_update(arreq(LB,infty,I-1,bound,LHS,A),
+% 	                     NewArrEq1, OutNewArrEq,
+% 			     ArrRef1, OutArrRef,
+% 			     Indices1, OutIndices).
+% flatten_right_update(arreq(LB,bound,UB,infty,LHS,upd(A,I,X)),
+% 	             InNewArrEq, OutNewArrEq,
+% 		     InArrRef, [ref(LHS,I,X)|OutArrRef],
+% 	             InIndices, [I|OutIndices]) :-
+% 	LB+1<=I,
+% 	flatten_right_update(arreq(LB,bound,I-1,bound,LHS,A),
+% 	                     InNewArrEq, NewArrEq1,
+% 			     InArrRef, ArrRef1,
+% 			     InIndices, Indices1),
+% 	flatten_right_update(arreq(I+1,bound,UB,infty,LHS,A),
+% 	                     NewArrEq1, OutNewArrEq,
+% 			     ArrRef1, OutArrRef,
+% 			     Indices1, OutIndices).
+
+%------------------------------------------------------------------------------
+% Add ordering constraints
+%------------------------------------------------------------------------------
+% produce_ordering([]).
+% produce_ordering([I|R]) :-
+% 	produce_ordering_aux(I,R),
+% 	produce_ordering(R).
+
+% produce_ordering_aux(_,[]).
+% produce_ordering_aux(I,[J|R]) :- I=J, produce_ordering_aux(I,R).
+% produce_ordering_aux(I,[J|R]) :- I<J, produce_ordering_aux(I,R).
+% produce_ordering_aux(I,[J|R]) :- I>J, produce_ordering_aux(I,R).
+
+% remove(_, [], []).	
+% remove(X, [Y|R], S) :-
+% 	X==Y, !, remove(X, R, S).
+% remove(X, [Y|R], [Y|S]) :-
+% 	remove(X, R, S).
+
+% remove_duplicates([], []).
+% remove_duplicates([X|R], [X|S]) :-
+% 	remove(X, R, T),
+% 	remove_duplicates(T, S).
+
+

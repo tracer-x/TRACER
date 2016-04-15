@@ -1,0 +1,17 @@
+#/bin/sh
+rm -f *.i
+rm -f *.o
+rm -f input
+rm -f input*
+rm -f *.cil.c
+rm -f *.clp
+rm -f *_CIL.c
+rm -f branches
+rm -f coverage
+rm -f szd_execution
+rm -f funcount
+rm -f stmtcount
+rm -f idcount
+rm -f cfg
+rm -f cfg_branches
+rm -f cfg_func_map

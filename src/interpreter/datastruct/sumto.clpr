@@ -1,0 +1,47 @@
+% This is a simple example that demonstrates how to prove a sequential
+% program's loop.
+%
+% This cannot be proved yet: Check that the assertions are correct.
+
+coinductionlimit(2).   % Limit coinduction to depth 2.
+unfolddepthbound(3).
+solver(arith).
+
+% The sequential program's loop
+
+unfold(p(K,I,S,N,Sf),
+       [
+	body([], [eq(K,3), eq(Sf,S)]),
+	body([p(K1,I,S,N,Sf)], [eq(K,0), eq(K1,1)]),
+	body([p(K1,I,S,N,Sf)], [eq(K,1), eq(K1,3), geq(I,N)]),
+        body([p(K1,I,S,N,Sf)], [eq(K,1), eq(K1,2), gt(N,I)]),
+	body([p(K1,I1,S1,N,Sf)],
+	     [eq(K,2), eq(K1,1), eq(I1,plus(I,1)), eq(S1,plus(S,I))])
+       ]).
+
+% Fibonacci function whose support starts from 5, 6, ...
+
+unfold(sumto(X,Y,Init),
+       [
+	body([], [eq(X,Init),eq(Y,Init)]),
+	body([sumto(A,B,C)], [gt(X,0),eq(Y,plus(B,X)),eq(X,plus(A,1)),eq(C,Init)])
+       ]).
+
+% To Prove:
+%
+% p(K,I,I,N,Sf), K=0 |= sumto(N,Sf,I)
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [p(K,Init,Init,N,Sf)], UnfoldableGAtoms),
+	addunfoldlevel(0, [sumto(N,Sf,Init)], UnfoldableHAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [eq(K,0)],
+		     [], UnfoldableHAtoms, [], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+rm -f ./tracer.0.1_debug.clpr
+rm -f ./tracer.0.1.clpr
+
+rm -R ./benchmarks
+rm -R ./tests
+

@@ -1,0 +1,65 @@
+#!/bin/bash
+
+source ./config_files
+
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+DECOMP_TCAS_DIR=`dirname "$abspath"`
+DECOMP_CMMD=c2c
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+if ! _have $DECOMP_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+save_files
+
+setup_Makefile -options "-DPROFILE -DPRINT_SYM_GRAPH"
+
+######################################################################
+# Generate the decompiled versions and move them to DECOMP_TCAS_DIR
+# directory.
+######################################################################3
+
+echo "Generating the decompiled version of tcas_1a"
+${DECOMP_CMMD} -symgraph tcas_1a.c > out
+mv tcas_1a.c.DECOMPILED.c tcas_1a_DECOMPILED.c  
+echo "Generating the decompiled version of tcas_1b"
+${DECOMP_CMMD} -symgraph tcas_1b.c > out
+mv tcas_1b.c.DECOMPILED.c tcas_1b_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_2a"
+${DECOMP_CMMD} -symgraph tcas_2a.c > out
+mv tcas_2a.c.DECOMPILED.c tcas_2a_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_2b"
+${DECOMP_CMMD} -symgraph tcas_2b.c > out
+mv tcas_2b.c.DECOMPILED.c tcas_2b_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_3a"
+${DECOMP_CMMD} -symgraph tcas_3a.c > out
+mv tcas_3a.c.DECOMPILED.c tcas_3a_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_3b"
+${DECOMP_CMMD} -symgraph tcas_3b.c > out
+mv tcas_3b.c.DECOMPILED.c tcas_3b_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_4a"
+${DECOMP_CMMD} -symgraph tcas_4a.c > out
+mv tcas_4a.c.DECOMPILED.c tcas_4a_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_4b"
+${DECOMP_CMMD} -symgraph tcas_4b.c > out 
+mv tcas_4b.c.DECOMPILED.c tcas_4b_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_5a"
+${DECOMP_CMMD} -symgraph tcas_5a.c > out
+mv tcas_5a.c.DECOMPILED.c tcas_5a_DECOMPILED.c 
+echo "Generating the decompiled version of tcas_5b"
+${DECOMP_CMMD} -symgraph tcas_5b.c > out
+mv tcas_5b.c.DECOMPILED.c tcas_5b_DECOMPILED.c 
+
+restore_files
+
+# Clean temporary files
+rm -f *.dot
+rm -f *.clp
+rm -f *.TRACES
+rm -f out

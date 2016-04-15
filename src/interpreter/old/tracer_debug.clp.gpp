@@ -1,0 +1,160 @@
+%==============================================================================
+% Auxiliary debugging routines
+%==============================================================================
+
+trace_info_bound(100).
+
+reset_trace_info :-
+	set_counter(trace_info_size, 0),
+	fassert(trace_info([])).
+
+record_subsumption_info(_, _, _) :-
+	trace_info_bound(Bound),
+	counter_value(trace_info_size, N), N>Bound, !.
+record_subsumption_info(Depth, FName, PP) :-
+	retract(trace_info(L)),
+	fassert(trace_info([sub(Depth, FName, PP)|L])), !,
+	add_counter(trace_info_size, 1).
+
+record_infeasible_info(_, _, _) :-
+	trace_info_bound(Bound),
+	counter_value(trace_info_size, N), N>Bound, !.
+record_infeasible_info(Depth, FName, PP) :-
+	retract(trace_info(L)),
+	fassert(trace_info([inf(Depth, FName, PP)|L])), !,
+	add_counter(trace_info_size, 1).
+
+
+print_trace :-
+	warning(warning_off),
+	trace_info_compare(L1),
+	warning(warning_on), !,
+	retract(trace_info(L)), !,
+	print_trace_aux(L, L1, _).
+print_trace.
+
+print_trace_aux([], [], 0).
+print_trace_aux([C1|R1], [C2|R2], N) :-
+	print_trace_aux(R1, R2, N-1),
+	print_trace_aux2(C1, C2, N).
+
+print_trace_aux2(C1, C2, N) :-
+	printf("No: % New: %\tOld: %\n", [N, C1, C2]),
+	warn_when_different(C1, C2).
+
+warn_when_different(C1, C2) :- C1 == C2, !.
+warn_when_different(_, _) :-
+	printf("Difference found\n", []),
+	read(_).
+
+
+watchpoint(func_pred, [p9]).
+
+record_watchpoint_visit(_, _, _) :-
+	trace_info_bound(Bound),
+	counter_value(trace_info_size, N), N>Bound, !.
+record_watchpoint_visit(Depth, FName, PP) :-
+	watchpoint(FName, PP), !,
+	retract(trace_info(L)),
+	assert(trace_info([vis(Depth, FName, PP)|L])), !,
+	add_counter(trace_info_size, 1).
+record_watchpoint_visit(_, _, _).
+
+record_watchpoint_subcheck(_, _, _) :-
+	trace_info_bound(Bound),
+	counter_value(trace_info_size, N), N>Bound, !.	
+record_watchpoint_subcheck(Depth, FName, PP) :-
+	watchpoint(FName, PP), !,
+	retract(trace_info(L)),
+	assert(trace_info([chk(Depth, FName, PP)|L])), !,
+	add_counter(trace_info_size, 1).
+record_watchpoint_subcheck(_, _, _).
+
+check_watchpoint(FName, PP,
+	         GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef) :-
+	watchpoint(FName, PP),
+	printf("Watchpoint (%,%)\n", [FName, PP]),
+	dump([GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef]), !,
+	read(_).
+check_watchpoint(_, _, _, _, _, _, _).
+
+check_watchpoint_table(FName, PP,
+	               TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+                       TConstraints) :-
+	watchpoint(FName, PP),
+	print_symbolic_constraints(
+	        TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		 TConstraints), !,
+	read(_).
+check_watchpoint_table(_, _, _, _, _, _, _).
+
+
+print_symbolic_constraints(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+	                   TConstraints) :-
+	print_symbolic_constraints_aux(TGlobalArr, TGlobalVar,
+	                               TLocalArr, TLocalVar, TConstraints).
+print_symbolic_constraints(_, _, _, _, _).
+
+print_symbolic_constraints_aux(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+	                       TConstraints) :-
+	label_variables(ga, TGlobalArr),
+	label_variables(gv, TGlobalVar),
+	label_variables(la, TLocalArr),
+	label_variables(lv, TLocalVar),
+	printf("%\n", [TConstraints]), !, fail.
+
+label_variables(Type, Variables) :-
+	label_variables_aux(1, Type, Variables).
+
+label_variables_aux(_, _, []).
+label_variables_aux(N, Type, [X|R]) :-
+	printf_to_atom(X, "%s%d", [Type, N]),
+	label_variables_aux(N+1, Type, R).
+
+trace_info_compare([sub(65, func_dequant, [p63]), sub(66,
+func_dequant, [p63]), inf(66, func_dequant, [p63]), inf(66,
+func_dequant, [p63]), inf(64, func_dequant, [p60]), inf(59, func_sign,
+[p4]), inf(58, func_sign, [p1]), sub(56, func_idct, [p7]), sub(59,
+func_idct, [p12]), sub(62, func_idct, [p26]), sub(65, func_idct,
+[p31]), sub(74, func_pred, [p6]), inf(75, func_pred, [p8]), inf(75,
+func_pred, [p8]), inf(75, func_pred, [p8]), sub(76, func_pred, [p9]),
+chk(76, func_pred, [p9]), vis(76, func_pred, [p9]), inf(75, func_pred,
+[p8]), inf(75, func_pred, [p8]), inf(75, func_pred, [p8]), sub(50,
+func_dequant, [p16]), sub(51, func_dequant, [p16]), sub(49,
+func_dequant, [p14]), sub(58, func_dequant, [p18]), sub(59,
+func_dequant, [p18]), inf(58, func_dequant, [p16]), inf(53, func_sign,
+[p4]), inf(52, func_sign, [p1]), sub(52, func_dequant, [p47]), sub(52,
+func_dequant, [p47]), sub(55, func_dequant, [p45]), sub(57,
+func_dequant, [p47]), inf(50, func_dequant, [p31]), sub(54,
+func_dequant, [p37]), sub(57, func_dequant, [p47]), sub(50,
+func_dequant, [p28]), inf(49, func_dequant, [p27]), sub(52,
+func_dequant, [p47]), sub(52, func_dequant, [p25]), inf(83, func_pred,
+[p8]), inf(83, func_pred, [p8]), inf(83, func_pred, [p8]), inf(83,
+func_pred, [p8]), inf(83, func_pred, [p8]), inf(83, func_pred, [p8]),
+sub(98, func_plus, [p10]), sub(99, func_plus, [p10]), inf(98,
+func_plus, [p8]), sub(110, func_display, [p8]), sub(111, func_display,
+[p31]), sub(111, func_display, [p31]), sub(112, func_display, [p20]),
+sub(112, func_display, [p20]), sub(114, func_display, [p18]), inf(112,
+func_display, [p10]), sub(110, func_display, [p7]), sub(114,
+func_display, [p31]), sub(114, func_display, [p31]), sub(117,
+func_display, [p31]), inf(116, func_display, [p25]), inf(116,
+func_display, [p25]), inf(115, func_display, [p20]), inf(115,
+func_display, [p20]), inf(114, func_display, [p9]), inf(114,
+func_display, [p9]), sub(114, func_display, [p31]), sub(114,
+func_display, [p31]), sub(117, func_display, [p31]), sub(117,
+func_display, [p31]), sub(120, func_display, [p31]), sub(121,
+func_display, [p31]), sub(116, func_display, [p25]), inf(116,
+func_display, [p21]), sub(118, func_display, [p31]), inf(116,
+func_display, [p21]), inf(115, func_display, [p20]), inf(116,
+func_display, [p25]), sub(117, func_display, [p31]), inf(116,
+func_display, [p25]), inf(115, func_display, [p20]), inf(115,
+func_display, [p10]), sub(123, func_outbuffer, [p25]), sub(123,
+func_outbuffer, [p25]), sub(126, func_outbuffer, [p25]), sub(126,
+func_outbuffer, [p25]), sub(128, func_outbuffer, [p25]), sub(128,
+func_outbuffer, [p25]), sub(129, func_outbuffer, [p25]), sub(125,
+func_outbuffer, [p20]), sub(127, func_outbuffer, [p19]), sub(127,
+func_outbuffer, [p19]), sub(129, func_outbuffer, [p25]), inf(124,
+func_outbuffer, [p13]), inf(125, func_outbuffer, [p20]), sub(126,
+func_outbuffer, [p25]), inf(125, func_outbuffer, [p20]), inf(124,
+func_outbuffer, [p13]), sub(125, func_outbuffer, [p12]), vis(86,
+func_pred, [p9]), inf(35, func_vldcontrol, [p4])]).

@@ -1,0 +1,890 @@
+#!/bin/bash
+# this has to be /bin/bash, because of $[ 1+2 ] syntax
+
+
+# ---------------------------------------------------------
+# Adapted from a shell script used in Cil
+
+# default values for user parameters
+skip=0
+contin=0
+perf=0
+blast="time ../bin/pblast.opt"
+block=""
+
+# counters
+curtest=0
+success=0
+failure=0
+unexSuccess=0
+unexFailure=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -skip n      skip the first n tests
+  -perf	       do performance evaluation
+  -contin      keep going even after a test fails (or succeeds) unexpectedly
+  -extra str   add "str" to every blast command
+  -help        print this message
+  -block s     run the tests in block s (default "all")
+  -all         run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+  case "$1" in
+    -skip)
+      shift
+      skip="$1"
+      ;;
+
+    -perf)
+      perf=1
+      ;;
+
+    -contin)
+      contin=1
+      ;;
+
+    -extra)       
+      shift
+      blast="$blast $1"
+      ;;
+
+    -help)
+      usage
+      exit 0
+      ;;
+
+    -block)
+      shift
+      block="$block$1"
+     ;;
+     
+    -all)
+     block="all"
+     ;;
+     
+    *)
+      echo "unknown arg: $1"
+      usage
+      exit 2
+      ;;
+  esac
+
+  shift
+done
+
+# clear the logfile
+log=regrtest.log
+stat=regrtest.stat
+rm -f *.log # we clear all logfiles from individual tests as well
+rm -f regrtest.stat
+# write something to terminal and log
+log() {
+  echo "$@"
+  echo "$@" >> $log
+}
+
+#takes  no args -- just does a bunch of greps on the test_*.log file
+getstats() {
+echo "getting stats"
+echo "[$curtest]" >> $stat 
+echo `grep "TOTAL" test_${curtest}_full.log` >> $stat
+echo `grep "real:" test_${curtest}_full.log` >> $stat
+echo `grep "user:" test_${curtest}_full.log` >> $stat
+echo `grep "Nb iterations of outer while loop" test_${curtest}_full.log` >> $stat
+echo `grep "Total number of queries" test_${curtest}_full.log` >> $stat
+echo "" >> $stat
+echo `grep "Total foci queries" test_${curtest}_full.log`  >> $stat
+echo "" >> $stat
+echo `grep "Nb iterations of reachability" test_${curtest}_full.log` >> $stat
+echo `grep "Nb proof tree nodes" test_${curtest}_full.log` >> $stat
+echo `grep "Nb fun tree nodes" test_${curtest}_full.log` >> $stat
+echo `grep "Number of predicates" test_${curtest}_full.log` >> $stat
+echo `grep "Tree " test_${curtest}_full.log`"\n"  >> $stat
+echo "Ticks" `grep "tick" test_${curtest}_full.log | wc`"\n"  >> $stat
+echo "Refines"`grep "Hit err" test_${curtest}_full.log | wc`  >> $stat
+echo "TreeCheck"`grep "Bad transition" test_${curtest}_full.log`"\n"  >> $stat
+echo "" >> $stat
+echo "" >> $stat
+}
+
+
+# bail, unless asked to continue
+bail() {
+  if [ $contin -eq 0 ]; then
+    exit 2
+  fi
+}
+
+# run a single test, and bail if it fails
+runTest() {
+  if ! runTestInternal "$@"; then
+    bail
+  fi
+}
+
+# run a single test, and return 0 if it succeeds
+runTestInternal() {
+  #result=0
+  rm -f test_${curtest}*.log
+  if [ "$curtest" -lt "$skip" ]; then
+    echo "[$curtest]: skipping $*"
+  else
+    # print a visually distinct banner
+    echo "------------ [$curtest] $* ------------"
+
+    "$@" > test_${curtest}_full.log 2>&1
+    #result=$?
+    if grep ":-(" test_${curtest}_full.log ; then
+      unexFailure=$[ $unexFailure + 1 ]
+      echo ""
+      log  "[$curtest] A regression test command failed:"
+      log  "  $*"
+      tail -200 test_${curtest}_full.log >test_${curtest}.log
+      rm test_${curtest}_full.log
+    else
+      if grep ":-)" test_${curtest}_full.log ; then
+	log "[$curtest] $@ succeeds"
+        success=$[ $success + 1 ]
+	getstats
+	echo `grep "Total number of queries" test_${curtest}_full.log`
+	echo `grep "Nb iterations of outer while loop" test_${curtest}_full.log`
+	echo `grep "Nb iterations of reachability" test_${curtest}_full.log`
+        rm test_${curtest}_full.log
+        if [ "$perf" -eq 1 ]; then 
+          echo "Now running performace tests"
+          rm -f tmp
+#          for n in 1 2 3 4 5; do
+          for n in 1 ; do
+            if (time "$@" >test_${curtest}_${n}.log 2>&1) 2>times.out; then
+              cat times.out | grep real | sed 's/real	0m/    /' \
+                        | sed 's/s$//' | tee -a tmp
+              rm times.out test_${curtest}_${n}.log
+            else
+              echo "Run $n of $@ failed."
+              exit 4
+            fi
+         done
+
+            # games with awk are to make sure sorting happens properly even when
+            # the input times don't all have same # of digits (e.g. 9s vs 10s)
+         log "    median:"`awk '{ printf("%9.3fs\n", $1); }' <tmp | sort | head -3 | tail -1`
+         rm tmp
+        fi
+      else
+        echo ""
+	log "[$curtest] $@ Unexpected error"
+	tail -200 test_${curtest}_full.log >test_${curtest}.log
+	rm test_${curtest}_full.log
+	dies=$[ $dies + 1]
+      fi
+    fi
+
+
+  fi
+
+  curtest=$[ $curtest + 1 ]
+  return $result
+}
+
+
+# run a test that is expected to fail
+failTest() {
+  reason="$1"
+  shift
+  rm -f test_${curtest}*.log
+  if [ "$curtest" -lt "$skip" ]; then
+    echo "[$curtest]: (fail) skipping $*"
+  else
+    echo "------------ [$curtest] (fail) $* ------------"
+    "$@" > test_${curtest}_full.log 2>&1
+    if grep ":-)" test_${curtest}_full.log; then
+      unexSuccess=$[ $unexSuccess + 1 ]
+      echo ""
+      log  "[$curtest] BAD NEWS: A regression test that should fail ($reason) now succeeds:"
+      log  "  $*"
+      tail -200 test_${curtest}_full.log >test_${curtest}.log
+      rm test_${curtest}_full.log
+      if [ $contin = 0 ]; then
+        exit 2
+      fi
+    else
+      if grep ":-(" test_${curtest}_full.log; then
+        failure=$[ $failure + 1 ]
+        echo "Failed as expected: $reason"
+	log "[$curtest] $@ fails as expected"
+	getstats
+	echo `grep "Total number of queries" test_${curtest}_full.log`
+	echo `grep "Nb iterations of outer while loop" test_${curtest}_full.log`
+	echo `grep "Nb iterations of reachability" test_${curtest}_full.log`
+        rm -f test_${curtest}_full.log
+
+        if [ "$perf" -eq 1 ]; then 
+          echo "Now running performance tests"
+          rm -f tmp
+          for n in 1 2 3 4 5; do
+            if (time "$@" >test_${curtest}_${n}.log 2>&1) 2>times.out; then
+              cat times.out | grep real | sed 's/real	0m/    /' \
+                        | sed 's/s$//' | tee -a tmp
+              rm times.out test_${curtest}_${n}.log
+            else
+              echo "Run $n of $@ failed."
+              exit 4
+            fi
+         done
+
+            # games with awk are to make sure sorting happens properly even when
+            # the input times don't all have same # of digits (e.g. 9s vs 10s)
+         log "    median:"`awk '{ printf("%9.3fs\n", $1); }' <tmp | sort | head -3 | tail -1`
+         rm tmp
+        fi
+      else
+        echo "Unexpected error"
+        log "[$curtest] $@ Unexpected error"
+	tail -200 test_${curtest}_full.log >test_${curtest}.log
+	rm test_${curtest}_full.log
+	dies=$[ $dies + 1]
+      fi
+    fi
+  fi
+
+  curtest=$[ $curtest + 1 ]
+}
+
+
+rw="-rw"
+
+# self-contained tests of specific examples 
+
+# easy microbenchmarks
+blockMICRO(){
+runTest $blast -bddmin driver.c -craig 2 -scope
+runTest $blast -bddmin sr.c  -craig 2 -scope
+runTest $blast -bddmin funcall-hard.c -craig 2 -scope
+#runTest $blast -bddmin qpmouse.i -pred qpmpreds -craig 1 -scope
+#runTest $blast tlan.i -pred tlan.preds -craig 1 -scope -nocache
+}
+
+
+blockNONSEP(){
+ #foci-linear issue in swap1.c, swap2.c
+runTest $blast alias/swap1.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/swap2.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/swap3.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/swap3a.c -cref -alias bdd -craig 1 -scope   "$@"
+} 
+
+# aliasing examples (swap)
+blockALIAS(){
+runTest $blast alias/memtemp.c -cref -focisymm -fociUF "$@"
+runTest $blast alias/alias1.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/alias2.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/ptest0.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/ptest1.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/ptest2.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast alias/swap.c -cref -alias bdd -craig 1 -scope   "$@"
+runTest $blast -craig 1 -quiet -cref -alias bdd -tproj tproject/test6.c "$@"
+#runTest $blast alias/swap1-add.c -cref -alias bdd -craig 1 -scope  
+failTest "UNSAFE" $blast alias/swap-bug.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap1-bug.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap2-bug.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap3-bug.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap4-bug.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "UNSAFE" $blast alias/alias1-unsafe.c -cref -alias bdd -craig 1 -scope  "$@"
+failTest "UNSAFE" $blast alias/alias2-unsafe.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "UNSAFE" $blast alias/ptest0-unsafe.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "UNSAFE" $blast alias/ptest1-unsafe.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "UNSAFE" $blast alias/ptest2-unsafe.c -cref -alias bdd -craig 1 -scope   "$@"
+
+runTest $blast incref2.c -alias bdd -incref -craig 1 -scope    "$@"
+runTest $blast incref.c -alias bdd -incref -craig 1 -scope    "$@"
+runTest $blast tproject/test7.c -craig 1 -alias bdd -incref "$@"
+runTest $blast tproject/test8.c -craig 1 -alias bdd -incref "$@"
+runTest $blast tproject/test9.c -craig 1 -alias bdd -incref "$@"
+}
+
+blockALIASLONG(){
+failTest "UNSAFE" $blast incref3.c -alias bdd -incref -craig 1 -scope   "$@"
+failTest "UNSAFE" $blast incref3.c -alias bdd -incref -craig 1 -cfb -ecov -scope   "$@"
+runTest $blast -cfb -ecov  -craig 1 -cref -quiet cftest/manyswap.c #v.long
+runTest $blast alias/swap3a.c -cref -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap2-bug.c -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap3-bug.c -alias bdd -craig 1 -scope   "$@"
+failTest "Error: Foci bug" $blast alias/swap4-bug.c -alias bdd -craig 1 -scope   "$@"
+runTest $blast pointertest.c -alias bdd -craig 1 -scope "$@"
+failTest "Bug" $blast pointertest-bug.c -alias bdd -incref "$@"
+runTest $blast tfwdbwd.c -cref -alias bdd -craig 1 -scope "$@"
+}
+
+
+# NT drivers with IRP completion property
+blockIRPAC(){
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -itpn -dfs ntdrivers/kbfiltr.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize -itpn -dfs -predH 6 ntdrivers/diskperf.i
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize -itpn -dfs -predH 6 ntdrivers/floppy.i
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1  -noinitialize -itpn -dfs -clock ntdrivers/cdaudio.i
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize -itpn -bfs ntdrivers/parclass-a2-rupak.i 
+#  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize -itpn -bfs ntdrivers/parclass-a.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize -itpn -bfs ntdrivers/parclass.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize -itpn ntdrivers/parport.i
+  failTest "UNSAFE"  $blast "$@" -msvc -nofp -predH 7 -craig 2 -scope ntdrivers/parclass.BUG.i  -incref -bfs
+ #failTest "UNSAFE" $blast "$@" -msvc -nofp -predH 7 -craig 2 -scope ntdrivers/cdaudio.i -incref -bfs
+}
+
+# NT drivers with IRP completion property
+blockIRPACN(){
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero  -dfs ntdrivers/kbfiltr.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize  -dfs -predH 6 ntdrivers/diskperf.i
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize  -dfs -predH 6 ntdrivers/floppy.i
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1  -noinitialize  -dfs -clock ntdrivers/cdaudio.i
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize  -bfs ntdrivers/parclass-a2.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize  -bfs ntdrivers/parclass-a.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize  -bfs ntdrivers/parclass.i 
+  runTest $blast -msvc -nofp "$@" -craig 2 -scope -cldepth 1 -timezero -noinitialize  ntdrivers/parport.i
+  failTest "UNSAFE"  $blast "$@" -msvc -nofp -predH 7 -craig 2 -scope ntdrivers/parclass.BUG.i  -incref -bfs
+ #failTest "UNSAFE" $blast "$@" -msvc -nofp -predH 7 -craig 2 -scope ntdrivers/cdaudio.i -incref -bfs
+}
+
+
+#blockIRPACN(){
+#  blockIRPAC -itpn
+#}
+blockIRP(){
+failTest "Bug" $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/cdaudio.i -incref -bfs
+runTest $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/kbfiltr.i -incref -bfs
+runTest $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/floppy.i  -incref -bfs
+runTest $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/parport.i  -incref -bfs
+runTest $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/parclass.i  -incref -bfs
+failTest "UNSAFE"  $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/parclass.BUG.i  -incref -bfs
+# runTest $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/mouclass.i -bfs
+# runTest $blast -bddmin -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/mouclass.i -block -bfs
+}
+
+# SSH examples sent by Chaki
+#use -craig 2 -scope -bfs
+blockCHAKI(){
+runTest $blast -nofp -predH 7 ssh/s3_clnt.blast.1.c  
+runTest $blast -nofp -predH 7 ssh/s3_clnt.blast.2.c  
+runTest $blast -nofp -predH 7 ssh/s3_clnt.blast.3.c  
+runTest $blast -nofp -predH 7 ssh/s3_clnt.blast.4.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.c   
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.1.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.2.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.3.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.4.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.5.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.6.c 
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.7.c 
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.8.c 
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.9.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.10.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.11.c 
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.12.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.13.c 
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.14.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.15.c  
+runTest $blast -nofp -predH 7 ssh/s3_srvr.blast.16.c 
+}
+
+
+# BFS search examples
+blockBFS(){
+runTest $blast -bfs -bddmin driver.c 
+runTest $blast -bfs -bddmin sr.c   
+runTest $blast -bfs -bddmin funcall-hard.c   
+runTest $blast -bfs -bddmin qpmouse.i # -pred qpmpreds  
+runTest $blast -bfs -bddmin  tlan.i # -pred tlan.preds
+runTest $blast -bfs -bddmin -msvc -nofp -block -predH 7 -scope -craig 1 ntdrivers/floppy.i 
+}
+
+blockCF(){
+# CF test examples
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/calltest.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/driver-simple.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/funcall-hard.c "$@"
+runTest $blast -cfb -ecov -craig 1 -quiet cftest/funcall-rec.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/funcall1.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/funcall2-global.c "$@"
+#runTest $blast -cfb -ecov  -craig 1 -quiet cftest/manyswap.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/funcall4.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/global.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/global2.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/rec1.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/rec2.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/twocalls.c "$@"
+runTest $blast -cfb -ecov  -craig 1 -quiet cftest/simpbug.c "$@"
+failTest "UNSAFE"  $blast -cfb -ecov  -craig 1 -quiet cftest/twocalls-unsafe.c "$@"
+failTest "UNSAFE"  $blast -cfb -ecov  -craig 1 -quiet cftest/fac.c "$@"
+failTest "UNSAFE"  $blast -cfb -ecov -craig 1 -quiet cftest/funcall-rec-unsafe.c "$@" #shocking, but blast works on this!
+failTest "UNSAFE"  $blast -cfb -ecov -craig 1 -quiet cftest/funcall3.c "$@"
+failTest "UNSAFE" $blast -cfb -ecov -craig 1 -quiet cftest/funcall-missing.c "$@"
+failTest "UNSAFE" $blast -cfb -ecov -craig 1 -quiet cftest/rec4.c "$@"
+}
+
+blockCFB(){
+blockCF -cfb
+}
+
+# tproject examples 
+blockTPROJ(){
+runTest $blast -craig 1 -quiet -tproj -projfun tproject/projfun.c
+runTest $blast -craig 1 -quiet -tproj tproject/test.c
+runTest $blast -craig 1 -quiet -tproj tproject/test1.c
+runTest $blast -craig 1 -quiet -tproj tproject/test2.c
+runTest $blast -craig 1 -quiet -tproj tproject/test4.c
+runTest $blast -craig 1 -quiet -tproj tproject/test5.c
+runTest $blast -craig 1 -quiet -alias bdd -tproj tproject/test6.c
+runTest $blast -craig 1 -quiet -alias bdd -tproj tproject/test-array.c
+
+failTest "UNSAFE" $blast -craig 1 -quiet -tproj tproject/test-unsafe.c
+failTest "UNSAFE" $blast -craig 1 -quiet -tproj tproject/test2-unsafe.c
+failTest "UNSAFE" $blast -craig 1 -quiet -tproj tproject/test3.c
+failTest "UNSAFE" $blast -craig 1 -quiet -tproj tproject/test-array1.c
+
+runTest $blast -cfb -ecov  -craig 1 -tproj cftest/calltest.c
+runTest $blast -cfb -ecov  -craig 1 -tproj cftest/driver.c
+runTest $blast -cfb -ecov  -craig 1 -tproj cftest/funcall-hard.c
+failTest "UNSAFE" $blast -cfb -ecov  -craig 1 -tproj cftest/funcall-missing.c
+runTest $blast -cfb -ecov  -craig 1 -tproj cftest/funcall-rec.c
+runTest $blast -cfb -ecov  -craig 1 -tproj cftest/funcall1.c
+runTest $blast -cfb -ecov  -craig 1 cftest/funcall2-global.c
+failTest "UNSAFE" $blast -cfb -ecov  -craig 1 cftest/funcall2-global-unsafe.c 
+failTest "UNSAFE" $blast -cfb -ecov  -craig 1 -tproj cftest/funcall-rec-unsafe.c
+#shocking, but blast works on the above!
+
+#ADD MORE ...
+#failTest $blast -craig 1 -quiet -tproj tproject/test-unsafe.c
+
+runTest $blast tproject/test7.c -craig 1 -alias bdd -incref -tproj "$@"
+runTest $blast tproject/test8.c -craig 1 -alias bdd -incref -tproj "$@"
+runTest $blast tproject/test9.c -craig 1 -alias bdd -incref -tproj "$@"
+}
+
+# aliasing examples (swap) with CF
+blockALIASCF(){
+blockALIAS -cfb -ecov
+}
+
+blockIRPCF(){
+  blockIRPAC -cfb
+}
+
+
+blockIRPCFTP(){
+  blockIRPAC -cfb -tproj
+}
+
+# TCAS examples from the TACAS 05 paper on FSOFT
+blockTCAS() {
+runTest $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY1A 
+runTest $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY1B 
+runTest $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY2A 
+runTest $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY3B 
+runTest $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY5A
+
+failTest "UNSAFE" $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY2B 
+failTest "UNSAFE" $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY3A 
+failTest "UNSAFE" $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY4A 
+failTest "UNSAFE" $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY4B 
+failTest "UNSAFE" $blast -craig 2 -dfs -nolattice tcas.i -L PROPERTY5B 
+}
+
+# File open close on large programs
+blockFILE() {
+runTest $blast -craig 1 -scope -alias bdd -incref -cfb -ecov  -tproj file_io_test.c # fails
+#$spec fileopenclose/file_openclose.spc file_openclose/fcron-2.9.5.c
+#runTest $blast -nofp -predH 7 -craig 1 -scope -alias bdd -incref -cf -ecov  -tproj file_openclose/instrumented.c 
+#$spec fileopenclose/file_openclose.spc file_openclose/fcrondyn-2.9.5.c
+#runTest $blast -nofp -predH 7 -craig 1 -scope -alias bdd -incref -cf -ecov  -tproj file_openclose/instrumented.c 
+#$spec fileopenclose/file_openclose.spc file_openclose/pfinger
+#runTest $blast -nofp -predH 7 -craig 1 -scope -alias bdd -incref -cf -ecov  -tproj file_openclose/instrumented.c 
+}
+
+# Finally tests that should succeed but fail now for various reasons
+blockMISC(){
+echo ""
+echo "Now running tests that should succeed but fail due to various reasons"
+failTest "foci does not reason about field offsets" $blast pointertest-bug.c -alias bdd -craig 1 -scope
+runTest $blast misc/test0-fun.c
+#failTest "foci does not reason about memory well!" $blast tfwdbwd.c -cref -craig 1 -scope -bfs
+#failTest "fails because we treat fields of a structure together" $blast test1/race2.c -init test1/init -pred test1/pred -inv test1/inv $rw
+}
+
+
+runCFTests(){
+blockTPROJ -cfb
+blockALIASCF
+blockIRPCF
+blockIRPCFTP
+}
+
+#must be called with -fmc, -fmcc
+blockFMCAC(){
+echo "Running FMC tests"
+runTest $blast -alias bdd -bfs "$@"  -pred fmc/stest0.pred fmc/stest0.c
+# test1,test2 fail with fmcc ...but succeed with vanilla blast -- craig 1
+runTest $blast -alias bdd -bfs "$@"  -pred fmc/test1.pred fmc/test1.c
+runTest $blast -alias bdd -bfs "$@"  -pred fmc/test2.pred fmc/test2.c
+runTest $blast -alias bdd -bfs "$@"  -pred fmc/loop.pred fmc/loop.c
+runTest $blast -alias bdd -bfs "$@"  -pred fmc/loop1.pred fmc/loop1.c
+failTest "UNSAFE" $blast -alias bdd -bfs "$@"  -pred fmc/loop.pred fmc/loop-unsafe.c
+failTest "UNSAFE" $blast -alias bdd -bfs "$@"  -pred fmc/loop1.pred fmc/loop1-unsafe.c
+#runTest $blast -alias bdd -bfs "$@" -loadabs fmc/alias1.abs fmc/alias1.c
+failTest "UNSAFE" $blast -alias bdd "$@" -pred fmc/stest0.pred fmc/stest0-unsafe.c
+runTest $blast -alias bdd -bfs "$@" -pred fmc/ucltest1.pred fmc/ucltest1.c
+runTest $blast -alias bdd -bfs "$@" -pred fmc/copy1.pred fmc/copy1.c
+runTest $blast -alias bdd -bfs "$@" -pred fmc/test4.pred fmc/test4.c
+runTest $blast -alias bdd -bfs "$@" -pred fmc/test5.pred  fmc/test5.c
+runTest $blast -alias bdd -bfs "$@" -pred fmc/test5-f.pred fmc/test5-f.c
+runTest $blast -alias bdd -bfs "$@" -pred fmc/test6.pred fmc/test6.c
+failTest "UNSAFE (but FOCI Crashes)" $blast -alias bdd "$@" -pred fmc/test6.pred fmc/test6-unsafe.c
+runTest $blast -alias bdd -bfs -fociUF "$@" -pred fmc/test7.pred fmc/test7.c
+runTest $blast -alias bdd -bfs -fociUF "$@" fmc/loop1-fld.c
+}
+
+
+blockFMCHARD(){
+echo "Running FMC easy tests"
+blockFMCAC
+echo "Running FMC hard tests"
+runTest $blast -fmc -alias bdd -bfs "$@" -pred fmc/prooftest3.pred fmc/prooftest3-flat.c
+runTest $blast -fmc -alias bdd -bfs "$@" -pred fmc/prooftest3.pred fmc/prooftest3-flat2.c
+runTest $blast -fmc -alias bdd -bfs "$@" -pred fmc/prooftest3.pred fmc/prooftest3-flat-split.c
+runTest $blast -fmc -alias bdd -bfs "$@" -pred fmc/prooftest3.pred fmc/prooftest3-flat2-split.c
+runTest $blast -fmc -alias bdd -bfs "$@" -pred fmc/prooftest3.pred fmc/prooftest3.c
+}
+
+blockFMC(){
+blockFMCAC -fmc
+}
+blockFMCC(){
+blockFMCAC -fmcc
+runTest $blast -bfs -alias bdd -fmcc fmc/alias1.c
+failTest "UNSAFE" $blast -bfs -alias bdd -fmcc fmc/test3.c
+runTest $blast -bfs -alias bdd -fmcc fmc/test4.c
+runTest $blast -bfs -alias bdd -fmcc fmc/test5.c
+runTest $blast -bfs -alias bdd -fmcc fmc/test6.c
+runTest $blast -bfs -alias bdd -fmcc fmc/test7.c
+runTest $blast -bfs -alias bdd -fmcc fmc/test8.c
+runTest $blast -bfs -alias bdd -fmcc fmc/test9.c
+
+}
+blockMCCARTHY(){
+  blockFMCAC -focisymm -focimax 1 -mccarthy
+}
+
+blockFOCIMAX(){
+  runTest $blast -focisymm -focimax 1 fmc/gulwani.c
+  runTest $blast -focisymm -focimax 1 fmc/gulwaniN.c
+  runTest $blast -focisymm -focimax 1 fmc/cousot.c
+  runTest $blast -focisymm -focimax 1 fmc/gotsman1.c
+  runTest $blast -focisymm -focimax 1 fmc/gotsman2.c
+  runTest $blast -focisymm -focimax 1 fmc/gotsman3.c
+}
+
+blockRPLONG(){
+ runTest $blast -focisymm -rp 1 -slicesymm rp/pc-full.c
+}
+
+blockRP(){
+ runTest $blast -focisymm -rp 1 rp/rp1.c 
+ runTest $blast -focisymm -rp 1 rp/rp1a.c 
+ runTest $blast -focisymm -rp 1 rp/rp1b.c 
+ runTest $blast -focisymm -rp 1 rp/rp1n.c
+ runTest $blast -focisymm -rp 1 rp/rp2a.c 
+ runTest $blast -focisymm -rp 1 rp/rp2b.c 
+ runTest $blast -focisymm -rp 1 rp/rp2.c 
+ runTest $blast -focisymm -rp 1 rp/rp2n.c
+ runTest $blast -focisymm -rp 1 rp/rp3a.c 
+ runTest $blast -focisymm -rp 1 rp/rp3b.c 
+ runTest $blast -focisymm -rp 1 rp/rp3.c 
+ runTest $blast -focisymm -rp 1 rp/rp3n.c
+ runTest $blast -focisymm -rp 1 rp/rp4a.c 
+ runTest $blast -focisymm -rp 1 rp/rp4b.c 
+ runTest $blast -focisymm -rp 1 rp/rp4.c 
+ runTest $blast -focisymm -rp 1 rp/rp4n.c
+ runTest $blast -focisymm -rp 1 rp/count.c
+ runTest $blast -focisymm -rp 1 rp/countneg.c
+ runTest $blast -focisymm -rp 1 rp/copy-assume.c
+ runTest $blast -focisymm -rp 1 rp/copy.c
+ runTest $blast -focisymm -rp 1 rp/copyn.c
+ runTest $blast -focisymm -rp 1 rp/pc.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/leq0.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/leq0a.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/leq0b.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/leq1.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/leq2.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/leq3.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/sort0a.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/sort1a.c
+ runTest $blast -focisymm -rp 1 -slicesymm rp/sort/sort0-storecheck.c
+
+ runTest $blast -focisymm -focimax 1 -mccarthy rp/max-easy.c # LEQ 
+ runTest $blast -focisymm -focimax 1 -mccarthy rp/max-easier.c # LEQ
+ runTest $blast -focisymm -rp 1 rp/copy-prop.c 
+ runTest $blast -focisymm -rp 1 -slicesymm rp/pc-full.c
+ failTest "UNSAFE" $blast -focisymm -rp 1 rp/rp2a-unsafe.c 
+ failTest "UNSAFE" $blast -focisymm -rp 1 rp/copy-unsafe.c 
+ #runTest $blast -focisymm -focimax 1 -mccarthy rp/max.c # LEQ ISSUE
+ #runTest $blast -focisymm -focimax 1 -mccarthy rp/max-swap.c # LEQ
+}
+
+blockCFBEVENTS(){
+  runTest $blast "$@" -cfb events/test0.c
+  runTest $blast "$@" -cfb events/test1.c
+  runTest $blast "$@" -cfb events/test2.c
+  runTest $blast "$@" -cfb events/test3.c
+  runTest $blast "$@" -cfb events/test4.c
+  runTest $blast "$@" -cfb events/test5.c
+  runTest $blast "$@" -cfb events/test6.c
+  runTest $blast "$@" -cfb events/test7.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test0-unsafe.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test1-unsafe.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test2-unsafe1.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test2-unsafe2.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test3-unsafe.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test4-unsafe.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test5-unsafe.c
+  failTest "UNSAFE" $blast "$@" -cfb events/test0-reset.c
+  runTest $blast "$@" -cfb -reloadmod -noinitialize -predH 6 events/plb-1.i 
+  runTest $blast "$@" -cfb -reloadmod -noinitialize -predH 6 events/plb-3.i 
+  runTest $blast "$@" -cfb -reloadmod -noinitialize -predH 6 events/plb-5.i
+  failTest "UNSAFE" $blast "$@" -cfb -maxcounter 1 -finitecounter -reloadmod -noinitialize -predH 6 events/plb-4.i 
+  runTest $blast "$@" -cfb -reloadmod -noinitialize -predH 6 events/nch-null.i
+  failTest "UNSAFE" $blast "$@" -cfb -maxcounter 1 -finitecounter -reloadmod -noinitialize -predH 6 events/nch-null-unsafe.i 
+  runTest $blast "$@" -cfb -reloadmod -noinitialize -predH 6 -itpn -ubdp foci events/plb-7.i
+  runTest $blast "$@" -cfb -reloadmod -noinitialize -predH 6 events/plb-6.i
+}
+blockEVENTS(){
+ blockCFBEVENTS -events
+} 
+#  runTest $blast -events -cfb events/test0.c
+#  runTest $blast -events -cfb events/test1.c
+#  runTest $blast -events -cfb events/test2.c
+# runTest $blast -events -cfb events/test3.c
+# runTest $blast -events -cfb events/test4.c
+# runTest $blast -events -cfb events/test5.c
+# runTest $blast -events -cfb events/test6.c
+# runTest $blast -events -cfb events/test7.c
+# failTest "UNSAFE" $blast -events -cfb events/test0-unsafe.c
+# failTest "UNSAFE" $blast -events -cfb events/test1-unsafe.c
+# failTest "UNSAFE" $blast -events -cfb events/test2-unsafe1.c
+# failTest "UNSAFE" $blast -events -cfb events/test2-unsafe2.c
+# failTest "UNSAFE" $blast -events -cfb events/test3-unsafe.c
+# failTest "UNSAFE" $blast -events -cfb events/test4-unsafe.c
+# failTest "UNSAFE" $blast -events -cfb events/test5-unsafe.c
+# failTest "UNSAFE" $blast -events -cfb events/test0-reset.c
+# runTest $blast -events -cfb -reloadmod -noinitialize -predH 6 events/plb-1.i 
+# runTest $blast -events -cfb -reloadmod -noinitialize -predH 6 events/plb-3.i 
+# runTest $blast -events -cfb -reloadmod -noinitialize -predH 6 events/plb-5.i
+# failTest "UNSAFE" $blast -events -cfb -maxcounter 1 -finitecounter -reloadmod -noinitialize -predH 6 events/plb-4.i 
+# runTest $blast -events -cfb -reloadmod -noinitialize -predH 6 events/nch-null.i
+# failTest "UNSAFE" $blast -events -cfb -maxcounter 1 -finitecounter -reloadmod -noinitialize -predH 6 events/nch-null-unsafe.i 
+
+
+ 
+runAllTests(){
+
+    blockMICRO
+    
+    blockALIAS 
+
+    blockTPROJ
+
+    blockALIASCF
+    
+    blockIRPAC
+
+    blockCHAKI
+
+    blockFOCIMAX
+
+    blockBFS
+
+    blockCF
+   
+    blockTCAS 
+
+    blockIRPCF
+     
+    blockIRPCFTP
+
+    blockFILE
+     
+    blockMISC
+
+    runCFTests
+
+    blockFMC
+
+    blockFMCC
+
+    blockFMCHARD
+
+    blockMCCARTHY
+
+    blockCFBEVENTS
+}
+
+runShortRegress(){
+
+    blockMICRO
+    
+    blockALIAS -bfs
+
+    blockTPROJ
+
+    blockCF
+
+    blockALIAS -cfb -ecov
+   
+    blockFILE 
+    
+    blockFOCIMAX
+
+    blockTCAS 
+    
+#   blockMCCARTHY
+    blockCHAKI
+
+    blockIRPAC
+
+    blockCFBEVENTS
+    # run the first three tests of the IRP block, since they complete quickly
+#runTest $blast -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/cdaudio.i -incref -bfs
+#runTest $blast -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/kbfiltr.i -incref -bfs
+#runTest $blast -msvc -nofp -predH 7 -craig 1 -scope -alias bdd -pred ntdrivers/irpMaf.preds ntdrivers/floppy.i  -incref -bfs
+
+}
+
+
+#RJ: I don't really follow the deal with contin...
+# process args
+#while [ "$block" != "" ]; do
+  echo $block
+  case "$block" in
+      MICRO)
+	  shift
+	  blockMICRO
+	  ;;
+      
+      ALIAS)
+	  blockALIAS -bfs
+	  ;;
+      
+      IRP)
+	  blockIRPAC
+	  ;;
+      IRPN)
+	  blockIRPACN
+	  ;;
+      FMC)
+      	  blockFMCAC
+	  ;;
+      FMCHARD)
+      	  blockFMCHARD
+	  ;;
+
+      TPROJ)
+	  blockTPROJ
+	  ;;
+
+      CHAKI)
+	  blockCHAKI
+	  ;;
+	  
+      BFS)
+	  blockBFS
+	  ;;
+
+      CF)
+	  blockCF
+	  ;;
+
+      CFB)
+          blockCFB
+	  ;;
+
+      IRPCF)
+	  blockIRPCF
+	  ;;
+
+      IRPCFTP)
+	  blockIRPCFTP
+	  ;;
+      FILE)
+	  blockFILE
+	  ;;
+
+      MISC)
+	  blockMISC
+	  ;;
+
+      SHORT_REGRESS)
+	  runShortRegress
+	  ;;
+
+      ALL)
+	  runAllTests
+	  ;;
+      ALLCF)
+          runCFTests
+	  ;;	  
+      CFBEVENTS)
+          blockCFBEVENTS
+          ;;
+      EVENTS)
+          blockEVENTS
+          ;;
+      TCAS)
+          blockTCAS
+          ;;
+      FMCHARD)
+          blockFMCHARD
+          ;;
+      FMC)
+          blockFMC
+          ;;
+      FMCC)
+          blockFMCC
+          ;;
+      MCCARTHY)
+          blockMCCARTHY
+	  ;;
+      RP)
+      	  blockRP
+	  ;;
+      RPLONG)
+      	  blockRPLONG
+	  ;;
+      FOCIMAX)
+          blockFOCIMAX
+	  ;;
+      *)
+      echo "unknown block!: $block"
+      usage
+      exit 2
+      ;;
+  esac
+  
+  shift
+#done
+
+# final arithmetic to report result
+rm -f test.log err.log
+    if [ -f "$log" ]; then
+    cat "$log"
+    fi
+echo ""
+echo "Successful tests:      $success"
+echo "Failed as expected:    $failure"    
+echo "Unexpected success:    $unexSuccess"
+echo "Unexpected failure:    $unexFailure"
+echo "No Answer:             $dies"
+
+

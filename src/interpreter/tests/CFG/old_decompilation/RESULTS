@@ -1,0 +1,136 @@
+test-5.c
+
+----------------------------------------------------------
+original  
+----------------------------------------------------------
+States visited              : 373 
+Analysis time               : 0.62 sec 
+Analysis throughput         : 601.613 states/sec 
+# subsumed nodes            : 63 
+# calls to solver during interpolation : 2093 
+
+# total transitions         : 56
+# of alive transitions      : 54
+# of dead  transitions      : 2
+# TRUE branches             : 371 
+# FALSE branches            : 302 
+
+Total time on interpolation phase: 6 %. 
+Total time on backward      phase: 16 %. 
+Total time on forward       phase: 22 %. 
+Total time on memo store    phase: 14 %. 
+Total time on memo lookup   phase: 32 %. 
+Total time on partition     phase: 10 %. 
+----------------------------------------------------------
+decompiled
+----------------------------------------------------------
+States visited              : 356 
+Analysis time               : 0.42 sec 
+Analysis throughput         : 847.619 states/sec 
+# subsumed nodes            : 48 
+# calls to solver during interpolation : 1306 
+
+# total transitions         : 230
+# of alive transitions      : 200
+# of dead  transitions      : 30
+# TRUE branches             : 354 
+# FALSE branches            : 26 
+
+Total time on interpolation phase: 7 %. 
+Total time on backward      phase: 22 %. 
+Total time on forward       phase: 19 %. 
+Total time on memo store    phase: 22 %. 
+Total time on memo lookup   phase: 22 %. 
+Total time on partition     phase: 7 %. 
+
+test.6.c
+----------------------------------------------------------
+original  
+----------------------------------------------------------
+States visited              : 238 
+Analysis time               : 0.35 sec 
+Analysis throughput         : 680 states/sec 
+# subsumed nodes            : 49 
+# calls to solver during interpolation : 1270 
+
+# total transitions         : 35
+# of alive transitions      : 32
+# of dead  transitions      : 3
+# TRUE branches             : 236 
+# FALSE branches            : 51 
+
+Total time on interpolation phase: 19 %. 
+Total time on backward      phase: 11 %. 
+Total time on forward       phase: 26 %. 
+Total time on memo store    phase: 7 %. 
+Total time on memo lookup   phase: 33 %. 
+Total time on partition     phase: 4 %. 
+
+----------------------------------------------------------
+decompiled
+----------------------------------------------------------
+States visited              : 307 
+Analysis time               : 0.36 sec 
+Analysis throughput         : 852.778 states/sec 
+# subsumed nodes            : 49 
+# calls to solver during interpolation : 606 
+
+# total transitions         : 73
+# of alive transitions      : 70
+# of dead  transitions      : 3
+# TRUE branches             : 305 
+# FALSE branches            : 21 
+
+Total time on interpolation phase: 8 %. 
+Total time on backward      phase: 19 %. 
+Total time on forward       phase: 35 %. 
+Total time on memo store    phase: 23 %. 
+Total time on memo lookup   phase: 8 %. 
+Total time on partition     phase: 8 %. 
+
+tcas (5a)
+
+----------------------------------------------------------
+original
+----------------------------------------------------------
+
+States visited              : 2450 
+Analysis time               : 17.7 sec 
+Analysis throughput         : 138.418 states/sec 
+# subsumed nodes            : 323 
+# calls to solver during interpolation : 20157 
+
+# total transitions         : 195
+# of alive transitions      : 160
+# of dead  transitions      : 35
+# TRUE branches             : 2448 
+# FALSE branches            : 2569 
+
+Total time on interpolation phase: 5 %. 
+Total time on backward      phase: 7 %. 
+Total time on forward       phase: 8 %. 
+Total time on memo store    phase: 13 %. 
+Total time on memo lookup   phase: 61 %. 
+Total time on partition     phase: 6 %. 
+
+----------------------------------------------------------
+decompiled
+----------------------------------------------------------
+States visited              : 1933 
+Analysis time               : 7.84 sec 
+Analysis throughput         : 246.556 states/sec 
+# subsumed nodes            : 552 
+
+# calls to solver during interpolation : 1944 
+# total transitions         : 1809
+# of alive transitions      : 1539
+# of dead  transitions      : 270
+# TRUE branches             : 1931 
+# FALSE branches            : 492 
+
+Total time on interpolation phase: 4 %. 
+Total time on backward      phase: 22 %. 
+Total time on forward       phase: 28 %. 
+Total time on memo store    phase: 23 %. 
+Total time on memo lookup   phase: 6 %. 
+Total time on partition     phase: 17 %. 

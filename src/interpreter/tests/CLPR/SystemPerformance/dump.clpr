@@ -1,0 +1,42 @@
+p(0, X, Y):-
+        X > 555,
+        Y > 666.
+p(N, X1, Y):-
+	% add_counter(visited,1),
+	% pause(1000),
+        N > 0,
+        X1 > (X + N),
+        p(N - 1, X, Y).
+
+go(N):-
+	% set_counter(threshold,100),
+	% set_counter(visited,0),
+        p(N, _X, Y),
+        writeln(done),
+        ztime,
+        dump([Y]),	
+        ctime(T),
+        printf("Time = %\n", [T]),
+	report_diagnostic,!.
+
+% pause(Inc):-
+%         counter_value(threshold,Y),
+%         counter_value(visited,X),
+%         X=Y,!,
+% 	printf("Write to continue:  \n",[]),
+%         read(_),
+%         add_counter(threshold,Inc).
+% pause(_).
+     
+%clpr -cs 110000000 -ts 5000000 -ls 6000000 -hs 6000000 -ss 5000000
+
+report_diagnostic:-
+	diagnostic(A,B,C,D,E,F,G),
+	print_diagnostic_info(A,B,C,D,E,F,G).
+print_diagnostic_info(AA,BB,CC,DD,EE,FF,GG):-
+	Unit  = 1048576,  % Mb
+	Base = 1, % diagnostic returns already memory usage in bytes
+        printf("Total %.1fMb Code %.1fMb Stack %.1fMb Heap %.1fMb ",
+	       [(AA*Base)/Unit,(BB*Base)/Unit,(CC*Base)/Unit,(DD*Base)/Unit]),
+	printf("Trail %.1fMb Solver %.1fMb PTerms %.1fMb \n",
+	       [(EE*Base)/Unit,(FF*Base)/Unit,(GG*Base)/Unit]).

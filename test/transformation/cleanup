@@ -1,0 +1,9 @@
+#!/bin/bash
+rm -f *-cil.c
+rm -f *.clp
+rm -f *.TRACES
+rm -f *.dot
+rm -f *.pdf
+rm -f *.armc
+rm -f *.qarmc
+rm -f *_CIL.c

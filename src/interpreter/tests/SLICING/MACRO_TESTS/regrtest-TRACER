@@ -1,0 +1,217 @@
+#!/bin/bash
+
+source ./regrtest-expected-results
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=tracer 
+
+CHECK_RESULTS=0   # 1: check results obtained against regtest-expected-results
+                  # 0: no check
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+TESTS_HOME=`dirname "$abspath"` 
+
+currtest=""
+block="" 
+
+# counters
+counter=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -help        print this message
+  -Wt <options> pass string options to TRACER
+  -block s     run the tests in block s (default "all")
+  -all         run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+    case "$1" in
+	-help)
+	    usage
+	    exit 1
+	    ;;	
+	-block)
+	    shift
+	    block="$block$1"
+	    ;;
+	
+	-all)
+	    shift 
+	    block="ALL"
+	    ;;	
+	*)
+	    echo "unknown arg: $1"
+	    usage
+	    exit 0
+	    ;;
+    esac
+    shift
+done
+
+
+# just does a bunch of greps on the *.out file
+function getstats {
+    echo $1 >> $stat
+    if grep "Analysis time" test_${currtest}_${counter}.out; then	
+        # Here we print to file the bunch of greps
+	echo `grep -ie "Slice size"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Original program size"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Percentage reduction of the slice"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "States visited" test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "# subsumed nodes"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "# witnesses failed"  test_${currtest}_${counter}.out` >> $stat
+        # Here we store in variables the results of greps	
+	s_size=`grep -ie "slice size"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g' `  
+	t_size=`grep -ie "program size"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'`
+reduc=`grep -ie "percentage reduction" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)\.\(.*\)@\2@g'` 
+	states=`grep -ie "states visited" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+	time=`grep -ie "analysis time"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\) sec@\2@g'` 
+	subsumed=`grep -ie "# subsumed nodes" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'`  
+	unsat=`grep -ie "# witnesses failed"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+    else	
+	dies=$[ $dies + 1]	
+    fi	
+}
+
+
+function cleanDirectory {
+    cd $1
+    rm -f *.clp
+    rm -f *.dot
+    rm -f *.TRACES
+    rm -f *.out
+    cd ${TESTS_HOME}    
+    rm -f *_CIL.c
+}
+
+
+# short_name full_name options
+function run {
+    currtest=$2
+    echo "[${counter}] ${currtest}.c" >> $log
+    echo "------------ [$currtest] $* ------------"
+    ${TRACER_CMMD} slicer $3.c $4 > test_${currtest}_${counter}.out
+    getstats $2
+    if [ ${CHECK_RESULTS} -eq 1 ]; then 
+	checkstats $1 $2
+    fi	
+    counter=$[ ${counter} + 1]
+}
+
+function run_try_until_success {
+    currtest=$2
+    echo "[${counter}] ${currtest}.c" >> $log
+    echo "------------ [$currtest] $* ------------"
+    has_success=0
+    while [ $has_success -eq 0 ]; do
+	${TRACER_CMMD} slicer $3.c $4 &> test_${currtest}_${counter}.out
+	if grep "Segmentation fault"  test_${currtest}_${counter}.out; then	
+	    has_success=0
+        else
+	    has_success=1
+	fi
+    done
+    getstats $2
+    if [ ${CHECK_RESULTS} -eq 1 ]; then 
+	checkstats $1 $2
+    fi	
+    counter=$[ ${counter} + 1]
+}
+
+blockWITNESSES(){
+    echo -e "Path-sensitive w/ witnesses \n" >> $stat
+    run "witness" mpeg mpeg/mpeg "-witnesses y -alias y -include-pointers y -clean-after-dump y"
+    run "witness" kbfiltr  kbfiltr "-witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "witness" cdaudio  cdaudio "-witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "witness" diskperf diskperf "-witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "witness" floppy   floppy "-witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run_try_until_success "witness" serial serial/bigger_serial_sliced "-witnesses y -witnesses-threshold 5 -clean-after-dump y -include-pointers y -ignore-comp-errors y -ts 5000000 -ls 5000000 -hs 18000000"
+#    run "nowitness" fcron fcron/fcron-instrumented-sliced.c "-witnesses y -witnesses-threshold 5 -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+}
+
+blockNOWITNESSES(){
+    echo -e "Path-sensitive w/o witnesses \n" >> $stat
+    run "nowitness" mpeg mpeg/mpeg "-witnesses n -alias y -include-pointers y -clean-after-dump y"
+    run "nowitness" kbfiltr  kbfiltr "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" cdaudio  cdaudio "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" diskperf diskperf "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" floppy   floppy "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run_try_until_success "nowitness" serial serial/bigger_serial_sliced "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y -ts 5000000 -ls 5000000 -hs 18000000 "
+#    run "nowitness" fcron fcron/fcron-instrumented-sliced.c "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+}
+
+blockPATHINSENSITIVE(){
+    echo -e "Path-insensitive \n" >> $stat
+    run "pathins" mpeg mpeg/mpeg "-path-sensitive n -alias y -include-pointers y -clean-after-dump y"
+    run "pathins" kbfiltr  kbfiltr "-path-sensitive n -include-pointers y -ignore-comp-errors y"
+    run "pathins" cdaudio  cdaudio "-path-sensitive n -include-pointers y -ignore-comp-errors y"
+    run "pathins" diskperf diskperf "-path-sensitive n -include-pointers y -ignore-comp-errors y"
+    run "pathins" floppy   floppy "-path-sensitive n -include-pointers y -ignore-comp-errors y"
+    run "pathins" serial serial/bigger_serial_sliced "-path-sensitive n -include-pointers y -ignore-comp-errors y"
+#   run "pathins" fcron fcron/fcron-instrumented-sliced.c "-path-sensitive n -include-pointers y -ignore-comp-errors y"
+}
+
+runAllTests(){
+#   blockWITNESSES
+    blockNOWITNESSES
+    blockPATHINSENSITIVE    
+}
+
+echo $block
+case "$block" in
+    WITNESSES)
+	shift
+	blockWITNESSES
+	;;
+    NOWITNESSES)
+	shift
+	blockNOWITNESSES
+	;;
+    PATHINSENSITIVE)
+	shift
+	blockPATHINSENSITIVE
+	;;      
+    ALL)
+	shift
+	runAllTests
+	;;
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 0
+	;;
+esac  
+shift
+
+# Clean temporary files
+cleanDirectory "."
+
+# Print some stuff
+echo "No Answer:             $dies"     >> $log
+
+exit 1

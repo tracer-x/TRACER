@@ -1,0 +1,5 @@
+* Directory CUTE, a concolic unit testing engine for C, contains
+benchmarks from http://osl.cs.uiuc.edu/~ksen/cute/?page=overview
+
+* Directory CREST, an Automatic Test Generation tool for C, contains
+benchmarks from http://code.google.com/p/crest/

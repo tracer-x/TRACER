@@ -1,0 +1,304 @@
+tracedepthbound(1).
+unfolddepthbound(1).
+
+% avl(H,null,0,{}).
+% avl(H,X,D1+1,{X} * S1 * S2) :-
+% 	H[X]=D1-D2, 0 <= D1-D2, D1-D2 <= 1,
+% 	avl(H,H[X+1],D1,S1), avl(H,H[X+2],D2,S2).
+% avl(H,X,D2+1,{X} * S1 * S2) :-
+% 	H[X]=D1-D2, D1-D2 = -1,
+% 	avl(H,H[X+1],D1,S1), avl(H,H[X+2],D2,S2).
+
+unfold(avl(H,X,D,M),
+       [
+	body([], [eq(X,0), eq(D,0), multiseteq(M,multisetempty)]),
+	body([avl(H,LeftPtr,D1,M1), avl(H,RightPtr,D2,M2)],
+	     [disjoint([multiset([X,plus(X,1),plus(X,2)]), M1, M2]),
+	      multiseteq(M,union([multiset(X,plus(X,1),plus(X,2)), M1, M2])),
+	      eq(D1,plus(ref(H,X),D2)), geq(D1,D2), geq(plus(D2,1),D1),
+	      eq(LeftPtr,ref(H,plus(X,1))), eq(RightPtr,ref(H,plus(X,2)))]),
+	body([avl(H,LeftPtr,D1,M1), avl(H,RightPtr,D2,M2)],
+	     [disjoint([multiset([X,plus(X,1),plus(X,2)]), M1, M2]),
+	      multiseteq(M,union([multiset(X,plus(X,1),plus(X,2)), M1, M2])),
+	      eq(D1,plus(ref(H,X),D2)), eq(D2,plus(D1,1)),
+	      eq(LeftPtr,ref(H,plus(X,1))), eq(RightPtr,ref(H,plus(X,2)))])
+       ]).
+
+
+
+% To Prove:
+%
+% Yf=H[X+1], H[Yf]=1,
+% H1=<H,X,0>, H2=<H1,Yf,0>, H3=<H2,Yf+2,X>,
+% Hf=<H3,X+1,H2[Yf+2]>,
+% avl(H,H[X+2],DL-2,S2),
+% avl(H,H[H[X+1]+1],DL-1,S11),
+% avl(H,H[H[X+1]+2],DL-2,S12),
+% S = {X} * {H[X+1]} * S2 * S11 * S12
+% |= 
+% avl(Hf,Yf,DL,S).
+
+% desired_configuration([atm(0,_),atm(0,_),atm(0,_)],
+% 		      [atm(1,_),atm(2,_),atm(2,_)]).
+
+% run :-
+% 	prove(0, 0,
+% 	      [avl(H,PA,DLA,S2),
+% 	       avl(H,PB,DLB,S11),
+% 	       avl(H,PC,DLC,S12)],
+% 	      [eq(PA,ref(H,plus(X,2))),
+% 	       eq(PB,ref(H,plus(ref(H,plus(X,1)),1))),
+% 	       eq(PC,ref(H,plus(ref(H,plus(X,1)),2))),
+% 	       eq(DLA,minus(DL,2)),
+% 	       eq(DLB,minus(DL,1)),
+% 		eq(DLC,minus(DL,2)),
+% 	       eq(Yf,ref(H,plus(X,1))),
+% 	       eq(ref(H,Yf),1),
+% 	       arreq(H1,upd(H,X,0)),
+% 	       arreq(H2,upd(H1,Yf,0)),
+% 	       arreq(H3,upd(H2,plus(Yf,2),X)),
+% 	       arreq(Hf,upd(H3,plus(X,1),ref(H2,plus(Yf,2)))),
+% 	       multiseteq(S,union([multiset([X,plus(X,1),plus(X,2)]),
+% 				   multiset([ref(H,plus(X,1)),
+% 					      plus(ref(H,plus(X,1)),1),
+% 					     plus(ref(H,plus(X,1)),2)]),
+% 				   S2, S11, S12])),
+% 	       disjoint([multiset([X,plus(X,1),plus(X,2)]),
+% 			 multiset([ref(H,plus(X,1)),
+% 				   plus(ref(H,plus(X,1)),1),
+% 				   plus(ref(H,plus(X,1)),2)]),
+% 			 S2, S11, S12])],
+% 	      [avl(Hf,Yf,DL,S)],
+% 	      [],
+% 	      []),
+% 	counter_value(assertionnumber, X),
+% 	printf("Proof succeed\n", []),
+% 	printf("Number of assertions: %\n", [X]),
+% 	print_monocut_stats.
+% run :-
+%         printf("PROOF FAILED.\n", []).
+
+
+
+% To Prove:
+%
+% Yf=H[X+1], H[Yf]=1,
+% H1=<H,X,0>, H2=<H1,Yf,0>, H3=<H2,Yf+2,X>,
+% Hf=<H3,X+1,H2[Yf+2]>,
+% avl(H,H[X+2],DL-2,S2),
+% avl(H,H[H[X+1]+1],DL-1,S11),
+% avl(H,H[H[X+1]+2],DL-2,S12),
+% S = {X} * {H[X+1]} * S2 * S11 * S12
+% |= 
+% avl(Hf,Yf,DL,S).
+
+desired_configuration([atm(0,_),atm(0,_),atm(0,_)],
+		      [atm(0,_),atm(1,_),atm(1,_)]).
+
+run :-
+	init_counters,
+	prove(0, 0,
+	      [avl(H,PA,DLA,S2),
+	       avl(H,PB,DLB,S11),
+	       avl(H,PC,DLC,S12)],
+	      [eq(PA,ref(H,plus(X,2))),
+	       eq(PB,ref(H,plus(ref(H,plus(X,1)),1))),
+	       eq(PC,ref(H,plus(ref(H,plus(X,1)),2))),
+	       eq(DLA,minus(DL,2)),
+	       eq(DLB,minus(DL,1)),
+		eq(DLC,minus(DL,2)),
+	       eq(Yf,ref(H,plus(X,1))),
+	       eq(ref(H,Yf),1),
+	       arreq(H1,upd(H,X,0)),
+	       arreq(H2,upd(H1,Yf,0)),
+	       arreq(H3,upd(H2,plus(Yf,2),X)),
+	       arreq(Hf,upd(H3,plus(X,1),ref(H2,plus(Yf,2)))),
+	       multiseteq(S,union([multiset([X,plus(X,1),plus(X,2)]),
+				   multiset([ref(H,plus(X,1)),
+					      plus(ref(H,plus(X,1)),1),
+					     plus(ref(H,plus(X,1)),2)]),
+				   S2, S11, S12])),
+	       disjoint([multiset([X,plus(X,1),plus(X,2)]),
+			 multiset([ref(H,plus(X,1)),
+				   plus(ref(H,plus(X,1)),1),
+				   plus(ref(H,plus(X,1)),2)]),
+			 S2, S11, S12])],
+	      [avl(Hf,LtP,LtD,T1),
+	       avl(Hf,RtP,RtD,T2)],
+	      [eq(ref(Hf,Yf),0),
+	       eq(LtP,ref(Hf,plus(Yf,1))),
+	       eq(RtP,ref(Hf,plus(Yf,2))),
+	       eq(LtD,minus(DL,1)),
+	       eq(RtD,minus(DL,1)),
+	       multiseteq(S,union([multiset([Yf,plus(Yf,1),plus(Yf,2)]),
+				   T1, T2])),
+	       disjoint([multiset([Yf,plus(Yf,1),plus(Yf,2)]),
+			 T1, T2])
+	       ],
+	      []),
+	printf("Proof succeed\n", []),
+	show_counters.
+run :-
+        printf("PROOF FAILED.\n", []).
+
+
+% run :-
+% 	set_counter(assertionnumber, 0),
+% 	addunfoldlevel(0,
+% 		       [avl(H,PA,DLA,S2),
+% 			avl(H,PB,DLB,S11),
+% 			avl(H,PC,DLC,S12)],
+% 		       UnfoldableGAtoms),
+% 	addunfoldlevel(0,
+% 		       [avl(Hf,Yf,DL,S)],
+% 		       UnfoldableHAtoms),
+% 	lprove(0, 0,
+% 	       [], UnfoldableGAtoms,
+% 	       [eq(PA,ref(H,plus(X,2))),
+% 		eq(PB,ref(H,plus(ref(H,plus(X,1)),1))),
+% 		eq(PC,ref(H,plus(ref(H,plus(X,1)),2))),
+% 		eq(DLA,minus(DL,2)),
+% 		eq(DLB,minus(DL,1)),
+% 		eq(DLC,minus(DL,2)),
+% 		eq(Yf,ref(H,plus(X,1))),
+% 		eq(ref(H,Yf),1),
+% 		arreq(H1,upd(H,X,0)),
+% 		arreq(H2,upd(H1,Yf,0)),
+% 		arreq(H3,upd(H2,plus(Yf,2),X)),
+% 		arreq(Hf,upd(H3,plus(X,1),ref(H2,plus(Yf,2)))),
+% 		multiseteq(S,union([multiset([X,plus(X,1),plus(X,2)]),
+% 				    multiset([ref(H,plus(X,1)),
+% 					      plus(ref(H,plus(X,1)),1),
+% 					      plus(ref(H,plus(X,1)),2)]),
+% 				    S2, S11, S12])),
+% 		disjoint([multiset([X,plus(X,1),plus(X,2)]),
+% 			  multiset([ref(H,plus(X,1)),
+% 				    plus(ref(H,plus(X,1)),1),
+% 				    plus(ref(H,plus(X,1)),2)]),
+% 			  S2, S11, S12])],
+% 	       [], UnfoldableHAtoms,
+% 	       [], []),
+%         printf("PROOF FAILED.\n", []).
+% run :-
+% 	counter_value(assertionnumber, X),
+% 	printf("Proof succeed\n", []),
+% 	printf("Number of assertions: %\n", [X]).
+
+% To Prove:
+%
+% Yf=H[X+1], H[Yf]=1,
+%     H1=<H,X,0>, H2=<H1,Yf,0>, H3=<H2,Yf+2,X>,
+%     Hf=<H3,X+1,H2[Yf+2]>,
+%     avl(H,H[X+2],DL-2,S2),
+%     avl(H,H[H[X+1]+1],DL-1,S11),
+%     avl(H,H[H[X+1]+2],DL-2,S12),
+%     S = {X} * {H[X+1]} * S2 * S11 * S12
+% |=
+% Hf[Yf]=0, Hf[Hf[Yf+2]]=0, S={Yf}*S11*{Hf[Yf+2]} * S2 * S12,
+% avl(Hf,Hf[Yf+1],DL-1,S11),
+% avl(Hf,Hf[Hf[Yf+2]+1],DL-2,S12),
+% avl(Hf,Hf[Hf[Yf+2]+2],DL-2,S2).
+
+% run :-
+% 	set_counter(assertionnumber, 0),	
+% 	prove(0, 0,
+% 	      [
+% 	       avl(H,RightPtr,RightDepth,M2),
+% 	       avl(H,LeftLeftPtr,LeftLeftDepth,M11),
+% 	       avl(H,LeftRightPtr,LeftRightDepth,M12)
+% 	      ],
+% 	      [
+% 	       eq(Yf,ref(H,plus(X,1))), eq(ref(H,Yf),1),
+% 	       arreq(H1,upd(H,X,0)), arreq(H2,upd(H1,Yf,0)),
+% 	       arreq(H3,upd(H2,plus(Yf,2),X)),
+% 	       arreq(Hf,upd(H3,plus(X,1),ref(H2,plus(Yf,2)))),
+% 	       eq(RightPtr,ref(H,plus(X,2))),
+% 	       eq(LeftLeftPtr,ref(H,plus(ref(H,plus(X,1)),1))),
+% 	       eq(LeftRightPtr,ref(H,plus(ref(H,plus(X,1)),2))),
+% 	       eq(DL,plus(RightDepth,2)),
+% 	       eq(DL,plus(LeftLeftDepth,1)),
+% 	       eq(DL,plus(LeftRightDepth,2)),
+% 	       multiseteq(S,union([multiset([X,plus(X,1),plus(X,2)]),
+% 				   multiset([ref(H,plus(X,1)),
+% 					     plus(ref(H,plus(X,1)),1),
+% 					     plus(ref(H,plus(X,1)),2)]),
+% 				   M11, M12, M2])),
+% 	       disjoint([multiset([X,plus(X,1),plus(X,2)]),
+% 			 multiset([ref(H,plus(X,1)),
+% 				   plus(ref(H,plus(X,1)),1),
+% 				   plus(ref(H,plus(X,1)),2)]),
+% 			 M2, M11, M12])
+% 	      ],
+% 	      [
+% 	       avl(Hf,LeftPtr,LeftDepth,M11),
+% 	       avl(Hf,RightLeftPtr,RightLeftDepth,M12),
+% 	       avl(Hf,RightRightPtr,RightRightDepth,M2)
+% 	      ],
+% 	      [
+% 	       eq(ref(Hf,Yf),0), eq(ref(Hf,ref(Hf,plus(Yf,2))),0),
+% 	       multiseteq(S,union([multiset([Yf,plus(Yf,1),plus(Yf,2)]),
+% 				   multiset([ref(Hf,plus(Yf,2)),
+% 					     plus(ref(Hf,plus(Yf,2)),1),
+% 					     plus(ref(Hf,plus(Yf,2)),2)]),
+% 				   M11, M12, M2])),
+% 	       eq(LeftPtr,ref(Hf,plus(Yf,1))),
+% 	       eq(RightLeftPtr,ref(Hf,plus(ref(Hf,plus(Yf,2)),1))),
+% 	       eq(RightRightPtr,ref(Hf,plus(ref(Hf,plus(Yf,2)),2))),
+% 	       eq(DL,plus(LeftDepth,1)),
+% 	       eq(DL,plus(RightLeftPtr,2)),
+% 	       eq(DL,plus(RightRightPtr,2))
+% 	      ],
+% 	      []).
+
+% To Prove:
+%
+%     H1=<H,X,0>, H2=<H1,Yf,0>, H3=<H2,Yf+2,X>,
+%     Hf=<H3,X+1,H2[Yf+2]>,
+%     avl(H,H[H[X+1]+1],DL-1,S11),
+%     S = {X} * {H[X+1]} * S2 * S11 * S12
+% |=
+% avl(Hf,Hf[Yf+1],DL-1,S11)
+
+
+% run :-
+% 	set_counter(assertionnumber, 0),	
+% 	prove(0, 0,
+% 	      [
+% 	       avl(H,LeftLeftPtr,LeftLeftDepth,M11)
+% 	      ],
+% 	      [
+% 	       eq(Yf,ref(H,plus(X,1))), eq(ref(H,Yf),1),
+% 	       arreq(H1,upd(H,X,0)), arreq(H2,upd(H1,Yf,0)),
+% 	       arreq(H3,upd(H2,plus(Yf,2),X)),
+% 	       arreq(Hf,upd(H3,plus(X,1),ref(H2,plus(Yf,2)))),
+% 	       eq(LeftLeftPtr,ref(H,plus(ref(H,plus(X,1)),1))),
+% 	       eq(DL,plus(LeftLeftDepth,1)),
+% 	       multiseteq(S,union([multiset([X,plus(X,1),plus(X,2)]),
+% 				   multiset([ref(H,plus(X,1)),
+% 					     plus(ref(H,plus(X,1)),1),
+% 					     plus(ref(H,plus(X,1)),2)]),
+% 				   M11, M12, M2])),
+% 	       disjoint([multiset([X,plus(X,1),plus(X,2)]),
+% 			 multiset([ref(H,plus(X,1)),
+% 				   plus(ref(H,plus(X,1)),1),
+% 				   plus(ref(H,plus(X,1)),2)]),
+% 			 M2, M11, M12])
+% 	      ],
+% 	      [
+% 	       avl(Hf,LeftPtr,LeftDepth,M11)
+% 	      ],
+% 	      [
+% 	       eq(ref(Hf,Yf),0), eq(ref(Hf,ref(Hf,plus(Yf,2))),0),
+% 	       multiseteq(S,union([multiset([Yf,plus(Yf,1),plus(Yf,2)]),
+% 				   multiset([ref(Hf,plus(Yf,2)),
+% 					     plus(ref(Hf,plus(Yf,2)),1),
+% 					     plus(ref(Hf,plus(Yf,2)),2)]),
+% 				   M11, M12, M2])),
+% 	       eq(LeftPtr,ref(Hf,plus(Yf,1))),
+% 	       eq(DL,plus(LeftDepth,1))
+% 	      ],
+% 	      []).
+
+
+:- consult('monocut.clpr').
+

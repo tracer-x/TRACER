@@ -1,0 +1,122 @@
+
+% Form DAC '06 paper of Suhendra et al.
+%
+% <0>  if (x>3)
+% <1>    z = z + 1;
+%      else
+% <2>    x = flag;
+% <3>  if (y==4)
+% <4>    y = y + 1;
+%      else
+% <5>    x = 1;
+% <6>  if (x<2)
+% <7>    z = z / 2;
+%      else
+% <8>    z = z - 1;
+% <9>  y = y + x - z;
+% <10> if (y > 0)
+% <11>   z = x + y;
+%      else
+% <12>   z = -1;
+% <13> return z;
+
+% summarization(X):
+% X=1: use interpolation
+% X=0: do not use interpolation
+
+summarization(0).
+verified_depthbound(1000000).
+
+query(PC, [ST,STf|SV], [T,_Tf|V], [eq(ST,0)|CL], [gt(STf,B)]) :-
+	init_goal(PC, V, SV, CL), T=0, verified_depthbound(B).
+
+init_goal([0], [_,_,_], [_,_,_], []).
+
+trans(PC1, [ST1,STf|SV1], [T1,Tf|V1],
+      PC2, [ST2,STf|SV2], [T2,Tf|V2], [eq(ST2,plus(ST1,1))|CL], []) :-
+	trans1(_, PC1, V1, SV1, PC2, V2, SV2, CL), T2=T1+1.
+
+trans1(1, [0], [EX,EY,EZ], [X,Y,Z],
+	 [1], [EX,EY,EZ], [X,Y,Z],
+	[gt(X,3)]) :- EX>3.
+
+trans1(2, [0], [EX,EY,EZ], [X,Y,Z],
+	 [2], [EX,EY,EZ], [X,Y,Z],
+	[geq(3,X)]) :- EX<=3.
+
+trans1(3, [1], [EX,EY,EZ],  [X,Y,Z],
+	 [3], [EX,EY,EZ1], [X,Y,Z1],
+	[eq(Z1,plus(Z,1))]) :- EZ1=EZ+1.
+
+trans1(4, [2], [_EX,EY,EZ],  [_X,Y,Z],
+	 [3], [_EX1,EY,EZ], [_X1,Y,Z],
+	[]).
+
+trans1(5, [3], [EX,EY,EZ], [X,Y,Z],
+	 [4], [EX,EY,EZ], [X,Y,Z],
+	[eq(Y,4)]) :- EY=4.
+
+trans1(6, [3], [EX,EY,EZ], [X,Y,Z],
+	 [5], [EX,EY,EZ], [X,Y,Z],
+	[gt(4,Y)]) :- EY<4.
+
+trans1(7, [3], [EX,EY,EZ], [X,Y,Z],
+	 [5], [EX,EY,EZ], [X,Y,Z],
+	[gt(Y,4)]) :- EY>4.
+
+trans1(8, [4], [EX,EY,EZ], [X,Y,Z],
+	 [6], [EX,EY1,EZ], [X,Y1,Z],
+	[eq(Y1,plus(Y,1))]) :- EY1=EY+1.
+
+trans1(9, [5], [_EX,EY,EZ], [_X,Y,Z],
+	 [6], [EX1,EY,EZ], [X1,Y,Z],
+	[eq(X1,1)]) :- EX1=1.
+
+trans1(10, [6], [EX,EY,EZ], [X,Y,Z],
+	 [7], [EX,EY,EZ], [X,Y,Z],
+	[gt(2,X)]) :- EX<2.
+
+trans1(11, [6], [EX,EY,EZ], [X,Y,Z],
+	 [8], [EX,EY,EZ], [X,Y,Z],
+	[geq(X,2)]) :- EX>=2.
+
+trans1(12, [7], [EX,EY,EZ], [X,Y,Z],
+	 [9], [EX,EY,EZ1], [X,Y,Z1],
+	[eq(Z1,div(Z,2))]) :- EZ1=EZ/2.
+
+trans1(13, [8], [EX,EY,EZ], [X,Y,Z],
+	 [9], [EX,EY,EZ1], [X,Y,Z1],
+	[eq(Z1,minus(Z,1))]) :- EZ1=EZ-1.
+
+trans1(14, [9], [EX,EY,EZ], [X,Y,Z],
+	 [10], [EX,EY1,EZ], [X,Y1,Z],
+	[eq(Y1,minus(plus(Y,X),Z))]) :-
+	EY1=EY+EX-EZ.
+
+% <10> if (y > 0)
+% <11>   z = x + y;
+%      else
+% <12>   z = -1;
+% <13> return z;
+
+trans1(15, [10], [EX,EY,EZ], [X,Y,Z],
+	 [11], [EX,EY,EZ], [X,Y,Z],
+	[gt(Y,0)]) :- EY>0.
+
+trans1(16, [10], [EX,EY,EZ], [X,Y,Z],
+	 [12], [EX,EY,EZ], [X,Y,Z],
+	[geq(0,Y)]) :- EY<=0.
+
+trans1(17, [11], [EX,EY,_EZ], [X,Y,_Z],
+	 [13], [EX,EY,EZ1], [X,Y,Z1],
+	[eq(Z1,plus(X,Y))]) :- EZ1=EX+EY.
+
+trans1(18, [12], [EX,EY,_EZ], [X,Y,_Z],
+	 [13], [EX,EY,EZ1], [X,Y,Z1],
+	[eq(Z1,(-1))]) :- EZ1=(-1).
+
+stop([13], [ST,STf|_], [T,T|_], [eq(ST,STf)]).
+
+varnames([t,tf,x,y,z]).
+
+:- consult('summ-slackening.clpr').

@@ -1,0 +1,55 @@
+About graphical packages:
+---------------------------------------------
+
+We have tested three graphical packages so far:
+
+- Grappa    which supports dot 
+- Jung      which supports GraphML and Pajek.
+- ZGRViewer which supports dot
+
+ZGRViewer is for now on the package used. Thus, code Grappa and Jung
+may be outdated.
+
+
+To configure the GUI Front-End
+---------------------------------------------
+
+1) Configure environment variable in ZGRViewer:
+
+- cd zgrviewer, and
+- open run.sh and modify ZGRV_HOME accordingly
+
+2) [I think not needed] Set up some paths in TracerUI.java:
+
+- tracerCmd
+- ZGRCmd
+
+TODO
+-----
+
+0) Add plugin in Eclipse
+
+1) Improve communication between Front-End and TRACER as well as
+   Front-End and zgrviewer. For now, that communication is via executing
+   scripts. Hence, there is lack of some flexibility. In particular, we
+   need:
+
+  * Set-up TRACER flags from the Front-End to choose:
+    + w/o witnesses, path-insensitive, etc
+    + partition vs non-partition, etc. 
+
+  * Set-up TRACER Makefile options from the Front-End to choose:
+    + Debug mode
+    + Encode/Decode answers
+    + Graphviz output, etc.
+
+Hint: we may do this by adding more parameters to tracer. But
+it may be better that the Front-End communicates with TRACER.
+
+2) Execute algorithms step by step. This implies a more flexible
+   communication between the Front-End and TRACER.
+
+
+
+
+

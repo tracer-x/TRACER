@@ -1,0 +1,20 @@
+/* For copyright information, see olden_v1.0/COPYRIGHT */
+**********************
+olden_v1.0/benchmarks/mst/README
+January 3, 1995
+Martin C. Carlisle
+
+this directory contains the Minimum Spanning Tree benchmark:
+
+J. Bentley. "A Parallel Algorithm for Constructing Minimum Spanning Trees."
+J. of Algorithms 1:51-59 (1980).
+
+as implemented for Olden by Martin C. Carlisle
+**********************
+
+Makefile - use "make mst" to create executable
+
+args.c - process command line args
+hash.[ch] - hash table routines
+main.c,mst.h - main routines
+makegraph.c - creates random graph

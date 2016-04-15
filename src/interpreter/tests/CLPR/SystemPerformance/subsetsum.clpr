@@ -1,0 +1,14 @@
+
+%p(22,50).
+p(32,60).
+p(I,X) :- I<22, add_counter(goalcount,1), p(I+1,X).
+p(I,X) :- I<22, add_counter(goalcount,1), p(I+1,X+1).
+
+q :- 
+	ztime,
+	set_counter(goalcount, 0),
+	p(0,0).
+q :-
+	ctime(Y),
+	counter_value(goalcount, X),
+	printf("No. goals % Time % seconds, % goals/sec\n", [X, Y, X/Y]).

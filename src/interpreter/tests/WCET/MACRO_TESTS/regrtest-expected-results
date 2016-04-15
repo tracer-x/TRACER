@@ -1,0 +1,167 @@
+###############################################################
+# NOTE: the expected results were taken with 
+# TIMING_MODEL_NUMOFCONSTRAINTS option
+###############################################################
+
+function showAllVars(){
+    echo "WCET                  : $wcet"     >> $log
+    echo "Total states          : $states"   >> $log       
+    echo "Num of subsumptions   : $subsumed" >> $log
+    echo "Num of unsat witnesses: $unsat"    >> $log
+}
+
+function myeval {
+# if [ $wcet -eq $2 ] && [ $subsumed -eq $3 ] && [ $unsat -eq $4 ]; then 
+ wcet_int="${wcet%\.*}"
+ if [ $wcet_int -eq $2 ]; then 
+    echo "$1 OK" >> $log
+ else
+    echo "$1 FAILED" >> $log
+    showAllVars
+ fi	  
+}
+
+
+function checkstats {
+ case "$1"   in
+   "witness")
+#      checkstats_witnesses $2
+      ;;
+   "nowitness")
+      checkstats_nowitnesses $2
+      ;;
+   "pathins")
+      checkstats_path_insensitive $2
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+function checkstats_nowitnesses {
+case "$1"  in
+   "adpcm")
+#     myeval "$1" 594  31 0 
+# w/ array constraints
+      myeval "$1" 902  60 0 
+      ;;
+   "mpeg")
+#      myeval "$1" 624 307 0
+# w/ array constraints
+       myeval "$1" 784 519 0
+      ;;
+   "susan_thin") 
+#     myeval "$1" 3187 182 0 
+# w/ array constraints
+      myeval "$1" 3203 189 0 
+      ;;
+   "statemate") 
+      myeval "$1" 263 15093 0 
+      ;;
+   "linpack")  
+      myeval "$1" 1304 378 0 
+      ;;
+   "kbfiltr") 
+#     myeval "$1" 139 262 0
+# w/ array constraints
+      myeval "$1" 154 262 0
+      ;;
+   "cdaudio") 
+#      myeval "$1" 374 861 0 
+# w/ array constraints
+       myeval "$1" 443 929 0 
+      ;;
+   "diskperf") 
+#      myeval "$1" 388 379 0
+# w/ array constraints
+       myeval "$1" 405 379 0
+      ;;
+   "floppy")  
+#      myeval "$1" 403 397 0 
+# w/ array constraints
+       myeval "$1" 457 400 0 
+      ;;
+   "serial")  
+      myeval "$1" 7481 10887 0 
+# w/ array constraints
+#     myeval "$1" 7053 10737 0 
+      ;;
+   "qpmouse") 
+#      myeval "$1" 280 37 0 
+# w/ array constraints
+       myeval "$1" 392 115 0 
+      ;;
+   "tlan") 
+#      myeval "$1" 611 356 0 
+# w/ array constraints
+       myeval "$1" 731 700 0 
+      ;;
+   "tcas") 
+      myeval "$1" 91 343 0
+      ;;
+     *)
+      ;;
+esac	     
+}
+
+function checkstats_path_insensitive {
+ case "$1"   in
+   "adpcm")
+      myeval "$1" 914 56 0 
+      ;;
+   "mpeg")
+      myeval "$1" 837 886 0
+      ;;
+   "susan_thin") 
+      myeval "$1" 5363 343 0
+      ;;
+   "statemate")   
+      myeval "$1" 293 400 0 
+      ;;
+   "linpack")  
+      myeval "$1" 1373 1803 0 
+      ;;
+   "kbfiltr") 
+#     myeval "$1" 139 275 0
+# w/ array constraints
+      myeval "$1" 154 275 0
+      ;;
+   "cdaudio") 
+#     myeval "$1" 394 1006 0 
+# w/ array constraints
+      myeval "$1" 463 1006 0 
+      ;;
+   "diskperf") 
+#     myeval "$1" 537 462 0
+# w/ array constraints
+      myeval "$1" 588 462 0
+      ;;
+   "floppy")  
+#     myeval "$1" 547 1210 0 
+# w/ array constraints
+      myeval "$1" 606 1210 0 
+      ;;
+   "serial")  
+     myeval "$1" 8992 6617 0 
+# w/ array constraints
+#    myeval "$1" 10162 6619 0 
+      ;;
+   "qpmouse") 
+#     myeval "$1" 398 72 0 
+# w/ array constraints
+      myeval "$1" 403 72 0 
+      ;;
+   "tlan") 
+#     myeval "$1" 664 286 0 
+# w/ array constraints
+      myeval "$1" 747 286 0 
+      ;;
+   "tcas") 
+      myeval "$1" 96 91 0
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+

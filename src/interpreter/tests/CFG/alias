@@ -1,0 +1,49 @@
+#!/bin/bash
+if [ $# = 0 ]
+then
+	echo "Usage:"
+	echo "alias prog.c   - decompile prog.c and generate three files - alias1.out, alias2.out and aliascompare.out (RUN FROM prog.c's folder ONLY)"
+	echo "cprop clean    - clean folder of above mentioned files"
+else
+if [ $1 = "clean" ]
+then
+	rm *cilly*
+	rm *.dec.c
+	rm alias1.out
+	rm alias2.out
+else
+if [ $1 = "compare" ]
+then
+	dir=`pwd`
+
+	cd ${CFGBIN}
+	java Alias ${dir}/alias1.out ${dir}/alias2.out
+else
+if  [ -f $1 ] 
+then
+	prog_cilly=${1}
+	prog_dec=${2}
+	dir=`pwd`
+
+	echo "Running crystal..."
+	if [ -f ${prog_cilly} ] && [ -f ${prog_dec} ]
+	then
+		crystal -v=20 ${prog_cilly} > alias1.out
+		crystal -v=20 ${prog_dec} > alias2.out
+		if [ -f alias1.out ] && [ -f alias2.out ]
+		then
+			cd ${CFGBIN}
+			java Alias ${dir}/alias1.out ${dir}/alias2.out
+		else
+			echo "alias1.out or alias2.out not created!"
+		fi
+	else
+		echo "Cannot find ${prog_cilly} or ${prog_dec}"
+	fi
+else
+	echo "${prog} does not exist"
+	exit 2
+fi
+fi
+fi
+fi

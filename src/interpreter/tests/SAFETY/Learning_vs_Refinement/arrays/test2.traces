@@ -1,0 +1,427 @@
+Start trace 
+       XXX
+0 :: 0: 	 FunctionCall(__BLAST_initialize_test2.i()) :: -1 
+      XXX
+0 :: 0: 	 Block(Return(0);) :: -1 
+      XXX
+-1 :: -1: 	 Skip :: 24 
+      XXX
+24 :: 24: 	 Block(i@main = 0;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  <  100) :: -1 
+      XXX
+26 :: 26: 	 Block(a[ i@main ].valid = 0;i@main = i@main  +  1;) :: 25 
+      XXX
+25 :: 25: 	 Pred(i@main  >=  100) :: -1 
+      XXX
+29 :: 29: 	 Block(a[ t ].valid = 0;) :: 30 
+      XXX
+30 :: 30: 	 Pred(true) :: -1 
+      XXX
+38 :: 38: 	 Block(i@main = 0;) :: 39 
+      XXX
+39 :: 39: 	 Pred(i@main  <  100) :: -1 
+      XXX
+40 :: 40: 	 Pred(i@main  ==  t) :: -1 
+      XXX
+40 :: 40: 	 Pred(a[ i@main ].valid  !=  0) :: -1 
+      XXX
+41 :: 41: 	 FunctionCall(error()) :: -1 
+      XXX
+End trace

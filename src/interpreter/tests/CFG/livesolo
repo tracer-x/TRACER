@@ -1,0 +1,52 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+	echo "Usage:"
+	echo "livesolo prog1.c prog2.c func linenum [outputdir] - run cil's live analysis at labels TRACER_LABEL (default) in func in both prog1 and prog2. output results in files"
+	echo "livesolo clean                                    - clean folder of temporary files"
+else
+if [ $1 = "clean" ]
+then
+	rm *cilly*
+	rm *.dec.c
+	rm live1.out
+	rm live2.out
+	rm livecompare.out
+else
+if [ $1 = "compare" ]
+then
+	dir=`pwd`
+
+	cd ..
+	diff live1.out live2.out > livecompare.out
+else
+	prog1=${1%.c}
+	prog2=${2%.c}
+	func=$3
+	if [ $# -eq 5 ]
+	then
+		dir=$5
+	else
+		dir=`pwd`
+	fi
+
+	echo "Running live analysis..."
+	cd ${dir}
+	if [ -f ${prog1}.c ] && [ -f ${prog2}.c ]
+	then
+		cilly ${prog1}.c --keepunused --doLiveness --live_func ${func} --live_label TRACER_LABEL 2> /dev/null | sed -e 's/,/\n/g' | sed '/^$/d' | sed 's/^ *//;s/ *$//' | sort | uniq > live1.out
+		cilly ${prog2}.c --keepunused --doLiveness --live_func ${func} --live_label TRACER_LABEL 2> /dev/null | sed -e 's/,/\n/g' | sed '/^$/d' | sed 's/^ *//;s/ *$//' | sort | uniq > live2.out
+		
+		nlines1=`wc live1.out --lines | cut -d' ' -f1`
+		nlines2=`wc live2.out --lines | cut -d' ' -f1`
+		echo ${4} ${nlines1} ${nlines2} >> histogram.out
+		rm live1.out
+		rm live2.out
+		#cat livecompare.out
+		echo "DONE!"
+	else
+		echo "Cannot find ${prog1}.c or ${prog2}.c"
+	fi
+fi
+fi
+fi

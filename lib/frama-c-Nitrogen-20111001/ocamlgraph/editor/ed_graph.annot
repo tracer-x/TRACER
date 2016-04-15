@@ -1,0 +1,4073 @@
+"editor/ed_graph.ml" 36 1609 1613 "editor/ed_graph.ml" 36 1609 1627
+type(
+  string -> node_info
+)
+ident(
+  def make_node_info "editor/ed_graph.ml" 45 1752 1752 --
+)
+"editor/ed_graph.ml" 36 1609 1628 "editor/ed_graph.ml" 36 1609 1629
+type(
+  string
+)
+ident(
+  def s "editor/ed_graph.ml" 37 1633 1635 "editor/ed_graph.ml" 43 1747 1750
+)
+"editor/ed_graph.ml" 38 1638 1650 "editor/ed_graph.ml" 38 1638 1651
+type(
+  string
+)
+ident(
+  int_ref s "editor/ed_graph.ml" 36 1609 1628 "editor/ed_graph.ml" 36 1609 1629
+)
+"editor/ed_graph.ml" 39 1654 1668 "editor/ed_graph.ml" 39 1654 1674
+type(
+  visibility
+)
+"editor/ed_graph.ml" 40 1677 1689 "editor/ed_graph.ml" 40 1677 1690
+type(
+  int
+)
+"editor/ed_graph.ml" 41 1693 1711 "editor/ed_graph.ml" 41 1693 1717
+type(
+  mode
+)
+"editor/ed_graph.ml" 42 1720 1733 "editor/ed_graph.ml" 42 1720 1745
+type(
+  Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.dummy_turtle
+)
+"editor/ed_graph.ml" 37 1633 1635 "editor/ed_graph.ml" 43 1747 1750
+type(
+  node_info
+)
+"editor/ed_graph.ml" 54 1956 1960 "editor/ed_graph.ml" 54 1956 1974
+type(
+  unit -> edge_info
+)
+ident(
+  def make_edge_info "editor/ed_graph.ml" 63 2115 2115 --
+)
+"editor/ed_graph.ml" 54 1956 1975 "editor/ed_graph.ml" 54 1956 1977
+type(
+  unit
+)
+"editor/ed_graph.ml" 56 1985 1999 "editor/ed_graph.ml" 56 1985 2004
+type(
+  bool
+)
+"editor/ed_graph.ml" 57 2007 2023 "editor/ed_graph.ml" 57 2007 2029
+type(
+  mode
+)
+"editor/ed_graph.ml" 58 2031 2049 "editor/ed_graph.ml" 58 2031 2061
+type(
+  Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.dummy_turtle
+)
+"editor/ed_graph.ml" 59 2064 2084 "editor/ed_graph.ml" 59 2064 2086
+type(
+  float
+)
+"editor/ed_graph.ml" 60 2089 2106 "editor/ed_graph.ml" 60 2089 2107
+type(
+  int
+)
+"editor/ed_graph.ml" 55 1980 1982 "editor/ed_graph.ml" 61 2110 2113
+type(
+  edge_info
+)
+"editor/ed_graph.ml" 65 2157 2163 "editor/ed_graph.ml" 65 2157 2170
+type(
+  t -> t -> int
+)
+ident(
+  def compare "editor/ed_graph.ml" 66 2208 2210 "editor/ed_graph.ml" 67 2242 2245
+)
+"editor/ed_graph.ml" 65 2157 2189 "editor/ed_graph.ml" 65 2157 2207
+type(
+  t -> t -> int
+)
+type(
+  t -> t -> int
+)
+ident(
+  ext_ref Pervasives.compare
+)
+"editor/ed_graph.ml" 66 2208 2214 "editor/ed_graph.ml" 66 2208 2221
+type(
+  edge_info
+)
+ident(
+  def default "editor/ed_graph.ml" 66 2208 2241 "editor/ed_graph.ml" 67 2242 2245
+)
+"editor/ed_graph.ml" 66 2208 2224 "editor/ed_graph.ml" 66 2208 2238
+type(
+  unit -> edge_info
+)
+ident(
+  int_ref make_edge_info "editor/ed_graph.ml" 54 1956 1960 "editor/ed_graph.ml" 54 1956 1974
+)
+"editor/ed_graph.ml" 66 2208 2239 "editor/ed_graph.ml" 66 2208 2241
+type(
+  unit
+)
+"editor/ed_graph.ml" 66 2208 2224 "editor/ed_graph.ml" 66 2208 2241
+call(
+  stack
+)
+type(
+  edge_info
+)
+"editor/ed_graph.ml" 70 2259 2261 "editor/ed_graph.ml" 70 2259 2324
+call(
+  stack
+)
+"editor/ed_graph.ml" 70 2259 2261 "editor/ed_graph.ml" 70 2259 2330
+call(
+  stack
+)
+"editor/ed_graph.ml" 72 2332 2343 "editor/ed_graph.ml" 72 2332 2355
+call(
+  stack
+)
+"editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+type(
+  B.G.t ref
+)
+ident(
+  def graph "editor/ed_graph.ml" 80 2412 2412 --
+)
+"editor/ed_graph.ml" 78 2381 2393 "editor/ed_graph.ml" 78 2381 2396
+type(
+  B.G.t -> B.G.t ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 78 2381 2398 "editor/ed_graph.ml" 78 2381 2406
+type(
+  ?size:int -> unit -> B.G.t
+)
+ident(
+  ext_ref G.create
+)
+"editor/ed_graph.ml" 78 2381 2407 "editor/ed_graph.ml" 78 2381 2409
+type(
+  unit
+)
+"editor/ed_graph.ml" 78 2381 2397 "editor/ed_graph.ml" 78 2381 2410
+call(
+  stack
+)
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 78 2381 2393 "editor/ed_graph.ml" 78 2381 2410
+type(
+  B.G.t ref
+)
+"editor/ed_graph.ml" 82 2439 2443 "editor/ed_graph.ml" 82 2439 2453
+type(
+  name ref
+)
+ident(
+  def graph_name "editor/ed_graph.ml" 85 2517 2517 --
+)
+"editor/ed_graph.ml" 82 2439 2456 "editor/ed_graph.ml" 82 2439 2459
+type(
+  name -> name ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 82 2439 2461 "editor/ed_graph.ml" 82 2439 2465
+type(
+  name
+)
+type(
+  name
+)
+"editor/ed_graph.ml" 82 2439 2456 "editor/ed_graph.ml" 82 2439 2472
+type(
+  name ref
+)
+"editor/ed_graph.ml" 85 2517 2521 "editor/ed_graph.ml" 85 2517 2536
+type(
+  G.V.t -> string
+)
+ident(
+  def string_of_label "editor/ed_graph.ml" 86 2561 2561 --
+)
+"editor/ed_graph.ml" 85 2517 2537 "editor/ed_graph.ml" 85 2517 2538
+type(
+  G.V.t
+)
+ident(
+  def x "editor/ed_graph.ml" 85 2517 2541 "editor/ed_graph.ml" 85 2517 2560
+)
+"editor/ed_graph.ml" 85 2517 2542 "editor/ed_graph.ml" 85 2517 2551
+type(
+  G.V.t -> G.V.label
+)
+ident(
+  ext_ref G.V.label
+)
+"editor/ed_graph.ml" 85 2517 2552 "editor/ed_graph.ml" 85 2517 2553
+type(
+  G.V.t
+)
+ident(
+  int_ref x "editor/ed_graph.ml" 85 2517 2537 "editor/ed_graph.ml" 85 2517 2538
+)
+"editor/ed_graph.ml" 85 2517 2541 "editor/ed_graph.ml" 85 2517 2554
+call(
+  stack
+)
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 85 2517 2541 "editor/ed_graph.ml" 85 2517 2560
+type(
+  string
+)
+"editor/ed_graph.ml" 86 2561 2565 "editor/ed_graph.ml" 86 2561 2569
+type(
+  G.vertex -> G.vertex -> bool
+)
+ident(
+  def edge "editor/ed_graph.ml" 92 2653 2653 --
+)
+"editor/ed_graph.ml" 86 2561 2570 "editor/ed_graph.ml" 86 2561 2571
+type(
+  G.vertex
+)
+ident(
+  def v "editor/ed_graph.ml" 86 2561 2572 "editor/ed_graph.ml" 86 2561 2622
+)
+"editor/ed_graph.ml" 86 2561 2572 "editor/ed_graph.ml" 86 2561 2573
+type(
+  G.vertex
+)
+ident(
+  def w "editor/ed_graph.ml" 86 2561 2576 "editor/ed_graph.ml" 86 2561 2622
+)
+"editor/ed_graph.ml" 86 2561 2576 "editor/ed_graph.ml" 86 2561 2586
+type(
+  B.G.t -> G.vertex -> G.vertex -> bool
+)
+ident(
+  ext_ref G.mem_edge
+)
+"editor/ed_graph.ml" 86 2561 2587 "editor/ed_graph.ml" 86 2561 2588
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 86 2561 2588 "editor/ed_graph.ml" 86 2561 2593
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 86 2561 2587 "editor/ed_graph.ml" 86 2561 2593
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 86 2561 2594 "editor/ed_graph.ml" 86 2561 2595
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 86 2561 2570 "editor/ed_graph.ml" 86 2561 2571
+)
+"editor/ed_graph.ml" 86 2561 2596 "editor/ed_graph.ml" 86 2561 2597
+type(
+  G.vertex
+)
+ident(
+  int_ref w "editor/ed_graph.ml" 86 2561 2572 "editor/ed_graph.ml" 86 2561 2573
+)
+"editor/ed_graph.ml" 86 2561 2576 "editor/ed_graph.ml" 86 2561 2597
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 86 2561 2598 "editor/ed_graph.ml" 86 2561 2600
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.||
+)
+"editor/ed_graph.ml" 86 2561 2601 "editor/ed_graph.ml" 86 2561 2611
+type(
+  B.G.t -> G.vertex -> G.vertex -> bool
+)
+ident(
+  ext_ref G.mem_edge
+)
+"editor/ed_graph.ml" 86 2561 2612 "editor/ed_graph.ml" 86 2561 2613
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 86 2561 2613 "editor/ed_graph.ml" 86 2561 2618
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 86 2561 2612 "editor/ed_graph.ml" 86 2561 2618
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 86 2561 2619 "editor/ed_graph.ml" 86 2561 2620
+type(
+  G.vertex
+)
+ident(
+  int_ref w "editor/ed_graph.ml" 86 2561 2572 "editor/ed_graph.ml" 86 2561 2573
+)
+"editor/ed_graph.ml" 86 2561 2621 "editor/ed_graph.ml" 86 2561 2622
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 86 2561 2570 "editor/ed_graph.ml" 86 2561 2571
+)
+"editor/ed_graph.ml" 86 2561 2601 "editor/ed_graph.ml" 86 2561 2622
+call(
+  tail
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 86 2561 2576 "editor/ed_graph.ml" 86 2561 2622
+type(
+  bool
+)
+"editor/ed_graph.ml" 93 2673 2675 "editor/ed_graph.ml" 94 2685 2692
+call(
+  stack
+)
+"editor/ed_graph.ml" 96 2706 2716 "editor/ed_graph.ml" 96 2706 2720
+type(
+  (string * Graph.Gml.value) list -> node_info
+)
+ident(
+  def node "editor/ed_graph.ml" 102 2875 2881 "editor/ed_graph.ml" 103 2912 2919
+)
+"editor/ed_graph.ml" 96 2706 2721 "editor/ed_graph.ml" 96 2706 2722
+type(
+  (string * Graph.Gml.value) list
+)
+ident(
+  def l "editor/ed_graph.ml" 97 2726 2727 "editor/ed_graph.ml" 101 2841 2874
+)
+"editor/ed_graph.ml" 97 2726 2727 "editor/ed_graph.ml" 97 2726 2741
+type(
+  string -> node_info
+)
+ident(
+  int_ref make_node_info "editor/ed_graph.ml" 36 1609 1613 "editor/ed_graph.ml" 36 1609 1627
+)
+"editor/ed_graph.ml" 99 2751 2764 "editor/ed_graph.ml" 99 2751 2774
+type(
+  string -> (string * Graph.Gml.value) list -> Graph.Gml.value
+)
+ident(
+  ext_ref List.assoc
+)
+"editor/ed_graph.ml" 99 2751 2775 "editor/ed_graph.ml" 99 2751 2779
+type(
+  string
+)
+"editor/ed_graph.ml" 99 2751 2780 "editor/ed_graph.ml" 99 2751 2781
+type(
+  (string * Graph.Gml.value) list
+)
+ident(
+  int_ref l "editor/ed_graph.ml" 96 2706 2721 "editor/ed_graph.ml" 96 2706 2722
+)
+"editor/ed_graph.ml" 99 2751 2764 "editor/ed_graph.ml" 99 2751 2781
+call(
+  stack
+)
+type(
+  Graph.Gml.value
+)
+"editor/ed_graph.ml" 100 2783 2803 "editor/ed_graph.ml" 100 2783 2804
+type(
+  int
+)
+ident(
+  def n "editor/ed_graph.ml" 100 2783 2808 "editor/ed_graph.ml" 100 2783 2823
+)
+"editor/ed_graph.ml" 100 2783 2795 "editor/ed_graph.ml" 100 2783 2804
+type(
+  Graph.Gml.value
+)
+"editor/ed_graph.ml" 100 2783 2808 "editor/ed_graph.ml" 100 2783 2821
+type(
+  int -> string
+)
+ident(
+  ext_ref Pervasives.string_of_int
+)
+"editor/ed_graph.ml" 100 2783 2822 "editor/ed_graph.ml" 100 2783 2823
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_graph.ml" 100 2783 2803 "editor/ed_graph.ml" 100 2783 2804
+)
+"editor/ed_graph.ml" 100 2783 2808 "editor/ed_graph.ml" 100 2783 2823
+call(
+  stack
+)
+type(
+  string
+)
+"editor/ed_graph.ml" 100 2783 2826 "editor/ed_graph.ml" 100 2783 2827
+type(
+  Graph.Gml.value
+)
+"editor/ed_graph.ml" 100 2783 2831 "editor/ed_graph.ml" 100 2783 2840
+type(
+  string
+)
+"editor/ed_graph.ml" 99 2751 2758 "editor/ed_graph.ml" 100 2783 2840
+type(
+  string
+)
+"editor/ed_graph.ml" 101 2841 2851 "editor/ed_graph.ml" 101 2841 2860
+type(
+  exn
+)
+"editor/ed_graph.ml" 101 2841 2864 "editor/ed_graph.ml" 101 2841 2873
+type(
+  string
+)
+"editor/ed_graph.ml" 98 2742 2745 "editor/ed_graph.ml" 101 2841 2874
+type(
+  string
+)
+"editor/ed_graph.ml" 97 2726 2727 "editor/ed_graph.ml" 101 2841 2874
+call(
+  tail
+)
+type(
+  node_info
+)
+"editor/ed_graph.ml" 102 2875 2885 "editor/ed_graph.ml" 102 2875 2889
+type(
+  'a -> edge_info
+)
+ident(
+  def edge "editor/ed_graph.ml" 102 2875 2911 "editor/ed_graph.ml" 103 2912 2919
+)
+"editor/ed_graph.ml" 102 2875 2890 "editor/ed_graph.ml" 102 2875 2891
+type(
+  'a
+)
+"editor/ed_graph.ml" 102 2875 2894 "editor/ed_graph.ml" 102 2875 2908
+type(
+  unit -> edge_info
+)
+ident(
+  int_ref make_edge_info "editor/ed_graph.ml" 54 1956 1960 "editor/ed_graph.ml" 54 1956 1974
+)
+"editor/ed_graph.ml" 102 2875 2909 "editor/ed_graph.ml" 102 2875 2911
+type(
+  unit
+)
+"editor/ed_graph.ml" 102 2875 2894 "editor/ed_graph.ml" 102 2875 2911
+call(
+  tail
+)
+type(
+  edge_info
+)
+"editor/ed_graph.ml" 93 2673 2675 "editor/ed_graph.ml" 103 2912 2920
+call(
+  stack
+)
+"editor/ed_graph.ml" 106 2942 2944 "editor/ed_graph.ml" 107 2954 2961
+call(
+  stack
+)
+"editor/ed_graph.ml" 109 2975 2985 "editor/ed_graph.ml" 109 2975 2989
+type(
+  Graph.Dot_ast.id * 'a -> 'b -> node_info
+)
+ident(
+  def node "editor/ed_graph.ml" 114 3112 3118 "editor/ed_graph.ml" 115 3149 3156
+)
+"editor/ed_graph.ml" 109 2975 2991 "editor/ed_graph.ml" 109 2975 2993
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  def id "editor/ed_graph.ml" 109 2975 2997 "editor/ed_graph.ml" 113 3074 3111
+)
+"editor/ed_graph.ml" 109 2975 2994 "editor/ed_graph.ml" 109 2975 2995
+type(
+  'a
+)
+"editor/ed_graph.ml" 109 2975 2990 "editor/ed_graph.ml" 109 2975 2996
+type(
+  Graph.Dot_ast.id * 'a
+)
+"editor/ed_graph.ml" 109 2975 2997 "editor/ed_graph.ml" 109 2975 2998
+type(
+  'b
+)
+"editor/ed_graph.ml" 109 2975 3007 "editor/ed_graph.ml" 109 2975 3009
+type(
+  Graph.Dot_ast.id
+)
+ident(
+  int_ref id "editor/ed_graph.ml" 109 2975 2991 "editor/ed_graph.ml" 109 2975 2993
+)
+"editor/ed_graph.ml" 110 3015 3032 "editor/ed_graph.ml" 110 3015 3033
+type(
+  string
+)
+ident(
+  def s "editor/ed_graph.ml" 113 3074 3095 "editor/ed_graph.ml" 113 3074 3111
+)
+"editor/ed_graph.ml" 110 3015 3018 "editor/ed_graph.ml" 110 3015 3033
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 111 3034 3052 "editor/ed_graph.ml" 111 3034 3053
+type(
+  string
+)
+ident(
+  def s "editor/ed_graph.ml" 113 3074 3095 "editor/ed_graph.ml" 113 3074 3111
+)
+"editor/ed_graph.ml" 111 3034 3037 "editor/ed_graph.ml" 111 3034 3053
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 110 3015 3018 "editor/ed_graph.ml" 111 3034 3053
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 112 3054 3072 "editor/ed_graph.ml" 112 3054 3073
+type(
+  string
+)
+ident(
+  def s "editor/ed_graph.ml" 113 3074 3095 "editor/ed_graph.ml" 113 3074 3111
+)
+"editor/ed_graph.ml" 112 3054 3057 "editor/ed_graph.ml" 112 3054 3073
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 110 3015 3018 "editor/ed_graph.ml" 112 3054 3073
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 113 3074 3090 "editor/ed_graph.ml" 113 3074 3091
+type(
+  string
+)
+ident(
+  def s "editor/ed_graph.ml" 113 3074 3095 "editor/ed_graph.ml" 113 3074 3111
+)
+"editor/ed_graph.ml" 113 3074 3077 "editor/ed_graph.ml" 113 3074 3091
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 110 3015 3018 "editor/ed_graph.ml" 113 3074 3091
+type(
+  Graph.Dot_ast.id
+)
+"editor/ed_graph.ml" 113 3074 3095 "editor/ed_graph.ml" 113 3074 3109
+type(
+  string -> node_info
+)
+ident(
+  int_ref make_node_info "editor/ed_graph.ml" 36 1609 1613 "editor/ed_graph.ml" 36 1609 1627
+)
+"editor/ed_graph.ml" 113 3074 3110 "editor/ed_graph.ml" 113 3074 3111
+type(
+  string
+)
+ident(
+  int_ref s "editor/ed_graph.ml" 110 3015 3032 "editor/ed_graph.ml" 110 3015 3033
+)
+"editor/ed_graph.ml" 113 3074 3095 "editor/ed_graph.ml" 113 3074 3111
+call(
+  tail
+)
+type(
+  node_info
+)
+"editor/ed_graph.ml" 109 2975 3001 "editor/ed_graph.ml" 113 3074 3111
+type(
+  node_info
+)
+"editor/ed_graph.ml" 114 3112 3122 "editor/ed_graph.ml" 114 3112 3126
+type(
+  'c -> edge_info
+)
+ident(
+  def edge "editor/ed_graph.ml" 114 3112 3148 "editor/ed_graph.ml" 115 3149 3156
+)
+"editor/ed_graph.ml" 114 3112 3127 "editor/ed_graph.ml" 114 3112 3128
+type(
+  'c
+)
+"editor/ed_graph.ml" 114 3112 3131 "editor/ed_graph.ml" 114 3112 3145
+type(
+  unit -> edge_info
+)
+ident(
+  int_ref make_edge_info "editor/ed_graph.ml" 54 1956 1960 "editor/ed_graph.ml" 54 1956 1974
+)
+"editor/ed_graph.ml" 114 3112 3146 "editor/ed_graph.ml" 114 3112 3148
+type(
+  unit
+)
+"editor/ed_graph.ml" 114 3112 3131 "editor/ed_graph.ml" 114 3112 3148
+call(
+  tail
+)
+type(
+  edge_info
+)
+"editor/ed_graph.ml" 106 2942 2944 "editor/ed_graph.ml" 115 3149 3157
+call(
+  stack
+)
+"editor/ed_graph.ml" 119 3190 3194 "editor/ed_graph.ml" 119 3190 3204
+type(
+  string -> B.G.t
+)
+ident(
+  def parse_file "editor/ed_graph.ml" 128 3331 3331 --
+)
+"editor/ed_graph.ml" 119 3190 3205 "editor/ed_graph.ml" 119 3190 3206
+type(
+  string
+)
+ident(
+  def f "editor/ed_graph.ml" 120 3210 3212 "editor/ed_graph.ml" 123 3280 3301
+)
+"editor/ed_graph.ml" 120 3210 3215 "editor/ed_graph.ml" 120 3210 3236
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Filename.check_suffix
+)
+"editor/ed_graph.ml" 120 3210 3237 "editor/ed_graph.ml" 120 3210 3238
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 119 3190 3205 "editor/ed_graph.ml" 119 3190 3206
+)
+"editor/ed_graph.ml" 120 3210 3239 "editor/ed_graph.ml" 120 3210 3245
+type(
+  string
+)
+"editor/ed_graph.ml" 120 3210 3215 "editor/ed_graph.ml" 120 3210 3245
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 121 3251 3255 "editor/ed_graph.ml" 121 3251 3270
+type(
+  string -> B.G.t
+)
+ident(
+  ext_ref GmlParser.parse
+)
+"editor/ed_graph.ml" 121 3251 3271 "editor/ed_graph.ml" 121 3251 3272
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 119 3190 3205 "editor/ed_graph.ml" 119 3190 3206
+)
+"editor/ed_graph.ml" 121 3251 3255 "editor/ed_graph.ml" 121 3251 3272
+call(
+  tail
+)
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 123 3280 3284 "editor/ed_graph.ml" 123 3280 3299
+type(
+  string -> B.G.t
+)
+ident(
+  ext_ref DotParser.parse
+)
+"editor/ed_graph.ml" 123 3280 3300 "editor/ed_graph.ml" 123 3280 3301
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 119 3190 3205 "editor/ed_graph.ml" 119 3190 3206
+)
+"editor/ed_graph.ml" 123 3280 3284 "editor/ed_graph.ml" 123 3280 3301
+call(
+  tail
+)
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 120 3210 3212 "editor/ed_graph.ml" 123 3280 3301
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 129 3351 3353 "editor/ed_graph.ml" 130 3363 3370
+call(
+  stack
+)
+"editor/ed_graph.ml" 132 3383 3394 "editor/ed_graph.ml" 132 3383 3398
+type(
+  G.V.label -> (string * Graph.Gml.value) list
+)
+ident(
+  def node "editor/ed_graph.ml" 133 3459 3466 "editor/ed_graph.ml" 134 3495 3503
+)
+"editor/ed_graph.ml" 132 3383 3400 "editor/ed_graph.ml" 132 3383 3401
+type(
+  G.V.label
+)
+ident(
+  def v "editor/ed_graph.ml" 132 3383 3416 "editor/ed_graph.ml" 132 3383 3458
+)
+"editor/ed_graph.ml" 132 3383 3417 "editor/ed_graph.ml" 132 3383 3424
+type(
+  string
+)
+"editor/ed_graph.ml" 132 3383 3435 "editor/ed_graph.ml" 132 3383 3448
+type(
+  string -> int
+)
+ident(
+  ext_ref Pervasives.int_of_string
+)
+"editor/ed_graph.ml" 132 3383 3449 "editor/ed_graph.ml" 132 3383 3450
+type(
+  G.V.label
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 132 3383 3400 "editor/ed_graph.ml" 132 3383 3401
+)
+"editor/ed_graph.ml" 132 3383 3449 "editor/ed_graph.ml" 132 3383 3456
+type(
+  string
+)
+"editor/ed_graph.ml" 132 3383 3434 "editor/ed_graph.ml" 132 3383 3457
+type(
+  int
+)
+"editor/ed_graph.ml" 132 3383 3426 "editor/ed_graph.ml" 132 3383 3457
+type(
+  Graph.Gml.value
+)
+"editor/ed_graph.ml" 132 3383 3417 "editor/ed_graph.ml" 132 3383 3457
+type(
+  string * Graph.Gml.value
+)
+"editor/ed_graph.ml" 132 3383 3416 "editor/ed_graph.ml" 132 3383 3458
+type(
+  (string * Graph.Gml.value) list
+)
+"editor/ed_graph.ml" 133 3459 3470 "editor/ed_graph.ml" 133 3459 3474
+type(
+  G.E.label -> 'a list
+)
+ident(
+  def edge "editor/ed_graph.ml" 133 3459 3494 "editor/ed_graph.ml" 134 3495 3503
+)
+"editor/ed_graph.ml" 133 3459 3476 "editor/ed_graph.ml" 133 3459 3477
+type(
+  G.E.label
+)
+ident(
+  def e "editor/ed_graph.ml" 133 3459 3492 "editor/ed_graph.ml" 133 3459 3494
+)
+"editor/ed_graph.ml" 133 3459 3492 "editor/ed_graph.ml" 133 3459 3494
+type(
+  'a list
+)
+"editor/ed_graph.ml" 129 3351 3353 "editor/ed_graph.ml" 134 3495 3504
+call(
+  stack
+)
+"editor/ed_graph.ml" 141 3576 3586 "editor/ed_graph.ml" 141 3576 3597
+type(
+  G.V.t -> string
+)
+ident(
+  def vertex_name "editor/ed_graph.ml" 142 3630 3636 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 141 3576 3598 "editor/ed_graph.ml" 141 3576 3604
+type(
+  G.V.t
+)
+ident(
+  def vertex "editor/ed_graph.ml" 141 3576 3607 "editor/ed_graph.ml" 141 3576 3629
+)
+"editor/ed_graph.ml" 141 3576 3607 "editor/ed_graph.ml" 141 3576 3622
+type(
+  G.V.t -> string
+)
+ident(
+  int_ref string_of_label "editor/ed_graph.ml" 85 2517 2521 "editor/ed_graph.ml" 85 2517 2536
+)
+"editor/ed_graph.ml" 141 3576 3623 "editor/ed_graph.ml" 141 3576 3629
+type(
+  G.V.t
+)
+ident(
+  int_ref vertex "editor/ed_graph.ml" 141 3576 3598 "editor/ed_graph.ml" 141 3576 3604
+)
+"editor/ed_graph.ml" 141 3576 3607 "editor/ed_graph.ml" 141 3576 3629
+call(
+  tail
+)
+type(
+  string
+)
+"editor/ed_graph.ml" 142 3630 3640 "editor/ed_graph.ml" 142 3630 3656
+type(
+  'a -> 'b list
+)
+ident(
+  def graph_attributes "editor/ed_graph.ml" 143 3664 3670 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 142 3630 3657 "editor/ed_graph.ml" 142 3630 3658
+type(
+  'a
+)
+"editor/ed_graph.ml" 142 3630 3661 "editor/ed_graph.ml" 142 3630 3663
+type(
+  'b list
+)
+"editor/ed_graph.ml" 143 3664 3674 "editor/ed_graph.ml" 143 3664 3699
+type(
+  'c -> 'd list
+)
+ident(
+  def default_vertex_attributes "editor/ed_graph.ml" 144 3707 3713 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 143 3664 3700 "editor/ed_graph.ml" 143 3664 3701
+type(
+  'c
+)
+"editor/ed_graph.ml" 143 3664 3704 "editor/ed_graph.ml" 143 3664 3706
+type(
+  'd list
+)
+"editor/ed_graph.ml" 144 3707 3717 "editor/ed_graph.ml" 144 3707 3734
+type(
+  'e -> 'f list
+)
+ident(
+  def vertex_attributes "editor/ed_graph.ml" 145 3742 3748 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 144 3707 3735 "editor/ed_graph.ml" 144 3707 3736
+type(
+  'e
+)
+"editor/ed_graph.ml" 144 3707 3739 "editor/ed_graph.ml" 144 3707 3741
+type(
+  'f list
+)
+"editor/ed_graph.ml" 145 3742 3752 "editor/ed_graph.ml" 145 3742 3775
+type(
+  'g -> 'h list
+)
+ident(
+  def default_edge_attributes "editor/ed_graph.ml" 146 3783 3789 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 145 3742 3776 "editor/ed_graph.ml" 145 3742 3777
+type(
+  'g
+)
+"editor/ed_graph.ml" 145 3742 3780 "editor/ed_graph.ml" 145 3742 3782
+type(
+  'h list
+)
+"editor/ed_graph.ml" 146 3783 3793 "editor/ed_graph.ml" 146 3783 3808
+type(
+  'i -> 'j list
+)
+ident(
+  def edge_attributes "editor/ed_graph.ml" 147 3816 3822 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 146 3783 3809 "editor/ed_graph.ml" 146 3783 3810
+type(
+  'i
+)
+"editor/ed_graph.ml" 146 3783 3813 "editor/ed_graph.ml" 146 3783 3815
+type(
+  'j list
+)
+"editor/ed_graph.ml" 147 3816 3826 "editor/ed_graph.ml" 147 3816 3838
+type(
+  'k -> 'l option
+)
+ident(
+  def get_subgraph "editor/ed_graph.ml" 147 3816 3847 "editor/ed_graph.ml" 148 3848 3855
+)
+"editor/ed_graph.ml" 147 3816 3839 "editor/ed_graph.ml" 147 3816 3840
+type(
+  'k
+)
+"editor/ed_graph.ml" 147 3816 3843 "editor/ed_graph.ml" 147 3816 3847
+type(
+  'l option
+)
+"editor/ed_graph.ml" 138 3532 3534 "editor/ed_graph.ml" 148 3848 3857
+call(
+  stack
+)
+"editor/ed_graph.ml" 154 3919 3924 "editor/ed_graph.ml" 154 3919 3934
+type(
+  G.t -> string -> unit
+)
+ident(
+  def gml_output "editor/ed_graph.ml" 161 4086 4087 --
+)
+"editor/ed_graph.ml" 154 3919 3935 "editor/ed_graph.ml" 154 3919 3936
+type(
+  G.t
+)
+ident(
+  def g "editor/ed_graph.ml" 154 3919 3937 "editor/ed_graph.ml" 158 4068 4083
+)
+"editor/ed_graph.ml" 154 3919 3937 "editor/ed_graph.ml" 154 3919 3938
+type(
+  string
+)
+ident(
+  def f "editor/ed_graph.ml" 155 3941 3945 "editor/ed_graph.ml" 158 4068 4083
+)
+"editor/ed_graph.ml" 155 3941 3949 "editor/ed_graph.ml" 155 3941 3950
+type(
+  out_channel
+)
+"editor/ed_graph.ml" 155 3941 3953 "editor/ed_graph.ml" 155 3941 3961
+type(
+  string -> out_channel
+)
+ident(
+  ext_ref Pervasives.open_out
+)
+"editor/ed_graph.ml" 155 3941 3962 "editor/ed_graph.ml" 155 3941 3963
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 154 3919 3937 "editor/ed_graph.ml" 154 3919 3938
+)
+"editor/ed_graph.ml" 155 3941 3953 "editor/ed_graph.ml" 155 3941 3963
+call(
+  stack
+)
+type(
+  out_channel
+)
+"editor/ed_graph.ml" 156 3967 3975 "editor/ed_graph.ml" 156 3967 3978
+type(
+  Format.formatter
+)
+"editor/ed_graph.ml" 156 3967 3981 "editor/ed_graph.ml" 156 3967 4012
+type(
+  out_channel -> Format.formatter
+)
+ident(
+  ext_ref Format.formatter_of_out_channel
+)
+"editor/ed_graph.ml" 156 3967 4013 "editor/ed_graph.ml" 156 3967 4014
+type(
+  out_channel
+)
+ident(
+  int_ref c "editor/ed_graph.ml" 155 3941 3949 "editor/ed_graph.ml" 155 3941 3950
+)
+"editor/ed_graph.ml" 156 3967 3981 "editor/ed_graph.ml" 156 3967 4014
+call(
+  stack
+)
+type(
+  Format.formatter
+)
+"editor/ed_graph.ml" 157 4018 4022 "editor/ed_graph.ml" 157 4018 4036
+type(
+  Format.formatter ->
+  ((Format.formatter -> G.t -> unit) -> G.t -> unit, Format.formatter, unit)
+  format -> (Format.formatter -> G.t -> unit) -> G.t -> unit
+)
+ident(
+  ext_ref Format.fprintf
+)
+"editor/ed_graph.ml" 157 4018 4037 "editor/ed_graph.ml" 157 4018 4040
+type(
+  Format.formatter
+)
+ident(
+  int_ref fmt "editor/ed_graph.ml" 156 3967 3975 "editor/ed_graph.ml" 156 3967 3978
+)
+"editor/ed_graph.ml" 157 4018 4041 "editor/ed_graph.ml" 157 4018 4047
+type(
+  ((Format.formatter -> G.t -> unit) -> G.t -> unit, Format.formatter, unit)
+  format
+)
+"editor/ed_graph.ml" 157 4018 4048 "editor/ed_graph.ml" 157 4018 4064
+type(
+  Format.formatter -> G.t -> unit
+)
+ident(
+  ext_ref GmlPrinter.print
+)
+"editor/ed_graph.ml" 157 4018 4065 "editor/ed_graph.ml" 157 4018 4066
+type(
+  G.t
+)
+ident(
+  int_ref g "editor/ed_graph.ml" 154 3919 3935 "editor/ed_graph.ml" 154 3919 3936
+)
+"editor/ed_graph.ml" 157 4018 4022 "editor/ed_graph.ml" 157 4018 4066
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 158 4068 4072 "editor/ed_graph.ml" 158 4068 4081
+type(
+  out_channel -> unit
+)
+ident(
+  ext_ref Pervasives.close_out
+)
+"editor/ed_graph.ml" 158 4068 4082 "editor/ed_graph.ml" 158 4068 4083
+type(
+  out_channel
+)
+ident(
+  int_ref c "editor/ed_graph.ml" 155 3941 3949 "editor/ed_graph.ml" 155 3941 3950
+)
+"editor/ed_graph.ml" 158 4068 4072 "editor/ed_graph.ml" 158 4068 4083
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 157 4018 4022 "editor/ed_graph.ml" 158 4068 4083
+type(
+  unit
+)
+"editor/ed_graph.ml" 156 3967 3971 "editor/ed_graph.ml" 158 4068 4083
+type(
+  unit
+)
+"editor/ed_graph.ml" 155 3941 3945 "editor/ed_graph.ml" 158 4068 4083
+type(
+  unit
+)
+"editor/ed_graph.ml" 161 4086 4091 "editor/ed_graph.ml" 161 4086 4101
+type(
+  G.t -> string -> unit
+)
+ident(
+  def dot_output "editor/ed_graph.ml" 166 4185 4186 --
+)
+"editor/ed_graph.ml" 161 4086 4102 "editor/ed_graph.ml" 161 4086 4103
+type(
+  G.t
+)
+ident(
+  def g "editor/ed_graph.ml" 161 4086 4104 "editor/ed_graph.ml" 164 4168 4183
+)
+"editor/ed_graph.ml" 161 4086 4104 "editor/ed_graph.ml" 161 4086 4105
+type(
+  string
+)
+ident(
+  def f "editor/ed_graph.ml" 162 4109 4112 "editor/ed_graph.ml" 164 4168 4183
+)
+"editor/ed_graph.ml" 162 4109 4116 "editor/ed_graph.ml" 162 4109 4118
+type(
+  out_channel
+)
+"editor/ed_graph.ml" 162 4109 4121 "editor/ed_graph.ml" 162 4109 4129
+type(
+  string -> out_channel
+)
+ident(
+  ext_ref Pervasives.open_out
+)
+"editor/ed_graph.ml" 162 4109 4130 "editor/ed_graph.ml" 162 4109 4131
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 161 4086 4104 "editor/ed_graph.ml" 161 4086 4105
+)
+"editor/ed_graph.ml" 162 4109 4121 "editor/ed_graph.ml" 162 4109 4131
+call(
+  stack
+)
+type(
+  out_channel
+)
+"editor/ed_graph.ml" 163 4135 4138 "editor/ed_graph.ml" 163 4135 4161
+type(
+  out_channel -> G.t -> unit
+)
+ident(
+  ext_ref DotPrinter.output_graph
+)
+"editor/ed_graph.ml" 163 4135 4162 "editor/ed_graph.ml" 163 4135 4164
+type(
+  out_channel
+)
+ident(
+  int_ref oc "editor/ed_graph.ml" 162 4109 4116 "editor/ed_graph.ml" 162 4109 4118
+)
+"editor/ed_graph.ml" 163 4135 4165 "editor/ed_graph.ml" 163 4135 4166
+type(
+  G.t
+)
+ident(
+  int_ref g "editor/ed_graph.ml" 161 4086 4102 "editor/ed_graph.ml" 161 4086 4103
+)
+"editor/ed_graph.ml" 163 4135 4138 "editor/ed_graph.ml" 163 4135 4166
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 164 4168 4171 "editor/ed_graph.ml" 164 4168 4180
+type(
+  out_channel -> unit
+)
+ident(
+  ext_ref Pervasives.close_out
+)
+"editor/ed_graph.ml" 164 4168 4181 "editor/ed_graph.ml" 164 4168 4183
+type(
+  out_channel
+)
+ident(
+  int_ref oc "editor/ed_graph.ml" 162 4109 4116 "editor/ed_graph.ml" 162 4109 4118
+)
+"editor/ed_graph.ml" 164 4168 4171 "editor/ed_graph.ml" 164 4168 4183
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 163 4135 4138 "editor/ed_graph.ml" 164 4168 4183
+type(
+  unit
+)
+"editor/ed_graph.ml" 162 4109 4112 "editor/ed_graph.ml" 164 4168 4183
+type(
+  unit
+)
+"editor/ed_graph.ml" 166 4185 4190 "editor/ed_graph.ml" 166 4185 4200
+type(
+  string -> unit
+)
+ident(
+  def save_graph "editor/ed_graph.ml" 176 4506 4506 --
+)
+"editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+type(
+  string
+)
+ident(
+  def name "editor/ed_graph.ml" 167 4208 4211 "editor/ed_graph.ml" 173 4475 4503
+)
+"editor/ed_graph.ml" 167 4208 4214 "editor/ed_graph.ml" 167 4208 4235
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Filename.check_suffix
+)
+"editor/ed_graph.ml" 167 4208 4236 "editor/ed_graph.ml" 167 4208 4240
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 167 4208 4241 "editor/ed_graph.ml" 167 4208 4246
+type(
+  string
+)
+"editor/ed_graph.ml" 167 4208 4214 "editor/ed_graph.ml" 167 4208 4246
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 168 4247 4257 "editor/ed_graph.ml" 168 4247 4267
+type(
+  B.G.t -> string -> unit
+)
+ident(
+  int_ref gml_output "editor/ed_graph.ml" 154 3919 3924 "editor/ed_graph.ml" 154 3919 3934
+)
+"editor/ed_graph.ml" 168 4247 4268 "editor/ed_graph.ml" 168 4247 4269
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 168 4247 4269 "editor/ed_graph.ml" 168 4247 4274
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 168 4247 4268 "editor/ed_graph.ml" 168 4247 4274
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 168 4247 4275 "editor/ed_graph.ml" 168 4247 4279
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 168 4247 4257 "editor/ed_graph.ml" 168 4247 4279
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 168 4247 4282 "editor/ed_graph.ml" 168 4247 4292
+type(
+  name ref
+)
+ident(
+  int_ref graph_name "editor/ed_graph.ml" 82 2439 2443 "editor/ed_graph.ml" 82 2439 2453
+)
+"editor/ed_graph.ml" 168 4247 4293 "editor/ed_graph.ml" 168 4247 4295
+type(
+  name ref -> name -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_graph.ml" 168 4247 4301 "editor/ed_graph.ml" 168 4247 4305
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 168 4247 4296 "editor/ed_graph.ml" 168 4247 4305
+type(
+  name
+)
+"editor/ed_graph.ml" 168 4247 4282 "editor/ed_graph.ml" 168 4247 4305
+type(
+  unit
+)
+"editor/ed_graph.ml" 168 4247 4255 "editor/ed_graph.ml" 168 4247 4306
+type(
+  unit
+)
+"editor/ed_graph.ml" 169 4307 4318 "editor/ed_graph.ml" 169 4307 4339
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Filename.check_suffix
+)
+"editor/ed_graph.ml" 169 4307 4340 "editor/ed_graph.ml" 169 4307 4344
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 169 4307 4345 "editor/ed_graph.ml" 169 4307 4350
+type(
+  string
+)
+"editor/ed_graph.ml" 169 4307 4318 "editor/ed_graph.ml" 169 4307 4350
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 170 4351 4361 "editor/ed_graph.ml" 170 4351 4371
+type(
+  B.G.t -> string -> unit
+)
+ident(
+  int_ref dot_output "editor/ed_graph.ml" 161 4086 4091 "editor/ed_graph.ml" 161 4086 4101
+)
+"editor/ed_graph.ml" 170 4351 4372 "editor/ed_graph.ml" 170 4351 4373
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 170 4351 4373 "editor/ed_graph.ml" 170 4351 4378
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 170 4351 4372 "editor/ed_graph.ml" 170 4351 4378
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 170 4351 4379 "editor/ed_graph.ml" 170 4351 4383
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 170 4351 4361 "editor/ed_graph.ml" 170 4351 4383
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 170 4351 4386 "editor/ed_graph.ml" 170 4351 4396
+type(
+  name ref
+)
+ident(
+  int_ref graph_name "editor/ed_graph.ml" 82 2439 2443 "editor/ed_graph.ml" 82 2439 2453
+)
+"editor/ed_graph.ml" 170 4351 4397 "editor/ed_graph.ml" 170 4351 4399
+type(
+  name ref -> name -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_graph.ml" 170 4351 4405 "editor/ed_graph.ml" 170 4351 4409
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 170 4351 4400 "editor/ed_graph.ml" 170 4351 4409
+type(
+  name
+)
+"editor/ed_graph.ml" 170 4351 4386 "editor/ed_graph.ml" 170 4351 4409
+type(
+  unit
+)
+"editor/ed_graph.ml" 170 4351 4359 "editor/ed_graph.ml" 170 4351 4410
+type(
+  unit
+)
+"editor/ed_graph.ml" 171 4411 4425 "editor/ed_graph.ml" 171 4411 4429
+type(
+  string
+)
+"editor/ed_graph.ml" 171 4411 4432 "editor/ed_graph.ml" 171 4411 4436
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 166 4185 4201 "editor/ed_graph.ml" 166 4185 4205
+)
+"editor/ed_graph.ml" 171 4411 4436 "editor/ed_graph.ml" 171 4411 4437
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"editor/ed_graph.ml" 171 4411 4437 "editor/ed_graph.ml" 171 4411 4443
+type(
+  string
+)
+"editor/ed_graph.ml" 171 4411 4432 "editor/ed_graph.ml" 171 4411 4443
+call(
+  stack
+)
+type(
+  string
+)
+"editor/ed_graph.ml" 172 4448 4451 "editor/ed_graph.ml" 172 4448 4461
+type(
+  B.G.t -> string -> unit
+)
+ident(
+  int_ref dot_output "editor/ed_graph.ml" 161 4086 4091 "editor/ed_graph.ml" 161 4086 4101
+)
+"editor/ed_graph.ml" 172 4448 4462 "editor/ed_graph.ml" 172 4448 4463
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 172 4448 4463 "editor/ed_graph.ml" 172 4448 4468
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 172 4448 4462 "editor/ed_graph.ml" 172 4448 4468
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 172 4448 4469 "editor/ed_graph.ml" 172 4448 4473
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 171 4411 4425 "editor/ed_graph.ml" 171 4411 4429
+)
+"editor/ed_graph.ml" 172 4448 4451 "editor/ed_graph.ml" 172 4448 4473
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 173 4475 4478 "editor/ed_graph.ml" 173 4475 4488
+type(
+  name ref
+)
+ident(
+  int_ref graph_name "editor/ed_graph.ml" 82 2439 2443 "editor/ed_graph.ml" 82 2439 2453
+)
+"editor/ed_graph.ml" 173 4475 4489 "editor/ed_graph.ml" 173 4475 4491
+type(
+  name ref -> name -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_graph.ml" 173 4475 4497 "editor/ed_graph.ml" 173 4475 4501
+type(
+  string
+)
+ident(
+  int_ref name "editor/ed_graph.ml" 171 4411 4425 "editor/ed_graph.ml" 171 4411 4429
+)
+"editor/ed_graph.ml" 173 4475 4492 "editor/ed_graph.ml" 173 4475 4501
+type(
+  name
+)
+"editor/ed_graph.ml" 173 4475 4478 "editor/ed_graph.ml" 173 4475 4501
+type(
+  unit
+)
+"editor/ed_graph.ml" 172 4448 4451 "editor/ed_graph.ml" 173 4475 4501
+type(
+  unit
+)
+"editor/ed_graph.ml" 171 4411 4419 "editor/ed_graph.ml" 173 4475 4503
+type(
+  unit
+)
+"editor/ed_graph.ml" 169 4307 4315 "editor/ed_graph.ml" 173 4475 4503
+type(
+  unit
+)
+"editor/ed_graph.ml" 167 4208 4211 "editor/ed_graph.ml" 173 4475 4503
+type(
+  unit
+)
+"editor/ed_graph.ml" 176 4506 4526 "editor/ed_graph.ml" 176 4506 4544
+call(
+  stack
+)
+"editor/ed_graph.ml" 177 4545 4558 "editor/ed_graph.ml" 177 4545 4573
+call(
+  stack
+)
+"editor/ed_graph.ml" 183 4604 4608 "editor/ed_graph.ml" 183 4604 4619
+type(
+  unit -> G.V.t option
+)
+ident(
+  def choose_root "editor/ed_graph.ml" 192 4760 4760 --
+)
+"editor/ed_graph.ml" 183 4604 4620 "editor/ed_graph.ml" 183 4604 4622
+type(
+  unit
+)
+"editor/ed_graph.ml" 185 4631 4635 "editor/ed_graph.ml" 185 4631 4648
+type(
+  (G.vertex -> unit) -> B.G.t -> unit
+)
+ident(
+  ext_ref G.iter_vertex
+)
+"editor/ed_graph.ml" 185 4631 4654 "editor/ed_graph.ml" 185 4631 4655
+type(
+  G.vertex
+)
+ident(
+  def v "editor/ed_graph.ml" 185 4631 4659 "editor/ed_graph.ml" 185 4631 4675
+)
+"editor/ed_graph.ml" 185 4631 4659 "editor/ed_graph.ml" 185 4631 4664
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"editor/ed_graph.ml" 185 4631 4673 "editor/ed_graph.ml" 185 4631 4674
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 185 4631 4654 "editor/ed_graph.ml" 185 4631 4655
+)
+"editor/ed_graph.ml" 185 4631 4665 "editor/ed_graph.ml" 185 4631 4675
+type(
+  exn
+)
+"editor/ed_graph.ml" 185 4631 4659 "editor/ed_graph.ml" 185 4631 4675
+type(
+  unit
+)
+"editor/ed_graph.ml" 185 4631 4649 "editor/ed_graph.ml" 185 4631 4676
+type(
+  G.vertex -> unit
+)
+"editor/ed_graph.ml" 185 4631 4677 "editor/ed_graph.ml" 185 4631 4678
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 185 4631 4678 "editor/ed_graph.ml" 185 4631 4683
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 185 4631 4677 "editor/ed_graph.ml" 185 4631 4683
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 185 4631 4635 "editor/ed_graph.ml" 185 4631 4683
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 186 4685 4689 "editor/ed_graph.ml" 186 4685 4693
+type(
+  G.V.t option
+)
+"editor/ed_graph.ml" 185 4631 4635 "editor/ed_graph.ml" 186 4685 4693
+type(
+  G.V.t option
+)
+"editor/ed_graph.ml" 187 4694 4708 "editor/ed_graph.ml" 187 4694 4709
+type(
+  G.V.t
+)
+ident(
+  def v "editor/ed_graph.ml" 188 4713 4717 "editor/ed_graph.ml" 188 4713 4723
+)
+"editor/ed_graph.ml" 187 4694 4701 "editor/ed_graph.ml" 187 4694 4709
+type(
+  exn
+)
+"editor/ed_graph.ml" 188 4713 4722 "editor/ed_graph.ml" 188 4713 4723
+type(
+  G.V.t
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 187 4694 4708 "editor/ed_graph.ml" 187 4694 4709
+)
+"editor/ed_graph.ml" 188 4713 4717 "editor/ed_graph.ml" 188 4713 4723
+type(
+  G.V.t option
+)
+"editor/ed_graph.ml" 184 4625 4627 "editor/ed_graph.ml" 188 4713 4723
+type(
+  G.V.t option
+)
+"editor/ed_graph.ml" 192 4760 4764 "editor/ed_graph.ml" 192 4760 4774
+type(
+  string -> unit
+)
+ident(
+  def load_graph "editor/ed_graph.ml" 196 4829 4829 --
+)
+"editor/ed_graph.ml" 192 4760 4775 "editor/ed_graph.ml" 192 4760 4776
+type(
+  string
+)
+ident(
+  def f "editor/ed_graph.ml" 193 4779 4781 "editor/ed_graph.ml" 194 4804 4827
+)
+"editor/ed_graph.ml" 193 4779 4781 "editor/ed_graph.ml" 193 4779 4786
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 193 4779 4787 "editor/ed_graph.ml" 193 4779 4789
+type(
+  B.G.t ref -> B.G.t -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_graph.ml" 193 4779 4790 "editor/ed_graph.ml" 193 4779 4800
+type(
+  string -> B.G.t
+)
+ident(
+  int_ref parse_file "editor/ed_graph.ml" 119 3190 3194 "editor/ed_graph.ml" 119 3190 3204
+)
+"editor/ed_graph.ml" 193 4779 4801 "editor/ed_graph.ml" 193 4779 4802
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 192 4760 4775 "editor/ed_graph.ml" 192 4760 4776
+)
+"editor/ed_graph.ml" 193 4779 4790 "editor/ed_graph.ml" 193 4779 4802
+call(
+  stack
+)
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 193 4779 4781 "editor/ed_graph.ml" 193 4779 4802
+type(
+  unit
+)
+"editor/ed_graph.ml" 194 4804 4806 "editor/ed_graph.ml" 194 4804 4816
+type(
+  name ref
+)
+ident(
+  int_ref graph_name "editor/ed_graph.ml" 82 2439 2443 "editor/ed_graph.ml" 82 2439 2453
+)
+"editor/ed_graph.ml" 194 4804 4817 "editor/ed_graph.ml" 194 4804 4819
+type(
+  name ref -> name -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_graph.ml" 194 4804 4826 "editor/ed_graph.ml" 194 4804 4827
+type(
+  string
+)
+ident(
+  int_ref f "editor/ed_graph.ml" 192 4760 4775 "editor/ed_graph.ml" 192 4760 4776
+)
+"editor/ed_graph.ml" 194 4804 4820 "editor/ed_graph.ml" 194 4804 4827
+type(
+  name
+)
+"editor/ed_graph.ml" 194 4804 4806 "editor/ed_graph.ml" 194 4804 4827
+type(
+  unit
+)
+"editor/ed_graph.ml" 193 4779 4781 "editor/ed_graph.ml" 194 4804 4827
+type(
+  unit
+)
+"editor/ed_graph.ml" 196 4829 4833 "editor/ed_graph.ml" 196 4829 4836
+type(
+  bool ref
+)
+ident(
+  def dfs "editor/ed_graph.ml" 198 4850 4850 --
+)
+"editor/ed_graph.ml" 196 4829 4839 "editor/ed_graph.ml" 196 4829 4842
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 196 4829 4843 "editor/ed_graph.ml" 196 4829 4848
+type(
+  bool
+)
+"editor/ed_graph.ml" 196 4829 4839 "editor/ed_graph.ml" 196 4829 4848
+type(
+  bool ref
+)
+"editor/ed_graph.ml" 198 4850 4854 "editor/ed_graph.ml" 198 4850 4866
+type(
+  int ref
+)
+ident(
+  def refresh_rate "editor/ed_graph.ml" 200 4877 4877 --
+)
+"editor/ed_graph.ml" 198 4850 4869 "editor/ed_graph.ml" 198 4850 4872
+type(
+  int -> int ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 198 4850 4873 "editor/ed_graph.ml" 198 4850 4875
+type(
+  int
+)
+"editor/ed_graph.ml" 198 4850 4869 "editor/ed_graph.ml" 198 4850 4875
+type(
+  int ref
+)
+"editor/ed_graph.ml" 200 4877 4881 "editor/ed_graph.ml" 200 4877 4883
+type(
+  bool ref
+)
+ident(
+  def aa "editor/ed_graph.ml" 202 4896 4896 --
+)
+"editor/ed_graph.ml" 200 4877 4886 "editor/ed_graph.ml" 200 4877 4889
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 200 4877 4890 "editor/ed_graph.ml" 200 4877 4894
+type(
+  bool
+)
+"editor/ed_graph.ml" 200 4877 4886 "editor/ed_graph.ml" 200 4877 4894
+type(
+  bool ref
+)
+"editor/ed_graph.ml" 202 4896 4900 "editor/ed_graph.ml" 202 4896 4902
+type(
+  unit
+)
+"editor/ed_graph.ml" 203 4906 4908 "editor/ed_graph.ml" 203 4906 4917
+type(
+  (Arg.key * Arg.spec * Arg.doc) list ->
+  Arg.anon_fun -> Arg.usage_msg -> unit
+)
+ident(
+  ext_ref Arg.parse
+)
+"editor/ed_graph.ml" 204 4918 4923 "editor/ed_graph.ml" 204 4918 4929
+type(
+  Arg.key
+)
+"editor/ed_graph.ml" 204 4918 4939 "editor/ed_graph.ml" 204 4918 4942
+type(
+  bool ref
+)
+ident(
+  int_ref dfs "editor/ed_graph.ml" 196 4829 4833 "editor/ed_graph.ml" 196 4829 4836
+)
+"editor/ed_graph.ml" 204 4918 4931 "editor/ed_graph.ml" 204 4918 4942
+type(
+  Arg.spec
+)
+"editor/ed_graph.ml" 204 4918 4944 "editor/ed_graph.ml" 204 4918 4966
+type(
+  Arg.doc
+)
+"editor/ed_graph.ml" 204 4918 4923 "editor/ed_graph.ml" 204 4918 4966
+type(
+  Arg.key * Arg.spec * Arg.doc
+)
+"editor/ed_graph.ml" 205 4968 4973 "editor/ed_graph.ml" 205 4968 4979
+type(
+  Arg.key
+)
+"editor/ed_graph.ml" 205 4968 4991 "editor/ed_graph.ml" 205 4968 4994
+type(
+  bool ref
+)
+ident(
+  int_ref dfs "editor/ed_graph.ml" 196 4829 4833 "editor/ed_graph.ml" 196 4829 4836
+)
+"editor/ed_graph.ml" 205 4968 4981 "editor/ed_graph.ml" 205 4968 4994
+type(
+  Arg.spec
+)
+"editor/ed_graph.ml" 205 4968 4996 "editor/ed_graph.ml" 205 4968 5018
+type(
+  Arg.doc
+)
+"editor/ed_graph.ml" 205 4968 4973 "editor/ed_graph.ml" 205 4968 5018
+type(
+  Arg.key * Arg.spec * Arg.doc
+)
+"editor/ed_graph.ml" 206 5020 5025 "editor/ed_graph.ml" 206 5020 5030
+type(
+  Arg.key
+)
+"editor/ed_graph.ml" 206 5020 5044 "editor/ed_graph.ml" 206 5020 5056
+type(
+  int ref
+)
+ident(
+  int_ref refresh_rate "editor/ed_graph.ml" 198 4850 4854 "editor/ed_graph.ml" 198 4850 4866
+)
+"editor/ed_graph.ml" 206 5020 5032 "editor/ed_graph.ml" 206 5020 5056
+type(
+  Arg.spec
+)
+"editor/ed_graph.ml" 206 5020 5058 "editor/ed_graph.ml" 206 5020 5104
+type(
+  Arg.doc
+)
+"editor/ed_graph.ml" 206 5020 5025 "editor/ed_graph.ml" 206 5020 5104
+type(
+  Arg.key * Arg.spec * Arg.doc
+)
+"editor/ed_graph.ml" 207 5106 5111 "editor/ed_graph.ml" 207 5106 5116
+type(
+  Arg.key
+)
+"editor/ed_graph.ml" 207 5106 5128 "editor/ed_graph.ml" 207 5106 5130
+type(
+  bool ref
+)
+ident(
+  int_ref aa "editor/ed_graph.ml" 200 4877 4881 "editor/ed_graph.ml" 200 4877 4883
+)
+"editor/ed_graph.ml" 207 5106 5118 "editor/ed_graph.ml" 207 5106 5130
+type(
+  Arg.spec
+)
+"editor/ed_graph.ml" 207 5106 5132 "editor/ed_graph.ml" 207 5106 5160
+type(
+  Arg.doc
+)
+"editor/ed_graph.ml" 207 5106 5111 "editor/ed_graph.ml" 207 5106 5160
+type(
+  Arg.key * Arg.spec * Arg.doc
+)
+"editor/ed_graph.ml" 204 4918 4922 "editor/ed_graph.ml" 208 5162 5167
+type(
+  (Arg.key * Arg.spec * Arg.doc) list
+)
+"editor/ed_graph.ml" 209 5168 5172 "editor/ed_graph.ml" 209 5168 5182
+type(
+  Arg.anon_fun
+)
+ident(
+  int_ref load_graph "editor/ed_graph.ml" 192 4760 4764 "editor/ed_graph.ml" 192 4760 4774
+)
+"editor/ed_graph.ml" 210 5184 5188 "editor/ed_graph.ml" 210 5184 5219
+type(
+  Arg.usage_msg
+)
+"editor/ed_graph.ml" 203 4906 4908 "editor/ed_graph.ml" 210 5184 5219
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 219 5319 5329 "editor/ed_graph.ml" 219 5319 5333
+type(
+  G.V.t * G.V.t -> int
+)
+ident(
+  def hash "editor/ed_graph.ml" 220 5380 5386 "editor/ed_graph.ml" 221 5450 5457
+)
+"editor/ed_graph.ml" 219 5319 5335 "editor/ed_graph.ml" 219 5319 5336
+type(
+  G.V.t
+)
+ident(
+  def v "editor/ed_graph.ml" 219 5319 5342 "editor/ed_graph.ml" 219 5319 5379
+)
+"editor/ed_graph.ml" 219 5319 5337 "editor/ed_graph.ml" 219 5319 5338
+type(
+  G.V.t
+)
+ident(
+  def w "editor/ed_graph.ml" 219 5319 5342 "editor/ed_graph.ml" 219 5319 5379
+)
+"editor/ed_graph.ml" 219 5319 5334 "editor/ed_graph.ml" 219 5319 5339
+type(
+  G.V.t * G.V.t
+)
+"editor/ed_graph.ml" 219 5319 5342 "editor/ed_graph.ml" 219 5319 5354
+type(
+  int * int -> int
+)
+ident(
+  ext_ref Hashtbl.hash
+)
+"editor/ed_graph.ml" 219 5319 5356 "editor/ed_graph.ml" 219 5319 5364
+type(
+  G.V.t -> int
+)
+ident(
+  ext_ref G.V.hash
+)
+"editor/ed_graph.ml" 219 5319 5365 "editor/ed_graph.ml" 219 5319 5366
+type(
+  G.V.t
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 219 5319 5335 "editor/ed_graph.ml" 219 5319 5336
+)
+"editor/ed_graph.ml" 219 5319 5356 "editor/ed_graph.ml" 219 5319 5366
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_graph.ml" 219 5319 5368 "editor/ed_graph.ml" 219 5319 5376
+type(
+  G.V.t -> int
+)
+ident(
+  ext_ref G.V.hash
+)
+"editor/ed_graph.ml" 219 5319 5377 "editor/ed_graph.ml" 219 5319 5378
+type(
+  G.V.t
+)
+ident(
+  int_ref w "editor/ed_graph.ml" 219 5319 5337 "editor/ed_graph.ml" 219 5319 5338
+)
+"editor/ed_graph.ml" 219 5319 5368 "editor/ed_graph.ml" 219 5319 5378
+call(
+  stack
+)
+type(
+  int
+)
+"editor/ed_graph.ml" 219 5319 5355 "editor/ed_graph.ml" 219 5319 5379
+type(
+  int * int
+)
+"editor/ed_graph.ml" 219 5319 5342 "editor/ed_graph.ml" 219 5319 5379
+call(
+  tail
+)
+type(
+  int
+)
+"editor/ed_graph.ml" 220 5380 5390 "editor/ed_graph.ml" 220 5380 5395
+type(
+  G.V.t * G.V.t -> G.V.t * G.V.t -> bool
+)
+ident(
+  def equal "editor/ed_graph.ml" 220 5380 5448 "editor/ed_graph.ml" 221 5450 5457
+)
+"editor/ed_graph.ml" 220 5380 5397 "editor/ed_graph.ml" 220 5380 5399
+type(
+  G.V.t
+)
+ident(
+  def v1 "editor/ed_graph.ml" 220 5380 5404 "editor/ed_graph.ml" 220 5380 5448
+)
+"editor/ed_graph.ml" 220 5380 5400 "editor/ed_graph.ml" 220 5380 5402
+type(
+  G.V.t
+)
+ident(
+  def w1 "editor/ed_graph.ml" 220 5380 5404 "editor/ed_graph.ml" 220 5380 5448
+)
+"editor/ed_graph.ml" 220 5380 5396 "editor/ed_graph.ml" 220 5380 5403
+type(
+  G.V.t * G.V.t
+)
+"editor/ed_graph.ml" 220 5380 5405 "editor/ed_graph.ml" 220 5380 5407
+type(
+  G.V.t
+)
+ident(
+  def v2 "editor/ed_graph.ml" 220 5380 5414 "editor/ed_graph.ml" 220 5380 5448
+)
+"editor/ed_graph.ml" 220 5380 5408 "editor/ed_graph.ml" 220 5380 5410
+type(
+  G.V.t
+)
+ident(
+  def w2 "editor/ed_graph.ml" 220 5380 5414 "editor/ed_graph.ml" 220 5380 5448
+)
+"editor/ed_graph.ml" 220 5380 5404 "editor/ed_graph.ml" 220 5380 5411
+type(
+  G.V.t * G.V.t
+)
+"editor/ed_graph.ml" 220 5380 5414 "editor/ed_graph.ml" 220 5380 5423
+type(
+  G.V.t -> G.V.t -> bool
+)
+ident(
+  ext_ref G.V.equal
+)
+"editor/ed_graph.ml" 220 5380 5424 "editor/ed_graph.ml" 220 5380 5426
+type(
+  G.V.t
+)
+ident(
+  int_ref v1 "editor/ed_graph.ml" 220 5380 5397 "editor/ed_graph.ml" 220 5380 5399
+)
+"editor/ed_graph.ml" 220 5380 5427 "editor/ed_graph.ml" 220 5380 5429
+type(
+  G.V.t
+)
+ident(
+  int_ref v2 "editor/ed_graph.ml" 220 5380 5405 "editor/ed_graph.ml" 220 5380 5407
+)
+"editor/ed_graph.ml" 220 5380 5414 "editor/ed_graph.ml" 220 5380 5429
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 220 5380 5430 "editor/ed_graph.ml" 220 5380 5432
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"editor/ed_graph.ml" 220 5380 5433 "editor/ed_graph.ml" 220 5380 5442
+type(
+  G.V.t -> G.V.t -> bool
+)
+ident(
+  ext_ref G.V.equal
+)
+"editor/ed_graph.ml" 220 5380 5443 "editor/ed_graph.ml" 220 5380 5445
+type(
+  G.V.t
+)
+ident(
+  int_ref w1 "editor/ed_graph.ml" 220 5380 5400 "editor/ed_graph.ml" 220 5380 5402
+)
+"editor/ed_graph.ml" 220 5380 5446 "editor/ed_graph.ml" 220 5380 5448
+type(
+  G.V.t
+)
+ident(
+  int_ref w2 "editor/ed_graph.ml" 220 5380 5408 "editor/ed_graph.ml" 220 5380 5410
+)
+"editor/ed_graph.ml" 220 5380 5433 "editor/ed_graph.ml" 220 5380 5448
+call(
+  tail
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 220 5380 5414 "editor/ed_graph.ml" 220 5380 5448
+type(
+  bool
+)
+"editor/ed_graph.ml" 216 5262 5264 "editor/ed_graph.ml" 221 5450 5458
+call(
+  stack
+)
+"editor/ed_graph.ml" 225 5462 5473 "editor/ed_graph.ml" 225 5462 5490
+call(
+  stack
+)
+"editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+type(
+  int ref
+)
+ident(
+  def nb_selected "editor/ed_graph.ml" 234 5627 5627 --
+)
+"editor/ed_graph.ml" 231 5566 5584 "editor/ed_graph.ml" 231 5566 5587
+type(
+  int -> int ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 231 5566 5588 "editor/ed_graph.ml" 231 5566 5589
+type(
+  int
+)
+"editor/ed_graph.ml" 231 5566 5584 "editor/ed_graph.ml" 231 5566 5589
+type(
+  int ref
+)
+"editor/ed_graph.ml" 234 5627 5631 "editor/ed_graph.ml" 234 5627 5642
+type(
+  G.V.t -> bool
+)
+ident(
+  def is_selected "editor/ed_graph.ml" 239 5745 5745 --
+)
+"editor/ed_graph.ml" 234 5627 5644 "editor/ed_graph.ml" 234 5627 5645
+type(
+  G.V.t
+)
+ident(
+  def x "editor/ed_graph.ml" 235 5656 5658 "editor/ed_graph.ml" 237 5718 5743
+)
+"editor/ed_graph.ml" 235 5656 5662 "editor/ed_graph.ml" 235 5656 5666
+type(
+  mode
+)
+"editor/ed_graph.ml" 235 5656 5669 "editor/ed_graph.ml" 235 5656 5678
+type(
+  G.V.t -> G.V.label
+)
+ident(
+  ext_ref G.V.label
+)
+"editor/ed_graph.ml" 235 5656 5679 "editor/ed_graph.ml" 235 5656 5680
+type(
+  G.V.t
+)
+ident(
+  int_ref x "editor/ed_graph.ml" 234 5627 5644 "editor/ed_graph.ml" 234 5627 5645
+)
+"editor/ed_graph.ml" 235 5656 5668 "editor/ed_graph.ml" 235 5656 5681
+call(
+  stack
+)
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 235 5656 5668 "editor/ed_graph.ml" 235 5656 5693
+type(
+  mode
+)
+"editor/ed_graph.ml" 236 5697 5699 "editor/ed_graph.ml" 236 5697 5703
+type(
+  mode
+)
+ident(
+  int_ref mode "editor/ed_graph.ml" 235 5656 5662 "editor/ed_graph.ml" 235 5656 5666
+)
+"editor/ed_graph.ml" 236 5697 5704 "editor/ed_graph.ml" 236 5697 5705
+type(
+  mode -> mode -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_graph.ml" 236 5697 5706 "editor/ed_graph.ml" 236 5697 5714
+type(
+  mode
+)
+"editor/ed_graph.ml" 236 5697 5699 "editor/ed_graph.ml" 236 5697 5714
+type(
+  bool
+)
+"editor/ed_graph.ml" 236 5697 5715 "editor/ed_graph.ml" 236 5697 5717
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.||
+)
+"editor/ed_graph.ml" 237 5718 5720 "editor/ed_graph.ml" 237 5718 5724
+type(
+  mode
+)
+ident(
+  int_ref mode "editor/ed_graph.ml" 235 5656 5662 "editor/ed_graph.ml" 235 5656 5666
+)
+"editor/ed_graph.ml" 237 5718 5725 "editor/ed_graph.ml" 237 5718 5726
+type(
+  mode -> mode -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_graph.ml" 237 5718 5727 "editor/ed_graph.ml" 237 5718 5743
+type(
+  mode
+)
+"editor/ed_graph.ml" 237 5718 5720 "editor/ed_graph.ml" 237 5718 5743
+type(
+  bool
+)
+"editor/ed_graph.ml" 236 5697 5699 "editor/ed_graph.ml" 237 5718 5743
+type(
+  bool
+)
+"editor/ed_graph.ml" 235 5656 5658 "editor/ed_graph.ml" 237 5718 5743
+type(
+  bool
+)
+"editor/ed_graph.ml" 245 5832 5836 "editor/ed_graph.ml" 245 5832 5849
+type(
+  mode_select_list -> G.vertex list
+)
+ident(
+  def selected_list "editor/ed_graph.ml" 260 6267 6267 --
+)
+"editor/ed_graph.ml" 245 5832 5850 "editor/ed_graph.ml" 245 5832 5854
+type(
+  mode_select_list
+)
+ident(
+  def mode "editor/ed_graph.ml" 246 5858 5860 "editor/ed_graph.ml" 255 6223 6260
+)
+"editor/ed_graph.ml" 246 5858 5864 "editor/ed_graph.ml" 246 5858 5880
+type(
+  G.vertex list ref
+)
+"editor/ed_graph.ml" 246 5858 5882 "editor/ed_graph.ml" 246 5858 5885
+type(
+  G.vertex list -> G.vertex list ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_graph.ml" 246 5858 5886 "editor/ed_graph.ml" 246 5858 5888
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 246 5858 5882 "editor/ed_graph.ml" 246 5858 5888
+type(
+  G.vertex list ref
+)
+"editor/ed_graph.ml" 247 5892 5894 "editor/ed_graph.ml" 247 5892 5907
+type(
+  (G.vertex -> unit) -> B.G.t -> unit
+)
+ident(
+  ext_ref G.iter_vertex
+)
+"editor/ed_graph.ml" 247 5892 5913 "editor/ed_graph.ml" 247 5892 5914
+type(
+  G.vertex
+)
+ident(
+  def v "editor/ed_graph.ml" 248 5919 5924 "editor/ed_graph.ml" 253 6079 6131
+)
+"editor/ed_graph.ml" 248 5919 5928 "editor/ed_graph.ml" 248 5919 5939
+type(
+  G.vertex -> bool
+)
+ident(
+  int_ref is_selected "editor/ed_graph.ml" 234 5627 5631 "editor/ed_graph.ml" 234 5627 5642
+)
+"editor/ed_graph.ml" 248 5919 5940 "editor/ed_graph.ml" 248 5919 5941
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 247 5892 5913 "editor/ed_graph.ml" 247 5892 5914
+)
+"editor/ed_graph.ml" 248 5919 5927 "editor/ed_graph.ml" 248 5919 5942
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 249 5944 5949 "editor/ed_graph.ml" 249 5944 5951
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"editor/ed_graph.ml" 249 5944 5959 "editor/ed_graph.ml" 249 5944 5963
+type(
+  mode_select_list
+)
+ident(
+  int_ref mode "editor/ed_graph.ml" 245 5832 5850 "editor/ed_graph.ml" 245 5832 5854
+)
+"editor/ed_graph.ml" 250 5969 5985 "editor/ed_graph.ml" 250 5969 5991
+type(
+  G.vertex
+)
+ident(
+  def vertex "editor/ed_graph.ml" 250 5969 5995 "editor/ed_graph.ml" 250 5969 6014
+)
+"editor/ed_graph.ml" 250 5969 5975 "editor/ed_graph.ml" 250 5969 5991
+type(
+  mode_select_list
+)
+"editor/ed_graph.ml" 250 5969 5995 "editor/ed_graph.ml" 250 5969 5998
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"editor/ed_graph.ml" 250 5969 6000 "editor/ed_graph.ml" 250 5969 6004
+type(
+  G.vertex -> G.vertex -> bool
+)
+ident(
+  int_ref edge "editor/ed_graph.ml" 86 2561 2565 "editor/ed_graph.ml" 86 2561 2569
+)
+"editor/ed_graph.ml" 250 5969 6005 "editor/ed_graph.ml" 250 5969 6006
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 247 5892 5913 "editor/ed_graph.ml" 247 5892 5914
+)
+"editor/ed_graph.ml" 250 5969 6007 "editor/ed_graph.ml" 250 5969 6013
+type(
+  G.vertex
+)
+ident(
+  int_ref vertex "editor/ed_graph.ml" 250 5969 5985 "editor/ed_graph.ml" 250 5969 5991
+)
+"editor/ed_graph.ml" 250 5969 5999 "editor/ed_graph.ml" 250 5969 6014
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 250 5969 5995 "editor/ed_graph.ml" 250 5969 6014
+type(
+  bool
+)
+"editor/ed_graph.ml" 251 6015 6033 "editor/ed_graph.ml" 251 6015 6039
+type(
+  G.vertex
+)
+ident(
+  def vertex "editor/ed_graph.ml" 251 6015 6043 "editor/ed_graph.ml" 251 6015 6058
+)
+"editor/ed_graph.ml" 251 6015 6021 "editor/ed_graph.ml" 251 6015 6039
+type(
+  mode_select_list
+)
+"editor/ed_graph.ml" 251 6015 6044 "editor/ed_graph.ml" 251 6015 6048
+type(
+  G.vertex -> G.vertex -> bool
+)
+ident(
+  int_ref edge "editor/ed_graph.ml" 86 2561 2565 "editor/ed_graph.ml" 86 2561 2569
+)
+"editor/ed_graph.ml" 251 6015 6049 "editor/ed_graph.ml" 251 6015 6050
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 247 5892 5913 "editor/ed_graph.ml" 247 5892 5914
+)
+"editor/ed_graph.ml" 251 6015 6051 "editor/ed_graph.ml" 251 6015 6057
+type(
+  G.vertex
+)
+ident(
+  int_ref vertex "editor/ed_graph.ml" 251 6015 6033 "editor/ed_graph.ml" 251 6015 6039
+)
+"editor/ed_graph.ml" 251 6015 6043 "editor/ed_graph.ml" 251 6015 6058
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 252 6059 6065 "editor/ed_graph.ml" 252 6059 6069
+type(
+  mode_select_list
+)
+"editor/ed_graph.ml" 252 6059 6073 "editor/ed_graph.ml" 252 6059 6077
+type(
+  bool
+)
+"editor/ed_graph.ml" 249 5944 5952 "editor/ed_graph.ml" 252 6059 6078
+type(
+  bool
+)
+"editor/ed_graph.ml" 248 5919 5927 "editor/ed_graph.ml" 252 6059 6078
+type(
+  bool
+)
+"editor/ed_graph.ml" 253 6079 6089 "editor/ed_graph.ml" 253 6079 6105
+type(
+  G.vertex list ref
+)
+ident(
+  int_ref vertex_selection "editor/ed_graph.ml" 246 5858 5864 "editor/ed_graph.ml" 246 5858 5880
+)
+"editor/ed_graph.ml" 253 6079 6106 "editor/ed_graph.ml" 253 6079 6108
+type(
+  G.vertex list ref -> G.vertex list -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_graph.ml" 253 6079 6109 "editor/ed_graph.ml" 253 6079 6110
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 247 5892 5913 "editor/ed_graph.ml" 247 5892 5914
+)
+"editor/ed_graph.ml" 253 6079 6113 "editor/ed_graph.ml" 253 6079 6114
+type(
+  G.vertex list ref -> G.vertex list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 253 6079 6114 "editor/ed_graph.ml" 253 6079 6130
+type(
+  G.vertex list ref
+)
+ident(
+  int_ref vertex_selection "editor/ed_graph.ml" 246 5858 5864 "editor/ed_graph.ml" 246 5858 5880
+)
+"editor/ed_graph.ml" 253 6079 6112 "editor/ed_graph.ml" 253 6079 6131
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 253 6079 6109 "editor/ed_graph.ml" 253 6079 6131
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 253 6079 6089 "editor/ed_graph.ml" 253 6079 6131
+type(
+  unit
+)
+"editor/ed_graph.ml" 248 5919 5924 "editor/ed_graph.ml" 253 6079 6131
+type(
+  unit
+)
+"editor/ed_graph.ml" 247 5892 5908 "editor/ed_graph.ml" 253 6079 6132
+type(
+  G.vertex -> unit
+)
+"editor/ed_graph.ml" 253 6079 6133 "editor/ed_graph.ml" 253 6079 6134
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 253 6079 6134 "editor/ed_graph.ml" 253 6079 6139
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 253 6079 6133 "editor/ed_graph.ml" 253 6079 6139
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 247 5892 5894 "editor/ed_graph.ml" 253 6079 6139
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 254 6141 6147 "editor/ed_graph.ml" 254 6141 6154
+type(
+  G.V.t -> G.V.t -> int
+)
+"editor/ed_graph.ml" 254 6141 6155 "editor/ed_graph.ml" 254 6141 6157
+type(
+  G.V.t
+)
+ident(
+  def s1 "editor/ed_graph.ml" 254 6141 6158 "editor/ed_graph.ml" 254 6141 6219
+)
+"editor/ed_graph.ml" 254 6141 6158 "editor/ed_graph.ml" 254 6141 6160
+type(
+  G.V.t
+)
+ident(
+  def s2 "editor/ed_graph.ml" 254 6141 6163 "editor/ed_graph.ml" 254 6141 6219
+)
+"editor/ed_graph.ml" 254 6141 6163 "editor/ed_graph.ml" 254 6141 6177
+type(
+  String.t -> String.t -> int
+)
+ident(
+  ext_ref String.compare
+)
+"editor/ed_graph.ml" 254 6141 6179 "editor/ed_graph.ml" 254 6141 6194
+type(
+  G.V.t -> String.t
+)
+ident(
+  int_ref string_of_label "editor/ed_graph.ml" 85 2517 2521 "editor/ed_graph.ml" 85 2517 2536
+)
+"editor/ed_graph.ml" 254 6141 6195 "editor/ed_graph.ml" 254 6141 6197
+type(
+  G.V.t
+)
+ident(
+  int_ref s1 "editor/ed_graph.ml" 254 6141 6155 "editor/ed_graph.ml" 254 6141 6157
+)
+"editor/ed_graph.ml" 254 6141 6178 "editor/ed_graph.ml" 254 6141 6198
+call(
+  stack
+)
+type(
+  String.t
+)
+"editor/ed_graph.ml" 254 6141 6200 "editor/ed_graph.ml" 254 6141 6215
+type(
+  G.V.t -> String.t
+)
+ident(
+  int_ref string_of_label "editor/ed_graph.ml" 85 2517 2521 "editor/ed_graph.ml" 85 2517 2536
+)
+"editor/ed_graph.ml" 254 6141 6216 "editor/ed_graph.ml" 254 6141 6218
+type(
+  G.V.t
+)
+ident(
+  int_ref s2 "editor/ed_graph.ml" 254 6141 6158 "editor/ed_graph.ml" 254 6141 6160
+)
+"editor/ed_graph.ml" 254 6141 6199 "editor/ed_graph.ml" 254 6141 6219
+call(
+  stack
+)
+type(
+  String.t
+)
+"editor/ed_graph.ml" 254 6141 6163 "editor/ed_graph.ml" 254 6141 6219
+call(
+  tail
+)
+type(
+  int
+)
+"editor/ed_graph.ml" 255 6223 6225 "editor/ed_graph.ml" 255 6223 6234
+type(
+  (G.vertex -> G.vertex -> int) -> G.vertex list -> G.vertex list
+)
+ident(
+  ext_ref List.sort
+)
+"editor/ed_graph.ml" 255 6223 6235 "editor/ed_graph.ml" 255 6223 6242
+type(
+  G.vertex -> G.vertex -> int
+)
+ident(
+  int_ref compare "editor/ed_graph.ml" 254 6141 6147 "editor/ed_graph.ml" 254 6141 6154
+)
+"editor/ed_graph.ml" 255 6223 6243 "editor/ed_graph.ml" 255 6223 6244
+type(
+  G.vertex list ref -> G.vertex list
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 255 6223 6244 "editor/ed_graph.ml" 255 6223 6260
+type(
+  G.vertex list ref
+)
+ident(
+  int_ref vertex_selection "editor/ed_graph.ml" 246 5858 5864 "editor/ed_graph.ml" 246 5858 5880
+)
+"editor/ed_graph.ml" 255 6223 6243 "editor/ed_graph.ml" 255 6223 6260
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 255 6223 6225 "editor/ed_graph.ml" 255 6223 6260
+call(
+  tail
+)
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 254 6141 6143 "editor/ed_graph.ml" 255 6223 6260
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 247 5892 5894 "editor/ed_graph.ml" 255 6223 6260
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 246 5858 5860 "editor/ed_graph.ml" 255 6223 6260
+type(
+  G.vertex list
+)
+"editor/ed_graph.ml" 262 6320 6324 "editor/ed_graph.ml" 262 6320 6337
+type(
+  G.vertex -> ed_event -> unit
+)
+ident(
+  def update_vertex "editor/ed_graph.ml" 303 8074 8074 --
+)
+"editor/ed_graph.ml" 262 6320 6338 "editor/ed_graph.ml" 262 6320 6344
+type(
+  G.vertex
+)
+ident(
+  def vertex "editor/ed_graph.ml" 262 6320 6345 "editor/ed_graph.ml" 297 8002 8021
+)
+"editor/ed_graph.ml" 262 6320 6345 "editor/ed_graph.ml" 262 6320 6350
+type(
+  ed_event
+)
+ident(
+  def event "editor/ed_graph.ml" 263 6353 6355 "editor/ed_graph.ml" 297 8002 8021
+)
+"editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 263 6353 6373 "editor/ed_graph.ml" 263 6353 6382
+type(
+  G.vertex -> G.V.label
+)
+ident(
+  ext_ref G.V.label
+)
+"editor/ed_graph.ml" 263 6353 6383 "editor/ed_graph.ml" 263 6353 6389
+type(
+  G.vertex
+)
+ident(
+  int_ref vertex "editor/ed_graph.ml" 262 6320 6338 "editor/ed_graph.ml" 262 6320 6344
+)
+"editor/ed_graph.ml" 263 6353 6373 "editor/ed_graph.ml" 263 6353 6389
+call(
+  stack
+)
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 265 6401 6411 "editor/ed_graph.ml" 265 6401 6422
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 265 6401 6411 "editor/ed_graph.ml" 265 6401 6434
+type(
+  mode
+)
+"editor/ed_graph.ml" 265 6401 6436 "editor/ed_graph.ml" 265 6401 6441
+type(
+  ed_event
+)
+ident(
+  int_ref event "editor/ed_graph.ml" 262 6320 6345 "editor/ed_graph.ml" 262 6320 6350
+)
+"editor/ed_graph.ml" 265 6401 6411 "editor/ed_graph.ml" 265 6401 6441
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 266 6447 6455 "editor/ed_graph.ml" 266 6447 6461
+type(
+  mode
+)
+"editor/ed_graph.ml" 266 6447 6463 "editor/ed_graph.ml" 266 6447 6469
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 266 6447 6455 "editor/ed_graph.ml" 266 6447 6469
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 266 6447 6473 "editor/ed_graph.ml" 266 6447 6484
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 266 6447 6500 "editor/ed_graph.ml" 266 6447 6508
+type(
+  mode
+)
+"editor/ed_graph.ml" 266 6447 6473 "editor/ed_graph.ml" 266 6447 6508
+type(
+  unit
+)
+"editor/ed_graph.ml" 266 6447 6510 "editor/ed_graph.ml" 266 6447 6514
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.incr
+)
+"editor/ed_graph.ml" 266 6447 6515 "editor/ed_graph.ml" 266 6447 6526
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 266 6447 6510 "editor/ed_graph.ml" 266 6447 6526
+type(
+  unit
+)
+"editor/ed_graph.ml" 266 6447 6473 "editor/ed_graph.ml" 266 6447 6526
+type(
+  unit
+)
+"editor/ed_graph.ml" 267 6527 6535 "editor/ed_graph.ml" 267 6527 6541
+type(
+  mode
+)
+"editor/ed_graph.ml" 267 6527 6543 "editor/ed_graph.ml" 267 6527 6548
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 267 6527 6535 "editor/ed_graph.ml" 267 6527 6548
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 267 6527 6552 "editor/ed_graph.ml" 267 6527 6563
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 267 6527 6579 "editor/ed_graph.ml" 267 6527 6586
+type(
+  mode
+)
+"editor/ed_graph.ml" 267 6527 6552 "editor/ed_graph.ml" 267 6527 6586
+type(
+  unit
+)
+"editor/ed_graph.ml" 268 6587 6595 "editor/ed_graph.ml" 268 6587 6601
+type(
+  mode
+)
+"editor/ed_graph.ml" 268 6587 6603 "editor/ed_graph.ml" 268 6587 6604
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 268 6587 6595 "editor/ed_graph.ml" 268 6587 6604
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 268 6587 6608 "editor/ed_graph.ml" 268 6587 6610
+type(
+  unit
+)
+"editor/ed_graph.ml" 269 6611 6619 "editor/ed_graph.ml" 269 6611 6627
+type(
+  mode
+)
+"editor/ed_graph.ml" 269 6611 6629 "editor/ed_graph.ml" 269 6611 6634
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 269 6611 6619 "editor/ed_graph.ml" 269 6611 6634
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 269 6611 6638 "editor/ed_graph.ml" 269 6611 6649
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 269 6611 6665 "editor/ed_graph.ml" 269 6611 6681
+type(
+  mode
+)
+"editor/ed_graph.ml" 269 6611 6638 "editor/ed_graph.ml" 269 6611 6681
+type(
+  unit
+)
+"editor/ed_graph.ml" 270 6682 6690 "editor/ed_graph.ml" 270 6682 6698
+type(
+  mode
+)
+"editor/ed_graph.ml" 270 6682 6700 "editor/ed_graph.ml" 270 6682 6708
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 270 6682 6690 "editor/ed_graph.ml" 270 6682 6708
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 270 6682 6712 "editor/ed_graph.ml" 270 6682 6723
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 270 6682 6739 "editor/ed_graph.ml" 270 6682 6745
+type(
+  mode
+)
+"editor/ed_graph.ml" 270 6682 6712 "editor/ed_graph.ml" 270 6682 6745
+type(
+  unit
+)
+"editor/ed_graph.ml" 270 6682 6747 "editor/ed_graph.ml" 270 6682 6751
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.decr
+)
+"editor/ed_graph.ml" 270 6682 6752 "editor/ed_graph.ml" 270 6682 6763
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 270 6682 6747 "editor/ed_graph.ml" 270 6682 6763
+type(
+  unit
+)
+"editor/ed_graph.ml" 270 6682 6712 "editor/ed_graph.ml" 270 6682 6763
+type(
+  unit
+)
+"editor/ed_graph.ml" 271 6764 6772 "editor/ed_graph.ml" 271 6764 6780
+type(
+  mode
+)
+"editor/ed_graph.ml" 271 6764 6782 "editor/ed_graph.ml" 271 6764 6783
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 271 6764 6772 "editor/ed_graph.ml" 271 6764 6783
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 271 6764 6787 "editor/ed_graph.ml" 271 6764 6789
+type(
+  unit
+)
+"editor/ed_graph.ml" 272 6790 6798 "editor/ed_graph.ml" 272 6790 6805
+type(
+  mode
+)
+"editor/ed_graph.ml" 272 6790 6807 "editor/ed_graph.ml" 272 6790 6813
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 272 6790 6798 "editor/ed_graph.ml" 272 6790 6813
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 272 6790 6817 "editor/ed_graph.ml" 272 6790 6828
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 272 6790 6844 "editor/ed_graph.ml" 272 6790 6860
+type(
+  mode
+)
+"editor/ed_graph.ml" 272 6790 6817 "editor/ed_graph.ml" 272 6790 6860
+type(
+  unit
+)
+"editor/ed_graph.ml" 272 6790 6862 "editor/ed_graph.ml" 272 6790 6866
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.incr
+)
+"editor/ed_graph.ml" 272 6790 6867 "editor/ed_graph.ml" 272 6790 6878
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 272 6790 6862 "editor/ed_graph.ml" 272 6790 6878
+type(
+  unit
+)
+"editor/ed_graph.ml" 272 6790 6817 "editor/ed_graph.ml" 272 6790 6878
+type(
+  unit
+)
+"editor/ed_graph.ml" 273 6879 6887 "editor/ed_graph.ml" 273 6879 6894
+type(
+  mode
+)
+"editor/ed_graph.ml" 273 6879 6896 "editor/ed_graph.ml" 273 6879 6903
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 273 6879 6887 "editor/ed_graph.ml" 273 6879 6903
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 273 6879 6907 "editor/ed_graph.ml" 273 6879 6918
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 273 6879 6934 "editor/ed_graph.ml" 273 6879 6940
+type(
+  mode
+)
+"editor/ed_graph.ml" 273 6879 6907 "editor/ed_graph.ml" 273 6879 6940
+type(
+  unit
+)
+"editor/ed_graph.ml" 274 6941 6949 "editor/ed_graph.ml" 274 6941 6956
+type(
+  mode
+)
+"editor/ed_graph.ml" 274 6941 6958 "editor/ed_graph.ml" 274 6941 6959
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 274 6941 6949 "editor/ed_graph.ml" 274 6941 6959
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 274 6941 6963 "editor/ed_graph.ml" 274 6941 6965
+type(
+  unit
+)
+"editor/ed_graph.ml" 275 6966 6974 "editor/ed_graph.ml" 275 6966 6990
+type(
+  mode
+)
+"editor/ed_graph.ml" 275 6966 6992 "editor/ed_graph.ml" 275 6966 7000
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 275 6966 6974 "editor/ed_graph.ml" 275 6966 7000
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 275 6966 7004 "editor/ed_graph.ml" 275 6966 7015
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 275 6966 7031 "editor/ed_graph.ml" 275 6966 7038
+type(
+  mode
+)
+"editor/ed_graph.ml" 275 6966 7004 "editor/ed_graph.ml" 275 6966 7038
+type(
+  unit
+)
+"editor/ed_graph.ml" 275 6966 7040 "editor/ed_graph.ml" 275 6966 7044
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.decr
+)
+"editor/ed_graph.ml" 275 6966 7045 "editor/ed_graph.ml" 275 6966 7056
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 275 6966 7040 "editor/ed_graph.ml" 275 6966 7056
+type(
+  unit
+)
+"editor/ed_graph.ml" 275 6966 7004 "editor/ed_graph.ml" 275 6966 7056
+type(
+  unit
+)
+"editor/ed_graph.ml" 276 7057 7065 "editor/ed_graph.ml" 276 7057 7081
+type(
+  mode
+)
+"editor/ed_graph.ml" 276 7057 7083 "editor/ed_graph.ml" 276 7057 7090
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 276 7057 7065 "editor/ed_graph.ml" 276 7057 7090
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 276 7057 7094 "editor/ed_graph.ml" 276 7057 7105
+type(
+  G.V.label
+)
+ident(
+  int_ref vertex_info "editor/ed_graph.ml" 263 6353 6359 "editor/ed_graph.ml" 263 6353 6370
+)
+"editor/ed_graph.ml" 276 7057 7121 "editor/ed_graph.ml" 276 7057 7129
+type(
+  mode
+)
+"editor/ed_graph.ml" 276 7057 7094 "editor/ed_graph.ml" 276 7057 7129
+type(
+  unit
+)
+"editor/ed_graph.ml" 277 7130 7138 "editor/ed_graph.ml" 277 7130 7154
+type(
+  mode
+)
+"editor/ed_graph.ml" 277 7130 7156 "editor/ed_graph.ml" 277 7130 7157
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 277 7130 7138 "editor/ed_graph.ml" 277 7130 7157
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 277 7130 7161 "editor/ed_graph.ml" 277 7130 7163
+type(
+  unit
+)
+"editor/ed_graph.ml" 264 6393 6395 "editor/ed_graph.ml" 278 7164 7169
+type(
+  unit
+)
+"editor/ed_graph.ml" 279 7171 7173 "editor/ed_graph.ml" 279 7171 7186
+type(
+  (G.edge -> unit) -> B.G.t -> G.vertex -> unit
+)
+ident(
+  ext_ref G.iter_succ_e
+)
+"editor/ed_graph.ml" 280 7187 7197 "editor/ed_graph.ml" 280 7187 7201
+type(
+  G.edge
+)
+ident(
+  def edge "editor/ed_graph.ml" 281 7205 7206 "editor/ed_graph.ml" 296 7991 7996
+)
+"editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+type(
+  G.E.label
+)
+"editor/ed_graph.ml" 281 7205 7222 "editor/ed_graph.ml" 281 7205 7231
+type(
+  G.edge -> G.E.label
+)
+ident(
+  ext_ref G.E.label
+)
+"editor/ed_graph.ml" 281 7205 7232 "editor/ed_graph.ml" 281 7205 7236
+type(
+  G.edge
+)
+ident(
+  int_ref edge "editor/ed_graph.ml" 280 7187 7197 "editor/ed_graph.ml" 280 7187 7201
+)
+"editor/ed_graph.ml" 281 7205 7222 "editor/ed_graph.ml" 281 7205 7236
+call(
+  stack
+)
+type(
+  G.E.label
+)
+"editor/ed_graph.ml" 282 7240 7245 "editor/ed_graph.ml" 282 7240 7256
+type(
+  G.E.vertex
+)
+"editor/ed_graph.ml" 282 7240 7259 "editor/ed_graph.ml" 282 7240 7266
+type(
+  G.edge -> G.E.vertex
+)
+ident(
+  ext_ref G.E.dst
+)
+"editor/ed_graph.ml" 282 7240 7267 "editor/ed_graph.ml" 282 7240 7271
+type(
+  G.edge
+)
+ident(
+  int_ref edge "editor/ed_graph.ml" 280 7187 7197 "editor/ed_graph.ml" 280 7187 7201
+)
+"editor/ed_graph.ml" 282 7240 7259 "editor/ed_graph.ml" 282 7240 7271
+call(
+  stack
+)
+type(
+  G.E.vertex
+)
+"editor/ed_graph.ml" 283 7276 7290 "editor/ed_graph.ml" 283 7276 7299
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 283 7276 7290 "editor/ed_graph.ml" 283 7276 7309
+type(
+  mode
+)
+"editor/ed_graph.ml" 283 7276 7311 "editor/ed_graph.ml" 283 7276 7316
+type(
+  ed_event
+)
+ident(
+  int_ref event "editor/ed_graph.ml" 262 6320 6345 "editor/ed_graph.ml" 262 6320 6350
+)
+"editor/ed_graph.ml" 283 7276 7290 "editor/ed_graph.ml" 283 7276 7316
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 284 7322 7327 "editor/ed_graph.ml" 284 7322 7333
+type(
+  mode
+)
+"editor/ed_graph.ml" 284 7322 7335 "editor/ed_graph.ml" 284 7322 7341
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 284 7322 7327 "editor/ed_graph.ml" 284 7322 7341
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 284 7322 7345 "editor/ed_graph.ml" 284 7322 7354
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 284 7322 7368 "editor/ed_graph.ml" 284 7322 7376
+type(
+  mode
+)
+"editor/ed_graph.ml" 284 7322 7345 "editor/ed_graph.ml" 284 7322 7376
+type(
+  unit
+)
+"editor/ed_graph.ml" 285 7377 7382 "editor/ed_graph.ml" 285 7377 7388
+type(
+  mode
+)
+"editor/ed_graph.ml" 285 7377 7390 "editor/ed_graph.ml" 285 7377 7395
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 285 7377 7382 "editor/ed_graph.ml" 285 7377 7395
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 285 7377 7399 "editor/ed_graph.ml" 285 7377 7408
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 285 7377 7422 "editor/ed_graph.ml" 285 7377 7429
+type(
+  mode
+)
+"editor/ed_graph.ml" 285 7377 7399 "editor/ed_graph.ml" 285 7377 7429
+type(
+  unit
+)
+"editor/ed_graph.ml" 286 7430 7435 "editor/ed_graph.ml" 286 7430 7441
+type(
+  mode
+)
+"editor/ed_graph.ml" 286 7430 7443 "editor/ed_graph.ml" 286 7430 7444
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 286 7430 7435 "editor/ed_graph.ml" 286 7430 7444
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 286 7430 7448 "editor/ed_graph.ml" 286 7430 7450
+type(
+  unit
+)
+"editor/ed_graph.ml" 287 7451 7456 "editor/ed_graph.ml" 287 7451 7464
+type(
+  mode
+)
+"editor/ed_graph.ml" 287 7451 7466 "editor/ed_graph.ml" 287 7451 7471
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 287 7451 7456 "editor/ed_graph.ml" 287 7451 7471
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 287 7451 7475 "editor/ed_graph.ml" 287 7451 7484
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 287 7451 7498 "editor/ed_graph.ml" 287 7451 7514
+type(
+  mode
+)
+"editor/ed_graph.ml" 287 7451 7475 "editor/ed_graph.ml" 287 7451 7514
+type(
+  unit
+)
+"editor/ed_graph.ml" 288 7515 7520 "editor/ed_graph.ml" 288 7515 7528
+type(
+  mode
+)
+"editor/ed_graph.ml" 288 7515 7530 "editor/ed_graph.ml" 288 7515 7538
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 288 7515 7520 "editor/ed_graph.ml" 288 7515 7538
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 288 7515 7545 "editor/ed_graph.ml" 288 7515 7548
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"editor/ed_graph.ml" 288 7515 7549 "editor/ed_graph.ml" 288 7515 7560
+type(
+  G.E.vertex -> bool
+)
+ident(
+  int_ref is_selected "editor/ed_graph.ml" 234 5627 5631 "editor/ed_graph.ml" 234 5627 5642
+)
+"editor/ed_graph.ml" 288 7515 7561 "editor/ed_graph.ml" 288 7515 7572
+type(
+  G.E.vertex
+)
+ident(
+  int_ref dest_vertex "editor/ed_graph.ml" 282 7240 7245 "editor/ed_graph.ml" 282 7240 7256
+)
+"editor/ed_graph.ml" 288 7515 7548 "editor/ed_graph.ml" 288 7515 7573
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 288 7515 7545 "editor/ed_graph.ml" 288 7515 7573
+type(
+  bool
+)
+"editor/ed_graph.ml" 288 7515 7579 "editor/ed_graph.ml" 288 7515 7588
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 288 7515 7602 "editor/ed_graph.ml" 288 7515 7608
+type(
+  mode
+)
+"editor/ed_graph.ml" 288 7515 7579 "editor/ed_graph.ml" 288 7515 7608
+type(
+  unit
+)
+"editor/ed_graph.ml" 288 7515 7542 "editor/ed_graph.ml" 288 7515 7608
+type(
+  unit
+)
+"editor/ed_graph.ml" 289 7609 7614 "editor/ed_graph.ml" 289 7609 7622
+type(
+  mode
+)
+"editor/ed_graph.ml" 289 7609 7624 "editor/ed_graph.ml" 289 7609 7625
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 289 7609 7614 "editor/ed_graph.ml" 289 7609 7625
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 289 7609 7629 "editor/ed_graph.ml" 289 7609 7631
+type(
+  unit
+)
+"editor/ed_graph.ml" 290 7632 7637 "editor/ed_graph.ml" 290 7632 7644
+type(
+  mode
+)
+"editor/ed_graph.ml" 290 7632 7646 "editor/ed_graph.ml" 290 7632 7652
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 290 7632 7637 "editor/ed_graph.ml" 290 7632 7652
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 290 7632 7656 "editor/ed_graph.ml" 290 7632 7665
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 290 7632 7679 "editor/ed_graph.ml" 290 7632 7695
+type(
+  mode
+)
+"editor/ed_graph.ml" 290 7632 7656 "editor/ed_graph.ml" 290 7632 7695
+type(
+  unit
+)
+"editor/ed_graph.ml" 291 7696 7701 "editor/ed_graph.ml" 291 7696 7708
+type(
+  mode
+)
+"editor/ed_graph.ml" 291 7696 7710 "editor/ed_graph.ml" 291 7696 7717
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 291 7696 7701 "editor/ed_graph.ml" 291 7696 7717
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 291 7696 7721 "editor/ed_graph.ml" 291 7696 7730
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 291 7696 7744 "editor/ed_graph.ml" 291 7696 7750
+type(
+  mode
+)
+"editor/ed_graph.ml" 291 7696 7721 "editor/ed_graph.ml" 291 7696 7750
+type(
+  unit
+)
+"editor/ed_graph.ml" 292 7751 7756 "editor/ed_graph.ml" 292 7751 7763
+type(
+  mode
+)
+"editor/ed_graph.ml" 292 7751 7765 "editor/ed_graph.ml" 292 7751 7766
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 292 7751 7756 "editor/ed_graph.ml" 292 7751 7766
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 292 7751 7770 "editor/ed_graph.ml" 292 7751 7772
+type(
+  unit
+)
+"editor/ed_graph.ml" 293 7773 7778 "editor/ed_graph.ml" 293 7773 7794
+type(
+  mode
+)
+"editor/ed_graph.ml" 293 7773 7796 "editor/ed_graph.ml" 293 7773 7804
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 293 7773 7778 "editor/ed_graph.ml" 293 7773 7804
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 293 7773 7811 "editor/ed_graph.ml" 293 7773 7814
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"editor/ed_graph.ml" 293 7773 7815 "editor/ed_graph.ml" 293 7773 7826
+type(
+  G.E.vertex -> bool
+)
+ident(
+  int_ref is_selected "editor/ed_graph.ml" 234 5627 5631 "editor/ed_graph.ml" 234 5627 5642
+)
+"editor/ed_graph.ml" 293 7773 7827 "editor/ed_graph.ml" 293 7773 7838
+type(
+  G.E.vertex
+)
+ident(
+  int_ref dest_vertex "editor/ed_graph.ml" 282 7240 7245 "editor/ed_graph.ml" 282 7240 7256
+)
+"editor/ed_graph.ml" 293 7773 7814 "editor/ed_graph.ml" 293 7773 7839
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 293 7773 7811 "editor/ed_graph.ml" 293 7773 7839
+type(
+  bool
+)
+"editor/ed_graph.ml" 293 7773 7845 "editor/ed_graph.ml" 293 7773 7854
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 293 7773 7868 "editor/ed_graph.ml" 293 7773 7875
+type(
+  mode
+)
+"editor/ed_graph.ml" 293 7773 7845 "editor/ed_graph.ml" 293 7773 7875
+type(
+  unit
+)
+"editor/ed_graph.ml" 293 7773 7808 "editor/ed_graph.ml" 293 7773 7875
+type(
+  unit
+)
+"editor/ed_graph.ml" 293 7773 7877 "editor/ed_graph.ml" 293 7773 7881
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.decr
+)
+"editor/ed_graph.ml" 293 7773 7882 "editor/ed_graph.ml" 293 7773 7893
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 293 7773 7877 "editor/ed_graph.ml" 293 7773 7893
+type(
+  unit
+)
+"editor/ed_graph.ml" 293 7773 7808 "editor/ed_graph.ml" 293 7773 7893
+type(
+  unit
+)
+"editor/ed_graph.ml" 294 7894 7899 "editor/ed_graph.ml" 294 7894 7915
+type(
+  mode
+)
+"editor/ed_graph.ml" 294 7894 7917 "editor/ed_graph.ml" 294 7894 7924
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 294 7894 7899 "editor/ed_graph.ml" 294 7894 7924
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 294 7894 7928 "editor/ed_graph.ml" 294 7894 7937
+type(
+  G.E.label
+)
+ident(
+  int_ref edge_info "editor/ed_graph.ml" 281 7205 7210 "editor/ed_graph.ml" 281 7205 7219
+)
+"editor/ed_graph.ml" 294 7894 7951 "editor/ed_graph.ml" 294 7894 7959
+type(
+  mode
+)
+"editor/ed_graph.ml" 294 7894 7928 "editor/ed_graph.ml" 294 7894 7959
+type(
+  unit
+)
+"editor/ed_graph.ml" 295 7960 7965 "editor/ed_graph.ml" 295 7960 7981
+type(
+  mode
+)
+"editor/ed_graph.ml" 295 7960 7983 "editor/ed_graph.ml" 295 7960 7984
+type(
+  ed_event
+)
+"editor/ed_graph.ml" 295 7960 7965 "editor/ed_graph.ml" 295 7960 7984
+type(
+  mode * ed_event
+)
+"editor/ed_graph.ml" 295 7960 7988 "editor/ed_graph.ml" 295 7960 7990
+type(
+  unit
+)
+"editor/ed_graph.ml" 283 7276 7277 "editor/ed_graph.ml" 296 7991 7996
+type(
+  unit
+)
+"editor/ed_graph.ml" 282 7240 7241 "editor/ed_graph.ml" 296 7991 7996
+type(
+  unit
+)
+"editor/ed_graph.ml" 281 7205 7206 "editor/ed_graph.ml" 296 7991 7996
+type(
+  unit
+)
+"editor/ed_graph.ml" 280 7187 7191 "editor/ed_graph.ml" 297 8002 8007
+type(
+  G.edge -> unit
+)
+"editor/ed_graph.ml" 297 8002 8008 "editor/ed_graph.ml" 297 8002 8009
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 297 8002 8009 "editor/ed_graph.ml" 297 8002 8014
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 297 8002 8008 "editor/ed_graph.ml" 297 8002 8014
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 297 8002 8015 "editor/ed_graph.ml" 297 8002 8021
+type(
+  G.vertex
+)
+ident(
+  int_ref vertex "editor/ed_graph.ml" 262 6320 6338 "editor/ed_graph.ml" 262 6320 6344
+)
+"editor/ed_graph.ml" 279 7171 7173 "editor/ed_graph.ml" 297 8002 8021
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 264 6393 6395 "editor/ed_graph.ml" 297 8002 8021
+type(
+  unit
+)
+"editor/ed_graph.ml" 263 6353 6355 "editor/ed_graph.ml" 297 8002 8021
+type(
+  unit
+)
+"editor/ed_graph.ml" 303 8074 8078 "editor/ed_graph.ml" 303 8074 8088
+type(
+  unit -> unit
+)
+ident(
+  def select_all "editor/ed_graph.ml" 315 8362 8362 --
+)
+"editor/ed_graph.ml" 303 8074 8089 "editor/ed_graph.ml" 303 8074 8091
+type(
+  unit
+)
+"editor/ed_graph.ml" 304 8096 8098 "editor/ed_graph.ml" 304 8096 8111
+type(
+  (G.vertex -> unit) -> B.G.t -> unit
+)
+ident(
+  ext_ref G.iter_vertex
+)
+"editor/ed_graph.ml" 304 8096 8117 "editor/ed_graph.ml" 304 8096 8118
+type(
+  G.vertex
+)
+ident(
+  def v "editor/ed_graph.ml" 305 8123 8128 "editor/ed_graph.ml" 310 8257 8265
+)
+"editor/ed_graph.ml" 305 8123 8131 "editor/ed_graph.ml" 305 8123 8134
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"editor/ed_graph.ml" 305 8123 8135 "editor/ed_graph.ml" 305 8123 8146
+type(
+  G.vertex -> bool
+)
+ident(
+  int_ref is_selected "editor/ed_graph.ml" 234 5627 5631 "editor/ed_graph.ml" 234 5627 5642
+)
+"editor/ed_graph.ml" 305 8123 8147 "editor/ed_graph.ml" 305 8123 8148
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 304 8096 8117 "editor/ed_graph.ml" 304 8096 8118
+)
+"editor/ed_graph.ml" 305 8123 8134 "editor/ed_graph.ml" 305 8123 8149
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 305 8123 8131 "editor/ed_graph.ml" 305 8123 8149
+type(
+  bool
+)
+"editor/ed_graph.ml" 307 8168 8179 "editor/ed_graph.ml" 307 8168 8180
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 307 8168 8183 "editor/ed_graph.ml" 307 8168 8192
+type(
+  G.vertex -> G.V.label
+)
+ident(
+  ext_ref G.V.label
+)
+"editor/ed_graph.ml" 307 8168 8193 "editor/ed_graph.ml" 307 8168 8194
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 304 8096 8117 "editor/ed_graph.ml" 304 8096 8118
+)
+"editor/ed_graph.ml" 307 8168 8183 "editor/ed_graph.ml" 307 8168 8194
+call(
+  stack
+)
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 308 8198 8205 "editor/ed_graph.ml" 308 8198 8206
+type(
+  G.V.label
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 307 8168 8179 "editor/ed_graph.ml" 307 8168 8180
+)
+"editor/ed_graph.ml" 308 8198 8222 "editor/ed_graph.ml" 308 8198 8230
+type(
+  mode
+)
+"editor/ed_graph.ml" 308 8198 8205 "editor/ed_graph.ml" 308 8198 8230
+type(
+  unit
+)
+"editor/ed_graph.ml" 309 8232 8239 "editor/ed_graph.ml" 309 8232 8243
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.incr
+)
+"editor/ed_graph.ml" 309 8232 8244 "editor/ed_graph.ml" 309 8232 8255
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 309 8232 8239 "editor/ed_graph.ml" 309 8232 8255
+type(
+  unit
+)
+"editor/ed_graph.ml" 308 8198 8205 "editor/ed_graph.ml" 309 8232 8255
+type(
+  unit
+)
+"editor/ed_graph.ml" 306 8151 8161 "editor/ed_graph.ml" 310 8257 8265
+type(
+  unit
+)
+"editor/ed_graph.ml" 305 8123 8128 "editor/ed_graph.ml" 310 8257 8265
+type(
+  unit
+)
+"editor/ed_graph.ml" 304 8096 8112 "editor/ed_graph.ml" 311 8266 8269
+type(
+  G.vertex -> unit
+)
+"editor/ed_graph.ml" 311 8266 8270 "editor/ed_graph.ml" 311 8266 8271
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 311 8266 8271 "editor/ed_graph.ml" 311 8266 8276
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 311 8266 8270 "editor/ed_graph.ml" 311 8266 8276
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 304 8096 8098 "editor/ed_graph.ml" 311 8266 8276
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 312 8278 8280 "editor/ed_graph.ml" 312 8278 8294
+type(
+  (G.edge -> unit) -> B.G.t -> unit
+)
+ident(
+  ext_ref G.iter_edges_e
+)
+"editor/ed_graph.ml" 312 8278 8300 "editor/ed_graph.ml" 312 8278 8301
+type(
+  G.edge
+)
+ident(
+  def e "editor/ed_graph.ml" 312 8278 8305 "editor/ed_graph.ml" 312 8278 8351
+)
+"editor/ed_graph.ml" 312 8278 8309 "editor/ed_graph.ml" 312 8278 8310
+type(
+  G.E.label
+)
+"editor/ed_graph.ml" 312 8278 8313 "editor/ed_graph.ml" 312 8278 8322
+type(
+  G.edge -> G.E.label
+)
+ident(
+  ext_ref G.E.label
+)
+"editor/ed_graph.ml" 312 8278 8323 "editor/ed_graph.ml" 312 8278 8324
+type(
+  G.edge
+)
+ident(
+  int_ref e "editor/ed_graph.ml" 312 8278 8300 "editor/ed_graph.ml" 312 8278 8301
+)
+"editor/ed_graph.ml" 312 8278 8313 "editor/ed_graph.ml" 312 8278 8324
+call(
+  stack
+)
+type(
+  G.E.label
+)
+"editor/ed_graph.ml" 312 8278 8328 "editor/ed_graph.ml" 312 8278 8329
+type(
+  G.E.label
+)
+ident(
+  int_ref e "editor/ed_graph.ml" 312 8278 8309 "editor/ed_graph.ml" 312 8278 8310
+)
+"editor/ed_graph.ml" 312 8278 8343 "editor/ed_graph.ml" 312 8278 8351
+type(
+  mode
+)
+"editor/ed_graph.ml" 312 8278 8328 "editor/ed_graph.ml" 312 8278 8351
+type(
+  unit
+)
+"editor/ed_graph.ml" 312 8278 8305 "editor/ed_graph.ml" 312 8278 8351
+type(
+  unit
+)
+"editor/ed_graph.ml" 312 8278 8295 "editor/ed_graph.ml" 312 8278 8352
+type(
+  G.edge -> unit
+)
+"editor/ed_graph.ml" 312 8278 8353 "editor/ed_graph.ml" 312 8278 8354
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 312 8278 8354 "editor/ed_graph.ml" 312 8278 8359
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 312 8278 8353 "editor/ed_graph.ml" 312 8278 8359
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 312 8278 8280 "editor/ed_graph.ml" 312 8278 8359
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 304 8096 8098 "editor/ed_graph.ml" 312 8278 8359
+type(
+  unit
+)
+"editor/ed_graph.ml" 315 8362 8366 "editor/ed_graph.ml" 315 8362 8378
+type(
+  unit -> unit
+)
+ident(
+  def unselect_all "editor/ed_graph.ml" 324 8562 8641 --
+)
+"editor/ed_graph.ml" 315 8362 8379 "editor/ed_graph.ml" 315 8362 8381
+type(
+  unit
+)
+"editor/ed_graph.ml" 316 8386 8388 "editor/ed_graph.ml" 316 8386 8401
+type(
+  (G.vertex -> unit) -> B.G.t -> unit
+)
+ident(
+  ext_ref G.iter_vertex
+)
+"editor/ed_graph.ml" 316 8386 8407 "editor/ed_graph.ml" 316 8386 8408
+type(
+  G.vertex
+)
+ident(
+  def v "editor/ed_graph.ml" 317 8413 8418 "editor/ed_graph.ml" 322 8541 8549
+)
+"editor/ed_graph.ml" 317 8413 8422 "editor/ed_graph.ml" 317 8413 8433
+type(
+  G.vertex -> bool
+)
+ident(
+  int_ref is_selected "editor/ed_graph.ml" 234 5627 5631 "editor/ed_graph.ml" 234 5627 5642
+)
+"editor/ed_graph.ml" 317 8413 8434 "editor/ed_graph.ml" 317 8413 8435
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 316 8386 8407 "editor/ed_graph.ml" 316 8386 8408
+)
+"editor/ed_graph.ml" 317 8413 8421 "editor/ed_graph.ml" 317 8413 8436
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_graph.ml" 319 8454 8465 "editor/ed_graph.ml" 319 8454 8466
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 319 8454 8469 "editor/ed_graph.ml" 319 8454 8478
+type(
+  G.vertex -> G.V.label
+)
+ident(
+  ext_ref G.V.label
+)
+"editor/ed_graph.ml" 319 8454 8479 "editor/ed_graph.ml" 319 8454 8480
+type(
+  G.vertex
+)
+ident(
+  int_ref v "editor/ed_graph.ml" 316 8386 8407 "editor/ed_graph.ml" 316 8386 8408
+)
+"editor/ed_graph.ml" 319 8454 8469 "editor/ed_graph.ml" 319 8454 8480
+call(
+  stack
+)
+type(
+  G.V.label
+)
+"editor/ed_graph.ml" 320 8484 8491 "editor/ed_graph.ml" 320 8484 8492
+type(
+  G.V.label
+)
+ident(
+  int_ref l "editor/ed_graph.ml" 319 8454 8465 "editor/ed_graph.ml" 319 8454 8466
+)
+"editor/ed_graph.ml" 320 8484 8508 "editor/ed_graph.ml" 320 8484 8514
+type(
+  mode
+)
+"editor/ed_graph.ml" 320 8484 8491 "editor/ed_graph.ml" 320 8484 8514
+type(
+  unit
+)
+"editor/ed_graph.ml" 321 8516 8523 "editor/ed_graph.ml" 321 8516 8527
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.decr
+)
+"editor/ed_graph.ml" 321 8516 8528 "editor/ed_graph.ml" 321 8516 8539
+type(
+  int ref
+)
+ident(
+  int_ref nb_selected "editor/ed_graph.ml" 231 5566 5570 "editor/ed_graph.ml" 231 5566 5581
+)
+"editor/ed_graph.ml" 321 8516 8523 "editor/ed_graph.ml" 321 8516 8539
+type(
+  unit
+)
+"editor/ed_graph.ml" 320 8484 8491 "editor/ed_graph.ml" 321 8516 8539
+type(
+  unit
+)
+"editor/ed_graph.ml" 318 8437 8447 "editor/ed_graph.ml" 322 8541 8549
+type(
+  unit
+)
+"editor/ed_graph.ml" 317 8413 8418 "editor/ed_graph.ml" 322 8541 8549
+type(
+  unit
+)
+"editor/ed_graph.ml" 316 8386 8402 "editor/ed_graph.ml" 323 8550 8553
+type(
+  G.vertex -> unit
+)
+"editor/ed_graph.ml" 323 8550 8554 "editor/ed_graph.ml" 323 8550 8555
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 323 8550 8555 "editor/ed_graph.ml" 323 8550 8560
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 323 8550 8554 "editor/ed_graph.ml" 323 8550 8560
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 316 8386 8388 "editor/ed_graph.ml" 323 8550 8560
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 324 8562 8564 "editor/ed_graph.ml" 324 8562 8578
+type(
+  (G.edge -> unit) -> B.G.t -> unit
+)
+ident(
+  ext_ref G.iter_edges_e
+)
+"editor/ed_graph.ml" 324 8562 8584 "editor/ed_graph.ml" 324 8562 8585
+type(
+  G.edge
+)
+ident(
+  def e "editor/ed_graph.ml" 324 8562 8589 "editor/ed_graph.ml" 324 8562 8633
+)
+"editor/ed_graph.ml" 324 8562 8593 "editor/ed_graph.ml" 324 8562 8594
+type(
+  G.E.label
+)
+"editor/ed_graph.ml" 324 8562 8597 "editor/ed_graph.ml" 324 8562 8606
+type(
+  G.edge -> G.E.label
+)
+ident(
+  ext_ref G.E.label
+)
+"editor/ed_graph.ml" 324 8562 8607 "editor/ed_graph.ml" 324 8562 8608
+type(
+  G.edge
+)
+ident(
+  int_ref e "editor/ed_graph.ml" 324 8562 8584 "editor/ed_graph.ml" 324 8562 8585
+)
+"editor/ed_graph.ml" 324 8562 8597 "editor/ed_graph.ml" 324 8562 8608
+call(
+  stack
+)
+type(
+  G.E.label
+)
+"editor/ed_graph.ml" 324 8562 8612 "editor/ed_graph.ml" 324 8562 8613
+type(
+  G.E.label
+)
+ident(
+  int_ref e "editor/ed_graph.ml" 324 8562 8593 "editor/ed_graph.ml" 324 8562 8594
+)
+"editor/ed_graph.ml" 324 8562 8627 "editor/ed_graph.ml" 324 8562 8633
+type(
+  mode
+)
+"editor/ed_graph.ml" 324 8562 8612 "editor/ed_graph.ml" 324 8562 8633
+type(
+  unit
+)
+"editor/ed_graph.ml" 324 8562 8589 "editor/ed_graph.ml" 324 8562 8633
+type(
+  unit
+)
+"editor/ed_graph.ml" 324 8562 8579 "editor/ed_graph.ml" 324 8562 8634
+type(
+  G.edge -> unit
+)
+"editor/ed_graph.ml" 324 8562 8635 "editor/ed_graph.ml" 324 8562 8636
+type(
+  B.G.t ref -> B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_graph.ml" 324 8562 8636 "editor/ed_graph.ml" 324 8562 8641
+type(
+  B.G.t ref
+)
+ident(
+  int_ref graph "editor/ed_graph.ml" 78 2381 2385 "editor/ed_graph.ml" 78 2381 2390
+)
+"editor/ed_graph.ml" 324 8562 8635 "editor/ed_graph.ml" 324 8562 8641
+type(
+  B.G.t
+)
+"editor/ed_graph.ml" 324 8562 8564 "editor/ed_graph.ml" 324 8562 8641
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_graph.ml" 316 8386 8388 "editor/ed_graph.ml" 324 8562 8641
+type(
+  unit
+)

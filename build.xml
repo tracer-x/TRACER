@@ -1,0 +1,375 @@
+<project name="tracer" default="run" basedir=".">
+
+  <!-- ===================================== -->
+  <!-- Here alias -->
+  <!-- ===================================== -->
+  <property name="baselib" value="./lib"/>
+  <property name="basesrc" value="./src"/>
+  <property name="basebin" value="./classes"/>
+
+  <!-- destination of the release distribution -->
+  <property name="release-dist" value="./tracer.0.1"/>
+  <!-- Needed to produce the release version which includes CLPR -->
+  <property name="CLPR" value="/home/jorge/SvnReps/Systems/CLPR/clpr-1.2b"/>
+
+  <!--   Java paths -->
+  <property name="antlr"     
+	    value="${basesrc}/compiler/antlr"/>
+  <property name="frontend"  
+	    value="${basesrc}/compiler/GUIFrontEnd"/>
+  <property name="grappa"    
+	    value="${basesrc}/compiler/GUIFrontEnd/att/grappa"/>
+  <property name="javacup"   
+	    value="${basesrc}/compiler/GUIFrontEnd/java_cup/runtime"/>
+  <property name="zgrviewer" 
+	    value="${basesrc}/compiler/GUIFrontEnd/zgrviewer"/>
+  <property name="frontend-nb" 
+	    value="${basesrc}/compiler/GUIFrontEnd/tracer-nb"/>
+
+  <!--    CLP paths -->
+  <property name="clprtracer"  value="${basesrc}/interpreter"/>
+  
+  <!--    Tests     -->
+  <!--   <property name="examples" value="${basesrc}/interpreter/tests"/> -->
+
+  <!-- ===================================== -->
+  <!-- Here libraries (*.jar files) -->
+  <!-- ===================================== -->
+  <path id="classpath.core">
+    <pathelement path="${baselib}/antlr.jar"/>
+    <pathelement path="${baselib}/grammars.jar"/>
+    <pathelement path="${baselib}/crystal.jar"/>
+    <pathelement path="${baselib}/java-cup-11a.jar"/>
+    <pathelement path="${baselib}/java-cup-11a-runtime.jar"/>
+    <pathelement path="${baselib}/JFlex.jar"/>
+    <pathelement path="${basebin}"/>
+    <!-- If JUNG is used -->
+    <pathelement path="${baselib}/jung-1.7.6.jar"/> 
+    <pathelement path="${baselib}/commons-collections-3.2.1.jar"/>
+    <pathelement path="${baselib}/colt.jar"/>    
+    <!-- lib files for tracer-nb -->
+    <pathelement path="${baselib}/appframework-1.0.3.jar"/>
+    <pathelement path="${baselib}/swing-worker-1.1.jar"/>
+    <!-- lib files for junit(not used but causes dependency issues) -->
+    <pathelement path="${baselib}/junit.jar"/>
+  </path>
+
+  <!-- =========================================== -->
+  <!-- Create the classes directory                -->
+  <!-- =========================================== -->
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${basebin}"/>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Check for updates in ANTLR directory        -->
+  <!-- =========================================== -->
+  <target name="updatecheck" depends="init">
+  	<uptodate property="noupdates" targetfile="${antlr}/.build">
+		<srcfiles dir="${antlr}" excludes="tests/**" />
+		<srcfiles dir="${antlr}/decompiler" />
+	</uptodate>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Generate parser from grammar file           -->
+  <!-- =========================================== -->
+  <target name="generate-parser" depends="updatecheck,init"
+  		  unless="noupdates">
+    <java classname="antlr.Tool"
+        classpathref="classpath.core">
+    <arg value="-o" />
+    <arg value="${antlr}" />
+    <arg value="${antlr}/PrologEmitter.g" />
+    </java>
+    <java classname="antlr.Tool"
+        classpathref="classpath.core">
+    <arg value="-o" />
+    <arg value="${antlr}" />
+    <arg value="${antlr}/CEmitter.g" />
+    </java>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Compile antlr, the compiler C to CLP(R)     -->
+  <!-- =========================================== -->
+  <target name="compile-antlr"
+  		  depends="updatecheck,generate-parser"
+		  unless="noupdates">
+    <javac srcdir="${antlr}"	   
+           destdir="${basebin}"
+           classpathref="classpath.core"
+           debug="false">
+    </javac>
+	<touch file="${antlr}/.build" />
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Compile javaCup, required for Grappa        -->
+  <!-- =========================================== -->
+  <target name="compile-javacup" depends="init">
+    <javac srcdir="${javacup}"
+           destdir="${basebin}"
+           classpathref="classpath.core"
+           debug="false"/>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Compile Grappa, a graph visualization tool  -->       
+  <!-- for Java                                    -->
+  <!-- =========================================== -->
+  <target name="compile-grappa" depends="compile-javacup">
+    <javac srcdir="${grappa}"
+           destdir="${basebin}"
+           classpathref="classpath.core"
+           debug="false"/>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Compile all clp.gpp files from TRACER       -->
+  <!-- =========================================== -->
+  <!-- IMPORTANT NOTE: We are using Makefile from Ant !! -->
+  <!-- We should port all Makefile's into Ant. -->
+  <target name="compileGPP">
+    <exec dir="${clprtracer}" executable="/usr/bin/make">
+    <!-- <exec dir="${clprtracer}" executable="d:\cygwin\bin\make.exe"> -->
+      <arg value="all"/>
+    </exec>
+  </target>
+  <target name="cleanGPP">
+    <exec dir="${clprtracer}" executable="/usr/bin/make">
+    <!-- <exec dir="${clprtracer}" executable="d:\cygwin\bin\make.exe"> -->
+      <arg value="realclean"/>
+    </exec>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Compile C program into CLP                  -->
+  <!-- =========================================== -->
+
+  <!-- USAGE: ant compi -Darg1="file.c" -Darg2="file.clp"
+                        -Darg3="-alias_analysis=y..."-->
+
+  <target name="compi" 
+	  description="Compile a C program into CLP." 
+	  depends="compile-antlr">
+    <java classname="compiler.Main"
+          classpathref="classpath.core"
+          maxmemory="600m"
+	  failonerror="true" 
+	  fork="true">
+    <arg value="${arg1}"/>
+    <arg value="${arg2}"/>
+    <arg value="${arg3}"/>
+    </java> 
+  </target> 
+
+  <!-- =========================================== -->
+  <!-- Decompile C program using TRACES file info  -->
+  <!-- =========================================== -->
+  <!-- USAGE: ant decompi -Darg1="file.c" -Darg2="file.clp.TRACES" -->
+  <target name="decompi" 
+	  description="Decompile C program using TRACES file info" 
+	  depends="compile-antlr">
+    <java classname="decompiler.Main"
+          classpathref="classpath.core"
+          maxmemory="600m"
+	      failonerror="true" 
+	      fork="true">
+    <arg value="${arg1}"/>
+    </java> 
+  </target> 
+
+  <!-- =========================================== -->
+  <!-- Compile all                                 -->
+  <!-- =========================================== -->
+  <!-- <target name="compile"
+      depends="compile-antlr,compile-grappa,compileGPP"> -->
+  <target name="compile" depends="compile-antlr">  
+    <!-- We DO NOT compile zgrviewer. Instead we use an 
+         existing .jar file -->
+    <javac srcdir="${frontend}"	   
+           destdir="${basebin}"
+	   excludes="zgrviewer/**,tracer-nb/**"
+	   classpathref="classpath.core"
+	   debug="on"
+	   debuglevel="lines,source">
+    </javac>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Run the application starting from the GUI   -->
+  <!-- =========================================== -->
+  <!--  This version is an old one and it's obsolete. -->
+  <target name="run-old" depends="compile"> 
+    <java classname="TracerUI"
+	  classpathref="classpath.core"
+          maxmemory="600m"
+          fork="true"/>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Compile the Netbeans-based GUI              -->
+  <!-- =========================================== -->
+  <target name="gcompile" depends="compile"> 
+    <!-- first, jar the compiler & store it in lib/ -->
+	<jar destfile="${baselib}/compiler.jar"
+	     basedir="${basebin}"
+		 includes="compiler/**" />
+    <!-- then, compile and generate the GUI -->
+	<ant dir="${frontend-nb}" inheritRefs="true" target="clean"/>
+	<ant dir="${frontend-nb}" inheritRefs="true"/>
+  </target>
+
+  <!-- =========================================== -->
+  <!-- Run the Netbeans-based GUI		   -->
+  <!-- =========================================== -->
+  <target name="run" depends="gcompile"> 
+	<java jar="${frontend-nb}/dist/tracer-nb.jar"
+	      classpathref="classpath.core"
+	      fork="true" />
+  </target>
+
+   <!-- ========================================== -->
+   <!-- Build the source code distribution.        -->
+   <!-- ========================================== -->	
+  <target name="dist" depends="clean,compile-antlr">
+    <!-- clean release dir -->
+    <delete dir="${release-dist}" />
+    <mkdir  dir="${release-dist}" />
+    <mkdir  dir="${release-dist}/lib" />
+    <mkdir  dir="${release-dist}/src" />
+    <mkdir  dir="${release-dist}/tests" />
+    <mkdir  dir="${release-dist}/benchmarks" />
+    <mkdir  dir="${release-dist}/tmp" />
+    
+    <!-- compile clpr -->
+    <exec dir="${CLPR}" executable="/usr/bin/make" />
+    
+    <!-- Specialized version of TRACER for public distribution -->  
+    <exec dir="./dist" executable="./generate_source_code"/>
+
+    <!-- copy all files to ${release-dist} -->
+    <copy todir="${release-dist}/src">
+      <fileset file="./dist/tracer.0.1_debug.clpr" />
+      <fileset file="./dist/tracer.0.1.clpr" />
+    </copy>
+    <copy todir="${release-dist}">
+      <fileset file="./dist/tracer.0.1" />
+      <fileset file="./dist/README" />
+    </copy>
+    <copy todir="${release-dist}/lib">
+      <fileset file="${CLPR}/clpr" />
+      <fileset file="${CLPR}/init.clpr" />
+      <fileset file="./bin/cilly" />
+      <fileset file="./lib/clp-prover" />
+      <fileset file="./lib/frontend" />
+      <fileset file="./lib/invgen" />
+    </copy>
+
+
+    <!-- Tests for public distribution -->  
+    <exec dir="./dist" executable="./generate_tests"/>
+
+    <!-- Copy all tests and regrtest script -->
+    <copy todir="${release-dist}/tests">
+      <fileset file="./dist/tests/*" />
+    </copy>
+
+    <!-- Benchmarks for public distribution -->  
+    <exec dir="./dist" executable="./generate_benchmarks"/>
+
+    <!-- Copy all benchmarks and regrtest script -->
+    <copy todir="${release-dist}/benchmarks">
+      <fileset file="./dist/benchmarks/*" />
+    </copy>
+
+    <!-- delete automatically generated files in the dist directory -->
+    <exec dir="./dist" executable="./cleanup"/>
+    
+    <!-- jar the compiler -->
+    <jar destfile="${release-dist}/tmp/compiler.jar"
+	 basedir="${basebin}"
+	 includes="compiler/**" />
+    <!-- jar the decompiler -->
+    <jar destfile="${release-dist}/tmp/decompiler.jar" 
+	 basedir="${basebin}" 
+	 includes="decompiler/**" /> 
+    <!-- create executable jar of jars C2CLP (*** uses one-jar ***) -->
+    <copy todir="${release-dist}/tmp">
+      <fileset dir="${baselib}"
+	       excludes="compiler.jar,decompiler.jar" />
+    </copy>
+    <taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask"
+	     classpath="${baselib}/one-jar-ant-task-0.97.jar" />
+    <one-jar destfile="${release-dist}/lib/C2CLP.jar">
+      <manifest>
+	<attribute name="Main-Class" value="com.simontuffs.onejar.Boot" />
+	<attribute name="One-Jar-Main-Class" value="compiler.Main" />
+      </manifest>
+      <main jar="${release-dist}/compiler.jar" />
+      <lib>
+	<fileset file="${release-dist}/tmp/antlr.jar" />
+	<fileset file="${release-dist}/tmp/grammars.jar" />
+	<fileset file="${release-dist}/tmp/crystal.jar" />
+	<fileset file="${release-dist}/tmp/java-cup-11a.jar" />
+	<fileset file="${release-dist}/tmp/java-cup-11a-runtime.jar" />
+	<fileset file="${release-dist}/tmp/JFlex.jar" />
+	<fileset file="${release-dist}/tmp/jung-1.7.6.jar" />
+	<fileset file="${release-dist}/tmp/commons-collections-3.2.1.jar" />
+	<fileset file="${release-dist}/tmp/colt.jar" />
+	<fileset file="${release-dist}/tmp/appframework-1.0.3.jar" />
+	<fileset file="${release-dist}/tmp/swing-worker-1.1.jar" />
+	<fileset file="${release-dist}/tmp/compiler.jar" />
+	<fileset file="${release-dist}/tmp/decompiler.jar" />
+      </lib>
+    </one-jar>
+    
+    <!-- set permissions for executables -->
+    <chmod perm="+x">
+      <fileset file="${release-dist}/lib/clpr" />
+      <fileset file="${release-dist}/lib/cilly" />
+      <fileset file="${release-dist}/lib/clp-prover" />
+      <fileset file="${release-dist}/lib/frontend" />
+      <fileset file="${release-dist}/lib/invgen" />
+      <fileset file="${release-dist}/tracer.0.1" />
+      <fileset file="${release-dist}/tests/regrtest" />
+      <fileset file="${release-dist}/benchmarks/regrtest" />
+    </chmod>
+
+    <!-- delete the directory where we put all temporary jar files -->
+    <delete dir="${release-dist}/tmp" />       
+
+    <!-- generate zip file -->
+    <exec executable="tar" dir="${basedir}">
+	  <arg value="--gzip" />
+	  <arg value="-cf" />
+	  <arg value="tracer.0.1.tar.gzip" />
+	  <arg value="${release-dist}" />
+	</exec>
+
+   <!-- after the zip we delete completely the directory -->	
+   <delete dir="${release-dist}" />        
+
+  </target>
+
+  <!-- ========================================== -->
+  <!-- Cleanup                                    -->
+  <!-- ========================================== -->
+  <target name="clean" depends="cleanGPP" description="clean up">
+    <delete>
+      <fileset dir="${basebin}">
+        <exclude name="**/*.jar"/>
+      </fileset>
+	  <fileset dir="${antlr}">
+	    <include name=".build" />
+	  </fileset>
+<!--       <fileset dir="${examples}"> -->
+<!--         <include name="*.c~"/> -->
+<!--       </fileset> -->
+    </delete>
+  </target>
+
+</project>
+

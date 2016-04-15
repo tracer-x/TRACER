@@ -1,0 +1,17 @@
+#!/bin/bash
+function postp(){
+    echo "================= $1 ================="
+    cd $1
+    cilly $1-prep-dec.c --out $1-prep-dec-cil.c --noPrintLn --noWrap
+    time frama-c-wrapper $1-prep-dec-cil.c $1-prep-dec-cil-prep.c > /dev/null 2>&1
+    cd ..
+}
+
+postp cdaudio
+postp diskperf
+postp floppy
+postp floppy2
+postp kbfiltr
+postp kbfiltr2
+
+echo "DONE"

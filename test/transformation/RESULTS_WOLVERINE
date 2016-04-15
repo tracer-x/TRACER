@@ -1,0 +1,105 @@
+### Results obtained after:
+### 1) converting != to < and >
+### 2) NOT using CIL
+### 3) applying the "quick fix" to the unsound slicer (see Bug#4 in tracer_slicer)
+### 4) MAX_CONSTRAINTS = 50 (default)
+
+
+vijay@paella:~/wolverine$ ./bench 
+=============== cdaudio ================$
+VERIFICATION SUCCESSFUL
+
+real	8m28.218s
+user	8m27.330s
+sys	0m0.850s
+VERIFICATION SUCCESSFUL
+
+real	6m13.622s
+user	6m12.840s
+sys	0m0.740s
+VERIFICATION SUCCESSFUL
+
+real	0m26.952s
+user	0m26.760s
+sys	0m0.170s
+=============== diskperf ================$
+VERIFICATION SUCCESSFUL
+
+real	6m33.522s
+user	6m32.890s
+sys	0m0.620s
+VERIFICATION SUCCESSFUL
+
+real	6m5.355s
+user	6m4.700s
+sys	0m0.650s
+VERIFICATION SUCCESSFUL
+
+real	2m42.973s
+user	2m42.000s
+sys	0m0.890s
+=============== floppy ================$
+VERIFICATION SUCCESSFUL
+
+real	8m37.876s
+user	8m37.430s
+sys	0m0.430s
+VERIFICATION SUCCESSFUL
+
+real	3m31.759s
+user	3m31.360s
+sys	0m0.400s
+VERIFICATION SUCCESSFUL
+
+real	0m24.634s
+user	0m24.410s
+sys	0m0.220s
+=============== floppy2 ================$
+VERIFICATION SUCCESSFUL
+
+real	9m48.528s
+user	9m48.060s
+sys	0m0.470s
+VERIFICATION SUCCESSFUL
+
+real	4m21.408s
+user	4m20.940s
+sys	0m0.470s
+VERIFICATION SUCCESSFUL
+
+real	0m27.414s
+user	0m27.190s
+sys	0m0.220s
+=============== kbfiltr ================$
+VERIFICATION SUCCESSFUL
+
+real	1m21.989s
+user	1m20.920s
+sys	0m1.070s
+VERIFICATION SUCCESSFUL
+
+real	0m4.164s
+user	0m4.090s
+sys	0m0.070s
+VERIFICATION SUCCESSFUL
+
+real	0m0.126s
+user	0m0.120s
+sys	0m0.010s
+=============== kbfiltr2 ================$
+VERIFICATION SUCCESSFUL
+
+real	3m34.427s
+user	3m30.230s
+sys	0m4.200s
+VERIFICATION SUCCESSFUL
+
+real	0m14.913s
+user	0m14.900s
+sys	0m0.010s
+VERIFICATION SUCCESSFUL
+
+real	0m1.111s
+user	0m1.100s
+sys	0m0.010s
+

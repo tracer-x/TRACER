@@ -1,0 +1,29 @@
+
+coinductionlimit(1).   % Limit coinduction to depth 2.
+% tracedepthbound(2).
+solver(arith).
+
+unfold(gcd(X,Y,Z),
+	[
+		body([], [eq(Y,X), eq(Z,X)]),
+		body([gcd(U,Y,Z)], [geq(X,plus(Y,1)), eq(U,minus(X,Y))]),
+		body([gcd(X,U,Z)], [geq(Y,plus(X,1)), eq(U,minus(Y,X))])
+	]).
+
+% To Prove:
+%
+% gcd(X,Y,Z), X>=0, Y>=0 |= Z+Z<=X+Y
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [gcd(X,Y,Z)], UnfoldableGAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [geq(X,0), geq(Y,0)],
+		     [], [], [geq(plus(X,Y),plus(Z,Z))], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

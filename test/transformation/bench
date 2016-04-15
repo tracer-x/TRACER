@@ -1,0 +1,18 @@
+#!/bin/bash
+bench_path=~/new-new-work/TRACER/trunk/test/transformation2
+
+function verify() {
+    echo "=============== $1 ================$"
+    time timeout 600 tracer safety $bench_path/$1/$1.c -minmax n | grep ";-)"
+    time timeout 600 tracer safety $bench_path/$1/$1-prep.c -minmax n | grep ";-)"
+    time timeout 600 tracer safety $bench_path/$1/$1-prep-dec-cil-prep.c -minmax n | grep ";-)"
+
+    rm -f *.clp
+}
+
+verify cdaudio
+verify diskperf
+verify floppy
+verify floppy2
+verify kbfiltr
+verify kbfiltr2

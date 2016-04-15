@@ -1,0 +1,36 @@
+#!/bin/bash
+if [ $# = 0 ]
+then
+	echo "Usage:"
+	echo "cprop prog.c   - decompile prog.c and generate two files - tmp.c (decompiled) and tmp2.c (constant propagated) (IMPORTANT: Run from prog.c's directory ONLY)"
+	echo "cprop clean    - clean folder of above mentioned files"
+else
+if [ $1 = "clean" ]
+then
+	rm *cilly*
+	rm *.dec.c
+	rm tmp*
+else
+if  [ -f $1 ] 
+then
+	prog=${1%.c}
+	prog_cilly=${1}_cilly
+	prog_dec=${1}.dec
+
+	echo "Decompiling..."
+	decompi ${prog}.c
+
+	echo "Running cilly constant propagation..."
+	if [ -f ${prog_cilly}.c ] && [ -f ${prog_dec}.c ]
+	then
+		cilly ${prog_dec}.c --out tmp.c --noPrintLn --noWrap --domakeCFG
+		cilly ${prog_dec}.c --out tmp2.c --noPrintLn --noWrap --domakeCFG --dopartial
+	else
+		echo "Cannot find ${prog_cilly}.c or ${prog_dec}.c"
+	fi
+else
+	echo "${prog} does not exist"
+	exit 2
+fi
+fi
+fi

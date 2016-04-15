@@ -1,0 +1,244 @@
+### Results obtained after:
+### 1) converting != to < and >
+### 2) NOT using CIL
+### 3) applying the "quick fix" to the unsound slicer (see Bug#4 in tracer_slicer)
+### 4) MAX_CONSTRAINTS = 50 (default)
+
+
+vijay@paella:~/cpa-checker/trunk$ ./bench 
+=============== cdaudio ================$
+cdaudio.c:1627: Warning: Return statement without a value in function returning int 
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	1m48.683s
+user	1m53.420s
+sys	0m1.300s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	1m34.491s
+user	1m39.490s
+sys	0m0.980s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m13.645s
+user	0m17.200s
+sys	0m0.360s
+=============== diskperf ================$
+diskperf.c:752: Warning: Return statement without a value in function returning int 
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	3m39.524s
+user	3m42.030s
+sys	0m2.740s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Assuming external function DiskPerfIoCompletion to be a pure function. (CtoFormulaConverter$RightHandSideToFormulaVisitor.visit, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	2m25.608s
+user	2m29.210s
+sys	0m1.610s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m17.770s
+user	0m21.900s
+sys	0m0.330s
+=============== floppy ================$
+floppy.c:769: Warning: Body of function main falls-through. Adding a return statement
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Assuming external function uninf1 to be a constant function. (CtoFormulaConverter$RightHandSideToFormulaVisitor.visit, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	1m28.152s
+user	1m32.530s
+sys	0m0.510s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Assuming external function uninf1 to be a constant function. (CtoFormulaConverter$RightHandSideToFormulaVisitor.visit, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m33.845s
+user	0m37.410s
+sys	0m0.470s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m7.516s
+user	0m11.310s
+sys	0m0.260s
+=============== floppy2 ================$
+floppy2.c:785: Warning: Body of function main falls-through. Adding a return statement
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	1m29.511s
+user	1m34.010s
+sys	0m1.140s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m38.569s
+user	0m43.380s
+sys	0m0.540s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m13.382s
+user	0m17.820s
+sys	0m0.340s
+=============== kbfiltr ================$
+kbfiltr.c:436: Warning: Return statement without a value in function returning int 
+kbfiltr.c:437: Warning: Return statement without a value in function returning int 
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m7.012s
+user	0m10.340s
+sys	0m0.220s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m3.937s
+user	0m5.490s
+sys	0m0.160s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m1.329s
+user	0m2.320s
+sys	0m0.090s
+=============== kbfiltr2 ================$
+kbfiltr2.c:468: Warning: Return statement without a value in function returning int 
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m7.933s
+user	0m11.370s
+sys	0m0.260s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m7.536s
+user	0m10.190s
+sys	0m0.120s
+CPAchecker 1.1-svn started (CPAchecker.run, INFO)
+
+Starting analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Stopping analysis ... (CPAchecker.runAlgorithm, INFO)
+
+Verification result: SAFE. No error path found by chosen configuration.
+More details about the verification run can be found in the directory "output/".
+
+real	0m2.490s
+user	0m4.510s
+sys	0m0.070s
+

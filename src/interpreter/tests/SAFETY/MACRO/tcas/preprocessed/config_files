@@ -1,0 +1,39 @@
+# Paths
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+# to get the path only - not the script name - add
+currentpath=`dirname "$abspath"`
+
+# Configurable files
+TRACER_Makefile=$currentpath/../../../../../Makefile
+
+
+function save_files() {
+    cp ${TRACER_Makefile} ${TRACER_Makefile}.backup
+}
+
+function restore_files() {
+    mv ${TRACER_Makefile}.backup ${TRACER_Makefile}
+}
+
+# Function to manipulate Makefile
+function setup_Makefile {
+
+    while [ "$1" != "" ]; do
+	case "$1" in
+	    -options)
+		shift
+		options="$1"
+		cat ${TRACER_Makefile} | sed 's:OPTIONS\( *\)=\( *\)\(.*\):OPTIONS='"${options}"':g' > ${TRACER_Makefile}.tmp
+                mv ${TRACER_Makefile}.tmp ${TRACER_Makefile}
+		;;	    
+
+	    *)
+		echo "unknown arg Makefile: $1"
+		exit 2
+		;;
+	esac
+	shift
+    done
+
+}
+

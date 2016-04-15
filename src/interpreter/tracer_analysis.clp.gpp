@@ -1,0 +1,2069 @@
+% tracer_analysis.clp.gpp
+
+%============================================================================%
+% This file contains common operations in analyses implemented in
+% TRACER. A new analysis can use these operations if the analysis
+% fulfills the following requirements:
+%
+% - The analysis must be stated in a backward manner starting from a
+%   program point and optionally, some subset of the program variables.
+%
+% - The solution (i.e., abstract state) is a set of variables (e.g.,
+%   dependency set, live set, etc) represented internally as facts
+%   analysis_answer/7:
+%
+%    analysis_answer(Depth,ML,Ws,
+%                    GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet)
+%
+%    where ML is a bit-vector representing the interpolant
+%          GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet is the solution 
+%          Ws is a set of witnesses (one for each variable in the solution)  
+%
+% - For each variable included in the solution, the analysis keeps
+%   track of its corresponding witness.
+% 
+% - The combine operation is SET UNION for the solutions.
+% ----------------------------------------------------------------------------%
+% There is an extra argument Aux which is actually unused. It's there
+% to make easier future extensions.  The SLICING_CONTROL_OPT option
+% uses it but this option is incorrect so it should not be used.
+%----------------------------------------------------------------------------%
+% A key operation is to pass answers from children to parents during
+% the backward traversal of the symbolic execution tree. This process
+% is quite elaborated due to many options we handle:
+%
+% - witnesses vs non-witnesses
+% - use of partition vs non-partition
+% - encoded witnesses vs non-encoded witnesses
+% - use of another process for assert/retract answers or not.
+% - etc.
+%---------------------------------------------------------------------------%
+% NOTE ABOUT WITNESSES: 
+%---------------------------------------------------------------------------%
+% The existence of loops makes difficult the propagation of witnesses.
+% Let's focus on the fragment (tests/LIVE/test-7.c):
+%
+% while(*) { /*A*/ if(x>0){a=y} /*B*/ ... }
+%
+% Assume, e.g. liveness, where we compute a fixpoint. Assume also
+% during the first iteration, the solution at B is empty. Then, at A
+% we have {x,y}. More importantly, the witness path is clear and
+% unambiguous since it's x>0. During the second iteration, we will
+% have now at B the set {x,y}. The problem now is that we could choose
+% the witness x<=0 since it also produces {x,y} at A. This example
+% illustrates that somehow we need to ***remember*** the choices we
+% did during the first iteration of the fixpoint to build the proper
+% witness.
+%
+% A second problem is the following. Assume that we choose the right
+% witness (x>0) at A during the second iteration of the
+% fixpoint. Then, assume a second copy of the loop with x=0. Then,
+% subsumption will not hold at A since the witness (x>0) is not
+% consistent with the incoming context (x=0). However, subsumption may
+% hold at B if at B there is no the witness x>0 and we may reuse more
+% live variables that we should. This shows that somehow, within a
+% loop, we need to consider the witnesses of the looping point.
+% 
+% A third problem is the backward propagation of witnesses across
+% loops. Assume the fragment:
+%    /*B*/ i=0;n=10; /*A*/ while(i<n){... if(i>0) ...}
+%
+% The witness at A can be i>0 and i<n. However, if we try to update
+% the witness at B we fail since i=0 and i >0 is not consistent. The
+% solution, for now, is to propagate back only invariant witnesses.
+%----------------------------------------------------------------------------%
+% export
+%
+% main operations
+% cleanup_analysis/0
+% combine_analysis_answers/7
+% analysis_pre_operator/19
+% analysis_check_subsumed/6
+% analysis_loop_back_edge/9
+% analysis_loop_exit/9
+% unfold_loop_until_fixpoint/36
+%
+% auxiliary operations
+% get_index_from_list/3
+% mark_if_nonvar/2
+%
+% to pass answers (analysis_answer/7 facts) from children to parents
+% record_analysis_answer/11
+% retract_analysis_answer/10
+% retract_analysis_answer_lowlevel/9
+% retract_analysis_loop_answer/4
+% encode_memo/9
+% encode_analysis_answer/3
+% decode_analysis_answer/3
+%
+% statistics
+% calculate_marked_variables/2
+% get_num_of_marked_variables/1
+%
+% debugging
+% print_analysis_answer/0
+% print_caller_state/0
+%============================================================================%
+
+cleanup_analysis:-
+#ifdef  SLICE_PSCFG
+        retractall(analysis_answer(_,_,_,_,_,_,_,_)),
+#else
+        retractall(analysis_answer(_,_,_,_,_,_,_)),
+#endif
+	retractall(analysis_caller_answer(_,_,_,_,_)),
+	% For stats
+	retractall('$temp$'(_,_,_,_,_,_)).	
+	
+%-----------------------------------------------------------------------%
+% combine_analysis_answers(+,+,+,+,+,+,-)
+% -----------------------------------------------------------------------%
+% Combine all variables from the children by applying SET UNION of all
+% variable set.
+% Then, for each witness path formula it picks one up arbitrarily.
+%-----------------------------------------------------------------------%
+combine_analysis_answers(FName, Id, PP, Depth, CL, ML, MergedAnswer):-
+	%------------------------------------------------------------------%	
+	% The following predicate does most of the work. It takes all
+	% children's answers and combine them.
+	%------------------------------------------------------------------%	
+        collate_analysis_answers(FName, Depth, Id, ML, Ws, 
+				 GlobalArrMark,GlobalVarMark,
+				 LocalArrMark,LocalVarMark),	
+	%------------------------------------------------------------------%
+	% Technicality in presence of function calls:
+	%
+	% Code to merge caller and callee states (counterpart of
+	% analysis_remember_caller_state/6)
+	%------------------------------------------------------------------%
+	Answer = answer(Ws,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	analysis_merge_caller_state(FName,PP,Answer,MergedAnswer),
+	MergedAnswer = answer(MergedWs,MergedGlobalArrMark, MergedGlobalVarMark,
+			      MergedLocalArrMark , MergedLocalVarMark),
+#if     (UNFOLD_OPT==SLICING)
+#ifdef  SLICE_FOOTPRINT_OPT
+    record_dependencies_at_endif(FName,PP,
+			       MergedGlobalArrMark, MergedGlobalVarMark,
+			       MergedLocalArrMark , MergedLocalVarMark),
+#endif
+#endif
+
+	record_analysis_answer(rule,FName, Depth, CL, ML,
+			       MergedWs,
+			       MergedGlobalArrMark, MergedGlobalVarMark,
+			       MergedLocalArrMark , MergedLocalVarMark,nil).
+
+%------------------------------------------------------------------------------
+% collate_analysis_answers
+%------------------------------------------------------------------------------
+collate_analysis_answers(FName, Depth, Id, ML, NewWs,
+			 NewMarkedGlobalArr, NewMarkedGlobalVar,
+			 NewMarkedLocalArr , NewMarkedLocalVar) :-
+	
+	freshglobalarrays(GlobalArrMark),
+	freshglobalvars(GlobalVarMark),
+        freshlocalarrays(FName, LocalArrMark),
+        freshlocalvars(FName, LocalVarMark),
+	append(LocalArrMark, LocalVarMark, M1),
+	append(GlobalVarMark, M1, M2),
+	append(GlobalArrMark, M2, Markings),
+	init_witness_paths(Markings,_,
+			   GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,
+			   EmptyWs),
+		      
+	collate_analysis_answers_aux(FName, Depth, ML, EmptyWs,Ws,    
+				     MarkedGlobalArr, MarkedGlobalVar,
+				     MarkedLocalArr , MarkedLocalVar
+#ifdef  SLICING_CONTROL_OPT						   				   
+				    ,F,N,AuxList
+#endif  /*SLICING_CONTROL_OPT*/
+				    ),
+#ifdef  SLICING_CONTROL_OPT			
+        apply_combine_control_optimization(F,N, AuxList, Id,
+				       ans(MarkedGlobalArr, MarkedGlobalVar,
+					   MarkedLocalArr , MarkedLocalVar,
+					   Ws),
+				       ans(NewMarkedGlobalArr, NewMarkedGlobalVar,
+					   NewMarkedLocalArr , NewMarkedLocalVar,
+					   NewWs0)),
+#else   /*SLICING_CONTROL_OPT*/
+        Id=_,
+	NewMarkedGlobalArr=MarkedGlobalArr,NewMarkedGlobalVar=MarkedGlobalVar,	
+	NewMarkedLocalArr=MarkedLocalArr,NewMarkedLocalVar=MarkedLocalVar,	
+	NewWs0=Ws,
+#endif  /*SLICING_CONTROL_OPT*/
+	combine_update_witness_paths(NewMarkedGlobalArr, NewMarkedGlobalVar,
+				     NewMarkedLocalArr , NewMarkedLocalVar,
+				     NewWs0, NewWs).
+	
+%------------------------------------------------------------------------------
+% collate_analysis_answers_aux
+%------------------------------------------------------------------------------
+collate_analysis_answers_aux(FName,Depth, ML, AccWs, CombWs,
+			     AccMarkedGlobalArr, AccMarkedGlobalVar,
+			     AccMarkedLocalArr , AccMarkedLocalVar
+#ifdef  SLICING_CONTROL_OPT						   
+			    ,F,N,AuxList):-
+% F is used to track whether all children are guards
+% N is used to track the number of feasible children
+% AuxList is a list with post marked variables.	
+#else
+                           ):-
+#endif /*SLICING_CONTROL_OPT*/
+
+        retract_analysis_answer_lowlevel(FName,Depth, ML, Ws,
+	                                 MarkedGlobalArr, MarkedGlobalVar,
+					 MarkedLocalArr , MarkedLocalVar,Aux),
+#ifdef  SLICING_CONTROL_OPT			
+        % To perform control-dependence optimization		
+	control_opt_get_info(Aux,F1,N1),
+#else
+        % To avoid warnings
+        Aux=_,	
+#endif	/*SLICING_CONTROL_OPT*/
+        %------------------------------------------------------------------%
+	% Combine witnesses
+        %------------------------------------------------------------------%
+        combine_witness_paths_without_update(AccWs, Ws, Ws1),
+        %------------------------------------------------------------------%	
+        % Combine markings
+        %------------------------------------------------------------------%	
+        AccMarkedGlobalArr = MarkedGlobalArr,
+	AccMarkedGlobalVar = MarkedGlobalVar,
+	AccMarkedLocalArr  = MarkedLocalArr,
+	AccMarkedLocalVar  = MarkedLocalVar,	
+	collate_analysis_answers_aux(FName, Depth, ML, Ws1, CombWs,
+	                             AccMarkedGlobalArr, AccMarkedGlobalVar,
+				     AccMarkedLocalArr , AccMarkedLocalVar
+#ifdef  SLICING_CONTROL_OPT							   
+				    ,F2, N2, AuxList1
+#endif  /*SLICING_CONTROL_OPT*/				    
+
+				    ),	
+#ifdef  SLICING_CONTROL_OPT	
+	F = F1 * F2,
+	N = N1 + N2,
+	combine_aux_info(Aux,AuxList1,AuxList),
+#endif  /*SLICING_CONTROL_OPT*/
+        true.
+collate_analysis_answers_aux(_,_,_,Ws,Ws,_,_,_,_
+#ifdef  SLICING_CONTROL_OPT						   			   
+			    , 1, 0, []
+#endif  /*SLICING_CONTROL_OPT*/
+			    ).
+
+%----------------------------------------------------------------------------%
+% analysis_pre_operator(+FName,+Depth,+Id,+PC1,+GuardFlag,+CallStack,+XCL,
+%                       +CL,+CL1,?ML,+ML1,
+%                       +SGlobalArr ,+SGlobalVar ,+SLocalArr ,+SLocalVar,
+%                       +SGlobalArr1,+SGlobalVar1,+SLocalArr1,+SLocalVar1)
+%----------------------------------------------------------------------------%
+% PC1: child's PC.
+% GuardFlag: if transition is a guard or not.
+% XCL: constraints for current transition.
+% CL : collected constraints of the parent.
+% CL1: collected constraints of the child.
+% ML : marked constraints (interpolant) of the parent.
+% ML1: marked constraints (interpolant) of the child.
+% SGlobalArr,SGlobalVar,SLocalArr,SLocalVar: father's variables.
+% SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1:  child's variables.
+%----------------------------------------------------------------------------%
+analysis_pre_operator(FName,Depth,Id,PC1,_,CallStack,XCL,CL,CL1,ML,ML1,
+		      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):- 	
+#ifdef  PROFILE				
+        ctime(Time0),
+#endif
+#ifdef  PRE_DEBUG
+        print_message("PRE operator 0... depth %\n",[Depth+1]),
+	print_analysis_answer,
+#endif  /*PRE_DEBUG*/
+        %--------------------------------------------------------------
+        % NOTE: the pre operation can be between a caller and its
+        % callee. Therefore, the parent's and child's variables might
+        % be different. Thus, sensitive operations to function name
+        % (e.g., encode/decode answers) need to know that.
+        %--------------------------------------------------------------
+        functionOfChildAndParent(Id,FName,PC1,CallStack,FNameOfChild,FNameOfParent),
+	retract_analysis_answer(FNameOfChild, Depth+1,CL1,ML1,PostWs,
+				PostMarkGlobalArr,PostMarkGlobalVar,
+				PostMarkLocalArr ,PostMarkLocalVar,_Aux),
+#ifdef  PRE_DEBUG	
+        print_message("PRE operator 1\n",[]),
+#endif  /*PRE_DEBUG*/
+	%----------------------------------------------------------------------
+	% Store the caller state if function call (counterpart of
+	% analysis_merge_caller_state/4)
+	%----------------------------------------------------------------------
+	analysis_remember_caller_state(Id,
+				       /* PostWs in encoded form */
+				       PostWs,
+				       /* Markings in decoded form */
+				       PostMarkGlobalArr,PostMarkGlobalVar,
+				       PostMarkLocalArr ,PostMarkLocalVar ),
+#ifdef  PRE_DEBUG	
+        print_message("PRE operator 2\n",[]),
+#endif  /*PRE_DEBUG*/
+#ifdef  PROFILE				
+        ctime(Time1),
+        add_counter(pre_phase_5,Time1-Time0),
+	ctime(Time6),
+#endif  /*PROFILE*/
+#ifdef  DEBUG_USE
+	print_message("\tPost solution set=",[]),
+	pretty_printer_markings(FNameOfChild,
+				PostMarkGlobalArr,PostMarkGlobalVar,
+				PostMarkLocalArr ,PostMarkLocalVar),	
+ 	print_message("\tPost witnesses=%\n",[PostWs]),
+#endif  /*DEBUG_USE*/
+        % NOTE: if no witnesses, then PostMark* will be modified
+        % in gen_slice_pre_operator_aux. This is why we do a safe copy
+        % of it.
+#ifdef  PRE_DEBUG
+        print_message("PRE operator 3\n",[]),
+#endif  /*PRE_DEBUG*/
+#ifdef  SLICING_CONTROL_OPT						       				  
+        fcopy_term(t(PostMarkGlobalArr, PostMarkGlobalVar,
+		     PostMarkLocalArr , PostMarkLocalVar),
+		   t(PostMarkGlobalArr0, PostMarkGlobalVar0,
+		     PostMarkLocalArr0 , PostMarkLocalVar0)),
+#endif	/*SLICING_CONTROL_OPT*/
+#ifdef  PROFILE				
+        ctime(Time7),
+        add_counter(pre_phase_8,Time7-Time6),
+#endif  /*PROFILE*/
+	
+#ifdef  PRE_DEBUG	
+        print_message("PRE operator 4\n",[]),
+#endif  /*PRE_DEBUG*/
+ 	analysis_pre_operator_aux(FNameOfChild,FNameOfParent,
+				  SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				  SGlobalArr , SGlobalVar , SLocalArr , SLocalVar,
+				  XCL, Id,
+				  PostMarkGlobalArr, PostMarkGlobalVar,
+				  PostMarkLocalArr , PostMarkLocalVar,
+				  PostWs, PreWs,
+#if     (UNFOLD_OPT==SLICING)			  				  
+				  SliceXCL,
+#endif  /*UNFOLD_OPT==SLICING*/  				  
+				  _PreVarsMark,
+				  PreGlobalArrMark, PreGlobalVarMark,
+				  PreLocalArrMark, PreLocalVarMark
+#ifdef  SLICING_CONTROL_OPT						       				  
+				 ,BranchFlag,NewWsIndexes
+#endif  /*SLICING_CONTROL_OPT*/				  
+				 ),
+#if     (UNFOLD_OPT==SLICING)
+#ifdef  PRE_DEBUG	
+        print_message("PRE operator 5... \n",[]),
+	print_message("\trecording Id:% SliceXCL:%\n",[Id,SliceXCL]),
+#endif  /*PRE_DEBUG*/
+ 	debug_message("\tSliceXCL=%\n",[SliceXCL]),
+#endif  /*UNFOLD_OPT == SLICING*/
+
+#ifdef  DEBUG_USE
+ 	print_message("\tPre solution set= ",[]),  		      
+ 	pretty_printer_markings(FNameOfParent,
+ 				PreGlobalArrMark,PreGlobalVarMark,
+ 				PreLocalArrMark ,PreLocalVarMark),	
+ 	print_message("\tPre witnesses=%\n",[PreWs]),
+#endif  /*DEBUG_USE*/
+%=============================================================================%
+% HERE DOMAIN-SPECIFIC OPERATION
+%=============================================================================%
+#if     (UNFOLD_OPT==SLICING)
+%----------------------------------------------------------------------
+% The transition is to be included in the slice, in case the SliceXCL
+% (sliced constraints) has at least one element marked.
+%----------------------------------------------------------------------
+#ifdef  PROFILE				
+        ctime(Time2),
+#endif  /*PROFILE*/
+	record_trans_in_slice(FName,Id, SliceXCL),	
+#ifdef  SLICE_PSCFG
+    record_trans_in_slice_pscfg(FName,Id,SliceXCL),
+#endif  /*SLICE_PSCFG*/
+#ifdef  PROFILE				
+        ctime(Time3),
+	add_counter(pre_phase_6,Time3-Time2),
+#endif  /*PROFILE*/
+#ifdef  PRE_DEBUG
+        print_message("PRE operator 6\n",[]),
+#endif  /*PRE_DEBUG*/
+#endif  /*UNFOLD_OPT==SLICING*/
+%=============================================================================%
+#ifdef  PROFILE
+	ctime(Time4),
+#endif  /*PROFILE*/
+#ifdef  SLICING_CONTROL_OPT						       
+        % To perform control-dependence optimization
+ 	control_opt_gen_info(BranchFlag, 1, NewWsIndexes,
+        %                                ^
+	%		     1 means that the transition is feasible 
+			     PostMarkGlobalArr0, PostMarkGlobalVar0,
+			     PostMarkLocalArr0 , PostMarkLocalVar0 , Aux),
+#else
+        % To avoid warnings
+        Aux=_,	
+#endif  /*SLICING_CONTROL_OPT*/
+        record_analysis_answer(rule,FNameOfParent, Depth, CL, ML,
+			       PreWs,
+			       PreGlobalArrMark, PreGlobalVarMark,
+			       PreLocalArrMark, PreLocalVarMark,Aux),
+#ifdef  PRE_DEBUG	
+        print_message("PRE operator 7\n",[]),
+	print_analysis_answer,	
+#endif  /*PRE_DEBUG*/
+#ifdef  PROFILE				
+        ctime(Time5),
+	add_counter(pre_phase_7,Time5-Time4).
+#else
+        true.
+#endif  /*PROFILE*/
+
+%---------------------------------------------------------------------------------%
+% analysis_pre_operator_aux(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,-,-,-,-,-,-,-,-,-)
+%---------------------------------------------------------------------------------%
+% NOTE: PreVarsMark1 is only used for debugging info so it could be
+% removed although no big gains are expected.
+%---------------------------------------------------------------------------------%
+analysis_pre_operator_aux(FNameOfChild, FNameOfParent,
+			  % Symbolic post variables
+			  PostGlobalArr, PostGlobalVar, PostLocalArr, PostLocalVar,
+			  % Symbolic pre variables
+			  PreGlobalArr , PreGlobalVar , PreLocalArr , PreLocalVar,
+			  XCL, Id,
+			  % Post marked variables (for without witnesses case)
+			  _PostGlobalArrMark, _PostGlobalVarMark,
+			  _PostLocalArrMark , _PostLocalVarMark,
+			  % Post-state and pre-state witnesses 
+			  PostWs, PreWs,
+#if     (UNFOLD_OPT==SLICING)			  
+			  % Slice of the transition XCL
+			  SliceXCL,
+#endif 	/*UNFOLD_OPT==SLICING*/		  
+			  PreVarsMark1, % all below Pre*Mark in a single list
+			  % Pre*Mark
+			  PreGlobalArrMark, PreGlobalVarMark,
+			  PreLocalArrMark , PreLocalVarMark
+#ifdef  SLICING_CONTROL_OPT			   
+			  % To perform control-dependence optimization
+			  ,BranchFlag,NewWsIndexes
+#endif			  
+			  ) :-
+	% W/ witnesses  
+	current_tracer_flag(witnesses, y),
+	!,
+	% Put together all SPost* 
+	append(PostLocalArr, PostLocalVar, L1),
+	append(PostGlobalVar, L1, L2),
+	append(PostGlobalArr, L2, PostVars),
+	% Put together all SPre*
+	append(PreLocalArr, PreLocalVar, M1),
+	append(PreGlobalVar, M1, M2),
+	append(PreGlobalArr, M2, PreVars),
+#ifdef  PROFILE				
+        ctime(Time0),
+#endif  /*PROFILE*/
+        %===================================================================
+        % Be careful: merge the below fcopy_term's in just one it
+        % fails with loops!
+        %===================================================================
+        % Create a new copy of XCL (XCL1) to generate PostVarsMark and
+        % PreVarsMark (i.e, post and pre state of markings). They
+        % don't contain markings yet.
+        %===================================================================
+	fcopy_term(t(XCL, PostVars, PreVars),
+		   t(XCL1, PostVarsMark, PreVarsMark)),
+	fcopy_term(t(PreGlobalArr, PreGlobalVar,PreLocalArr, PreLocalVar,
+		     PreVars),
+		   t(PreGlobalArrMark, PreGlobalVarMark,
+		     PreLocalArrMark, PreLocalVarMark,
+		     PreVarsMark1)),	
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(pre_phase_1,Time1-Time0),
+#endif  /*PROFILE*/ 
+	%---------------------------------------------------------------------%
+	% Mark variables
+	%---------------------------------------------------------------------%
+#ifdef  PROFILE				
+        ctime(Time2),
+#ifdef  PRE_DEBUG	
+        print_message("PRE AUX operator 1\n",[]),
+#endif	/*PRE_DEBUG*/
+#endif  /*PROFILE*/        
+        % Produce the post-state dependency markings from the
+        % post-state witnesses.
+	produce_markings_from_witnesses(PostWs, PostVarsMark),	
+#ifdef  PROFILE					
+        ctime(Time3),
+        add_counter(pre_phase_2,Time3-Time2),
+#ifdef  PRE_DEBUG	
+        print_message("PRE AUX operator 2\nPreVarsMark: % \n",[PreVarsMark]),
+#endif	/*PRE_DEBUG*/	
+        ctime(Time4),
+#endif  /*PROFILE*/
+%=============================================================================%
+% HERE DOMAIN-SPECIFIC OPERATIONS
+%=============================================================================%
+#if     (UNFOLD_OPT==SLICING)
+%=============================================================================%	
+        %---------------------------------------------------------------------%
+	% Update slice and propagate backward dependencies
+	%---------------------------------------------------------------------%
+	% IMPORTANT: via unification when XCL1 is marked, PreVarsMark
+	% is also updated accordingly.
+	%---------------------------------------------------------------------%
+	propagate_back_dependencies_w_witnesses(Id, XCL1, PreVarsMark, SliceXCL,
+	     % post-state witnesses 
+	     PostWs,
+             % Used for creating new witnesses (by copying them),
+	     PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+	     % Final post-state for witnesses (after optimization)
+	     Post1Ws
+#ifdef  SLICING_CONTROL_OPT			   			       
+	     % Improve precision of guards by doing optimization if
+	     % flag slicer_control_opt is on.
+	     ,BranchFlag,NewWsIndexes
+#endif			      
+					       ),
+%=============================================================================%	
+#elif   (UNFOLD_OPT==LIVE)
+%=============================================================================%	
+         propagate_back_live_w_witnesses(Id, XCL1, PreVarsMark, 
+					 PostGlobalArr,PostGlobalVar,
+					 PostLocalArr ,PostLocalVar,
+					 PostWs, Post1Ws),
+#endif  /*(UNFOLD_OPT==SLICING)*/	
+%=============================================================================%	
+#ifdef  PROFILE					
+        ctime(Time5),
+	add_counter(pre_phase_3,Time5-Time4),
+#ifdef  PRE_DEBUG	
+        print_message("PRE AUX operator 3\n",[]),
+#endif	/*PRE_DEBUG*/
+	ctime(Time6),	
+#endif  /* PROFILE */
+        % Here we propagate markings from PreVarsMark to PreVarsMark1
+	mark_if_nonvar(PreVarsMark, PreVarsMark1),
+#ifdef  PRE_DEBUG		
+        print_message("PRE AUX operator 4\nPreVarsMark: %\n",[PreVarsMark]),
+#endif
+	%------------------------------------------------------------------%
+	% Update witnesses
+	%------------------------------------------------------------------%
+	construct_pre_witnesses(Id,
+				FNameOfChild,FNameOfParent,
+				% symbolic post-state (children) variables
+				PostGlobalArr, PostGlobalVar,
+				PostLocalArr, PostLocalVar,
+				% symbolic pre-state (parent) variables 
+				PreGlobalArr, PreGlobalVar,
+				PreLocalArr, PreLocalVar,
+				XCL,
+				% From pre-state variables and witnesses
+				PreVarsMark, Post1Ws,
+				% we produce new pre-state witnesses
+				PreWs),	
+#ifdef  PROFILE						
+        ctime(Time7),
+#ifdef  PRE_DEBUG		
+        print_message("PRE AUX operator 5\n",[]),
+#endif	/*PRE_DEBUG*/
+        add_counter(pre_phase_4,Time7-Time6),
+#endif  /*PROFILE*/
+        true.
+analysis_pre_operator_aux(_FNameOfChild,_FNameOfParent,
+			  PostGlobalArr, PostGlobalVar, PostLocalArr, PostLocalVar,
+			  PreGlobalArr , PreGlobalVar , PreLocalArr , PreLocalVar,
+			  XCL, Id,
+			  PostGlobalArrMark, PostGlobalVarMark,
+			  PostLocalArrMark, PostLocalVarMark,			   
+			  _PostWs, [] ,
+#if     (UNFOLD_OPT==SLICING)			  
+			  SliceXCL1,
+#endif  /*UNFOLD_OPT==SLICING*/			  
+			  PreVarsMark,
+			  PreGlobalArrMark, PreGlobalVarMark,
+			  PreLocalArrMark, PreLocalVarMark
+#ifdef  SLICING_CONTROL_OPT			   			       			  
+			  % To perform control-dependence optimization	
+			 ,BranchFlag,[]
+#endif			  
+			 ) :-
+	% W/o witnesses
+	current_tracer_flag(witnesses, n),
+	!,
+#ifdef  PROFILE					
+        ctime(Time0),
+#endif	
+	fcopy_term(t(PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+		     XCL,
+		     PreGlobalArr,PreGlobalVar,PreLocalArr,PreLocalVar),
+		   t(PostGlobalArrMark,PostGlobalVarMark,PostLocalArrMark,PostLocalVarMark,
+		     XCL1,
+		     PreGlobalArrMark, PreGlobalVarMark,PreLocalArrMark,PreLocalVarMark)),		     
+#ifdef  PROFILE				
+        ctime(Time1),
+	add_counter(pre_phase_1,Time1-Time0),
+	ctime(Time2),	
+#endif	/*PROFILE*/
+	append(PreLocalArrMark, PreLocalVarMark, PreVarsMark0),
+	append(PreGlobalVarMark, PreVarsMark0, PreVarsMark1),
+	append(PreGlobalArrMark, PreVarsMark1, PreVarsMark),
+%=============================================================================%
+% HERE DOMAIN-SPECIFIC OPERATIONS
+%=============================================================================%
+#if     (UNFOLD_OPT==SLICING)
+%=============================================================================%	
+	%------------------------------------------------------------------%	
+	% Mark variables and compute slice
+	% IMPORTANT: via unification if XCL1 is marked then Pre*Mark
+	% are also marked
+	%------------------------------------------------------------------%
+	propagate_back_dependencies_wo_witnesses(Id,XCL1,SliceXCL1
+#ifdef  SLICING_CONTROL_OPT				
+						,BranchFlag
+#endif				
+	 					),
+#elif   (UNFOLD_OPT==LIVE)
+%=============================================================================%	
+	propagate_back_live_wo_witnesses(Id,XCL1),
+#endif  /*(UNFOLD_OPT==SLICING)*/
+%=============================================================================%	
+#ifdef  PROFILE				
+        ctime(Time3),
+	add_counter(pre_phase_3,Time3-Time2),
+#endif	/*PROFILE*/
+	true.
+
+%---------------------------------------------------------------------------------%
+% analysis_remember_caller_state(+Id,+Ws,+MarkGlobalArr,+MarkGlobalVar,
+%                                +MarkLocalArr,+MarkLocalVar)
+%---------------------------------------------------------------------------------%
+% In presence of function calls, the caller needs to store its state
+% (i.e., marked local variables and witnesses) before the callee is
+% called. After the callee returns, the caller needs to merge the
+% state of all its variables which are not related to the callee with
+% those related to the callee. Otherwise, the state of the unrelated
+% variables would be lost after the callee returns from a function call.
+%
+% FIXME: We may lose more witnesses than necessary.
+%---------------------------------------------------------------------------------%
+analysis_remember_caller_state(Id,
+			       PostWs,
+			       PostMarkGlobalArr, PostMarkGlobalVar,
+			       PostMarkLocalArr , PostMarkLocalVar):-
+	trans(CallerFName, Id, PP1,_,_,_,_,_,_,_,_,_,_,_,
+	      SGlobalArr1, SGlobalVar1,_,_,SLocalArr1,SLocalVar1,
+	      XCL, [call(_,_,_,_)],_,_),
+        !,
+	%------------------------------------------------------------------------
+	% Assume x = foo(...);
+	% Here we call "x" the "return" value.
+        %	
+	% After returning from foo, the return value should be marked
+	% only (if needed) by the callee and never by the
+	% caller. Here, we make sure that the return value is unmarked
+	% when passed to the callee.
+	% To see why it is needed check test_function-14.c 
+	%------------------------------------------------------------------------
+	get_return_index(XCL, Id,
+			 SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,ReturnIndex),
+	% M2: original marked variables
+	append(PostMarkLocalArr,PostMarkLocalVar,M0),
+	append(PostMarkGlobalVar,M0,M1), append(PostMarkGlobalArr,M1,M2),	
+	copy_to_unbound_list(PostMarkLocalArr  , PostMarkLocalArr1),
+	copy_to_unbound_list(PostMarkLocalVar  , PostMarkLocalVar1),
+	copy_to_unbound_list(PostMarkGlobalArr , PostMarkGlobalArr1),
+	copy_to_unbound_list(PostMarkGlobalVar , PostMarkGlobalVar1),
+	% N2: copy of original marked variables
+	append(PostMarkLocalArr1,PostMarkLocalVar1,N0),
+	append(PostMarkGlobalVar1,N0,N1), append(PostMarkGlobalArr1,N1,N2),
+	%-------------------------------------------------------------------------
+	% MARKED VAR AND WITNESS: we delete the solution associated
+	% with the return value (marked variable and witness) because
+	% it should be updated by the callee.
+	%-------------------------------------------------------------------------
+	delete_marking_and_witness_of_return(ReturnIndex,M2,N2,CallerFName,PostWs,PostWs1),
+	%-------------------------------------------------------------------------
+	% WITNESS: keep only the witnesses related to the caller's
+	% local variables. The witnesses associated with global
+	% variables will be updated by the callee.
+	%-------------------------------------------------------------------------
+	delete_global_witnesses(PostWs1, PostWs2),
+	%------------------------------------------------------------------------
+	% To store the caller state: only local markings+witnesses
+	% excluding return value
+	%------------------------------------------------------------------------
+#ifdef  ENCODE_CHILD_PARENT
+        % Here PostWs2 are in encoded form.
+        fasserta(analysis_caller_answer(CallerFName,PP1,
+					PostMarkLocalArr1,PostMarkLocalVar1,PostWs2)),
+#else
+        asserta(analysis_caller_answer(CallerFName,PP1,
+				       PostMarkLocalArr1,PostMarkLocalVar1,PostWs2)),
+#endif  /*ENCODE_CHILD_PARENT*/	
+	debug_message("\n\tRemembering CALLER state: % % MLocalArr:% MLocalVar:%  Ws:% \n\n",
+		      [CallerFName, PP1,PostMarkLocalArr1,PostMarkLocalVar1,PostWs2]).
+analysis_remember_caller_state(_, _ , _ , _, _, _):- !.
+
+%------------------------------------------------------------------------------------%
+% delete_marking_and_witness_of_return(+Index,+Ms,-NewMs,+Ws,-NewWs)
+%------------------------------------------------------------------------------------%
+% Delete the marking and witness (if any) of the return value from the
+% caller context. By return value, we mean the lhs of the statement
+% x = foo(...);
+%------------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_delete_marking_and_witness_of_return:-
+	SGA = [_H], SGV = [_A,_B,_C], SLA = [], SLV = [X,_Y,_Z],
+	XCL = [ref(_,_,_),assign(X,_)],
+	get_return_index(XCL,_,SGA,SGV,SLA,SLV,Index),
+	print_message("Index: % \n",[Index]),	
+	MGA = [_], MGV = [o,_,o], MLA = [] ,MLV = [o,o,_],
+	append(MLA,MLV,M0),append(MGV,M0,M1),append(MGA,M1,M2),	
+	copy_to_unbound_list(MLA,MLA1),
+	copy_to_unbound_list(MLV,MLV1),
+	copy_to_unbound_list(MGV,MGV1),
+	copy_to_unbound_list(MGA,MGA1),	
+	append(MLA1,MLV1,N0),append(MGV1,N0,N1), append(MGA1,N1,N2),
+	Ws = [w(2,_,_,_,_,_,_),w(4,_,_,_,_,_,_),w(5,_,_,_,_,_,_),w(6,_,_,_,_,_,_)],
+        delete_marking_and_witness_of_return(Index,M2,N2,_,Ws,NewWs),
+	print_message("Before % % % % \n% \n",[MGA,MGV,MLA,MLV,Ws]),
+	print_message("After % % % % \n% \n",[MGA1,MGV1,MLA1,MLV1,NewWs]).	
+#endif	/*DEBUG_USE*/
+%------------------------------------------------------------------------------------%
+delete_marking_and_witness_of_return(-1, Ms, Ms, _FName, Ws, Ws) :- !.
+delete_marking_and_witness_of_return(I,Ms, Ns, FName, Ws, NWs)  :-
+	unmark_nth(1,I,Ms,Ns),
+%	delete_return_marking_from_caller_context(Ms, Ns, 1, I ),
+	delete_nth_witness_list(Ws,I,FName,NWs).
+
+% TO BE REMOVED
+% delete_return_marking_from_caller_context([_|Ms], [_|Ms] , K, I):-
+% 	K == I, !.
+% delete_return_marking_from_caller_context([M|Ms], [M|Ns] , K, I):-
+% 	K < I , !,
+% 	delete_return_marking_from_caller_context(Ms, Ns, K+1, I).
+
+%------------------------------------------------------------------------------%
+% analysis_merge_caller_state(+FName,+PP,+CalleeAnswer,-MergedAnswer)
+%------------------------------------------------------------------------------%
+% Merge CalleeAnswer with CallerAnswer which is taken from
+% analysis_caller_answer/5 and return MergedAnswer.
+%------------------------------------------------------------------------------%
+analysis_merge_caller_state(FName,PP,
+			    answer(Ws,MarkGlobalArr,MarkGlobalVar,
+				   MarkLocalArr,MarkLocalVar),
+			    answer(MergedWs,MarkGlobalArr,MarkGlobalVar,
+				   MergedMarkLocalArr,MergedMarkLocalVar)):-
+        % print_caller_state,
+#ifdef  ENCODE_CHILD_PARENT
+        % Here witnesses at caller (CallerWs) are in encoded form
+        retract(analysis_caller_answer(FName,PP,CallerMarkLocalArr,CallerMarkLocalVar,CallerWs)),
+#else
+        analysis_caller_answer(FName,PP,CallerMarkLocalArr,CallerMarkLocalVar,CallerWs),
+	robust_retract_no_call(analysis_caller_answer(FName,PP,_,_,_)),
+#endif 	/*ENCODE_CHILD_PARENT*/
+	debug_message("Merging CALLER and CALLEE ... \n",[]),
+	debug_message("\tCallee Ws %\n\tCaller Ws % \n",[Ws, CallerWs]),
+	debug_message("\tCallee MarkLocalArr %\n\tCaller MarkLocalArr % \n",
+		      [MarkLocalArr, CallerMarkLocalArr]),
+	debug_message("\tCallee MarkLocalVar %\n\tCaller MarkLocalVar % \n",
+		      [MarkLocalVar, CallerMarkLocalVar]),
+	analysis_merge_caller_and_callee(Ws, CallerWs, MergedWs,
+					 MarkLocalArr, CallerMarkLocalArr, MergedMarkLocalArr,
+					 MarkLocalVar, CallerMarkLocalVar, MergedMarkLocalVar),
+	debug_message("\tMerged %\n", [MergedWs]),
+	debug_message("\tMerged %\n", [MergedMarkLocalArr]),
+	debug_message("\tMerged %\n", [MergedMarkLocalVar]).
+analysis_merge_caller_state(_FName,_PP,Answer,Answer):- !.
+
+analysis_merge_caller_and_callee(Ws, CallerWs, MergedWs,
+				 MarkLocalArr, CallerMarkLocalArr, MergedMarkLocalArr,
+				 MarkLocalVar, CallerMarkLocalVar, MergedMarkLocalVar):-
+	% Merge witnesses
+	analysis_merge_caller_callee_witnesses(CallerWs,Ws,MergedWs),
+	% Merge LocalArr
+	analysis_merge_caller_callee_markings(MarkLocalArr, CallerMarkLocalArr,
+					      MergedMarkLocalArr),
+	% Merge LocalVar
+	analysis_merge_caller_callee_markings(MarkLocalVar, CallerMarkLocalVar,
+					      MergedMarkLocalVar).
+
+analysis_merge_caller_callee_markings(Mark0, Mark1, Mark0):- Mark0 = Mark1.
+	
+%-------------------------------------------------------------------------------%
+%  Note: This predicate works independently whether witnesses are
+%  encoded or not.
+%-------------------------------------------------------------------------------%
+analysis_merge_caller_callee_witnesses([],Ws,Ws) :- !.
+analysis_merge_caller_callee_witnesses([w(I,Id,A,B,C,D,E)|Rs],Ws0,Ws2):-
+	add_witnesses_sorted(Ws0,w(I,Id,A,B,C,D,E),Ws1),
+	analysis_merge_caller_callee_witnesses(Rs,Ws1,Ws2).
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% analysis_check_subsumed_answer(+,+,+,+,+,+Answer)
+% Check if answer subsumed holds in the new context
+%-------------------------------------------------------------------------------%
+analysis_check_subsumed_answer(_,_,_,_,_,_) :-
+	current_tracer_flag(witnesses,n), !.
+analysis_check_subsumed_answer(GlobalArr, GlobalVar, LocalArr, LocalVar,
+			       ArrRef, answer(Ws,_,_,_,_)) :-
+	current_tracer_flag(witnesses,y), !,
+	%----------------------------------------------------------------------
+        % Checking if all witness paths are consistent in the subsumed
+        % symbolic state (i.e.,satisfiable)
+        %----------------------------------------------------------------------
+#ifdef  PROFILE
+	% Number of times the whole bunch of witnesses is checked
+	add_counter(num_reps_is_checked, 1),
+#endif	/*PROFILE*/
+	satisfiable_all_witnesses(Ws,
+				  GlobalArr,GlobalVar,LocalArr,LocalVar,
+				  ArrRef).
+
+%-------------------------------------------------------------------------------%
+% analysis_loop_back_edge(+FName,+Depth,+PP,+CL,+ML,+,+,+,+)
+% A back-edge transition has been found.
+%-------------------------------------------------------------------------------%
+analysis_loop_back_edge(FName,Depth, PP, CL, ML, 
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	%------------------------------------------------------------------------
+	% Record solution and interpolant from the loop exit
+	% condition. The interpolant is required for correctness. The
+	% solution speeds up the fixpoint convergence since it does
+	% not start with empty solution.
+	%------------------------------------------------------------------------
+
+	% From here the solution
+        loop_fixpoint(FName,PP,Ws,
+	              MarkedGlobalArr,MarkedGlobalVar,MarkedLocalArr,MarkedLocalVar),
+
+	% Record solution+interpolant
+#ifdef  DEBUG_USE	
+        print_message("Returning interpolant from loop exit paths:\n",
+		      [],magenta),
+	pretty_printer_marked_constraints(FName,CL,ML,
+					  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#else
+	SGlobalArr=_,SGlobalVar=_,SLocalArr=_,SLocalVar=_,			  
+#endif  /*DEBUG_USE*/		
+	record_analysis_answer(rule,FName, Depth, CL, ML, Ws,
+                               MarkedGlobalArr, MarkedGlobalVar,
+			       MarkedLocalArr , MarkedLocalVar,nil).
+			     	
+%-------------------------------------------------------------------------------%
+% analysis_loop_exit(+,+,+,+,+,+,+,+,-)
+% An exit condition of the loop is taken
+%-------------------------------------------------------------------------------%
+analysis_loop_exit(FName,Id,Depth,PP,_,_,_,_,_ML):-
+#ifdef  PROFILE	
+	ctime(Time0),
+#endif  /*PROFILE*/
+        %-----------------------------------------------------------------------
+        % Step 1: collect the solution+interpolant from the subtree
+        % rooted at the exit transition
+        %-----------------------------------------------------------------------
+#ifdef  SLICING_CONTROL_OPT		
+	% Here should not perform the control-dependence optimization
+	current_tracer_flag(slicer_control_opt,OldVal),
+	set_tracer_flag(slicer_control_opt,n),
+#endif	/*SLICING_CONTROL_OPT*/
+        once(collate_analysis_answers(FName, Depth, Id, ML, _Ws, 
+				      GlobalArrMark,GlobalVarMark,
+				      LocalArrMark,LocalVarMark)),	
+#ifdef  SLICING_CONTROL_OPT			
+	set_tracer_flag(slicer_control_opt,OldVal),
+#endif	/*SLICING_CONTROL_OPT*/
+%        debug_message("End COMBINE \n\n",[]),
+	
+#ifdef  PROFILE		
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif
+	%=======================================================================
+	% Step 2: at the start of the loop the witnesses must be empty
+        % FIXME: not sure if we can return the witnesses
+        % from the exit paths of loop.
+	%=======================================================================
+	freshglobalarrays(GlobalArrMark),
+	freshglobalvars(GlobalVarMark),
+        freshlocalarrays(FName, LocalArrMark),
+        freshlocalvars(FName, LocalVarMark),
+
+	debug_message("Start FIXPOINT at %@% with solution set: ", 
+		     [FName, PP],magenta),
+#ifdef  DEBUG_USE	
+	pretty_printer_markings(FName,
+				GlobalArrMark,GlobalVarMark,
+				LocalArrMark ,LocalVarMark),
+#endif  /*DEBUG_USE*/	
+	append(LocalArrMark, LocalVarMark, M1),
+	append(GlobalVarMark, M1, M2),
+	append(GlobalArrMark, M2, Markings),
+	init_witness_paths(Markings,Id,
+			   GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,
+			   EmptyWs),
+
+	%-----------------------------------------------------------------------
+	% Step 3: record the interpolant
+	%-----------------------------------------------------------------------	
+	assert_exit_interp(Depth, FName, ML),	
+        %-----------------------------------------------------------------------
+        % Step 4: store the solution from the exit condition to be
+        % considered during the fixpoint of the loop. However, the
+        % analysis of the loop starts with empty witnesses.
+        %-----------------------------------------------------------------------
+        fassert(loop_fixpoint(FName, PP, EmptyWs,
+			      GlobalArrMark,GlobalVarMark,
+			      LocalArrMark, LocalVarMark)),
+	!. % cut added for being able to include the second clause
+	   % in order to catch potential errors.
+analysis_loop_exit(FName,_,_,PP,_,_,_,_,_):-
+	error_message("unexpected failure in analysis_loop_exit/9 [%,%]\n",
+		      [FName,PP]).
+
+%============================================================================%
+% Iterative algorithm for computing conservative solutions.
+%
+% We perform a standard fixpoint computation which consists of
+% analyzing the loop until no changes in the solutions.
+%============================================================================%
+
+%==============================================================================
+% unfold_loop_until_fixpoint
+%==============================================================================
+% Step 1: the loop body has been analyzed already
+%==============================================================================	
+unfold_loop_until_fixpoint(Depth, Id,
+			   GlobalArr, GlobalVar, LocalArr, LocalVar,
+			   _GlobalArrX, _GlobalVarX, _LocalArrX, _LocalVarX,
+			   FName, PP, _PP1, ExitPP, _Statement,
+			   _GlobalArr1, _GlobalVar1, _LocalArr1, _LocalVar1,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   _SGlobalArr1, _SGlobalVar1, _SLocalArr1, _SLocalVar1,
+			   CL, _XCL, ML, CallStack, _ArrRefX, ArrRef, Loops,
+			   TableSpace) :-
+#ifdef  PROFILE
+%	ctime(NewTime),	
+%	once(retract(fixp_iteration_timing(OldTime))),%IMPORTANT to use once/1:
+%	print_message("Time Analysis for fixpoint iteration: % seconds \n",
+%		      [NewTime-OldTime]),
+%	add_counter(fixp_round_timing,NewTime-OldTime),
+%% This is to output the time spent on assert during the fixpoint
+%% iteration.	
+%       counter_value(assert_timing,AssertTime),
+% 	print_message("Accumulative time spent on assert   : % seconds \n\n",
+%	       [AssertTime]),	
+	ctime(Time0),	
+#endif
+        %---------------------------------------------------------------------------%
+        % Combine all solutions from all loop entries.
+        %---------------------------------------------------------------------------%
+#ifdef  SLICING_CONTROL_OPT			
+	% Here should not perform the control-dependence optimization
+	current_tracer_flag(slicer_control_opt,OldVal),
+	set_tracer_flag(slicer_control_opt,n),
+#endif
+        once(collate_analysis_answers(FName, Depth, Id, ML0, Ws, 
+				      NewGlobalArrMark, NewGlobalVarMark,
+				      NewLocalArrMark , NewLocalVarMark)),
+#ifdef  SLICING_CONTROL_OPT				
+	set_tracer_flag(slicer_control_opt,OldVal),
+#endif	
+        record_analysis_answer(fact,FName,Depth,CL,ML0,_,_,_,_,_,nil),
+#ifdef  PROFILE									
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif  /*PROFILE*/
+#ifdef  FIXPO_DEBUG
+        print_message("FIXPOINT 1: finishing loop iteration for % % \n",
+		      [FName,PP]),
+#endif  /*FIXPO_DEBUG*/
+	/*
+	 *  NOTE: We can use retract/1 rather than robust_retract/1
+	 *  because witnesses are not used.
+	 * 
+	 *  The use of once/1 is very important to avoid an infinite
+	 *  loop. If the fixpoint is reached we assert another instance
+	 *  of loop_fixpoint/7 so during the backtracking
+	 *  retract(loop_fixpoint(...)) would succeed and so on.
+	*/	  
+        once(retract(loop_fixpoint(FName, PP, _OldWs,
+				   OldGlobalArrMark, OldGlobalVarMark,
+				   OldLocalArrMark,  OldLocalVarMark))),
+	% Don't use !. Abnormal exit if loop reaches fixpoint in one
+	% iteration	
+	% !,	
+/*	
+        loop_fixpoint(FName, PP, _OldWs,
+		      OldGlobalArrMark, OldGlobalVarMark,
+ 		      OldLocalArrMark,  OldLocalVarMark),	
+        robust_retract(loop_fixpoint(FName, PP, _, _, _,_,_)),
+*/	
+#ifdef  FIXPO_DEBUG
+        print_message("FIXPOINT 2: retract loop_fixpoint. \n",[]),
+#endif
+#ifdef  DEBUG_USE
+        print_message("Old solution: ",[],magenta),	
+	pretty_printer_markings(FName,
+				OldGlobalArrMark, OldGlobalVarMark,
+				OldLocalArrMark , OldLocalVarMark),
+        print_message("New solution: ",[],magenta),	
+	pretty_printer_markings(FName,			       
+				NewGlobalArrMark, NewGlobalVarMark,
+				NewLocalArrMark, NewLocalVarMark),
+#endif 	/*DEBUG_USE*/	
+ 	combine_variables_fixp_iterations(OldGlobalArrMark, OldGlobalVarMark,
+					  OldLocalArrMark, OldLocalVarMark,
+					  NewGlobalArrMark, NewGlobalVarMark,
+					  NewLocalArrMark, NewLocalVarMark,
+					  NoFixpoint),
+#ifdef  DEBUG_USE
+        print_message("Combined solution: ",[],magenta),	
+	pretty_printer_markings(FName,			       
+				NewGlobalArrMark, NewGlobalVarMark,
+				NewLocalArrMark, NewLocalVarMark),
+#endif  /*DEBUG_USE*/
+        %=================================================================%
+        % IMPORTANT STEP: generate witnesses for the next
+        % iteration. If the fixpoint is not reached we will start the
+        % next iteration with fresh witnesses. Otherwise, we keep the
+        % witnesses from the last iteration.
+        %=================================================================%
+        gen_witnesses_for_next_fixpo_iter(NoFixpoint, Ws, Id,
+					  NewGlobalArrMark, NewGlobalVarMark,
+					  NewLocalArrMark , NewLocalVarMark ,
+					  SGlobalArr, SGlobalVar,
+					  SLocalArr , SLocalVar , NewWs),	 
+	%----------------------------------------------------------------------
+	% Record current iteration of the fixpoint
+	%----------------------------------------------------------------------	 
+	% NewWs may have arithmetic constraints. Thus, assert/1 must
+	% be used.
+	%----------------------------------------------------------------------	 	 
+ 	assert(loop_fixpoint(FName, PP, NewWs,
+			     NewGlobalArrMark, NewGlobalVarMark,
+			     NewLocalArrMark, NewLocalVarMark)),	
+#ifdef  FIXPO_DEBUG
+        print_message("FIXPOINT 5: asserting the new solution % \n",
+	       [loop_fixpoint(FName, PP, NewWs,
+			      NewGlobalArrMark, NewGlobalVarMark,
+			      NewLocalArrMark, NewLocalVarMark)]),
+#endif		
+#ifdef  PROFILE
+	ctime(Time2),
+	add_counter(fixp_combine_timing,Time2-Time0),	
+#endif
+        NoFixpoint > 0,
+	!,
+	%----------------------------------------------------------------------	
+	% At this point, we know that fixpoint is not reached yet
+	%----------------------------------------------------------------------
+	
+	%--------------------------------------------------------------------
+	% Key step: cleanup all memo table entries stored during the
+	% analysis of the loop
+	%--------------------------------------------------------------------
+	clear_loop_in_memo_table(
+#ifdef 	OPTIMIZED_FIXPO
+                                 FName,
+#endif /*OPTIMIZED_FIXPO*/				
+				 TableSpace),
+#if     defined(FIXPO_DEBUG) || defined(DEBUG_USE)        
+        print_message("Fixpoint NOT reached yet. \n\n",[],magenta),
+#endif
+        %-------------------------------------------------------------------
+        % Start another fixpoint iteration
+        %-------------------------------------------------------------------
+	unfold_loop_body(Depth, Id, FName, PP, ExitPP,
+			 GlobalArr, GlobalVar, LocalArr, LocalVar,
+			 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 CL, ML, CallStack, ArrRef, Loops,
+			 TableSpace).
+unfold_loop_until_fixpoint(Depth, Id,
+			   GlobalArr, GlobalVar, LocalArr, LocalVar,
+			   _GlobalArrX, _GlobalVarX, _LocalArrX, _LocalVarX,
+			   FName, PP, _PP1, _ExitPP, _Statement,
+			   _GlobalArr1, _GlobalVar1, _LocalArr1, _LocalVar1,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   _SGlobalArr1, _SGlobalVar1, _SLocalArr1, _SLocalVar1,
+			   CL, _XCL, ML, CallStack, _ArrRefX, ArrRef, _Loops,
+			   TableSpace) :-
+#ifdef  PROFILE									
+	ctime(Time0),
+#endif
+	%----------------------------------------------------------------------
+	% Fixpoint has been reached!
+	%----------------------------------------------------------------------
+	/*
+	 *  NOTE: We must use robust_retract/1 since witnesses may be
+	 *  constrained.
+	*/
+ 	loop_fixpoint(FName, PP, Ws,
+                      GlobalArrMark, GlobalVarMark,
+ 		      LocalArrMark,  LocalVarMark),
+        robust_retract(loop_fixpoint(FName, PP, _, _, _,_,_)),	
+#ifdef  FIXPO_DEBUG
+        print_message("FIXPOINT 7: retract loop_fixpoint % \n",
+	              [loop_fixpoint(FName, PP, Ws,
+				     GlobalArrMark, GlobalVarMark,
+				     LocalArrMark,  LocalVarMark)]),
+#endif
+	%---------------------------------------------------------------------%
+	% Once the fixpoint has been reached we still need to collate
+	% answers.  Here we ignore CL, ML, and WP of the loop body. We
+	% will get them later, already combined with the interpolants
+	% of the exit path, with the call to retract_wcet_loop_answer
+	% ---------------------------------------------------------------------%
+	combine_analysis_answers(FName, Id, PP, Depth, _CL, _ML,_Answer),
+	%---------------------------------------------------------------------%
+	% Here, we obtain the interpolant from the exit path and
+	% combine (union) with the interpolant from the body
+	%---------------------------------------------------------------------%
+	debug_message("Merging interpolant from exit and body ... \n",[],magenta),
+	retract_analysis_loop_answer(Depth, FName, CL, ML),
+        debug_message("\tInterpolant from BODY+EXIT LOOP: ",[],magenta),
+#ifdef  DEBUG_USE	
+	pretty_printer_marked_constraints(FName,CL,ML,
+					  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#endif  /*DEBUG_USE*/	
+	store_loop_summary(FName, Id, PP, Depth,
+			   GlobalArr, GlobalVar, LocalArr, LocalVar,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   ArrRef, CL, ML,
+			   CallStack, answer(Ws, 
+					     GlobalArrMark, GlobalVarMark, 
+					     LocalArrMark,  LocalVarMark),
+#ifdef  OPTIMIZED_FIXPO
+			   /*out*/Interp,
+#endif			   
+			   TableSpace),
+#ifdef  DEBUG_USE
+        counter_value(fixpoint_iteration,FixpIter),
+	find_latest_child(TableSpace, NewTableSpace),	
+	print_message("FIXPOINT REACHED for (%,%) in % iterations. \n",
+		      [TableSpace,NewTableSpace,FixpIter],magenta),
+	print_message("Fixpoint solution: \n",[],magenta),
+	pretty_printer_markings(FName,
+				GlobalArrMark  , GlobalVarMark,		  
+				LocalArrMark   , LocalVarMark),	
+#endif  /*DEBUG_USE*/		
+#ifdef  OPTIMIZED_FIXPO
+        store_loop_memotable(FName, Id, PP, Depth,
+			     GlobalArr, GlobalVar, LocalArr, LocalVar,
+			     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			     ArrRef, CallStack, Interp,
+			     answer(Ws, 
+				    GlobalArrMark, GlobalVarMark, 
+				    LocalArrMark,  LocalVarMark)),
+#endif  /*OPTIMIZED_FIXPO*/
+#ifdef  PROFILE									
+	ctime(Time3),
+	add_counter(fixp_exit_timing,Time3-Time0),
+	% To counter number of times the loop analysis is finished
+	add_counter(num_loops_analyzed,1),	
+#endif
+	!,	
+	fail.
+
+%--------------------------------------------------------------------------%
+% If we reached a fixpoint the witnesses are from the last iteration.
+% Otherwise, we generate fresh witnesses for the next iteration.
+%--------------------------------------------------------------------------%
+% IMPORTANT: In fact, if the fixpoint is reached we just keep those
+% INVARIANT witnesses from the last iteration. This is done by
+% backward_propagation_witnesses_across_abstraction/7
+%--------------------------------------------------------------------------%
+gen_witnesses_for_next_fixpo_iter(FixpointFlag, _, Id,
+				  MarkedGlobalArr, MarkedGlobalVar,
+				  MarkedLocalArr , MarkedLocalVar,
+				  SGlobalArr, SGlobalVar,
+				  SLocalArr , SLocalVar , FreshWs):-				   
+        FixpointFlag > 0,
+	!,			   
+	%------------------------------------------------------------------% 
+	% Fixpoint not yet.
+	% Compute fresh witnesses from marked variables
+	%------------------------------------------------------------------% 	
+	append(MarkedLocalArr,MarkedLocalVar,M1),
+	append(MarkedGlobalVar,M1,M2),
+	append(MarkedGlobalArr,M2,M3),
+
+	copy_to_unbound_list(SGlobalVar, FreshGlobalVar),
+	copy_to_unbound_list(SGlobalArr, FreshGlobalArr),
+	copy_to_unbound_list(SLocalVar , FreshLocalVar),
+	copy_to_unbound_list(SLocalArr , FreshLocalArr),
+#ifdef  FIXPO_DEBUG
+        print_message("FIXPOINT 4\n",[]),
+#endif
+        debug_message("Creating fresh witnesses for next fixpo iteration.\n",[]),
+ 	init_witness_paths(M3,Id,
+			   FreshGlobalArr,FreshGlobalVar,FreshLocalArr,FreshLocalVar,
+			   FreshWs).
+gen_witnesses_for_next_fixpo_iter(_,FixpoWs,_,_,_,_,_,_,_,_,_,FixpoWs):-
+	debug_message("Returning witnesses from the last fixpo iteration.\n",[]),
+	!.
+        % Fixpoint computed. Return witnesses from the last iteration				   
+				   					
+%----------------------------------------------------------------------------%
+% This code stores the answer for the parent and also the corresponding
+% entry in the memo table with interpolant+answer
+%----------------------------------------------------------------------------%
+store_loop_summary(FName, Id, PP, Depth,
+		   GlobalArr, GlobalVar, LocalArr, LocalVar,
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		   ArrRef, CL, ML,
+		   CallStack, answer(Ws, 
+				     GlobalArrMark, GlobalVarMark, 
+				     LocalArrMark,  LocalVarMark),
+#ifdef  OPTIMIZED_FIXPO
+		   Interp,
+#endif		  
+		   TableSpace ):-
+	debug_message("\tBEGIN Storage of answer and entry in memo for the WHOLE LOOP\n",[]),
+#ifdef  PROFILE
+	ctime(Time1),
+#endif
+
+        record_analysis_answer(rule,FName,Depth,CL,ML,Ws,
+			       GlobalArrMark, GlobalVarMark,
+			       LocalArrMark , LocalVarMark, nil),
+#ifdef  PROFILE
+	ctime(Time2),
+	add_counter(assert_timing,Time2-Time1),
+#endif  /*PROFILE*/
+#ifdef  FIXPO_DEBUG
+        print_memo_table,
+#endif
+        store(FName, Id, PP, GlobalArr, GlobalVar, LocalArr, LocalVar,
+	      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	      ArrRef, CL, ML,_WP,
+	      CallStack, answer(Ws, 
+				GlobalArrMark, GlobalVarMark, 
+				LocalArrMark,  LocalVarMark),
+#ifdef  OPTIMIZED_FIXPO
+              Interp,
+#endif 	     
+	      TableSpace),
+	debug_message("\tEND Storage of answer and entry in memo for the WHOLE LOOP\n",[]).		
+
+%============================================================================%
+% Auxiliary predicates
+%============================================================================%
+
+%----------------------------------------------------------------------------
+% get_index_from_list(+,+,-)
+%----------------------------------------------------------------------------
+get_index_from_list(Xs,X,Index):-
+	get_index_from_list_aux(Xs,1,X,Index).
+get_index_from_list_aux([V|_],I,X,I):- V == X,!.
+get_index_from_list_aux([_V|Vs],I,X,Index):- !,
+	get_index_from_list_aux(Vs,I+1,X,Index).
+
+%----------------------------------------------------------------------------
+% mark_if_nonvar(L1,L2)
+%----------------------------------------------------------------------------
+#ifdef DEBUG_USE
+test_mark_if_nonvar:-
+	L = [_,w(2),_,w(4)],  
+	mark_if_nonvar(L,R),
+	print_message("L: % L2:% \n",[L,R]).
+#endif /*DEBUG_USE*/
+%----------------------------------------------------------------------------
+mark_if_nonvar([], []).
+mark_if_nonvar([X|R], [_|S]) :-
+	var(X),
+	!,
+	mark_if_nonvar(R, S).
+mark_if_nonvar([_|R], [Y|S]) :-
+	mark_term(Y), mark_if_nonvar(R, S).
+
+
+%============================================================================%
+% For assert/retract analysis_answer/7 facts
+%============================================================================%
+% (The following piece of code is a nightmare due to the multiple
+% representations we keep for improving performance).
+%============================================================================%
+
+#ifdef  ENCODE_CHILD_PARENT
+record_analysis_answer(_RuleFlag,FName, Depth, CL, ML, Ws, 
+		       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux) :-
+	record_analysis_answer_encoded_witnesses(FName,Depth,CL,ML,Ws,
+						 GlobalArrMark,GlobalVarMark,
+						 LocalArrMark,LocalVarMark,Aux).
+#else
+record_analysis_answer(RuleFlag,FName, Depth, CL, ML, Ws, 
+		       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux) :-
+	record_analysis_answer_0(RuleFlag,FName, Depth, CL, ML, Ws, 
+				 GlobalArrMark,GlobalVarMark,
+				 LocalArrMark,LocalVarMark, Aux).
+#endif  /*ENCODE_CHILD_PARENT*/
+
+%==============================================================================
+% Record analysis answer to be propagated to the ancestors.
+% First-level handles two cases: witnesses vs no witnesses	
+%==============================================================================
+record_analysis_answer_0(RuleFlag,FName, Depth, CL, ML, Ws, 
+			 GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux) :-		    
+	current_tracer_flag(witnesses,y), !,
+	record_analysis_answer_1(RuleFlag,FName,Depth, CL, ML, Ws,
+				 GlobalArrMark, GlobalVarMark,
+				 LocalArrMark, LocalVarMark, Aux).
+			    
+record_analysis_answer_0(_RuleFlag,FName, Depth, CL, ML, _Ws, 
+			 GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux) :-
+	current_tracer_flag(witnesses,n), !,
+	% Here even if RuleFlag is rule we use fassert/1 because
+	% witnesses are not needed.	
+	record_analysis_answer_1(fact,FName,Depth, CL, ML, [],
+				 GlobalArrMark, GlobalVarMark,
+				 LocalArrMark, LocalVarMark, Aux).	
+			    
+%=============================================================================
+% Record analysis answer to be propagated to the ancestors.
+% Second-level handles two cases: partition vs non-partition (naive)
+%=============================================================================
+record_analysis_answer_1(RuleFlag,FName,Depth,_,ML,Ws,
+			 GlobalArrMark,GlobalVarMark,
+			 LocalArrMark,LocalVarMark,Aux):-		     
+	current_tracer_flag(path_datastructure,naive), !,
+	record_analysis_answer_2(RuleFlag,FName,Depth,ML,Ws,
+				  GlobalArrMark,GlobalVarMark,
+				  LocalArrMark,LocalVarMark,Aux).
+record_analysis_answer_1(RuleFlag,FName,Depth,Es, ML, Ws,
+			 GlobalArrMark,GlobalVarMark,
+			 LocalArrMark,LocalVarMark,Aux):-
+	current_tracer_flag(path_datastructure,partition), !,
+	% Transfer marked constraints from Es to ML
+#ifndef NEWPARTITION
+	convert_partition2naive_ifNotVar(Es,ML),
+#else   
+	% To prevent warnings
+	Es = _,
+#endif  /*NEWPARTITION*/
+	record_analysis_answer_2(RuleFlag,FName,Depth, ML,Ws,
+				 GlobalArrMark,GlobalVarMark,
+				 LocalArrMark,LocalVarMark,Aux).
+
+%============================================================================
+% Record analysis answer to be propagated to the ancestors.
+% Third-level handles two cases: fact or rule to be asserted
+%============================================================================
+#ifdef ENCODE_CHILD_PARENT
+% To safe memory and be faster the answers are first encoded.
+record_analysis_answer_2(_,FName,Depth,ML,
+			 Ws,
+			 GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,_Aux):-			
+#ifdef  PROFILE
+        ctime(T0),
+#endif 	/*PROFILE*/		
+	encode_marked_list(ML,MLX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_interpolant_answers,T1-T0),
+#endif	/*PROFILE*/
+	debug_message("\tEncode interpolant: % %\n",[ML,MLX]),
+	% Here it's done dump for grabbing the witnesses' constraints
+	encode_analysis_answer(FName,
+			      answer(Ws,
+				     GlobalArrMark,GlobalVarMark,
+				     LocalArrMark,LocalVarMark),
+			      answer(WsX,
+				     GlobalArrMarkX,GlobalVarMarkX,
+				     LocalArrMarkX,LocalVarMarkX)),	
+	debug_message("ENCODED ASSERT %\n",
+		      [analysis_answer(Depth,FName,MLX,WsX,
+		       GlobalArrMarkX,GlobalVarMarkX,LocalArrMarkX,LocalVarMarkX)]),
+#ifdef  PROFILE										
+	ctime(T4),
+#endif
+#ifdef  PIPEDUMP_AND_ANSWERS
+% To safe memory and be faster the answers are stored in a different
+% process.
+        pipe_master_store_analysis_answer(Depth,MLX,WsX,
+					    GlobalArrMarkX,GlobalVarMarkX,
+					    LocalArrMarkX ,LocalVarMarkX),
+#else   
+        fassert(analysis_answer(Depth,MLX,WsX,
+			          GlobalArrMarkX,GlobalVarMarkX,
+			          LocalArrMarkX ,LocalVarMarkX)),			      
+#endif 	/*PIPEDUMP_AND_ANSWERS*/
+#ifdef  PROFILE										
+	ctime(T5),
+	add_counter(assert_timing,T5-T4).
+#else   
+        true.
+#endif	/*PROFILE*/
+%--------------------------------------------------------------------------------%
+#else
+%--------------------------------------------------------------------------------%
+record_analysis_answer_2(fact,_FName,Depth,ML,Ws,
+			 GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux):-
+#ifdef  PROFILE										
+	ctime(Time0),
+#endif		
+#ifdef  SLICE_PSCFG
+	fassert(analysis_answer(Depth,ML,Ws,
+			       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux)),
+#else
+    Aux=_, % to avoid warnings
+	fassert(analysis_answer(Depth,ML,Ws,
+			       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark)),
+#endif
+#ifdef  PROFILE										
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0).
+#else
+        true.
+#endif 	
+record_analysis_answer_2(rule,_FName,Depth,ML,Ws,			 
+			 GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux):-
+#ifdef  PROFILE										
+	ctime(Time0),
+#endif
+#ifdef  ONLY_LINEAR_WITNESSES
+        % assert_only_lin_eqs/1 is a CLP(R) builtin
+	assert_only_lin_eqs(analysis_answer(Depth,ML,Ws,
+					    GlobalArrMark,GlobalVarMark,
+					    LocalArrMark,LocalVarMark)),
+#else   /*ONLY_LINEAR_WITNESSES */
+#ifdef  SLICE_PSCFG
+	assert(analysis_answer(Depth,ML,Ws,
+			       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,Aux)),
+#else
+    Aux=_, % to avoid warnings
+	assert(analysis_answer(Depth,ML,Ws,
+			       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark)),
+#endif
+#endif  /*ONLY_LINEAR_WITNESSES*/	
+#ifdef  PROFILE										
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0).
+#else
+        true.
+#endif 
+#endif
+
+%--------------------------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT
+%--------------------------------------------------------------------------%
+% In this version, witnesses (Ws) are already encoded so no need to
+% encode them. ML and markings variables (Marked*) are not encoded.
+%--------------------------------------------------------------------------%
+record_analysis_answer_encoded_witnesses(FName,Depth,_,ML,Ws,
+					 MarkedGlobalArr,MarkedGlobalVar,
+					 MarkedLocalArr ,MarkedLocalVar,Aux):-
+	current_tracer_flag(path_datastructure,naive),!,
+	record_analysis_answer_encoded_witnesses_1(FName,Depth,ML,
+						   Ws,
+						   MarkedGlobalArr,MarkedGlobalVar,
+						   MarkedLocalArr ,MarkedLocalVar, Aux).
+record_analysis_answer_encoded_witnesses(FName,Depth,Es,ML,Ws,
+					 MarkedGlobalArr,MarkedGlobalVar,
+					 MarkedLocalArr ,MarkedLocalVar,Aux):-
+	current_tracer_flag(path_datastructure,partition),!,
+	% Transfer marked constraints from Es to ML
+#ifndef NEWPARTITION
+	convert_partition2naive_ifNotVar(Es,ML),
+#else /* !defined(NEWPARTITION) */
+	% To prevent warnings
+	Es = _,
+#endif /* !defined(NEWPARTITION) */
+	% FName is the function name associated to W*'s variables
+	% (needed for encode/decode)	
+	record_analysis_answer_encoded_witnesses_1(FName,Depth,ML,
+						   Ws,
+						   MarkedGlobalArr,MarkedGlobalVar,
+						   MarkedLocalArr ,MarkedLocalVar, Aux).
+
+record_analysis_answer_encoded_witnesses_1(FName,Depth,ML,Ws,
+					   MarkedGlobalArr,MarkedGlobalVar,
+					   MarkedLocalArr ,MarkedLocalVar,_Aux):-			 
+	debug_message("ASSERT % \n", [analysis_answer(FName,Depth,ML,Ws,
+						      MarkedGlobalArr,MarkedGlobalVar,
+						      MarkedLocalArr ,MarkedLocalVar)]),
+#ifdef  PROFILE
+        ctime(T0),
+#endif 	/*PROFILE*/		
+	encode_marked_list(ML,MLX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_interpolant_answers,T1-T0),
+	ctime(T2),
+#endif  /*PROFILE*/
+	encode_marked_list(MarkedGlobalArr , MarkedGlobalArrX),
+	encode_marked_list(MarkedGlobalVar , MarkedGlobalVarX),
+	encode_marked_list(MarkedLocalArr  , MarkedLocalArrX),
+	encode_marked_list(MarkedLocalVar  , MarkedLocalVarX),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(encode_analysis_markings,T3-T2),
+	ctime(T4),
+#endif  /*PROFILE*/
+#ifdef  PIPEDUMP_AND_ANSWERS
+        pipe_master_store_analysis_answer(Depth,MLX,Ws,
+					  MarkedGlobalArrX, MarkedGlobalVarX,
+					  MarkedLocalArrX , MarkedLocalVarX),
+#else   
+        fassert(analysis_answer(Depth,MLX,Ws,
+				MarkedGlobalArrX, MarkedGlobalVarX,
+				MarkedLocalArrX , MarkedLocalVarX )),
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+#ifdef  PROFILE
+	ctime(T5),
+	add_counter(assert_timing,T5-T4),
+#endif  /*PROFILE*/
+	debug_message("ENCODED ASSERT % \n",[analysis_answer(FName,Depth,MLX,Ws,
+							     MarkedGlobalArrX,MarkedGlobalVarX,
+							     MarkedLocalArrX ,MarkedLocalVarX)]).
+#endif /*ENCODE_CHILD_PARENT*/
+
+%====================================================================================
+% RETRACT analysis_answer
+%====================================================================================
+
+#ifdef  ENCODE_CHILD_PARENT
+retract_analysis_answer(FName,Depth,CL,ML,Ws,
+			MarkedGlobalArr,MarkedGlobalVar,
+			MarkedLocalArr,MarkedLocalVar,Aux):-		      
+	retract_analysis_answer_encoded_witnesses(FName,Depth,CL,ML,Ws,
+						  MarkedGlobalArr,MarkedGlobalVar,
+						  MarkedLocalArr,MarkedLocalVar,Aux).
+
+% Hook to avoid overhead from higher-level calls: used during combine
+% operation.
+retract_analysis_answer_lowlevel(FName,Depth,ML,Ws,
+				 MarkedGlobalArr,MarkedGlobalVar,
+				 MarkedLocalArr ,MarkedLocalVar,Aux):-
+       retract_analysis_answer_encoded_witnesses_1(FName,Depth,ML,Ws,
+						   MarkedGlobalArr,MarkedGlobalVar,
+						   MarkedLocalArr,MarkedLocalVar,Aux).		
+#else
+retract_analysis_answer(FName,Depth,CL,ML,Ws,
+			MarkedGlobalArr,MarkedGlobalVar,
+			MarkedLocalArr,MarkedLocalVar,Aux):-
+	retract_analysis_answer_0(FName,Depth,CL,ML,Ws,
+				  MarkedGlobalArr,MarkedGlobalVar,
+				  MarkedLocalArr,MarkedLocalVar,Aux).
+
+% Hook to avoid higher-level calls: used during combine operation.
+retract_analysis_answer_lowlevel(FName,Depth,ML,Ws,
+				 MarkedGlobalArr,MarkedGlobalVar,
+				 MarkedLocalArr ,MarkedLocalVar,Aux):-
+        retract_analysis_answer_1(FName,Depth,ML,Ws,
+				  MarkedGlobalArr,MarkedGlobalVar,
+				  MarkedLocalArr ,MarkedLocalVar,Aux).
+#endif  /*ENCODE_CHILD_PARENT*/
+
+
+retract_analysis_answer_0(FName,Depth,_,ML,Ws,
+			  MarkedGlobalArr,MarkedGlobalVar,
+			  MarkedLocalArr,MarkedLocalVar,Aux):-		      
+ 	current_tracer_flag(path_datastructure,naive), !,
+	retract_analysis_answer_1(FName,Depth,ML,Ws,
+				  MarkedGlobalArr,MarkedGlobalVar,
+				  MarkedLocalArr,MarkedLocalVar,Aux).				 
+retract_analysis_answer_0(FName,Depth, Es, ML, Ws,
+			  MarkedGlobalArr,MarkedGlobalVar,
+			  MarkedLocalArr,MarkedLocalVar,Aux):-		      
+ 	current_tracer_flag(path_datastructure,partition), !,
+ 	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else   
+	% To prevent warnings
+	Es = _,
+#endif  /*NEWPARTITION*/
+	retract_analysis_answer_1(FName,Depth,ML,Ws,
+				  MarkedGlobalArr,MarkedGlobalVar,
+				  MarkedLocalArr,MarkedLocalVar,Aux).
+				 
+%----------------------------------------------------------------------------%
+#ifdef ENCODE_CHILD_PARENT
+%----------------------------------------------------------------------------%
+% These operations perform assert/retract of answers in order to
+% propagate information from children to parents. To safe memory and
+% be faster the answers are first encoded if option ENCODE_CHILD_PARENT
+% is defined.
+%
+% NOTE: retract_analysis_loop_answer_1/3 calls this predicate directly.
+%
+retract_analysis_answer_1(FName,Depth,ML,Ws,
+			  MarkedGlobalArr,MarkedGlobalVar,
+			  MarkedLocalArr,MarkedLocalVar,_Aux):-
+#ifdef  PROFILE										
+	ctime(T0),
+#endif  /*PROFILE*/
+#ifdef  PIPEDUMP_AND_ANSWERS
+	pipe_master_remove_analysis_answer(Depth,MLX,WsX,
+					  MarkedGlobalArrX,MarkedGlobalVarX,
+					  MarkedLocalArrX,MarkedLocalVarX),
+#else
+	retract(analysis_answer(Depth,MLX,WsX,
+				MarkedGlobalArrX,MarkedGlobalVarX,
+				MarkedLocalArrX,MarkedLocalVarX)),
+#endif	/*PIPEDUMP_AND_ANSWERS*/
+#ifdef  PROFILE										
+	ctime(T1),
+	add_counter(retract_timing,T1-T0),
+#endif	/*PROFILE*/
+	debug_message("RETRACT %\n",
+		      [analysis_answer(Depth,MLX,WsX,
+				      MarkedGlobalArrX,MarkedGlobalVarX,
+				      MarkedLocalArrX,MarkedLocalVarX)]),
+#ifdef  PROFILE										
+	ctime(T2),
+#endif	/*PROFILE*/	
+	decode_marked_list(MLX,ML),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(decode_interpolant_answers,T3-T2),
+#endif	/*PROFILE*/
+	debug_message("\tDecode interpolant: % ---> % \n",[MLX,ML]),
+	decode_analysis_answer(FName,
+			      answer(WsX,
+				     MarkedGlobalArrX,MarkedGlobalVarX,
+				     MarkedLocalArrX,MarkedLocalVarX),
+			      answer(Ws,
+				     MarkedGlobalArr,MarkedGlobalVar,
+				     MarkedLocalArr,MarkedLocalVar)),	
+	debug_message("DECODED RETRACT %\n",
+		      [analysis_answer(Depth,ML,Ws,
+				      MarkedGlobalArr,MarkedGlobalVar,
+				      MarkedLocalArr ,MarkedLocalVar)]).		
+%----------------------------------------------------------------------------%
+#else
+%----------------------------------------------------------------------------%
+retract_analysis_answer_1(_FName,Depth,ML,Ws,
+			  MarkedGlobalArr,MarkedGlobalVar,
+			  MarkedLocalArr,MarkedLocalVar,Aux):-
+#ifdef  PROFILE										
+	ctime(Time0),
+#endif  /*PROFILE*/
+#ifdef  SLICE_PSCFG
+        analysis_answer(Depth, ML, Ws,
+			MarkedGlobalArr,MarkedGlobalVar,
+			MarkedLocalArr ,MarkedLocalVar,Aux),
+ 	robust_retract_no_call(analysis_answer(Depth, _, _, _, _, _, _, _)),
+#else
+    Aux=_, % to avoid warnings
+        analysis_answer(Depth, ML, Ws,
+			MarkedGlobalArr,MarkedGlobalVar,
+			MarkedLocalArr ,MarkedLocalVar),
+ 	robust_retract_no_call(analysis_answer(Depth, _, _, _, _, _, _)),
+#endif
+#ifdef  PROFILE										
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif   /*PROFILE*/
+        true.
+%----------------------------------------------------------------------------%
+#endif  /*ENCODE_CHILD_PARENT*/
+%----------------------------------------------------------------------------%
+
+
+%----------------------------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT
+%----------------------------------------------------------------------------%
+% In this version, witnesses are not decoded.
+retract_analysis_answer_encoded_witnesses(FName,Depth,_,ML,Ws,
+					  MarkedGlobalArr,MarkedGlobalVar,
+					  MarkedLocalArr,MarkedLocalVar,Aux):-		      
+ 	current_tracer_flag(path_datastructure,naive), !,
+        retract_analysis_answer_encoded_witnesses_1(FName,Depth,ML,
+						    Ws,
+						    MarkedGlobalArr,MarkedGlobalVar,
+						    MarkedLocalArr,MarkedLocalVar,Aux).
+						   
+retract_analysis_answer_encoded_witnesses(FName,Depth,Es,ML,Ws,
+					  MarkedGlobalArr,MarkedGlobalVar,
+					  MarkedLocalArr,MarkedLocalVar,Aux):-
+ 	current_tracer_flag(path_datastructure,partition),!,
+ 	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else /* !defined(NEWPARTITION) */
+	Es = _,
+#endif /* !defined(NEWPARTITION) */
+        retract_analysis_answer_encoded_witnesses_1(FName,Depth,ML,
+						    Ws,
+						    MarkedGlobalArr,MarkedGlobalVar,
+						    MarkedLocalArr,MarkedLocalVar,Aux).
+						   
+retract_analysis_answer_encoded_witnesses_1(_FName,Depth,ML,Ws,
+					    MarkedGlobalArr,MarkedGlobalVar,
+					    MarkedLocalArr ,MarkedLocalVar,_Aux):-
+#ifdef  PROFILE
+	ctime(T0),
+#endif  /*PROFILE*/
+#ifdef  PIPEDUMP_AND_ANSWERS
+	pipe_master_remove_analysis_answer(Depth,MLX,
+					  Ws,
+					  MarkedGlobalArrX,MarkedGlobalVarX,
+					  MarkedLocalArrX,MarkedLocalVarX),
+#else
+	retract(analysis_answer(Depth,MLX,
+			       Ws,
+			       MarkedGlobalArrX,MarkedGlobalVarX,
+			       MarkedLocalArrX,MarkedLocalVarX)),			      
+#endif	/*PIPEDUMP_AND_ANSWERS*/
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(retract_timing,T1-T0),
+#endif	/*PROFILE*/
+	debug_message("RETRACT %\n",[analysis_answer(Depth,MLX,Ws,
+						     MarkedGlobalArrX,MarkedGlobalVarX,
+						     MarkedLocalArrX,MarkedLocalVarX)]),
+#ifdef  PROFILE
+	ctime(T2),
+#endif	/*PROFILE*/
+	decode_marked_list(MLX,ML),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(decode_interpolant_answers,T3-T2),
+	ctime(T4),
+#endif  /*PROFILE*/
+	decode_marked_list(MarkedGlobalArrX,MarkedGlobalArr),
+	decode_marked_list(MarkedGlobalVarX,MarkedGlobalVar),
+	decode_marked_list(MarkedLocalArrX ,MarkedLocalArr),
+	decode_marked_list(MarkedLocalVarX ,MarkedLocalVar),
+#ifdef  PROFILE
+        ctime(T5),
+	add_counter(decode_analysis_markings,T5-T4),
+#endif  /*PROFILE*/
+	debug_message("DECODED RETRACT (encoded witnesses)%\n",
+		      [analysis_answer(Depth,ML,Ws,
+				       MarkedGlobalArr,MarkedGlobalVar,
+				       MarkedLocalArr,MarkedLocalVar)]).
+%--------------------------------------------------------------------------%
+#endif /*ENCODE_CHILD_PARENT*/
+%--------------------------------------------------------------------------%
+
+
+%----------------------------------------------------------------------------%
+% Retract analysis interpolants for the whole loop
+%----------------------------------------------------------------------------%
+retract_analysis_loop_answer(Depth,FName,_,ML) :- 		  	   
+ 	current_tracer_flag(path_datastructure,naive),!,
+        retract_analysis_loop_answer_1(Depth,FName,ML).
+	                              
+retract_analysis_loop_answer(Depth,FName, Es, ML) :-		   	   
+	current_tracer_flag(path_datastructure,partition),!,
+ 	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else /* !defined(NEWPARTITION) */
+	% To prevent warnings
+	Es = _,
+#endif /* !defined(NEWPARTITION) */
+        retract_analysis_loop_answer_1(Depth,FName,ML).
+
+%--------------------------------------------------------------------------%
+#ifdef ENCODE_CHILD_PARENT
+%--------------------------------------------------------------------------%
+% Low-level operation for RETRACT analysis_answer/9 + exit_interp/4.
+retract_analysis_loop_answer_1(Depth,FName,ML):-
+	retract_analysis_answer_1(FName,Depth,ML,_,_,_,_,_,_),
+	retract_exit_interp(Depth,FName,ML).
+%--------------------------------------------------------------------------%
+#else 
+%--------------------------------------------------------------------------%
+retract_analysis_loop_answer_1(Depth,_FName,ML) :-
+#ifdef  PROFILE
+	ctime(Time0),
+#endif
+#ifdef  SLICE_PSCFG
+  	robust_retract_no_call(analysis_answer(Depth,ML,_,_,_,_,_,_)),
+#else
+  	robust_retract_no_call(analysis_answer(Depth,ML,_,_,_,_,_)),
+#endif
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0),
+#endif	/*PROFILE*/	
+	retract_exit_interp(Depth,_,ML).
+%--------------------------------------------------------------------------%
+#endif  /*ENCODE_CHILD_PARENT*/
+%--------------------------------------------------------------------------%
+
+%--------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+% Assert answers in another process
+%--------------------------------------------------------------------------%
+pipe_master_store_analysis_answer(Depth,ML,Ws,
+				  GlobalArrMark,GlobalVarMark,
+				  LocalArrMark,LocalVarMark):-				
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("assert_answer(%,%,%,%,%,%,%,%) .\n",
+				  [Depth,ML,Ws,
+				   GlobalArrMark,GlobalVarMark,
+				   LocalArrMark,LocalVarMark,
+				   MsgTimeStamp1]),
+#else
+	write_store_answers_slave("assert_answer(%,%,%,%,%,%,%) .\n",
+				  [Depth,ML,Ws,
+				   GlobalArrMark,GlobalVarMark,
+				   LocalArrMark,LocalVarMark
+				  ]),
+#endif /*PROFILE*/
+	read_from_store_answers_slave(_).
+pipe_master_remove_analysis_answer(Depth,ML,Ws,
+				   GlobalArrMark,GlobalVarMark,
+				   LocalArrMark,LocalVarMark):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("retract_answer(%,%,%,%,%,%,%,%) .\n",
+				  [Depth,ML,Ws,
+				   GlobalArrMark,GlobalVarMark,
+				   LocalArrMark,LocalVarMark,MsgTimeStamp1]),				   
+#else
+	write_store_answers_slave("retract_answer(%,%,%,%,%,%,%) .\n",
+				  [Depth,ML,Ws,
+				   GlobalArrMark,GlobalVarMark,
+				   LocalArrMark,LocalVarMark]),
+#endif /*PROFILE*/
+	read_from_store_answers_slave(X),
+	process_slave_output(X,Reply),
+	!,
+	pipe_master_remove_analysis_answer_aux(Reply,	
+					       Depth,ML,Ws,
+					       GlobalArrMark,GlobalVarMark,
+					       LocalArrMark ,LocalVarMark).
+pipe_master_remove_analysis_answer_aux(reply_args(fail),_,_,_,_,_,_,_):-!,fail.
+pipe_master_remove_analysis_answer_aux(reply_args(Depth,ML,Ws,
+						  GlobalArrMark,GlobalVarMark,
+						  LocalArrMark ,LocalVarMark),
+				       Depth,ML,Ws,
+				       GlobalArrMark,GlobalVarMark,
+				       LocalArrMark ,LocalVarMark):- !.
+%--------------------------------------------------------------------------%
+#endif /*PIPEDUMP_AND_ANSWERS*/
+%--------------------------------------------------------------------------%
+
+%==========================================================================%
+% The following predicates allows to encode/decode memo entries and
+% analysis answers
+%==========================================================================%
+#ifdef  ENCODE_MEMO
+%#if     (UNFOLD_OPT==SLICING)
+% Generic operation for encoding entries of the memo table.
+encode_memo(FName,
+	    GlobalArr/*list(var)*/, GlobalVar/*list(var)*/,
+	    LocalArr /*list(var)*/, LocalVar /*list(var)*/,
+	    CList , Answer,
+	    CListX, AnswerX):-
+	% defined in tracer_encode_ground.clp.gpp
+	/* Encode the negated list of constraints */ 
+	encode_constraints_list(FName,
+				GlobalArr,GlobalVar,LocalArr,LocalVar,
+				CList,CListX),
+	/* Encode the wcet answer */
+#ifdef  PROFILE
+	ctime(T0),
+#endif			
+	encode_analysis_answer(FName,Answer,AnswerX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_memo_2,T1-T0),
+#endif
+        %print_message("Encode memo succeed. \n",[]),
+	!.
+encode_memo(_,_,_,_,_,_,_,_,_):- error_message("encode_memo/9 \n",[]).	
+%#endif /*UNFOLD_OPT==SLICING*/
+#endif /*ENCODE_MEMO*/
+
+#if     (defined(ENCODE_MEMO) || defined(ENCODE_CHILD_PARENT))
+% Operation for encoding analysis answers
+encode_analysis_answer(FName, Answer, AnswerX):-
+	Answer = answer(Ws,
+			GlobalArrMark,GlobalVarMark,
+			LocalArrMark,LocalVarMark),
+	% Here it's done dump for grabbing the witnesses' constraints
+        encode_multiple_witnesses(Ws,FName,WsX),
+	debug_message("\tEncode witnesses: % --> %\n",[Ws,WsX]),
+#ifdef  PROFILE
+	ctime(T2),
+#endif	
+	encode_marked_list(GlobalArrMark,GlobalArrMarkX),
+	encode_marked_list(GlobalVarMark,GlobalVarMarkX),
+	encode_marked_list(LocalArrMark,LocalArrMarkX),
+	encode_marked_list(LocalVarMark,LocalVarMarkX),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(encode_analysis_markings,T3-T2),
+#endif	
+	debug_message("\tEncode markings : <% % % %>\n",
+	       [GlobalArrMarkX,GlobalVarMarkX,
+		GlobalVarMarkX,LocalVarMarkX]),		
+	AnswerX = answer(WsX,
+			GlobalArrMarkX,GlobalVarMarkX,
+			LocalArrMarkX,LocalVarMarkX),!.
+
+% Operation for decoding analysis answers
+decode_analysis_answer(FName, AnswerX, Answer):-
+	AnswerX = answer(WsX,
+			 MarkedGlobalArrX,MarkedGlobalVarX,
+			 MarkedLocalArrX,MarkedLocalVarX),
+        decode_multiple_witnesses(WsX,FName,Ws),
+	debug_message("\tDecode witnesses: % ---> % \n",[WsX,Ws]),        
+#ifdef  PROFILE
+	ctime(T4),
+#endif		     
+	decode_marked_list(MarkedGlobalArrX,MarkedGlobalArr),
+	decode_marked_list(MarkedGlobalVarX,MarkedGlobalVar),
+	decode_marked_list(MarkedLocalArrX ,MarkedLocalArr),
+	decode_marked_list(MarkedLocalVarX ,MarkedLocalVar),
+#ifdef  PROFILE
+        ctime(T5),
+	add_counter(decode_analysis_markings,T5-T4),
+#endif 					
+	debug_message("\tDecode markings : <% % % %> \n",
+		      [MarkedGlobalArr,MarkedGlobalVar,
+		       MarkedLocalArr,MarkedLocalVar]),
+	Answer = answer(Ws,
+			MarkedGlobalArr,MarkedGlobalVar,
+			MarkedLocalArr,MarkedLocalVar),!.
+#endif /*ENCODE_CHILD_PARENT || ENCODE_MEMO */
+
+%========================================================================%
+% For stats
+%========================================================================%
+
+%------------------------------------------------------------------------%
+% calculate_marked_variables(+FName,+PP)
+%------------------------------------------------------------------------%
+% Count and record the number of marked variables per program point.
+%------------------------------------------------------------------------%
+calculate_marked_variables(FName,PP):-
+	start(FName,PP),!,
+	calculate_marked_variables_aux(FName).
+calculate_marked_variables(_,_):-!.
+
+calculate_marked_variables_aux(FName):-
+% By backtracking we obtain all program points per function
+	func_program_point(FName,PP),
+        calculate_marked_variables_per_pp(FName,PP),
+	fail.
+calculate_marked_variables_aux(_):-!.
+	
+calculate_marked_variables_per_pp(FName,PP):-
+% Backtracking here is possible for different contexts of the same
+% program point
+#ifdef  PIPEMEMO
+	pipe_master_check_t(PP,_,_,FName,_,_,_,_,_,_,_,Answer),
+#else
+	check_t(PP,_,FName,_,_,_,_,_,_,_,Answer),
+#endif 	/*PIPEMEMO*/
+	once(calculate_marked_variables_per_pp_aux(FName, PP, Answer)).
+
+%-------------------------------------------------------------------------%
+% No backtracking allowed here.
+%-------------------------------------------------------------------------%
+calculate_marked_variables_per_pp_aux(FName, PP, Answer):-
+	Answer=answer(_Witnesses,
+		      MarkGlobalArrX,MarkGlobalVarX,
+		      MarkLocalArrX,MarkLocalVarX),
+#if     (!defined(PIPEMEMO)) && (defined(ENCODE_MEMO))
+        decode_marked_list(MarkGlobalArrX,MarkGlobalArr),
+	decode_marked_list(MarkGlobalVarX,MarkGlobalVar),
+	decode_marked_list(MarkLocalArrX ,MarkLocalArr),
+	decode_marked_list(MarkLocalVarX ,MarkLocalVar),		   
+#else
+        MarkGlobalArrX=MarkGlobalArr,
+	MarkGlobalVarX=MarkGlobalVar,
+	MarkLocalArrX =MarkLocalArr,
+	MarkLocalVarX =MarkLocalVar,	
+#endif  /*(defined(ENCODE_MEMO) || defined(PIPEMEMO))*/
+        %-----------------------------------------------------------------%
+        % Here we compute the union of all markings for all instances
+        % of the same PP and store for further collection.
+        %-----------------------------------------------------------------%
+        merge_and_record_marked_variables(FName,PP,
+					  MarkGlobalArr,MarkGlobalVar,
+					  MarkLocalArr ,MarkLocalVar).
+
+merge_and_record_marked_variables(FName,PP,GA,GV,LA,LV):-	
+        retract('$temp$'(FName,PP,GA,GV,LA,LV)),
+	!,
+	fassert('$temp$'(FName,PP,GA,GV,LA,LV)).
+merge_and_record_marked_variables(FName,PP,GA,GV,LA,LV):-
+	fassert('$temp$'(FName,PP,GA,GV,LA,LV)), !.
+
+%-----------------------------------------------------------------------%
+% get_num_of_marked_variables(N)
+%-----------------------------------------------------------------------%
+% N is the total number of marked variable for the whole program
+%-----------------------------------------------------------------------%
+get_num_of_marked_variables(N):-
+	set_counter(total_marked_vars,0),
+	get_num_of_marked_variables_aux,
+	counter_value(total_marked_vars,N).
+
+get_num_of_marked_variables_aux:-
+	start(FName,_),
+	func_program_point(FName,PP),
+	collect_num_of_marked_variables(FName,PP),	
+	fail.
+get_num_of_marked_variables_aux.
+
+collect_num_of_marked_variables(FName,PP):-	
+	retract('$temp$'(FName,PP,MarkGlobalArr,MarkGlobalVar,
+			 MarkLocalArr,MarkLocalVar)),	
+ 	count_marked_elements(MarkGlobalArr,N1),
+ 	count_marked_elements(MarkGlobalVar,N2),
+ 	count_marked_elements(MarkLocalArr ,N3),
+ 	count_marked_elements(MarkLocalVar ,N4),
+#ifdef  DEBUG_USE	
+	print_message("# marked variables for %:%  %\n",
+		      [FName,PP,N1+N2+N3+N4]),
+#endif	/*DEBUG_USE*/	
+	add_counter(total_marked_vars,N1+N2+N3+N4).
+%	!.
+%collect_num_of_marked_variables(FName,PP):-
+%	error_message("collect_num_of_marked_variables/2 for %:% \n",[FName,PP]).
+
+
+%------------------------------------------------------------------------%
+% For Debugging
+%------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------%
+% To print answers stored in a tree node
+%------------------------------------------------------------------------%
+#ifdef  SLICE_PSCFG
+print_analysis_answer:-
+        analysis_answer(Depth, ML, Ws,
+ 	               MarkedGlobalArr,MarkedGlobalVar,
+ 		       MarkedLocalArr,MarkedLocalVar,Aux),		      
+	print_message("analysis_answer(%,%,%,%,%,%,%,%).\n",
+	       [Depth,ML,Ws,MarkedGlobalArr,MarkedGlobalVar,
+		MarkedLocalArr,MarkedLocalVar,Aux]),
+	fail.
+#else
+print_analysis_answer:-
+        analysis_answer(Depth, ML, Ws,
+ 	               MarkedGlobalArr,MarkedGlobalVar,
+ 		       MarkedLocalArr,MarkedLocalVar),		      
+	print_message("analysis_answer(%,%,%,%,%,%,%).\n",
+	       [Depth,ML,Ws,MarkedGlobalArr,MarkedGlobalVar,
+		MarkedLocalArr,MarkedLocalVar]),
+	fail.
+#endif  /*SLICE_PSCFG*/
+print_analysis_answer.
+
+%------------------------------------------------------------------------%
+% To print state before calling a function
+%------------------------------------------------------------------------%
+print_caller_state:-
+	analysis_caller_answer(A,B,C,D,E),
+	print_message(" % % % % % \n",[A,B,C,D,E]),
+	fail.
+print_caller_state.

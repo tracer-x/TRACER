@@ -1,0 +1,39 @@
+* Variables should not be initialized outside of a function since
+every transition is associated with a function name. Variable
+declaration is accepted though.
+
+* Variable declaration must precede any other statement within a
+block. A block is identified by { }. This follows from ANSI C89
+requirements.
+
+* Multi-level pointers are not supported yet (only single-level
+pointers are).
+
+* No more than one function call should be present in a single
+statement. The compiler works fine for this without any problem but
+this is a limitation to use the unfolder.
+
+* Using & to get the address of an array element has been fixed. A 
+bug though is the ref(...) is not shown in the constraints for a 
+switch when & for array reference is used in the condition part of 
+loops nested within that switch. Nested loops and standalone switch
+work fine.
+
+Something like:
+
+switch(..)
+     case 1: while( x < &y[2] ) ...
+
+* For functions that accept variable number of parameters such as
+printf, only the minimum required parameters (i.e., those declared
+manually) will be accepted. The arguments that represent ... will be
+truncated.
+
+* Expressions of the form +=, -+, etc are not supported.
+
+* C variable names such as __A is translated as a free logic variable
+which is incorrect!
+
+* C variable names as "a" and "A" are mapped to the same logic
+variable which is also incorrect!
+

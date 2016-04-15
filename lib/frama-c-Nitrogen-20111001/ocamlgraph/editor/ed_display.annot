@@ -1,0 +1,6913 @@
+"editor/ed_display.ml" 24 1327 1331 "editor/ed_display.ml" 24 1327 1336
+type(
+  bool ref
+)
+ident(
+  def debug "editor/ed_display.ml" 28 1378 1378 --
+)
+"editor/ed_display.ml" 24 1327 1339 "editor/ed_display.ml" 24 1327 1342
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_display.ml" 24 1327 1343 "editor/ed_display.ml" 24 1327 1348
+type(
+  bool
+)
+"editor/ed_display.ml" 24 1327 1339 "editor/ed_display.ml" 24 1327 1348
+type(
+  bool ref
+)
+"editor/ed_display.ml" 28 1378 1383 "editor/ed_display.ml" 28 1378 1384
+type(
+  float
+)
+ident(
+  def w "editor/ed_display.ml" 87 2889 2889 --
+)
+"editor/ed_display.ml" 28 1378 1385 "editor/ed_display.ml" 28 1378 1386
+type(
+  float
+)
+ident(
+  def h "editor/ed_display.ml" 87 2889 2889 --
+)
+"editor/ed_display.ml" 28 1378 1382 "editor/ed_display.ml" 28 1378 1387
+type(
+  float * float
+)
+"editor/ed_display.ml" 28 1378 1390 "editor/ed_display.ml" 28 1378 1394
+type(
+  float
+)
+"editor/ed_display.ml" 28 1378 1395 "editor/ed_display.ml" 28 1378 1399
+type(
+  float
+)
+"editor/ed_display.ml" 28 1378 1389 "editor/ed_display.ml" 28 1378 1400
+type(
+  float * float
+)
+"editor/ed_display.ml" 87 2889 2893 "editor/ed_display.ml" 87 2889 2905
+type(
+  string
+)
+ident(
+  def color_circle "editor/ed_display.ml" 89 2918 2918 --
+)
+"editor/ed_display.ml" 87 2889 2908 "editor/ed_display.ml" 87 2889 2916
+type(
+  string
+)
+"editor/ed_display.ml" 89 2918 2922 "editor/ed_display.ml" 89 2918 2939
+type(
+  string
+)
+ident(
+  def color_intern_edge "editor/ed_display.ml" 90 2951 2951 --
+)
+"editor/ed_display.ml" 89 2918 2942 "editor/ed_display.ml" 89 2918 2950
+type(
+  string
+)
+"editor/ed_display.ml" 90 2951 2955 "editor/ed_display.ml" 90 2951 2975
+type(
+  string
+)
+ident(
+  def color_successor_edge "editor/ed_display.ml" 91 2999 2999 --
+)
+"editor/ed_display.ml" 90 2951 2978 "editor/ed_display.ml" 90 2951 2985
+type(
+  string
+)
+"editor/ed_display.ml" 91 2999 3003 "editor/ed_display.ml" 91 2999 3015
+type(
+  string
+)
+ident(
+  def color_vertex "editor/ed_display.ml" 93 3028 3028 --
+)
+"editor/ed_display.ml" 91 2999 3018 "editor/ed_display.ml" 91 2999 3026
+type(
+  string
+)
+"editor/ed_display.ml" 93 3028 3032 "editor/ed_display.ml" 93 3028 3058
+type(
+  string
+)
+ident(
+  def color_selected_intern_edge "editor/ed_display.ml" 94 3087 3087 --
+)
+"editor/ed_display.ml" 93 3028 3061 "editor/ed_display.ml" 93 3028 3070
+type(
+  string
+)
+"editor/ed_display.ml" 94 3087 3091 "editor/ed_display.ml" 94 3087 3120
+type(
+  string
+)
+ident(
+  def color_selected_successor_edge "editor/ed_display.ml" 95 3134 3134 --
+)
+"editor/ed_display.ml" 94 3087 3123 "editor/ed_display.ml" 94 3087 3132
+type(
+  string
+)
+"editor/ed_display.ml" 95 3134 3138 "editor/ed_display.ml" 95 3134 3159
+type(
+  string
+)
+ident(
+  def color_selected_vertex "editor/ed_display.ml" 97 3173 3173 --
+)
+"editor/ed_display.ml" 95 3134 3162 "editor/ed_display.ml" 95 3134 3171
+type(
+  string
+)
+"editor/ed_display.ml" 97 3173 3177 "editor/ed_display.ml" 97 3173 3202
+type(
+  string
+)
+ident(
+  def color_focused_intern_edge "editor/ed_display.ml" 98 3215 3215 --
+)
+"editor/ed_display.ml" 97 3173 3205 "editor/ed_display.ml" 97 3173 3214
+type(
+  string
+)
+"editor/ed_display.ml" 98 3215 3219 "editor/ed_display.ml" 98 3215 3247
+type(
+  string
+)
+ident(
+  def color_focused_successor_edge "editor/ed_display.ml" 99 3261 3261 --
+)
+"editor/ed_display.ml" 98 3215 3250 "editor/ed_display.ml" 98 3215 3259
+type(
+  string
+)
+"editor/ed_display.ml" 99 3261 3265 "editor/ed_display.ml" 99 3261 3285
+type(
+  string
+)
+ident(
+  def color_focused_vertex "editor/ed_display.ml" 101 3301 3301 --
+)
+"editor/ed_display.ml" 99 3261 3289 "editor/ed_display.ml" 99 3261 3298
+type(
+  string
+)
+"editor/ed_display.ml" 101 3301 3305 "editor/ed_display.ml" 101 3301 3339
+type(
+  string
+)
+ident(
+  def color_selected_focused_intern_edge "editor/ed_display.ml" 102 3352 3352 --
+)
+"editor/ed_display.ml" 101 3301 3342 "editor/ed_display.ml" 101 3301 3351
+type(
+  string
+)
+"editor/ed_display.ml" 102 3352 3356 "editor/ed_display.ml" 102 3352 3385
+type(
+  string
+)
+ident(
+  def color_selected_focused_vertex "editor/ed_display.ml" 103 3397 3397 --
+)
+"editor/ed_display.ml" 102 3352 3387 "editor/ed_display.ml" 102 3352 3396
+type(
+  string
+)
+"editor/ed_display.ml" 103 3397 3401 "editor/ed_display.ml" 103 3397 3438
+type(
+  string
+)
+ident(
+  def color_selected_focused_successor_edge "editor/ed_display.ml" 105 3452 3452 --
+)
+"editor/ed_display.ml" 103 3397 3441 "editor/ed_display.ml" 103 3397 3450
+type(
+  string
+)
+"editor/ed_display.ml" 105 3452 3456 "editor/ed_display.ml" 105 3452 3466
+type(
+  string
+)
+ident(
+  def color_text "editor/ed_display.ml" 107 3478 3478 --
+)
+"editor/ed_display.ml" 105 3452 3469 "editor/ed_display.ml" 105 3452 3476
+type(
+  string
+)
+"editor/ed_display.ml" 107 3478 3482 "editor/ed_display.ml" 107 3478 3502
+type(
+  int
+)
+ident(
+  def width_successor_edge "editor/ed_display.ml" 108 3507 3507 --
+)
+"editor/ed_display.ml" 107 3478 3505 "editor/ed_display.ml" 107 3478 3506
+type(
+  int
+)
+"editor/ed_display.ml" 108 3507 3511 "editor/ed_display.ml" 108 3507 3528
+type(
+  int
+)
+ident(
+  def width_intern_edge "editor/ed_display.ml" 109 3533 3533 --
+)
+"editor/ed_display.ml" 108 3507 3531 "editor/ed_display.ml" 108 3507 3532
+type(
+  int
+)
+"editor/ed_display.ml" 109 3533 3537 "editor/ed_display.ml" 109 3533 3552
+type(
+  float
+)
+ident(
+  def point_size_text "editor/ed_display.ml" 115 3704 3704 --
+)
+"editor/ed_display.ml" 109 3533 3555 "editor/ed_display.ml" 109 3533 3558
+type(
+  float
+)
+"editor/ed_display.ml" 115 3704 3708 "editor/ed_display.ml" 115 3704 3723
+type(
+  GnoCanvas.line Ed_graph.H2.t
+)
+ident(
+  def successor_edges "editor/ed_display.ml" 116 3739 3739 --
+)
+"editor/ed_display.ml" 115 3704 3726 "editor/ed_display.ml" 115 3704 3735
+type(
+  int -> GnoCanvas.line Ed_graph.H2.t
+)
+ident(
+  ext_ref Ed_graph.H2.create
+)
+"editor/ed_display.ml" 115 3704 3736 "editor/ed_display.ml" 115 3704 3738
+type(
+  int
+)
+"editor/ed_display.ml" 115 3704 3726 "editor/ed_display.ml" 115 3704 3738
+call(
+  stack
+)
+type(
+  GnoCanvas.line Ed_graph.H2.t
+)
+"editor/ed_display.ml" 116 3739 3743 "editor/ed_display.ml" 116 3739 3755
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t
+)
+ident(
+  def intern_edges "editor/ed_display.ml" 120 3798 3798 --
+)
+"editor/ed_display.ml" 116 3739 3758 "editor/ed_display.ml" 116 3739 3767
+type(
+  int -> (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t
+)
+ident(
+  ext_ref Ed_graph.H2.create
+)
+"editor/ed_display.ml" 116 3739 3768 "editor/ed_display.ml" 116 3739 3770
+type(
+  int
+)
+"editor/ed_display.ml" 116 3739 3758 "editor/ed_display.ml" 116 3739 3770
+call(
+  stack
+)
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t
+)
+"editor/ed_display.ml" 120 3798 3802 "editor/ed_display.ml" 120 3798 3807
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  def nodes "editor/ed_display.ml" 125 3861 3861 --
+)
+"editor/ed_display.ml" 120 3798 3810 "editor/ed_display.ml" 120 3798 3818
+type(
+  int -> (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  ext_ref Ed_graph.H.create
+)
+"editor/ed_display.ml" 120 3798 3819 "editor/ed_display.ml" 120 3798 3821
+type(
+  int
+)
+"editor/ed_display.ml" 120 3798 3810 "editor/ed_display.ml" 120 3798 3821
+call(
+  stack
+)
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+"editor/ed_display.ml" 125 3861 3865 "editor/ed_display.ml" 125 3861 3874
+type(
+  int * int -> float * float
+)
+ident(
+  def to_turtle "editor/ed_display.ml" 134 4102 4102 --
+)
+"editor/ed_display.ml" 125 3861 3875 "editor/ed_display.ml" 125 3861 3876
+type(
+  int
+)
+ident(
+  def x "editor/ed_display.ml" 126 3881 3883 "editor/ed_display.ml" 131 4059 4064
+)
+"editor/ed_display.ml" 125 3861 3877 "editor/ed_display.ml" 125 3861 3878
+type(
+  int
+)
+ident(
+  def y "editor/ed_display.ml" 126 3881 3883 "editor/ed_display.ml" 131 4059 4064
+)
+"editor/ed_display.ml" 125 3861 3874 "editor/ed_display.ml" 125 3861 3879
+type(
+  int * int
+)
+"editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3889
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3890 "editor/ed_display.ml" 126 3881 3892
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3892
+type(
+  float * float
+)
+"editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3897
+type(
+  float * float
+)
+"editor/ed_display.ml" 126 3881 3902 "editor/ed_display.ml" 126 3881 3907
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 126 3881 3908 "editor/ed_display.ml" 126 3881 3909
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 125 3861 3875 "editor/ed_display.ml" 125 3861 3876
+)
+"editor/ed_display.ml" 126 3881 3902 "editor/ed_display.ml" 126 3881 3909
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3909 "editor/ed_display.ml" 126 3881 3911
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 126 3881 3912 "editor/ed_display.ml" 126 3881 3914
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3914 "editor/ed_display.ml" 126 3881 3916
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 126 3881 3916 "editor/ed_display.ml" 126 3881 3917
+type(
+  float
+)
+ident(
+  int_ref w "editor/ed_display.ml" 28 1378 1383 "editor/ed_display.ml" 28 1378 1384
+)
+"editor/ed_display.ml" 126 3881 3911 "editor/ed_display.ml" 126 3881 3918
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3902 "editor/ed_display.ml" 126 3881 3918
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3919 "editor/ed_display.ml" 126 3881 3921
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_display.ml" 126 3881 3922 "editor/ed_display.ml" 126 3881 3924
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3901 "editor/ed_display.ml" 126 3881 3925
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3927 "editor/ed_display.ml" 126 3881 3929
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3930 "editor/ed_display.ml" 126 3881 3932
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_display.ml" 126 3881 3933 "editor/ed_display.ml" 126 3881 3938
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 126 3881 3939 "editor/ed_display.ml" 126 3881 3940
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 125 3861 3877 "editor/ed_display.ml" 125 3861 3878
+)
+"editor/ed_display.ml" 126 3881 3933 "editor/ed_display.ml" 126 3881 3940
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3941 "editor/ed_display.ml" 126 3881 3943
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 126 3881 3944 "editor/ed_display.ml" 126 3881 3946
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3946 "editor/ed_display.ml" 126 3881 3948
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 126 3881 3948 "editor/ed_display.ml" 126 3881 3949
+type(
+  float
+)
+ident(
+  int_ref h "editor/ed_display.ml" 28 1378 1385 "editor/ed_display.ml" 28 1378 1386
+)
+"editor/ed_display.ml" 126 3881 3943 "editor/ed_display.ml" 126 3881 3950
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3933 "editor/ed_display.ml" 126 3881 3950
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3926 "editor/ed_display.ml" 126 3881 3951
+type(
+  float
+)
+"editor/ed_display.ml" 126 3881 3900 "editor/ed_display.ml" 126 3881 3952
+type(
+  float * float
+)
+"editor/ed_display.ml" 127 3956 3962 "editor/ed_display.ml" 127 3956 3964
+type(
+  float
+)
+"editor/ed_display.ml" 127 3956 3967 "editor/ed_display.ml" 127 3956 3971
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sqrt
+)
+"editor/ed_display.ml" 127 3956 3972 "editor/ed_display.ml" 127 3956 3974
+type(
+  float
+)
+ident(
+  int_ref zx "editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3889
+)
+"editor/ed_display.ml" 127 3956 3974 "editor/ed_display.ml" 127 3956 3976
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 127 3956 3976 "editor/ed_display.ml" 127 3956 3978
+type(
+  float
+)
+ident(
+  int_ref zx "editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3889
+)
+"editor/ed_display.ml" 127 3956 3972 "editor/ed_display.ml" 127 3956 3978
+type(
+  float
+)
+"editor/ed_display.ml" 127 3956 3979 "editor/ed_display.ml" 127 3956 3981
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 127 3956 3982 "editor/ed_display.ml" 127 3956 3984
+type(
+  float
+)
+ident(
+  int_ref zy "editor/ed_display.ml" 126 3881 3890 "editor/ed_display.ml" 126 3881 3892
+)
+"editor/ed_display.ml" 127 3956 3984 "editor/ed_display.ml" 127 3956 3986
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 127 3956 3986 "editor/ed_display.ml" 127 3956 3988
+type(
+  float
+)
+ident(
+  int_ref zy "editor/ed_display.ml" 126 3881 3890 "editor/ed_display.ml" 126 3881 3892
+)
+"editor/ed_display.ml" 127 3956 3982 "editor/ed_display.ml" 127 3956 3988
+type(
+  float
+)
+"editor/ed_display.ml" 127 3956 3971 "editor/ed_display.ml" 127 3956 3989
+type(
+  float
+)
+"editor/ed_display.ml" 127 3956 3967 "editor/ed_display.ml" 127 3956 3989
+type(
+  float
+)
+"editor/ed_display.ml" 128 3993 3998 "editor/ed_display.ml" 128 3993 4000
+type(
+  float
+)
+ident(
+  int_ref zn "editor/ed_display.ml" 127 3956 3962 "editor/ed_display.ml" 127 3956 3964
+)
+"editor/ed_display.ml" 128 3993 4001 "editor/ed_display.ml" 128 3993 4002
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"editor/ed_display.ml" 128 3993 4003 "editor/ed_display.ml" 128 3993 4009
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.rlimit
+)
+"editor/ed_display.ml" 128 3993 3998 "editor/ed_display.ml" 128 3993 4009
+type(
+  bool
+)
+"editor/ed_display.ml" 129 4015 4020 "editor/ed_display.ml" 129 4015 4026
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.rlimit
+)
+"editor/ed_display.ml" 129 4015 4026 "editor/ed_display.ml" 129 4015 4028
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 129 4015 4028 "editor/ed_display.ml" 129 4015 4030
+type(
+  float
+)
+ident(
+  int_ref zx "editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3889
+)
+"editor/ed_display.ml" 129 4015 4020 "editor/ed_display.ml" 129 4015 4030
+type(
+  float
+)
+"editor/ed_display.ml" 129 4015 4030 "editor/ed_display.ml" 129 4015 4032
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 129 4015 4032 "editor/ed_display.ml" 129 4015 4034
+type(
+  float
+)
+ident(
+  int_ref zn "editor/ed_display.ml" 127 3956 3962 "editor/ed_display.ml" 127 3956 3964
+)
+"editor/ed_display.ml" 129 4015 4020 "editor/ed_display.ml" 129 4015 4034
+type(
+  float
+)
+"editor/ed_display.ml" 129 4015 4036 "editor/ed_display.ml" 129 4015 4042
+type(
+  float
+)
+ident(
+  ext_ref Ed_hyper.rlimit
+)
+"editor/ed_display.ml" 129 4015 4042 "editor/ed_display.ml" 129 4015 4044
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 129 4015 4044 "editor/ed_display.ml" 129 4015 4046
+type(
+  float
+)
+ident(
+  int_ref zy "editor/ed_display.ml" 126 3881 3890 "editor/ed_display.ml" 126 3881 3892
+)
+"editor/ed_display.ml" 129 4015 4036 "editor/ed_display.ml" 129 4015 4046
+type(
+  float
+)
+"editor/ed_display.ml" 129 4015 4046 "editor/ed_display.ml" 129 4015 4048
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 129 4015 4048 "editor/ed_display.ml" 129 4015 4050
+type(
+  float
+)
+ident(
+  int_ref zn "editor/ed_display.ml" 127 3956 3962 "editor/ed_display.ml" 127 3956 3964
+)
+"editor/ed_display.ml" 129 4015 4036 "editor/ed_display.ml" 129 4015 4050
+type(
+  float
+)
+"editor/ed_display.ml" 129 4015 4019 "editor/ed_display.ml" 129 4015 4051
+type(
+  float * float
+)
+"editor/ed_display.ml" 131 4059 4063 "editor/ed_display.ml" 131 4059 4064
+type(
+  float * float
+)
+ident(
+  int_ref r "editor/ed_display.ml" 126 3881 3887 "editor/ed_display.ml" 126 3881 3897
+)
+"editor/ed_display.ml" 128 3993 3995 "editor/ed_display.ml" 131 4059 4064
+type(
+  float * float
+)
+"editor/ed_display.ml" 127 3956 3958 "editor/ed_display.ml" 131 4059 4064
+type(
+  float * float
+)
+"editor/ed_display.ml" 126 3881 3883 "editor/ed_display.ml" 131 4059 4064
+type(
+  float * float
+)
+"editor/ed_display.ml" 134 4102 4106 "editor/ed_display.ml" 134 4102 4117
+type(
+  float * float -> int * int
+)
+ident(
+  def from_turtle "editor/ed_display.ml" 141 4299 4299 --
+)
+"editor/ed_display.ml" 134 4102 4119 "editor/ed_display.ml" 134 4102 4120
+type(
+  float
+)
+ident(
+  def x "editor/ed_display.ml" 135 4126 4128 "editor/ed_display.ml" 137 4173 4234
+)
+"editor/ed_display.ml" 134 4102 4121 "editor/ed_display.ml" 134 4102 4122
+type(
+  float
+)
+ident(
+  def y "editor/ed_display.ml" 135 4126 4128 "editor/ed_display.ml" 137 4173 4234
+)
+"editor/ed_display.ml" 134 4102 4118 "editor/ed_display.ml" 134 4102 4123
+type(
+  float * float
+)
+"editor/ed_display.ml" 135 4126 4132 "editor/ed_display.ml" 135 4126 4137
+type(
+  float
+)
+"editor/ed_display.ml" 135 4126 4141 "editor/ed_display.ml" 135 4126 4142
+type(
+  float
+)
+ident(
+  int_ref w "editor/ed_display.ml" 28 1378 1383 "editor/ed_display.ml" 28 1378 1384
+)
+"editor/ed_display.ml" 135 4126 4142 "editor/ed_display.ml" 135 4126 4144
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 135 4126 4144 "editor/ed_display.ml" 135 4126 4146
+type(
+  float
+)
+"editor/ed_display.ml" 135 4126 4140 "editor/ed_display.ml" 135 4126 4147
+type(
+  float
+)
+"editor/ed_display.ml" 136 4148 4154 "editor/ed_display.ml" 136 4148 4159
+type(
+  float
+)
+"editor/ed_display.ml" 136 4148 4163 "editor/ed_display.ml" 136 4148 4164
+type(
+  float
+)
+ident(
+  int_ref h "editor/ed_display.ml" 28 1378 1385 "editor/ed_display.ml" 28 1378 1386
+)
+"editor/ed_display.ml" 136 4148 4164 "editor/ed_display.ml" 136 4148 4166
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 136 4148 4166 "editor/ed_display.ml" 136 4148 4168
+type(
+  float
+)
+"editor/ed_display.ml" 136 4148 4162 "editor/ed_display.ml" 136 4148 4169
+type(
+  float
+)
+"editor/ed_display.ml" 137 4173 4176 "editor/ed_display.ml" 137 4173 4184
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 137 4173 4186 "editor/ed_display.ml" 137 4173 4187
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_display.ml" 134 4102 4119 "editor/ed_display.ml" 134 4102 4120
+)
+"editor/ed_display.ml" 137 4173 4187 "editor/ed_display.ml" 137 4173 4189
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 137 4173 4189 "editor/ed_display.ml" 137 4173 4194
+type(
+  float
+)
+ident(
+  int_ref xzoom "editor/ed_display.ml" 135 4126 4132 "editor/ed_display.ml" 135 4126 4137
+)
+"editor/ed_display.ml" 137 4173 4186 "editor/ed_display.ml" 137 4173 4194
+type(
+  float
+)
+"editor/ed_display.ml" 137 4173 4195 "editor/ed_display.ml" 137 4173 4197
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 137 4173 4198 "editor/ed_display.ml" 137 4173 4203
+type(
+  float
+)
+ident(
+  int_ref xzoom "editor/ed_display.ml" 135 4126 4132 "editor/ed_display.ml" 135 4126 4137
+)
+"editor/ed_display.ml" 137 4173 4185 "editor/ed_display.ml" 137 4173 4204
+type(
+  float
+)
+"editor/ed_display.ml" 137 4173 4176 "editor/ed_display.ml" 137 4173 4204
+type(
+  int
+)
+"editor/ed_display.ml" 137 4173 4206 "editor/ed_display.ml" 137 4173 4214
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 137 4173 4215 "editor/ed_display.ml" 137 4173 4220
+type(
+  float
+)
+ident(
+  int_ref yzoom "editor/ed_display.ml" 136 4148 4154 "editor/ed_display.ml" 136 4148 4159
+)
+"editor/ed_display.ml" 137 4173 4221 "editor/ed_display.ml" 137 4173 4223
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_display.ml" 137 4173 4224 "editor/ed_display.ml" 137 4173 4225
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_display.ml" 134 4102 4121 "editor/ed_display.ml" 134 4102 4122
+)
+"editor/ed_display.ml" 137 4173 4225 "editor/ed_display.ml" 137 4173 4227
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 137 4173 4227 "editor/ed_display.ml" 137 4173 4232
+type(
+  float
+)
+ident(
+  int_ref yzoom "editor/ed_display.ml" 136 4148 4154 "editor/ed_display.ml" 136 4148 4159
+)
+"editor/ed_display.ml" 137 4173 4224 "editor/ed_display.ml" 137 4173 4232
+type(
+  float
+)
+"editor/ed_display.ml" 137 4173 4214 "editor/ed_display.ml" 137 4173 4233
+type(
+  float
+)
+"editor/ed_display.ml" 137 4173 4206 "editor/ed_display.ml" 137 4173 4233
+type(
+  int
+)
+"editor/ed_display.ml" 137 4173 4175 "editor/ed_display.ml" 137 4173 4234
+type(
+  int * int
+)
+"editor/ed_display.ml" 135 4126 4128 "editor/ed_display.ml" 137 4173 4234
+type(
+  int * int
+)
+"editor/ed_display.ml" 141 4299 4303 "editor/ed_display.ml" 141 4299 4314
+type(
+  float * float
+)
+ident(
+  def start_point "editor/ed_display.ml" 144 4452 4452 --
+)
+"editor/ed_display.ml" 141 4299 4317 "editor/ed_display.ml" 141 4299 4326
+type(
+  int * int -> float * float
+)
+ident(
+  int_ref to_turtle "editor/ed_display.ml" 125 3861 3865 "editor/ed_display.ml" 125 3861 3874
+)
+"editor/ed_display.ml" 141 4299 4328 "editor/ed_display.ml" 141 4299 4336
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 141 4299 4337 "editor/ed_display.ml" 141 4299 4338
+type(
+  float
+)
+ident(
+  int_ref w "editor/ed_display.ml" 28 1378 1383 "editor/ed_display.ml" 28 1378 1384
+)
+"editor/ed_display.ml" 141 4299 4338 "editor/ed_display.ml" 141 4299 4340
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 141 4299 4340 "editor/ed_display.ml" 141 4299 4342
+type(
+  float
+)
+"editor/ed_display.ml" 141 4299 4336 "editor/ed_display.ml" 141 4299 4343
+type(
+  float
+)
+"editor/ed_display.ml" 141 4299 4328 "editor/ed_display.ml" 141 4299 4343
+type(
+  int
+)
+"editor/ed_display.ml" 141 4299 4345 "editor/ed_display.ml" 141 4299 4353
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 141 4299 4354 "editor/ed_display.ml" 141 4299 4355
+type(
+  float
+)
+ident(
+  int_ref h "editor/ed_display.ml" 28 1378 1385 "editor/ed_display.ml" 28 1378 1386
+)
+"editor/ed_display.ml" 141 4299 4355 "editor/ed_display.ml" 141 4299 4357
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 141 4299 4357 "editor/ed_display.ml" 141 4299 4359
+type(
+  float
+)
+"editor/ed_display.ml" 141 4299 4353 "editor/ed_display.ml" 141 4299 4360
+type(
+  float
+)
+"editor/ed_display.ml" 141 4299 4345 "editor/ed_display.ml" 141 4299 4360
+type(
+  int
+)
+"editor/ed_display.ml" 141 4299 4327 "editor/ed_display.ml" 141 4299 4361
+type(
+  int * int
+)
+"editor/ed_display.ml" 141 4299 4317 "editor/ed_display.ml" 141 4299 4361
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_display.ml" 144 4452 4456 "editor/ed_display.ml" 144 4452 4463
+type(
+  Ed_hyper.coord ref
+)
+ident(
+  def origine "editor/ed_display.ml" 147 4576 4576 --
+)
+"editor/ed_display.ml" 144 4452 4466 "editor/ed_display.ml" 144 4452 4469
+type(
+  Ed_hyper.coord -> Ed_hyper.coord ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_display.ml" 144 4452 4470 "editor/ed_display.ml" 144 4452 4481
+type(
+  Ed_hyper.coord
+)
+ident(
+  int_ref start_point "editor/ed_display.ml" 141 4299 4303 "editor/ed_display.ml" 141 4299 4314
+)
+"editor/ed_display.ml" 144 4452 4466 "editor/ed_display.ml" 144 4452 4481
+type(
+  Ed_hyper.coord ref
+)
+"editor/ed_display.ml" 147 4576 4580 "editor/ed_display.ml" 147 4576 4593
+type(
+  (int * int) ref
+)
+ident(
+  def current_point "editor/ed_display.ml" 150 4645 4645 --
+)
+"editor/ed_display.ml" 147 4576 4596 "editor/ed_display.ml" 147 4576 4599
+type(
+  int * int -> (int * int) ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"editor/ed_display.ml" 147 4576 4601 "editor/ed_display.ml" 147 4576 4602
+type(
+  int
+)
+"editor/ed_display.ml" 147 4576 4603 "editor/ed_display.ml" 147 4576 4604
+type(
+  int
+)
+"editor/ed_display.ml" 147 4576 4600 "editor/ed_display.ml" 147 4576 4605
+type(
+  int * int
+)
+"editor/ed_display.ml" 147 4576 4596 "editor/ed_display.ml" 147 4576 4605
+type(
+  (int * int) ref
+)
+"editor/ed_display.ml" 150 4645 4649 "editor/ed_display.ml" 150 4645 4659
+type(
+  int -> int -> unit
+)
+ident(
+  def moveto_gtk "editor/ed_display.ml" 153 4752 4752 --
+)
+"editor/ed_display.ml" 150 4645 4660 "editor/ed_display.ml" 150 4645 4661
+type(
+  int
+)
+ident(
+  def x "editor/ed_display.ml" 150 4645 4662 "editor/ed_display.ml" 150 4645 4688
+)
+"editor/ed_display.ml" 150 4645 4662 "editor/ed_display.ml" 150 4645 4663
+type(
+  int
+)
+ident(
+  def y "editor/ed_display.ml" 150 4645 4666 "editor/ed_display.ml" 150 4645 4688
+)
+"editor/ed_display.ml" 150 4645 4666 "editor/ed_display.ml" 150 4645 4679
+type(
+  (int * int) ref
+)
+ident(
+  int_ref current_point "editor/ed_display.ml" 147 4576 4580 "editor/ed_display.ml" 147 4576 4593
+)
+"editor/ed_display.ml" 150 4645 4680 "editor/ed_display.ml" 150 4645 4682
+type(
+  (int * int) ref -> int * int -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_display.ml" 150 4645 4684 "editor/ed_display.ml" 150 4645 4685
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 150 4645 4660 "editor/ed_display.ml" 150 4645 4661
+)
+"editor/ed_display.ml" 150 4645 4686 "editor/ed_display.ml" 150 4645 4687
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 150 4645 4662 "editor/ed_display.ml" 150 4645 4663
+)
+"editor/ed_display.ml" 150 4645 4683 "editor/ed_display.ml" 150 4645 4688
+type(
+  int * int
+)
+"editor/ed_display.ml" 150 4645 4666 "editor/ed_display.ml" 150 4645 4688
+type(
+  unit
+)
+"editor/ed_display.ml" 153 4752 4756 "editor/ed_display.ml" 153 4752 4767
+type(
+  Ed_hyper.turtle -> unit
+)
+ident(
+  def tmoveto_gtk "editor/ed_display.ml" 158 4884 4884 --
+)
+"editor/ed_display.ml" 153 4752 4768 "editor/ed_display.ml" 153 4752 4774
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_display.ml" 154 4778 4780 "editor/ed_display.ml" 155 4817 4833
+)
+"editor/ed_display.ml" 154 4778 4785 "editor/ed_display.ml" 154 4778 4786
+type(
+  int
+)
+"editor/ed_display.ml" 154 4778 4787 "editor/ed_display.ml" 154 4778 4788
+type(
+  int
+)
+"editor/ed_display.ml" 154 4778 4784 "editor/ed_display.ml" 154 4778 4789
+type(
+  int * int
+)
+"editor/ed_display.ml" 154 4778 4791 "editor/ed_display.ml" 154 4778 4802
+type(
+  Ed_hyper.coord -> int * int
+)
+ident(
+  int_ref from_turtle "editor/ed_display.ml" 134 4102 4106 "editor/ed_display.ml" 134 4102 4117
+)
+"editor/ed_display.ml" 154 4778 4803 "editor/ed_display.ml" 154 4778 4809
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 153 4752 4768 "editor/ed_display.ml" 153 4752 4774
+)
+"editor/ed_display.ml" 154 4778 4803 "editor/ed_display.ml" 154 4778 4813
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 154 4778 4791 "editor/ed_display.ml" 154 4778 4813
+call(
+  stack
+)
+type(
+  int * int
+)
+"editor/ed_display.ml" 155 4817 4819 "editor/ed_display.ml" 155 4817 4829
+type(
+  int -> int -> unit
+)
+ident(
+  int_ref moveto_gtk "editor/ed_display.ml" 150 4645 4649 "editor/ed_display.ml" 150 4645 4659
+)
+"editor/ed_display.ml" 155 4817 4830 "editor/ed_display.ml" 155 4817 4831
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 154 4778 4785 "editor/ed_display.ml" 154 4778 4786
+)
+"editor/ed_display.ml" 155 4817 4832 "editor/ed_display.ml" 155 4817 4833
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 154 4778 4787 "editor/ed_display.ml" 154 4778 4788
+)
+"editor/ed_display.ml" 155 4817 4819 "editor/ed_display.ml" 155 4817 4833
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 154 4778 4780 "editor/ed_display.ml" 155 4817 4833
+type(
+  unit
+)
+"editor/ed_display.ml" 158 4884 4888 "editor/ed_display.ml" 158 4884 4907
+type(
+  unit -> Ed_hyper.turtle
+)
+ident(
+  def make_turtle_origine "editor/ed_display.ml" 164 5114 5114 --
+)
+"editor/ed_display.ml" 158 4884 4908 "editor/ed_display.ml" 158 4884 4910
+type(
+  unit
+)
+"editor/ed_display.ml" 159 4914 4921 "editor/ed_display.ml" 159 4914 4922
+type(
+  int
+)
+"editor/ed_display.ml" 159 4914 4923 "editor/ed_display.ml" 159 4914 4924
+type(
+  int
+)
+"editor/ed_display.ml" 159 4914 4920 "editor/ed_display.ml" 159 4914 4925
+type(
+  int * int
+)
+"editor/ed_display.ml" 159 4914 4933 "editor/ed_display.ml" 159 4914 4934
+type(
+  float
+)
+"editor/ed_display.ml" 159 4914 4935 "editor/ed_display.ml" 159 4914 4936
+type(
+  float
+)
+"editor/ed_display.ml" 159 4914 4932 "editor/ed_display.ml" 159 4914 4937
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 159 4914 4940 "editor/ed_display.ml" 159 4914 4941
+type(
+  Ed_hyper.coord ref -> Ed_hyper.coord
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 159 4914 4941 "editor/ed_display.ml" 159 4914 4948
+type(
+  Ed_hyper.coord ref
+)
+ident(
+  int_ref origine "editor/ed_display.ml" 144 4452 4456 "editor/ed_display.ml" 144 4452 4463
+)
+"editor/ed_display.ml" 159 4914 4940 "editor/ed_display.ml" 159 4914 4948
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 159 4914 4953 "editor/ed_display.ml" 159 4914 4961
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 159 4914 4962 "editor/ed_display.ml" 159 4914 4963
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_display.ml" 159 4914 4933 "editor/ed_display.ml" 159 4914 4934
+)
+"editor/ed_display.ml" 159 4914 4953 "editor/ed_display.ml" 159 4914 4963
+type(
+  int
+)
+"editor/ed_display.ml" 159 4914 4965 "editor/ed_display.ml" 159 4914 4973
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 159 4914 4974 "editor/ed_display.ml" 159 4914 4975
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_display.ml" 159 4914 4935 "editor/ed_display.ml" 159 4914 4936
+)
+"editor/ed_display.ml" 159 4914 4965 "editor/ed_display.ml" 159 4914 4975
+type(
+  int
+)
+"editor/ed_display.ml" 159 4914 4952 "editor/ed_display.ml" 159 4914 4976
+type(
+  int * int
+)
+"editor/ed_display.ml" 159 4914 4928 "editor/ed_display.ml" 159 4914 4976
+type(
+  int * int
+)
+"editor/ed_display.ml" 160 4982 4984 "editor/ed_display.ml" 160 4982 4994
+type(
+  int -> int -> unit
+)
+ident(
+  int_ref moveto_gtk "editor/ed_display.ml" 150 4645 4649 "editor/ed_display.ml" 150 4645 4659
+)
+"editor/ed_display.ml" 160 4982 4996 "editor/ed_display.ml" 160 4982 4997
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 159 4914 4921 "editor/ed_display.ml" 159 4914 4922
+)
+"editor/ed_display.ml" 160 4982 4998 "editor/ed_display.ml" 160 4982 4999
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 159 4914 4923 "editor/ed_display.ml" 159 4914 4924
+)
+"editor/ed_display.ml" 160 4982 4984 "editor/ed_display.ml" 160 4982 4999
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 161 5001 5003 "editor/ed_display.ml" 161 5001 5014
+type(
+  Ed_hyper.coord -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.make_turtle
+)
+"editor/ed_display.ml" 161 5001 5015 "editor/ed_display.ml" 161 5001 5016
+type(
+  Ed_hyper.coord ref -> Ed_hyper.coord
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 161 5001 5016 "editor/ed_display.ml" 161 5001 5023
+type(
+  Ed_hyper.coord ref
+)
+ident(
+  int_ref origine "editor/ed_display.ml" 144 4452 4456 "editor/ed_display.ml" 144 4452 4463
+)
+"editor/ed_display.ml" 161 5001 5015 "editor/ed_display.ml" 161 5001 5023
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 161 5001 5024 "editor/ed_display.ml" 161 5001 5027
+type(
+  float
+)
+"editor/ed_display.ml" 161 5001 5003 "editor/ed_display.ml" 161 5001 5027
+call(
+  tail
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 160 4982 4984 "editor/ed_display.ml" 161 5001 5027
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 159 4914 4916 "editor/ed_display.ml" 161 5001 5027
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 164 5114 5118 "editor/ed_display.ml" 164 5114 5129
+type(
+  Ed_hyper.turtle -> float list -> float list
+)
+ident(
+  def tlineto_gtk "editor/ed_display.ml" 174 5413 5413 --
+)
+"editor/ed_display.ml" 164 5114 5130 "editor/ed_display.ml" 164 5114 5136
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_display.ml" 164 5114 5137 "editor/ed_display.ml" 167 5199 5241
+)
+"editor/ed_display.ml" 164 5114 5137 "editor/ed_display.ml" 164 5114 5141
+type(
+  float list
+)
+ident(
+  def line "editor/ed_display.ml" 165 5144 5146 "editor/ed_display.ml" 167 5199 5241
+)
+"editor/ed_display.ml" 165 5144 5146 "editor/ed_display.ml" 165 5144 5157
+type(
+  Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref tmoveto_gtk "editor/ed_display.ml" 153 4752 4756 "editor/ed_display.ml" 153 4752 4767
+)
+"editor/ed_display.ml" 165 5144 5158 "editor/ed_display.ml" 165 5144 5164
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 164 5114 5130 "editor/ed_display.ml" 164 5114 5136
+)
+"editor/ed_display.ml" 165 5144 5146 "editor/ed_display.ml" 165 5144 5164
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 166 5167 5174 "editor/ed_display.ml" 166 5167 5175
+type(
+  int
+)
+"editor/ed_display.ml" 166 5167 5176 "editor/ed_display.ml" 166 5167 5177
+type(
+  int
+)
+"editor/ed_display.ml" 166 5167 5173 "editor/ed_display.ml" 166 5167 5178
+type(
+  int * int
+)
+"editor/ed_display.ml" 166 5167 5181 "editor/ed_display.ml" 166 5167 5182
+type(
+  (int * int) ref -> int * int
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 166 5167 5182 "editor/ed_display.ml" 166 5167 5195
+type(
+  (int * int) ref
+)
+ident(
+  int_ref current_point "editor/ed_display.ml" 147 4576 4580 "editor/ed_display.ml" 147 4576 4593
+)
+"editor/ed_display.ml" 166 5167 5181 "editor/ed_display.ml" 166 5167 5195
+type(
+  int * int
+)
+"editor/ed_display.ml" 167 5199 5201 "editor/ed_display.ml" 167 5199 5212
+type(
+  float list -> float list -> float list
+)
+ident(
+  ext_ref List.append
+)
+"editor/ed_display.ml" 167 5199 5213 "editor/ed_display.ml" 167 5199 5217
+type(
+  float list
+)
+ident(
+  int_ref line "editor/ed_display.ml" 164 5114 5137 "editor/ed_display.ml" 164 5114 5141
+)
+"editor/ed_display.ml" 167 5199 5220 "editor/ed_display.ml" 167 5199 5225
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 167 5199 5226 "editor/ed_display.ml" 167 5199 5227
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 166 5167 5174 "editor/ed_display.ml" 166 5167 5175
+)
+"editor/ed_display.ml" 167 5199 5219 "editor/ed_display.ml" 167 5199 5228
+type(
+  float
+)
+"editor/ed_display.ml" 167 5199 5231 "editor/ed_display.ml" 167 5199 5236
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 167 5199 5237 "editor/ed_display.ml" 167 5199 5238
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 166 5167 5176 "editor/ed_display.ml" 166 5167 5177
+)
+"editor/ed_display.ml" 167 5199 5230 "editor/ed_display.ml" 167 5199 5239
+type(
+  float
+)
+"editor/ed_display.ml" 167 5199 5218 "editor/ed_display.ml" 167 5199 5241
+type(
+  float list
+)
+"editor/ed_display.ml" 167 5199 5201 "editor/ed_display.ml" 167 5199 5241
+call(
+  tail
+)
+type(
+  float list
+)
+"editor/ed_display.ml" 166 5167 5169 "editor/ed_display.ml" 167 5199 5241
+type(
+  float list
+)
+"editor/ed_display.ml" 165 5144 5146 "editor/ed_display.ml" 167 5199 5241
+type(
+  float list
+)
+"editor/ed_display.ml" 174 5413 5417 "editor/ed_display.ml" 174 5413 5435
+type(
+  Ed_hyper.turtle ->
+  float -> int -> < set : [> `POINTS of float array ] list -> 'a; .. > -> 'a
+)
+ident(
+  def set_successor_edge "editor/ed_display.ml" 187 5887 5887 --
+)
+"editor/ed_display.ml" 174 5413 5436 "editor/ed_display.ml" 174 5413 5442
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_display.ml" 174 5413 5443 "editor/ed_display.ml" 185 5858 5885
+)
+"editor/ed_display.ml" 174 5413 5443 "editor/ed_display.ml" 174 5413 5451
+type(
+  float
+)
+ident(
+  def distance "editor/ed_display.ml" 174 5413 5452 "editor/ed_display.ml" 185 5858 5885
+)
+"editor/ed_display.ml" 174 5413 5452 "editor/ed_display.ml" 174 5413 5457
+type(
+  int
+)
+ident(
+  def steps "editor/ed_display.ml" 174 5413 5458 "editor/ed_display.ml" 185 5858 5885
+)
+"editor/ed_display.ml" 174 5413 5458 "editor/ed_display.ml" 174 5413 5462
+type(
+  < set : [> `POINTS of float array ] list -> 'a; .. > as 'b
+)
+ident(
+  def line "editor/ed_display.ml" 175 5465 5467 "editor/ed_display.ml" 185 5858 5885
+)
+"editor/ed_display.ml" 175 5465 5471 "editor/ed_display.ml" 175 5465 5472
+type(
+  float
+)
+"editor/ed_display.ml" 175 5465 5475 "editor/ed_display.ml" 175 5465 5483
+type(
+  float
+)
+ident(
+  int_ref distance "editor/ed_display.ml" 174 5413 5443 "editor/ed_display.ml" 174 5413 5451
+)
+"editor/ed_display.ml" 175 5465 5484 "editor/ed_display.ml" 175 5465 5486
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 175 5465 5488 "editor/ed_display.ml" 175 5465 5493
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 175 5465 5494 "editor/ed_display.ml" 175 5465 5499
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_display.ml" 174 5413 5452 "editor/ed_display.ml" 174 5413 5457
+)
+"editor/ed_display.ml" 175 5465 5487 "editor/ed_display.ml" 175 5465 5500
+type(
+  float
+)
+"editor/ed_display.ml" 175 5465 5475 "editor/ed_display.ml" 175 5465 5500
+type(
+  float
+)
+"editor/ed_display.ml" 176 5504 5514 "editor/ed_display.ml" 176 5504 5525
+type(
+  Ed_hyper.turtle -> float list -> int -> Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 176 5504 5526 "editor/ed_display.ml" 176 5504 5532
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_display.ml" 176 5504 5533 "editor/ed_display.ml" 179 5617 5670
+)
+"editor/ed_display.ml" 176 5504 5533 "editor/ed_display.ml" 176 5504 5538
+type(
+  float list
+)
+ident(
+  def liste "editor/ed_display.ml" 176 5504 5541 "editor/ed_display.ml" 179 5617 5670
+)
+"editor/ed_display.ml" 177 5550 5556 "editor/ed_display.ml" 177 5550 5557
+type(
+  int
+)
+"editor/ed_display.ml" 177 5550 5562 "editor/ed_display.ml" 177 5550 5568
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 176 5504 5526 "editor/ed_display.ml" 176 5504 5532
+)
+"editor/ed_display.ml" 177 5550 5569 "editor/ed_display.ml" 177 5550 5574
+type(
+  float list
+)
+ident(
+  int_ref liste "editor/ed_display.ml" 176 5504 5533 "editor/ed_display.ml" 176 5504 5538
+)
+"editor/ed_display.ml" 177 5550 5561 "editor/ed_display.ml" 177 5550 5575
+type(
+  Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 178 5576 5582 "editor/ed_display.ml" 178 5576 5583
+type(
+  int
+)
+ident(
+  def n "editor/ed_display.ml" 178 5576 5586 "editor/ed_display.ml" 179 5617 5670
+)
+"editor/ed_display.ml" 178 5576 5590 "editor/ed_display.ml" 178 5576 5594
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 178 5576 5597 "editor/ed_display.ml" 178 5576 5604
+type(
+  Ed_hyper.turtle -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.advance
+)
+"editor/ed_display.ml" 178 5576 5605 "editor/ed_display.ml" 178 5576 5611
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 176 5504 5526 "editor/ed_display.ml" 176 5504 5532
+)
+"editor/ed_display.ml" 178 5576 5612 "editor/ed_display.ml" 178 5576 5613
+type(
+  float
+)
+ident(
+  int_ref d "editor/ed_display.ml" 175 5465 5471 "editor/ed_display.ml" 175 5465 5472
+)
+"editor/ed_display.ml" 178 5576 5597 "editor/ed_display.ml" 178 5576 5613
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 179 5617 5623 "editor/ed_display.ml" 179 5617 5634
+type(
+  Ed_hyper.turtle -> float list -> int -> Ed_hyper.turtle * float list
+)
+ident(
+  int_ref list_points "editor/ed_display.ml" 176 5504 5514 "editor/ed_display.ml" 176 5504 5525
+)
+"editor/ed_display.ml" 179 5617 5635 "editor/ed_display.ml" 179 5617 5639
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turt "editor/ed_display.ml" 178 5576 5590 "editor/ed_display.ml" 178 5576 5594
+)
+"editor/ed_display.ml" 179 5617 5641 "editor/ed_display.ml" 179 5617 5652
+type(
+  Ed_hyper.turtle -> float list -> float list
+)
+ident(
+  int_ref tlineto_gtk "editor/ed_display.ml" 164 5114 5118 "editor/ed_display.ml" 164 5114 5129
+)
+"editor/ed_display.ml" 179 5617 5653 "editor/ed_display.ml" 179 5617 5657
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turt "editor/ed_display.ml" 178 5576 5590 "editor/ed_display.ml" 178 5576 5594
+)
+"editor/ed_display.ml" 179 5617 5658 "editor/ed_display.ml" 179 5617 5663
+type(
+  float list
+)
+ident(
+  int_ref liste "editor/ed_display.ml" 176 5504 5533 "editor/ed_display.ml" 176 5504 5538
+)
+"editor/ed_display.ml" 179 5617 5640 "editor/ed_display.ml" 179 5617 5664
+call(
+  stack
+)
+type(
+  float list
+)
+"editor/ed_display.ml" 179 5617 5666 "editor/ed_display.ml" 179 5617 5667
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_display.ml" 178 5576 5582 "editor/ed_display.ml" 178 5576 5583
+)
+"editor/ed_display.ml" 179 5617 5667 "editor/ed_display.ml" 179 5617 5668
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"editor/ed_display.ml" 179 5617 5668 "editor/ed_display.ml" 179 5617 5669
+type(
+  int
+)
+"editor/ed_display.ml" 179 5617 5665 "editor/ed_display.ml" 179 5617 5670
+type(
+  int
+)
+"editor/ed_display.ml" 179 5617 5623 "editor/ed_display.ml" 179 5617 5670
+call(
+  tail
+)
+type(
+  Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 178 5576 5586 "editor/ed_display.ml" 179 5617 5670
+type(
+  Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 176 5504 5541 "editor/ed_display.ml" 179 5617 5670
+type(
+  int -> Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 181 5676 5682 "editor/ed_display.ml" 181 5676 5687
+type(
+  float list
+)
+"editor/ed_display.ml" 182 5691 5700 "editor/ed_display.ml" 182 5691 5701
+type(
+  int
+)
+"editor/ed_display.ml" 182 5691 5702 "editor/ed_display.ml" 182 5691 5703
+type(
+  int
+)
+"editor/ed_display.ml" 182 5691 5699 "editor/ed_display.ml" 182 5691 5704
+type(
+  int * int
+)
+"editor/ed_display.ml" 182 5691 5707 "editor/ed_display.ml" 182 5691 5718
+type(
+  Ed_hyper.coord -> int * int
+)
+ident(
+  int_ref from_turtle "editor/ed_display.ml" 134 4102 4106 "editor/ed_display.ml" 134 4102 4117
+)
+"editor/ed_display.ml" 182 5691 5719 "editor/ed_display.ml" 182 5691 5725
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 174 5413 5436 "editor/ed_display.ml" 174 5413 5442
+)
+"editor/ed_display.ml" 182 5691 5719 "editor/ed_display.ml" 182 5691 5729
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 182 5691 5707 "editor/ed_display.ml" 182 5691 5729
+call(
+  stack
+)
+type(
+  int * int
+)
+"editor/ed_display.ml" 182 5691 5735 "editor/ed_display.ml" 182 5691 5740
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 182 5691 5741 "editor/ed_display.ml" 182 5691 5742
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 182 5691 5700 "editor/ed_display.ml" 182 5691 5701
+)
+"editor/ed_display.ml" 182 5691 5734 "editor/ed_display.ml" 182 5691 5743
+type(
+  float
+)
+"editor/ed_display.ml" 182 5691 5746 "editor/ed_display.ml" 182 5691 5751
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 182 5691 5752 "editor/ed_display.ml" 182 5691 5753
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 182 5691 5702 "editor/ed_display.ml" 182 5691 5703
+)
+"editor/ed_display.ml" 182 5691 5745 "editor/ed_display.ml" 182 5691 5754
+type(
+  float
+)
+"editor/ed_display.ml" 182 5691 5733 "editor/ed_display.ml" 182 5691 5755
+type(
+  float list
+)
+"editor/ed_display.ml" 182 5691 5695 "editor/ed_display.ml" 182 5691 5755
+type(
+  float list
+)
+"editor/ed_display.ml" 183 5760 5766 "editor/ed_display.ml" 183 5760 5772
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 183 5760 5773 "editor/ed_display.ml" 183 5760 5780
+type(
+  float list
+)
+"editor/ed_display.ml" 183 5760 5766 "editor/ed_display.ml" 183 5760 5780
+type(
+  Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 183 5760 5783 "editor/ed_display.ml" 183 5760 5794
+type(
+  Ed_hyper.turtle -> float list -> int -> Ed_hyper.turtle * float list
+)
+ident(
+  int_ref list_points "editor/ed_display.ml" 176 5504 5514 "editor/ed_display.ml" 176 5504 5525
+)
+"editor/ed_display.ml" 183 5760 5795 "editor/ed_display.ml" 183 5760 5801
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 174 5413 5436 "editor/ed_display.ml" 174 5413 5442
+)
+"editor/ed_display.ml" 183 5760 5802 "editor/ed_display.ml" 183 5760 5807
+type(
+  float list
+)
+ident(
+  int_ref start "editor/ed_display.ml" 181 5676 5682 "editor/ed_display.ml" 181 5676 5687
+)
+"editor/ed_display.ml" 183 5760 5808 "editor/ed_display.ml" 183 5760 5813
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_display.ml" 174 5413 5452 "editor/ed_display.ml" 174 5413 5457
+)
+"editor/ed_display.ml" 183 5760 5783 "editor/ed_display.ml" 183 5760 5813
+call(
+  stack
+)
+type(
+  Ed_hyper.turtle * float list
+)
+"editor/ed_display.ml" 184 5817 5824 "editor/ed_display.ml" 184 5817 5830
+type(
+  float array
+)
+"editor/ed_display.ml" 184 5817 5833 "editor/ed_display.ml" 184 5817 5846
+type(
+  float list -> float array
+)
+ident(
+  ext_ref Array.of_list
+)
+"editor/ed_display.ml" 184 5817 5847 "editor/ed_display.ml" 184 5817 5854
+type(
+  float list
+)
+ident(
+  int_ref lpoints "editor/ed_display.ml" 183 5760 5773 "editor/ed_display.ml" 183 5760 5780
+)
+"editor/ed_display.ml" 184 5817 5833 "editor/ed_display.ml" 184 5817 5854
+call(
+  stack
+)
+type(
+  float array
+)
+"editor/ed_display.ml" 185 5858 5860 "editor/ed_display.ml" 185 5858 5864
+type(
+  'b
+)
+ident(
+  int_ref line "editor/ed_display.ml" 174 5413 5458 "editor/ed_display.ml" 174 5413 5462
+)
+"editor/ed_display.ml" 185 5858 5860 "editor/ed_display.ml" 185 5858 5868
+type(
+  ([> `POINTS of float array ] as 'c) list -> 'a
+)
+"editor/ed_display.ml" 185 5858 5878 "editor/ed_display.ml" 185 5858 5884
+type(
+  float array
+)
+ident(
+  int_ref points "editor/ed_display.ml" 184 5817 5824 "editor/ed_display.ml" 184 5817 5830
+)
+"editor/ed_display.ml" 185 5858 5870 "editor/ed_display.ml" 185 5858 5884
+type(
+  'c
+)
+"editor/ed_display.ml" 185 5858 5869 "editor/ed_display.ml" 185 5858 5885
+type(
+  'c list
+)
+"editor/ed_display.ml" 185 5858 5860 "editor/ed_display.ml" 185 5858 5885
+type(
+  'a
+)
+"editor/ed_display.ml" 184 5817 5820 "editor/ed_display.ml" 185 5858 5885
+type(
+  'a
+)
+"editor/ed_display.ml" 183 5760 5762 "editor/ed_display.ml" 185 5858 5885
+type(
+  'a
+)
+"editor/ed_display.ml" 181 5676 5678 "editor/ed_display.ml" 185 5858 5885
+type(
+  'a
+)
+"editor/ed_display.ml" 176 5504 5506 "editor/ed_display.ml" 185 5858 5885
+type(
+  'a
+)
+"editor/ed_display.ml" 175 5465 5467 "editor/ed_display.ml" 185 5858 5885
+type(
+  'a
+)
+"editor/ed_display.ml" 190 5976 5980 "editor/ed_display.ml" 190 5976 5991
+type(
+  polaire -> cartesien
+)
+ident(
+  def pol_to_cart "editor/ed_display.ml" 196 6067 6067 --
+)
+"editor/ed_display.ml" 190 5976 5992 "editor/ed_display.ml" 190 5976 5993
+type(
+  polaire
+)
+ident(
+  def p "editor/ed_display.ml" 191 5996 5996 "editor/ed_display.ml" 194 6064 6065
+)
+"editor/ed_display.ml" 192 5999 6005 "editor/ed_display.ml" 192 5999 6006
+type(
+  polaire
+)
+ident(
+  int_ref p "editor/ed_display.ml" 190 5976 5992 "editor/ed_display.ml" 190 5976 5993
+)
+"editor/ed_display.ml" 192 5999 6005 "editor/ed_display.ml" 192 5999 6013
+type(
+  float
+)
+"editor/ed_display.ml" 192 5999 6014 "editor/ed_display.ml" 192 5999 6016
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 192 5999 6018 "editor/ed_display.ml" 192 5999 6021
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.cos
+)
+"editor/ed_display.ml" 192 5999 6022 "editor/ed_display.ml" 192 5999 6023
+type(
+  polaire
+)
+ident(
+  int_ref p "editor/ed_display.ml" 190 5976 5992 "editor/ed_display.ml" 190 5976 5993
+)
+"editor/ed_display.ml" 192 5999 6022 "editor/ed_display.ml" 192 5999 6029
+type(
+  float
+)
+"editor/ed_display.ml" 192 5999 6017 "editor/ed_display.ml" 192 5999 6030
+type(
+  float
+)
+"editor/ed_display.ml" 192 5999 6005 "editor/ed_display.ml" 192 5999 6030
+type(
+  float
+)
+"editor/ed_display.ml" 193 6032 6038 "editor/ed_display.ml" 193 6032 6039
+type(
+  polaire
+)
+ident(
+  int_ref p "editor/ed_display.ml" 190 5976 5992 "editor/ed_display.ml" 190 5976 5993
+)
+"editor/ed_display.ml" 193 6032 6038 "editor/ed_display.ml" 193 6032 6046
+type(
+  float
+)
+"editor/ed_display.ml" 193 6032 6047 "editor/ed_display.ml" 193 6032 6049
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 193 6032 6051 "editor/ed_display.ml" 193 6032 6054
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sin
+)
+"editor/ed_display.ml" 193 6032 6055 "editor/ed_display.ml" 193 6032 6056
+type(
+  polaire
+)
+ident(
+  int_ref p "editor/ed_display.ml" 190 5976 5992 "editor/ed_display.ml" 190 5976 5993
+)
+"editor/ed_display.ml" 193 6032 6055 "editor/ed_display.ml" 193 6032 6062
+type(
+  float
+)
+"editor/ed_display.ml" 193 6032 6050 "editor/ed_display.ml" 193 6032 6063
+type(
+  float
+)
+"editor/ed_display.ml" 193 6032 6038 "editor/ed_display.ml" 193 6032 6063
+type(
+  float
+)
+"editor/ed_display.ml" 191 5996 5996 "editor/ed_display.ml" 194 6064 6065
+type(
+  cartesien
+)
+"editor/ed_display.ml" 196 6067 6071 "editor/ed_display.ml" 196 6067 6082
+type(
+  cartesien -> polaire
+)
+ident(
+  def cart_to_pol "editor/ed_display.ml" 205 6298 6298 --
+)
+"editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+type(
+  cartesien
+)
+ident(
+  def p "editor/ed_display.ml" 197 6087 6089 "editor/ed_display.ml" 201 6224 6225
+)
+"editor/ed_display.ml" 197 6087 6094 "editor/ed_display.ml" 197 6087 6100
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6103 "editor/ed_display.ml" 197 6087 6107
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sqrt
+)
+"editor/ed_display.ml" 197 6087 6109 "editor/ed_display.ml" 197 6087 6110
+type(
+  cartesien
+)
+ident(
+  int_ref p "editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+)
+"editor/ed_display.ml" 197 6087 6109 "editor/ed_display.ml" 197 6087 6112
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6113 "editor/ed_display.ml" 197 6087 6115
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 197 6087 6116 "editor/ed_display.ml" 197 6087 6117
+type(
+  cartesien
+)
+ident(
+  int_ref p "editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+)
+"editor/ed_display.ml" 197 6087 6116 "editor/ed_display.ml" 197 6087 6119
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6108 "editor/ed_display.ml" 197 6087 6120
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6121 "editor/ed_display.ml" 197 6087 6123
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 197 6087 6124 "editor/ed_display.ml" 197 6087 6125
+type(
+  cartesien
+)
+ident(
+  int_ref p "editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+)
+"editor/ed_display.ml" 197 6087 6124 "editor/ed_display.ml" 197 6087 6127
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6128 "editor/ed_display.ml" 197 6087 6130
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 197 6087 6131 "editor/ed_display.ml" 197 6087 6132
+type(
+  cartesien
+)
+ident(
+  int_ref p "editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+)
+"editor/ed_display.ml" 197 6087 6131 "editor/ed_display.ml" 197 6087 6134
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6123 "editor/ed_display.ml" 197 6087 6135
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6107 "editor/ed_display.ml" 197 6087 6136
+type(
+  float
+)
+"editor/ed_display.ml" 197 6087 6103 "editor/ed_display.ml" 197 6087 6136
+type(
+  float
+)
+"editor/ed_display.ml" 199 6142 6153 "editor/ed_display.ml" 199 6142 6159
+type(
+  float
+)
+ident(
+  int_ref radius "editor/ed_display.ml" 197 6087 6094 "editor/ed_display.ml" 197 6087 6100
+)
+"editor/ed_display.ml" 200 6161 6171 "editor/ed_display.ml" 200 6161 6173
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6174 "editor/ed_display.ml" 200 6161 6176
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 200 6161 6177 "editor/ed_display.ml" 200 6161 6180
+type(
+  float -> float
+)
+ident(
+  ext_ref Ed_hyper.ath
+)
+"editor/ed_display.ml" 200 6161 6183 "editor/ed_display.ml" 200 6161 6184
+type(
+  cartesien
+)
+ident(
+  int_ref p "editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+)
+"editor/ed_display.ml" 200 6161 6183 "editor/ed_display.ml" 200 6161 6186
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6187 "editor/ed_display.ml" 200 6161 6189
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 200 6161 6190 "editor/ed_display.ml" 200 6161 6196
+type(
+  float
+)
+ident(
+  int_ref radius "editor/ed_display.ml" 197 6087 6094 "editor/ed_display.ml" 197 6087 6100
+)
+"editor/ed_display.ml" 200 6161 6182 "editor/ed_display.ml" 200 6161 6197
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6198 "editor/ed_display.ml" 200 6161 6200
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 200 6161 6202 "editor/ed_display.ml" 200 6161 6204
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6205 "editor/ed_display.ml" 200 6161 6207
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 200 6161 6208 "editor/ed_display.ml" 200 6161 6209
+type(
+  cartesien
+)
+ident(
+  int_ref p "editor/ed_display.ml" 196 6067 6083 "editor/ed_display.ml" 196 6067 6084
+)
+"editor/ed_display.ml" 200 6161 6208 "editor/ed_display.ml" 200 6161 6211
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6212 "editor/ed_display.ml" 200 6161 6214
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 200 6161 6215 "editor/ed_display.ml" 200 6161 6221
+type(
+  float
+)
+ident(
+  int_ref radius "editor/ed_display.ml" 197 6087 6094 "editor/ed_display.ml" 197 6087 6100
+)
+"editor/ed_display.ml" 200 6161 6208 "editor/ed_display.ml" 200 6161 6221
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6201 "editor/ed_display.ml" 200 6161 6222
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6181 "editor/ed_display.ml" 200 6161 6223
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6177 "editor/ed_display.ml" 200 6161 6223
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_display.ml" 200 6161 6171 "editor/ed_display.ml" 200 6161 6223
+type(
+  float
+)
+"editor/ed_display.ml" 198 6140 6140 "editor/ed_display.ml" 201 6224 6225
+type(
+  polaire
+)
+"editor/ed_display.ml" 197 6087 6089 "editor/ed_display.ml" 201 6224 6225
+type(
+  polaire
+)
+"editor/ed_display.ml" 205 6298 6302 "editor/ed_display.ml" 205 6298 6317
+type(
+  Ed_hyper.turtle ->
+  Ed_hyper.turtle ->
+  GnomeCanvas.PathDef.t ->
+  < set : [> `BPATH of GnomeCanvas.PathDef.t ] list -> 'a; .. > -> 'a
+)
+ident(
+  def set_intern_edge "editor/ed_display.ml" 219 6837 6837 --
+)
+"editor/ed_display.ml" 205 6298 6318 "editor/ed_display.ml" 205 6298 6320
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def tv "editor/ed_display.ml" 205 6298 6321 "editor/ed_display.ml" 214 6739 6764
+)
+"editor/ed_display.ml" 205 6298 6321 "editor/ed_display.ml" 205 6298 6323
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def tw "editor/ed_display.ml" 205 6298 6324 "editor/ed_display.ml" 214 6739 6764
+)
+"editor/ed_display.ml" 205 6298 6324 "editor/ed_display.ml" 205 6298 6329
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  def bpath "editor/ed_display.ml" 205 6298 6330 "editor/ed_display.ml" 214 6739 6764
+)
+"editor/ed_display.ml" 205 6298 6330 "editor/ed_display.ml" 205 6298 6334
+type(
+  < set : [> `BPATH of GnomeCanvas.PathDef.t ] list -> 'a; .. > as 'b
+)
+ident(
+  def line "editor/ed_display.ml" 206 6337 6339 "editor/ed_display.ml" 214 6739 6764
+)
+"editor/ed_display.ml" 206 6337 6344 "editor/ed_display.ml" 206 6337 6345
+type(
+  float
+)
+"editor/ed_display.ml" 206 6337 6346 "editor/ed_display.ml" 206 6337 6347
+type(
+  float
+)
+"editor/ed_display.ml" 206 6337 6343 "editor/ed_display.ml" 206 6337 6348
+type(
+  float * float
+)
+"editor/ed_display.ml" 206 6337 6356 "editor/ed_display.ml" 206 6337 6357
+type(
+  int
+)
+"editor/ed_display.ml" 206 6337 6359 "editor/ed_display.ml" 206 6337 6360
+type(
+  int
+)
+"editor/ed_display.ml" 206 6337 6355 "editor/ed_display.ml" 206 6337 6362
+type(
+  int * int
+)
+"editor/ed_display.ml" 206 6337 6365 "editor/ed_display.ml" 206 6337 6376
+type(
+  Ed_hyper.coord -> int * int
+)
+ident(
+  int_ref from_turtle "editor/ed_display.ml" 134 4102 4106 "editor/ed_display.ml" 134 4102 4117
+)
+"editor/ed_display.ml" 206 6337 6377 "editor/ed_display.ml" 206 6337 6379
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_display.ml" 205 6298 6318 "editor/ed_display.ml" 205 6298 6320
+)
+"editor/ed_display.ml" 206 6337 6377 "editor/ed_display.ml" 206 6337 6383
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 206 6337 6365 "editor/ed_display.ml" 206 6337 6383
+call(
+  stack
+)
+type(
+  int * int
+)
+"editor/ed_display.ml" 206 6337 6389 "editor/ed_display.ml" 206 6337 6401
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float_of_int
+)
+"editor/ed_display.ml" 206 6337 6402 "editor/ed_display.ml" 206 6337 6403
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 206 6337 6356 "editor/ed_display.ml" 206 6337 6357
+)
+"editor/ed_display.ml" 206 6337 6388 "editor/ed_display.ml" 206 6337 6404
+type(
+  float
+)
+"editor/ed_display.ml" 206 6337 6406 "editor/ed_display.ml" 206 6337 6418
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float_of_int
+)
+"editor/ed_display.ml" 206 6337 6419 "editor/ed_display.ml" 206 6337 6420
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 206 6337 6359 "editor/ed_display.ml" 206 6337 6360
+)
+"editor/ed_display.ml" 206 6337 6405 "editor/ed_display.ml" 206 6337 6421
+type(
+  float
+)
+"editor/ed_display.ml" 206 6337 6387 "editor/ed_display.ml" 206 6337 6422
+type(
+  float * float
+)
+"editor/ed_display.ml" 206 6337 6351 "editor/ed_display.ml" 206 6337 6422
+type(
+  float * float
+)
+"editor/ed_display.ml" 207 6426 6433 "editor/ed_display.ml" 207 6426 6435
+type(
+  float
+)
+"editor/ed_display.ml" 207 6426 6436 "editor/ed_display.ml" 207 6426 6438
+type(
+  float
+)
+"editor/ed_display.ml" 207 6426 6432 "editor/ed_display.ml" 207 6426 6439
+type(
+  float * float
+)
+"editor/ed_display.ml" 207 6426 6447 "editor/ed_display.ml" 207 6426 6449
+type(
+  int
+)
+"editor/ed_display.ml" 207 6426 6450 "editor/ed_display.ml" 207 6426 6452
+type(
+  int
+)
+"editor/ed_display.ml" 207 6426 6446 "editor/ed_display.ml" 207 6426 6453
+type(
+  int * int
+)
+"editor/ed_display.ml" 207 6426 6456 "editor/ed_display.ml" 207 6426 6467
+type(
+  Ed_hyper.coord -> int * int
+)
+ident(
+  int_ref from_turtle "editor/ed_display.ml" 134 4102 4106 "editor/ed_display.ml" 134 4102 4117
+)
+"editor/ed_display.ml" 207 6426 6468 "editor/ed_display.ml" 207 6426 6470
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tw "editor/ed_display.ml" 205 6298 6321 "editor/ed_display.ml" 205 6298 6323
+)
+"editor/ed_display.ml" 207 6426 6468 "editor/ed_display.ml" 207 6426 6474
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 207 6426 6456 "editor/ed_display.ml" 207 6426 6474
+call(
+  stack
+)
+type(
+  int * int
+)
+"editor/ed_display.ml" 207 6426 6480 "editor/ed_display.ml" 207 6426 6492
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float_of_int
+)
+"editor/ed_display.ml" 207 6426 6493 "editor/ed_display.ml" 207 6426 6495
+type(
+  int
+)
+ident(
+  int_ref x' "editor/ed_display.ml" 207 6426 6447 "editor/ed_display.ml" 207 6426 6449
+)
+"editor/ed_display.ml" 207 6426 6479 "editor/ed_display.ml" 207 6426 6496
+type(
+  float
+)
+"editor/ed_display.ml" 207 6426 6498 "editor/ed_display.ml" 207 6426 6510
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float_of_int
+)
+"editor/ed_display.ml" 207 6426 6511 "editor/ed_display.ml" 207 6426 6513
+type(
+  int
+)
+ident(
+  int_ref y' "editor/ed_display.ml" 207 6426 6450 "editor/ed_display.ml" 207 6426 6452
+)
+"editor/ed_display.ml" 207 6426 6497 "editor/ed_display.ml" 207 6426 6514
+type(
+  float
+)
+"editor/ed_display.ml" 207 6426 6478 "editor/ed_display.ml" 207 6426 6515
+type(
+  float * float
+)
+"editor/ed_display.ml" 207 6426 6442 "editor/ed_display.ml" 207 6426 6515
+type(
+  float * float
+)
+"editor/ed_display.ml" 208 6519 6525 "editor/ed_display.ml" 208 6519 6529
+type(
+  float
+)
+"editor/ed_display.ml" 208 6519 6532 "editor/ed_display.ml" 208 6519 6536
+type(
+  float
+)
+"editor/ed_display.ml" 209 6540 6542 "editor/ed_display.ml" 209 6540 6567
+type(
+  GnomeCanvas.PathDef.t -> unit
+)
+ident(
+  ext_ref GnomeCanvas.PathDef.reset
+)
+"editor/ed_display.ml" 209 6540 6568 "editor/ed_display.ml" 209 6540 6573
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 205 6298 6324 "editor/ed_display.ml" 205 6298 6329
+)
+"editor/ed_display.ml" 209 6540 6542 "editor/ed_display.ml" 209 6540 6573
+type(
+  unit
+)
+"editor/ed_display.ml" 210 6575 6577 "editor/ed_display.ml" 210 6575 6603
+type(
+  GnomeCanvas.PathDef.t -> float -> float -> unit
+)
+ident(
+  ext_ref GnomeCanvas.PathDef.moveto
+)
+"editor/ed_display.ml" 210 6575 6604 "editor/ed_display.ml" 210 6575 6609
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 205 6298 6324 "editor/ed_display.ml" 205 6298 6329
+)
+"editor/ed_display.ml" 210 6575 6610 "editor/ed_display.ml" 210 6575 6611
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_display.ml" 206 6337 6344 "editor/ed_display.ml" 206 6337 6345
+)
+"editor/ed_display.ml" 210 6575 6612 "editor/ed_display.ml" 210 6575 6613
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_display.ml" 206 6337 6346 "editor/ed_display.ml" 206 6337 6347
+)
+"editor/ed_display.ml" 210 6575 6577 "editor/ed_display.ml" 210 6575 6613
+type(
+  unit
+)
+"editor/ed_display.ml" 211 6616 6618 "editor/ed_display.ml" 211 6616 6645
+type(
+  GnomeCanvas.PathDef.t ->
+  float -> float -> float -> float -> float -> float -> unit
+)
+ident(
+  ext_ref GnomeCanvas.PathDef.curveto
+)
+"editor/ed_display.ml" 211 6616 6646 "editor/ed_display.ml" 211 6616 6651
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 205 6298 6324 "editor/ed_display.ml" 205 6298 6329
+)
+"editor/ed_display.ml" 211 6616 6654 "editor/ed_display.ml" 211 6616 6655
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_display.ml" 206 6337 6344 "editor/ed_display.ml" 206 6337 6345
+)
+"editor/ed_display.ml" 211 6616 6655 "editor/ed_display.ml" 211 6616 6657
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 211 6616 6658 "editor/ed_display.ml" 211 6616 6660
+type(
+  float
+)
+ident(
+  int_ref x' "editor/ed_display.ml" 207 6426 6433 "editor/ed_display.ml" 207 6426 6435
+)
+"editor/ed_display.ml" 211 6616 6653 "editor/ed_display.ml" 211 6616 6661
+type(
+  float
+)
+"editor/ed_display.ml" 211 6616 6661 "editor/ed_display.ml" 211 6616 6663
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 211 6616 6663 "editor/ed_display.ml" 211 6616 6667
+type(
+  float
+)
+ident(
+  int_ref rate "editor/ed_display.ml" 208 6519 6525 "editor/ed_display.ml" 208 6519 6529
+)
+"editor/ed_display.ml" 211 6616 6652 "editor/ed_display.ml" 211 6616 6668
+type(
+  float
+)
+"editor/ed_display.ml" 211 6616 6671 "editor/ed_display.ml" 211 6616 6672
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_display.ml" 206 6337 6346 "editor/ed_display.ml" 206 6337 6347
+)
+"editor/ed_display.ml" 211 6616 6673 "editor/ed_display.ml" 211 6616 6675
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 211 6616 6676 "editor/ed_display.ml" 211 6616 6678
+type(
+  float
+)
+ident(
+  int_ref y' "editor/ed_display.ml" 207 6426 6436 "editor/ed_display.ml" 207 6426 6438
+)
+"editor/ed_display.ml" 211 6616 6670 "editor/ed_display.ml" 211 6616 6679
+type(
+  float
+)
+"editor/ed_display.ml" 211 6616 6679 "editor/ed_display.ml" 211 6616 6681
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 211 6616 6681 "editor/ed_display.ml" 211 6616 6685
+type(
+  float
+)
+ident(
+  int_ref rate "editor/ed_display.ml" 208 6519 6525 "editor/ed_display.ml" 208 6519 6529
+)
+"editor/ed_display.ml" 211 6616 6669 "editor/ed_display.ml" 211 6616 6686
+type(
+  float
+)
+"editor/ed_display.ml" 212 6688 6694 "editor/ed_display.ml" 212 6688 6695
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_display.ml" 206 6337 6344 "editor/ed_display.ml" 206 6337 6345
+)
+"editor/ed_display.ml" 212 6688 6697 "editor/ed_display.ml" 212 6688 6699
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 212 6688 6699 "editor/ed_display.ml" 212 6688 6701
+type(
+  float
+)
+ident(
+  int_ref x' "editor/ed_display.ml" 207 6426 6433 "editor/ed_display.ml" 207 6426 6435
+)
+"editor/ed_display.ml" 212 6688 6693 "editor/ed_display.ml" 212 6688 6702
+type(
+  float
+)
+"editor/ed_display.ml" 212 6688 6702 "editor/ed_display.ml" 212 6688 6704
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 212 6688 6704 "editor/ed_display.ml" 212 6688 6708
+type(
+  float
+)
+ident(
+  int_ref rate "editor/ed_display.ml" 208 6519 6525 "editor/ed_display.ml" 208 6519 6529
+)
+"editor/ed_display.ml" 212 6688 6692 "editor/ed_display.ml" 212 6688 6709
+type(
+  float
+)
+"editor/ed_display.ml" 212 6688 6712 "editor/ed_display.ml" 212 6688 6713
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_display.ml" 206 6337 6346 "editor/ed_display.ml" 206 6337 6347
+)
+"editor/ed_display.ml" 212 6688 6714 "editor/ed_display.ml" 212 6688 6716
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 212 6688 6717 "editor/ed_display.ml" 212 6688 6719
+type(
+  float
+)
+ident(
+  int_ref y' "editor/ed_display.ml" 207 6426 6436 "editor/ed_display.ml" 207 6426 6438
+)
+"editor/ed_display.ml" 212 6688 6711 "editor/ed_display.ml" 212 6688 6720
+type(
+  float
+)
+"editor/ed_display.ml" 212 6688 6720 "editor/ed_display.ml" 212 6688 6722
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 212 6688 6722 "editor/ed_display.ml" 212 6688 6726
+type(
+  float
+)
+ident(
+  int_ref rate "editor/ed_display.ml" 208 6519 6525 "editor/ed_display.ml" 208 6519 6529
+)
+"editor/ed_display.ml" 212 6688 6710 "editor/ed_display.ml" 212 6688 6727
+type(
+  float
+)
+"editor/ed_display.ml" 213 6728 6732 "editor/ed_display.ml" 213 6728 6734
+type(
+  float
+)
+ident(
+  int_ref x' "editor/ed_display.ml" 207 6426 6433 "editor/ed_display.ml" 207 6426 6435
+)
+"editor/ed_display.ml" 213 6728 6735 "editor/ed_display.ml" 213 6728 6737
+type(
+  float
+)
+ident(
+  int_ref y' "editor/ed_display.ml" 207 6426 6436 "editor/ed_display.ml" 207 6426 6438
+)
+"editor/ed_display.ml" 211 6616 6618 "editor/ed_display.ml" 213 6728 6737
+type(
+  unit
+)
+"editor/ed_display.ml" 214 6739 6741 "editor/ed_display.ml" 214 6739 6745
+type(
+  'b
+)
+ident(
+  int_ref line "editor/ed_display.ml" 205 6298 6330 "editor/ed_display.ml" 205 6298 6334
+)
+"editor/ed_display.ml" 214 6739 6741 "editor/ed_display.ml" 214 6739 6749
+type(
+  ([> `BPATH of GnomeCanvas.PathDef.t ] as 'c) list -> 'a
+)
+"editor/ed_display.ml" 214 6739 6758 "editor/ed_display.ml" 214 6739 6763
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 205 6298 6324 "editor/ed_display.ml" 205 6298 6329
+)
+"editor/ed_display.ml" 214 6739 6751 "editor/ed_display.ml" 214 6739 6763
+type(
+  'c
+)
+"editor/ed_display.ml" 214 6739 6750 "editor/ed_display.ml" 214 6739 6764
+type(
+  'c list
+)
+"editor/ed_display.ml" 214 6739 6741 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 211 6616 6618 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 210 6575 6577 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 209 6540 6542 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 208 6519 6521 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 207 6426 6428 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 206 6337 6339 "editor/ed_display.ml" 214 6739 6764
+type(
+  'a
+)
+"editor/ed_display.ml" 219 6837 6841 "editor/ed_display.ml" 219 6837 6857
+type(
+  Ed_graph.H.key -> Ed_hyper.turtle -> GnoCanvas.group
+)
+ident(
+  def tdraw_string_gtk "editor/ed_display.ml" 235 7416 7416 --
+)
+"editor/ed_display.ml" 219 6837 6858 "editor/ed_display.ml" 219 6837 6859
+type(
+  Ed_graph.H.key
+)
+ident(
+  def v "editor/ed_display.ml" 219 6837 6860 "editor/ed_display.ml" 233 7404 7410
+)
+"editor/ed_display.ml" 219 6837 6860 "editor/ed_display.ml" 219 6837 6866
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def turtle "editor/ed_display.ml" 220 6870 6872 "editor/ed_display.ml" 233 7404 7410
+)
+"editor/ed_display.ml" 220 6870 6876 "editor/ed_display.ml" 220 6870 6880
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 220 6870 6881 "editor/ed_display.ml" 220 6870 6888
+type(
+  GnoCanvas.ellipse
+)
+"editor/ed_display.ml" 220 6870 6889 "editor/ed_display.ml" 220 6870 6894
+type(
+  GnoCanvas.text
+)
+"editor/ed_display.ml" 220 6870 6876 "editor/ed_display.ml" 220 6870 6894
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 220 6870 6897 "editor/ed_display.ml" 220 6870 6903
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t ->
+  Ed_graph.H.key -> GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+ident(
+  ext_ref Ed_graph.H.find
+)
+"editor/ed_display.ml" 220 6870 6904 "editor/ed_display.ml" 220 6870 6909
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  int_ref nodes "editor/ed_display.ml" 120 3798 3802 "editor/ed_display.ml" 120 3798 3807
+)
+"editor/ed_display.ml" 220 6870 6910 "editor/ed_display.ml" 220 6870 6911
+type(
+  Ed_graph.H.key
+)
+ident(
+  int_ref v "editor/ed_display.ml" 219 6837 6858 "editor/ed_display.ml" 219 6837 6859
+)
+"editor/ed_display.ml" 220 6870 6897 "editor/ed_display.ml" 220 6870 6911
+call(
+  stack
+)
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 221 6917 6919 "editor/ed_display.ml" 221 6917 6930
+type(
+  Ed_hyper.turtle -> unit
+)
+ident(
+  int_ref tmoveto_gtk "editor/ed_display.ml" 153 4752 4756 "editor/ed_display.ml" 153 4752 4767
+)
+"editor/ed_display.ml" 221 6917 6931 "editor/ed_display.ml" 221 6917 6937
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turtle "editor/ed_display.ml" 219 6837 6860 "editor/ed_display.ml" 219 6837 6866
+)
+"editor/ed_display.ml" 221 6917 6919 "editor/ed_display.ml" 221 6917 6937
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 222 6941 6947 "editor/ed_display.ml" 222 6941 6953
+type(
+  float
+)
+"editor/ed_display.ml" 222 6941 6957 "editor/ed_display.ml" 222 6941 6970
+type(
+  Ed_hyper.coord -> float
+)
+ident(
+  ext_ref Ed_hyper.shrink_factor
+)
+"editor/ed_display.ml" 222 6941 6973 "editor/ed_display.ml" 222 6941 6982
+type(
+  Ed_graph.H.key -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 222 6941 6983 "editor/ed_display.ml" 222 6941 6984
+type(
+  Ed_graph.H.key
+)
+ident(
+  int_ref v "editor/ed_display.ml" 219 6837 6858 "editor/ed_display.ml" 219 6837 6859
+)
+"editor/ed_display.ml" 222 6941 6972 "editor/ed_display.ml" 222 6941 6985
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 222 6941 6972 "editor/ed_display.ml" 222 6941 6992
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 222 6941 6971 "editor/ed_display.ml" 222 6941 6997
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 222 6941 6956 "editor/ed_display.ml" 222 6941 6998
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_display.ml" 223 7002 7008 "editor/ed_display.ml" 223 7002 7014
+type(
+  float
+)
+"editor/ed_display.ml" 223 7002 7020 "editor/ed_display.ml" 223 7002 7026
+type(
+  float
+)
+ident(
+  int_ref factor "editor/ed_display.ml" 222 6941 6947 "editor/ed_display.ml" 222 6941 6953
+)
+"editor/ed_display.ml" 223 7002 7027 "editor/ed_display.ml" 223 7002 7028
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"editor/ed_display.ml" 223 7002 7029 "editor/ed_display.ml" 223 7002 7032
+type(
+  float
+)
+"editor/ed_display.ml" 223 7002 7020 "editor/ed_display.ml" 223 7002 7032
+type(
+  bool
+)
+"editor/ed_display.ml" 223 7002 7038 "editor/ed_display.ml" 223 7002 7041
+type(
+  float
+)
+"editor/ed_display.ml" 223 7002 7047 "editor/ed_display.ml" 223 7002 7053
+type(
+  float
+)
+ident(
+  int_ref factor "editor/ed_display.ml" 222 6941 6947 "editor/ed_display.ml" 222 6941 6953
+)
+"editor/ed_display.ml" 223 7002 7017 "editor/ed_display.ml" 223 7002 7053
+type(
+  float
+)
+"editor/ed_display.ml" 224 7057 7063 "editor/ed_display.ml" 224 7057 7064
+type(
+  float
+)
+"editor/ed_display.ml" 224 7057 7067 "editor/ed_display.ml" 224 7057 7073
+type(
+  float
+)
+ident(
+  int_ref factor "editor/ed_display.ml" 223 7002 7008 "editor/ed_display.ml" 223 7002 7014
+)
+"editor/ed_display.ml" 224 7057 7073 "editor/ed_display.ml" 224 7057 7075
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_display.ml" 224 7057 7076 "editor/ed_display.ml" 224 7057 7091
+type(
+  float
+)
+ident(
+  int_ref point_size_text "editor/ed_display.ml" 109 3533 3537 "editor/ed_display.ml" 109 3533 3552
+)
+"editor/ed_display.ml" 224 7057 7067 "editor/ed_display.ml" 224 7057 7091
+type(
+  float
+)
+"editor/ed_display.ml" 225 7095 7097 "editor/ed_display.ml" 225 7095 7102
+type(
+  GnoCanvas.text
+)
+ident(
+  int_ref texte "editor/ed_display.ml" 220 6870 6889 "editor/ed_display.ml" 220 6870 6894
+)
+"editor/ed_display.ml" 225 7095 7097 "editor/ed_display.ml" 225 7095 7106
+type(
+  GnomeCanvas.text_p list -> unit
+)
+"editor/ed_display.ml" 225 7095 7121 "editor/ed_display.ml" 225 7095 7122
+type(
+  float
+)
+ident(
+  int_ref w "editor/ed_display.ml" 224 7057 7063 "editor/ed_display.ml" 224 7057 7064
+)
+"editor/ed_display.ml" 225 7095 7108 "editor/ed_display.ml" 225 7095 7122
+type(
+  GnomeCanvas.text_p
+)
+"editor/ed_display.ml" 225 7095 7107 "editor/ed_display.ml" 225 7095 7124
+type(
+  GnomeCanvas.text_p list
+)
+"editor/ed_display.ml" 225 7095 7097 "editor/ed_display.ml" 225 7095 7124
+type(
+  unit
+)
+"editor/ed_display.ml" 226 7126 7132 "editor/ed_display.ml" 226 7126 7133
+type(
+  float
+)
+"editor/ed_display.ml" 226 7126 7136 "editor/ed_display.ml" 226 7126 7141
+type(
+  GnoCanvas.text
+)
+ident(
+  int_ref texte "editor/ed_display.ml" 220 6870 6889 "editor/ed_display.ml" 220 6870 6894
+)
+"editor/ed_display.ml" 226 7126 7136 "editor/ed_display.ml" 226 7126 7152
+type(
+  float
+)
+"editor/ed_display.ml" 227 7157 7163 "editor/ed_display.ml" 227 7157 7164
+type(
+  float
+)
+"editor/ed_display.ml" 227 7157 7167 "editor/ed_display.ml" 227 7157 7172
+type(
+  GnoCanvas.text
+)
+ident(
+  int_ref texte "editor/ed_display.ml" 220 6870 6889 "editor/ed_display.ml" 220 6870 6894
+)
+"editor/ed_display.ml" 227 7157 7167 "editor/ed_display.ml" 227 7157 7184
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7190 "editor/ed_display.ml" 228 7188 7197
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  int_ref ellipse "editor/ed_display.ml" 220 6870 6881 "editor/ed_display.ml" 220 6870 6888
+)
+"editor/ed_display.ml" 228 7188 7190 "editor/ed_display.ml" 228 7188 7201
+type(
+  GnomeCanvas.re_p list -> unit
+)
+"editor/ed_display.ml" 228 7188 7210 "editor/ed_display.ml" 228 7188 7212
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_display.ml" 228 7188 7214 "editor/ed_display.ml" 228 7188 7215
+type(
+  float
+)
+ident(
+  int_ref w "editor/ed_display.ml" 226 7126 7132 "editor/ed_display.ml" 226 7126 7133
+)
+"editor/ed_display.ml" 228 7188 7215 "editor/ed_display.ml" 228 7188 7217
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 228 7188 7217 "editor/ed_display.ml" 228 7188 7219
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7212 "editor/ed_display.ml" 228 7188 7220
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7210 "editor/ed_display.ml" 228 7188 7220
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7220 "editor/ed_display.ml" 228 7188 7222
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 228 7188 7222 "editor/ed_display.ml" 228 7188 7224
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7209 "editor/ed_display.ml" 228 7188 7225
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7204 "editor/ed_display.ml" 228 7188 7225
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 228 7188 7233 "editor/ed_display.ml" 228 7188 7234
+type(
+  float
+)
+ident(
+  int_ref w "editor/ed_display.ml" 226 7126 7132 "editor/ed_display.ml" 226 7126 7133
+)
+"editor/ed_display.ml" 228 7188 7234 "editor/ed_display.ml" 228 7188 7236
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 228 7188 7236 "editor/ed_display.ml" 228 7188 7238
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7232 "editor/ed_display.ml" 228 7188 7239
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7239 "editor/ed_display.ml" 228 7188 7241
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 228 7188 7241 "editor/ed_display.ml" 228 7188 7243
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7231 "editor/ed_display.ml" 228 7188 7244
+type(
+  float
+)
+"editor/ed_display.ml" 228 7188 7227 "editor/ed_display.ml" 228 7188 7244
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 229 7246 7254 "editor/ed_display.ml" 229 7246 7256
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_display.ml" 229 7246 7258 "editor/ed_display.ml" 229 7246 7259
+type(
+  float
+)
+ident(
+  int_ref h "editor/ed_display.ml" 227 7157 7163 "editor/ed_display.ml" 227 7157 7164
+)
+"editor/ed_display.ml" 229 7246 7259 "editor/ed_display.ml" 229 7246 7261
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 229 7246 7261 "editor/ed_display.ml" 229 7246 7263
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7256 "editor/ed_display.ml" 229 7246 7264
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7254 "editor/ed_display.ml" 229 7246 7264
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7264 "editor/ed_display.ml" 229 7246 7266
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 229 7246 7266 "editor/ed_display.ml" 229 7246 7268
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7253 "editor/ed_display.ml" 229 7246 7269
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7248 "editor/ed_display.ml" 229 7246 7269
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 229 7246 7277 "editor/ed_display.ml" 229 7246 7278
+type(
+  float
+)
+ident(
+  int_ref h "editor/ed_display.ml" 227 7157 7163 "editor/ed_display.ml" 227 7157 7164
+)
+"editor/ed_display.ml" 229 7246 7278 "editor/ed_display.ml" 229 7246 7280
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 229 7246 7280 "editor/ed_display.ml" 229 7246 7282
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7276 "editor/ed_display.ml" 229 7246 7283
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7283 "editor/ed_display.ml" 229 7246 7285
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 229 7246 7285 "editor/ed_display.ml" 229 7246 7287
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7275 "editor/ed_display.ml" 229 7246 7288
+type(
+  float
+)
+"editor/ed_display.ml" 229 7246 7271 "editor/ed_display.ml" 229 7246 7288
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 228 7188 7202 "editor/ed_display.ml" 229 7246 7289
+type(
+  GnomeCanvas.re_p list
+)
+"editor/ed_display.ml" 228 7188 7190 "editor/ed_display.ml" 229 7246 7289
+type(
+  unit
+)
+"editor/ed_display.ml" 230 7291 7298 "editor/ed_display.ml" 230 7291 7299
+type(
+  int
+)
+"editor/ed_display.ml" 230 7291 7300 "editor/ed_display.ml" 230 7291 7301
+type(
+  int
+)
+"editor/ed_display.ml" 230 7291 7297 "editor/ed_display.ml" 230 7291 7302
+type(
+  int * int
+)
+"editor/ed_display.ml" 230 7291 7305 "editor/ed_display.ml" 230 7291 7306
+type(
+  (int * int) ref -> int * int
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 230 7291 7306 "editor/ed_display.ml" 230 7291 7319
+type(
+  (int * int) ref
+)
+ident(
+  int_ref current_point "editor/ed_display.ml" 147 4576 4580 "editor/ed_display.ml" 147 4576 4593
+)
+"editor/ed_display.ml" 230 7291 7305 "editor/ed_display.ml" 230 7291 7319
+type(
+  int * int
+)
+"editor/ed_display.ml" 231 7323 7325 "editor/ed_display.ml" 231 7323 7329
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node "editor/ed_display.ml" 220 6870 6876 "editor/ed_display.ml" 220 6870 6880
+)
+"editor/ed_display.ml" 231 7323 7325 "editor/ed_display.ml" 231 7323 7334
+type(
+  x:float -> y:float -> unit
+)
+"editor/ed_display.ml" 231 7323 7339 "editor/ed_display.ml" 231 7323 7344
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 231 7323 7345 "editor/ed_display.ml" 231 7323 7346
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 230 7291 7298 "editor/ed_display.ml" 230 7291 7299
+)
+"editor/ed_display.ml" 231 7323 7338 "editor/ed_display.ml" 231 7323 7347
+type(
+  float
+)
+"editor/ed_display.ml" 231 7323 7352 "editor/ed_display.ml" 231 7323 7357
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 231 7323 7358 "editor/ed_display.ml" 231 7323 7359
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 230 7291 7300 "editor/ed_display.ml" 230 7291 7301
+)
+"editor/ed_display.ml" 231 7323 7351 "editor/ed_display.ml" 231 7323 7360
+type(
+  float
+)
+"editor/ed_display.ml" 231 7323 7325 "editor/ed_display.ml" 231 7323 7360
+type(
+  unit
+)
+"editor/ed_display.ml" 232 7362 7364 "editor/ed_display.ml" 232 7362 7368
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node "editor/ed_display.ml" 220 6870 6876 "editor/ed_display.ml" 220 6870 6880
+)
+"editor/ed_display.ml" 232 7362 7364 "editor/ed_display.ml" 232 7362 7372
+type(
+  GnomeCanvas.group_p list -> unit
+)
+"editor/ed_display.ml" 232 7362 7379 "editor/ed_display.ml" 232 7362 7384
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 232 7362 7385 "editor/ed_display.ml" 232 7362 7386
+type(
+  int
+)
+ident(
+  int_ref x "editor/ed_display.ml" 230 7291 7298 "editor/ed_display.ml" 230 7291 7299
+)
+"editor/ed_display.ml" 232 7362 7378 "editor/ed_display.ml" 232 7362 7387
+type(
+  float
+)
+"editor/ed_display.ml" 232 7362 7375 "editor/ed_display.ml" 232 7362 7387
+type(
+  GnomeCanvas.group_p
+)
+"editor/ed_display.ml" 232 7362 7393 "editor/ed_display.ml" 232 7362 7398
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_display.ml" 232 7362 7399 "editor/ed_display.ml" 232 7362 7400
+type(
+  int
+)
+ident(
+  int_ref y "editor/ed_display.ml" 230 7291 7300 "editor/ed_display.ml" 230 7291 7301
+)
+"editor/ed_display.ml" 232 7362 7392 "editor/ed_display.ml" 232 7362 7401
+type(
+  float
+)
+"editor/ed_display.ml" 232 7362 7389 "editor/ed_display.ml" 232 7362 7401
+type(
+  GnomeCanvas.group_p
+)
+"editor/ed_display.ml" 232 7362 7374 "editor/ed_display.ml" 232 7362 7402
+type(
+  GnomeCanvas.group_p list
+)
+"editor/ed_display.ml" 232 7362 7364 "editor/ed_display.ml" 232 7362 7402
+type(
+  unit
+)
+"editor/ed_display.ml" 233 7404 7406 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node "editor/ed_display.ml" 220 6870 6876 "editor/ed_display.ml" 220 6870 6880
+)
+"editor/ed_display.ml" 232 7362 7364 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 231 7323 7325 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 230 7291 7293 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 228 7188 7190 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 227 7157 7159 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 226 7126 7128 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 225 7095 7097 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 224 7057 7059 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 223 7002 7004 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 222 6941 6943 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 221 6917 6919 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 220 6870 6872 "editor/ed_display.ml" 233 7404 7410
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 235 7416 7420 "editor/ed_display.ml" 235 7416 7428
+type(
+  #GnoCanvas.group -> Ed_graph.H.key -> unit
+)
+ident(
+  def add_node "editor/ed_display.ml" 248 7852 7852 --
+)
+"editor/ed_display.ml" 235 7416 7429 "editor/ed_display.ml" 235 7416 7435
+type(
+  #GnoCanvas.group as 'a
+)
+ident(
+  def canvas "editor/ed_display.ml" 235 7416 7436 "editor/ed_display.ml" 246 7808 7850
+)
+"editor/ed_display.ml" 235 7416 7436 "editor/ed_display.ml" 235 7416 7437
+type(
+  Ed_graph.H.key
+)
+ident(
+  def v "editor/ed_display.ml" 236 7440 7442 "editor/ed_display.ml" 246 7808 7850
+)
+"editor/ed_display.ml" 236 7440 7446 "editor/ed_display.ml" 236 7440 7447
+type(
+  string
+)
+"editor/ed_display.ml" 236 7440 7450 "editor/ed_display.ml" 236 7440 7465
+type(
+  Ed_graph.H.key -> string
+)
+ident(
+  ext_ref Ed_graph.string_of_label
+)
+"editor/ed_display.ml" 236 7440 7466 "editor/ed_display.ml" 236 7440 7467
+type(
+  Ed_graph.H.key
+)
+ident(
+  int_ref v "editor/ed_display.ml" 235 7416 7436 "editor/ed_display.ml" 235 7416 7437
+)
+"editor/ed_display.ml" 236 7440 7450 "editor/ed_display.ml" 236 7440 7467
+call(
+  stack
+)
+type(
+  string
+)
+"editor/ed_display.ml" 237 7471 7477 "editor/ed_display.ml" 237 7471 7487
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 237 7471 7490 "editor/ed_display.ml" 237 7471 7505
+type(
+  ?x:float -> ?y:float -> 'a -> GnoCanvas.group
+)
+ident(
+  ext_ref GnoCanvas.group
+)
+"editor/ed_display.ml" 237 7471 7509 "editor/ed_display.ml" 237 7471 7512
+type(
+  float
+)
+"editor/ed_display.ml" 237 7471 7516 "editor/ed_display.ml" 237 7471 7519
+type(
+  float
+)
+"editor/ed_display.ml" 237 7471 7520 "editor/ed_display.ml" 237 7471 7526
+type(
+  'a
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 235 7416 7429 "editor/ed_display.ml" 235 7416 7435
+)
+"editor/ed_display.ml" 237 7471 7490 "editor/ed_display.ml" 237 7471 7526
+call(
+  stack
+)
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 238 7530 7536 "editor/ed_display.ml" 238 7530 7543
+type(
+  GnoCanvas.ellipse
+)
+"editor/ed_display.ml" 238 7530 7546 "editor/ed_display.ml" 238 7530 7563
+type(
+  ?x1:float ->
+  ?y1:float ->
+  ?x2:float ->
+  ?y2:float ->
+  ?fill_color:string ->
+  ?props:GnomeCanvas.re_p list -> GnoCanvas.group -> GnoCanvas.ellipse
+)
+ident(
+  ext_ref GnoCanvas.ellipse
+)
+"editor/ed_display.ml" 239 7565 7590 "editor/ed_display.ml" 239 7565 7602
+type(
+  string
+)
+ident(
+  int_ref color_vertex "editor/ed_display.ml" 91 2999 3003 "editor/ed_display.ml" 91 2999 3015
+)
+"editor/ed_display.ml" 239 7565 7578 "editor/ed_display.ml" 239 7565 7602
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 239 7565 7620 "editor/ed_display.ml" 239 7565 7627
+type(
+  string
+)
+"editor/ed_display.ml" 239 7565 7605 "editor/ed_display.ml" 239 7565 7627
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 240 7631 7651 "editor/ed_display.ml" 240 7631 7652
+type(
+  int
+)
+"editor/ed_display.ml" 240 7631 7637 "editor/ed_display.ml" 240 7631 7652
+type(
+  GnomeCanvas.re_p
+)
+"editor/ed_display.ml" 239 7565 7576 "editor/ed_display.ml" 240 7631 7654
+type(
+  GnomeCanvas.re_p list
+)
+"editor/ed_display.ml" 240 7631 7655 "editor/ed_display.ml" 240 7631 7665
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node_group "editor/ed_display.ml" 237 7471 7477 "editor/ed_display.ml" 237 7471 7487
+)
+"editor/ed_display.ml" 238 7530 7546 "editor/ed_display.ml" 240 7631 7665
+call(
+  stack
+)
+type(
+  GnoCanvas.ellipse
+)
+"editor/ed_display.ml" 242 7673 7679 "editor/ed_display.ml" 242 7673 7684
+type(
+  GnoCanvas.text
+)
+"editor/ed_display.ml" 242 7673 7687 "editor/ed_display.ml" 242 7673 7701
+type(
+  ?x:float ->
+  ?y:float ->
+  ?text:string ->
+  ?font:string ->
+  ?size:int ->
+  ?anchor:Gtk.Tags.anchor_type ->
+  ?props:GnomeCanvas.text_p list -> GnoCanvas.group -> GnoCanvas.text
+)
+ident(
+  ext_ref GnoCanvas.text
+)
+"editor/ed_display.ml" 242 7673 7713 "editor/ed_display.ml" 242 7673 7716
+type(
+  float
+)
+"editor/ed_display.ml" 242 7673 7710 "editor/ed_display.ml" 242 7673 7716
+type(
+  GnomeCanvas.text_p
+)
+"editor/ed_display.ml" 242 7673 7721 "editor/ed_display.ml" 242 7673 7724
+type(
+  float
+)
+"editor/ed_display.ml" 242 7673 7718 "editor/ed_display.ml" 242 7673 7724
+type(
+  GnomeCanvas.text_p
+)
+"editor/ed_display.ml" 242 7673 7733 "editor/ed_display.ml" 242 7673 7734
+type(
+  string
+)
+ident(
+  int_ref s "editor/ed_display.ml" 236 7440 7446 "editor/ed_display.ml" 236 7440 7447
+)
+"editor/ed_display.ml" 242 7673 7727 "editor/ed_display.ml" 242 7673 7734
+type(
+  GnomeCanvas.text_p
+)
+"editor/ed_display.ml" 243 7738 7759 "editor/ed_display.ml" 243 7738 7769
+type(
+  string
+)
+ident(
+  int_ref color_text "editor/ed_display.ml" 105 3452 3456 "editor/ed_display.ml" 105 3452 3466
+)
+"editor/ed_display.ml" 243 7738 7747 "editor/ed_display.ml" 243 7738 7769
+type(
+  GnomeCanvas.text_p
+)
+"editor/ed_display.ml" 242 7673 7709 "editor/ed_display.ml" 243 7738 7770
+type(
+  GnomeCanvas.text_p list
+)
+"editor/ed_display.ml" 243 7738 7771 "editor/ed_display.ml" 243 7738 7781
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node_group "editor/ed_display.ml" 237 7471 7477 "editor/ed_display.ml" 237 7471 7487
+)
+"editor/ed_display.ml" 242 7673 7687 "editor/ed_display.ml" 243 7738 7781
+call(
+  stack
+)
+type(
+  GnoCanvas.text
+)
+"editor/ed_display.ml" 245 7787 7789 "editor/ed_display.ml" 245 7787 7799
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node_group "editor/ed_display.ml" 237 7471 7477 "editor/ed_display.ml" 237 7471 7487
+)
+"editor/ed_display.ml" 245 7787 7789 "editor/ed_display.ml" 245 7787 7804
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 245 7787 7804 "editor/ed_display.ml" 245 7787 7806
+type(
+  unit
+)
+"editor/ed_display.ml" 245 7787 7789 "editor/ed_display.ml" 245 7787 7806
+type(
+  unit
+)
+"editor/ed_display.ml" 246 7808 7810 "editor/ed_display.ml" 246 7808 7815
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t ->
+  Ed_graph.H.key ->
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text -> unit
+)
+ident(
+  ext_ref Ed_graph.H.add
+)
+"editor/ed_display.ml" 246 7808 7816 "editor/ed_display.ml" 246 7808 7821
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  int_ref nodes "editor/ed_display.ml" 120 3798 3802 "editor/ed_display.ml" 120 3798 3807
+)
+"editor/ed_display.ml" 246 7808 7822 "editor/ed_display.ml" 246 7808 7823
+type(
+  Ed_graph.H.key
+)
+ident(
+  int_ref v "editor/ed_display.ml" 235 7416 7436 "editor/ed_display.ml" 235 7416 7437
+)
+"editor/ed_display.ml" 246 7808 7825 "editor/ed_display.ml" 246 7808 7835
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node_group "editor/ed_display.ml" 237 7471 7477 "editor/ed_display.ml" 237 7471 7487
+)
+"editor/ed_display.ml" 246 7808 7836 "editor/ed_display.ml" 246 7808 7843
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  int_ref ellipse "editor/ed_display.ml" 238 7530 7536 "editor/ed_display.ml" 238 7530 7543
+)
+"editor/ed_display.ml" 246 7808 7844 "editor/ed_display.ml" 246 7808 7849
+type(
+  GnoCanvas.text
+)
+ident(
+  int_ref texte "editor/ed_display.ml" 242 7673 7679 "editor/ed_display.ml" 242 7673 7684
+)
+"editor/ed_display.ml" 246 7808 7824 "editor/ed_display.ml" 246 7808 7850
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 246 7808 7810 "editor/ed_display.ml" 246 7808 7850
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 245 7787 7789 "editor/ed_display.ml" 246 7808 7850
+type(
+  unit
+)
+"editor/ed_display.ml" 242 7673 7675 "editor/ed_display.ml" 246 7808 7850
+type(
+  unit
+)
+"editor/ed_display.ml" 238 7530 7532 "editor/ed_display.ml" 246 7808 7850
+type(
+  unit
+)
+"editor/ed_display.ml" 237 7471 7473 "editor/ed_display.ml" 246 7808 7850
+type(
+  unit
+)
+"editor/ed_display.ml" 236 7440 7442 "editor/ed_display.ml" 246 7808 7850
+type(
+  unit
+)
+"editor/ed_display.ml" 248 7852 7856 "editor/ed_display.ml" 248 7852 7866
+type(
+  #GnoCanvas.group -> unit
+)
+ident(
+  def init_nodes "editor/ed_display.ml" 255 7969 7969 --
+)
+"editor/ed_display.ml" 248 7852 7867 "editor/ed_display.ml" 248 7852 7873
+type(
+  #GnoCanvas.group as 'a
+)
+ident(
+  def canvas "editor/ed_display.ml" 249 7876 7878 "editor/ed_display.ml" 250 7893 7933
+)
+"editor/ed_display.ml" 249 7876 7878 "editor/ed_display.ml" 249 7876 7885
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t -> unit
+)
+ident(
+  ext_ref Ed_graph.H.clear
+)
+"editor/ed_display.ml" 249 7876 7886 "editor/ed_display.ml" 249 7876 7891
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  int_ref nodes "editor/ed_display.ml" 120 3798 3802 "editor/ed_display.ml" 120 3798 3807
+)
+"editor/ed_display.ml" 249 7876 7878 "editor/ed_display.ml" 249 7876 7891
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 250 7893 7895 "editor/ed_display.ml" 250 7893 7908
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.B.G.t -> unit
+)
+ident(
+  ext_ref Ed_graph.G.iter_vertex
+)
+"editor/ed_display.ml" 250 7893 7910 "editor/ed_display.ml" 250 7893 7918
+type(
+  'a -> Ed_graph.G.vertex -> unit
+)
+ident(
+  int_ref add_node "editor/ed_display.ml" 235 7416 7420 "editor/ed_display.ml" 235 7416 7428
+)
+"editor/ed_display.ml" 250 7893 7919 "editor/ed_display.ml" 250 7893 7925
+type(
+  'a
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 248 7852 7867 "editor/ed_display.ml" 248 7852 7873
+)
+"editor/ed_display.ml" 250 7893 7909 "editor/ed_display.ml" 250 7893 7926
+call(
+  stack
+)
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_display.ml" 250 7893 7927 "editor/ed_display.ml" 250 7893 7928
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 250 7893 7928 "editor/ed_display.ml" 250 7893 7933
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_display.ml" 250 7893 7927 "editor/ed_display.ml" 250 7893 7933
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_display.ml" 250 7893 7895 "editor/ed_display.ml" 250 7893 7933
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 249 7876 7878 "editor/ed_display.ml" 250 7893 7933
+type(
+  unit
+)
+"editor/ed_display.ml" 255 7969 7973 "editor/ed_display.ml" 255 7969 7992
+type(
+  < set : [> `FILL_COLOR of 'a | `WIDTH_PIXELS of 'b ] list -> 'c; .. > ->
+  'a -> 'b -> 'c
+)
+ident(
+  def color_change_vertex "editor/ed_display.ml" 259 8100 8100 --
+)
+"editor/ed_display.ml" 255 7969 7993 "editor/ed_display.ml" 255 7969 7997
+type(
+  < set : [> `FILL_COLOR of 'a | `WIDTH_PIXELS of 'b ] list -> 'c; .. > as 'd
+)
+ident(
+  def item "editor/ed_display.ml" 255 7969 7998 "editor/ed_display.ml" 256 8008 8058
+)
+"editor/ed_display.ml" 255 7969 7998 "editor/ed_display.ml" 255 7969 8003
+type(
+  'a
+)
+ident(
+  def color "editor/ed_display.ml" 255 7969 8004 "editor/ed_display.ml" 256 8008 8058
+)
+"editor/ed_display.ml" 255 7969 8004 "editor/ed_display.ml" 255 7969 8005
+type(
+  'b
+)
+ident(
+  def n "editor/ed_display.ml" 256 8008 8010 "editor/ed_display.ml" 256 8008 8058
+)
+"editor/ed_display.ml" 256 8008 8010 "editor/ed_display.ml" 256 8008 8014
+type(
+  'd
+)
+ident(
+  int_ref item "editor/ed_display.ml" 255 7969 7993 "editor/ed_display.ml" 255 7969 7997
+)
+"editor/ed_display.ml" 256 8008 8010 "editor/ed_display.ml" 256 8008 8018
+type(
+  ([> `FILL_COLOR of 'a | `WIDTH_PIXELS of 'b ] as 'e) list -> 'c
+)
+"editor/ed_display.ml" 256 8008 8033 "editor/ed_display.ml" 256 8008 8038
+type(
+  'a
+)
+ident(
+  int_ref color "editor/ed_display.ml" 255 7969 7998 "editor/ed_display.ml" 255 7969 8003
+)
+"editor/ed_display.ml" 256 8008 8021 "editor/ed_display.ml" 256 8008 8038
+type(
+  'e
+)
+"editor/ed_display.ml" 256 8008 8055 "editor/ed_display.ml" 256 8008 8056
+type(
+  'b
+)
+ident(
+  int_ref n "editor/ed_display.ml" 255 7969 8004 "editor/ed_display.ml" 255 7969 8005
+)
+"editor/ed_display.ml" 256 8008 8041 "editor/ed_display.ml" 256 8008 8056
+type(
+  'e
+)
+"editor/ed_display.ml" 256 8008 8019 "editor/ed_display.ml" 256 8008 8058
+type(
+  'e list
+)
+"editor/ed_display.ml" 256 8008 8010 "editor/ed_display.ml" 256 8008 8058
+type(
+  'c
+)
+"editor/ed_display.ml" 259 8100 8104 "editor/ed_display.ml" 259 8100 8128
+type(
+  GnoCanvas.bpath -> string -> unit
+)
+ident(
+  def color_change_intern_edge "editor/ed_display.ml" 263 8234 8234 --
+)
+"editor/ed_display.ml" 259 8100 8130 "editor/ed_display.ml" 259 8100 8134
+type(
+  GnoCanvas.bpath
+)
+ident(
+  def line "editor/ed_display.ml" 259 8100 8152 "editor/ed_display.ml" 260 8161 8194
+)
+"editor/ed_display.ml" 259 8100 8152 "editor/ed_display.ml" 259 8100 8157
+type(
+  string
+)
+ident(
+  def color "editor/ed_display.ml" 260 8161 8163 "editor/ed_display.ml" 260 8161 8194
+)
+"editor/ed_display.ml" 260 8161 8163 "editor/ed_display.ml" 260 8161 8167
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 259 8100 8130 "editor/ed_display.ml" 259 8100 8134
+)
+"editor/ed_display.ml" 260 8161 8163 "editor/ed_display.ml" 260 8161 8171
+type(
+  GnomeCanvas.bpath_p list -> unit
+)
+"editor/ed_display.ml" 260 8161 8188 "editor/ed_display.ml" 260 8161 8193
+type(
+  string
+)
+ident(
+  int_ref color "editor/ed_display.ml" 259 8100 8152 "editor/ed_display.ml" 259 8100 8157
+)
+"editor/ed_display.ml" 260 8161 8173 "editor/ed_display.ml" 260 8161 8193
+type(
+  GnomeCanvas.bpath_p
+)
+"editor/ed_display.ml" 260 8161 8172 "editor/ed_display.ml" 260 8161 8194
+type(
+  GnomeCanvas.bpath_p list
+)
+"editor/ed_display.ml" 260 8161 8163 "editor/ed_display.ml" 260 8161 8194
+type(
+  unit
+)
+"editor/ed_display.ml" 263 8234 8238 "editor/ed_display.ml" 263 8234 8265
+type(
+  GnoCanvas.line -> string -> unit
+)
+ident(
+  def color_change_successor_edge "editor/ed_display.ml" 271 8435 8435 --
+)
+"editor/ed_display.ml" 263 8234 8267 "editor/ed_display.ml" 263 8234 8271
+type(
+  GnoCanvas.line
+)
+ident(
+  def line "editor/ed_display.ml" 263 8234 8288 "editor/ed_display.ml" 264 8297 8327
+)
+"editor/ed_display.ml" 263 8234 8288 "editor/ed_display.ml" 263 8234 8293
+type(
+  string
+)
+ident(
+  def color "editor/ed_display.ml" 264 8297 8299 "editor/ed_display.ml" 264 8297 8327
+)
+"editor/ed_display.ml" 264 8297 8299 "editor/ed_display.ml" 264 8297 8303
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 263 8234 8267 "editor/ed_display.ml" 263 8234 8271
+)
+"editor/ed_display.ml" 264 8297 8299 "editor/ed_display.ml" 264 8297 8307
+type(
+  GnomeCanvas.line_p list -> unit
+)
+"editor/ed_display.ml" 264 8297 8321 "editor/ed_display.ml" 264 8297 8326
+type(
+  string
+)
+ident(
+  int_ref color "editor/ed_display.ml" 263 8234 8288 "editor/ed_display.ml" 263 8234 8293
+)
+"editor/ed_display.ml" 264 8297 8309 "editor/ed_display.ml" 264 8297 8326
+type(
+  GnomeCanvas.line_p
+)
+"editor/ed_display.ml" 264 8297 8308 "editor/ed_display.ml" 264 8297 8327
+type(
+  GnomeCanvas.line_p list
+)
+"editor/ed_display.ml" 264 8297 8299 "editor/ed_display.ml" 264 8297 8327
+type(
+  unit
+)
+"editor/ed_display.ml" 271 8435 8439 "editor/ed_display.ml" 271 8435 8455
+type(
+  Ed_graph.H2.key ->
+  Ed_graph.edge_info ->
+  Ed_hyper.turtle ->
+  Ed_hyper.turtle ->
+  #GnoCanvas.group -> GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+ident(
+  def draw_intern_edge "editor/ed_display.ml" 294 9020 9020 --
+)
+"editor/ed_display.ml" 271 8435 8456 "editor/ed_display.ml" 271 8435 8458
+type(
+  Ed_graph.H2.key
+)
+ident(
+  def vw "editor/ed_display.ml" 271 8435 8459 "editor/ed_display.ml" 289 8994 9006
+)
+"editor/ed_display.ml" 271 8435 8459 "editor/ed_display.ml" 271 8435 8463
+type(
+  Ed_graph.edge_info
+)
+ident(
+  def edge "editor/ed_display.ml" 271 8435 8464 "editor/ed_display.ml" 289 8994 9006
+)
+"editor/ed_display.ml" 271 8435 8464 "editor/ed_display.ml" 271 8435 8466
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def tv "editor/ed_display.ml" 271 8435 8467 "editor/ed_display.ml" 289 8994 9006
+)
+"editor/ed_display.ml" 271 8435 8467 "editor/ed_display.ml" 271 8435 8469
+type(
+  Ed_hyper.turtle
+)
+ident(
+  def tw "editor/ed_display.ml" 271 8435 8470 "editor/ed_display.ml" 289 8994 9006
+)
+"editor/ed_display.ml" 271 8435 8470 "editor/ed_display.ml" 271 8435 8476
+type(
+  #GnoCanvas.group as 'a
+)
+ident(
+  def canvas "editor/ed_display.ml" 272 8479 8481 "editor/ed_display.ml" 289 8994 9006
+)
+"editor/ed_display.ml" 272 8479 8485 "editor/ed_display.ml" 272 8479 8490
+type(
+  GnomeCanvas.PathDef.t
+)
+"editor/ed_display.ml" 272 8479 8491 "editor/ed_display.ml" 272 8479 8495
+type(
+  GnoCanvas.bpath
+)
+"editor/ed_display.ml" 272 8479 8485 "editor/ed_display.ml" 272 8479 8495
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 274 8507 8517 "editor/ed_display.ml" 274 8507 8518
+type(
+  GnomeCanvas.PathDef.t
+)
+"editor/ed_display.ml" 274 8507 8519 "editor/ed_display.ml" 274 8507 8523
+type(
+  GnoCanvas.bpath
+)
+ident(
+  def line "editor/ed_display.ml" 275 8559 8565 "editor/ed_display.ml" 275 8559 8567
+)
+"editor/ed_display.ml" 274 8507 8517 "editor/ed_display.ml" 274 8507 8523
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 274 8507 8517 "editor/ed_display.ml" 274 8507 8529
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+ident(
+  def pl "editor/ed_display.ml" 275 8559 8565 "editor/ed_display.ml" 275 8559 8567
+)
+"editor/ed_display.ml" 274 8507 8532 "editor/ed_display.ml" 274 8507 8539
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t ->
+  Ed_graph.H2.key -> GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+ident(
+  ext_ref Ed_graph.H2.find
+)
+"editor/ed_display.ml" 274 8507 8540 "editor/ed_display.ml" 274 8507 8552
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t
+)
+ident(
+  int_ref intern_edges "editor/ed_display.ml" 116 3739 3743 "editor/ed_display.ml" 116 3739 3755
+)
+"editor/ed_display.ml" 274 8507 8553 "editor/ed_display.ml" 274 8507 8555
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 271 8435 8456 "editor/ed_display.ml" 271 8435 8458
+)
+"editor/ed_display.ml" 274 8507 8532 "editor/ed_display.ml" 274 8507 8555
+call(
+  stack
+)
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 275 8559 8565 "editor/ed_display.ml" 275 8559 8567
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+ident(
+  int_ref pl "editor/ed_display.ml" 274 8507 8517 "editor/ed_display.ml" 274 8507 8529
+)
+"editor/ed_display.ml" 274 8507 8513 "editor/ed_display.ml" 275 8559 8567
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 276 8568 8577 "editor/ed_display.ml" 276 8568 8586
+type(
+  exn
+)
+"editor/ed_display.ml" 277 8590 8600 "editor/ed_display.ml" 277 8590 8605
+type(
+  GnomeCanvas.PathDef.t
+)
+"editor/ed_display.ml" 277 8590 8608 "editor/ed_display.ml" 277 8590 8636
+type(
+  ?size:int -> unit -> GnomeCanvas.PathDef.t
+)
+ident(
+  ext_ref GnomeCanvas.PathDef.new_path
+)
+"editor/ed_display.ml" 277 8590 8637 "editor/ed_display.ml" 277 8590 8639
+type(
+  unit
+)
+"editor/ed_display.ml" 277 8590 8608 "editor/ed_display.ml" 277 8590 8639
+type(
+  GnomeCanvas.PathDef.t
+)
+"editor/ed_display.ml" 278 8643 8653 "editor/ed_display.ml" 278 8643 8657
+type(
+  GnoCanvas.bpath
+)
+"editor/ed_display.ml" 278 8643 8660 "editor/ed_display.ml" 278 8643 8675
+type(
+  ?bpath:GnomeCanvas.PathDef.t ->
+  ?fill_color:string ->
+  ?props:GnomeCanvas.bpath_p list -> 'a -> GnoCanvas.bpath
+)
+ident(
+  ext_ref GnoCanvas.bpath
+)
+"editor/ed_display.ml" 278 8643 8676 "editor/ed_display.ml" 278 8643 8682
+type(
+  'a
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 271 8435 8470 "editor/ed_display.ml" 271 8435 8476
+)
+"editor/ed_display.ml" 279 8683 8700 "editor/ed_display.ml" 279 8683 8705
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 277 8590 8600 "editor/ed_display.ml" 277 8590 8605
+)
+"editor/ed_display.ml" 279 8683 8693 "editor/ed_display.ml" 279 8683 8705
+type(
+  GnomeCanvas.bpath_p
+)
+"editor/ed_display.ml" 279 8683 8722 "editor/ed_display.ml" 279 8683 8739
+type(
+  int
+)
+ident(
+  int_ref width_intern_edge "editor/ed_display.ml" 108 3507 3511 "editor/ed_display.ml" 108 3507 3528
+)
+"editor/ed_display.ml" 279 8683 8708 "editor/ed_display.ml" 279 8683 8739
+type(
+  GnomeCanvas.bpath_p
+)
+"editor/ed_display.ml" 279 8683 8691 "editor/ed_display.ml" 279 8683 8741
+type(
+  GnomeCanvas.bpath_p list
+)
+"editor/ed_display.ml" 278 8643 8660 "editor/ed_display.ml" 279 8683 8741
+call(
+  stack
+)
+type(
+  GnoCanvas.bpath
+)
+"editor/ed_display.ml" 281 8752 8758 "editor/ed_display.ml" 281 8752 8762
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 278 8643 8653 "editor/ed_display.ml" 278 8643 8657
+)
+"editor/ed_display.ml" 281 8752 8758 "editor/ed_display.ml" 281 8752 8778
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 281 8752 8779 "editor/ed_display.ml" 281 8752 8781
+type(
+  unit
+)
+"editor/ed_display.ml" 281 8752 8758 "editor/ed_display.ml" 281 8752 8781
+type(
+  unit
+)
+"editor/ed_display.ml" 282 8783 8789 "editor/ed_display.ml" 282 8783 8795
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t ->
+  Ed_graph.H2.key -> GnomeCanvas.PathDef.t * GnoCanvas.bpath -> unit
+)
+ident(
+  ext_ref Ed_graph.H2.add
+)
+"editor/ed_display.ml" 282 8783 8796 "editor/ed_display.ml" 282 8783 8808
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t
+)
+ident(
+  int_ref intern_edges "editor/ed_display.ml" 116 3739 3743 "editor/ed_display.ml" 116 3739 3755
+)
+"editor/ed_display.ml" 282 8783 8809 "editor/ed_display.ml" 282 8783 8811
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 271 8435 8456 "editor/ed_display.ml" 271 8435 8458
+)
+"editor/ed_display.ml" 282 8783 8813 "editor/ed_display.ml" 282 8783 8818
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 277 8590 8600 "editor/ed_display.ml" 277 8590 8605
+)
+"editor/ed_display.ml" 282 8783 8819 "editor/ed_display.ml" 282 8783 8823
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 278 8643 8653 "editor/ed_display.ml" 278 8643 8657
+)
+"editor/ed_display.ml" 282 8783 8812 "editor/ed_display.ml" 282 8783 8824
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 282 8783 8789 "editor/ed_display.ml" 282 8783 8824
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 283 8826 8836 "editor/ed_display.ml" 283 8826 8837
+type(
+  Ed_graph.G.V.t
+)
+"editor/ed_display.ml" 283 8826 8838 "editor/ed_display.ml" 283 8826 8839
+type(
+  Ed_graph.G.V.t
+)
+"editor/ed_display.ml" 283 8826 8836 "editor/ed_display.ml" 283 8826 8839
+type(
+  Ed_graph.H2.key
+)
+"editor/ed_display.ml" 283 8826 8844 "editor/ed_display.ml" 283 8826 8846
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 271 8435 8456 "editor/ed_display.ml" 271 8435 8458
+)
+"editor/ed_display.ml" 284 8850 8860 "editor/ed_display.ml" 284 8850 8871
+type(
+  Ed_graph.G.V.t -> bool
+)
+ident(
+  ext_ref Ed_graph.is_selected
+)
+"editor/ed_display.ml" 284 8850 8872 "editor/ed_display.ml" 284 8850 8873
+type(
+  Ed_graph.G.V.t
+)
+ident(
+  int_ref w "editor/ed_display.ml" 283 8826 8838 "editor/ed_display.ml" 283 8826 8839
+)
+"editor/ed_display.ml" 284 8850 8859 "editor/ed_display.ml" 284 8850 8874
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_display.ml" 284 8850 8875 "editor/ed_display.ml" 284 8850 8877
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.||
+)
+"editor/ed_display.ml" 284 8850 8879 "editor/ed_display.ml" 284 8850 8890
+type(
+  Ed_graph.G.V.t -> bool
+)
+ident(
+  ext_ref Ed_graph.is_selected
+)
+"editor/ed_display.ml" 284 8850 8891 "editor/ed_display.ml" 284 8850 8892
+type(
+  Ed_graph.G.V.t
+)
+ident(
+  int_ref v "editor/ed_display.ml" 283 8826 8836 "editor/ed_display.ml" 283 8826 8837
+)
+"editor/ed_display.ml" 284 8850 8878 "editor/ed_display.ml" 284 8850 8893
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_display.ml" 284 8850 8859 "editor/ed_display.ml" 284 8850 8893
+type(
+  bool
+)
+"editor/ed_display.ml" 285 8896 8907 "editor/ed_display.ml" 285 8896 8911
+type(
+  Ed_graph.edge_info
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 271 8435 8459 "editor/ed_display.ml" 271 8435 8463
+)
+"editor/ed_display.ml" 285 8896 8926 "editor/ed_display.ml" 285 8896 8934
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 285 8896 8907 "editor/ed_display.ml" 285 8896 8934
+type(
+  unit
+)
+"editor/ed_display.ml" 284 8850 8856 "editor/ed_display.ml" 285 8896 8934
+type(
+  unit
+)
+"editor/ed_display.ml" 286 8936 8942 "editor/ed_display.ml" 286 8936 8947
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 277 8590 8600 "editor/ed_display.ml" 277 8590 8605
+)
+"editor/ed_display.ml" 286 8936 8948 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 278 8643 8653 "editor/ed_display.ml" 278 8643 8657
+)
+"editor/ed_display.ml" 286 8936 8942 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 284 8850 8856 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 283 8826 8832 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 282 8783 8789 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 281 8752 8758 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 278 8643 8649 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 277 8590 8596 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 273 8499 8503 "editor/ed_display.ml" 286 8936 8952
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 288 8958 8960 "editor/ed_display.ml" 288 8958 8975
+type(
+  Ed_hyper.turtle ->
+  Ed_hyper.turtle -> GnomeCanvas.PathDef.t -> GnoCanvas.bpath -> unit
+)
+ident(
+  int_ref set_intern_edge "editor/ed_display.ml" 205 6298 6302 "editor/ed_display.ml" 205 6298 6317
+)
+"editor/ed_display.ml" 288 8958 8976 "editor/ed_display.ml" 288 8958 8978
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tv "editor/ed_display.ml" 271 8435 8464 "editor/ed_display.ml" 271 8435 8466
+)
+"editor/ed_display.ml" 288 8958 8979 "editor/ed_display.ml" 288 8958 8981
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref tw "editor/ed_display.ml" 271 8435 8467 "editor/ed_display.ml" 271 8435 8469
+)
+"editor/ed_display.ml" 288 8958 8982 "editor/ed_display.ml" 288 8958 8987
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 272 8479 8485 "editor/ed_display.ml" 272 8479 8490
+)
+"editor/ed_display.ml" 288 8958 8988 "editor/ed_display.ml" 288 8958 8992
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 272 8479 8491 "editor/ed_display.ml" 272 8479 8495
+)
+"editor/ed_display.ml" 288 8958 8960 "editor/ed_display.ml" 288 8958 8992
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 289 8994 8996 "editor/ed_display.ml" 289 8994 9001
+type(
+  GnomeCanvas.PathDef.t
+)
+ident(
+  int_ref bpath "editor/ed_display.ml" 272 8479 8485 "editor/ed_display.ml" 272 8479 8490
+)
+"editor/ed_display.ml" 289 8994 9002 "editor/ed_display.ml" 289 8994 9006
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 272 8479 8491 "editor/ed_display.ml" 272 8479 8495
+)
+"editor/ed_display.ml" 289 8994 8996 "editor/ed_display.ml" 289 8994 9006
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 288 8958 8960 "editor/ed_display.ml" 289 8994 9006
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 272 8479 8481 "editor/ed_display.ml" 289 8994 9006
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 294 9020 9024 "editor/ed_display.ml" 294 9020 9043
+type(
+  Ed_graph.H2.key -> Ed_graph.edge_info -> #GnoCanvas.group -> GnoCanvas.line
+)
+ident(
+  def draw_successor_edge "editor/ed_display.ml" 319 9646 9646 --
+)
+"editor/ed_display.ml" 294 9020 9044 "editor/ed_display.ml" 294 9020 9046
+type(
+  Ed_graph.H2.key
+)
+ident(
+  def vw "editor/ed_display.ml" 294 9020 9047 "editor/ed_display.ml" 310 9563 9569
+)
+"editor/ed_display.ml" 294 9020 9047 "editor/ed_display.ml" 294 9020 9051
+type(
+  Ed_graph.edge_info
+)
+ident(
+  def edge "editor/ed_display.ml" 294 9020 9052 "editor/ed_display.ml" 310 9563 9569
+)
+"editor/ed_display.ml" 294 9020 9052 "editor/ed_display.ml" 294 9020 9058
+type(
+  #GnoCanvas.group as 'a
+)
+ident(
+  def canvas "editor/ed_display.ml" 295 9061 9063 "editor/ed_display.ml" 310 9563 9569
+)
+"editor/ed_display.ml" 295 9061 9067 "editor/ed_display.ml" 295 9061 9071
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 297 9082 9088 "editor/ed_display.ml" 297 9082 9095
+type(
+  GnoCanvas.line Ed_graph.H2.t -> Ed_graph.H2.key -> GnoCanvas.line
+)
+ident(
+  ext_ref Ed_graph.H2.find
+)
+"editor/ed_display.ml" 297 9082 9096 "editor/ed_display.ml" 297 9082 9111
+type(
+  GnoCanvas.line Ed_graph.H2.t
+)
+ident(
+  int_ref successor_edges "editor/ed_display.ml" 115 3704 3708 "editor/ed_display.ml" 115 3704 3723
+)
+"editor/ed_display.ml" 297 9082 9112 "editor/ed_display.ml" 297 9082 9114
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 294 9020 9044 "editor/ed_display.ml" 294 9020 9046
+)
+"editor/ed_display.ml" 297 9082 9088 "editor/ed_display.ml" 297 9082 9114
+call(
+  stack
+)
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 298 9115 9124 "editor/ed_display.ml" 298 9115 9133
+type(
+  exn
+)
+"editor/ed_display.ml" 299 9137 9147 "editor/ed_display.ml" 299 9137 9151
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 299 9137 9154 "editor/ed_display.ml" 299 9137 9168
+type(
+  ?points:float array ->
+  ?fill_color:string ->
+  ?props:GnomeCanvas.line_p list -> 'a -> GnoCanvas.line
+)
+ident(
+  ext_ref GnoCanvas.line
+)
+"editor/ed_display.ml" 299 9137 9169 "editor/ed_display.ml" 299 9137 9175
+type(
+  'a
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 294 9020 9052 "editor/ed_display.ml" 294 9020 9058
+)
+"editor/ed_display.ml" 299 9137 9197 "editor/ed_display.ml" 299 9137 9217
+type(
+  string
+)
+ident(
+  int_ref color_successor_edge "editor/ed_display.ml" 90 2951 2955 "editor/ed_display.ml" 90 2951 2975
+)
+"editor/ed_display.ml" 299 9137 9185 "editor/ed_display.ml" 299 9137 9217
+type(
+  GnomeCanvas.line_p
+)
+"editor/ed_display.ml" 300 9220 9240 "editor/ed_display.ml" 300 9220 9260
+type(
+  int
+)
+ident(
+  int_ref width_successor_edge "editor/ed_display.ml" 107 3478 3482 "editor/ed_display.ml" 107 3478 3502
+)
+"editor/ed_display.ml" 300 9220 9226 "editor/ed_display.ml" 300 9220 9260
+type(
+  GnomeCanvas.line_p
+)
+"editor/ed_display.ml" 300 9220 9270 "editor/ed_display.ml" 300 9220 9274
+type(
+  bool
+)
+"editor/ed_display.ml" 300 9220 9262 "editor/ed_display.ml" 300 9220 9274
+type(
+  GnomeCanvas.line_p
+)
+"editor/ed_display.ml" 299 9137 9183 "editor/ed_display.ml" 300 9220 9275
+type(
+  GnomeCanvas.line_p list
+)
+"editor/ed_display.ml" 299 9137 9154 "editor/ed_display.ml" 300 9220 9275
+call(
+  stack
+)
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 302 9286 9292 "editor/ed_display.ml" 302 9286 9296
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 299 9137 9147 "editor/ed_display.ml" 299 9137 9151
+)
+"editor/ed_display.ml" 302 9286 9292 "editor/ed_display.ml" 302 9286 9312
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 302 9286 9313 "editor/ed_display.ml" 302 9286 9315
+type(
+  unit
+)
+"editor/ed_display.ml" 302 9286 9292 "editor/ed_display.ml" 302 9286 9315
+type(
+  unit
+)
+"editor/ed_display.ml" 303 9317 9323 "editor/ed_display.ml" 303 9317 9329
+type(
+  GnoCanvas.line Ed_graph.H2.t -> Ed_graph.H2.key -> GnoCanvas.line -> unit
+)
+ident(
+  ext_ref Ed_graph.H2.add
+)
+"editor/ed_display.ml" 303 9317 9330 "editor/ed_display.ml" 303 9317 9345
+type(
+  GnoCanvas.line Ed_graph.H2.t
+)
+ident(
+  int_ref successor_edges "editor/ed_display.ml" 115 3704 3708 "editor/ed_display.ml" 115 3704 3723
+)
+"editor/ed_display.ml" 303 9317 9346 "editor/ed_display.ml" 303 9317 9348
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 294 9020 9044 "editor/ed_display.ml" 294 9020 9046
+)
+"editor/ed_display.ml" 303 9317 9349 "editor/ed_display.ml" 303 9317 9353
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 299 9137 9147 "editor/ed_display.ml" 299 9137 9151
+)
+"editor/ed_display.ml" 303 9317 9323 "editor/ed_display.ml" 303 9317 9353
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 304 9357 9367 "editor/ed_display.ml" 304 9357 9368
+type(
+  Ed_graph.G.V.t
+)
+"editor/ed_display.ml" 304 9357 9369 "editor/ed_display.ml" 304 9357 9370
+type(
+  Ed_graph.G.V.t
+)
+"editor/ed_display.ml" 304 9357 9367 "editor/ed_display.ml" 304 9357 9370
+type(
+  Ed_graph.H2.key
+)
+"editor/ed_display.ml" 304 9357 9375 "editor/ed_display.ml" 304 9357 9377
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 294 9020 9044 "editor/ed_display.ml" 294 9020 9046
+)
+"editor/ed_display.ml" 305 9381 9391 "editor/ed_display.ml" 305 9381 9402
+type(
+  Ed_graph.G.V.t -> bool
+)
+ident(
+  ext_ref Ed_graph.is_selected
+)
+"editor/ed_display.ml" 305 9381 9403 "editor/ed_display.ml" 305 9381 9404
+type(
+  Ed_graph.G.V.t
+)
+ident(
+  int_ref w "editor/ed_display.ml" 304 9357 9369 "editor/ed_display.ml" 304 9357 9370
+)
+"editor/ed_display.ml" 305 9381 9390 "editor/ed_display.ml" 305 9381 9405
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_display.ml" 305 9381 9406 "editor/ed_display.ml" 305 9381 9408
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.||
+)
+"editor/ed_display.ml" 305 9381 9410 "editor/ed_display.ml" 305 9381 9421
+type(
+  Ed_graph.G.V.t -> bool
+)
+ident(
+  ext_ref Ed_graph.is_selected
+)
+"editor/ed_display.ml" 305 9381 9422 "editor/ed_display.ml" 305 9381 9423
+type(
+  Ed_graph.G.V.t
+)
+ident(
+  int_ref v "editor/ed_display.ml" 304 9357 9367 "editor/ed_display.ml" 304 9357 9368
+)
+"editor/ed_display.ml" 305 9381 9409 "editor/ed_display.ml" 305 9381 9424
+call(
+  stack
+)
+type(
+  bool
+)
+"editor/ed_display.ml" 305 9381 9390 "editor/ed_display.ml" 305 9381 9424
+type(
+  bool
+)
+"editor/ed_display.ml" 306 9427 9438 "editor/ed_display.ml" 306 9427 9442
+type(
+  Ed_graph.edge_info
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 294 9020 9047 "editor/ed_display.ml" 294 9020 9051
+)
+"editor/ed_display.ml" 306 9427 9457 "editor/ed_display.ml" 306 9427 9465
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 306 9427 9438 "editor/ed_display.ml" 306 9427 9465
+type(
+  unit
+)
+"editor/ed_display.ml" 305 9381 9387 "editor/ed_display.ml" 306 9427 9465
+type(
+  unit
+)
+"editor/ed_display.ml" 307 9467 9473 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 299 9137 9147 "editor/ed_display.ml" 299 9137 9151
+)
+"editor/ed_display.ml" 305 9381 9387 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 304 9357 9363 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 303 9317 9323 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 302 9286 9292 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 299 9137 9143 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 296 9074 9078 "editor/ed_display.ml" 307 9467 9477
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 309 9483 9485 "editor/ed_display.ml" 309 9483 9503
+type(
+  Ed_hyper.turtle -> float -> int -> GnoCanvas.line -> unit
+)
+ident(
+  int_ref set_successor_edge "editor/ed_display.ml" 174 5413 5417 "editor/ed_display.ml" 174 5413 5435
+)
+"editor/ed_display.ml" 309 9483 9504 "editor/ed_display.ml" 309 9483 9508
+type(
+  Ed_graph.edge_info
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 294 9020 9047 "editor/ed_display.ml" 294 9020 9051
+)
+"editor/ed_display.ml" 309 9483 9504 "editor/ed_display.ml" 309 9483 9520
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 309 9483 9521 "editor/ed_display.ml" 309 9483 9525
+type(
+  Ed_graph.edge_info
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 294 9020 9047 "editor/ed_display.ml" 294 9020 9051
+)
+"editor/ed_display.ml" 309 9483 9521 "editor/ed_display.ml" 309 9483 9539
+type(
+  float
+)
+"editor/ed_display.ml" 309 9483 9540 "editor/ed_display.ml" 309 9483 9544
+type(
+  Ed_graph.edge_info
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 294 9020 9047 "editor/ed_display.ml" 294 9020 9051
+)
+"editor/ed_display.ml" 309 9483 9540 "editor/ed_display.ml" 309 9483 9555
+type(
+  int
+)
+"editor/ed_display.ml" 309 9483 9557 "editor/ed_display.ml" 309 9483 9561
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 295 9061 9067 "editor/ed_display.ml" 295 9061 9071
+)
+"editor/ed_display.ml" 309 9483 9485 "editor/ed_display.ml" 309 9483 9561
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 310 9563 9565 "editor/ed_display.ml" 310 9563 9569
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 295 9061 9067 "editor/ed_display.ml" 295 9061 9071
+)
+"editor/ed_display.ml" 309 9483 9485 "editor/ed_display.ml" 310 9563 9569
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 295 9061 9063 "editor/ed_display.ml" 310 9563 9569
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 319 9646 9650 "editor/ed_display.ml" 319 9646 9663
+type(
+  < parent : < get_bounds : float array; .. >; .. > ->
+  GdkEvent.Motion.t -> Ed_hyper.turtle
+)
+ident(
+  def motion_turtle "editor/ed_display.ml" 330 10018 10018 --
+)
+"editor/ed_display.ml" 319 9646 9664 "editor/ed_display.ml" 319 9646 9668
+type(
+  < parent : < get_bounds : float array; .. >; .. > as 'a
+)
+ident(
+  def item "editor/ed_display.ml" 319 9646 9669 "editor/ed_display.ml" 327 9989 10015
+)
+"editor/ed_display.ml" 319 9646 9669 "editor/ed_display.ml" 319 9646 9671
+type(
+  GdkEvent.Motion.t
+)
+ident(
+  def ev "editor/ed_display.ml" 320 9674 9676 "editor/ed_display.ml" 327 9989 10015
+)
+"editor/ed_display.ml" 320 9674 9680 "editor/ed_display.ml" 320 9674 9686
+type(
+  float array
+)
+"editor/ed_display.ml" 320 9674 9689 "editor/ed_display.ml" 320 9674 9693
+type(
+  'a
+)
+ident(
+  int_ref item "editor/ed_display.ml" 319 9646 9664 "editor/ed_display.ml" 319 9646 9668
+)
+"editor/ed_display.ml" 320 9674 9689 "editor/ed_display.ml" 320 9674 9700
+type(
+  < get_bounds : float array; .. > as 'b
+)
+"editor/ed_display.ml" 320 9674 9689 "editor/ed_display.ml" 320 9674 9711
+type(
+  float array
+)
+"editor/ed_display.ml" 321 9715 9721 "editor/ed_display.ml" 321 9715 9723
+type(
+  float * float
+)
+"editor/ed_display.ml" 321 9715 9726 "editor/ed_display.ml" 321 9715 9735
+type(
+  int * int -> float * float
+)
+ident(
+  int_ref to_turtle "editor/ed_display.ml" 125 3861 3865 "editor/ed_display.ml" 125 3861 3874
+)
+"editor/ed_display.ml" 321 9715 9736 "editor/ed_display.ml" 321 9715 9744
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 321 9715 9746 "editor/ed_display.ml" 321 9715 9752
+type(
+  float array
+)
+ident(
+  int_ref bounds "editor/ed_display.ml" 320 9674 9680 "editor/ed_display.ml" 320 9674 9686
+)
+"editor/ed_display.ml" 321 9715 9754 "editor/ed_display.ml" 321 9715 9755
+type(
+  int
+)
+"editor/ed_display.ml" 321 9715 9746 "editor/ed_display.ml" 321 9715 9756
+type(
+  float
+)
+"editor/ed_display.ml" 321 9715 9756 "editor/ed_display.ml" 321 9715 9758
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 321 9715 9759 "editor/ed_display.ml" 321 9715 9765
+type(
+  float array
+)
+ident(
+  int_ref bounds "editor/ed_display.ml" 320 9674 9680 "editor/ed_display.ml" 320 9674 9686
+)
+"editor/ed_display.ml" 321 9715 9767 "editor/ed_display.ml" 321 9715 9768
+type(
+  int
+)
+"editor/ed_display.ml" 321 9715 9759 "editor/ed_display.ml" 321 9715 9769
+type(
+  float
+)
+"editor/ed_display.ml" 321 9715 9745 "editor/ed_display.ml" 321 9715 9770
+type(
+  float
+)
+"editor/ed_display.ml" 321 9715 9770 "editor/ed_display.ml" 321 9715 9772
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 321 9715 9772 "editor/ed_display.ml" 321 9715 9774
+type(
+  float
+)
+"editor/ed_display.ml" 321 9715 9744 "editor/ed_display.ml" 321 9715 9775
+type(
+  float
+)
+"editor/ed_display.ml" 321 9715 9736 "editor/ed_display.ml" 321 9715 9775
+type(
+  int
+)
+"editor/ed_display.ml" 322 9777 9783 "editor/ed_display.ml" 322 9777 9791
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 322 9777 9793 "editor/ed_display.ml" 322 9777 9799
+type(
+  float array
+)
+ident(
+  int_ref bounds "editor/ed_display.ml" 320 9674 9680 "editor/ed_display.ml" 320 9674 9686
+)
+"editor/ed_display.ml" 322 9777 9801 "editor/ed_display.ml" 322 9777 9802
+type(
+  int
+)
+"editor/ed_display.ml" 322 9777 9793 "editor/ed_display.ml" 322 9777 9803
+type(
+  float
+)
+"editor/ed_display.ml" 322 9777 9803 "editor/ed_display.ml" 322 9777 9805
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_display.ml" 322 9777 9806 "editor/ed_display.ml" 322 9777 9812
+type(
+  float array
+)
+ident(
+  int_ref bounds "editor/ed_display.ml" 320 9674 9680 "editor/ed_display.ml" 320 9674 9686
+)
+"editor/ed_display.ml" 322 9777 9814 "editor/ed_display.ml" 322 9777 9815
+type(
+  int
+)
+"editor/ed_display.ml" 322 9777 9806 "editor/ed_display.ml" 322 9777 9816
+type(
+  float
+)
+"editor/ed_display.ml" 322 9777 9792 "editor/ed_display.ml" 322 9777 9817
+type(
+  float
+)
+"editor/ed_display.ml" 322 9777 9817 "editor/ed_display.ml" 322 9777 9819
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_display.ml" 322 9777 9819 "editor/ed_display.ml" 322 9777 9821
+type(
+  float
+)
+"editor/ed_display.ml" 322 9777 9791 "editor/ed_display.ml" 322 9777 9822
+type(
+  float
+)
+"editor/ed_display.ml" 322 9777 9783 "editor/ed_display.ml" 322 9777 9822
+type(
+  int
+)
+"editor/ed_display.ml" 321 9715 9735 "editor/ed_display.ml" 322 9777 9823
+type(
+  int * int
+)
+"editor/ed_display.ml" 321 9715 9726 "editor/ed_display.ml" 322 9777 9823
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_display.ml" 323 9827 9833 "editor/ed_display.ml" 323 9827 9835
+type(
+  float * float
+)
+"editor/ed_display.ml" 323 9827 9838 "editor/ed_display.ml" 323 9827 9847
+type(
+  int * int -> float * float
+)
+ident(
+  int_ref to_turtle "editor/ed_display.ml" 125 3861 3865 "editor/ed_display.ml" 125 3861 3874
+)
+"editor/ed_display.ml" 323 9827 9849 "editor/ed_display.ml" 323 9827 9857
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 323 9827 9859 "editor/ed_display.ml" 323 9827 9876
+type(
+  GdkEvent.Motion.t -> float
+)
+ident(
+  ext_ref GdkEvent.Motion.x
+)
+"editor/ed_display.ml" 323 9827 9877 "editor/ed_display.ml" 323 9827 9879
+type(
+  GdkEvent.Motion.t
+)
+ident(
+  int_ref ev "editor/ed_display.ml" 319 9646 9669 "editor/ed_display.ml" 319 9646 9671
+)
+"editor/ed_display.ml" 323 9827 9858 "editor/ed_display.ml" 323 9827 9880
+type(
+  float
+)
+"editor/ed_display.ml" 323 9827 9849 "editor/ed_display.ml" 323 9827 9880
+type(
+  int
+)
+"editor/ed_display.ml" 324 9882 9889 "editor/ed_display.ml" 324 9882 9897
+type(
+  float -> int
+)
+ident(
+  ext_ref Pervasives.truncate
+)
+"editor/ed_display.ml" 324 9882 9899 "editor/ed_display.ml" 324 9882 9916
+type(
+  GdkEvent.Motion.t -> float
+)
+ident(
+  ext_ref GdkEvent.Motion.y
+)
+"editor/ed_display.ml" 324 9882 9917 "editor/ed_display.ml" 324 9882 9919
+type(
+  GdkEvent.Motion.t
+)
+ident(
+  int_ref ev "editor/ed_display.ml" 319 9646 9669 "editor/ed_display.ml" 319 9646 9671
+)
+"editor/ed_display.ml" 324 9882 9898 "editor/ed_display.ml" 324 9882 9920
+type(
+  float
+)
+"editor/ed_display.ml" 324 9882 9889 "editor/ed_display.ml" 324 9882 9920
+type(
+  int
+)
+"editor/ed_display.ml" 323 9827 9848 "editor/ed_display.ml" 324 9882 9921
+type(
+  int * int
+)
+"editor/ed_display.ml" 323 9827 9838 "editor/ed_display.ml" 324 9882 9921
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_display.ml" 325 9925 9932 "editor/ed_display.ml" 325 9925 9933
+type(
+  float
+)
+"editor/ed_display.ml" 325 9925 9934 "editor/ed_display.ml" 325 9925 9935
+type(
+  float
+)
+"editor/ed_display.ml" 325 9925 9931 "editor/ed_display.ml" 325 9925 9936
+type(
+  float * float
+)
+"editor/ed_display.ml" 325 9925 9939 "editor/ed_display.ml" 325 9925 9950
+type(
+  Ed_hyper.coord -> float * float -> float * float -> float * float
+)
+ident(
+  ext_ref Ed_hyper.drag_origin
+)
+"editor/ed_display.ml" 325 9925 9951 "editor/ed_display.ml" 325 9925 9952
+type(
+  Ed_hyper.coord ref -> Ed_hyper.coord
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 325 9925 9952 "editor/ed_display.ml" 325 9925 9959
+type(
+  Ed_hyper.coord ref
+)
+ident(
+  int_ref origine "editor/ed_display.ml" 144 4452 4456 "editor/ed_display.ml" 144 4452 4463
+)
+"editor/ed_display.ml" 325 9925 9951 "editor/ed_display.ml" 325 9925 9959
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 325 9925 9960 "editor/ed_display.ml" 325 9925 9962
+type(
+  float * float
+)
+ident(
+  int_ref z1 "editor/ed_display.ml" 321 9715 9721 "editor/ed_display.ml" 321 9715 9723
+)
+"editor/ed_display.ml" 325 9925 9963 "editor/ed_display.ml" 325 9925 9965
+type(
+  float * float
+)
+ident(
+  int_ref z2 "editor/ed_display.ml" 323 9827 9833 "editor/ed_display.ml" 323 9827 9835
+)
+"editor/ed_display.ml" 325 9925 9939 "editor/ed_display.ml" 325 9925 9965
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_display.ml" 326 9969 9971 "editor/ed_display.ml" 326 9969 9978
+type(
+  Ed_hyper.coord ref
+)
+ident(
+  int_ref origine "editor/ed_display.ml" 144 4452 4456 "editor/ed_display.ml" 144 4452 4463
+)
+"editor/ed_display.ml" 326 9969 9979 "editor/ed_display.ml" 326 9969 9981
+type(
+  Ed_hyper.coord ref -> Ed_hyper.coord -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"editor/ed_display.ml" 326 9969 9983 "editor/ed_display.ml" 326 9969 9984
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_display.ml" 325 9925 9932 "editor/ed_display.ml" 325 9925 9933
+)
+"editor/ed_display.ml" 326 9969 9985 "editor/ed_display.ml" 326 9969 9986
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_display.ml" 325 9925 9934 "editor/ed_display.ml" 325 9925 9935
+)
+"editor/ed_display.ml" 326 9969 9982 "editor/ed_display.ml" 326 9969 9987
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 326 9969 9971 "editor/ed_display.ml" 326 9969 9987
+type(
+  unit
+)
+"editor/ed_display.ml" 327 9989 9991 "editor/ed_display.ml" 327 9989 10002
+type(
+  Ed_hyper.coord -> float -> Ed_hyper.turtle
+)
+ident(
+  ext_ref Ed_hyper.make_turtle
+)
+"editor/ed_display.ml" 327 9989 10003 "editor/ed_display.ml" 327 9989 10004
+type(
+  Ed_hyper.coord ref -> Ed_hyper.coord
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 327 9989 10004 "editor/ed_display.ml" 327 9989 10011
+type(
+  Ed_hyper.coord ref
+)
+ident(
+  int_ref origine "editor/ed_display.ml" 144 4452 4456 "editor/ed_display.ml" 144 4452 4463
+)
+"editor/ed_display.ml" 327 9989 10003 "editor/ed_display.ml" 327 9989 10011
+type(
+  Ed_hyper.coord
+)
+"editor/ed_display.ml" 327 9989 10012 "editor/ed_display.ml" 327 9989 10015
+type(
+  float
+)
+"editor/ed_display.ml" 327 9989 9991 "editor/ed_display.ml" 327 9989 10015
+call(
+  tail
+)
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 326 9969 9971 "editor/ed_display.ml" 327 9989 10015
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 325 9925 9927 "editor/ed_display.ml" 327 9989 10015
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 323 9827 9829 "editor/ed_display.ml" 327 9989 10015
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 321 9715 9717 "editor/ed_display.ml" 327 9989 10015
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 320 9674 9676 "editor/ed_display.ml" 327 9989 10015
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 330 10018 10022 "editor/ed_display.ml" 330 10018 10038
+type(
+  Ed_graph.H2.key -> unit
+)
+ident(
+  def hide_intern_edge "editor/ed_display.ml" 333 10125 10125 --
+)
+"editor/ed_display.ml" 330 10018 10039 "editor/ed_display.ml" 330 10018 10041
+type(
+  Ed_graph.H2.key
+)
+ident(
+  def vw "editor/ed_display.ml" 331 10044 10046 "editor/ed_display.ml" 331 10044 10123
+)
+"editor/ed_display.ml" 331 10044 10054 "editor/ed_display.ml" 331 10044 10055
+type(
+  GnomeCanvas.PathDef.t
+)
+"editor/ed_display.ml" 331 10044 10056 "editor/ed_display.ml" 331 10044 10060
+type(
+  GnoCanvas.bpath
+)
+ident(
+  def line "editor/ed_display.ml" 331 10044 10090 "editor/ed_display.ml" 331 10044 10102
+)
+"editor/ed_display.ml" 331 10044 10054 "editor/ed_display.ml" 331 10044 10060
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 331 10044 10063 "editor/ed_display.ml" 331 10044 10070
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t ->
+  Ed_graph.H2.key -> GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+ident(
+  ext_ref Ed_graph.H2.find
+)
+"editor/ed_display.ml" 331 10044 10071 "editor/ed_display.ml" 331 10044 10083
+type(
+  (GnomeCanvas.PathDef.t * GnoCanvas.bpath) Ed_graph.H2.t
+)
+ident(
+  int_ref intern_edges "editor/ed_display.ml" 116 3739 3743 "editor/ed_display.ml" 116 3739 3755
+)
+"editor/ed_display.ml" 331 10044 10084 "editor/ed_display.ml" 331 10044 10086
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 330 10018 10039 "editor/ed_display.ml" 330 10018 10041
+)
+"editor/ed_display.ml" 331 10044 10063 "editor/ed_display.ml" 331 10044 10086
+call(
+  stack
+)
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 331 10044 10090 "editor/ed_display.ml" 331 10044 10094
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 331 10044 10056 "editor/ed_display.ml" 331 10044 10060
+)
+"editor/ed_display.ml" 331 10044 10090 "editor/ed_display.ml" 331 10044 10099
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 331 10044 10100 "editor/ed_display.ml" 331 10044 10102
+type(
+  unit
+)
+"editor/ed_display.ml" 331 10044 10090 "editor/ed_display.ml" 331 10044 10102
+type(
+  unit
+)
+"editor/ed_display.ml" 331 10044 10050 "editor/ed_display.ml" 331 10044 10102
+type(
+  unit
+)
+"editor/ed_display.ml" 331 10044 10108 "editor/ed_display.ml" 331 10044 10117
+type(
+  exn
+)
+"editor/ed_display.ml" 331 10044 10121 "editor/ed_display.ml" 331 10044 10123
+type(
+  unit
+)
+"editor/ed_display.ml" 331 10044 10046 "editor/ed_display.ml" 331 10044 10123
+type(
+  unit
+)
+"editor/ed_display.ml" 333 10125 10129 "editor/ed_display.ml" 333 10125 10147
+type(
+  Ed_graph.H2.key -> unit
+)
+ident(
+  def hide_succesor_edge "editor/ed_display.ml" 339 10257 10257 --
+)
+"editor/ed_display.ml" 333 10125 10148 "editor/ed_display.ml" 333 10125 10150
+type(
+  Ed_graph.H2.key
+)
+ident(
+  def vw "editor/ed_display.ml" 334 10153 10155 "editor/ed_display.ml" 334 10153 10233
+)
+"editor/ed_display.ml" 334 10153 10163 "editor/ed_display.ml" 334 10153 10167
+type(
+  GnoCanvas.line
+)
+ident(
+  def line "editor/ed_display.ml" 334 10153 10200 "editor/ed_display.ml" 334 10153 10212
+)
+"editor/ed_display.ml" 334 10153 10170 "editor/ed_display.ml" 334 10153 10177
+type(
+  GnoCanvas.line Ed_graph.H2.t -> Ed_graph.H2.key -> GnoCanvas.line
+)
+ident(
+  ext_ref Ed_graph.H2.find
+)
+"editor/ed_display.ml" 334 10153 10178 "editor/ed_display.ml" 334 10153 10193
+type(
+  GnoCanvas.line Ed_graph.H2.t
+)
+ident(
+  int_ref successor_edges "editor/ed_display.ml" 115 3704 3708 "editor/ed_display.ml" 115 3704 3723
+)
+"editor/ed_display.ml" 334 10153 10194 "editor/ed_display.ml" 334 10153 10196
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 333 10125 10148 "editor/ed_display.ml" 333 10125 10150
+)
+"editor/ed_display.ml" 334 10153 10170 "editor/ed_display.ml" 334 10153 10196
+call(
+  stack
+)
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 334 10153 10200 "editor/ed_display.ml" 334 10153 10204
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 334 10153 10163 "editor/ed_display.ml" 334 10153 10167
+)
+"editor/ed_display.ml" 334 10153 10200 "editor/ed_display.ml" 334 10153 10209
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 334 10153 10210 "editor/ed_display.ml" 334 10153 10212
+type(
+  unit
+)
+"editor/ed_display.ml" 334 10153 10200 "editor/ed_display.ml" 334 10153 10212
+type(
+  unit
+)
+"editor/ed_display.ml" 334 10153 10159 "editor/ed_display.ml" 334 10153 10212
+type(
+  unit
+)
+"editor/ed_display.ml" 334 10153 10218 "editor/ed_display.ml" 334 10153 10227
+type(
+  exn
+)
+"editor/ed_display.ml" 334 10153 10231 "editor/ed_display.ml" 334 10153 10233
+type(
+  unit
+)
+"editor/ed_display.ml" 334 10153 10155 "editor/ed_display.ml" 334 10153 10233
+type(
+  unit
+)
+"editor/ed_display.ml" 339 10257 10261 "editor/ed_display.ml" 339 10257 10271
+type(
+  'a -> #GnoCanvas.group -> unit
+)
+ident(
+  def draw_graph "editor/ed_display.ml" 414 12481 12481 --
+)
+"editor/ed_display.ml" 339 10257 10272 "editor/ed_display.ml" 339 10257 10276
+type(
+  'a
+)
+ident(
+  def root "editor/ed_display.ml" 339 10257 10277 "editor/ed_display.ml" 409 12462 12472
+)
+"editor/ed_display.ml" 339 10257 10277 "editor/ed_display.ml" 339 10257 10283
+type(
+  #GnoCanvas.group as 'b
+)
+ident(
+  def canvas "editor/ed_display.ml" 341 10304 10306 "editor/ed_display.ml" 409 12462 12472
+)
+"editor/ed_display.ml" 341 10304 10306 "editor/ed_display.ml" 341 10304 10319
+type(
+  (Ed_graph.G.vertex -> unit) -> Ed_graph.B.G.t -> unit
+)
+ident(
+  ext_ref Ed_graph.G.iter_vertex
+)
+"editor/ed_display.ml" 342 10320 10329 "editor/ed_display.ml" 342 10320 10330
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  def v "editor/ed_display.ml" 343 10335 10342 "editor/ed_display.ml" 358 10913 10926
+)
+"editor/ed_display.ml" 343 10335 10348 "editor/ed_display.ml" 343 10335 10349
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 343 10335 10365 "editor/ed_display.ml" 343 10335 10374
+type(
+  Ed_graph.G.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 343 10335 10375 "editor/ed_display.ml" 343 10335 10376
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 342 10320 10329 "editor/ed_display.ml" 342 10320 10330
+)
+"editor/ed_display.ml" 343 10335 10365 "editor/ed_display.ml" 343 10335 10376
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 344 10380 10390 "editor/ed_display.ml" 344 10380 10391
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref l "editor/ed_display.ml" 343 10335 10348 "editor/ed_display.ml" 343 10335 10349
+)
+"editor/ed_display.ml" 344 10380 10390 "editor/ed_display.ml" 344 10380 10399
+type(
+  Ed_graph.visibility
+)
+"editor/ed_display.ml" 344 10380 10400 "editor/ed_display.ml" 344 10380 10401
+type(
+  Ed_graph.visibility -> Ed_graph.visibility -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_display.ml" 344 10380 10402 "editor/ed_display.ml" 344 10380 10409
+type(
+  Ed_graph.visibility
+)
+"editor/ed_display.ml" 344 10380 10390 "editor/ed_display.ml" 344 10380 10409
+type(
+  bool
+)
+"editor/ed_display.ml" 346 10424 10432 "editor/ed_display.ml" 346 10424 10436
+type(
+  GnoCanvas.group
+)
+ident(
+  def node "editor/ed_display.ml" 347 10471 10475 "editor/ed_display.ml" 354 10775 10860
+)
+"editor/ed_display.ml" 346 10424 10439 "editor/ed_display.ml" 346 10424 10455
+type(
+  Ed_graph.H.key -> Ed_hyper.turtle -> GnoCanvas.group
+)
+ident(
+  int_ref tdraw_string_gtk "editor/ed_display.ml" 219 6837 6841 "editor/ed_display.ml" 219 6837 6857
+)
+"editor/ed_display.ml" 346 10424 10456 "editor/ed_display.ml" 346 10424 10457
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 342 10320 10329 "editor/ed_display.ml" 342 10320 10330
+)
+"editor/ed_display.ml" 346 10424 10458 "editor/ed_display.ml" 346 10424 10459
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref l "editor/ed_display.ml" 343 10335 10348 "editor/ed_display.ml" 343 10335 10349
+)
+"editor/ed_display.ml" 346 10424 10458 "editor/ed_display.ml" 346 10424 10466
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 346 10424 10439 "editor/ed_display.ml" 346 10424 10466
+call(
+  stack
+)
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 347 10471 10475 "editor/ed_display.ml" 347 10471 10479
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node "editor/ed_display.ml" 346 10424 10432 "editor/ed_display.ml" 346 10424 10436
+)
+"editor/ed_display.ml" 347 10471 10475 "editor/ed_display.ml" 347 10471 10492
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 347 10471 10492 "editor/ed_display.ml" 347 10471 10494
+type(
+  unit
+)
+"editor/ed_display.ml" 347 10471 10475 "editor/ed_display.ml" 347 10471 10494
+type(
+  unit
+)
+"editor/ed_display.ml" 348 10496 10500 "editor/ed_display.ml" 348 10496 10504
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node "editor/ed_display.ml" 346 10424 10432 "editor/ed_display.ml" 346 10424 10436
+)
+"editor/ed_display.ml" 348 10496 10500 "editor/ed_display.ml" 348 10496 10509
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 348 10496 10509 "editor/ed_display.ml" 348 10496 10511
+type(
+  unit
+)
+"editor/ed_display.ml" 348 10496 10500 "editor/ed_display.ml" 348 10496 10511
+type(
+  unit
+)
+"editor/ed_display.ml" 349 10513 10521 "editor/ed_display.ml" 349 10513 10522
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 349 10513 10523 "editor/ed_display.ml" 349 10513 10527
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  def item "editor/ed_display.ml" 350 10548 10552 "editor/ed_display.ml" 354 10775 10860
+)
+"editor/ed_display.ml" 349 10513 10528 "editor/ed_display.ml" 349 10513 10529
+type(
+  GnoCanvas.text
+)
+"editor/ed_display.ml" 349 10513 10521 "editor/ed_display.ml" 349 10513 10529
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 349 10513 10530 "editor/ed_display.ml" 349 10513 10536
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t ->
+  Ed_graph.H.key -> GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+ident(
+  ext_ref Ed_graph.H.find
+)
+"editor/ed_display.ml" 349 10513 10537 "editor/ed_display.ml" 349 10513 10542
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  int_ref nodes "editor/ed_display.ml" 120 3798 3802 "editor/ed_display.ml" 120 3798 3807
+)
+"editor/ed_display.ml" 349 10513 10543 "editor/ed_display.ml" 349 10513 10544
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 342 10320 10329 "editor/ed_display.ml" 342 10320 10330
+)
+"editor/ed_display.ml" 349 10513 10530 "editor/ed_display.ml" 349 10513 10544
+call(
+  stack
+)
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 350 10548 10558 "editor/ed_display.ml" 350 10548 10559
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref l "editor/ed_display.ml" 343 10335 10348 "editor/ed_display.ml" 343 10335 10349
+)
+"editor/ed_display.ml" 350 10548 10558 "editor/ed_display.ml" 350 10548 10571
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 351 10577 10585 "editor/ed_display.ml" 351 10577 10591
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 351 10577 10595 "editor/ed_display.ml" 351 10577 10614
+type(
+  GnoCanvas.ellipse -> string -> int -> unit
+)
+ident(
+  int_ref color_change_vertex "editor/ed_display.ml" 255 7969 7973 "editor/ed_display.ml" 255 7969 7992
+)
+"editor/ed_display.ml" 351 10577 10615 "editor/ed_display.ml" 351 10577 10619
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  int_ref item "editor/ed_display.ml" 349 10513 10523 "editor/ed_display.ml" 349 10513 10527
+)
+"editor/ed_display.ml" 351 10577 10620 "editor/ed_display.ml" 351 10577 10632
+type(
+  string
+)
+ident(
+  int_ref color_vertex "editor/ed_display.ml" 91 2999 3003 "editor/ed_display.ml" 91 2999 3015
+)
+"editor/ed_display.ml" 351 10577 10633 "editor/ed_display.ml" 351 10577 10634
+type(
+  int
+)
+"editor/ed_display.ml" 351 10577 10595 "editor/ed_display.ml" 351 10577 10635
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 352 10636 10644 "editor/ed_display.ml" 352 10636 10652
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 352 10636 10656 "editor/ed_display.ml" 352 10636 10675
+type(
+  GnoCanvas.ellipse -> string -> int -> unit
+)
+ident(
+  int_ref color_change_vertex "editor/ed_display.ml" 255 7969 7973 "editor/ed_display.ml" 255 7969 7992
+)
+"editor/ed_display.ml" 352 10636 10676 "editor/ed_display.ml" 352 10636 10680
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  int_ref item "editor/ed_display.ml" 349 10513 10523 "editor/ed_display.ml" 349 10513 10527
+)
+"editor/ed_display.ml" 352 10636 10681 "editor/ed_display.ml" 352 10636 10702
+type(
+  string
+)
+ident(
+  int_ref color_selected_vertex "editor/ed_display.ml" 95 3134 3138 "editor/ed_display.ml" 95 3134 3159
+)
+"editor/ed_display.ml" 352 10636 10703 "editor/ed_display.ml" 352 10636 10704
+type(
+  int
+)
+"editor/ed_display.ml" 352 10636 10656 "editor/ed_display.ml" 352 10636 10705
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 353 10706 10714 "editor/ed_display.ml" 353 10706 10721
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 353 10706 10726 "editor/ed_display.ml" 353 10706 10745
+type(
+  GnoCanvas.ellipse -> string -> int -> unit
+)
+ident(
+  int_ref color_change_vertex "editor/ed_display.ml" 255 7969 7973 "editor/ed_display.ml" 255 7969 7992
+)
+"editor/ed_display.ml" 353 10706 10746 "editor/ed_display.ml" 353 10706 10750
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  int_ref item "editor/ed_display.ml" 349 10513 10523 "editor/ed_display.ml" 349 10513 10527
+)
+"editor/ed_display.ml" 353 10706 10751 "editor/ed_display.ml" 353 10706 10771
+type(
+  string
+)
+ident(
+  int_ref color_focused_vertex "editor/ed_display.ml" 99 3261 3265 "editor/ed_display.ml" 99 3261 3285
+)
+"editor/ed_display.ml" 353 10706 10772 "editor/ed_display.ml" 353 10706 10773
+type(
+  int
+)
+"editor/ed_display.ml" 353 10706 10726 "editor/ed_display.ml" 353 10706 10774
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 354 10775 10783 "editor/ed_display.ml" 354 10775 10799
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 354 10775 10803 "editor/ed_display.ml" 354 10775 10822
+type(
+  GnoCanvas.ellipse -> string -> int -> unit
+)
+ident(
+  int_ref color_change_vertex "editor/ed_display.ml" 255 7969 7973 "editor/ed_display.ml" 255 7969 7992
+)
+"editor/ed_display.ml" 354 10775 10823 "editor/ed_display.ml" 354 10775 10827
+type(
+  GnoCanvas.ellipse
+)
+ident(
+  int_ref item "editor/ed_display.ml" 349 10513 10523 "editor/ed_display.ml" 349 10513 10527
+)
+"editor/ed_display.ml" 354 10775 10828 "editor/ed_display.ml" 354 10775 10857
+type(
+  string
+)
+ident(
+  int_ref color_selected_focused_vertex "editor/ed_display.ml" 102 3352 3356 "editor/ed_display.ml" 102 3352 3385
+)
+"editor/ed_display.ml" 354 10775 10858 "editor/ed_display.ml" 354 10775 10859
+type(
+  int
+)
+"editor/ed_display.ml" 354 10775 10803 "editor/ed_display.ml" 354 10775 10860
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 350 10548 10552 "editor/ed_display.ml" 354 10775 10860
+type(
+  unit
+)
+"editor/ed_display.ml" 349 10513 10517 "editor/ed_display.ml" 354 10775 10860
+type(
+  unit
+)
+"editor/ed_display.ml" 348 10496 10500 "editor/ed_display.ml" 354 10775 10860
+type(
+  unit
+)
+"editor/ed_display.ml" 347 10471 10475 "editor/ed_display.ml" 354 10775 10860
+type(
+  unit
+)
+"editor/ed_display.ml" 345 10416 10418 "editor/ed_display.ml" 355 10861 10866
+type(
+  unit
+)
+"editor/ed_display.ml" 357 10879 10885 "editor/ed_display.ml" 357 10879 10889
+type(
+  GnoCanvas.group
+)
+"editor/ed_display.ml" 357 10879 10890 "editor/ed_display.ml" 357 10879 10891
+type(
+  GnoCanvas.ellipse
+)
+"editor/ed_display.ml" 357 10879 10892 "editor/ed_display.ml" 357 10879 10893
+type(
+  GnoCanvas.text
+)
+"editor/ed_display.ml" 357 10879 10885 "editor/ed_display.ml" 357 10879 10893
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 357 10879 10895 "editor/ed_display.ml" 357 10879 10901
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t ->
+  Ed_graph.H.key -> GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+ident(
+  ext_ref Ed_graph.H.find
+)
+"editor/ed_display.ml" 357 10879 10902 "editor/ed_display.ml" 357 10879 10907
+type(
+  (GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text) Ed_graph.H.t
+)
+ident(
+  int_ref nodes "editor/ed_display.ml" 120 3798 3802 "editor/ed_display.ml" 120 3798 3807
+)
+"editor/ed_display.ml" 357 10879 10908 "editor/ed_display.ml" 357 10879 10909
+type(
+  Ed_graph.G.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 342 10320 10329 "editor/ed_display.ml" 342 10320 10330
+)
+"editor/ed_display.ml" 357 10879 10895 "editor/ed_display.ml" 357 10879 10909
+call(
+  stack
+)
+type(
+  GnoCanvas.group * GnoCanvas.ellipse * GnoCanvas.text
+)
+"editor/ed_display.ml" 358 10913 10915 "editor/ed_display.ml" 358 10913 10919
+type(
+  GnoCanvas.group
+)
+ident(
+  int_ref node "editor/ed_display.ml" 357 10879 10885 "editor/ed_display.ml" 357 10879 10889
+)
+"editor/ed_display.ml" 358 10913 10915 "editor/ed_display.ml" 358 10913 10924
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 358 10913 10924 "editor/ed_display.ml" 358 10913 10926
+type(
+  unit
+)
+"editor/ed_display.ml" 358 10913 10915 "editor/ed_display.ml" 358 10913 10926
+type(
+  unit
+)
+"editor/ed_display.ml" 357 10879 10881 "editor/ed_display.ml" 358 10913 10926
+type(
+  unit
+)
+"editor/ed_display.ml" 344 10380 10387 "editor/ed_display.ml" 358 10913 10926
+type(
+  unit
+)
+"editor/ed_display.ml" 343 10335 10342 "editor/ed_display.ml" 358 10913 10926
+type(
+  unit
+)
+"editor/ed_display.ml" 342 10320 10324 "editor/ed_display.ml" 359 10927 10932
+type(
+  Ed_graph.G.vertex -> unit
+)
+"editor/ed_display.ml" 360 10933 10937 "editor/ed_display.ml" 360 10933 10938
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 360 10933 10938 "editor/ed_display.ml" 360 10933 10943
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_display.ml" 360 10933 10937 "editor/ed_display.ml" 360 10933 10943
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_display.ml" 341 10304 10306 "editor/ed_display.ml" 360 10933 10943
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 363 10972 10974 "editor/ed_display.ml" 363 10972 10988
+type(
+  (Ed_graph.G.edge -> unit) -> Ed_graph.B.G.t -> unit
+)
+ident(
+  ext_ref Ed_graph.G.iter_edges_e
+)
+"editor/ed_display.ml" 364 10989 10998 "editor/ed_display.ml" 364 10989 10999
+type(
+  Ed_graph.G.edge
+)
+ident(
+  def e "editor/ed_display.ml" 365 11003 11010 "editor/ed_display.ml" 408 12454 12459
+)
+"editor/ed_display.ml" 365 11003 11014 "editor/ed_display.ml" 365 11003 11018
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_display.ml" 365 11003 11021 "editor/ed_display.ml" 365 11003 11030
+type(
+  Ed_graph.G.edge -> Ed_graph.G.E.label
+)
+ident(
+  ext_ref Ed_graph.G.E.label
+)
+"editor/ed_display.ml" 365 11003 11031 "editor/ed_display.ml" 365 11003 11032
+type(
+  Ed_graph.G.edge
+)
+ident(
+  int_ref e "editor/ed_display.ml" 364 10989 10998 "editor/ed_display.ml" 364 10989 10999
+)
+"editor/ed_display.ml" 365 11003 11021 "editor/ed_display.ml" 365 11003 11032
+call(
+  stack
+)
+type(
+  Ed_graph.G.E.label
+)
+"editor/ed_display.ml" 366 11036 11047 "editor/ed_display.ml" 366 11036 11048
+type(
+  Ed_graph.G.E.vertex
+)
+"editor/ed_display.ml" 366 11036 11051 "editor/ed_display.ml" 366 11036 11058
+type(
+  Ed_graph.G.edge -> Ed_graph.G.E.vertex
+)
+ident(
+  ext_ref Ed_graph.G.E.src
+)
+"editor/ed_display.ml" 366 11036 11059 "editor/ed_display.ml" 366 11036 11060
+type(
+  Ed_graph.G.edge
+)
+ident(
+  int_ref e "editor/ed_display.ml" 364 10989 10998 "editor/ed_display.ml" 364 10989 10999
+)
+"editor/ed_display.ml" 366 11036 11051 "editor/ed_display.ml" 366 11036 11060
+call(
+  stack
+)
+type(
+  Ed_graph.G.E.vertex
+)
+"editor/ed_display.ml" 367 11064 11075 "editor/ed_display.ml" 367 11064 11076
+type(
+  Ed_graph.G.E.vertex
+)
+"editor/ed_display.ml" 367 11064 11079 "editor/ed_display.ml" 367 11064 11086
+type(
+  Ed_graph.G.edge -> Ed_graph.G.E.vertex
+)
+ident(
+  ext_ref Ed_graph.G.E.dst
+)
+"editor/ed_display.ml" 367 11064 11087 "editor/ed_display.ml" 367 11064 11088
+type(
+  Ed_graph.G.edge
+)
+ident(
+  int_ref e "editor/ed_display.ml" 364 10989 10998 "editor/ed_display.ml" 364 10989 10999
+)
+"editor/ed_display.ml" 367 11064 11079 "editor/ed_display.ml" 367 11064 11088
+call(
+  stack
+)
+type(
+  Ed_graph.G.E.vertex
+)
+"editor/ed_display.ml" 368 11092 11103 "editor/ed_display.ml" 368 11092 11105
+type(
+  Ed_graph.G.E.vertex * Ed_graph.G.E.vertex
+)
+"editor/ed_display.ml" 368 11092 11109 "editor/ed_display.ml" 368 11092 11110
+type(
+  Ed_graph.G.E.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 366 11036 11047 "editor/ed_display.ml" 366 11036 11048
+)
+"editor/ed_display.ml" 368 11092 11111 "editor/ed_display.ml" 368 11092 11112
+type(
+  Ed_graph.G.E.vertex
+)
+ident(
+  int_ref w "editor/ed_display.ml" 367 11064 11075 "editor/ed_display.ml" 367 11064 11076
+)
+"editor/ed_display.ml" 368 11092 11108 "editor/ed_display.ml" 368 11092 11113
+type(
+  Ed_graph.G.E.vertex * Ed_graph.G.E.vertex
+)
+"editor/ed_display.ml" 369 11117 11127 "editor/ed_display.ml" 369 11117 11131
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 365 11003 11014 "editor/ed_display.ml" 365 11003 11018
+)
+"editor/ed_display.ml" 369 11117 11127 "editor/ed_display.ml" 369 11117 11139
+type(
+  bool
+)
+"editor/ed_display.ml" 373 11185 11193 "editor/ed_display.ml" 373 11185 11197
+type(
+  GnoCanvas.line
+)
+ident(
+  def line "editor/ed_display.ml" 375 11242 11246 "editor/ed_display.ml" 383 11659 11682
+)
+"editor/ed_display.ml" 373 11185 11200 "editor/ed_display.ml" 373 11185 11219
+type(
+  Ed_graph.H2.key -> Ed_graph.G.E.label -> 'b -> GnoCanvas.line
+)
+ident(
+  int_ref draw_successor_edge "editor/ed_display.ml" 294 9020 9024 "editor/ed_display.ml" 294 9020 9043
+)
+"editor/ed_display.ml" 373 11185 11220 "editor/ed_display.ml" 373 11185 11222
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 368 11092 11103 "editor/ed_display.ml" 368 11092 11105
+)
+"editor/ed_display.ml" 373 11185 11223 "editor/ed_display.ml" 373 11185 11227
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 365 11003 11014 "editor/ed_display.ml" 365 11003 11018
+)
+"editor/ed_display.ml" 373 11185 11228 "editor/ed_display.ml" 373 11185 11234
+type(
+  'b
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 339 10257 10277 "editor/ed_display.ml" 339 10257 10283
+)
+"editor/ed_display.ml" 373 11185 11200 "editor/ed_display.ml" 373 11185 11234
+call(
+  stack
+)
+type(
+  GnoCanvas.line
+)
+"editor/ed_display.ml" 376 11252 11264 "editor/ed_display.ml" 376 11252 11268
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 365 11003 11014 "editor/ed_display.ml" 365 11003 11018
+)
+"editor/ed_display.ml" 376 11252 11264 "editor/ed_display.ml" 376 11252 11278
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 377 11284 11294 "editor/ed_display.ml" 377 11284 11300
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 377 11284 11304 "editor/ed_display.ml" 377 11284 11331
+type(
+  GnoCanvas.line -> string -> unit
+)
+ident(
+  int_ref color_change_successor_edge "editor/ed_display.ml" 263 8234 8238 "editor/ed_display.ml" 263 8234 8265
+)
+"editor/ed_display.ml" 377 11284 11332 "editor/ed_display.ml" 377 11284 11336
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 373 11185 11193 "editor/ed_display.ml" 373 11185 11197
+)
+"editor/ed_display.ml" 377 11284 11337 "editor/ed_display.ml" 377 11284 11357
+type(
+  string
+)
+ident(
+  int_ref color_successor_edge "editor/ed_display.ml" 90 2951 2955 "editor/ed_display.ml" 90 2951 2975
+)
+"editor/ed_display.ml" 377 11284 11304 "editor/ed_display.ml" 377 11284 11358
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 378 11359 11369 "editor/ed_display.ml" 378 11359 11377
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 378 11359 11381 "editor/ed_display.ml" 378 11359 11408
+type(
+  GnoCanvas.line -> string -> unit
+)
+ident(
+  int_ref color_change_successor_edge "editor/ed_display.ml" 263 8234 8238 "editor/ed_display.ml" 263 8234 8265
+)
+"editor/ed_display.ml" 378 11359 11409 "editor/ed_display.ml" 378 11359 11413
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 373 11185 11193 "editor/ed_display.ml" 373 11185 11197
+)
+"editor/ed_display.ml" 378 11359 11414 "editor/ed_display.ml" 378 11359 11443
+type(
+  string
+)
+ident(
+  int_ref color_selected_successor_edge "editor/ed_display.ml" 94 3087 3091 "editor/ed_display.ml" 94 3087 3120
+)
+"editor/ed_display.ml" 378 11359 11381 "editor/ed_display.ml" 378 11359 11444
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 379 11445 11455 "editor/ed_display.ml" 379 11445 11462
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 379 11445 11467 "editor/ed_display.ml" 379 11445 11494
+type(
+  GnoCanvas.line -> string -> unit
+)
+ident(
+  int_ref color_change_successor_edge "editor/ed_display.ml" 263 8234 8238 "editor/ed_display.ml" 263 8234 8265
+)
+"editor/ed_display.ml" 379 11445 11495 "editor/ed_display.ml" 379 11445 11499
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 373 11185 11193 "editor/ed_display.ml" 373 11185 11197
+)
+"editor/ed_display.ml" 379 11445 11500 "editor/ed_display.ml" 379 11445 11528
+type(
+  string
+)
+ident(
+  int_ref color_focused_successor_edge "editor/ed_display.ml" 98 3215 3219 "editor/ed_display.ml" 98 3215 3247
+)
+"editor/ed_display.ml" 379 11445 11467 "editor/ed_display.ml" 379 11445 11529
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 380 11530 11540 "editor/ed_display.ml" 380 11530 11556
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 380 11530 11560 "editor/ed_display.ml" 380 11530 11587
+type(
+  GnoCanvas.line -> string -> unit
+)
+ident(
+  int_ref color_change_successor_edge "editor/ed_display.ml" 263 8234 8238 "editor/ed_display.ml" 263 8234 8265
+)
+"editor/ed_display.ml" 380 11530 11588 "editor/ed_display.ml" 380 11530 11592
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 373 11185 11193 "editor/ed_display.ml" 373 11185 11197
+)
+"editor/ed_display.ml" 380 11530 11593 "editor/ed_display.ml" 380 11530 11630
+type(
+  string
+)
+ident(
+  int_ref color_selected_focused_successor_edge "editor/ed_display.ml" 103 3397 3401 "editor/ed_display.ml" 103 3397 3438
+)
+"editor/ed_display.ml" 380 11530 11560 "editor/ed_display.ml" 380 11530 11631
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 375 11242 11246 "editor/ed_display.ml" 381 11632 11639
+type(
+  unit
+)
+"editor/ed_display.ml" 382 11641 11645 "editor/ed_display.ml" 382 11641 11649
+type(
+  GnoCanvas.line
+)
+ident(
+  int_ref line "editor/ed_display.ml" 373 11185 11193 "editor/ed_display.ml" 373 11185 11197
+)
+"editor/ed_display.ml" 382 11641 11645 "editor/ed_display.ml" 382 11641 11654
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 382 11641 11655 "editor/ed_display.ml" 382 11641 11657
+type(
+  unit
+)
+"editor/ed_display.ml" 382 11641 11645 "editor/ed_display.ml" 382 11641 11657
+type(
+  unit
+)
+"editor/ed_display.ml" 383 11659 11663 "editor/ed_display.ml" 383 11659 11679
+type(
+  Ed_graph.H2.key -> unit
+)
+ident(
+  int_ref hide_intern_edge "editor/ed_display.ml" 330 10018 10022 "editor/ed_display.ml" 330 10018 10038
+)
+"editor/ed_display.ml" 383 11659 11680 "editor/ed_display.ml" 383 11659 11682
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 368 11092 11103 "editor/ed_display.ml" 368 11092 11105
+)
+"editor/ed_display.ml" 383 11659 11663 "editor/ed_display.ml" 383 11659 11682
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 382 11641 11645 "editor/ed_display.ml" 383 11659 11682
+type(
+  unit
+)
+"editor/ed_display.ml" 375 11242 11246 "editor/ed_display.ml" 383 11659 11682
+type(
+  unit
+)
+"editor/ed_display.ml" 372 11177 11179 "editor/ed_display.ml" 384 11683 11688
+type(
+  unit
+)
+"editor/ed_display.ml" 388 11732 11736 "editor/ed_display.ml" 388 11732 11754
+type(
+  Ed_graph.H2.key -> unit
+)
+ident(
+  int_ref hide_succesor_edge "editor/ed_display.ml" 333 10125 10129 "editor/ed_display.ml" 333 10125 10147
+)
+"editor/ed_display.ml" 388 11732 11755 "editor/ed_display.ml" 388 11732 11757
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 368 11092 11103 "editor/ed_display.ml" 368 11092 11105
+)
+"editor/ed_display.ml" 388 11732 11736 "editor/ed_display.ml" 388 11732 11757
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 389 11759 11767 "editor/ed_display.ml" 389 11759 11771
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 389 11759 11774 "editor/ed_display.ml" 389 11759 11783
+type(
+  Ed_graph.G.E.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 389 11759 11784 "editor/ed_display.ml" 389 11759 11785
+type(
+  Ed_graph.G.E.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 366 11036 11047 "editor/ed_display.ml" 366 11036 11048
+)
+"editor/ed_display.ml" 389 11759 11774 "editor/ed_display.ml" 389 11759 11785
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 390 11789 11797 "editor/ed_display.ml" 390 11789 11801
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 390 11789 11804 "editor/ed_display.ml" 390 11789 11813
+type(
+  Ed_graph.G.E.vertex -> Ed_graph.G.V.label
+)
+ident(
+  ext_ref Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 390 11789 11814 "editor/ed_display.ml" 390 11789 11815
+type(
+  Ed_graph.G.E.vertex
+)
+ident(
+  int_ref w "editor/ed_display.ml" 367 11064 11075 "editor/ed_display.ml" 367 11064 11076
+)
+"editor/ed_display.ml" 390 11789 11804 "editor/ed_display.ml" 390 11789 11815
+call(
+  stack
+)
+type(
+  Ed_graph.G.V.label
+)
+"editor/ed_display.ml" 391 11819 11827 "editor/ed_display.ml" 391 11819 11831
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 391 11819 11834 "editor/ed_display.ml" 391 11819 11838
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref labv "editor/ed_display.ml" 389 11759 11767 "editor/ed_display.ml" 389 11759 11771
+)
+"editor/ed_display.ml" 391 11819 11834 "editor/ed_display.ml" 391 11819 11845
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 392 11849 11857 "editor/ed_display.ml" 392 11849 11861
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 392 11849 11864 "editor/ed_display.ml" 392 11849 11868
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref labw "editor/ed_display.ml" 390 11789 11797 "editor/ed_display.ml" 390 11789 11801
+)
+"editor/ed_display.ml" 392 11849 11864 "editor/ed_display.ml" 392 11849 11875
+type(
+  Ed_hyper.turtle
+)
+"editor/ed_display.ml" 393 11879 11886 "editor/ed_display.ml" 393 11879 11890
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref labv "editor/ed_display.ml" 389 11759 11767 "editor/ed_display.ml" 389 11759 11771
+)
+"editor/ed_display.ml" 393 11879 11886 "editor/ed_display.ml" 393 11879 11898
+type(
+  Ed_graph.visibility
+)
+"editor/ed_display.ml" 393 11879 11899 "editor/ed_display.ml" 393 11879 11900
+type(
+  Ed_graph.visibility -> Ed_graph.visibility -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_display.ml" 393 11879 11901 "editor/ed_display.ml" 393 11879 11908
+type(
+  Ed_graph.visibility
+)
+"editor/ed_display.ml" 393 11879 11886 "editor/ed_display.ml" 393 11879 11908
+type(
+  bool
+)
+"editor/ed_display.ml" 394 11910 11916 "editor/ed_display.ml" 394 11910 11918
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"editor/ed_display.ml" 394 11910 11919 "editor/ed_display.ml" 394 11910 11923
+type(
+  Ed_graph.G.V.label
+)
+ident(
+  int_ref labw "editor/ed_display.ml" 390 11789 11797 "editor/ed_display.ml" 390 11789 11801
+)
+"editor/ed_display.ml" 394 11910 11919 "editor/ed_display.ml" 394 11910 11931
+type(
+  Ed_graph.visibility
+)
+"editor/ed_display.ml" 394 11910 11932 "editor/ed_display.ml" 394 11910 11933
+type(
+  Ed_graph.visibility -> Ed_graph.visibility -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_display.ml" 394 11910 11934 "editor/ed_display.ml" 394 11910 11941
+type(
+  Ed_graph.visibility
+)
+"editor/ed_display.ml" 394 11910 11919 "editor/ed_display.ml" 394 11910 11941
+type(
+  bool
+)
+"editor/ed_display.ml" 395 11943 11949 "editor/ed_display.ml" 395 11943 11951
+type(
+  bool -> bool -> bool
+)
+ident(
+  ext_ref Pervasives.&&
+)
+"editor/ed_display.ml" 395 11943 11952 "editor/ed_display.ml" 395 11943 11953
+type(
+  Ed_graph.G.E.vertex
+)
+ident(
+  int_ref v "editor/ed_display.ml" 366 11036 11047 "editor/ed_display.ml" 366 11036 11048
+)
+"editor/ed_display.ml" 395 11943 11953 "editor/ed_display.ml" 395 11943 11955
+type(
+  Ed_graph.G.E.vertex -> Ed_graph.G.E.vertex -> bool
+)
+ident(
+  ext_ref Pervasives.!=
+)
+"editor/ed_display.ml" 395 11943 11955 "editor/ed_display.ml" 395 11943 11956
+type(
+  Ed_graph.G.E.vertex
+)
+ident(
+  int_ref w "editor/ed_display.ml" 367 11064 11075 "editor/ed_display.ml" 367 11064 11076
+)
+"editor/ed_display.ml" 395 11943 11952 "editor/ed_display.ml" 395 11943 11956
+type(
+  bool
+)
+"editor/ed_display.ml" 394 11910 11919 "editor/ed_display.ml" 395 11943 11956
+type(
+  bool
+)
+"editor/ed_display.ml" 393 11879 11886 "editor/ed_display.ml" 395 11943 11956
+type(
+  bool
+)
+"editor/ed_display.ml" 397 11972 11982 "editor/ed_display.ml" 397 11972 11983
+type(
+  GnomeCanvas.PathDef.t
+)
+"editor/ed_display.ml" 397 11972 11984 "editor/ed_display.ml" 397 11972 11988
+type(
+  GnoCanvas.bpath
+)
+ident(
+  def line "editor/ed_display.ml" 398 12036 12042 "editor/ed_display.ml" 405 12397 12414
+)
+"editor/ed_display.ml" 397 11972 11982 "editor/ed_display.ml" 397 11972 11988
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 397 11972 11991 "editor/ed_display.ml" 397 11972 12007
+type(
+  Ed_graph.H2.key ->
+  Ed_graph.G.E.label ->
+  Ed_hyper.turtle ->
+  Ed_hyper.turtle -> 'b -> GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+ident(
+  int_ref draw_intern_edge "editor/ed_display.ml" 271 8435 8439 "editor/ed_display.ml" 271 8435 8455
+)
+"editor/ed_display.ml" 397 11972 12008 "editor/ed_display.ml" 397 11972 12010
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 368 11092 11103 "editor/ed_display.ml" 368 11092 11105
+)
+"editor/ed_display.ml" 397 11972 12011 "editor/ed_display.ml" 397 11972 12015
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 365 11003 11014 "editor/ed_display.ml" 365 11003 11018
+)
+"editor/ed_display.ml" 397 11972 12016 "editor/ed_display.ml" 397 11972 12020
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turv "editor/ed_display.ml" 391 11819 11827 "editor/ed_display.ml" 391 11819 11831
+)
+"editor/ed_display.ml" 397 11972 12021 "editor/ed_display.ml" 397 11972 12025
+type(
+  Ed_hyper.turtle
+)
+ident(
+  int_ref turw "editor/ed_display.ml" 392 11849 11857 "editor/ed_display.ml" 392 11849 11861
+)
+"editor/ed_display.ml" 397 11972 12026 "editor/ed_display.ml" 397 11972 12032
+type(
+  'b
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 339 10257 10277 "editor/ed_display.ml" 339 10257 10283
+)
+"editor/ed_display.ml" 397 11972 11991 "editor/ed_display.ml" 397 11972 12032
+call(
+  stack
+)
+type(
+  GnomeCanvas.PathDef.t * GnoCanvas.bpath
+)
+"editor/ed_display.ml" 399 12048 12062 "editor/ed_display.ml" 399 12048 12066
+type(
+  Ed_graph.G.E.label
+)
+ident(
+  int_ref edge "editor/ed_display.ml" 365 11003 11014 "editor/ed_display.ml" 365 11003 11018
+)
+"editor/ed_display.ml" 399 12048 12062 "editor/ed_display.ml" 399 12048 12076
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 400 12082 12087 "editor/ed_display.ml" 400 12082 12093
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 400 12082 12097 "editor/ed_display.ml" 400 12082 12121
+type(
+  GnoCanvas.bpath -> string -> unit
+)
+ident(
+  int_ref color_change_intern_edge "editor/ed_display.ml" 259 8100 8104 "editor/ed_display.ml" 259 8100 8128
+)
+"editor/ed_display.ml" 400 12082 12122 "editor/ed_display.ml" 400 12082 12126
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 397 11972 11984 "editor/ed_display.ml" 397 11972 11988
+)
+"editor/ed_display.ml" 400 12082 12127 "editor/ed_display.ml" 400 12082 12144
+type(
+  string
+)
+ident(
+  int_ref color_intern_edge "editor/ed_display.ml" 89 2918 2922 "editor/ed_display.ml" 89 2918 2939
+)
+"editor/ed_display.ml" 400 12082 12097 "editor/ed_display.ml" 400 12082 12145
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 401 12146 12151 "editor/ed_display.ml" 401 12146 12159
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 401 12146 12163 "editor/ed_display.ml" 401 12146 12187
+type(
+  GnoCanvas.bpath -> string -> unit
+)
+ident(
+  int_ref color_change_intern_edge "editor/ed_display.ml" 259 8100 8104 "editor/ed_display.ml" 259 8100 8128
+)
+"editor/ed_display.ml" 401 12146 12188 "editor/ed_display.ml" 401 12146 12192
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 397 11972 11984 "editor/ed_display.ml" 397 11972 11988
+)
+"editor/ed_display.ml" 401 12146 12193 "editor/ed_display.ml" 401 12146 12219
+type(
+  string
+)
+ident(
+  int_ref color_selected_intern_edge "editor/ed_display.ml" 93 3028 3032 "editor/ed_display.ml" 93 3028 3058
+)
+"editor/ed_display.ml" 401 12146 12163 "editor/ed_display.ml" 401 12146 12220
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 402 12221 12226 "editor/ed_display.ml" 402 12221 12233
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 402 12221 12238 "editor/ed_display.ml" 402 12221 12262
+type(
+  GnoCanvas.bpath -> string -> unit
+)
+ident(
+  int_ref color_change_intern_edge "editor/ed_display.ml" 259 8100 8104 "editor/ed_display.ml" 259 8100 8128
+)
+"editor/ed_display.ml" 402 12221 12263 "editor/ed_display.ml" 402 12221 12267
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 397 11972 11984 "editor/ed_display.ml" 397 11972 11988
+)
+"editor/ed_display.ml" 402 12221 12268 "editor/ed_display.ml" 402 12221 12293
+type(
+  string
+)
+ident(
+  int_ref color_focused_intern_edge "editor/ed_display.ml" 97 3173 3177 "editor/ed_display.ml" 97 3173 3202
+)
+"editor/ed_display.ml" 402 12221 12238 "editor/ed_display.ml" 402 12221 12294
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 403 12295 12300 "editor/ed_display.ml" 403 12295 12316
+type(
+  Ed_graph.mode
+)
+"editor/ed_display.ml" 403 12295 12320 "editor/ed_display.ml" 403 12295 12344
+type(
+  GnoCanvas.bpath -> string -> unit
+)
+ident(
+  int_ref color_change_intern_edge "editor/ed_display.ml" 259 8100 8104 "editor/ed_display.ml" 259 8100 8128
+)
+"editor/ed_display.ml" 403 12295 12345 "editor/ed_display.ml" 403 12295 12349
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 397 11972 11984 "editor/ed_display.ml" 397 11972 11988
+)
+"editor/ed_display.ml" 403 12295 12350 "editor/ed_display.ml" 403 12295 12384
+type(
+  string
+)
+ident(
+  int_ref color_selected_focused_intern_edge "editor/ed_display.ml" 101 3301 3305 "editor/ed_display.ml" 101 3301 3339
+)
+"editor/ed_display.ml" 403 12295 12320 "editor/ed_display.ml" 403 12295 12385
+call(
+  stack
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 398 12036 12042 "editor/ed_display.ml" 404 12386 12395
+type(
+  unit
+)
+"editor/ed_display.ml" 405 12397 12403 "editor/ed_display.ml" 405 12397 12407
+type(
+  GnoCanvas.bpath
+)
+ident(
+  int_ref line "editor/ed_display.ml" 397 11972 11984 "editor/ed_display.ml" 397 11972 11988
+)
+"editor/ed_display.ml" 405 12397 12403 "editor/ed_display.ml" 405 12397 12412
+type(
+  unit -> unit
+)
+"editor/ed_display.ml" 405 12397 12412 "editor/ed_display.ml" 405 12397 12414
+type(
+  unit
+)
+"editor/ed_display.ml" 405 12397 12403 "editor/ed_display.ml" 405 12397 12414
+type(
+  unit
+)
+"editor/ed_display.ml" 398 12036 12042 "editor/ed_display.ml" 405 12397 12414
+type(
+  unit
+)
+"editor/ed_display.ml" 396 11957 11966 "editor/ed_display.ml" 406 12415 12422
+type(
+  unit
+)
+"editor/ed_display.ml" 407 12428 12434 "editor/ed_display.ml" 407 12428 12450
+type(
+  Ed_graph.H2.key -> unit
+)
+ident(
+  int_ref hide_intern_edge "editor/ed_display.ml" 330 10018 10022 "editor/ed_display.ml" 330 10018 10038
+)
+"editor/ed_display.ml" 407 12428 12451 "editor/ed_display.ml" 407 12428 12453
+type(
+  Ed_graph.H2.key
+)
+ident(
+  int_ref vw "editor/ed_display.ml" 368 11092 11103 "editor/ed_display.ml" 368 11092 11105
+)
+"editor/ed_display.ml" 407 12428 12434 "editor/ed_display.ml" 407 12428 12453
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 393 11879 11883 "editor/ed_display.ml" 407 12428 12453
+type(
+  unit
+)
+"editor/ed_display.ml" 392 11849 11853 "editor/ed_display.ml" 407 12428 12453
+type(
+  unit
+)
+"editor/ed_display.ml" 391 11819 11823 "editor/ed_display.ml" 407 12428 12453
+type(
+  unit
+)
+"editor/ed_display.ml" 390 11789 11793 "editor/ed_display.ml" 407 12428 12453
+type(
+  unit
+)
+"editor/ed_display.ml" 389 11759 11763 "editor/ed_display.ml" 407 12428 12453
+type(
+  unit
+)
+"editor/ed_display.ml" 387 11724 11726 "editor/ed_display.ml" 408 12454 12459
+type(
+  unit
+)
+"editor/ed_display.ml" 369 11117 11124 "editor/ed_display.ml" 408 12454 12459
+type(
+  unit
+)
+"editor/ed_display.ml" 368 11092 11099 "editor/ed_display.ml" 408 12454 12459
+type(
+  unit
+)
+"editor/ed_display.ml" 367 11064 11071 "editor/ed_display.ml" 408 12454 12459
+type(
+  unit
+)
+"editor/ed_display.ml" 366 11036 11043 "editor/ed_display.ml" 408 12454 12459
+type(
+  unit
+)
+"editor/ed_display.ml" 365 11003 11010 "editor/ed_display.ml" 408 12454 12459
+type(
+  unit
+)
+"editor/ed_display.ml" 364 10989 10993 "editor/ed_display.ml" 408 12454 12460
+type(
+  Ed_graph.G.edge -> unit
+)
+"editor/ed_display.ml" 409 12462 12466 "editor/ed_display.ml" 409 12462 12467
+type(
+  Ed_graph.B.G.t ref -> Ed_graph.B.G.t
+)
+ident(
+  ext_ref Pervasives.!
+)
+"editor/ed_display.ml" 409 12462 12467 "editor/ed_display.ml" 409 12462 12472
+type(
+  Ed_graph.B.G.t ref
+)
+ident(
+  ext_ref Ed_graph.graph
+)
+"editor/ed_display.ml" 409 12462 12466 "editor/ed_display.ml" 409 12462 12472
+type(
+  Ed_graph.B.G.t
+)
+"editor/ed_display.ml" 363 10972 10974 "editor/ed_display.ml" 409 12462 12472
+call(
+  tail
+)
+type(
+  unit
+)
+"editor/ed_display.ml" 341 10304 10306 "editor/ed_display.ml" 409 12462 12472
+type(
+  unit
+)
+"editor/ed_display.ml" 414 12481 12485 "editor/ed_display.ml" 414 12481 12498
+type(
+  #GnoCanvas.group -> unit
+)
+ident(
+  def reset_display "editor/ed_display.ml" 415 12508 12527 --
+)
+"editor/ed_display.ml" 414 12481 12499 "editor/ed_display.ml" 414 12481 12505
+type(
+  #GnoCanvas.group as 'a
+)
+ident(
+  def canvas "editor/ed_display.ml" 415 12508 12510 "editor/ed_display.ml" 415 12508 12527
+)
+"editor/ed_display.ml" 415 12508 12510 "editor/ed_display.ml" 415 12508 12520
+type(
+  'a -> unit
+)
+ident(
+  int_ref init_nodes "editor/ed_display.ml" 248 7852 7856 "editor/ed_display.ml" 248 7852 7866
+)
+"editor/ed_display.ml" 415 12508 12521 "editor/ed_display.ml" 415 12508 12527
+type(
+  'a
+)
+ident(
+  int_ref canvas "editor/ed_display.ml" 414 12481 12499 "editor/ed_display.ml" 414 12481 12505
+)
+"editor/ed_display.ml" 415 12508 12510 "editor/ed_display.ml" 415 12508 12527
+call(
+  tail
+)
+type(
+  unit
+)

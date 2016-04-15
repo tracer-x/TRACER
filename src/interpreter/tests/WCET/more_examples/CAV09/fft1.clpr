@@ -1,0 +1,46 @@
+
+straightline0(0, [I,J,_J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	straightline0(1, [I,J,N/2,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline0(1, [I,J,J1,_J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	straightline0(2, [I,J,J1,N-1,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline0(2, [I,_J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	straightline0(3, [I,1,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline0(3, [_I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+U) :-
+	loop1([0,J,J1,J2,N,K,If1,Jf1,J1f1,J2f1,Nf1,Kf1], U),
+	straightline0(4, [If1,Jf1,J1f1,J2f1,Nf1,Kf1,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline0(4, [I,J,J1,J2,N,K,I,J,J1,J2,N,K], 0).
+
+loop1([I,J,J1,J2,N,K,I,J,J1,J2,N,K], 0) :- I>J2, !.
+loop1([I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+U) :-
+	straightline1(0, [I,J,J1,J2,N,K,If1,Jf1,J1f1,J2f1,Nf1,Kf1], U),
+	loop1([If1,Jf1,J1f1,J2f1,Nf1,Kf1,If,Jf,J1f,J2f,Nf,Kf], T).
+
+straightline1(0, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	I < J,
+	straightline1(1, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(0, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	I >= J,
+	straightline1(2, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(1, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	straightline1(2, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(2, [I,J,J1,J2,N,_K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	K = J1,
+	straightline1(3, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(3, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+U) :-
+	loop2([I,J,J1,J2,N,K,If1,Jf1,J1f1,J2f1,Nf1,Kf1], U),
+	straightline1(4, [If1,Jf1,J1f1,J2f1,Nf1,Kf1,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(4, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	straightline1(5, [I,J+K,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(5, [I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	straightline1(6, [I+1,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T).
+straightline1(6, [I,J,J1,J2,N,K,I,J,J1,J2,N,K], 0).
+
+loop2([I,J,J1,J2,N,K,I,J,J1,J2,N,K], 0) :- K>=J, !.
+loop2([I,J,J1,J2,N,K,If,Jf,J1f,J2f,Nf,Kf], T+1) :-
+	loop2([I,J-K,J1,J2,N,K/2,If,Jf,J1f,J2f,Nf,Kf], T).
+
+execute(_Simulation,T,[I,J,J1,J2,64,K]) :-
+	straightline0(0, [I,J,J1,J2,64,K,_If,_Jf,_J1f,_J2f,_Nf,_Kf], T).
+
+:- consult('test_engine.clpr').
+

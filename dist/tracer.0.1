@@ -1,0 +1,335 @@
+#============================================================================#
+#!/bin/bash
+# Copyright (C)2012 National University of Singapore
+# Authors: J. A. Navas, Andrew E. Santosa, and Vijayaraghavan Murali
+#
+#
+# This script runs the tool TRACER for verification of C programs.
+# 
+# Run "tracer.0.1 -help" to see all options
+#============================================================================#
+
+# Paths
+CLPRPATH=$TRACER_PATH/lib
+MAIN=src/tracer.0.1
+
+function usage(){
+cat <<EOF
+TRACER: A Symbolic Execution Tool for Verification
+Copyright (C)2012 National University of Singapore
+Authors: J. A. Navas, Andrew E. Santosa, and Vijayaraghavan Murali
+
+Usage: $0 program [options]
+  program is the name of the program to be verified.
+  A program should be annotated at least with one _TRACER_abort(cond).
+  General options:
+
+  -help                            print this message
+  -optimized-version         [n|y] turn on/off an optimized version (default n)
+                                   If y then dot files are not generated.
+  -alias                     [n|y] turn on/off alias analysis  (default y)
+                                   (unsound if n)
+  -mccarthy                  [n|y] turn on/off mccarthy solver (default n)
+  -convert-strict-ineq       [n|y] convert strict inequalities into
+                                   non-strict inequalities     (default n)
+  -convert-eq-to-ineq        [n|y] convert equality into inequalities (default n)
+  -intp                         x  choose interpolation method
+                                   x=none  -- no interpolation  
+                                   x=sp    -- use of strongest postconditions (default)
+                                   x=wp    -- use of weakest preconditions.
+                                   x=clp   -- use CLP-Prover 
+  -loop-inv                     x  use loop invariants (default none)
+                                   x=none      -- none
+                                   x=octagon   -- octagon   abstract domain
+                                   x=polyhedra -- polyhedra abstract domain
+                                   x=invgen    -- InvGen tool
+  -h                            x  choose heuristics during refinement
+                                   x is integer between [1...4] (default 2)
+
+EOF
+}
+
+# Sanity checks on input values
+function check_yes_not_arg(){
+    if [ "$2" != "y" ] && [ "$2" != "n" ]; then
+	echo "unexpected value for -$1 $2"
+	exit 2
+    fi	
+}
+
+
+# Compile the C program to CLP via CIL and ANTLR
+function compileC2CLP(){
+    if  [ -f ${prog} ] 
+    then       
+    # Get absolute paths of the C program and generate the absolute path
+    # for the CLP program.
+	filename=`basename ${prog}`
+	dirname=`dirname ${prog}`
+	basename_NOSUFFIX=${filename%.c}	
+	basename_C=${basename_NOSUFFIX}.c
+	basename_CLP=${basename_NOSUFFIX}.clp	
+	abspath_C="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_C"
+	abspath_CLP="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_CLP"
+    else
+	echo "${prog} does not exist"
+	exit 2
+    fi  	
+    # Call compiler from C to CLP
+    C2CLP="java -jar $TRACER_PATH/lib/C2CLP.jar ${abspath_C} ${abspath_CLP} $C2CLPOPTS" 
+    tee_command="tee -a $C2CLP_OUT"
+    exec $C2CLP  2>/dev/null  | exec $tee_command
+}
+
+
+#----------------------------------------------------------------------------#
+#                              MAIN 
+#----------------------------------------------------------------------------#
+
+if [ $# -lt 1 ] 
+then
+    usage
+    exit 2
+fi
+
+prog=$1
+C2CLP_OUT=compiler.out        # To redirect compiler output
+
+use_interpolation=1           # true
+use_other_intp=0              # false
+minmax_use=1                  # true
+use_alias=1                   # true
+include_arrays=0              # false
+include_only_sym_arrays=0     # false
+optimized_version=0           # false
+convert_strict_inequalities=0 # false 
+convert_eq_to_ineq=0          # false 
+# basic | pplloose | polka | pplstrict | invgen
+loop_inv="nil"      
+
+TRACEROPTS="nil"     
+
+#-------------------------------------------------------------------------#
+# Setup CLP(R) parameters
+#-------------------------------------------------------------------------#
+# Note: local stack and heap size are allocated together
+# Note: -ss is not the size of the solver. The solver allocates
+# dynamically memory. Instead -ss is the number of variables handled
+# by tableau.
+CLPR_OPT_CS=130000000   #520Mb  # Code space  x 4 in bytes
+CLPR_OPT_TS=5000000     #20Mb   # Trail stack x 4 in btyes
+CLPR_OPT_LS=7000000             # Local stack x 4 in bytes
+CLPR_OPT_HS=8000000     #60Mb   # Heap x 4 in bytes
+CLPR_OPT_SS=5000000     #20Mb   # Tableau space x 4 in bytes
+
+#-------------------------------------------------------------------------#
+# Read options from user
+#-------------------------------------------------------------------------#
+if [ "$1" == "-help" ]; then
+     usage
+     exit 2
+fi
+
+while [ "$2" != "" ]; do
+    case "$2" in
+	-optimized-version)
+	    shift
+	    check_yes_not_arg "optimized-version" $2
+	    if [ "$2" == "y" ]; then
+		optimized_version=1
+	    fi 	
+	    ;;	    
+	-mccarthy)
+	    shift
+	    check_yes_not_arg "mccarthy" $2
+	    TRACEROPTS="option(array_solver,$2),$TRACEROPTS"
+	    if [ "$2" == "y" ]; then
+		include_arrays=1
+	    fi 	
+	    ;;	    
+	-alias)
+	    shift
+	    check_yes_not_arg "alias" $2
+	    TRACEROPTS="option(alias,$2),$TRACEROPTS"
+	    if [ "$2" == "n" ]; then
+		use_alias=0
+	    fi
+	    ;;	    
+	-convert-strict-ineq)
+	    shift
+	    check_yes_not_arg "convert-strict-inequality" $2
+	    TRACEROPTS="option(convert_strict_inequality,$2),$TRACEROPTS"
+	    if [ "$2" == "y" ]; then
+		convert_strict_inequalities=1
+	    fi
+	    ;;	 
+	-convert-eq-to-ineq)
+	    shift
+	    check_yes_not_arg "convert-eq-to-ineq" $2
+	    if [ "$2" == "y" ]; then
+		convert_eq_to_ineq=1
+	    fi
+	    ;;	    
+	-loop-inv)
+	    shift
+	    if [ "$2" == "none" ]; then
+		loop_inv="nil"
+	    else 
+		if [ "$2" == "octagon" ]; then
+		    loop_inv="basic"
+		else
+		    if [ "$2" == "polyhedra" ]; then
+			loop_inv="polka"
+		    else
+			if [ "$2" == "invgen" ]; then
+			    loop_inv="invgen"
+			else
+ 			    echo "unexpected value for -loop-inv: $2"
+			    exit 2
+			fi
+		    fi
+		fi
+	    fi 	
+	    ;;	    
+	-intp)
+	    shift
+	    case "$2" in
+		"none")
+		    use_interpolation=0
+		    ;;
+		"sp" )
+		    TRACEROPTS="option(interpolant,deletion),$TRACEROPTS"
+		    ;;
+		"wp" )
+                    use_other_intp=1
+		    TRACEROPTS="option(other_interp,y),option(other_interp_method,non_disjunctive),$TRACEROPTS"
+		    ;;
+		"clp" )
+                    use_other_intp=1		    
+		    TRACEROPTS="option(other_interp,y),option(other_interp_method,rybal),$TRACEROPTS"
+		    ;;
+		*)
+		    echo "unexpected value for -intp $2"
+		    exit 2
+	    esac		
+ 	    ;;	    
+	-h)
+	    shift
+	    TRACEROPTS="option(refinement_heuristics,$2),$TRACEROPTS"
+	    ;;    
+	-optimist-subs)
+	    shift
+	    check_yes_not_arg "optimistic-subs" $2
+	    if [ "$2" == "n" ]; then
+		TRACEROPTS="option(allow_become_non_invariant_to_subsume,n),$TRACEROPTS"
+	    fi
+ 	    ;;
+	-help)
+	    shift
+	    usage
+	    exit 2
+	    ;;	    	
+	*)
+	    echo "unknown option $2"
+	    exit 2
+	    ;;
+    esac
+    shift
+done
+
+if [ $use_interpolation -eq 0 ]; then
+    TRACEROPTS="option(interpolation,n),$TRACEROPTS"
+else
+    TRACEROPTS="option(interpolation,y),$TRACEROPTS"
+fi
+
+if [ $optimized_version -eq 1 ]; then
+    TRACERSRC="${TRACER_PATH}/$MAIN"".clpr"
+    TRACEROPTS="option(minmax_cs_reuse,y),$TRACEROPTS"
+else
+    TRACERSRC="${TRACER_PATH}/$MAIN""_debug.clpr"
+    TRACEROPTS="option(minmax_cs_reuse,n),$TRACEROPTS"
+fi
+
+#-------------------------------------------------------------------------#
+# Options handled by the compiler from C to CLP 
+#-------------------------------------------------------------------------#
+C2CLPOPTS="include_block_hierarchy=true"
+# To convert all formal parameters and return values as global
+# variables. This makes much easier symbolic execution with function
+# calls although it introduces overheads.
+C2CLPOPTS="wp_compilation=true,$C2CLPOPTS" 
+if [ $use_alias -eq 1 ]; then
+# To use alias analysis to partition heap. Also needed for dealing
+# with & variables.
+    C2CLPOPTS="alias_analysis=true,$C2CLPOPTS" 
+fi	
+if [ $include_arrays -eq 1 ]; then
+# Include full array constraints for full reasoning
+    C2CLPOPTS="include_array_constraints=true,$C2CLPOPTS" 
+fi	
+if [ $include_only_sym_arrays -eq 1 ] && [ $include_arrays -eq 0 ]; then
+# Include only symbolic array constraints. Not for reasoning
+    C2CLPOPTS="include_array_constraints=true,$C2CLPOPTS" 
+    C2CLPOPTS="include_only_sym_array_constraints=true,$C2CLPOPTS" 
+fi	
+if [ $convert_strict_inequalities -eq 1 ]; then
+    C2CLPOPTS="convert_strict_inequalities=true,$C2CLPOPTS" 
+fi
+if [ $use_other_intp -eq 1 ]; then
+    if [ $include_only_sym_arrays -eq 1 ] || [ $include_arrays -eq 1 ]; then
+	echo "Sorry this interpolant is not implement for arrays/pointers."	
+	exit 2
+    fi
+    ## Special compilation for wp: 
+    ## All formal params and return values are converted to global
+    ## C2CLPOPTS="wp_compilation=true,$C2CLPOPTS" 
+fi
+
+if [ $loop_inv == "invgen" ]; then
+    # we use invgen + polyhedra
+    # we could use invgen + octagon but invgen is already quite
+    # expensive so better run with polyhedra
+    C2CLPOPTS="abstract_domain=polka,heavyweight_invariants=true,$C2CLPOPTS"
+else
+    if [ $loop_inv != "nil" ]; then    
+	C2CLPOPTS="abstract_domain=$loop_inv,$C2CLPOPTS"	
+    fi	
+fi
+if [ $convert_eq_to_ineq -eq 1 ]; then
+     if [ $use_other_intp -eq 1 ]; then
+         echo "Warning: cannot convert equalities to inequalities."
+	 convert_eq_to_ineq=0
+     else
+	    C2CLPOPTS="eq_to_ineq=true,$C2CLPOPTS"
+	    TRACEROPTS="option(convert_eq_to_ineq,y),$TRACEROPTS"
+     fi
+fi
+
+# Compile from C to CLPR
+compileC2CLP
+
+# Catch errors from the frontend (ANTLR, CRYSTAL, or CIL)
+if ( (grep "Fatal error" $C2CLP_OUT) || (grep " Error:" $C2CLP_OUT) || (grep "CIL failed" $C2CLP_OUT)); then
+   echo -e "\nTRACER: compilation of ${basename_C} failed.\n"
+   rm -f $C2CLP_OUT
+   exit 0
+else
+   rm -f $C2CLP_OUT
+fi
+
+cp $TRACERSRC "$TRACERSRC.tmp"
+# Filename and all user options are appended into the CLPR program
+echo -e ":- run_with_user_options('${abspath_CLP}',[$TRACEROPTS]).\n" >> "$TRACERSRC.tmp"
+echo -e ":- halt.\n" >> "$TRACERSRC.tmp"
+
+# Load and execution of the CLPR file
+echo -e "Loading CLPR ...\n"
+export CLPRLIB=${CLPRPATH}
+${CLPRPATH}/clpr -cs ${CLPR_OPT_CS} -ts ${CLPR_OPT_TS} -ls ${CLPR_OPT_LS} -hs ${CLPR_OPT_HS} -ss ${CLPR_OPT_SS} $TRACERSRC.tmp
+
+# Delete temporary files
+rm -f $TRACERSRC.tmp
+rm -f check_t.clp
+rm -f store_t.clp
+rm -f encode.clp

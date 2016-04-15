@@ -1,0 +1,43 @@
+This directory contains the statemate benchmarks used in comparing
+BLAST run with interpolating tracer. Also includes supporting files.
+
+In particular,
+
+statemate-timed_noloop_shorter3.c
+
+is a shortened version of statemate.c that can be verified by Blast,
+its CLP counterpart is
+
+statemate-timed_noloop_shorter3.clpr
+
+where simplification using shorten_trans has been applied, as it is
+with Blast. The run result of Blast (Cygwin, Windows XP SP3, Intel Core
+2 Duo, E6550 at 2.33 GHz, 3.25GB RAM) is in the file
+
+RESULTS_statemate-timed_noloop_shorter3.txt
+ 
+Another file
+
+statemate-timed_noloop_shorter5.c
+
+is also a shorter version of the statemate benchmark, with more selective
+choice of statements to be included. This is the one that is reported
+in SAS '09 draft. Its CLP counterpart is
+
+statemate-timed_noloop_shorter5.clpr
+
+Similarly the results are in
+
+RESULTS_statemate-timed_noloop_shorter5.txt
+
+OTHER EXAMPLES:
+===============
+
+joxan-10.c is the example that refines using lots of predicates
+(showing the slowness of Blast's refinement process),
+though the refinement is done only once.
+
+j4.c is the example that demonstrates that Blast is order n2 while
+we are linear.
+
+

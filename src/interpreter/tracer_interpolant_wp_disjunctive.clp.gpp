@@ -1,0 +1,651 @@
+% tracer_wp_disjunctive.clp.gpp
+
+%=============================================================================%
+% This file contains operations used to compute a disjunctive weakest
+% precondition in order to use it as interpolant.
+%=============================================================================%
+% export
+%
+%   wp_disjunct_gen_success_path/5
+%   wp_disjunct_infeasible_path/9
+%   wp_disjunct_pre_operator/18
+%   wp_disjunct_combine/9
+%   wp_disjunct_simplify_after_combined/3
+%   wp_disjunct_subsumed/15                   
+%   wp_disjunct_create_subsumed_interpolant/12
+%   wp_disjunct_create_abstraction_interpolant/12  
+%   wp_disjunct_create_memo_interpolant/11
+%   wp_disjunct_merge_loop_interpolant/8
+%   wp_disjunct_print_pre_stats/0
+%   wp_disjunct_print_combine_stats/0
+%
+#ifdef MINMAX
+%   wp_disjunct_create_memo_loopheader_interpolant/8
+#endif /*MINMAX*/
+%=============================================================================%
+%   The weakest precondition is computed as follows:
+%
+%   - If state <pc,Phi> and guard g is reached. Then, if Phi and g is
+%     unsatisfiable then return g.  In principle, we should return the
+%     formula (g=>false) = (not g). However, we return the negation of
+%     (not g) because in the memo we store the negated interpolant for
+%     making easier later the entailment tests.
+%
+%   - If state <pc,Phi> and (pc = pc_end and Phi is satisfiable) then
+%     return true
+%
+%   - If state <pc,Phi> and exists another state <pc,Phi_bar> such that 
+%     Phi and Phi_bar are unsatisfiable then return Phi_bar
+%
+%   - Otherwise, perform one symbolic execution step and during
+%     backtracking:
+%
+%     pre(op  ,F) = op and F, if op is a guard
+%                   F[E/x]  , if op = x:=e           
+%     combine(pre(op,F1),pre(op,F2)) = pre(op,F1) or pre(op,F2)
+%
+%     These two come from the fact that:
+%
+%     wp(if c then S1 else S2,Q) = (c => wp(S1,Q)) and (not(c) => wp(S2,Q))
+%                                = (c and wp(S1,Q)) or (not(c) and wp(S2,Q))
+%
+%   Two optimizations on the top of this algorithm:
+%
+%   1) pre(g,Q) = Q, if guard g is irrelevant to the safety
+%
+%   2) if the size of the weakest precondition formula is bigger than
+%   a specified threshold, the weakest precondition is not computed
+%   anymore and strongest postconditions (basic interpolants) are used
+%   instead. This is notified with the term "nil".
+%
+%   note: the wp is stored directly in the memo since it's constructed
+%   its negated form from the beginning.
+% 
+% TODO:
+%
+% - Array references and aliasing.
+% - The use of wp for wcet is a outdated. Need to udpate.  Not
+%   implemented for minmax or slicing neither.
+%
+% FIXME:
+%
+% - For tcas_1a.c the use of -intp dwp produces a much bigger search
+%   space than -intp sp which, in principle, it should not happen.
+%
+%==============================================================================%
+
+%------------------------------------------------------------------------------%
+% Pragmas
+%------------------------------------------------------------------------------%
+% if WP_REPLACE_ASSIGNMENTS then wp(x:=e,F) = F[E/x]
+% otherwise wp(x:=e,F) = F /\ x=e
+#define WP_REPLACE_ASSIGNMENTS
+% 1: apply (expensive but effective) simplification after the wp has
+%    been computed
+% 0: does not apply simplification.
+#define WP_SIMPLIFY 1
+%------------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------------%
+% wp_disjunct_gen_success_path(+,+,+,+,-)
+% Generate the formula true as weakest-precondition.
+%------------------------------------------------------------------------------%
+wp_disjunct_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,WP):-
+	WP = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, [],_).
+	                                              %          ^^ means true
+
+%------------------------------------------------------------------------------%
+% wp_disjunct_infeasible_path(+,+,+,+,+,+,+,+,-)
+% Generate the weakest-precondition of an infeasible path.
+%------------------------------------------------------------------------------%
+wp_disjunct_infeasible_path(_FName,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   CL,ML,XCL,WP):-
+	%--------------------------------------------------------------------
+	% step1: get the unsatisfiable core from CL using ML
+	%--------------------------------------------------------------------
+	select_marked_constraints_path(CL,ML,Core,o),
+	%--------------------------------------------------------------------
+	% step 2: compute all (conservatively) related constraints from XCL
+	% wrt the core. Only constraints from XCL which affect the
+	% safety condition will be pushed back.	
+	%--------------------------------------------------------------------
+	varset_constraints(Core,RelVs),
+	irrel_rel_constraints(XCL,RelVs,_,RelXCL),	
+	%--------------------------------------------------------------------
+	% step 3: produce the weakest-precondition from RelXCL
+        %         return the negated wp of XCL (i.e., XCL itself)
+        %---------------------------------------------------------------------	
+	append(RelXCL, Tail, WPConj),
+	WP=state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		 [intp_conjunct(Tail,WPConj)],_),
+        !.
+
+%------------------------------------------------------------------------------%
+% wp_disjunct_pre_operator
+%------------------------------------------------------------------------------%
+% Compute the wp of an operation
+% pre(op,F) = op and F, if op is a guard
+%             F[E/x]  , if op is x:=e           
+%------------------------------------------------------------------------------%
+wp_disjunct_pre_operator(nil,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,nil) :- !.
+wp_disjunct_pre_operator(WP1, ML1,
+			 _Id, FName1, 
+			 SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			 XCL, GuardFlag, CL, ML,
+			 FName,SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 WP) :-	
+	%----------------------------------------------------------------------
+	% Always be aware that across function calls, the variables of the
+	% parent can be different from children
+        %----------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET) 
+        %----------------------------------------------------------------------
+        % With WCET, copying is necessary since the variables are to be
+        % used in computing witnesses hence to be constrained
+        %----------------------------------------------------------------------
+	fcopy_term(t(XCL,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1),
+		   t(XCLA,
+		     SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA,
+		     SGlobalArr1A, SGlobalVar1A, SLocalArr1A, SLocalVar1A)),
+#else   /*UNFOLD_OPT==WCET*/
+        SGlobalArr1A = SGlobalArr1, SGlobalVar1A = SGlobalVar1,
+        SLocalArr1A  = SLocalArr1,  SLocalVar1A  = SLocalVar1,
+	SGlobalArrA  = SGlobalArr,  SGlobalVarA  = SGlobalVar,
+	SLocalArrA   = SLocalArr,   SLocalVarA   = SLocalVar,
+        XCLA = XCL,
+#endif  /*UNFOLD_OPT==WCET*/
+        WP1 = state(SGlobalArr1A, SGlobalVar1A, SLocalArr1A, SLocalVar1A, _,_),
+	WP  = state(SGlobalArrA , SGlobalVarA , SLocalArrA , SLocalVarA , _,_),
+	compute_wp(GuardFlag, WP1, ML1,
+		   FName1,SGlobalArr1A, SGlobalVar1A, SLocalArr1A, SLocalVar1A,
+		   FName ,SGlobalArrA,  SGlobalVarA,  SLocalArrA,  SLocalVarA,
+		   CL, ML, XCLA, WP).
+
+%-----------------------------------------------------------------------------%
+% compute_wp(+GuardFlag,+PostWP,+ML,+,+,+,+,+,+,+,+,+,+,+CL,+ML,+XCL,-PreWP)
+%-----------------------------------------------------------------------------%
+#ifdef  WP_REPLACE_ASSIGNMENTS
+compute_wp(branch, WP1,ML1,_,_,_,_,_,_,_,_,_,_,_,ML, XCL, WP) :-
+	compute_wp_guard(WP1, ML1, ML, XCL, WP).					
+compute_wp(not_branch,WP1, ML1,
+	   PostFName, PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+	   PreFName , PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar,	   
+	   _CL, _ML, XCL, WP) :-
+	%---------------------------------------------------------------------	
+	% Remove irrelevant constraints from XCL to speedup the
+	% computation of the wp.
+	%---------------------------------------------------------------------		
+	get_marked_constraints(ML1, XCL, XCL1, []),		
+	% Debugging ----------------------------------------------------------
+	PostFName=_, PreFName=_,
+% 	debug_message("\tComputing WP\n",[]),
+% 	debug_message("\tPostML:",[]),
+% 	pretty_printer_marked_constraints(PostFName,CL,ML1,
+% 				          PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar),
+% 	debug_message("\tXCL:",[]),
+% 	pretty_printer_constraints_list(PreFName,
+% 					PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+% 					PostFName,
+% 					PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+% 					XCL),
+% 	debug_message("\tXCL1:",[]),
+% 	pretty_printer_constraints_list(PreFName,
+% 					PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+% 					PostFName,
+% 					PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+% 					XCL1),
+%  	pretty_printer_wp(PostFName,_,"\tPostWP**: \n",
+% 	                  PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+% 	                  WP1),
+	% Debugging ----------------------------------------------------------	
+	compute_wp_assignment(WP_SIMPLIFY, WP1,
+			      PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar,
+			      PreSGlobalArr ,PreSGlobalVar ,PreSLocalArr ,PreSLocalVar,
+			      XCL1,WP),
+	% Debugging ----------------------------------------------------------	
+%  	pretty_printer_wp(PreFName,_,"\tPreWP**: \n",
+% 	                  PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+% 	                  WP).
+	true.
+#else   /*WP_REPLACE_ASSIGNMENTS*/
+compute_wp(_,WP1,ML1,_,_,_,_,_,_,_,_,_,_,_,ML,XCL,WP) :-
+	compute_wp_guard(WP1, ML1, ML, XCL, WP).					
+#endif  /*WP_REPLACE_ASSIGNMENTS*/
+
+
+%-----------------------------------------------------------------------------%
+% compute_wp_guard(+WP1, +ML1, +ML, +XCL, -WP)
+%-----------------------------------------------------------------------------%
+% WP is WP1 in conjunction with those constraints from XCL which
+% affect the safety condition. We check if the conjunction is
+% unsatisfiable which implies that WP is true.
+%-----------------------------------------------------------------------------%
+compute_wp_guard(WP1, ML1, _ML, XCL, WP):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	%------------------------------------------------------------
+	% Step 1: consider only relevant constraint
+	%------------------------------------------------------------	
+	get_marked_constraints(ML1, XCL, XCL1, XCL1Tail),
+	WP1 = state(_,_,_,_,Cond1,_),
+	WP  = state(_,_,_,_,Cond2,_),
+	%------------------------------------------------------------		
+	% Step 2: conjoin the constraint
+	%------------------------------------------------------------		
+	compute_wp_append(Cond1, XCL1, XCL1Tail, Cond),
+	%------------------------------------------------------------
+	% Step 3: if after conjoining is unsatisfiable the wp is true
+	%------------------------------------------------------------	
+	% If Cond2 is empty list means true.
+	remove_infeasible_interp_conjunct(Cond, Cond2),
+	%------------------------------------------------------------
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(compute_wp_guard_timing,Time1-Time0),
+#endif  /*PROFILE*/
+        true.
+
+%-----------------------------------------------------------------------------%
+% compute_wp_append(+WPConjunctList,+XCL,+XCLTail,-NewWPConjunctList)
+%-----------------------------------------------------------------------------%
+% WPConjunctList is a list of intp_conjunct(Tail,List). For each
+% intp_conjunct/2 term in WPConjunctList, it appends each constraint in
+% XCL with List and unifies XCLTail with Tail.
+%
+% For instance,
+% ?- compute_wp_append([intp_conjunct(T1,[gt(X1,5)|T1]),
+%                       intp_conjunct(T2,[assign(X2,4)|T2])],
+%                      [assign(X3,2)|T0],T0,Res).
+%
+% Res = [intp_conjunct(T0, [gt(X1, 5.000000), assign(X3, 2.000000)|T0]),
+%        intp_conjunct(T0, [assign(X2, 4.000000), assign(X3, 2.000000)|T0])].
+%-----------------------------------------------------------------------------%
+compute_wp_append([], _XCL1, _XCL1Tail, []).
+compute_wp_append([intp_conjunct(XCL1, List)|R], XCL1, XCL1Tail, 
+		  [intp_conjunct(XCL1Tail, List)|S]) :-
+	compute_wp_append(R, XCL1, XCL1Tail, S).
+
+%------------------------------------------------------------------------------%
+% wp_disjunct_simplify_after_combined(+FName,+WP,-SimpWP)
+%------------------------------------------------------------------------------%
+% After all children's wp's have been combined, we try to remove
+% redundancies may be required.
+%------------------------------------------------------------------------------%
+wp_disjunct_simplify_after_combined(_,nil,nil):-!.
+wp_disjunct_simplify_after_combined(FName,WP,SimpWP):-
+	remove_all_duplicates_limit_size(FName, WP, SimpWP).
+
+%-----------------------------------------------------------------------------
+% wp_disjunct_combine(+WP1,+WP2,
+%                     +Depth,+FName,
+%                     +SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,-WP3)
+%-----------------------------------------------------------------------------
+% Combining two wps, considering one of them is nil wp. To be called
+% from within answer collating procedures
+%------------------------------------------------------------------------------
+wp_disjunct_combine(nil,_,_,_,_,_,_,_,nil) :- !.
+wp_disjunct_combine(_,nil,_,_,_,_,_,_,nil) :- !.
+wp_disjunct_combine(WPA, WPB,_,_,_,_,_,_,WPC) :-
+	WPA = state(SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA, WPConjA,_),
+	WPB = state(SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA, WPConjB,_),
+        %----------------------------------------------------------------------
+        % Simply create a disjunction of the two wp's
+        %----------------------------------------------------------------------
+	append(WPConjA, WPConjB, WPConjC),
+	WPC = state(SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA, WPConjC,_).
+
+	%remove_all_duplicates_limit_size(FName, WPC, RefinedWPC).	
+% 	WPA = state(SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA, WPConjA,_),
+% 	WPB = state(SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA, WPConjB,_),
+% 	Vs  = vars(_,SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA),
+% #ifdef  PROFILE
+%         ctime(T0),
+% #endif  /*PROFILE*/	
+% 	wp_disjunct_combine_aux(WPConjA,WPConjB,Vs,WPConjC),
+% #ifdef  PROFILE
+%         ctime(T1),
+% 	add_counter(remove_all_duplicates,T1-T0),
+% #endif  /*PROFILE*/		
+% 	WPC0 = state(SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA, WPConjC,_),
+% 	halt_wp_propagation_if_limit(WPC0, WPC).
+
+%------------------------------------------------------------------------------%
+% remove_all_duplicates_limit_size(+,+,-)
+%------------------------------------------------------------------------------%
+% Remove redundant literals across different disjunctions. Moreover,
+% if the size is too big we transform the wp into "nil" and switch to
+% -intp sp (strongest postconditions).
+%------------------------------------------------------------------------------%
+remove_all_duplicates_limit_size(_,nil, nil) :- !.
+remove_all_duplicates_limit_size(FName, WP, WP1) :-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+	remove_all_duplicates(FName, WP, WP2),
+	!,
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(remove_all_duplicates_timing,T1-T0),
+#endif  /*PROFILE*/	
+	halt_wp_propagation_if_limit(WP2, WP1).
+
+halt_wp_propagation_if_limit(WP,WP):-
+	% Here no limit. Thus, we never switch to basic interpolation algorith.
+	current_tracer_flag(wp_max_structure_size,M),
+	M < 0 ,
+	!.
+halt_wp_propagation_if_limit(WP, nil) :-
+	%-------------------------------------------------------------------
+	% Maximum size of WP information stored in the memo table
+	% before we switch to basic interpolation algorithm
+	%-------------------------------------------------------------------
+	current_tracer_flag(wp_max_structure_size,M),
+	wp_size(WP, N),	
+	N>M,
+	!,
+	print_message("WARNING: exceed maximum size (%) for wp\n",[M]).
+halt_wp_propagation_if_limit(WP, WP).
+
+%------------------------------------------------------------------------------
+% wp_disjunct_subsumed(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+%------------------------------------------------------------------------------
+wp_disjunct_subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,WPConj) :-
+	WPConj == [], !.
+wp_disjunct_subsumed(FName,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     GlobalArr , GlobalVar , LocalArr , LocalVar , ArrRef,
+		     TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, WPConj) :-	
+	% We first test if we are propagating wp
+	is_intp_conjunct(WPConj),
+	!,
+#ifdef  PROFILE
+        check_all_interp_conjuncts_profiled(FName,
+					    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					    GlobalArr, GlobalVar,LocalArr, LocalVar,
+					    ArrRef,
+					    TGlobalArr, TGlobalVar,TLocalArr, TLocalVar,
+					    WPConj).
+#else  
+        check_all_interp_conjuncts(FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   GlobalArr, GlobalVar, LocalArr, LocalVar,
+				   ArrRef,
+				   TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				   WPConj).
+#endif  /*PROFILE*/
+%----------------------------------------------------------------------------
+% This clause is executed when the size of the wp formula has reached
+% the limit.
+%----------------------------------------------------------------------------
+wp_disjunct_subsumed(FName,
+		     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,		     
+		     GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		     TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, WPConj) :-
+#ifdef  PROFILE
+	subsumed_profiled(FName,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,			  
+			  GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+			  TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+			  WPConj).
+#else  
+	subsumed(FName,
+		 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,		 
+		 GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		 TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+		 WPConj).
+#endif  /*PROFILE*/
+
+is_intp_conjunct([X|_]):- functor(X,intp_conjunct,_).
+	
+#ifdef  PROFILE
+%------------------------------------------------------------------------------
+% check_all_interp_conjuncts_profiled: A wrapper for
+% check_all_interp_conjuncts that collects some profiling information
+%------------------------------------------------------------------------------
+check_all_interp_conjuncts_profiled(FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    GlobalArr, GlobalVar, LocalArr, LocalVar,
+				    ArrRef,
+				    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				    WPConj) :-
+	ctime(T0),
+	check_all_interp_conjuncts_profiled_aux(FName,
+						SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+						GlobalArr, GlobalVar,LocalArr, LocalVar,
+						ArrRef,
+						TGlobalArr, TGlobalVar,TLocalArr, TLocalVar,
+						WPConj, T0).
+
+check_all_interp_conjuncts_profiled_aux(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					GlobalArr, GlobalVar, LocalArr, LocalVar,
+					ArrRef,
+					TGlobalArr, TGlobalVar,
+					TLocalArr, TLocalVar,
+					WPConj, T0) :-
+ 	check_all_interp_conjuncts(WPConj,FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   GlobalArr, GlobalVar, LocalArr, LocalVar,ArrRef,
+				   TGlobalArr, TGlobalVar, TLocalArr, TLocalVar),
+	
+	!,
+	ctime(T1),
+	add_counter(subsumed_timing_ok,T1-T0),
+	add_counter(subsumed_ok,1).
+check_all_interp_conjuncts_profiled_aux(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,T0) :-
+	ctime(T1),
+	add_counter(subsumed_timing_failed,T1-T0),
+	add_counter(subsumed_failed,1), !, fail.
+#endif  /*PROFILE*/
+
+%------------------------------------------------------------------------------
+% check_all_interp_conjuncts
+%------------------------------------------------------------------------------
+% Check that **all** conjuncts in the WP are unsatisfiable in
+% conjunction with the current context.
+%------------------------------------------------------------------------------
+check_all_interp_conjuncts([],_,_,_,_,_,_,_,_,_,_,_,_,_,_).
+check_all_interp_conjuncts([intp_conjunct([], Cond)|R],FName,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+			   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar):-
+	%----------------------------------------------------------------------
+	% Cond is interpreted as a conjunction of positive literals
+	%----------------------------------------------------------------------	
+	make_singleton_dnf(Cond,Cond1),
+	subsumed(FName,
+		 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		 GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+	         TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, Cond1),
+	!,
+	check_all_interp_conjuncts(R,FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   GlobalArr, GlobalVar,LocalArr, LocalVar, ArrRef, 
+				   TGlobalArr, TGlobalVar,TLocalArr, TLocalVar).
+
+
+%------------------------------------------------------------------------------%
+% wp_disjunct_create_subsumed_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% Create interpolant from subsuming memo goal
+%------------------------------------------------------------------------------%
+wp_disjunct_create_subsumed_interpolant(_, _, _, _, _, _,
+					TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,[],WP):-
+	%----------------------------------------------------------------------
+	% Case 1: empty [] condition can mean that the wp is empty
+	% (true) or the basic interpolant is empty (also means
+	% true). Here we assume that the wp is empty, and produce
+	% another wp instead of nil (no wp).
+	%----------------------------------------------------------------------
+	!,
+	WP = state(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar, [],_).
+wp_disjunct_create_subsumed_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					CL, ML,
+					TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+					WPConj, WP) :-
+	%----------------------------------------------------------------------	
+	% Case 2: we are propagating wp
+	%----------------------------------------------------------------------	
+	is_intp_conjunct(WPConj),
+	!,
+	%----------------------------------------------------------------------
+	% Generate ML from the wp. Note that WPConj1 is the same than WPConj.
+	%----------------------------------------------------------------------
+	unsat_core_from_dwp(SGlobalArr,SGlobalVar,SLocalArr ,SLocalVar,
+			    CL, ML,
+			    TGlobalArr,TGlobalVar,TLocalArr ,TLocalVar,
+			    WPConj, WPConj1),
+	%----------------------------------------------------------------------
+	% Construct the weakest precondition
+	%----------------------------------------------------------------------
+	WP = state(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,WPConj1,_).	           
+wp_disjunct_create_subsumed_interpolant(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+					CL, ML,
+					TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+					NegConstraints, nil) :-
+	%----------------------------------------------------------------------	
+	% Case 3: the size of the wp formula has reached the limit.
+	%----------------------------------------------------------------------
+
+	%----------------------------------------------------------------------		
+	% Generate ML, no more wp propagation
+	%----------------------------------------------------------------------	
+	make_dnf(NegConstraints, NegConstraints1),
+	%----------------------------------------------------------------------
+	% note NegConstraints1 will be interpreted as a disjunction of
+	% negated literals. Then, for each negated literal d_i the
+	% final interpolant will be those constraints from CL that in
+	% conjunction with d_i are unsatisfiable.
+	%----------------------------------------------------------------------	
+	interpolate_constraints_path(NegConstraints1, CL, ML, no_check).
+
+%-----------------------------------------------------------------------------%
+% unsat_core_from_dwp(+SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,
+%                                       +CL, -ML,
+%		 	                +SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,
+%			                +WPConj, -WPConj1)
+%-----------------------------------------------------------------------------%
+% Create an unsatisfiable core (ML) using the WP.
+% WPConj1 is the same than WPConj.
+% 
+% ML is a bitvector interpolant obtained from WPConj as follows:
+% 
+% - Let Phi be the formula associated with WPConj
+% - then, mark as many elements from ML as needed to imply Phi
+%-----------------------------------------------------------------------------%
+unsat_core_from_dwp(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    CL, ML,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    WPConj, WPConj1) :-
+	add_counter(num_deletion_markings_from_wp,1),
+	unsat_core_from_dwp_aux(WPConj,
+				SGlobalArr, SGlobalVar,SLocalArr, SLocalVar,
+				CL, ML),
+	make_diff_list_intp(WPConj, WPConj1),
+	!.
+unsat_core_from_dwp(_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("unsat_core_from_dwp/12 failed\n",[]).
+
+unsat_core_from_dwp_aux([],_,_,_,_,_,_).
+unsat_core_from_dwp_aux([intp_conjunct([],Cond)|R],
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			CL,ML) :-
+	%--------------------------------------------------------------------
+        % Note that Cond1 is interpreted as a conjunction positive
+        % literals.  interpolate_constraints_path/5 will mark those
+        % constraints that preserve the unsatisfiability of CL in
+        % conjunction with Cond2.
+        %--------------------------------------------------------------------
+        make_singleton_dnf(Cond,Cond1),
+	% We know that XCL is unsat, so no need of checking that
+	interpolate_constraints_path(Cond1, CL, ML, no_check),
+	add_counter(num_deletion_markings_from_wp_aux,1),	
+	!,
+	unsat_core_from_dwp_aux(R,
+				SGlobalArr,SGlobalVar,
+				SLocalArr,SLocalVar,CL,ML).
+
+%------------------------------------------------------------------------------%
+% wp_disjunct_create_abstraction_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% Create interpolant from an abstraction point (e.g., loops)
+%------------------------------------------------------------------------------%
+wp_disjunct_create_abstraction_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   CL, ML,
+					   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					   WPConj, WP) :-
+	wp_disjunct_create_subsumed_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+						CL, ML,
+						TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+						WPConj, WP).
+
+%------------------------------------------------------------------------------
+% wp_disjunct_create_memo_interpolant(+,+,+,+,+,+,-,+,+,+,+,+)
+%------------------------------------------------------------------------------
+% Produce the interpolant to store in the memo. If it is "nil" then we
+% produce the interpolant as usual. Otherwise, the interpolant is just
+% the weakest precondition
+%------------------------------------------------------------------------------
+wp_disjunct_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				    CL, ML, WP,
+				    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				    NegInterp) :-
+	% Case 1: if wp is not computed then we compute usual basic
+	% interpolants
+	WP==nil, !,
+	make_negated_projected_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   CL, ML,
+					   SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+					   NegInterp).
+wp_disjunct_create_memo_interpolant(_,_,_,_,_,_,
+				    WP,SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+				    WPConj) :-
+	% Case 2: return wp
+        WP=state(SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,WPConj,_).
+
+#ifdef  MINMAX
+% Special case for loop headers
+wp_disjunct_create_memo_loopheader_interpolant(_SGlobalArr, _SGlobalVar,
+					       _SLocalArr , _SLocalVar,
+					       LoopCL, LoopML, Intp ,OutIntp):-
+	Intp == nil,
+	!,
+	select_marked_constraints_path(LoopCL, LoopML, LoopInterp, o),
+	negate_numerical_list(LoopInterp, OutIntp).
+wp_disjunct_create_memo_loopheader_interpolant(SGlobalArr, SGlobalVar,
+					       SLocalArr , SLocalVar,
+					       _,_, Intp ,OutIntp):-
+	wp_disjunct_create_memo_interpolant(_,_,_,_,_,_,
+					    Intp,
+					    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					    OutIntp).
+#endif  /*MINMAX*/
+%------------------------------------------------------------------------------%
+% wp_disjunct_merge_loop_interpolant(+WP1,+WP2,+FName,+SGlobalArr,...,-WP3)
+%------------------------------------------------------------------------------%
+% Merge the weakest precondition of the loop body with the loop exit's
+%------------------------------------------------------------------------------%	
+wp_disjunct_merge_loop_interpolant(WP1,WP2,_,_,_,_,_,WP3):-
+	wp_disjunct_combine(WP1,WP2,_,_,_,_,_,_,WP3).
+
+
+wp_disjunct_print_pre_stats:-
+	current_tracer_flag(other_interp_method,disjunctive),!,
+	counter_value(num_of_infeasible_wp_conjunct,NumInfConj),	
+	print_message("\tNumber of infeasible conjuncts                           : % \n",
+		      [NumInfConj]).
+wp_disjunct_print_pre_stats.
+
+wp_disjunct_print_combine_stats:-
+	current_tracer_flag(other_interp_method,disjunctive),!,	
+	counter_value(num_of_duplicates,NumOfDuplicates),	
+        counter_value(remove_all_duplicates_timing, WPRemoveDupT),
+	counter_value(identical_test_timing,IdentT),
+	print_message("\tTime for deleting redundant literals                     : % sec\n",
+		      [WPRemoveDupT]),
+	print_message("\t\tTime for identical test between literals         : % sec\n",[IdentT]),
+	print_message("\tNum of redundant literals wrt other disjuncts            : % \n",
+		      [NumOfDuplicates]).
+wp_disjunct_print_combine_stats.		

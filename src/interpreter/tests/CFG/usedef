@@ -1,0 +1,50 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+	echo "Usage:"
+	echo "usedef prog1.c prog2.c serial.ser  - automated usedef analysis histrogram generation tool. need to provide cillied, decompd and serialized file"
+	echo "usedef clean                       - clean folder of temporary files"
+else
+if [ $1 = "clean" ]
+then
+	rm *cilly*
+	rm *.dec.c*
+	rm *.ser
+	rm histogram.out
+else
+if [ $# -ne 3 ]
+then
+	echo "Usage:"
+	echo "usedef prog1.c prog2.c serial.ser  - automated usedef analysis histrogram generation tool. need to provide cillied, decompd and serialized file"
+	echo "usedef clean                       - clean folder of temporary files"
+else
+	dir=`pwd`
+	cillied=${dir}/$1
+	decompd=${dir}/$2
+	seriald=${dir}/$3
+	tmp1=${dir}/.tmp1.out
+	tmp2=${dir}/.tmp2.out
+
+	echo "running frama-c on ${cillied}..."
+	frama-c -pdg ${cillied} | grep -E "\[Elem\]|\[..d\]|RESULT" > ${tmp1}
+	wc --lines ${tmp1}
+	echo "running frama-c on ${decompd}..."
+	frama-c -pdg ${decompd} | grep -E "\[Elem\]|\[..d\]|RESULT" > ${tmp2}
+	wc --lines ${tmp2}
+
+	cd ${CFGBIN}
+	echo "analyzing..."
+	java Usedef ${tmp1} ${tmp2} ${seriald} > ${dir}/histogram.out
+	rm ${tmp1} ${tmp2}
+	cd ${dir}
+
+	if [ -f histogram.out ]
+	then
+		echo "USEDEF DONE!"
+	else
+		echo "USEDEF NOT DONE :("
+	fi
+
+fi
+fi
+fi

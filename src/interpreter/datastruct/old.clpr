@@ -1,0 +1,72 @@
+get_array_reference_indices([],InIndices,InIndices).
+get_array_reference_indices([ref(A,I,_)|R],InIndices,[I|OutIndices]) :-
+	get_array_update_indices(A,InIndices,Indices1),
+	get_array_reference_indices(R,Indices1,OutIndices).
+
+get_array_update_indices(A,InIndices,InIndices) :-
+	(var(A); atomic(A)), !.
+get_array_update_indices(upd(A,I,_),InIndices,[I|OutIndices]) :-
+	get_array_update_indices(A,InIndices,OutIndices).
+
+get_array_equality_indices([],InIndices,InIndices).
+get_array_equality_indices([arreq(_,_,A,B)|R],InIndices,[I|OutIndices]) :-
+	get_array_update_indices(A,InIndices,Indices1),
+	get_array_update_indices(B,Indices1,Indices2),
+	get_array_equality_indices(R,Indices2,OutIndices).
+
+add_ordering_constraints(CL, OutCL) :-
+	find_indices(CL, Indices), !,
+	pair_elements(Indices, Pairs), !,
+	append(Pairs, CL, OutCL).
+
+find_indices(A, OutL) :-
+	find_indices_aux(A, [], L1),
+	remove_duplicates(L1, OutL), !.
+
+find_indices_aux(A, L, L) :- var(A), !.
+find_indices_aux(A, L, L) :- atomic(A), !.
+find_indices_aux(A, L, L) :- A==[], !.
+find_indices_aux(ref(A,I), InL, [I|OutL]) :- !,
+	find_indices_aux(A, InL, L1),
+	find_indices_aux(I, L1, OutL).
+find_indices_aux(upd(A,I,X), InL, [I|OutL]) :- !,
+	find_indices_aux(A, InL, L1),
+	find_indices_aux(I, L1, L2),
+	find_indices_aux(X, L2, OutL).
+find_indices_aux([A|R], InL, OutL) :- !,
+	find_indices_aux(A, InL, L1),
+	find_indices_aux(R, L1, OutL).
+find_indices_aux(A, InL, OutL) :-
+	A=..[_|R],
+	find_indices_aux(R, InL, OutL).
+
+remove(_, [], []).	
+remove(X, [Y|R], S) :-
+	X==Y, !, remove(X, R, S).
+remove(X, [Y|R], [Y|S]) :-
+	remove(X, R, S).
+
+remove_duplicates([], []).
+remove_duplicates([X|R], [X|S]) :-
+	remove(X, R, T),
+	remove_duplicates(T, S).
+
+pair_elements(Elements, OutL) :-
+	pair_elements_aux1(Elements, [], OutL).
+
+pair_elements_aux1([], L, L).
+pair_elements_aux1([X|R], InL, OutL) :-
+	pair_elements_aux2(X, R, InL, L1),
+	pair_elements_aux1(R, L1, OutL).
+
+pair_elements_aux2(_, [], L, L).
+pair_elements_aux2(X, [Y|R], InL, [C|OutL]) :-
+	constrain_pair(X, Y, C),
+	pair_elements_aux2(X, R, InL, OutL).
+
+constrain_pair(X, Y, eq(X,Y)).
+constrain_pair(X, Y, lt(X,Y)).
+constrain_pair(X, Y, gt(X,Y)).
+
+
+

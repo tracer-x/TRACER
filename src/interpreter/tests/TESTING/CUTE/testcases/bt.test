@@ -1,0 +1,13 @@
+rm -f output
+
+echo "Testing Binary Tress"
+echo "The testing should complete in 984 runs"
+sleep 2
+
+#completes in 984 runs
+../cutec bt f
+../cute bt -i 5000 -d 20 -q
+../cuteStat.exe
+
+cat output
+../clean

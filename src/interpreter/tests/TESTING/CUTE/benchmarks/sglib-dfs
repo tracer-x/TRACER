@@ -1,0 +1,44 @@
+rm -f output
+
+../cutec sglib-qsort-cute f
+../cute sglib-qsort-cute -i 100000  -q
+echo -n "Array Quick Sort" >> output
+../cuteStat.exe
+
+../cutec sglib-hsort-cute f
+../cute sglib-hsort-cute -i 100000  -q
+echo -n "Array Heap Sort" >> output
+../cuteStat.exe
+
+../cutec sglib-llist-cute f
+../cute sglib-llist-cute -i 50000 -d 50 -q
+echo -n "Linked List" >> output
+../cuteStat.exe
+
+../cutec sglib-slist-cute f
+../cute sglib-slist-cute -i 50000 -d 100 -q
+echo -n "Sorted List" >> output
+../cuteStat.exe
+
+../cutec sglib-dllist-cute f
+../cute sglib-dllist-cute -i 50000 -d 50 -q
+echo -n "Doubly Linked List" >> output
+../cuteStat.exe
+
+../cutec sglib-rbtree-cute f
+../cute sglib-rbtree-cute -i 1000000 -d 60 -q
+echo -n "Red Black Tree" >> output
+../cuteStat.exe
+
+../cutec sglib-dllist-cute-buggy f
+../cute sglib-dllist-cute-buggy -i 100000 -d 50 -q
+echo -n "Hash List " >> output
+../cuteStat.exe
+
+../cutec sglib-hash-cute-buggy f
+../cute sglib-hash-cute-buggy -i 100000 -d 50 -q
+echo -n "Hash List " >> output
+../cuteStat.exe
+
+cat output
+../clean

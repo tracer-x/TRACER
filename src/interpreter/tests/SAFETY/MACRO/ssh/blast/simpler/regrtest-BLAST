@@ -1,0 +1,247 @@
+#!/bin/bash
+# this has to be /bin/bash, because of $[ 1+2 ] syntax
+# some simple cil regression tests; ideally, everyone can run
+# this before committing
+
+
+# ---------------------------------------------------------
+# Adapted from a shell script used in Cil
+
+# default values for user parameters
+skip=0
+contin=0
+perf=0
+#blast="../../bin/pblast.opt "
+blast="/home/jorge/bin/pblast.opt "
+
+# counters
+curtest=0
+success=0
+failure=0
+unexSuccess=0
+unexFailure=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -skip n      skip the first n tests
+  -perf	       do performance evaluation
+  -contin      keep going even after a test fails (or succeeds) unexpectedly
+  -extra str   add "str" to every blast command
+  -help        print this message
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+  case "$1" in
+    -skip)
+      shift
+      skip="$1"
+      ;;
+
+    -perf)
+      perf=1
+      ;;
+
+    -contin)
+      contin=1
+      ;;
+
+    -extra)       
+      shift
+      blast="$blast $1"
+      ;;
+
+    -help)
+      usage
+      exit 0
+      ;;
+
+    *)
+      echo "unknown arg: $1"
+      usage
+      exit 2
+      ;;
+  esac
+
+  shift
+done
+
+# clear the logfile
+log=regrtest.log
+rm -f $log
+
+# write something to terminal and log
+log() {
+  echo "$@"
+  echo "$@" >> $log
+}
+
+
+# bail, unless asked to continue
+bail() {
+  if [ $contin -eq 0 ]; then
+    exit 2
+  fi
+}
+
+# run a single test, and bail if it fails
+runTest() {
+  if ! runTestInternal "$@"; then
+    bail
+  fi
+}
+
+# run a single test, and return 0 if it succeeds
+runTestInternal() {
+  #result=0
+  rm -f test.log
+  if [ "$curtest" -lt "$skip" ]; then
+    echo "[$curtest]: skipping $*"
+  else
+    # print a visually distinct banner
+    echo "------------ [$curtest] $* ------------"
+
+    "$@" > test.log 2>err.log
+    #result=$?
+    if grep ":-(" test.log ; then
+      unexFailure=$[ $unexFailure + 1 ]
+      echo ""
+      log  "[$curtest] A regression test command failed:"
+      log  "  $*"
+    else
+      if grep ":-)" test.log ; then
+	log "[$curtest] $@ succeeds"
+        success=$[ $success + 1 ]
+	echo `grep "Total number of queries" test.log`
+	echo `grep "Nb iterations of outer while loop" test.log`
+	echo `grep "Nb iterations of reachability" test.log`
+        if [ "$perf" -eq 1 ]; then 
+          echo "Now running performace tests"
+          rm -f tmp
+#          for n in 1 2 3 4 5; do
+          for n in 1 ; do
+            if (time "$@" >test.log 2>&1) 2>times.out; then
+              cat times.out | grep real | sed 's/real	0m/    /' \
+                        | sed 's/s$//' | tee -a tmp
+              rm times.out
+            else
+              echo "Run $n of $@ failed."
+              exit 4
+            fi
+         done
+
+            # games with awk are to make sure sorting happens properly even when
+            # the input times don't all have same # of digits (e.g. 9s vs 10s)
+         log "    median:"`awk '{ printf("%9.3fs\n", $1); }' <tmp | sort | head -3 | tail -1`
+         rm tmp
+        fi
+      else
+        echo ""
+	log "[$curtest] Unexpected error"
+      fi
+    fi
+
+
+  fi
+
+  curtest=$[ $curtest + 1 ]
+  return $result
+}
+
+
+# run a test that is expected to fail
+failTest() {
+  reason="$1"
+  shift
+  rm -f test.log
+  if [ "$curtest" -lt "$skip" ]; then
+    echo "[$curtest]: (fail) skipping $*"
+  else
+    echo "------------ [$curtest] (fail) $* ------------"
+    "$@" > test.log 2>err.log
+    if grep ":-)" test.log; then
+      unexSuccess=$[ $unexSuccess + 1 ]
+      echo ""
+      log  "[$curtest] BAD NEWS: A regression test that should fail ($reason) now succeeds:"
+      log  "  $*"
+      if [ $contin = 0 ]; then
+        exit 2
+      fi
+    else
+      if grep ":-(" test.log; then
+        failure=$[ $failure + 1 ]
+        echo "Failed as expected: $reason"
+	log "[$curtest] $@ fails as expected"
+	echo `grep "Total number of queries" test.log`
+	echo `grep "Nb iterations of outer while loop" test.log`
+	echo `grep "Nb iterations of reachability" test.log`
+
+        if [ "$perf" -eq 1 ]; then 
+          echo "Now running performance tests"
+          rm -f tmp
+          for n in 1 2 3 4 5; do
+            if (time "$@" >test.log 2>&1) 2>times.out; then
+              cat times.out | grep real | sed 's/real	0m/    /' \
+                        | sed 's/s$//' | tee -a tmp
+              rm times.out
+            else
+              echo "Run $n of $@ failed."
+              exit 4
+            fi
+         done
+
+            # games with awk are to make sure sorting happens properly even when
+            # the input times don't all have same # of digits (e.g. 9s vs 10s)
+         log "    median:"`awk '{ printf("%9.3fs\n", $1); }' <tmp | sort | head -3 | tail -1`
+         rm tmp
+        fi
+      else
+        echo "Unexpected error"
+        log "[$curtest] Unexpected error"
+      fi
+    fi
+  fi
+
+  curtest=$[ $curtest + 1 ]
+}
+
+
+rw="-rw"
+
+# SSH examples sent by Chaki
+
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -scope -predH 7 -bfs s3_clnt.blast.1.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -scope -predH 7 -bfs s3_clnt.blast.2.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -scope -predH 7 -bfs s3_clnt.blast.3.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -scope -predH 7 -bfs s3_clnt.blast.4.c
+
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.1.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.2.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.3.c
+runTest $blast -nofp -bddcov -nocache -block -craig 1 -scope -predH 7 -bfs s3_srvr.blast.4.c
+runTest $blast -nofp -bddcov -nocache -block -craig 1 -scope -predH 7 -bfs s3_srvr.blast.6.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.7.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.9.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.10.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.11.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.12.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.13.c
+runTest $blast -nofp -bddcov -nocache -block -craig 2 -predH 7 -bfs s3_srvr.blast.14.c
+
+
+
+# final arithmetic to report result
+rm -f test.log err.log
+echo ""
+echo "Successful tests:      $success"
+echo "Failed as expected:    $failure"    
+if [ $contin = 1 ]; then
+  echo "Unexpected success:    $unexSuccess"
+  echo "Unexpected failure:    $unexFailure"
+  if [ -f "$log" ]; then
+    cat "$log"
+  fi
+fi
+

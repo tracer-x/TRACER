@@ -1,0 +1,18 @@
+-----------------------------------------------------------
+Total time taken in seconds 9
+Total number of Iterations 1444
+Branches Covered 72
+Branch Coverage in Percentage 90
+Functions Tested 8
+Average percentage of arithmetic constraints found redundant 95.5795
+Average percentage of iterations in which unsatisfiablity optimization helped 0
+-----------------------------------------------------------
+-----------------------------------------------------------
+Total time taken in seconds 14
+Total number of Iterations 1825
+Branches Covered 132
+Branch Coverage in Percentage 82.5
+Functions Tested 8
+Average percentage of arithmetic constraints found redundant 94.7079
+Average percentage of iterations in which unsatisfiablity optimization helped 39.8286
+-----------------------------------------------------------

@@ -1,0 +1,159 @@
+trans(func_fib,
+	[0],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[1],[H],[],[SH],[],[],[ReturnValue,N,INext,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SINext,SFnew,SFold,STemp,SAns],
+	[],
+	[],
+	[]).
+trans(func_fib,
+	[1],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,FnewNext,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnewNext,SFold,STemp,SAns],
+	[],
+	[],
+	[]).
+trans(func_fib,
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,FoldNext,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFoldNext,STemp,SAns],
+	[],
+	[],
+	[]).
+trans(func_fib,
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,TempNext,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STempNext,SAns],
+	[],
+	[],
+	[]).
+trans(func_fib,
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,AnsNext],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAnsNext],
+	[],
+	[],
+	[]).
+trans(func_fib,
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,FnewNext,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnewNext,SFold,STemp,SAns],
+	[eq(SFnewNext,1)],
+	[],
+	[]) :-
+	FnewNext=1.
+trans(func_fib,
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[7],[H],[],[SH],[],[],[ReturnValue,N,INext,Fnew,FoldNext,Temp,Ans],[],[SReturnValue,SN,SINext,SFnew,SFoldNext,STemp,SAns],
+	[eq(SFoldNext,0),eq(SINext,2)],
+	[],
+	[]) :-
+	FoldNext=0,INext=2.
+trans(func_fib,
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[9],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[geq(30,SI),geq(SN,SI)],
+	[],
+	[]) :-
+	I<=30,I<=N.
+trans(func_fib,
+	[9],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[10],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,TempNext,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STempNext,SAns],
+	[eq(STempNext,SFnew)],
+	[],
+	[]) :-
+	TempNext=Fnew.
+trans(func_fib,
+	[10],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[11],[H],[],[SH],[],[],[ReturnValue,N,I,FnewNext,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnewNext,SFold,STemp,SAns],
+	[eq(SFnewNext,plus(SFnew,SFold))],
+	[],
+	[]) :-
+	FnewNext=Fnew+Fold.
+trans(func_fib,
+	[11],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[12],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,FoldNext,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFoldNext,STemp,SAns],
+	[eq(SFoldNext,STemp)],
+	[],
+	[]) :-
+	FoldNext=Temp.
+trans(func_fib,
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[8],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[gt(SI,30)],
+	[],
+	[]) :-
+	I>30.
+trans(func_fib,
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[8],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[gt(SI,SN)],
+	[],
+	[]) :-
+	I>N.
+trans(func_fib,
+	[12],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[7],[H],[],[SH],[],[],[ReturnValue,N,INext,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SINext,SFnew,SFold,STemp,SAns],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[]) :-
+	INext=I+1.
+trans(func_fib,
+	[8],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[13],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[],
+	[],
+	[]).
+trans(func_fib,
+	[13],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[14],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,AnsNext],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAnsNext],
+	[eq(SAnsNext,SFnew)],
+	[],
+	[]) :-
+	AnsNext=Fnew.
+trans(func_fib,
+	[14],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[15],[H],[],[SH],[],[],[ReturnValueNext,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValueNext,SN,SI,SFnew,SFold,STemp,SAns],
+	[eq(SReturnValueNext,SAns)],
+	[],
+	[]) :-
+	ReturnValueNext=Ans.
+trans(func_main,
+	[0],[H],[],[SH],[],[],[ReturnValue,A],[],[SReturnValue,SA],
+	[1],[H],[],[SH],[],[],[ReturnValue,ANext],[],[SReturnValue,SANext],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[1],[H],[],[SH],[],[],[ReturnValue,A],[],[SReturnValue,SA],
+	[2],[H],[],[SH],[],[],[ReturnValue,ANext],[],[SReturnValue,SANext],
+	[eq(SANext,30)],
+	[],
+	[]) :-
+	ANext=30.
+trans(func_main,
+	[2],[H],[],[SH],[],[],[ReturnValue,A],[],[SReturnValue,SA],
+	[3],[H],[],[SH],[],[],[ReturnValue,A],[],[SReturnValue,SA],
+	[],
+	[call(func_fib,[RV0,A|_],[SRV0,_V1|_],[eq(_V1,SA)])],
+	[]).
+trans(func_main,
+	[3],[H],[],[SH],[],[],[ReturnValue,A],[],[SReturnValue,SA],
+	[4],[H],[],[SH],[],[],[ReturnValueNext,A],[],[SReturnValueNext,SA],
+	[eq(SReturnValueNext,SA)],
+	[],
+	[]) :-
+	ReturnValueNext=A.
+%--------------------------------------------------
+loop(func_fib, [7],[8], 30, [n],[],[],[n,n,u,u,u,u,n]).
+%--------------------------------------------------
+start(func_fib, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_fib, [15]).
+bottom(func_main, [4]).
+%--------------------------------------------------
+freshlocalarrays(func_fib,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_fib,[_,_,_,_,_,_,_]).
+freshlocalvars(func_main,[_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+:- consult('../src/clpr/wcetmulti.clpr').

@@ -1,0 +1,40 @@
+A.0:
+avl(H,H[Yf+1],DL-1,S11),
+S = {X} * {Yf} * S2 * S11 * S12
+|=
+avl(<<<<H,X,0>,Yf,0>,Yf+2,X>,X+1,H[Yf+2]>,H[Yf+1],DL-1,S11)
+
+A.1a: LU A.0
+H[Yf+1]=null, DL=1, S11={},
+S = {X} * {Yf} * S2 * S11 * S12
+|=
+avl(<<<<H,X,0>,Yf,0>,Yf+2,X>,X+1,H[Yf+2]>,H[Yf+1],DL-1,S11)
+
+A.1b: LU A.0
+avl(H,H[H[Yf+1]+1],DL-2,S111),
+avl(H,H[H[Yf+1]+2],D2,S112),
+S11 = {H[Yf+1]} * S111 * S112,
+H[H[Yf+1]]=DL-2-D2, 0<=DL-2-D2, DL-2-D2<=1,
+S = {X} * {Yf} * S2 * S11 * S12
+|=
+avl(<<<<H,X,0>,Yf,0>,Yf+2,X>,X+1,H[Yf+2]>,H[Yf+1],DL-1,S11)
+
+A.2: RU A.1a
+H[Yf+1]=null, DL=1, S11={},
+S = {X} * {Yf} * S2 * S11 * S12
+|=
+H[Yf+1]=null, DL=1, S11={}
+DP
+
+
+
+avl(<<<<H,X,0>,Yf,0>,Yf+2,X>,X+1,H[Yf+2]>,H[Yf+1],DL-1,S11)
+
+
+avl(H,null,0,{}).
+avl(H,X,D1+1,{X} * S1 * S2) :-
+	H[X]=D1-D2, 0 <= D1-D2, D1-D2 <= 1,
+	avl(H,H[X+1],D1,S1), avl(H,H[X+2],D2,S2).
+avl(H,X,D2+1,{X} * S1 * S2) :-
+	H[X]=D1-D2, D1-D2 = -1,
+	avl(H,H[X+1],D1,S1), avl(H,H[X+2],D2,S2).

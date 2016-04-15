@@ -1,0 +1,1156 @@
+% tracer_paths.clp.gpp
+
+%=======================================================================%
+%                       Operations over paths
+%=======================================================================%
+% A constraint or formula path (i.e., the formula associated with a
+% path) can be represented naively using two lists, CL and ML. CL is a
+% list of constraints collected along the path and ML is a list of
+% marked constraints used by the interpolation algorithm. This option
+% can be selected by:
+% 
+% set_tracer_flag(path_datastructure,naive).
+%
+% A very important optimization is called constraint independence,
+% which exploits the fact that we can often divide the set of
+% constraints we track into multiple independent subsets of
+% constraints. Two constraints are considered to be independent if
+% they have disjoint set of operations. The main advantage is that we
+% reduce significantly the number of calls to the solver during
+% interpolation. 
+%
+% Constraint independence is implemented using an union-find data
+% structure for keeping track different equivalence classes in order
+% to keep separated constraints which are not relevant from each.
+% This (default) option can be selected by:
+%
+% set_tracer_flag(path_datastructure,partition).
+%
+% The main feature of partition is that the partitions are computed
+% on-the-fly and incrementally. If partition is not used at least we
+% should turn on the flag path_slicing. With this option, we get the
+% same effect than partition but much slower since partitions are
+% computed once the path has been finished. The main disadvantage is
+% that it's not incremental.
+%=======================================================================%
+% export
+%         init_constraints_path/3,
+%         init_marked_constraints_path/3
+%         add_constraints_path/5,
+%         interpolate_constraints_path/4,
+%         evaluate_selectively_constraints_path/4,
+%         evaluate_constraints_path/3,
+%         project_sym_constraints_path/6,
+%         select_marked_constraints_path/4,
+%         irrel_rel_constraints_from_path/4,
+%         find_constraints_path_and_mark/4,
+%
+#ifdef    PROFILE
+%         init_partition_profile_counters/0,
+%         get_partition_stats/5,
+%         print_partition_stats/5,
+#endif    /*PROFILE*/
+%
+%         pretty_printer_path/6,
+%         pretty_printer_path/11,
+%
+%         Convert from list-based representation to union-find.
+%         convert_partition2naive/3,
+%         convert_partition2naive_ifNotVar/2,
+%         convert_path_to_list/2.
+%-------------------------------------------------------------------------%
+
+% Note NEWPARTITION2 is not used. The code related
+% to these options should be erased at some point.
+% NEWPARTITION is used if USEWP is on.
+
+#ifdef  NEWPARTITION2
+:- set_counter(constraint_key,0).
+#endif
+
+
+#ifdef  PROFILE
+init_partition_profile_counters:-
+	set_counter(total_constraints_before_partition,0),
+	set_counter(total_constraints_after_partition,0),
+        % To measure time spent conversion from partition to naive
+	set_counter(convert_partition,0),	
+	% To measure efficiency of partition operations
+	set_counter(partition_merge,0),
+	set_counter(partition_post,0).
+
+get_partition_stats(Total,ConvT,PostT,MergeT,PrepInterpT):-
+	current_tracer_flag(path_datastructure,partition),!,
+	counter_value(convert_partition,ConvT),
+	counter_value(partition_post,PostT),
+	counter_value(partition_merge,MergeT),
+	counter_value(partition_prep_interpolation,PrepInterpT),
+	Total = ConvT+PostT+MergeT+PrepInterpT.
+get_partition_stats(0,0,0,0,0):-!.
+
+print_partition_stats(TotalT,ConvT,PostT,MergeT,PrepInterpT):-
+	current_tracer_flag(path_datastructure,partition),!,
+	print_message("\t\t(1)Maintenance of independent partitions: % sec \n",
+		      [TotalT]),
+	print_message("\t\t\tConversion (partition->naive)   : % sec\n",[ConvT]),
+	print_message("\t\t\tPost operator                   : % sec\n",[PostT]),
+	print_message("\t\t\tMerge operator                  : % sec\n",[MergeT]),
+	print_message("\t\t\tPreprocessing for interpolation : % sec\n",[PrepInterpT]).
+print_partition_stats(_,_,_,_,_):-!.
+#endif  /*PROFILE*/
+
+#ifdef  NEWPARTITION2
+next_constraint_key(OldVal):-
+	counter_value(constraint_key,OldVal),
+	add_counter(constraint_key,1).
+#endif /*NEWPARTITION2*/
+
+%-----------------------------------------------------------------------%
+% Usage 1: init_constraints_path(+XCL,-NewCP,-NewMarkCP)
+% Usage 2: init_constraints_path(+XCL,-NewUnionFind,_)
+%-----------------------------------------------------------------------%
+% Initialize a new constraint path NewCP with its corresponding marked
+% constraint NewMarkCP.
+%-----------------------------------------------------------------------%
+init_constraints_path(XCL,NewCL,NewML):-
+	current_tracer_flag(path_datastructure,naive),!,
+	append_symbolic_list(XCL,[],[],NewCL,NewML).
+init_constraints_path(XCL,UnionFind1,
+#ifdef  NEWPARTITION
+                      NewML
+#else 
+	              _
+#endif  /*NEWPARTITION*/
+                      ):-
+	current_tracer_flag(path_datastructure,partition),!,
+%	new(0,UnionFind0),
+	% create union find	
+	new(_,UnionFind0),                
+	add_constraints_path(XCL,UnionFind0,[],UnionFind1,
+#ifdef  NEWPARTITION
+			    NewML
+#else 
+			    _
+#endif  /*NEWPARTITION*/
+			    ).
+
+%------------------------------------------------------------------------%
+% Usage 1: init_marked_constraints_path(+XCL,-CL,?ML)
+% Usage 2: init_marked_constraints_path(+XCL,-UnionFind,?ML)
+%------------------------------------------------------------------------%
+init_marked_constraints_path(XCL,CL,ML):-
+	current_tracer_flag(path_datastructure,naive),!,
+	init_constraints_path(XCL,CL,ML),
+	mark_all_elements(ML).
+init_marked_constraints_path(XCL,UnionFind,ML):-
+	current_tracer_flag(path_datastructure,partition),!,
+	init_constraints_path(XCL,UnionFind,_),
+	convert_partition2naive(UnionFind,_,ML),	
+	mark_all_elements(ML).
+		
+%------------------------------------------------------------------------%
+% Usage 1: add_constraints_path(+XCL,+CL,+ML,-CL1,-ML1)
+% Usage 2: add_constraints_path(+XCL,+UnionFind,_,-UnionFind1,_)
+%------------------------------------------------------------------------%
+% Add new constraints of XCL into CL and ML, and return CL1 and ML1
+%------------------------------------------------------------------------%
+add_constraints_path(XCL,CL,ML,CL1,ML1):-
+	add_constraints_path___(XCL,CL,ML,CL1,ML1),!.
+add_constraints_path(_,_,_,_,_):-
+	error_message("unexpected failure in add_constraints_path/5.\n",[]).
+	
+add_constraints_path___(XCL,CL,ML,CL1,ML1):-
+	current_tracer_flag(path_datastructure,naive),!,	
+	append_symbolic_list(XCL,CL,ML,CL1,ML1).
+#ifdef  NEWPARTITION
+add_constraints_path___(XCL,UnionFind0,ML,UnionFind1,ML1):-
+	current_tracer_flag(path_datastructure,partition),!,
+	post_constraints_path(XCL,UnionFind0,ML,UnionFind1,ML1).
+#else
+add_constraints_path___(XCL,UnionFind0,_,UnionFind1,_):-
+	current_tracer_flag(path_datastructure,partition),!,
+	post_constraints_path(XCL,UnionFind0,_,UnionFind1,_).
+#endif  /*NEWPARTITION*/
+
+%------------------------------------------------------------------------%
+% Usage 1: merge_constraints_paths(+CL1,+ML1,+CL2,+ML2,-MergedCL,-MergedML)
+% Usage 2: merge_constraints_paths(+UnionFind1,-ML1,+UnionFind2,-ML2,-MergedUnionFind,_)
+%------------------------------------------------------------------------%
+merge_constraints_paths(CL1,ML1,CL2,ML2,MergedCL,MergedML):-
+	merge_constraints_paths_aux(CL1,ML1,CL2,ML2,MergedCL,MergedML),!.
+merge_constraints_paths(_,_,_,_,_,_):-
+	error_message("unexpected failure in merge_constraints_paths/6\n",[]).
+merge_constraints_paths_aux(CL1,ML1,CL2,ML2,MergedCL,MergedML):-
+	current_tracer_flag(path_datastructure,naive),!,
+	append(CL1,CL2,MergedCL),
+	append(ML1,ML2,MergedML).
+merge_constraints_paths_aux(UnionFind0,ML0,UnionFind1,ML1,MergedUnionFind,_):-
+	current_tracer_flag(path_datastructure,partition),!,
+#ifdef  PROFILE
+        ctime(T0),
+#endif
+	%----------------------------------------------------------------%
+	% To get CL from UnionFind0 and also for transfering markings from
+	% the input argument ML0 to UnionFind0 through unification
+	%----------------------------------------------------------------%	
+	convert_partition2naive(UnionFind0,CL0,ML0),
+	%----------------------------------------------------------------%	
+	% To transfer markings from ML1 to UnionFind1
+	%----------------------------------------------------------------%	
+	convert_partition2naive(UnionFind1,_,ML1),	
+        post_constraints_path2(CL0,ML0,UnionFind1,MergedUnionFind),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(partition_merge,T1-T0).
+#else
+        true.
+#endif
+	
+
+post_constraints_path2([],[],UnionFind,UnionFind).
+post_constraints_path2([C|Cs],[M|Ms],UnionFind0,UnionFind4):-	
+    	% Get variables from the constraint C
+        varset_constraints([C],InterestVars),
+	% Add (only) new variables from constraint C into the union-find
+	multiple_make(InterestVars,UnionFind0,UnionFind1),	
+	% Conjoin constraint for each representative
+#ifdef  NEWPARTITION2					     	
+	next_constraint_key(CKey),
+#endif	
+	conjoin_new_constraint(InterestVars,c(C,M
+#ifdef  NEWPARTITION2					     
+					     ,CKey,_
+#endif					     
+					     ),UnionFind1,UnionFind2),
+	% Merge all above representatives in the union-find structure
+	merge_list(InterestVars,UnionFind2,UnionFind3),
+        post_constraints_path2(Cs,Ms,UnionFind3,UnionFind4).
+
+%------------------------------------------------------------------------%
+% For compatibility reasons, we convert the union-find into CL and ML
+% to call compute_unsat_core. In our preliminary experiments it may be
+% up to 15% of the total time so it's worth to implement it as
+% efficient as possible.
+%------------------------------------------------------------------------%
+% convert_partition2naive/3: convert the union-find to lists format
+% (CL and ML). It is BIDIRECTIONAL.
+%------------------------------------------------------------------------%
+convert_partition2naive_ifNotVar(UnionFind,_):- var(UnionFind),!.
+convert_partition2naive_ifNotVar(UnionFind,ML):-
+	convert_partition2naive(UnionFind,_,ML),!.
+
+convert_partition2naive(UnionFind0,CL,ML):-
+	convert_partition2naive___(UnionFind0,CL,ML),!.
+convert_partition2naive(UnionFind,CL,ML):-
+	print_message("UnionFind: %\n",[UnionFind]),
+	print_message("CL:% ML:%\n",[CL,ML]),
+	error_message("unexpected failure in convert_partition2naive/3.\n",[]).
+
+convert_partition2naive___(UnionFind0,CL,ML):-
+#ifdef  PROFILE	
+	ctime(Time0),
+#endif	
+	UnionFind0 = s(UnionFind0X,_),
+	traverse_tree(UnionFind0X,L),
+	% Tail-recursive without append that keeps order (diff. lists)	
+	convert_partition2naive_aux_dl(L,CL,ML
+#ifdef  NEWPARTITION2
+				      ,_KL,_FL
+#endif	/*NEWPARTITION2*/		      				      
+				      ),
+	% Tail-recursive with linear append
+	% convert_partition2naive_aux(L,[],[],CL,ML),
+#ifdef  PROFILE		
+	ctime(Time1),
+	add_counter(convert_partition,Time1-Time0).
+#else
+        true.
+#endif
+
+% Tail-recursive version without append that keeps order (w/
+% difference lists)
+convert_partition2naive_aux_dl(L,CL,ML
+#ifdef  NEWPARTITION2
+			      ,KL,FL
+#endif			      
+			      ):-
+	convert_partition2naive_aux2_dl(L,X,X,Y,Y,
+#ifdef  NEWPARTITION2
+				       W,W,Z,Z,
+#endif 			       					
+				       CL,[],ML,[]
+#ifdef  NEWPARTITION2
+				       ,KL,[],FL,[]
+#endif				       
+				       ).
+convert_partition2naive_aux2_dl([],CL,TCL,ML,TML,
+#ifdef  NEWPARTITION2
+			       KL,TKL,FL,TFL,
+#endif 			       
+			       CL,TCL,ML,TML
+#ifdef  NEWPARTITION2
+			       ,KL,TKL,FL,TFL
+#endif 			       			       
+			       ):- !.
+convert_partition2naive_aux2_dl([rec(_Key,data(_KeyRep,CP))|Rs],
+				CL0,TCL0,ML0,TML0,
+#ifdef  NEWPARTITION2
+			       KL0,TKL0,FL0,TFL0,
+#endif			       
+			       CL2,TCL2,ML2,TML2
+#ifdef  NEWPARTITION2
+                               ,KL2,TKL2,FL2,TFL2
+#endif			       
+			       ):-
+	unzip_constraints_dl(CP,X,X,XCL,CL0,Y,Y,XML,ML0
+#ifdef  NEWPARTITION2
+			    ,W,W,XKL,KL0
+			    ,Z,Z,XFL,FL0
+#endif			    
+			    ),
+	convert_partition2naive_aux2_dl(Rs,XCL,TCL0,XML,TML0,
+#ifdef  NEWPARTITION2
+				       XKL,TKL0,XFL,TFL0, 
+#endif				       
+				       CL2,TCL2,ML2,TML2
+#ifdef  NEWPARTITION2
+				       ,KL2,TKL2,FL2,TFL2
+#endif				       				       
+				       ).
+
+% The above code is this following but removing calls to append_dl/6:
+% convert_partition2naive_aux2_dl([],CL,TCL,ML,TML,CL,TCL,ML,TML):- !.
+% convert_partition2naive_aux2_dl([rec(_Key,data(_KeyRep,CP))|Rs],
+% 			       CL0,TCL0,ML0,TML0,CL2,TCL2,ML2,TML2):-
+% 	unzip_constraints_dl(CP,X,X,XCL,TXCL,Y,Y,XML,TXML),	
+% 	append_dl(XCL,TXCL,CL0,TCL0,CL1,TCL1),
+% 	append_dl(XML,TXML,ML0,TML0,ML1,TML1),
+% 	convert_partition2naive_aux2_dl(Rs,CL1,TCL1,ML1,TML1,CL2,TCL2,ML2,TML2).
+
+
+% Tail-recursive version with linear append (no difference lists)
+% The order between different representatives is not controlled.
+% convert_partition2naive_aux([],CL,ML,CL,ML):- !.
+% convert_partition2naive_aux([rec(_Key,data(_KeyRep,CP))|Rs],CL0,ML0,CL2,ML2):-
+% 	unzip_constraints(CP,XCL,XML),	
+% 	append(XCL,CL0,CL1),
+% 	append(XML,ML0,ML1),
+% 	convert_partition2naive_aux(Rs,CL1,ML1,CL2,ML2).
+
+%-----------------------------------------------------------------------%
+% append_symbolic_list(AppendedConstraintList,
+%                      ConstraintList,
+%                      MarkList,
+%                      NewConstraintList,
+%                      NewMarkList):
+%-----------------------------------------------------------------------%	
+% Append ConstraintList with AppendedConstraintList into
+% NewConstraintList, at the same time add padding of the same length
+% of AppendedConstraintList to MarkList resulting in NewMarkList.
+%-----------------------------------------------------------------------%
+append_symbolic_list([], CL, ML, CL, ML).
+append_symbolic_list([X|R], CL, ML, [X|CL1], [_|ML1]) :-
+	append_symbolic_list(R, CL, ML, CL1, ML1).
+
+%-----------------------------------------------------------------------%
+% post_constraints_path(CL,UnionFind0,UnionFind1)
+%-----------------------------------------------------------------------%
+% Conjoin the current path UnionFind0 with CL (list of constraints) and
+% return the new path UnionFind1.
+%-----------------------------------------------------------------------%
+post_constraints_path(XCL,UnionFind0,ML,UnionFind1,ML1):-
+#ifdef  PROFILE
+        ctime(T0),
+#endif	
+	post_constraints_path___(XCL,UnionFind0,ML,UnionFind1,ML1),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(partition_post,T1-T0),	
+#endif	
+	!.
+post_constraints_path(_,_,_,_,_):-		     
+	error_message("unexpected failure in post_constraints_path/3.\n",[]).
+
+post_constraints_path___([],UnionFind0,ML,UnionFind0,ML):- !.
+post_constraints_path___([C|Cs],UnionFind0,ML,UnionFind4,[M|R]):-
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	% Idea: all equivalence classes relevant to InterestVars are
+	% merged into one.
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% Get variables from the constraint C
+        varset_constraints([C],InterestVars),
+	% Add (only) new variables from constraint C into the union-find
+	multiple_make(InterestVars,UnionFind0,UnionFind1),
+	% Conjoin constraint for each representative
+#ifdef  NEWPARTITION2					     	
+	next_constraint_key(CKey),
+#endif	
+	conjoin_new_constraint(InterestVars,c(C,M
+#ifdef  NEWPARTITION2					     
+					     ,CKey,_
+#endif					     
+					     ),UnionFind1,UnionFind2),
+	% Merge all above representatives in the union-find structure
+	merge_list(InterestVars,UnionFind2,UnionFind3),
+	post_constraints_path___(Cs,UnionFind3,ML,UnionFind4,R).
+
+%-----------------------------------------------------------------------%
+% Usage 1: interpolate_constraints_path(+XCL,+CL,?ML,+CheckNeeded)
+% Usage 2: interpolate_constraints_path(+XCL,+UnionFind,-ML,+CheckNeeded)
+%-----------------------------------------------------------------------%
+% Mark the minimal subset of constraints in CL such that XCL still
+% holds (i.e., compute the interpolant).
+%
+% CheckNeeded (check or no_check) is a flag to indicate if
+% compute_unsat_core needs to check if the formula is unsatisfiable.
+%
+% You may want to use make_dnf or make_singleton_dnf in order to
+% create a dnf out of a list of constraints passed as the first
+% argument.
+%-----------------------------------------------------------------------%
+interpolate_constraints_path(NegProp,CL,ML,CheckNeeded):-
+	interpolate_constraints_path___(NegProp,CL,ML,CheckNeeded), !.
+interpolate_constraints_path(_,_,_,_):-	
+ 	error_message("interpolate_constraints_path/4 failed.\n",[]).
+
+interpolate_constraints_path___(NegProp,CL,ML,CheckNeeded):-
+	current_tracer_flag(path_datastructure,naive), !,
+	compute_unsat_core(NegProp,CL,ML,CheckNeeded).
+% interpolate_constraints_path___(NegProp,UnionFind,_,CheckNeeded):-
+%  	current_tracer_flag(path_datastructure,partition), !,
+% 	% GENERATION OF INTERPOLANT FOR INFEASIBLE PATH:	
+% 	%    We obtain the variables of interest from XCL: the
+% 	%    last transition that failed.	
+%  	varset_constraints(NegProp,InterestVars),
+% 	relevant_constraints(InterestVars,UnionFind,CL,ML),
+% 	compute_unsat_core(NegProp,CL,ML,CheckNeeded),
+% 	true.
+% GENERATION OF INTERPOLANT FOR A SUCCESS PATH:	
+%    We obtain the variables of interest from NegProp: the
+%    negated safety condition to be proved.
+interpolate_constraints_path___([tt],UnionFind,ML,CheckNeeded):-	
+ 	current_tracer_flag(path_datastructure,partition),  !,
+	print_message("Warning: Negated condition in interpolation is tt. ",[]),
+	print_message("Partition will not be effective!\n",[]),
+	convert_partition2naive(UnionFind,CL,ML),
+	compute_unsat_core([tt],CL,ML,CheckNeeded).
+interpolate_constraints_path___(NegProp,UnionFind,_,CheckNeeded):-	
+ 	current_tracer_flag(path_datastructure,partition),  !,
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+ 	varset_constraints(NegProp,InterestVars),
+#ifdef  MARK_CONSTRAINTS_DEBUG
+        print_message("1) Interest variables: % \n",[InterestVars]),
+#endif  /*MARK_CONSTRAINTS_DEBUG*/
+	%----------------------------------------------------------------------
+	% We note that ML here is not according to symbolic execution order,
+	% but it is ok for our purpose, which is just to mark relevant
+	% constraints.
+	%----------------------------------------------------------------------
+	relevant_constraints(InterestVars,UnionFind,CL,ML),
+#ifdef  PROFILE
+        union_find_size(UnionFind,UnionFindSize),
+	length(CL,CLSize),
+	add_counter(total_constraints_before_partition,UnionFindSize),
+	add_counter(total_constraints_after_partition,CLSize),	
+#endif  /*PROFILE*/
+#ifdef  MARK_CONSTRAINTS_DEBUG
+        print_message("2) CL: %\nNegProp %\n",[CL,NegProp]),
+#endif  /*MARK_CONSTRAINTS_DEBUG*/
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(partition_prep_interpolation,T1-T0),
+#endif  /*PROFILE*/
+	compute_unsat_core(NegProp,CL,ML,CheckNeeded),
+#ifdef  MARK_CONSTRAINTS_DEBUG
+        print_message("3) ML % \n",[ML]),
+#endif  /*MARK_CONSTRAINTS_DEBUG*/
+	true.
+
+%==============================================================================
+% make_dnf and make_singleton_dnf below are to be used in conjunction
+% with interpolate_constraints_path above, depending on whether a
+% constraint list passed as the first argument of mark_constraint_path
+% is a list of conjuncts (use make_singleton_dnf) or a list of
+% disjuncts (use make_dnf)
+%==============================================================================
+%-----------------------------------------------------------------------------
+% make_dnf(+X,-LLs): Create a list of lists LLs by making each element
+% of list X a list.
+%-----------------------------------------------------------------------------
+make_dnf([], []) :- !.
+make_dnf([[]|R], S) :- !,
+	make_dnf(R, S).
+make_dnf([[A|B]|R], [[A|B]|S]) :- !,
+	make_dnf(R, S).
+make_dnf([A|R], [[A]|S]) :- !,
+	make_dnf(R, S).
+make_dnf(C, [[C]]).
+
+%-----------------------------------------------------------------------------
+% make_singleton_dnf(+X,-LLs):
+% Create a list of lists LLs by enclosing X in another list
+%-----------------------------------------------------------------------------
+make_singleton_dnf([[A|R]|S], [[A|R]|S]) :- !.
+make_singleton_dnf(L, [L]).
+
+
+% Succeeds if the argument is a non-empty list of lists.
+is_dnf([[_|_]|_]).
+
+%-----------------------------------------------------------------------%
+% relevant_constraints(Vars,UnionFind,CL,ML)
+%-----------------------------------------------------------------------%
+% First collect all constraints in UnionFind related to each variable
+% in Vars and then, unzip the format of those constrains into standard
+% CL and ML in order to call later compute_unsat_core/4.
+%-----------------------------------------------------------------------%
+relevant_constraints(Vs,UnionFind,CL,ML):-
+	relevant_constraint_paths(Vs,UnionFind,[],CP),
+	unzip_constraints(CP,CL,ML
+#ifdef  NEWPARTITION2
+			 ,_KL,_FL
+#endif			 			 
+			 ).
+
+relevant_constraint_paths(_,s(root,[]),CP0,CP0):-!.
+relevant_constraint_paths([],_,CP0,CP0).
+relevant_constraint_paths([X|Xs],UnionFind,CP0,CP3):-
+	% Obtain representative of X
+	findSimple(0,X,UnionFind,data(_RX,CP1)),
+	% Added cut temporary by Jorge (26/11/09)
+	!, 
+	unord_setunion(CP1,CP0,CP2),
+	% Bug fixed 12/11/09: the use of append introduces duplicates!
+	% append(CP1,CP0,CP2),
+        % This call is buggy (by Jorge 09/29/09)
+	% Keep this comment to avoid future temptations 
+	% insert_constraint_path(CP1,CP0,CP2), 
+	relevant_constraint_paths(Xs,UnionFind,CP2,CP3).
+relevant_constraint_paths([_|Xs],UnionFind,CP0,CP1):-
+	% Added clause temporary by Jorge (26/11/09) 
+	!, 
+	% print_message("WARNING?: % is not registered in formula path\n",[X]),
+	relevant_constraint_paths(Xs,UnionFind,CP0,CP1).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Don't use this code:
+% insert_constraint_path([],CP,CP):- !.
+% insert_constraint_path([c(C0,M0)|Cs],CP0,CP1):-
+%         % don't insert new constraint but unify marking!	
+%         member(c(C0,M0),CP0),!, 
+%         insert_constraint_path(Cs,CP0,CP1).
+% insert_constraint_path([c(C0,M0)|Cs],CP0,CP1):-
+% 	!,
+% 	% insert new constraint
+% 	insert_constraint_path(Cs,[c(C0,M0)|CP0],CP1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------%
+% unzip_constraints(+,-,-)
+%----------------------------------------------------------------------------%
+% Tail recursive version that preserves order due to difference lists.
+%----------------------------------------------------------------------------%
+% unzip a list of constraints: non tail-recursive version
+% This version is faster than using difference lists.
+%----------------------------------------------------------------------------%
+unzip_constraints([],[],[]
+#ifdef  NEWPARTITION2
+		 ,[],[]
+#endif		 
+		 ).
+unzip_constraints([c(C,M
+#ifdef  NEWPARTITION2
+                    ,K,F
+#endif 		    
+		    )|CL],[C|Xs],[M|Ys]
+#ifdef  NEWPARTITION2
+                    ,[K|Ws],[F|Zs]
+#endif 		    		 
+		 ):- unzip_constraints(CL,Xs,Ys
+#ifdef  NEWPARTITION2
+				      ,Ws,Zs
+#endif				      
+				      ).
+
+%unzip_constraints(CP,CL,ML):-
+%	unzip_constraints_dl(CP,X,X,CL,[],Y,Y,ML,[]).
+
+unzip_constraints_dl([],CL,TCL,CL,TCL,ML,TML,ML,TML
+#ifdef  NEWPARTITION2
+		    ,KL,TKL,KL,TKL		    
+		    ,FL,TFL,FL,TFL
+#endif  /*NEWPARTITION2*/	       	    
+		    ).
+unzip_constraints_dl([c(C,M
+#ifdef  NEWPARTITION2
+		       ,K,F
+#endif  /*NEWPARTITION2*/	       
+		       )|Xs],
+		     AccCL,[C|TNAccCL],
+		     CL,TCL,
+		     AccML,[M|TNAccML],
+		     ML,TML
+#ifdef  NEWPARTITION2
+		    ,AccKL,[K|TNAccKL],
+		     KL,TKL		     		    
+		    ,AccFL,[F|TNAccFL],
+		     FL,TFL
+#endif	/*NEWPARTITION2*/	       	    
+		    ):-
+	unzip_constraints_dl(Xs,AccCL,TNAccCL,CL,TCL,AccML,TNAccML,ML,TML
+#ifdef  NEWPARTITION2
+                            ,AccKL,TNAccKL,KL,TKL			    			    
+                            ,AccFL,TNAccFL,FL,TFL
+#endif 	/*NEWPARTITION2*/	       		    
+			    ).
+
+% The above code is this following but removing calls to append_dl/6:
+% unzip_constraints_dl([],CL,TCL,CL,TCL,ML,TML,ML,TML).
+% unzip_constraints_dl([c(C,M)|Xs],AccCL,TAccCL,CL,TCL,AccML,TAccML,ML,TML):-
+% 	append_dl(AccCL,TAccCL,[C|TC],TC,NAccCL,TNAccCL),
+% 	append_dl(AccML,TAccML,[M|TM],TM,NAccML,TNAccML),		
+% 	unzip_constraints_dl(Xs,NAccCL,TNAccCL,CL,TCL,NAccML,TNAccML,ML,TML).
+% append_dl(A,B,B,C,A,C).
+
+%----------------------------------------------------------------------------%
+% zip_constraints(+,+,-)
+%----------------------------------------------------------------------------%
+% Tail recursive version that preserves order due to difference lists.
+%----------------------------------------------------------------------------%
+zip_constraints(CL,ML,
+#ifdef  NEWPARTITION2
+	       KL,FL,
+#endif 	       
+	       CP):-
+	zip_constraints_dl(CL,ML,
+#ifdef  NEWPARTITION2
+			  KL,FL,
+#endif		   			   
+			  X,X,CP,[]).
+zip_constraints_dl([],[],
+#ifdef  NEWPARTITION2
+		  [],[],
+#endif		   
+		  CP,TCP,CP,TCP).
+zip_constraints_dl([C|Xs],[M|Ys],
+#ifdef  NEWPARTITION2
+		  [K|Ks],[F|Fs],
+#endif 		  
+		  NAcc,[c(C,M
+#ifdef  NEWPARTITION2
+			 ,K,F
+#endif			  
+			 )|TNAcc],Zs,TZs)  :-
+	zip_constraints_dl(Xs,Ys,
+#ifdef  NEWPARTITION2
+                          Ks,Fs,
+#endif 			  
+			  NAcc,TNAcc,Zs,TZs).
+
+% The above code is this following but removing calls to append_dl/6:
+% zip_constraints_dl([],[],CP,TCP,CP,TCP).
+% zip_constraints_dl([C|Xs],[M|Ys],Acc,TAcc,Zs,TZs)  :-
+% 	append_dl(Acc,TAcc,[c(C,M)|TC],TC,NAcc,TNAcc),
+% 	zip_constraints_dl(Xs,Ys,NAcc,TNAcc,Zs,TZs).
+
+% zip a list of constraints: non tail-recursive version
+% zip_constraints([],[],[]).
+% zip_constraints([C|Xs],[M|Ys],[c(C,M)|Zs])  :- zip_constraints(Xs,Ys,Zs).
+
+%------------------------------------------------------------------------%
+% varset_constraints/3: given a set of constraints return its variables
+%------------------------------------------------------------------------%
+varset_constraints(CL,VarSet):-
+	varset_constraints_aux(CL,[],VarSet).
+
+varset_constraints_aux([],VarSet,VarSet):-!.
+varset_constraints_aux([C|Cs],VarSet0,VarSet2):-
+	varset_constraint(C,VarSet0,VarSet1),
+	varset_constraints_aux(Cs,VarSet1,VarSet2).
+varset_constraint(C,Acc,Acc1):-
+	% note: use of var/1 renames the free variable. We don't want
+	% that.
+	myvar(C), !,
+	unord_setunion([C],Acc,Acc1).
+varset_constraint(C,Acc,Acc):-
+	atomic(C),!.
+varset_constraint(C,Acc,Acc1):-
+	functor(C,F,_A),!,
+	C =.. [F|Args],
+	varset_constraint_args(Args,Acc,Acc1).
+varset_constraint_args([],Acc,Acc):-!.
+varset_constraint_args([A|As],Acc,Acc2):-
+	varset_constraint(A,Acc,Acc1),
+	varset_constraint_args(As,Acc1,Acc2).
+
+%-----------------------------------------------------------------------------%
+% Usage 1: evaluate_selectively_constraints_path(+CL, +ML, -ArrRef, +Mark)
+% Usage 2: evaluate_selectively_constraints_path(+UnionFind, -ML, -ArrRef, +Mark)
+%-----------------------------------------------------------------------------%
+% evaluate_selectively_constraints_path/4: evaluate only marked
+% symbolic constraints. If path_datastructure is naive then call to
+% constraint_symbolic_selectively/5. If path_datastructure is
+% partition then call to constraint_symbolic_selectively_path/4
+% ----------------------------------------------------------------------------%
+evaluate_selectively_constraints_path(CL, ML, ArrRef, Mark):-
+	current_tracer_flag(path_datastructure,naive),!,
+	constraint_symbolic_selectively(CL,ML, [], ArrRef,Mark), !.
+evaluate_selectively_constraints_path(UnionFind0, ML,ArrRef, Mark):-
+	current_tracer_flag(path_datastructure,partition),!,
+	% Transfer marked constraints from ML to UnionFind0
+#ifndef NEWPARTITION
+	convert_partition2naive(UnionFind0,_,ML),
+#else 
+	% To prevent warnings
+	ML = _,
+#endif  /*NEWPARTITION*/
+	UnionFind0 = s(UnionFind0X,_),
+	traverse_tree(UnionFind0X,L0),	
+	constraint_symbolic_selectively_path(L0, [], ArrRef, Mark), !.
+
+%------------------------------------------------------------------------------
+% constraint_symbolic_selectively(+CL,+TagL,-ArrRef, +Mark)
+% Evaluate only symbolic constraints marked with symbol Mark
+%------------------------------------------------------------------------------
+% Used to store in the memo table the interpolant.
+%------------------------------------------------------------------------------
+constraint_symbolic_selectively(CL, ML, InArrRef, OutArrRef, Mark) :-
+	pick_constraints(CL, ML, [], CL1, Mark),
+	% constraint_symbolic_arrays_SAT_check_form(CL1,InArrRef,OutArrRef).
+	% FIXME: check this ...
+	constraint_symbolic_with_array_update_subst(CL1,InArrRef,OutArrRef).
+	
+%-----------------------------------------------------------------------------%
+% constraint_symbolic_selectively_path(+UnionFind,+ArrRef1,-ArrRef2,+Mark)
+% Evaluate only symbolic constraints which are marked with symbol Mark
+%-----------------------------------------------------------------------------%
+constraint_symbolic_selectively_path([], ArrRef, ArrRef, _Mark).
+constraint_symbolic_selectively_path([rec(Key,data(Rep,CP))|Xs],
+				     InArrRef, OutArrRef, Mark):-
+	%----------------------------------------------------------------------
+	% Only the representative has the constraints attached
+	%----------------------------------------------------------------------
+	Key == Rep, !,
+	%----------------------------------------------------------------------
+	% Unzip the constraint path into two elements: CL and ML
+	%----------------------------------------------------------------------
+	unzip_constraints(CP,CL,ML
+#ifdef  NEWPARTITION2
+			 ,_KL,_FL
+#endif			 
+			 ),
+	%----------------------------------------------------------------------
+	% Evaluate constraints if marked
+	%----------------------------------------------------------------------
+	constraint_symbolic_selectively(CL,ML, InArrRef, ArrRef1, Mark),
+	constraint_symbolic_selectively_path(Xs, ArrRef1, OutArrRef, Mark).
+constraint_symbolic_selectively_path([_|Xs], InArrRef, OutArrRef, Mark):- !,
+	constraint_symbolic_selectively_path(Xs, InArrRef, OutArrRef, Mark).
+
+%-----------------------------------------------------------------------------%
+% evaluate_constraints_path(+,+,-)
+%-----------------------------------------------------------------------------%
+% Evaluate all constraints. If path_datastructure is naive then call
+% to constraint_symbolic/3. If path_datastructure is partition then
+% call to constraint_symbolic_path/3
+%-----------------------------------------------------------------------------%
+evaluate_constraints_path(CL,InArrRef,ArrRef):-
+	current_tracer_flag(path_datastructure,naive),!,
+	% constraint_symbolic_arrays_SAT_check_form(CL,InArrRef,ArrRef),!.
+	% FIXME: check this ...
+	constraint_symbolic_with_array_update_subst(CL,InArrRef,ArrRef),!.
+evaluate_constraints_path(UnionFind0,InArrRef,ArrRef):-
+	current_tracer_flag(path_datastructure,partition),!,
+	UnionFind0 = s(UnionFind0X,_),
+	traverse_tree(UnionFind0X,L0),	
+	constraint_symbolic_path(L0,InArrRef,ArrRef), !.
+
+%------------------------------------------------------------------------------
+% constraint_symbolic_path(+UnionFind,+ArrRef1,-ArrRef2)
+% Evaluate all symbolic constraints
+%------------------------------------------------------------------------------
+constraint_symbolic_path([], ArrRef, ArrRef).
+constraint_symbolic_path([rec(Key,data(Rep,CP))|Xs],
+			 InArrRef, OutArrRef):-
+	%----------------------------------------------------------------------
+	% Only the representative has the constraints attached
+	%----------------------------------------------------------------------
+	Key == Rep, !,
+	%----------------------------------------------------------------------
+	% Unzip the constraint path into two elements: CL and ML
+	%----------------------------------------------------------------------
+	unzip_constraints(CP,CL,_ML
+#ifdef  NEWPARTITION2
+			 ,_KL,_FL
+#endif			 			 
+			 ),
+	%----------------------------------------------------------------------
+	% Evaluate constraints if marked
+	%----------------------------------------------------------------------
+	% constraint_symbolic_arrays_SAT_check_form(CL,InArrRef,ArrRef1),	
+	% FIXME: check this ...
+	constraint_symbolic_with_array_update_subst(CL,InArrRef,ArrRef1),
+	constraint_symbolic_path(Xs, ArrRef1, OutArrRef).
+constraint_symbolic_path([_|Xs], InArrRef, OutArrRef):- !,
+	constraint_symbolic_path(Xs, InArrRef, OutArrRef).
+
+%-----------------------------------------------------------------------------%
+% Usage 1: select_marked_constraints_path(+CL,+ML,-ShortCL,+Mark)
+% Usage 2: select_marked_constraints_path(+UnionFind,+ML,-ShortCL,+Mark)
+% Usage 3: select_marked_constraints_path(+UnionFind,-ML,-ShortCL,+Mark)
+%-----------------------------------------------------------------------------%
+select_marked_constraints_path(CL, ML, ShortCL, Mark):-
+	current_tracer_flag(path_datastructure,naive),%!,
+	pick_constraints(CL, ML, [], ShortCL, Mark), !.
+select_marked_constraints_path(UnionFind0, ML, ShortCL, Mark):-
+	current_tracer_flag(path_datastructure,partition),%!,
+	% Transfer marked constraints from ML to UnionFind0
+#ifndef NEWPARTITION
+	convert_partition2naive(UnionFind0,_,ML),
+#else 
+        % To prevent warnings
+        ML = _,
+#endif  /*NEWPARTITION*/
+	UnionFind0 = s(UnionFind0X,_),
+	traverse_tree(UnionFind0X,L0),	
+	select_marked_constraints_path_aux(L0,[], ShortCL, Mark), !.
+select_marked_constraints_path(_,_,_,_):-
+	error_message("select_marked_constraints_path/4\n",[]).
+
+%----------------------------------------------------------------------------%
+% Usage 1: project_sym_constraints_path(+SGlobalArr,...,+CL,-ProjCL)
+% Usage 2: project_sym_constraints_path(+SGlobalArr,...,+UnionFind,-ProjCL)
+%----------------------------------------------------------------------------%
+% Notice that the 6th argument is always a list of constraints.
+%----------------------------------------------------------------------------%
+% Project CL onto the symbolic variables SGlobalArr,....
+%----------------------------------------------------------------------------%
+project_sym_constraints_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     CL, ProjCL):-
+	current_tracer_flag(path_datastructure,naive),
+	project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				CL, ProjCL),!.
+project_sym_constraints_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     UnionFind, ProjCL):-
+	current_tracer_flag(path_datastructure,partition),
+	convert_partition2naive(UnionFind,CL,_ML),
+	project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				CL, ProjCL),!.
+project_sym_constraints_path(_,_,_,_,_,_):-
+	error_message("project_sym_constraints_path/6\n",[]).
+
+%-----------------------------------------------------------------------------%
+% select_marked_constraints_path_aux(+UnionFind,+ShortCL1,-ShortCL2, +Mark)
+%-----------------------------------------------------------------------------%
+select_marked_constraints_path_aux([], ShortCL, ShortCL, _Mark).
+select_marked_constraints_path_aux([rec(Key,data(Rep,CP))|Xs],
+				   InShortCL, OutShortCL, Mark):-
+	%----------------------------------------------------------------------
+	% Only the representative has the constraints attached
+	%----------------------------------------------------------------------
+	Key == Rep, !,
+	%----------------------------------------------------------------------
+	% Unzip the constraint path into two elements: CL and ML
+	%----------------------------------------------------------------------
+	unzip_constraints(CP,CL,ML
+#ifdef  NEWPARTITION2
+			 ,_KL,_FL
+#endif			 			 			 
+			 ),
+	% pick_constraints2(CL, ML, InShortCL, ShortCL1),
+	pick_constraints(CL, ML, InShortCL, ShortCL1, Mark),	
+	select_marked_constraints_path_aux(Xs, ShortCL1, OutShortCL, Mark).
+select_marked_constraints_path_aux([_|Xs], InShortCL, OutShortCL, Mark):- !,
+	select_marked_constraints_path_aux(Xs, InShortCL, OutShortCL, Mark).
+
+%-----------------------------------------------------------------------------%
+% pick_constraints(+CL,+ML,+AccCL,-OutCL,+Mark)
+%-----------------------------------------------------------------------------%
+pick_constraints([], [], OutCL, OutCL, _).
+pick_constraints([X|Xs], [M|Ms], AccCL, OutCL, Mark) :-
+	M == Mark , !,
+	pick_constraints(Xs, Ms, [X|AccCL], OutCL, Mark).
+pick_constraints([_|Xs], [_|Ms], AccCL, OutCL, Mark) :-
+	pick_constraints(Xs, Ms, AccCL, OutCL, Mark).
+
+%-----------------------------------------------------------------------------%
+% irrel_rel_constraints_from_path(+UnionFind,+Vs,-IrrelCL,-RelCL)
+%-----------------------------------------------------------------------------%
+% IrrelCL is a list of constraints that contain the same constraints
+% as UnionFind but without any constraint that intersects with the set of
+% variables Vs. RelCL is the complement of IrrelCL.
+%-----------------------------------------------------------------------------%
+irrel_rel_constraints_from_path(UnionFind,Vs,IrrelCL,RelCL):-
+	current_tracer_flag(path_datastructure,partition),!,
+	convert_partition2naive(UnionFind,CL,_),
+	irrel_rel_constraints(CL,Vs,IrrelCL,RelCL).	
+irrel_rel_constraints_from_path(CL,Vs,IrrelCL,RelCL):-
+	current_tracer_flag(path_datastructure,naive),!,
+	irrel_rel_constraints(CL,Vs,IrrelCL,RelCL).
+
+%-----------------------------------------------------------------------------%
+% find_constraints_path_and_mark(?UnionFind,?ML,+Constraints,+Mark)
+%-----------------------------------------------------------------------------%
+% Search for constraints in UnionFind which are identical to some from
+% Constraints and mark it with the tag Mark.
+%-----------------------------------------------------------------------------%
+find_constraints_path_and_mark(UnionFind,_,Constraints,Mark):-
+	current_tracer_flag(path_datastructure,partition),!,
+	convert_partition2naive(UnionFind,CL,ML),	
+	find_constraints_list_and_mark(CL,ML,Constraints,Mark).
+find_constraints_path_and_mark(CL,ML,Constraints,Mark):-
+	current_tracer_flag(path_datastructure,naive),!,
+	find_constraints_list_and_mark(CL,ML,Constraints,Mark).
+
+find_constraints_list_and_mark([],[],_,_):-!.	
+find_constraints_list_and_mark([C|T],[M|ML],Constraints,Mark):-
+	% identical test
+	memberGndchk(C,Constraints),
+	!,
+	M=Mark,
+	find_constraints_list_and_mark(T,ML,Constraints,Mark).
+find_constraints_list_and_mark([_|T],[_|ML],Constraints,Mark):-
+	!,
+	find_constraints_list_and_mark(T,ML,Constraints,Mark).
+%-----------------------------------------------------------------------------%
+% convert_path_to_list(+UnionFind,-CL)
+%-----------------------------------------------------------------------------%
+% Convert the formula path to a prolog list of constraints
+%-----------------------------------------------------------------------------%
+convert_path_to_list(UnionFind,CL):-
+	current_tracer_flag(path_datastructure,partition),!,
+	convert_partition2naive(UnionFind,CL,_).
+convert_path_to_list(CL,CL):-
+	current_tracer_flag(path_datastructure,naive),!.
+	
+%-----------------------------------------------------------------------------%
+% pretty_printer_path(+UnionFind,+FName,+SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar)
+%-----------------------------------------------------------------------------%
+pretty_printer_path(UnionFind,FName,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	current_tracer_flag(path_datastructure,partition),!,
+	convert_partition2naive(UnionFind,CL,_),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL).
+pretty_printer_path(CL, FName,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	current_tracer_flag(path_datastructure,naive),!,
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL).
+
+%-----------------------------------------------------------------------------%
+% pretty_printer_path(+UnionFind,+FName,+SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,
+%                     +FName1,+SGlobalArr1,+SGlobalVar1,+SLocalArr1,+SLocalVar1)
+%-----------------------------------------------------------------------------%
+pretty_printer_path(UnionFind,
+		    PreFName,
+		    PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+		    PostFName,
+		    PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar):-	
+	current_tracer_flag(path_datastructure,partition),!,
+	convert_partition2naive(UnionFind,CL,_),
+	pretty_printer_constraints_list(PreFName,
+					PreSGlobalArr,PreSGlobalVar,
+					PreSLocalArr,PreSLocalVar,
+					PostFName,
+					PostSGlobalArr,PostSGlobalVar,
+					PostSLocalArr,PostSLocalVar,CL).
+pretty_printer_path(CL,
+		    PreFName,
+		    PreSGlobalArr,PreSGlobalVar,PreSLocalArr,PreSLocalVar,
+		    PostFName,
+		    PostSGlobalArr,PostSGlobalVar,PostSLocalArr,PostSLocalVar):-	
+	current_tracer_flag(path_datastructure,naive),!,
+	pretty_printer_constraints_list(PreFName,
+					PreSGlobalArr,PreSGlobalVar,
+					PreSLocalArr,PreSLocalVar,
+					PostFName,
+					PostSGlobalArr,PostSGlobalVar,
+					PostSLocalArr,PostSLocalVar,CL).
+	
+#ifdef DEBUG_USE
+% To test paths with constraints partition
+test_constraint_path:-
+	set_tracer_flag(path_datastructure,partition),
+	% Initialize the constraint path
+	% X0=?,Y0=?,Z0=?
+	XCL0 = [],
+	init_constraints_path(XCL0,UnionFind0,_),
+	print_message("After X0=?,Y0=?,Z0=? \n",[]),
+	% print_union_find(UnionFind0),
+	print_message("% \n",[UnionFind0]),
+	% X=3;          
+        XCL1= [assign(X1,3)], Y1=_Y0,Z1=_Z0,
+	add_constraints_path(XCL1,UnionFind0,_,UnionFind1,_),
+	print_message("After X=3 \n",[]),
+	% print_union_find(UnionFind1),
+	print_message("% \n",[UnionFind1]),
+	% if (X1 > 1) 
+	XCL2 = [gt(X1,1)], 
+	add_constraints_path(XCL2,UnionFind1,_,UnionFind2,_),
+	print_message("After if (X1>1) \n",[]),
+	% print_union_find(UnionFind2),
+	print_message("% \n",[UnionFind2]),
+	% X = X + 2;   
+	XCL3 = [assign(X2,plus(X1,2))],_Y2=Y1,Z2=Z1,
+	add_constraints_path(XCL3,UnionFind2,_,UnionFind3,_),
+	print_message("After X=X+2 \n",[]),
+	% print_union_find(UnionFind3),
+	print_message("% \n",[UnionFind3]),
+ 	% Y = X + 5;   
+	XCL4 = [assign(Y3,plus(X3,5))],X3=X2,_Z3=Z2,
+	add_constraints_path(XCL4,UnionFind3,_,UnionFind4,_),			
+	print_message("After Y=X+5 \n",[]),
+ 	% print_union_find(UnionFind4),
+	print_message("% \n",[UnionFind4]),
+	interpolate_constraints_path([[geq(5,Y3)]],UnionFind4,_,check),
+	print_message("After generation of interpolant for Y>5 \n",[]),
+	% print_union_find(UnionFind4),
+	print_message("% \n",[UnionFind4]).
+test_merge_constraints_paths :-
+	set_tracer_flag(path_datastructure,partition),
+	% Initialize the constraint path
+	% X0=?,Y0=?,Z0=?
+	
+	% path 1
+	init_constraints_path([],UnionFind0,_),
+	% X=3;          
+        XCL1= [assign(X1,3)], Y1=_Y0,Z1=_Z0,
+	add_constraints_path(XCL1,UnionFind0,_,UnionFind1,_),
+	print_message("After X=3 \n",[]),
+	print_message("% \n",[UnionFind1]),
+	% if (X1 > 1) 
+	XCL2 = [gt(X1,1)], 
+	add_constraints_path(XCL2,UnionFind1,_,UnionFind2,_),
+	print_message("After if (X1>1) \n",[]),
+	print_message("Path 1: % \n",[UnionFind2]),
+
+	% path 2
+	init_constraints_path([],UnionFind3,_),	
+	% X = X + 2;   
+	XCL3 = [assign(X2,plus(X1,2))],_Y2=Y1,Z2=Z1,
+	add_constraints_path(XCL3,UnionFind3,_,UnionFind4,_),
+	print_message("After X=X+2 \n",[]),
+	print_message("% \n",[UnionFind4]),
+ 	% Y = X + 5;   
+	XCL4 = [assign(_Y3,plus(X3,5))],X3=X2,_Z3=Z2,
+	add_constraints_path(XCL4,UnionFind4,_,UnionFind5,_),			
+	print_message("After Y=X+5 \n",[]),
+	
+	print_message("Path 2 % \n",[UnionFind5]),
+	merge_constraints_paths(UnionFind2,_ML2,UnionFind5,_ML5,MergedUnionFind,_MergedML),
+	print_message("Merging path 1 and 2: % \n",[MergedUnionFind]).	
+#endif  /*DEBUG_USE*/
+
+
+%===============================================================================%
+%===============================================================================%
+#ifdef  UNUSED_CODE
+%-------------------------------------------------------------------------------%
+% add_constraints_and_markings_path(+CL,+ML,+UnionFind0,-UnionFind1)
+% Generate a find-union from CL and ML
+%-------------------------------------------------------------------------------%
+add_constraints_and_markings_path([],[],UnionFind,UnionFind):- !.
+add_constraints_and_markings_path([C|Cs],[M|Ms],UnionFind0,UnionFind4):-
+	% Get variables from the constraint C
+        varset_constraints([C],InterestVars),
+	% Add (only) new variables from constraint C into the union-find
+	multiple_make(InterestVars,UnionFind0,UnionFind1),	
+	% Conjoin constraint for each representative
+#ifdef  NEWPARTITION2					     	
+	next_constraint_key(CKey),
+#endif	
+	conjoin_new_constraint(InterestVars,c(C,M
+#ifdef  NEWPARTITION2					     
+					     ,CKey,_
+#endif					     
+					     ),UnionFind1,UnionFind2),
+	% Merge all above representatives in the union-find structure
+	merge_list(InterestVars,UnionFind2,UnionFind3),
+	add_constraints_and_markings_path(Cs,Ms,UnionFind3,UnionFind4).
+
+#ifdef  NEWPARTITION2
+%------------------------------------------------------------------------------
+% Each constraint is of the form c(C, M, K, F) where C is the
+% constraint, K is a key for indexing the constraint later, M is a
+% term 'o' (if part of the interpolant), and F is a flag to classify
+% the constraint. 
+%------------------------------------------------------------------------------
+
+% put_flag_constraints_path(?UnionFind, +Val): the field F of all constraints
+% in UnionFind is overwritten by Val. This predicate is assumed to be called
+% only if partition is used. Otherwise, error is reported.
+put_flag_constraints_path(_UnionFind0, _Val):-
+	current_tracer_flag(path_datastructure,naive),!.
+put_flag_constraints_path(UnionFind0, Val):-
+	current_tracer_flag(path_datastructure,partition),
+	UnionFind0 = s(UnionFind0X,_),
+	traverse_tree(UnionFind0X,L0),		
+	put_flag_constraints_path_aux(L0,Val),!.
+put_flag_constraints_path(_UnionFind0, _Val):-
+	error_message("Unexpected problem in put_flag_constraints_path/2\n",[]).
+	
+put_flag_constraints_path_aux([],_).
+put_flag_constraints_path_aux([rec(Key,data(Rep,CP))|Xs],Val):-
+	%----------------------------------------------------------------------
+	% Only the representative has the constraints attached
+	%----------------------------------------------------------------------
+	Key == Rep, !,
+	%----------------------------------------------------------------------
+	% Unzip the constraint path into two elements: CL and ML
+	%----------------------------------------------------------------------
+	unzip_constraints(CP,_CL,_ML,_KL,FL),
+	unify_all_elements(FL,Val),	
+	put_flag_constraints_path_aux(Xs, Val).
+put_flag_constraints_path_aux([_|Xs], Val):- !,
+	put_flag_constraints_path_aux(Xs, Val).
+
+
+% get_flag_constraints_path(+UnionFind,+ML,+Val,-IndexesList): IndexesList is
+% a list of terms t(K,M,F) where F is equal to Val. This predicate is
+% assumed to be called only if partition is used. Otherwise, error is
+% reported.
+get_flag_constraints_path(UnionFind0, ML, Val, IndexesList):-
+	current_tracer_flag(path_datastructure,partition),
+	% Transfer marked constraints from ML to UnionFind0
+#ifndef NEWPARTITION
+	convert_partition2naive(UnionFind0,_,ML),
+#else 
+	% To prevent warnings
+	ML = _,
+#endif  /*NEWPARTITION*/
+	UnionFind0 = s(UnionFind0X,_),
+	traverse_tree(UnionFind0X,L0),	
+	get_flag_constraints_path_aux(L0,Val,[],IndexesList),
+	!.
+get_flag_constraints_path(_UnionFind0, _ML, _Val, _IndexesList):-
+	error_message("Unexpected problem in get_flag_constraints_path/4\n",[]).
+
+get_flag_constraints_path_aux([],_Val,L,L).
+get_flag_constraints_path_aux([rec(Key,data(Rep,CP))|Xs],Val,AccL,L):-
+	%----------------------------------------------------------------------
+	% Only the representative has the constraints attached
+	%----------------------------------------------------------------------
+	Key == Rep, !,
+	%----------------------------------------------------------------------
+	% Unzip the constraint path into two elements: CL and ML
+	%----------------------------------------------------------------------
+	unzip_constraints(CP,_CL,ML,KL,FL),
+
+	insert_index_if_same_flag(FL,KL,ML,Val,AccL,NAccL),
+	
+	get_flag_constraints_path_aux(Xs, Val, NAccL, L).
+get_flag_constraints_path_aux([_|Xs], Val, AccL, L):- !,
+	get_flag_constraints_path_aux(Xs, Val, AccL, L).
+
+insert_index_if_same_flag([],[],[],_Val,L,L):-!.
+insert_index_if_same_flag([F|Fs],[K|Ks],[M|Ms],Val,AccL,L):-
+	F == Val,!,
+	insert_index_if_same_flag(Fs,Ks,Ms,Val,[t(K,M,F)|AccL],L).
+insert_index_if_same_flag([_F|Fs],[_K|Ks],[_M|Ms],Val,AccL,L):-
+	insert_index_if_same_flag(Fs,Ks,Ms,Val,AccL,L).
+#endif /*NEWPARTITION2*/
+#endif  /*UNUSED_CODE*/
+	

@@ -1,0 +1,62 @@
+I think I'm done, but it's a bit complicated. Mainly because of some
+machine dependent stuff.
+
+Kindly update SVN and follow the instructions in
+$TRACER_PATH/lib/crest/README (also attached here).
+
+Examples and benchmarks are present in
+$TRACER_PATH/lib/crest/mytest. I added a script "cleancrest" which
+will clean intermediate files Crest spits out.
+
+-----
+
+For the demo I recommend showing test2.c (SOS example). Btw for this
+use WP but for big benchmarks use SP, since WP slows down a lot.
+
+----------------------------------------------------------------------
+Steps to do to run TRACER with Crest:
+
+1) Download yices-1.0.11 for your system http://yices.csl.sri.com/download-old.shtml
+   and extract it somewhere (this is an external dependency of Crest). If you are
+   on Linux, it's usually yices-1.0.11-i686-pc-linux-gnu-static-gmp.tar.gz (32bit)
+   or yices-1.0.11-x86_64-pc-linux-gnu-static-gmp.tar.gz (64bit)
+
+2) cd $TRACER_PATH/lib/crest/src and open Makefile. Edit the YICES_DIR to point
+   to the dir of yices-1.0.11 you extracted in step 1
+
+3) make
+
+4) cd $TRACER_PATH/lib/crest/cil (this is the CIL version used by Crest)
+
+5) ./configure && make
+
+6) cd $TRACER_PATH/lib/cil-1.3.7 (this is the CIL version we use)
+
+   Note CIL needs OCaml. We tried with 3.11 but it does not work. The
+   version we tested is 3.12.1
+
+7) ./configure && make
+
+8) cp obj/x86_LINUX/cilly.asm.exe $TRACER_PATH/lib/cilly
+
+That's it. Assuming you sorted out any other dependency issues, you can now run
+programs with TRACER+Crest.
+
+To run Crest _alone_ on, say eg1.c:
+
+1) $TRACER_PATH/lib/crest/bin/crestc eg1.c (this will instrument/compile eg1.c)
+
+2) $TRACER_PATH/lib/crest/bin/run_crest ./eg1 123456 -dfs
+
+   where 123456 is the iteration limit and -dfs is strategy (-cfg is another)
+3) To run Crest with TRACER:
+   $TRACER_PATH/lib/crest/bin/run_crest ./eg1 123456 -dfs -tracer_nosub -sp
+
+   where -tracer_nosub will run TRACER but with *no subsumption* (we used this to
+   count %subsumption, overhead etc. for the paper)
+
+   -tracer_sub will run TRACER with subsumption (Crest will listen to memo table)
+
+   last option is either -sp or -ndwp for SP or NDWP interpolants.
+
+IMPORTANT: CLPR should only be compiled with -DLINUX -DCC_CSET and not anything else!

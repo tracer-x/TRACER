@@ -1,0 +1,70 @@
+:- dynamic slicing_answer/8.
+
+%        main(1000). main(2000). main(4000). main(8000).  main(16000). main(32000)
+% Time :   0.071        0.11         0.24       0.40         0.721       1.439
+% Speed:   14084       18181        16666       20000        22191       22237
+%
+% Av.Speed: 18893 asserts/seconds
+
+% no_style_check(all),
+%        main_ground(1000). main_ground(2000). main_ground(4000). main_ground(8000).  main_ground(16000). main_ground(32000)
+% Time :       0.02              0.03               0.06              0.101                0.16              0.309
+% Speed:      50000             66666              66666             79207                100000            103559
+% Av.Speed: 77683 asserts/seconds
+
+main_ground(N):-
+	FName= func_main,
+	Depth= 0,
+	ML = '00000100010000000110000000001110000000',
+	Reps = [rep(2 ,'0','00000000000000000000','','00000000000000000000'),
+		rep(10,'0','00000000000000000000','','00000000000000000000'),
+		rep(15,'0','00000000000000000000','','00000000000000000000'),
+		rep(31,'0','00000000000000000000','','00000000000000000000'),
+		rep(33,'0','00000000000000000000','','00000000000000000000')],
+        GlobalArrMark='0',
+	GlobalVarMark='10000000100001000000',
+	LocalArrMark='',
+	LocalVarMark='00000000010100000000',
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	write('Time: '), write(Time),nl.
+
+main(N):-
+	FName= func_main,
+	Depth= 0,
+	ML = [_,_,_,_,_,o,_,_,_,o,_,_,_,_,_,_,_,o,o,_,_,_,_,_,_,_,_,_,o,o,o,_,_,_,_,_,_,_],
+	Reps = [rep(2 ,[_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(10,[_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(15,[_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(31,[_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(33,[_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_])],
+        GlobalArrMark=[_],
+	GlobalVarMark=[o,_,_,_,_,_,_,_,o,_,_,_,_,o,_,_,_,_,_,_],
+	LocalArrMark=[],
+	LocalVarMark=[_,_,_,_,_,_,_,_,_,o,_,o,_,_,_,_,_,_,_,_],
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	write('Time: '), write(Time),nl.
+
+p(0,_,_,_,_,_,_,_,_):-!.
+p(N,
+  FName,Depth, 
+  ML,
+  Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark):-
+       N > 0,!,	
+       assert(slicing_answer(FName,Depth,
+			     ML,
+			     Reps,
+			     GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark)),
+       N1 is N -1,
+       Depth1 is Depth+1,
+       p(N1,
+	 FName,Depth1, 
+	 ML,
+	 Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark).
+
+ztime       :-  statistics(runtime,_).
+ctime(Time) :-	statistics(runtime,[_,T1]), Time is T1/1000.
+

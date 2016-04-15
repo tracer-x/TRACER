@@ -1,0 +1,182 @@
+ndwp
+----------------------------------------------------------
+[0]: kbfiltr-safe
+Program SAFE
+States visited : 1484
+Analysis time : 4.45 sec
+[1]: kbfiltr-unsafe-1
+Program UNSAFE
+States visited: 516
+Analysis time: 1.04 seconds
+[2]: kbfiltr-unsafe-2
+Program UNSAFE
+States visited: 299
+Analysis time: 0.63 seconds
+[3]: cdaudio
+Program SAFE
+States visited : 14222
+Analysis time : 90.79 sec
+[4]: diskperf
+Program SAFE
+States visited : 7290
+Analysis time : 54 sec
+[5]: floppy
+Program SAFE
+States visited : 3258
+Analysis time : 22.51 sec
+[0]: tcas_1a
+Program SAFE
+States visited : 4311
+Analysis time : 6.35 sec
+[1]: tcas_1b
+Program SAFE
+States visited : 4313
+Analysis time : 6.25 sec
+[2]: tcas_2a
+Program SAFE
+States visited : 4309
+Analysis time : 6.28 sec
+[3]: tcas_2b
+Program UNSAFE
+States visited: 120
+Analysis time: 0.02 seconds
+[4]: tcas_3a
+Program UNSAFE
+States visited: 286
+Analysis time: 0.22 seconds
+[5]: tcas_3b
+Program SAFE
+States visited : 4313
+Analysis time : 6.25 sec
+[6]: tcas_4a
+Program UNSAFE
+States visited: 279
+Analysis time: 0.21 seconds
+[7]: tcas_4b
+Program UNSAFE
+States visited: 113
+Analysis time: 0.01 seconds
+[8]: tcas_5a
+Program SAFE
+States visited : 4307
+Analysis time : 6.25 sec
+[9]: tcas_5b
+Program UNSAFE
+States visited: 113
+Analysis time: 0.01 seconds
+[0]: statemate-shorter
+Program SAFE
+States visited : 1021
+Analysis time : 6.84 sec
+
+----------------------------------------------------------
+linear
+----------------------------------------------------------
+[0]: kbfiltr-safe
+Program SAFE
+States visited : 1854
+Analysis time : 2.39 sec
+[1]: kbfiltr-unsafe-1
+Program UNSAFE
+States visited: 567
+Analysis time: 0.56 seconds
+[2]: kbfiltr-unsafe-2
+Program UNSAFE
+States visited: 340
+Analysis time: 0.32 seconds
+[3]: cdaudio
+Program SAFE
+States visited : 17245
+Analysis time : 43.8 sec
+[4]: diskperf
+Program SAFE
+States visited : 15715
+Analysis time : 65.63 sec
+[0]: tcas_1a
+Program SAFE
+States visited : 6786
+Analysis time : 5.25 sec
+[1]: tcas_1b
+Program SAFE
+States visited : 6732
+Analysis time : 4.96 sec
+[2]: tcas_2a
+Program SAFE
+States visited : 6725
+Analysis time : 4.98 sec
+[3]: tcas_2b
+Program UNSAFE
+States visited: 120
+Analysis time: 0.01 seconds
+[4]: tcas_3a
+Program UNSAFE
+States visited: 286
+Analysis time: 0.12 seconds
+[5]: tcas_3b
+Program SAFE
+States visited : 6732
+Analysis time : 4.98 sec
+[6]: tcas_4a
+Program UNSAFE
+States visited: 279
+Analysis time: 0.12 seconds
+[7]: tcas_4b
+Program UNSAFE
+States visited: 113
+Analysis time: 0.01 seconds
+[8]: tcas_5a
+Program SAFE
+States visited : 6698
+Analysis time : 4.92 sec
+[9]: tcas_5b
+Program UNSAFE
+States visited: 113
+Analysis time: 0.01 seconds
+[0]: statemate-shorter
+Program SAFE
+States visited : 18995
+Analysis time : 75.25 sec
+
+----------------------------------------------------------
+clp
+----------------------------------------------------------
+[0]: tcas_1a
+Program SAFE
+States visited : 5704
+Analysis time : 47.03 sec
+[1]: tcas_1b
+Program SAFE
+States visited : 5697
+Analysis time : 42.96 sec
+[2]: tcas_2a
+Program SAFE
+States visited : 5693
+Analysis time : 43.94 sec
+[3]: tcas_2b
+Program UNSAFE
+States visited: 120
+Analysis time: 0.02 seconds
+[4]: tcas_3a
+Program UNSAFE
+States visited: 286
+Analysis time: 1.3 seconds
+[5]: tcas_3b
+Program SAFE
+States visited : 5697
+Analysis time : 44.18 sec
+[6]: tcas_4a
+Program UNSAFE
+States visited: 279
+Analysis time: 1.22 seconds
+[7]: tcas_4b
+Program UNSAFE
+States visited: 113
+Analysis time: 0.03 seconds
+[8]: tcas_5a
+Program SAFE
+States visited : 5700
+Analysis time : 44.51 sec
+[9]: tcas_5b
+Program UNSAFE
+States visited: 113
+Analysis time: 0.02 seconds

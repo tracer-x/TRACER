@@ -1,0 +1,465 @@
+The run confirms that Blast stick predicates to program points,
+and do not traverse a subtree without the predicates once they
+are added.
+
+The run result of k2-i to k2-i+1 when compared do not show
+doubling effect in space and/or time.
+
+Run results of k2:
+=================
+
+k2-1: 
+====
+
+Model checker stats:
+
+Nb iterations of outer while loop: 0
+Nb iterations of reachability: 665
+Nb created nodes: 0
+Nb refinment processes: 2
+Nb refined nodes: 0
+Nb proof tree nodes: 494
+Nb proof tree covered nodes: 124Nb deleted nodes: 0
+
+
+Abstractor stats:
+
+Total number of non-post queries = 1 
+Total number of cached queries = 8836 
+Total number of queries = 10717 
+Worst-case number of post queries = 11360 
+Actual number of post queries = 11360 
+NonDC number of post queries = 5066 
+Assume post queries = 102 
+Total posts = 291 
+Total assume posts = 7 
+Total foci queries = 25 
+Foci Theory Clauses:
+Num theory clauses: 0
+List of predicates: 
+
+Number of predicates =23 
+Maximum number of predicates active together (discounting scope) = 0
+
+Functions visited:
+main , __BLAST_initialize_k2-1.i , Writing out .abs file: k2-1.abs
+Maximum #preds/loc: 23
+Average #preds/loc: 21
+Done writing .abs file
+
+Minor Words : 37335156.
+Major Words : 1070419.
+Total size of heap in words : 798720
+
+Total time reported by Blast  0.999 s (1)
+
+Time reported by "time"
+real	0m6.156s
+user	0m2.430s
+sys	0m1.768s
+
+
+k2-2:
+====
+
+Model checker stats:
+
+Nb iterations of outer while loop: 0
+Nb iterations of reachability: 935
+Nb created nodes: 0
+Nb refinment processes: 4
+Nb refined nodes: 0
+Nb proof tree nodes: 500
+Nb proof tree covered nodes: 126Nb deleted nodes: 0
+
+
+Abstractor stats:
+
+Total number of non-post queries = 1 
+Total number of cached queries = 9788 
+Total number of queries = 11772 
+Worst-case number of post queries = 13450 
+Actual number of post queries = 13450 
+NonDC number of post queries = 5078 
+Assume post queries = 204 
+Total posts = 433 
+Total assume posts = 20 
+Total foci queries = 31 
+Foci Theory Clauses:
+Num theory clauses: 0
+List of predicates: 
+
+Number of predicates =25 
+Maximum number of predicates active together (discounting scope) = 0
+
+Functions visited:
+__BLAST_initialize_k2-2.i , main , Writing out .abs file: k2-2.abs
+Maximum #preds/loc: 25
+Average #preds/loc: 22
+Done writing .abs file
+
+Minor Words : 43920169.
+Major Words : 1213450.
+Total size of heap in words : 860160
+
+
+No error found.  The system is safe :-)
+
+Timings:
+TOTAL                          1.280 s (1)
+  subtree_cut_refinement           0.000 s (4)
+    update_tree_after_refinement[CUT]           0.000 s (4)
+  check_error                    0.110 s (4)
+    block_analyze_trace            0.110 s (4)
+      cleanup and go                 0.000 s (4)
+      Interpolant Refine             0.032 s (4)
+        CSIsat time                    0.016 s (27)
+          foci itpn                      0.016 s (27)
+        convertToSimplifySyntax           0.000 s (136)
+      get useful blocks              0.078 s (4)
+        foci itpn                      0.000 s (4)
+        convertToSimplifySyntax           0.000 s (2710)
+      Cons folder                    0.000 s (4)
+        get_lval_aliases_iter           0.000 s (20)
+          Lval iterator                  0.000 s (5)
+      load lv table                  0.000 s (4)
+      make lv_stack                  0.000 s (4)
+  main post                      1.170 s (934)
+    get_new_data                   1.170 s (933)
+      postBdd                        0.998 s (440)
+        bddForEachCube-post            0.998 s (436)
+          simplify querytime             0.000 s (19)
+            convertToSimplifySyntax           0.000 s (19)
+          _check_pred                    0.889 s (429)
+            simp-a2:                       0.485 s (5863)
+              lookup_cache_add               0.000 s (972)
+              simplify querytime             0.063 s (972)
+                convertToSimplifySyntax           0.032 s (972)
+              lookup_cache                   0.016 s (5863)
+            simp-a1:                       0.310 s (5863)
+              lookup_cache_add               0.000 s (972)
+              simplify querytime             0.015 s (972)
+                convertToSimplifySyntax           0.000 s (972)
+              lookup_cache                   0.000 s (5863)
+          _assume                        0.032 s (429)
+            convertToSimplifySyntax           0.032 s (429)
+          _check_Pred_list               0.000 s (429)
+        _check_pred                    0.000 s (4)
+          simp-a2:                       0.000 s (9)
+            lookup_cache_add               0.000 s (9)
+            simplify querytime             0.000 s (9)
+              convertToSimplifySyntax           0.000 s (9)
+            lookup_cache                   0.000 s (9)
+          simp-a1:                       0.000 s (9)
+            lookup_cache_add               0.000 s (9)
+            simplify querytime             0.000 s (9)
+              convertToSimplifySyntax           0.000 s (9)
+            lookup_cache                   0.000 s (9)
+        _assume                        0.000 s (4)
+          convertToSimplifySyntax           0.000 s (4)
+        _check_Pred_list               0.000 s (4)
+        simplify querytime             0.000 s (2)
+          convertToSimplifySyntax           0.000 s (2)
+      mk_pred_triple sp              0.000 s (440)
+      mk_pred_triple ac              0.080 s (440)
+        getMustAliases                 0.016 s (2074)
+          filter alias candidates           0.000 s (2074)
+          getVarsAndDerefs               0.016 s (2074)
+        getPossibleAliases             0.016 s (2074)
+          filter alias candidates           0.000 s (2074)
+          getVarsAndDerefs               0.000 s (2074)
+  Covered check:                 0.000 s (931)
+  cap                            0.000 s (935)
+  initialize skipfun             0.000 s (2)
+  Kill init                      0.000 s (1)
+  read initial state             0.000 s (1)
+  read invariants                0.000 s (1)
+  modelCheck                     0.000 s (1)
+  Call graph construction           0.000 s (1)
+  Add alias override             0.000 s (1)
+  Modifies Database              0.000 s (1)
+  Alias analysis                 0.000 s (1)
+  Build CFA:                     0.000 s (1)
+  read alias pairs               0.000 s (1)
+  read seeds                     0.000 s (1)
+  Parse:                         0.000 s (1)
+
+
+No error found.  The system is safe :-)
+
+CSIsat stopped.
+
+real	0m7.438s
+user	0m3.048s
+sys	0m1.902s
+
+k2-3:
+====
+
+Model checker stats:
+
+Nb iterations of outer while loop: 0
+Nb iterations of reachability: 1393
+Nb created nodes: 0
+Nb refinment processes: 7
+Nb refined nodes: 0
+Nb proof tree nodes: 506
+Nb proof tree covered nodes: 128Nb deleted nodes: 0
+
+
+Abstractor stats:
+
+Total number of non-post queries = 1 
+Total number of cached queries = 11626 
+Total number of queries = 13779 
+Worst-case number of post queries = 17228 
+Actual number of post queries = 17228 
+NonDC number of post queries = 5097 
+Assume post queries = 430 
+Total posts = 679 
+Total assume posts = 47 
+Total foci queries = 40 
+Foci Theory Clauses:
+Num theory clauses: 0
+List of predicates: 
+
+Number of predicates =27 
+Maximum number of predicates active together (discounting scope) = 0
+
+Functions visited:
+__BLAST_initialize_k2-3.i , main , Writing out .abs file: k2-3.abs
+Maximum #preds/loc: 27
+Average #preds/loc: 22
+Done writing .abs file
+
+Minor Words : 53333660.
+Major Words : 1435693.
+Total size of heap in words : 921600
+
+
+No error found.  The system is safe :-)
+
+Timings:
+TOTAL                          1.440 s (1)
+  subtree_cut_refinement           0.000 s (7)
+    update_tree_after_refinement[CUT]           0.000 s (7)
+  check_error                    0.156 s (7)
+    block_analyze_trace            0.156 s (7)
+      cleanup and go                 0.000 s (7)
+      Interpolant Refine             0.000 s (7)
+        CSIsat time                    0.000 s (33)
+          foci itpn                      0.000 s (33)
+        convertToSimplifySyntax           0.000 s (176)
+      get useful blocks              0.140 s (7)
+        foci itpn                      0.000 s (7)
+        convertToSimplifySyntax           0.000 s (3861)
+      Cons folder                    0.016 s (7)
+        get_lval_aliases_iter           0.000 s (49)
+          Lval iterator                  0.000 s (7)
+      load lv table                  0.000 s (7)
+      make lv_stack                  0.000 s (7)
+  main post                      1.252 s (1392)
+    get_new_data                   1.252 s (1391)
+      postBdd                        1.236 s (694)
+        bddForEachCube-post            1.220 s (689)
+          simplify querytime             0.000 s (40)
+            convertToSimplifySyntax           0.000 s (40)
+          _check_pred                    1.046 s (674)
+            simp-a2:                       0.406 s (6843)
+              lookup_cache_add               0.000 s (1042)
+              simplify querytime             0.032 s (1042)
+                convertToSimplifySyntax           0.032 s (1042)
+              lookup_cache                   0.016 s (6843)
+            simp-a1:                       0.563 s (6843)
+              lookup_cache_add               0.000 s (1042)
+              simplify querytime             0.063 s (1042)
+                convertToSimplifySyntax           0.031 s (1042)
+              lookup_cache                   0.046 s (6843)
+          _assume                        0.111 s (674)
+            convertToSimplifySyntax           0.095 s (674)
+          _check_Pred_list               0.000 s (674)
+        _check_pred                    0.000 s (5)
+          simp-a2:                       0.000 s (15)
+            lookup_cache_add               0.000 s (13)
+            simplify querytime             0.000 s (13)
+              convertToSimplifySyntax           0.000 s (13)
+            lookup_cache                   0.000 s (15)
+          simp-a1:                       0.000 s (15)
+            lookup_cache_add               0.000 s (13)
+            simplify querytime             0.000 s (13)
+              convertToSimplifySyntax           0.000 s (13)
+            lookup_cache                   0.000 s (15)
+        _assume                        0.000 s (5)
+          convertToSimplifySyntax           0.000 s (5)
+        _check_Pred_list               0.000 s (5)
+        simplify querytime             0.000 s (2)
+          convertToSimplifySyntax           0.000 s (2)
+      mk_pred_triple sp              0.000 s (694)
+      mk_pred_triple ac              0.000 s (694)
+        getMustAliases                 0.000 s (2262)
+          filter alias candidates           0.000 s (2262)
+          getVarsAndDerefs               0.000 s (2262)
+        getPossibleAliases             0.000 s (2262)
+          filter alias candidates           0.000 s (2262)
+          getVarsAndDerefs               0.000 s (2262)
+  Covered check:                 0.016 s (1386)
+  cap                            0.000 s (1393)
+  initialize skipfun             0.000 s (2)
+  Kill init                      0.000 s (1)
+  read initial state             0.000 s (1)
+  read invariants                0.000 s (1)
+  modelCheck                     0.000 s (1)
+  Call graph construction           0.000 s (1)
+  Add alias override             0.000 s (1)
+  Modifies Database              0.000 s (1)
+  Alias analysis                 0.000 s (1)
+  Build CFA:                     0.000 s (1)
+  read alias pairs               0.000 s (1)
+  read seeds                     0.000 s (1)
+  Parse:                         0.016 s (1)
+
+
+No error found.  The system is safe :-)
+
+CSIsat stopped.
+
+real	0m9.265s
+user	0m3.665s
+sys	0m2.231s
+
+
+k2-4:
+====
+
+Model checker stats:
+
+Nb iterations of outer while loop: 0
+Nb iterations of reachability: 2051
+Nb created nodes: 0
+Nb refinment processes: 11
+Nb refined nodes: 0
+Nb proof tree nodes: 512
+Nb proof tree covered nodes: 130Nb deleted nodes: 0
+
+
+Abstractor stats:
+
+Total number of non-post queries = 1 
+Total number of cached queries = 14838 
+Total number of queries = 17280 
+Worst-case number of post queries = 23568 
+Actual number of post queries = 23568 
+NonDC number of post queries = 5123 
+Assume post queries = 910 
+Total posts = 1039 
+Total assume posts = 94 
+Total foci queries = 52 
+Foci Theory Clauses:
+Num theory clauses: 0
+List of predicates: 
+
+Number of predicates =29 
+Maximum number of predicates active together (discounting scope) = 0
+
+Functions visited:
+main , __BLAST_initialize_k2-4.i , Writing out .abs file: k2-4.abs
+Maximum #preds/loc: 29
+Average #preds/loc: 23
+Done writing .abs file
+
+Minor Words : 66757927.
+Major Words : 1752534.
+Total size of heap in words : 983040
+
+
+No error found.  The system is safe :-)
+
+Timings:
+TOTAL                          1.796 s (1)
+  subtree_cut_refinement           0.000 s (11)
+    update_tree_after_refinement[CUT]           0.000 s (11)
+  check_error                    0.250 s (11)
+    block_analyze_trace            0.250 s (11)
+      cleanup and go                 0.000 s (11)
+      Interpolant Refine             0.047 s (11)
+        CSIsat time                    0.015 s (41)
+          foci itpn                      0.015 s (41)
+        convertToSimplifySyntax           0.000 s (228)
+      get useful blocks              0.155 s (11)
+        foci itpn                      0.000 s (11)
+        convertToSimplifySyntax           0.061 s (5409)
+      Cons folder                    0.000 s (11)
+        get_lval_aliases_iter           0.000 s (99)
+          Lval iterator                  0.000 s (9)
+      load lv table                  0.000 s (11)
+      make lv_stack                  0.000 s (11)
+  main post                      1.515 s (2050)
+    get_new_data                   1.515 s (2049)
+      postBdd                        1.374 s (1068)
+        bddForEachCube-post            1.328 s (1062)
+          simplify querytime             0.015 s (75)
+            convertToSimplifySyntax           0.015 s (75)
+          _check_pred                    1.156 s (1033)
+            simp-a2:                       0.546 s (8555)
+              lookup_cache_add               0.000 s (1165)
+              simplify querytime             0.015 s (1165)
+                convertToSimplifySyntax           0.000 s (1165)
+              lookup_cache                   0.031 s (8555)
+            simp-a1:                       0.482 s (8555)
+              lookup_cache_add               0.000 s (1165)
+              simplify querytime             0.046 s (1165)
+                convertToSimplifySyntax           0.016 s (1165)
+              lookup_cache                   0.031 s (8555)
+          _assume                        0.109 s (1033)
+            convertToSimplifySyntax           0.109 s (1033)
+          _check_Pred_list               0.000 s (1033)
+        _check_pred                    0.000 s (6)
+          simp-a2:                       0.000 s (23)
+            lookup_cache_add               0.000 s (17)
+            simplify querytime             0.000 s (17)
+              convertToSimplifySyntax           0.000 s (17)
+            lookup_cache                   0.000 s (23)
+          simp-a1:                       0.000 s (23)
+            lookup_cache_add               0.000 s (17)
+            simplify querytime             0.000 s (17)
+              convertToSimplifySyntax           0.000 s (17)
+            lookup_cache                   0.000 s (23)
+        _assume                        0.000 s (6)
+          convertToSimplifySyntax           0.000 s (6)
+        _check_Pred_list               0.000 s (6)
+        simplify querytime             0.000 s (2)
+          convertToSimplifySyntax           0.000 s (2)
+      mk_pred_triple sp              0.000 s (1068)
+      mk_pred_triple ac              0.093 s (1068)
+        getMustAliases                 0.031 s (2458)
+          filter alias candidates           0.000 s (2458)
+          getVarsAndDerefs               0.016 s (2458)
+        getPossibleAliases             0.047 s (2458)
+          filter alias candidates           0.000 s (2458)
+          getVarsAndDerefs               0.032 s (2458)
+  Covered check:                 0.000 s (2040)
+  cap                            0.016 s (2051)
+  initialize skipfun             0.000 s (2)
+  Kill init                      0.000 s (1)
+  read initial state             0.000 s (1)
+  read invariants                0.000 s (1)
+  modelCheck                     0.000 s (1)
+  Call graph construction           0.000 s (1)
+  Add alias override             0.000 s (1)
+  Modifies Database              0.000 s (1)
+  Alias analysis                 0.000 s (1)
+  Build CFA:                     0.000 s (1)
+  read alias pairs               0.000 s (1)
+  read seeds                     0.000 s (1)
+  Parse:                         0.015 s (1)
+
+
+No error found.  The system is safe :-)
+
+CSIsat stopped.
+
+real	0m11.812s
+user	0m4.370s
+sys	0m2.929s
+
+

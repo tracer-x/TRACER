@@ -1,0 +1,2885 @@
+./blastit.pl statemate-timed_noloop_shorter3.c
+gcc -E -DBLAST -I /home/andrews/software/blast-2.5/blast/test/headers/ statemate-timed_noloop_shorter3.c > /tmp/statemate-timed_noloop_shorter3.i
+mfilter /tmp/statemate-timed_noloop_shorter3.i > statemate-timed_noloop_shorter3.i
+pblast.opt statemate-timed_noloop_shorter3.i    -predH 7
+BLAST 2.5, Copyright (c) 2002-2008, The BLAST Team.
+
+Begin Parsing files: statemate-timed_noloop_shorter3.i
+Putting in initializer __BLAST_initialize_statemate-timed_noloop_shorter3.i
+Finished Parsing
+Begin Building CFA
+cr Checking for cycles in the call graph.
+cr Done checking for cycles in the call graph.
+Call Graph Paths: 3
+Visited functions: 2
+Visited existing functions: 2
+Finished Building CFA
+Starting the alias analysis
+: 8 nodes 1 leaves 0.0078125 minterms
+1000001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000010-------  1
+
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+In collapse expression
+Lval is : t
+: is the zero DD
+: is the zero DD
+: is the zero DD
+: is the zero DD
+: is the zero DD
+: is the zero DD
+: is the zero DD
+: is the zero DD
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : step
+In collapse expression
+Lval is : t
+In collapse expression
+Lval is : t
+Printing Points to BDD:
+: 23 nodes 1 leaves 0.00012207 minterms
+10000111000011  1
+10001001000100  1
+
+Printing lvalue_to_bdd_map :
+: 8 nodes 1 leaves 0.0078125 minterms
+1000001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0111000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0110000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0101000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0100000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0011000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0010000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0001000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000111-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000110-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000101-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000100-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000011-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000010-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000001-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+0000000-------  1
+
+: 8 nodes 1 leaves 0.0078125 minterms
+1000010-------  1
+
+Checking manager.
+Opening file statemate-timed_noloop_shorter3.bdd
+Calling BddStore
+Finished Building Aliases
+Finished Building Must Aliases
+Done post-alias-analysis
+back from post_alias_analysis
+cr Checking for cycles in the call graph.
+cr Done checking for cycles in the call graph.
+Call Graph Paths: 3
+Visited functions: 2
+Visited existing functions: 2
+Unknown fun :
+here now back from load_async
+UL> Only trivial lattice enabled
+here now back from load_async
+Initialized Abstraction
+Done adding seed predicates
+
+
+
+********** Now running the model-checker **********
+
+
+Setting signal for 2000 seconds
+counterex. size:30
+block_analyze_trace
+In block_a_t:29
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =29
+Forking Simplify process...
+done!
+
+done loop
+Forking CSIsat process...
+done!
+
+blockset unsat as expected
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 3 : 173: 	 Block(t = 0;X1 = 0;X2 = 0;X3 = 0;X87 = 0;X88 = 0;X89 = 0;X90 = 0;X91 = 0;X92
+= 0;X93 = 0;X94 = 0;X95 = 0;X96 = 0;X97 = 0;X98 = 0;X99 = 0;X100 = 0;X101 =
+0;X102 = 0;t = t  +  1;)
+[INF0] 6 : 199: 	 Block(X2 = time;t = t  +  1;)
+[INF0] 13 : 231: 	 Block(X1 = time;t = t  +  1;)
+[INF0] 14 : 234: 	 Block(time = 1;stable = 0;step = 0;t = t  +  1;stable = 1;step = step  +  1;t
+= t  +  1;)
+[INF0] 16 : 248: 	 Block(B11 = 0;t = t  +  1;)
+[INF0] 18 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 20 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 22 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 27 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 28 : 325: 	 Pred(t  >  200)
+Conflicting Blocks
+[INF1] 4 : 194: 	 Pred(B4  ==  0)
+[INF1] 5 : 198: 	 Pred(B4  !=  0)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+Now take_fun size: 0
+Adding glob_imp_lval: t
+addPred: 0: (gui) adding predicate t*2<=2 to the system
+addPred: 0: (gui) adding predicate t*2<=2 to the system
+2
+addPred: 1: (gui) adding predicate t*2<=4 to the system
+addPred: 1: (gui) adding predicate t*2<=4 to the system
+2
+addPred: 2: (gui) adding predicate t*2<=6 to the system
+addPred: 2: (gui) adding predicate t*2<=6 to the system
+2
+addPred: 3: (gui) adding predicate t*2<=10 to the system
+addPred: 3: (gui) adding predicate t*2<=10 to the system
+2
+addPred: 4: (gui) adding predicate t*2<=12 to the system
+addPred: 4: (gui) adding predicate t*2<=12 to the system
+2
+addPred: 5: (gui) adding predicate t*2<=14 to the system
+addPred: 5: (gui) adding predicate t*2<=14 to the system
+2
+addPred: 6: (gui) adding predicate t*2<=16 to the system
+addPred: 6: (gui) adding predicate t*2<=16 to the system
+2
+addPred: 7: (gui) adding predicate t*2<=18 to the system
+addPred: 7: (gui) adding predicate t*2<=18 to the system
+2
+addPred: 8: (gui) adding predicate t*2<=20 to the system
+addPred: 8: (gui) adding predicate t*2<=20 to the system
+Adding all preds now...
+Now take_fun size: 0
+Adding glob_imp_lval: B4
+addPred: 9: (gui) adding predicate B4==0 to the system
+addPred: 9: (gui) adding predicate B4==0 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:100
+TP Queries:246
+Reached Cubes:15
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 10
+Average #preds/loc: 8
+Done writing .abs file
+Node Depth: 10
+While loop tick:200
+TP Queries:2046
+Reached Cubes:115
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 10
+Average #preds/loc: 8
+Done writing .abs file
+Node Depth: 18
+While loop tick:300
+TP Queries:3846
+Reached Cubes:215
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 10
+Average #preds/loc: 8
+Done writing .abs file
+Node Depth: 25
+counterex. size:31
+block_analyze_trace
+In block_a_t:30
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =30
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 23 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 28 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 29 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+addPred: 10: (gui) adding predicate t*2<=22 to the system
+addPred: 10: (gui) adding predicate t*2<=22 to the system
+2
+addPred: 11: (gui) adding predicate t*2<=24 to the system
+addPred: 11: (gui) adding predicate t*2<=24 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:400
+TP Queries:5586
+Reached Cubes:309
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 11
+Average #preds/loc: 9
+Done writing .abs file
+Node Depth: 28
+counterex. size:32
+block_analyze_trace
+In block_a_t:31
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =31
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 22 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 24 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 29 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 30 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 12: (gui) adding predicate t<=10 to the system
+addPred: 12: (gui) adding predicate t<=10 to the system
+addPred: 13: (gui) adding predicate t<=11 to the system
+addPred: 13: (gui) adding predicate t<=11 to the system
+addPred: 14: (gui) adding predicate t<=12 to the system
+addPred: 14: (gui) adding predicate t<=12 to the system
+addPred: 15: (gui) adding predicate t<=13 to the system
+addPred: 15: (gui) adding predicate t<=13 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:35
+block_analyze_trace
+In block_a_t:34
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =34
+done loop
+blockset unsat as expected
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 27 : 300: 	 Pred(X77  ==  0)
+[INF0] 30 : 308: 	 Pred(X77  !=  0)
+Conflicting Blocks
+[INF1] 32 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF1] 33 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Now take_fun size: 0
+Adding glob_imp_lval: X77
+addPred: 16: (gui) adding predicate X77==0 to the system
+addPred: 16: (gui) adding predicate X77==0 to the system
+Adding all preds now...
+2
+addPred: 17: (gui) adding predicate t*2<=26 to the system
+addPred: 17: (gui) adding predicate t*2<=26 to the system
+2
+addPred: 18: (gui) adding predicate t*2<=28 to the system
+addPred: 18: (gui) adding predicate t*2<=28 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:500
+TP Queries:7892
+Reached Cubes:400
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 17
+Average #preds/loc: 9
+Done writing .abs file
+Node Depth: 35
+counterex. size:32
+block_analyze_trace
+In block_a_t:31
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =31
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 23 : 267: 	 Block(B4 = 0;B6 = 0;X91 = 2;X7 = 0;X92 = 1;B5 = 1;X93 = 1;t = t  +  1;)
+[INF0] 24 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 29 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 30 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:37
+block_analyze_trace
+In block_a_t:36
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =36
+done loop
+blockset unsat as expected
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 300: 	 Pred(X77  ==  0)
+[INF0] 32 : 308: 	 Pred(X77  !=  0)
+Conflicting Blocks
+[INF1] 34 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF1] 35 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+addPred: 19: (gui) adding predicate t<=14 to the system
+addPred: 19: (gui) adding predicate t<=14 to the system
+addPred: 20: (gui) adding predicate t<=15 to the system
+addPred: 20: (gui) adding predicate t<=15 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:33
+block_analyze_trace
+In block_a_t:32
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =32
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 27 : 300: 	 Pred(X77  ==  0)
+[INF0] 28 : 302: 	 Block(X61 = X65;t = t  +  1;)
+[INF0] 30 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 31 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:36
+block_analyze_trace
+In block_a_t:35
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =35
+done loop
+blockset unsat as expected
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 25 : 284: 	 Pred(X77  ==  0)
+[INF0] 31 : 300: 	 Pred(X77  !=  0)
+Conflicting Blocks
+[INF1] 30 : 298: 	 Pred(X65  !=  X67)
+[INF1] 33 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF1] 34 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:33
+block_analyze_trace
+In block_a_t:32
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =32
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 21 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 23 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 25 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 30 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 31 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:600
+TP Queries:9738
+Reached Cubes:470
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 19
+Average #preds/loc: 9
+Done writing .abs file
+Node Depth: 28
+counterex. size:35
+block_analyze_trace
+In block_a_t:34
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =34
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 300: 	 Pred(X77  ==  0)
+[INF0] 30 : 302: 	 Block(X61 = X65;t = t  +  1;)
+[INF0] 32 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 33 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 19
+Average #preds/loc: 9
+Done writing .abs file
+counterex. size:34
+block_analyze_trace
+In block_a_t:33
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =33
+done loop
+blockset unsat as expected
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 26 : 292: 	 Pred(X77  !=  0)
+[INF0] 30 : 308: 	 Pred(X77  ==  0)
+Conflicting Blocks
+[INF1] 29 : 306: 	 Pred(X73  !=  X74)
+[INF1] 31 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF1] 32 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:33
+block_analyze_trace
+In block_a_t:32
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =32
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 26 : 290: 	 Pred(X71  !=  X72)
+[INF0] 30 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 31 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:700
+TP Queries:11604
+Reached Cubes:551
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 19
+Average #preds/loc: 9
+Done writing .abs file
+Node Depth: 31
+counterex. size:35
+block_analyze_trace
+In block_a_t:34
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =34
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 30 : 306: 	 Pred(X73  !=  X74)
+[INF0] 32 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 33 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:33
+block_analyze_trace
+In block_a_t:32
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =32
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 25 : 284: 	 Pred(X77  ==  0)
+[INF0] 26 : 286: 	 Block(X60 = X68;t = t  +  1;)
+[INF0] 30 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 31 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:34
+block_analyze_trace
+In block_a_t:33
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =33
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 26 : 282: 	 Pred(X68  !=  X70)
+[INF0] 31 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 32 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:33
+block_analyze_trace
+In block_a_t:32
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =32
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 22 : 259: 	 Block(B0 = 0;X102 = 1;t = t  +  1;)
+[INF0] 23 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 25 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 30 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 31 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:800
+TP Queries:13474
+Reached Cubes:625
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 20
+Average #preds/loc: 9
+Done writing .abs file
+Node Depth: 30
+counterex. size:34
+block_analyze_trace
+In block_a_t:33
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =33
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 306: 	 Pred(X73  !=  X74)
+[INF0] 31 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 32 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 20
+Average #preds/loc: 9
+Done writing .abs file
+counterex. size:33
+block_analyze_trace
+In block_a_t:32
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =32
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 26 : 292: 	 Pred(X77  !=  0)
+[INF0] 27 : 294: 	 Block(X68 = X71;t = t  +  1;)
+[INF0] 30 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 31 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:35
+block_analyze_trace
+In block_a_t:34
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =34
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 28 : 290: 	 Pred(X71  !=  X72)
+[INF0] 32 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 33 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 20
+Average #preds/loc: 10
+Done writing .abs file
+While loop tick:900
+TP Queries:15460
+Reached Cubes:699
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 20
+Average #preds/loc: 10
+Done writing .abs file
+Node Depth: 34
+counterex. size:35
+block_analyze_trace
+In block_a_t:34
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =34
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 22 : 252: 	 Block(X100 = 1;t = t  +  1;)
+[INF0] 23 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 25 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 27 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 32 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 33 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:36
+block_analyze_trace
+In block_a_t:35
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =35
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 33 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 34 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+addPred: 21: (gui) adding predicate t*2<=30 to the system
+addPred: 21: (gui) adding predicate t*2<=30 to the system
+2
+addPred: 22: (gui) adding predicate t*2<=32 to the system
+addPred: 22: (gui) adding predicate t*2<=32 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:34
+block_analyze_trace
+In block_a_t:33
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =33
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 27 : 292: 	 Pred(X77  !=  0)
+[INF0] 28 : 294: 	 Block(X68 = X71;t = t  +  1;)
+[INF0] 31 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 32 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1000
+TP Queries:17752
+Reached Cubes:782
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 21
+Average #preds/loc: 10
+Done writing .abs file
+Node Depth: 35
+RGN> Processed node's region:
+RGN> [AtomicRegion:
+RGN> Location: id=0#77 src="statemate-timed_noloop_shorter3.i"; line=326
+RGN> AbstrDatRgn:
+RGN> Predicates: [...]
+RGN> Lattice:
+RGN> Top
+RGN> 
+RGN> Stack:
+RGN> []]
+RGN> 
+counterex. size:35
+block_analyze_trace
+In block_a_t:34
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =34
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 28 : 290: 	 Pred(X71  !=  X72)
+[INF0] 32 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 33 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 21
+Average #preds/loc: 10
+Done writing .abs file
+counterex. size:36
+block_analyze_trace
+In block_a_t:35
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =35
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 30 : 298: 	 Pred(X65  !=  X67)
+[INF0] 33 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 34 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:36
+block_analyze_trace
+In block_a_t:35
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =35
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 22 : 248: 	 Block(B11 = 0;t = t  +  1;)
+[INF0] 24 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 26 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 28 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 33 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 34 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1100
+TP Queries:19878
+Reached Cubes:858
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 22
+Average #preds/loc: 11
+Done writing .abs file
+Node Depth: 35
+counterex. size:37
+block_analyze_trace
+In block_a_t:36
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =36
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 31 : 300: 	 Pred(X77  ==  0)
+[INF0] 32 : 302: 	 Block(X61 = X65;t = t  +  1;)
+[INF0] 34 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 35 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+addPred: 23: (gui) adding predicate t*2<=34 to the system
+addPred: 23: (gui) adding predicate t*2<=34 to the system
+2
+addPred: 24: (gui) adding predicate t*2<=36 to the system
+addPred: 24: (gui) adding predicate t*2<=36 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:37
+block_analyze_trace
+In block_a_t:36
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =36
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 290: 	 Pred(X71  !=  X72)
+[INF0] 31 : 294: 	 Block(X68 = X71;t = t  +  1;)
+[INF0] 34 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 35 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 25: (gui) adding predicate t<=16 to the system
+addPred: 25: (gui) adding predicate t<=16 to the system
+addPred: 26: (gui) adding predicate t<=17 to the system
+addPred: 26: (gui) adding predicate t<=17 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1200
+TP Queries:22442
+Reached Cubes:939
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 26
+Average #preds/loc: 11
+Done writing .abs file
+Node Depth: 34
+counterex. size:37
+block_analyze_trace
+In block_a_t:36
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =36
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 27 : 265: 	 Pred(B13  ==  0)
+[INF0] 28 : 267: 	 Block(B4 = 0;B6 = 0;X91 = 2;X7 = 0;X92 = 1;B5 = 1;X93 = 1;t = t  +  1;)
+[INF0] 29 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 34 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 35 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:36
+block_analyze_trace
+In block_a_t:35
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =35
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 290: 	 Pred(X71  !=  X72)
+[INF0] 33 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 34 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 26
+Average #preds/loc: 12
+Done writing .abs file
+counterex. size:38
+block_analyze_trace
+In block_a_t:37
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =37
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 23 : 245: 	 Block(X90 = 3;t = t  +  1;)
+[INF0] 24 : 248: 	 Block(B11 = 0;t = t  +  1;)
+[INF0] 26 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 28 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 30 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 35 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 36 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1300
+TP Queries:25262
+Reached Cubes:1018
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 26
+Average #preds/loc: 12
+Done writing .abs file
+Node Depth: 33
+counterex. size:38
+block_analyze_trace
+In block_a_t:37
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =37
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 33 : 306: 	 Pred(X73  !=  X74)
+[INF0] 35 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 36 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 27: (gui) adding predicate t<=18 to the system
+addPred: 27: (gui) adding predicate t<=18 to the system
+addPred: 28: (gui) adding predicate t<=19 to the system
+addPred: 28: (gui) adding predicate t<=19 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:37
+block_analyze_trace
+In block_a_t:36
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =36
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 284: 	 Pred(X77  ==  0)
+[INF0] 30 : 286: 	 Block(X60 = X68;t = t  +  1;)
+[INF0] 34 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 35 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:38
+block_analyze_trace
+In block_a_t:37
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =37
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 30 : 282: 	 Pred(X68  !=  X70)
+[INF0] 35 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 36 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 28
+Average #preds/loc: 12
+Done writing .abs file
+While loop tick:1400
+TP Queries:28162
+Reached Cubes:1104
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 28
+Average #preds/loc: 12
+Done writing .abs file
+Node Depth: 36
+counterex. size:37
+block_analyze_trace
+In block_a_t:36
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =36
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 30 : 290: 	 Pred(X71  !=  X72)
+[INF0] 34 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 35 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:39
+block_analyze_trace
+In block_a_t:38
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =38
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 23 : 234: 	 Block(time = 1;stable = 0;step = 0;t = t  +  1;stable = 1;step = step  +  1;t
+= t  +  1;)
+[INF0] 25 : 248: 	 Block(B11 = 0;t = t  +  1;)
+[INF0] 27 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 29 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 31 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 36 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 37 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:39
+block_analyze_trace
+In block_a_t:38
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =38
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 33 : 306: 	 Pred(X73  !=  X74)
+[INF0] 35 : 310: 	 Block(X65 = X73;t = t  +  1;)
+[INF0] 36 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 37 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+addPred: 29: (gui) adding predicate t*2<=38 to the system
+addPred: 29: (gui) adding predicate t*2<=38 to the system
+2
+addPred: 30: (gui) adding predicate t*2<=40 to the system
+addPred: 30: (gui) adding predicate t*2<=40 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1500
+TP Queries:31268
+Reached Cubes:1189
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 30
+Average #preds/loc: 13
+Done writing .abs file
+Node Depth: 29
+counterex. size:41
+block_analyze_trace
+In block_a_t:40
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =40
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 34 : 286: 	 Block(X60 = X68;t = t  +  1;)
+[INF0] 38 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 39 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:41
+block_analyze_trace
+In block_a_t:40
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =40
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 35 : 294: 	 Block(X68 = X71;t = t  +  1;)
+[INF0] 38 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 39 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:41
+block_analyze_trace
+In block_a_t:40
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =40
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 33 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 38 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 39 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1600
+TP Queries:34786
+Reached Cubes:1282
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 30
+Average #preds/loc: 14
+Done writing .abs file
+Node Depth: 38
+counterex. size:41
+block_analyze_trace
+In block_a_t:40
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =40
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 25 : 234: 	 Block(time = 1;stable = 0;step = 0;t = t  +  1;stable = 1;step = step  +  1;t
+= t  +  1;)
+[INF0] 27 : 248: 	 Block(B11 = 0;t = t  +  1;)
+[INF0] 29 : 255: 	 Block(B17 = 0;t = t  +  1;)
+[INF0] 31 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 33 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 38 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 39 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 30
+Average #preds/loc: 14
+Done writing .abs file
+counterex. size:42
+block_analyze_trace
+In block_a_t:41
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =41
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 35 : 290: 	 Pred(X71  !=  X72)
+[INF0] 39 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 40 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1700
+TP Queries:38216
+Reached Cubes:1374
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 30
+Average #preds/loc: 14
+Done writing .abs file
+Node Depth: 40
+counterex. size:42
+block_analyze_trace
+In block_a_t:41
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =41
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 34 : 282: 	 Pred(X68  !=  X70)
+[INF0] 39 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 40 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:41
+block_analyze_trace
+In block_a_t:40
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =40
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 29 : 257: 	 Pred(B19  ==  0)
+[INF0] 30 : 259: 	 Block(B0 = 0;X102 = 1;t = t  +  1;)
+[INF0] 31 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 33 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 38 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 39 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:1800
+TP Queries:41812
+Reached Cubes:1464
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 30
+Average #preds/loc: 15
+Done writing .abs file
+Node Depth: 37
+counterex. size:44
+block_analyze_trace
+In block_a_t:43
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =43
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 37 : 298: 	 Pred(X65  !=  X67)
+[INF0] 39 : 302: 	 Block(X61 = X65;t = t  +  1;)
+[INF0] 41 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 42 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+addPred: 31: (gui) adding predicate t*2<=42 to the system
+addPred: 31: (gui) adding predicate t*2<=42 to the system
+2
+addPred: 32: (gui) adding predicate t*2<=44 to the system
+addPred: 32: (gui) adding predicate t*2<=44 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:43
+block_analyze_trace
+In block_a_t:42
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =42
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 37 : 298: 	 Pred(X65  !=  X67)
+[INF0] 40 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 41 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 33: (gui) adding predicate t<=20 to the system
+addPred: 33: (gui) adding predicate t<=20 to the system
+addPred: 34: (gui) adding predicate t<=21 to the system
+addPred: 34: (gui) adding predicate t<=21 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:42
+block_analyze_trace
+In block_a_t:41
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =41
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 30 : 257: 	 Pred(B19  ==  0)
+[INF0] 31 : 259: 	 Block(B0 = 0;X102 = 1;t = t  +  1;)
+[INF0] 32 : 263: 	 Block(B20 = 0;t = t  +  1;)
+[INF0] 34 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 39 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 40 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 34
+Average #preds/loc: 15
+Done writing .abs file
+While loop tick:1900
+TP Queries:45206
+Reached Cubes:1549
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 34
+Average #preds/loc: 15
+Done writing .abs file
+Node Depth: 39
+counterex. size:44
+block_analyze_trace
+In block_a_t:43
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =43
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 38 : 298: 	 Pred(X65  !=  X67)
+[INF0] 41 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 42 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 34
+Average #preds/loc: 15
+Done writing .abs file
+counterex. size:45
+block_analyze_trace
+In block_a_t:44
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =44
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 38 : 298: 	 Pred(X65  !=  X67)
+[INF0] 40 : 302: 	 Block(X61 = X65;t = t  +  1;)
+[INF0] 42 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 43 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+2
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 34
+Average #preds/loc: 15
+Done writing .abs file
+counterex. size:42
+block_analyze_trace
+In block_a_t:41
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =41
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 32 : 265: 	 Pred(B13  ==  0)
+[INF0] 33 : 267: 	 Block(B4 = 0;B6 = 0;X91 = 2;X7 = 0;X92 = 1;B5 = 1;X93 = 1;t = t  +  1;)
+[INF0] 34 : 276: 	 Block(B14 = 0;B11 = 1;B17 = 1;B20 = 1;B14 = 1;t = t  +  1;)
+[INF0] 39 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 40 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 35: (gui) adding predicate t<=22 to the system
+addPred: 35: (gui) adding predicate t<=22 to the system
+addPred: 36: (gui) adding predicate t<=23 to the system
+addPred: 36: (gui) adding predicate t<=23 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:45
+block_analyze_trace
+In block_a_t:44
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =44
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 40 : 306: 	 Pred(X73  !=  X74)
+[INF0] 42 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 43 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:2000
+TP Queries:49346
+Reached Cubes:1632
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 36
+Average #preds/loc: 16
+Done writing .abs file
+Node Depth: 45
+RGN> Processed node's region:
+RGN> [AtomicRegion:
+RGN> Location: id=0#80 src="statemate-timed_noloop_shorter3.i"; line=171
+RGN> AbstrDatRgn:
+RGN> Predicates: [...]
+RGN> Lattice:
+RGN> Top
+RGN> 
+RGN> Stack:
+RGN> []]
+RGN> 
+counterex. size:43
+block_analyze_trace
+In block_a_t:42
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =42
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 35 : 282: 	 Pred(X68  !=  X70)
+[INF0] 40 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 41 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+addPred: 37: (gui) adding predicate t*2<=46 to the system
+addPred: 37: (gui) adding predicate t*2<=46 to the system
+2
+2
+addPred: 38: (gui) adding predicate t*2<=48 to the system
+addPred: 38: (gui) adding predicate t*2<=48 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:43
+block_analyze_trace
+In block_a_t:42
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =42
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 36 : 290: 	 Pred(X71  !=  X72)
+[INF0] 40 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 41 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 39: (gui) adding predicate t<=24 to the system
+addPred: 39: (gui) adding predicate t<=24 to the system
+addPred: 40: (gui) adding predicate t<=25 to the system
+addPred: 40: (gui) adding predicate t<=25 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:2100
+TP Queries:53554
+Reached Cubes:1722
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 40
+Average #preds/loc: 17
+Done writing .abs file
+Node Depth: 40
+counterex. size:44
+block_analyze_trace
+In block_a_t:43
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =43
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 38 : 298: 	 Pred(X65  !=  X67)
+[INF0] 41 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 42 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:44
+block_analyze_trace
+In block_a_t:43
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =43
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 36 : 284: 	 Pred(X77  ==  0)
+[INF0] 37 : 286: 	 Block(X60 = X68;t = t  +  1;)
+[INF0] 41 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 42 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+2
+2
+2
+addPred: 41: (gui) adding predicate t*2<=50 to the system
+addPred: 41: (gui) adding predicate t*2<=50 to the system
+2
+addPred: 42: (gui) adding predicate t*2<=52 to the system
+addPred: 42: (gui) adding predicate t*2<=52 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:44
+block_analyze_trace
+In block_a_t:43
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =43
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 37 : 292: 	 Pred(X77  !=  0)
+[INF0] 38 : 294: 	 Block(X68 = X71;t = t  +  1;)
+[INF0] 41 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 42 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 43: (gui) adding predicate t<=26 to the system
+addPred: 43: (gui) adding predicate t<=26 to the system
+addPred: 44: (gui) adding predicate t<=27 to the system
+addPred: 44: (gui) adding predicate t<=27 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:44
+block_analyze_trace
+In block_a_t:43
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =43
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 39 : 308: 	 Pred(X77  !=  0)
+[INF0] 40 : 310: 	 Block(X65 = X73;t = t  +  1;)
+[INF0] 41 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 42 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+While loop tick:2200
+TP Queries:58014
+Reached Cubes:1811
+Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 44
+Average #preds/loc: 18
+Done writing .abs file
+Node Depth: 43
+counterex. size:45
+block_analyze_trace
+In block_a_t:44
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =44
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 40 : 306: 	 Pred(X73  !=  X74)
+[INF0] 42 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 43 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:45
+block_analyze_trace
+In block_a_t:44
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =44
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 39 : 298: 	 Pred(X65  !=  X67)
+[INF0] 42 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 43 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:46
+block_analyze_trace
+In block_a_t:45
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =45
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 40 : 300: 	 Pred(X77  ==  0)
+[INF0] 41 : 302: 	 Block(X61 = X65;t = t  +  1;)
+[INF0] 43 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 44 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+counterex. size:46
+block_analyze_trace
+In block_a_t:45
+
+
+Starting phase 2
+asgn_list is:
+
+
+Starting phase 3
+get_useful_blocks: size =45
+done loop
+blockset unsat as expected
+done loop
+get_useful_blocks done.
+Conflicting Blocks
+[INF0] 41 : 308: 	 Pred(X77  !=  0)
+[INF0] 42 : 310: 	 Block(X65 = X73;t = t  +  1;)
+[INF0] 43 : 316: 	 Block(B10 = B12;B13 = B15;B16 = B18;B19 = B21;X36 = X76;X34 = X61;X32 =
+X75;X30 = X60;t = t  +  1;)
+[INF0] 44 : 325: 	 Pred(t  >  200)
+[BAT] Done setting arrays for cutting
+
+
+Starting phase 4
+[BAT] Calling refiner
+addPred: 45: (gui) adding predicate t<=28 to the system
+addPred: 45: (gui) adding predicate t<=28 to the system
+addPred: 46: (gui) adding predicate t<=29 to the system
+addPred: 46: (gui) adding predicate t<=29 to the system
+Adding all preds now...
+[BAT] Done refiner
+Non-trivial functions 0
+Depth of tree: 48
+
+
+No error found.  The system is safe :-)
+
+
+
+Phi Regions:
+
+Done
+
+
+Model checker stats:
+
+Nb iterations of outer while loop: 0
+Nb iterations of reachability: 2281
+Nb created nodes: 0
+Nb refinment processes: 60
+Nb refined nodes: 0
+Nb proof tree nodes: 714
+Nb proof tree covered nodes: 251Nb deleted nodes: 0
+
+
+Abstractor stats:
+
+Total number of non-post queries = 1 
+Total number of cached queries = 36676 
+Total number of queries = 58410 
+Worst-case number of post queries = 61660 
+Actual number of post queries = 61660 
+NonDC number of post queries = 3039 
+Assume post queries = 41272 
+Total posts = 1727 
+Total assume posts = 1259 
+Total foci queries = 0 
+Foci Theory Clauses:
+Num theory clauses: 0
+List of predicates: 
+
+Number of predicates =47 
+Maximum number of predicates active together (discounting scope) = 0
+
+Functions visited:
+main , __BLAST_initialize_statemate-timed_noloop_shorter3.i , Writing out .abs file: statemate-timed_noloop_shorter3.abs
+Maximum #preds/loc: 45
+Average #preds/loc: 18
+Done writing .abs file
+
+Minor Words : 108267076.
+Major Words : 3582407.
+Total size of heap in words : 1290240
+
+
+No error found.  The system is safe :-)
+
+Timings:
+TOTAL                          2.843 s (1)
+  subtree_cut_refinement           0.156 s (60)
+    update_tree_after_refinement[CUT]           0.156 s (60)
+  check_error                    0.969 s (60)
+    block_analyze_trace            0.969 s (60)
+      cleanup and go                 0.000 s (60)
+      Interpolant Refine             0.236 s (60)
+        CSIsat time                    0.048 s (238)
+        convertToSimplifySyntax           0.064 s (1236)
+      get useful blocks              0.377 s (60)
+        convertToSimplifySyntax           0.095 s (12202)
+      Cons folder                    0.232 s (60)
+        get_lval_aliases_iter           0.015 s (3677)
+          Lval iterator                  0.000 s (64)
+      load lv table                  0.000 s (60)
+      make lv_stack                  0.000 s (60)
+  main post                      1.702 s (1984)
+    get_new_data                   1.686 s (1958)
+      postBdd                        1.560 s (1875)
+        simplify querytime             0.000 s (19)
+          convertToSimplifySyntax           0.000 s (19)
+        bddForEachCube-post            1.170 s (1369)
+          _check_pred                    1.060 s (1221)
+            simp-a2:                       0.310 s (19175)
+              lookup_cache_add               0.015 s (10030)
+              simplify querytime             0.155 s (10030)
+                convertToSimplifySyntax           0.015 s (10030)
+              lookup_cache                   0.031 s (19175)
+            simp-a1:                       0.654 s (19175)
+              lookup_cache_add               0.016 s (10030)
+              simplify querytime             0.468 s (10030)
+                convertToSimplifySyntax           0.061 s (10030)
+              lookup_cache                   0.016 s (19175)
+          _assume                        0.047 s (1221)
+            convertToSimplifySyntax           0.031 s (1221)
+          _check_Pred_list               0.000 s (1221)
+          simplify querytime             0.016 s (570)
+            convertToSimplifySyntax           0.016 s (570)
+        _check_pred                    0.279 s (506)
+          simp-a2:                       0.062 s (9326)
+            lookup_cache_add               0.000 s (542)
+            simplify querytime             0.000 s (542)
+              convertToSimplifySyntax           0.000 s (542)
+            lookup_cache                   0.015 s (9326)
+          simp-a1:                       0.140 s (9326)
+            lookup_cache_add               0.000 s (542)
+            simplify querytime             0.016 s (542)
+              convertToSimplifySyntax           0.016 s (542)
+            lookup_cache                   0.015 s (9326)
+        _assume                        0.016 s (506)
+          convertToSimplifySyntax           0.016 s (506)
+        _check_Pred_list               0.000 s (506)
+      mk_pred_triple sp              0.000 s (1875)
+      mk_pred_triple ac              0.031 s (1875)
+        getMustAliases                 0.031 s (4216)
+          filter alias candidates           0.000 s (4216)
+          getVarsAndDerefs               0.016 s (4216)
+        getPossibleAliases             0.000 s (4216)
+          filter alias candidates           0.000 s (4216)
+          getVarsAndDerefs               0.000 s (4216)
+  Covered check:                 0.000 s (2221)
+  cap                            0.000 s (2281)
+  initialize skipfun             0.000 s (2)
+  Kill init                      0.000 s (1)
+  read initial state             0.000 s (1)
+  read invariants                0.000 s (1)
+  modelCheck                     0.000 s (1)
+  Call graph construction           0.000 s (1)
+  Add alias override             0.000 s (1)
+  Modifies Database              0.000 s (1)
+  Alias analysis                 0.016 s (1)
+  Build CFA:                     0.000 s (1)
+  read alias pairs               0.000 s (1)
+  read seeds                     0.000 s (1)
+  Parse:                         0.000 s (1)
+
+
+No error found.  The system is safe :-)
+
+CSIsat stopped.
+sh-3.2$ 

@@ -1,0 +1,46 @@
+% CLP(R)     N=10000, T=0.13
+%            N=15000  T=0.14
+%            N=20000  T=0.21
+%            N=30000  T=0.31
+%            N=40000  T=0.41
+%            N=45000  T=0.44
+%            N=48000  T=0.44
+%            N=49000  T=0.47
+%            N=50000  Heap overflow
+concat([], B, B).
+concat([X|A], B, [X|C]) :- concat(A, B, C).
+
+create_lists(N):-
+	ztime,
+	zmem_usage,
+	unfolder(N,[]),
+	ctime(T),
+	cmem_usage(MemoryUsage),
+	printf("Time: %\n",[T]),
+	report_memory_usage(MemoryUsage).
+
+% length of the list is 50
+trans([_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]).
+
+unfolder(0,_)    :- !.
+unfolder(N,List0):-
+  trans(NewList),
+  concat(NewList,List0,List1),
+  unfolder(N-1,List1).
+
+report_memory_usage(memory(AA,BB,CC,DD,EE,FF,GG)):-
+  printf("Total %.2f Code %.2f Stack %.2f Heap %.2f Trail %.2f Solver %.2f PTerms %.2f \n",
+	 [AA,BB,CC,DD,EE,FF,GG]),
+	Unit  = 1048576,  % Mb
+	Base = 1, % diagnostic returns already memory usage in bytes	
+  printf("Total %.2fMb Code %.2fMb Stack %.2fMb Heap %.2fMb Trail %.2fMb Solver %.2fMb PTerms %.2fMb \n",
+	 [(AA*Base)/Unit,(BB*Base)/Unit,(CC*Base)/Unit,(DD*Base)/Unit,
+	  (EE*Base)/Unit,(FF*Base)/Unit,(GG*Base)/Unit]).
+	
+% report_diagnostic:-
+% 	diagnostic(AA,BB,CC,DD,EE,FF,GG),
+% 	Unit  = 1048576,  % Mb
+% 	Base = 1, % diagnostic returns already memory usage in bytes	
+%   printf("Total %.2fMb Code %.2fMb Stack %.2fMb Heap %.2fMb Trail %.2fMb Solver %.2fMb PTerms %.2fMb \n",
+% 	 [(AA*Base)/Unit,(BB*Base)/Unit,(CC*Base)/Unit,(DD*Base)/Unit,
+% 	  (EE*Base)/Unit,(FF*Base)/Unit,(GG*Base)/Unit]).

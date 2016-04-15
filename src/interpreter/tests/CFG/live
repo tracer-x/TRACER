@@ -1,0 +1,40 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+	echo "Usage:"
+	echo "live prog1.c prog2.c serial.ser  - automated live analysis histrogram generation tool. need to provide cillied, decompd and serialized file"
+	echo "live clean                       - clean folder of temporary files"
+else
+if [ $1 = "clean" ]
+then
+	rm *cilly*
+	rm *.dec.c*
+	rm *.ser
+	rm live1.out
+	rm live2.out
+	rm livecompare.out
+else
+if [ $# -ne 3 ]
+then
+	echo "Usage:"
+	echo "live prog1.c prog2.c serial.ser  - automated live analysis histrogram generation tool. need to provide cillied, decompd and serialized file"
+	echo "live clean                       - clean folder of temporary files"
+else
+	dir=`pwd`
+	cillied=${dir}/$1
+	decompd=${dir}/$2
+	seriald=${dir}/$3
+
+	cd ${CFGBIN}
+	java Live ${cillied} ${decompd} ${seriald} ${dir}
+	cd ${dir}
+	
+	if [ -f histogram.out ]
+	then
+		echo "LIVE DONE!"
+	else
+		echo "LIVE NOT DONE :("
+	fi
+fi
+fi
+fi

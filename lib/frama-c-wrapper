@@ -1,0 +1,2 @@
+#!/bin/sh
+$TRACER_PATH/lib/frama-c ${1} -slice-calls _TRACER_abort -slicing-level 3 -lib-entry -main main -then-on 'Slicing export' -print -ocode ${2}

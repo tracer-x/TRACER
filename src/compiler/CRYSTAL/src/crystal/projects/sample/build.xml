@@ -1,0 +1,25 @@
+<project name="sample" default="sample.script">
+	<available file="../../../../bin/sample" property="script.avail"/>
+
+	<target name="sample.script" unless="script.avail">
+		<ant dir="../../../.." target="script" inheritAll="false">
+			<property name="scriptname" 
+				value="sample"/>
+			
+			<property name="mainclass" 
+				value="crystal.projects.sample.Main"/>
+		</ant>
+	</target>
+	
+	<target name="dist">
+		<delete file="sample.tgz"/>
+		<tar destfile="sample.tgz" compression="gzip">
+			<tarfileset dir=".." prefix="crystal/src/crystal/projects">
+				<include name="sample/**"/>
+			</tarfileset>
+		</tar>
+	</target>
+
+</project>
+
+

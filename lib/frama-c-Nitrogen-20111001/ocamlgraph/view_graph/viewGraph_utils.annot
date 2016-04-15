@@ -1,0 +1,951 @@
+"view_graph/viewGraph_utils.ml" 20 1309 1313 "view_graph/viewGraph_utils.ml" 20 1309 1335
+type(
+  (GObj.widget -> unit) -> GnoCanvas.canvas
+)
+ident(
+  def create_scrolled_canvas "view_graph/viewGraph_utils.ml" 43 2372 2372 --
+)
+"view_graph/viewGraph_utils.ml" 20 1309 1336 "view_graph/viewGraph_utils.ml" 20 1309 1343
+type(
+  GObj.widget -> unit
+)
+ident(
+  def packing "view_graph/viewGraph_utils.ml" 21 1346 1348 "view_graph/viewGraph_utils.ml" 41 2360 2370
+)
+"view_graph/viewGraph_utils.ml" 21 1346 1352 "view_graph/viewGraph_utils.ml" 21 1346 1357
+type(
+  GBin.frame
+)
+"view_graph/viewGraph_utils.ml" 21 1346 1360 "view_graph/viewGraph_utils.ml" 21 1346 1370
+type(
+  ?label:string ->
+  ?label_xalign:Gtk.clampf ->
+  ?label_yalign:Gtk.clampf ->
+  ?shadow_type:Gtk.Tags.shadow_type ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GBin.frame
+)
+ident(
+  ext_ref GBin.frame
+)
+"view_graph/viewGraph_utils.ml" 21 1346 1384 "view_graph/viewGraph_utils.ml" 21 1346 1387
+type(
+  Gtk.Tags.shadow_type
+)
+"view_graph/viewGraph_utils.ml" 21 1346 1388 "view_graph/viewGraph_utils.ml" 21 1346 1390
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 21 1346 1360 "view_graph/viewGraph_utils.ml" 21 1346 1390
+call(
+  stack
+)
+type(
+  GBin.frame
+)
+"view_graph/viewGraph_utils.ml" 22 1394 1400 "view_graph/viewGraph_utils.ml" 22 1394 1406
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 23 1410 1418 "view_graph/viewGraph_utils.ml" 23 1410 1420
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 23 1410 1423 "view_graph/viewGraph_utils.ml" 23 1410 1428
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1456 "view_graph/viewGraph_utils.ml" 24 1452 1472
+type(
+  ?aa:bool ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GnoCanvas.canvas
+)
+ident(
+  ext_ref GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1474 "view_graph/viewGraph_utils.ml" 24 1452 1476
+type(
+  bool
+)
+ident(
+  int_ref aa "view_graph/viewGraph_utils.ml" 23 1410 1418 "view_graph/viewGraph_utils.ml" 23 1410 1420
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1484 "view_graph/viewGraph_utils.ml" 24 1452 1487
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1496 "view_graph/viewGraph_utils.ml" 24 1452 1499
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1509 "view_graph/viewGraph_utils.ml" 24 1452 1514
+type(
+  GBin.frame
+)
+ident(
+  int_ref frame "view_graph/viewGraph_utils.ml" 21 1346 1352 "view_graph/viewGraph_utils.ml" 21 1346 1357
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1509 "view_graph/viewGraph_utils.ml" 24 1452 1518
+type(
+  GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1519 "view_graph/viewGraph_utils.ml" 24 1452 1521
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 24 1452 1456 "view_graph/viewGraph_utils.ml" 24 1452 1521
+call(
+  stack
+)
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 23 1410 1414 "view_graph/viewGraph_utils.ml" 24 1452 1521
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 26 1528 1534 "view_graph/viewGraph_utils.ml" 26 1528 1535
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 26 1528 1538 "view_graph/viewGraph_utils.ml" 26 1528 1544
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_utils.ml" 22 1394 1400 "view_graph/viewGraph_utils.ml" 22 1394 1406
+)
+"view_graph/viewGraph_utils.ml" 26 1528 1538 "view_graph/viewGraph_utils.ml" 26 1528 1569
+type(
+  bool -> unit
+)
+"view_graph/viewGraph_utils.ml" 26 1528 1570 "view_graph/viewGraph_utils.ml" 26 1528 1574
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 26 1528 1538 "view_graph/viewGraph_utils.ml" 26 1528 1574
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 28 1634 1640 "view_graph/viewGraph_utils.ml" 28 1634 1645
+type(
+  GPack.table
+)
+"view_graph/viewGraph_utils.ml" 28 1634 1648 "view_graph/viewGraph_utils.ml" 28 1634 1659
+type(
+  ?columns:int ->
+  ?rows:int ->
+  ?homogeneous:bool ->
+  ?row_spacings:int ->
+  ?col_spacings:int ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.table
+)
+ident(
+  ext_ref GPack.table
+)
+"view_graph/viewGraph_utils.ml" 28 1634 1661 "view_graph/viewGraph_utils.ml" 28 1634 1668
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "view_graph/viewGraph_utils.ml" 20 1309 1336 "view_graph/viewGraph_utils.ml" 20 1309 1343
+)
+"view_graph/viewGraph_utils.ml" 29 1669 1691 "view_graph/viewGraph_utils.ml" 29 1669 1692
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 29 1669 1702 "view_graph/viewGraph_utils.ml" 29 1669 1703
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 29 1669 1718 "view_graph/viewGraph_utils.ml" 29 1669 1719
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 29 1669 1734 "view_graph/viewGraph_utils.ml" 29 1669 1735
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 29 1669 1736 "view_graph/viewGraph_utils.ml" 29 1669 1738
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 28 1634 1648 "view_graph/viewGraph_utils.ml" 29 1669 1738
+call(
+  stack
+)
+type(
+  GPack.table
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1748 "view_graph/viewGraph_utils.ml" 30 1742 1749
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1752 "view_graph/viewGraph_utils.ml" 30 1742 1757
+type(
+  GPack.table
+)
+ident(
+  int_ref table "view_graph/viewGraph_utils.ml" 28 1634 1640 "view_graph/viewGraph_utils.ml" 28 1634 1645
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1752 "view_graph/viewGraph_utils.ml" 30 1742 1764
+type(
+  left:int ->
+  top:int ->
+  ?right:int ->
+  ?bottom:int ->
+  ?expand:Gtk.Tags.expand_type ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1771 "view_graph/viewGraph_utils.ml" 30 1742 1772
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1780 "view_graph/viewGraph_utils.ml" 30 1742 1781
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1787 "view_graph/viewGraph_utils.ml" 30 1742 1788
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1797 "view_graph/viewGraph_utils.ml" 30 1742 1798
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 31 1799 1819 "view_graph/viewGraph_utils.ml" 31 1799 1824
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 31 1799 1831 "view_graph/viewGraph_utils.ml" 31 1799 1836
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 31 1799 1845 "view_graph/viewGraph_utils.ml" 31 1799 1850
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 31 1799 1861 "view_graph/viewGraph_utils.ml" 31 1799 1862
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 31 1799 1873 "view_graph/viewGraph_utils.ml" 31 1799 1874
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 32 1875 1887 "view_graph/viewGraph_utils.ml" 32 1875 1892
+type(
+  GBin.frame
+)
+ident(
+  int_ref frame "view_graph/viewGraph_utils.ml" 21 1346 1352 "view_graph/viewGraph_utils.ml" 21 1346 1357
+)
+"view_graph/viewGraph_utils.ml" 32 1875 1887 "view_graph/viewGraph_utils.ml" 32 1875 1899
+type(
+  GObj.widget
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1752 "view_graph/viewGraph_utils.ml" 32 1875 1899
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1909 "view_graph/viewGraph_utils.ml" 33 1903 1910
+type(
+  GRange.range
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1913 "view_graph/viewGraph_utils.ml" 33 1903 1929
+type(
+  Gtk.Tags.orientation ->
+  ?adjustment:GData.adjustment ->
+  ?inverted:bool ->
+  ?update_policy:Gtk.Tags.update_type ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GRange.range
+)
+ident(
+  ext_ref GRange.scrollbar
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1930 "view_graph/viewGraph_utils.ml" 33 1903 1941
+type(
+  Gtk.Tags.orientation
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1954 "view_graph/viewGraph_utils.ml" 33 1903 1960
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_utils.ml" 22 1394 1400 "view_graph/viewGraph_utils.ml" 22 1394 1406
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1954 "view_graph/viewGraph_utils.ml" 33 1903 1972
+type(
+  GData.adjustment
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1973 "view_graph/viewGraph_utils.ml" 33 1903 1975
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1913 "view_graph/viewGraph_utils.ml" 33 1903 1975
+call(
+  stack
+)
+type(
+  GRange.range
+)
+"view_graph/viewGraph_utils.ml" 34 1980 1986 "view_graph/viewGraph_utils.ml" 34 1980 1987
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 34 1980 1990 "view_graph/viewGraph_utils.ml" 34 1980 1995
+type(
+  GPack.table
+)
+ident(
+  int_ref table "view_graph/viewGraph_utils.ml" 28 1634 1640 "view_graph/viewGraph_utils.ml" 28 1634 1645
+)
+"view_graph/viewGraph_utils.ml" 34 1980 1990 "view_graph/viewGraph_utils.ml" 34 1980 2002
+type(
+  left:int ->
+  top:int ->
+  ?right:int ->
+  ?bottom:int ->
+  ?expand:Gtk.Tags.expand_type ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 34 1980 2009 "view_graph/viewGraph_utils.ml" 34 1980 2010
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 34 1980 2018 "view_graph/viewGraph_utils.ml" 34 1980 2019
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 34 1980 2025 "view_graph/viewGraph_utils.ml" 34 1980 2026
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 34 1980 2035 "view_graph/viewGraph_utils.ml" 34 1980 2036
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 35 2037 2057 "view_graph/viewGraph_utils.ml" 35 2037 2059
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 35 2037 2066 "view_graph/viewGraph_utils.ml" 35 2037 2071
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 35 2037 2080 "view_graph/viewGraph_utils.ml" 35 2037 2082
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 35 2037 2093 "view_graph/viewGraph_utils.ml" 35 2037 2094
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 35 2037 2105 "view_graph/viewGraph_utils.ml" 35 2037 2106
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 36 2107 2119 "view_graph/viewGraph_utils.ml" 36 2107 2120
+type(
+  GRange.range
+)
+ident(
+  int_ref w "view_graph/viewGraph_utils.ml" 33 1903 1909 "view_graph/viewGraph_utils.ml" 33 1903 1910
+)
+"view_graph/viewGraph_utils.ml" 36 2107 2119 "view_graph/viewGraph_utils.ml" 36 2107 2127
+type(
+  GObj.widget
+)
+"view_graph/viewGraph_utils.ml" 34 1980 1990 "view_graph/viewGraph_utils.ml" 36 2107 2127
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2138 "view_graph/viewGraph_utils.ml" 37 2132 2139
+type(
+  GRange.range
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2142 "view_graph/viewGraph_utils.ml" 37 2132 2158
+type(
+  Gtk.Tags.orientation ->
+  ?adjustment:GData.adjustment ->
+  ?inverted:bool ->
+  ?update_policy:Gtk.Tags.update_type ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GRange.range
+)
+ident(
+  ext_ref GRange.scrollbar
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2159 "view_graph/viewGraph_utils.ml" 37 2132 2168
+type(
+  Gtk.Tags.orientation
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2181 "view_graph/viewGraph_utils.ml" 37 2132 2187
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_utils.ml" 22 1394 1400 "view_graph/viewGraph_utils.ml" 22 1394 1406
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2181 "view_graph/viewGraph_utils.ml" 37 2132 2199
+type(
+  GData.adjustment
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2200 "view_graph/viewGraph_utils.ml" 37 2132 2202
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2142 "view_graph/viewGraph_utils.ml" 37 2132 2202
+call(
+  stack
+)
+type(
+  GRange.range
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2213 "view_graph/viewGraph_utils.ml" 38 2207 2214
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2217 "view_graph/viewGraph_utils.ml" 38 2207 2222
+type(
+  GPack.table
+)
+ident(
+  int_ref table "view_graph/viewGraph_utils.ml" 28 1634 1640 "view_graph/viewGraph_utils.ml" 28 1634 1645
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2217 "view_graph/viewGraph_utils.ml" 38 2207 2229
+type(
+  left:int ->
+  top:int ->
+  ?right:int ->
+  ?bottom:int ->
+  ?expand:Gtk.Tags.expand_type ->
+  ?fill:Gtk.Tags.expand_type ->
+  ?shrink:Gtk.Tags.expand_type ->
+  ?xpadding:int -> ?ypadding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2236 "view_graph/viewGraph_utils.ml" 38 2207 2237
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2245 "view_graph/viewGraph_utils.ml" 38 2207 2246
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2252 "view_graph/viewGraph_utils.ml" 38 2207 2253
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2262 "view_graph/viewGraph_utils.ml" 38 2207 2263
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 39 2264 2284 "view_graph/viewGraph_utils.ml" 39 2264 2286
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 39 2264 2293 "view_graph/viewGraph_utils.ml" 39 2264 2298
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 39 2264 2307 "view_graph/viewGraph_utils.ml" 39 2264 2309
+type(
+  Gtk.Tags.expand_type
+)
+"view_graph/viewGraph_utils.ml" 39 2264 2320 "view_graph/viewGraph_utils.ml" 39 2264 2321
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 39 2264 2332 "view_graph/viewGraph_utils.ml" 39 2264 2333
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 40 2335 2347 "view_graph/viewGraph_utils.ml" 40 2335 2348
+type(
+  GRange.range
+)
+ident(
+  int_ref w "view_graph/viewGraph_utils.ml" 37 2132 2138 "view_graph/viewGraph_utils.ml" 37 2132 2139
+)
+"view_graph/viewGraph_utils.ml" 40 2335 2347 "view_graph/viewGraph_utils.ml" 40 2335 2355
+type(
+  GObj.widget
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2217 "view_graph/viewGraph_utils.ml" 40 2335 2355
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 41 2360 2364 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_utils.ml" 22 1394 1400 "view_graph/viewGraph_utils.ml" 22 1394 1406
+)
+"view_graph/viewGraph_utils.ml" 38 2207 2209 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 37 2132 2134 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 34 1980 1982 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 33 1903 1905 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 30 1742 1744 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 28 1634 1636 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 26 1528 1530 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 22 1394 1396 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 21 1346 1348 "view_graph/viewGraph_utils.ml" 41 2360 2370
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 43 2372 2376 "view_graph/viewGraph_utils.ml" 43 2372 2392
+type(
+  string -> ViewGraph_select.t_env
+)
+ident(
+  def create_graph_win "view_graph/viewGraph_utils.ml" 56 3060 3079 --
+)
+"view_graph/viewGraph_utils.ml" 43 2372 2393 "view_graph/viewGraph_utils.ml" 43 2372 2398
+type(
+  string
+)
+ident(
+  def title "view_graph/viewGraph_utils.ml" 44 2401 2403 "view_graph/viewGraph_utils.ml" 56 3060 3079
+)
+"view_graph/viewGraph_utils.ml" 44 2401 2407 "view_graph/viewGraph_utils.ml" 44 2401 2413
+type(
+  GWindow.window
+)
+"view_graph/viewGraph_utils.ml" 44 2401 2416 "view_graph/viewGraph_utils.ml" 44 2401 2430
+type(
+  ?kind:Gtk.Tags.window_type ->
+  ?title:string ->
+  ?allow_grow:bool ->
+  ?allow_shrink:bool ->
+  ?decorated:bool ->
+  ?deletable:bool ->
+  ?focus_on_map:bool ->
+  ?icon:GdkPixbuf.pixbuf ->
+  ?icon_name:string ->
+  ?modal:bool ->
+  ?position:Gtk.Tags.window_position ->
+  ?resizable:bool ->
+  ?screen:Gdk.screen ->
+  ?type_hint:Gdk.Tags.window_type_hint ->
+  ?urgency_hint:bool ->
+  ?wm_name:string ->
+  ?wm_class:string ->
+  ?border_width:int ->
+  ?width:int -> ?height:int -> ?show:bool -> unit -> GWindow.window
+)
+ident(
+  ext_ref GWindow.window
+)
+"view_graph/viewGraph_utils.ml" 44 2401 2432 "view_graph/viewGraph_utils.ml" 44 2401 2437
+type(
+  string
+)
+ident(
+  int_ref title "view_graph/viewGraph_utils.ml" 43 2372 2393 "view_graph/viewGraph_utils.ml" 43 2372 2398
+)
+"view_graph/viewGraph_utils.ml" 45 2438 2469 "view_graph/viewGraph_utils.ml" 45 2438 2473
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 45 2438 2487 "view_graph/viewGraph_utils.ml" 45 2438 2491
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 45 2438 2492 "view_graph/viewGraph_utils.ml" 45 2438 2494
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 44 2401 2416 "view_graph/viewGraph_utils.ml" 45 2438 2494
+call(
+  stack
+)
+type(
+  GWindow.window
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2505 "view_graph/viewGraph_utils.ml" 46 2499 2509
+type(
+  GPack.box
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2512 "view_graph/viewGraph_utils.ml" 46 2499 2522
+type(
+  ?homogeneous:bool ->
+  ?spacing:int ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.box
+)
+ident(
+  ext_ref GPack.vbox
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2537 "view_graph/viewGraph_utils.ml" 46 2499 2538
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2548 "view_graph/viewGraph_utils.ml" 46 2499 2549
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2559 "view_graph/viewGraph_utils.ml" 46 2499 2565
+type(
+  GWindow.window
+)
+ident(
+  int_ref window "view_graph/viewGraph_utils.ml" 44 2401 2407 "view_graph/viewGraph_utils.ml" 44 2401 2413
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2559 "view_graph/viewGraph_utils.ml" 46 2499 2569
+type(
+  GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2570 "view_graph/viewGraph_utils.ml" 46 2499 2572
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2512 "view_graph/viewGraph_utils.ml" 46 2499 2572
+call(
+  stack
+)
+type(
+  GPack.box
+)
+"view_graph/viewGraph_utils.ml" 47 2576 2582 "view_graph/viewGraph_utils.ml" 47 2576 2590
+type(
+  GButton.button
+)
+"view_graph/viewGraph_utils.ml" 47 2576 2593 "view_graph/viewGraph_utils.ml" 47 2576 2607
+type(
+  ?label:string ->
+  ?use_mnemonic:bool ->
+  ?stock:GtkStock.id ->
+  ?relief:Gtk.Tags.relief_style ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GButton.button
+)
+ident(
+  ext_ref GButton.button
+)
+"view_graph/viewGraph_utils.ml" 47 2576 2615 "view_graph/viewGraph_utils.ml" 47 2576 2621
+type(
+  string
+)
+"view_graph/viewGraph_utils.ml" 48 2622 2651 "view_graph/viewGraph_utils.ml" 48 2622 2655
+type(
+  GPack.box
+)
+ident(
+  int_ref vbox "view_graph/viewGraph_utils.ml" 46 2499 2505 "view_graph/viewGraph_utils.ml" 46 2499 2509
+)
+"view_graph/viewGraph_utils.ml" 48 2622 2651 "view_graph/viewGraph_utils.ml" 48 2622 2660
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 48 2622 2669 "view_graph/viewGraph_utils.ml" 48 2622 2674
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 48 2622 2681 "view_graph/viewGraph_utils.ml" 48 2622 2685
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 48 2622 2650 "view_graph/viewGraph_utils.ml" 48 2622 2686
+call(
+  tail
+)
+type(
+  GObj.widget -> unit
+)
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 48 2622 2687 "view_graph/viewGraph_utils.ml" 48 2622 2689
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 47 2576 2593 "view_graph/viewGraph_utils.ml" 48 2622 2689
+call(
+  stack
+)
+type(
+  GButton.button
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2699 "view_graph/viewGraph_utils.ml" 49 2693 2700
+type(
+  GtkSignal.id
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2703 "view_graph/viewGraph_utils.ml" 49 2693 2711
+type(
+  GButton.button
+)
+ident(
+  int_ref help_but "view_graph/viewGraph_utils.ml" 47 2576 2582 "view_graph/viewGraph_utils.ml" 47 2576 2590
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2703 "view_graph/viewGraph_utils.ml" 49 2693 2719
+type(
+  GButton.button_signals
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2703 "view_graph/viewGraph_utils.ml" 49 2693 2727
+type(
+  callback:(unit -> unit) -> GtkSignal.id
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2738 "view_graph/viewGraph_utils.ml" 49 2693 2764
+type(
+  unit -> unit
+)
+ident(
+  ext_ref ViewGraph_select.show_help
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2703 "view_graph/viewGraph_utils.ml" 49 2693 2764
+type(
+  GtkSignal.id
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2774 "view_graph/viewGraph_utils.ml" 50 2768 2780
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2783 "view_graph/viewGraph_utils.ml" 50 2768 2805
+type(
+  (GObj.widget -> unit) -> GnoCanvas.canvas
+)
+ident(
+  int_ref create_scrolled_canvas "view_graph/viewGraph_utils.ml" 20 1309 1313 "view_graph/viewGraph_utils.ml" 20 1309 1335
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2807 "view_graph/viewGraph_utils.ml" 50 2768 2811
+type(
+  GPack.box
+)
+ident(
+  int_ref vbox "view_graph/viewGraph_utils.ml" 46 2499 2505 "view_graph/viewGraph_utils.ml" 46 2499 2509
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2807 "view_graph/viewGraph_utils.ml" 50 2768 2816
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2825 "view_graph/viewGraph_utils.ml" 50 2768 2829
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2836 "view_graph/viewGraph_utils.ml" 50 2768 2840
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2806 "view_graph/viewGraph_utils.ml" 50 2768 2841
+call(
+  tail
+)
+type(
+  GObj.widget -> unit
+)
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2783 "view_graph/viewGraph_utils.ml" 50 2768 2841
+call(
+  stack
+)
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2851 "view_graph/viewGraph_utils.ml" 51 2845 2855
+type(
+  GPack.box
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2858 "view_graph/viewGraph_utils.ml" 51 2845 2868
+type(
+  ?homogeneous:bool ->
+  ?spacing:int ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.box
+)
+ident(
+  ext_ref GPack.hbox
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2878 "view_graph/viewGraph_utils.ml" 51 2845 2879
+type(
+  int
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2889 "view_graph/viewGraph_utils.ml" 51 2845 2893
+type(
+  GPack.box
+)
+ident(
+  int_ref vbox "view_graph/viewGraph_utils.ml" 46 2499 2505 "view_graph/viewGraph_utils.ml" 46 2499 2509
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2889 "view_graph/viewGraph_utils.ml" 51 2845 2898
+type(
+  GObj.widget -> unit
+)
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2899 "view_graph/viewGraph_utils.ml" 51 2845 2901
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2858 "view_graph/viewGraph_utils.ml" 51 2845 2901
+call(
+  stack
+)
+type(
+  GPack.box
+)
+"view_graph/viewGraph_utils.ml" 52 2905 2911 "view_graph/viewGraph_utils.ml" 52 2905 2926
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 53 2929 2933 "view_graph/viewGraph_utils.ml" 53 2929 2954
+type(
+  ViewGraph_select.t_options ->
+  GnoCanvas.canvas -> (GObj.widget -> unit) -> ViewGraph_select.t_env
+)
+ident(
+  ext_ref ViewGraph_select.init
+)
+"view_graph/viewGraph_utils.ml" 53 2929 2955 "view_graph/viewGraph_utils.ml" 53 2929 2987
+type(
+  ViewGraph_select.t_options
+)
+ident(
+  ext_ref ViewGraph_select.default_options
+)
+"view_graph/viewGraph_utils.ml" 54 2988 2994 "view_graph/viewGraph_utils.ml" 54 2988 3000
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_utils.ml" 50 2768 2774 "view_graph/viewGraph_utils.ml" 50 2768 2780
+)
+"view_graph/viewGraph_utils.ml" 54 2988 3002 "view_graph/viewGraph_utils.ml" 54 2988 3006
+type(
+  GPack.box
+)
+ident(
+  int_ref hbox "view_graph/viewGraph_utils.ml" 51 2845 2851 "view_graph/viewGraph_utils.ml" 51 2845 2855
+)
+"view_graph/viewGraph_utils.ml" 54 2988 3002 "view_graph/viewGraph_utils.ml" 54 2988 3011
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 54 2988 3020 "view_graph/viewGraph_utils.ml" 54 2988 3024
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 54 2988 3031 "view_graph/viewGraph_utils.ml" 54 2988 3035
+type(
+  bool
+)
+"view_graph/viewGraph_utils.ml" 54 2988 3001 "view_graph/viewGraph_utils.ml" 54 2988 3036
+call(
+  tail
+)
+type(
+  GObj.widget -> unit
+)
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+"view_graph/viewGraph_utils.ml" 53 2929 2933 "view_graph/viewGraph_utils.ml" 54 2988 3036
+call(
+  stack
+)
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 55 3040 3044 "view_graph/viewGraph_utils.ml" 55 3040 3050
+type(
+  GWindow.window
+)
+ident(
+  int_ref window "view_graph/viewGraph_utils.ml" 44 2401 2407 "view_graph/viewGraph_utils.ml" 44 2401 2413
+)
+"view_graph/viewGraph_utils.ml" 55 3040 3044 "view_graph/viewGraph_utils.ml" 55 3040 3055
+type(
+  unit -> unit
+)
+"view_graph/viewGraph_utils.ml" 55 3040 3056 "view_graph/viewGraph_utils.ml" 55 3040 3058
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 55 3040 3044 "view_graph/viewGraph_utils.ml" 55 3040 3058
+type(
+  unit
+)
+"view_graph/viewGraph_utils.ml" 56 3060 3064 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+ident(
+  int_ref select_init_env "view_graph/viewGraph_utils.ml" 52 2905 2911 "view_graph/viewGraph_utils.ml" 52 2905 2926
+)
+"view_graph/viewGraph_utils.ml" 55 3040 3044 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 52 2905 2907 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 51 2845 2847 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 50 2768 2770 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 49 2693 2695 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 47 2576 2578 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 46 2499 2501 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)
+"view_graph/viewGraph_utils.ml" 44 2401 2403 "view_graph/viewGraph_utils.ml" 56 3060 3079
+type(
+  ViewGraph_select.t_env
+)

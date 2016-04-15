@@ -1,0 +1,1167 @@
+% tracer_graphviz.clp.gpp
+
+%==========================================================================%
+% This module allows to print:
+% - State Transition System  in dot format.          (graphviz_STS/1)
+% - Symbolic Execution Graph in dot format.          (graphviz_sym_graph/1)
+% - Sliced State Transition System in dot format.    (graphviz_slice_STS/2)
+% - Symbolic Execution Graph in raw format.          (print_sym_graph/1)
+%==========================================================================%
+% export:
+%  Main predicates
+%  graphviz_STS/1
+%  graphviz_sym_graph/1
+%  graphviz_slice_STS/2
+%  cleanup_graphviz/0
+%  print_sym_graph/1
+%  Auxiliary predicates
+%  To record explicitly the symbolic execution graph
+%  record_sym_graph_edge/7
+%  record_sym_graph_inter_edge/7
+%  record_sym_graph_subsumed_edge/5
+%  To distinguish different contexts associated with the same program
+%  point.
+%  attach_context_to_pc/3
+%  context_value/3
+%  get_next_pp_context/4
+#ifdef MINMAX
+%  get_ancestor_pp_context/4
+#endif /*MINMAX*/
+%  push_context_stack/2
+%  pop_context_stack/0
+%  top_context_stack/1
+%==========================================================================%
+% KNOWN BUGS:
+% -  With large .dot files it arises: "Error: trouble in
+%    init_rank" This is a dot error related to the use of clusters. We
+%    use clusters to display different functions. Unfortunately, there is
+%    no available patch yet.
+#ifdef MINMAX
+% -  In case of a looping point, we draw an edge to the nearest
+%    ancestor point which might be not the subsumer ancestor.
+% -  The tree cannot be shown if code space is reused across restarts
+%    (MINMAX_CS_REUSE)
+#endif /*MINMAX*/
+% TODO:
+% - Label more informatively edges (using dictionary) when refer to
+%   function calls and returns.
+% - For slicing, different fixpoint iterations are drawn as different
+%   copies of the loop at the same level.
+%==========================================================================%
+#ifdef GROUND_EXPLANATION
+dont_collect_sym_graph:- counter_value(follow_ground_trace, 2), !.
+dont_collect_sym_graph:- counter_value(ground_trace_collection_mode, 1), !.
+#endif
+
+cleanup_graphviz:-
+#ifdef  RECORD_SYM_GRAPH_ON_FILE	
+	cleanup_sym_graph_file,
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/	
+	retractall(context(_,_,_)),
+	retractall('$list'(_)),
+	retractall(sym_graph(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)),
+	retractall(nodes_subsumed(_,_,_,_)),
+	retractall(pp_context(_,_,_)).
+
+%--------------------------------------------------------------------------%
+% graphviz_STS(+OutFile)
+%--------------------------------------------------------------------------%
+% Output the STS (State Transition System) of the program using the
+% graphviz tool.
+%--------------------------------------------------------------------------%
+graphviz_STS(OutFile):-	
+	telling(Old),
+	tell(OutFile),
+	graphviz_strict_header('G','State Transition System'),
+	set_counter(dict_vars,0),
+	set_counter(dict_array,0),
+	draw_sts(_),
+	graphviz_footer,
+	told,
+	tell(Old).
+
+% draw_sts(+Trans)
+% If Trans is a free var, then print all edges in the STS with the
+% information from the corresponding transition.
+% If Trans is not var, then it's a list of the transitions which must
+% be kept by the slicer. 
+draw_sts(Trans):-
+	findall_procs(Ps),
+	draw_sts_IntraProcs(Ps,Trans),
+	draw_sts_InterProc(Trans).
+draw_sts_IntraProcs([],_):-!.
+draw_sts_IntraProcs([P|Ps],Trans):- !,
+	graphviz_subheader(P),
+        draw_sts_proc(P,Trans),
+	graphviz_end_nodes_no_context(P),
+        graphviz_footer,
+	draw_sts_IntraProcs(Ps,Trans).
+
+% Bridge predicate to be re-used for different purposes.
+draw_sts_proc(FName,Trans):-
+	var(Trans),!,
+	draw_sts_IntraProc(FName).
+draw_sts_proc(FName,Trans):-!,
+	% INTRA-PROCEDURAL SLICING
+	draw_slice_sts_IntraProc(FName,Trans).
+
+draw_sts_InterProc(Trans):-
+	var(Trans),!,
+	draw_sts_InterProc1.
+draw_sts_InterProc(Trans):- !,
+	% INTER-PROCEDURAL SLICING
+	draw_slice_sts_InterProc(Trans).
+
+draw_sts_InterProc1:-	
+	trans(FName,_Id,
+	      [PC1],_,_,_GArray,_GVars,_,_,_LArray,_LVars,
+	      [PC4],_,_,_GArray,_GVars,_,_,_LArray,_LVars,
+	      CL,[call(CallFName, _, _,_)],_,_Statement),
+	start(CallFName,[PC2]),
+	bottom(CallFName,[PC3]),
+	graphviz_inter_edge(FName,CallFName,call,PC1,PC2),
+	%graphviz_inter_edge(CallFName,FName,return,PC3,PC1),
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% We print the transition to the continuation with the
+	% attached constraints
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	graphviz_inter_edge(CallFName,FName,return(CL),PC3,PC4),	
+	fail.
+draw_sts_InterProc1.
+
+draw_sts_IntraProc(FName):-
+	trans(FName,Id,
+	      [PC1],_,_,GArray,GVars,_,_,LArray,LVars,
+	      [PC2],_,_,GArray,GVars,_,_,LArray,LVars,
+	      CL,Call,_,Statement),
+	draw_sts_IntraProc_If_Not_Call(Call,
+				       FName,GArray,GVars,LArray,LVars,
+				       PC1,PC2,Id,CL,Statement),	
+	fail.
+draw_sts_IntraProc(_).
+
+draw_sts_IntraProc_If_Not_Call([call(_,_,_,_)],FName,_,_,_,_,PC1,_,_,_,Statement):- 
+        graphviz_node(Statement,FName,PC1),!.
+draw_sts_IntraProc_If_Not_Call(_,FName,GArray,GVars,LArray,LVars,
+			       PC1,PC2,Id,CL,Statement):-
+	apply_dict(global,GArray,GVars),
+	apply_dict(FName,LArray,LVars),
+	% Add only non-terminal node
+	graphviz_node(Statement,FName,PC1),
+	graphviz_intra_edge(PC1,PC2,FName,FName,Id,CL).
+		
+graphviz_inter_edge(FName1,FName2,return(CL),PC1,PC2):- 
+	% Add edge from one procedure to another
+	print_file('\t "%_%" -> "%_%" [label= " ',[FName1,PC1,FName2,PC2]),
+	print_file(" (return) ",[]),
+	graphviz_constraints(CL),
+	print_file('\t "];\n',[]),!.
+% Id is either call or return (w/o CL)
+graphviz_inter_edge(FName1,FName2,Id,PC1,PC2):- 
+	% Add edge from one procedure to another
+	print_file('\t "%_%" -> "%_%" [label= " ',[FName1,PC1,FName2,PC2]),
+	print_file(" (%) ",[Id]),				
+	print_file('\t "];\n',[]).
+
+graphviz_intra_edge(PC1,PC2,FName1,FName2,Id,NewCL):- 
+	% Add intra edges
+	print_file('\t "%_%" -> "%_%" [label= " ',[FName1,PC1,FName2,PC2]),
+	print_file("\t (%) ",[Id]),
+        graphviz_constraints(NewCL),
+	print_file('\t "];\n',[]).
+
+graphviz_node(_,'func_main','p$init_0'):-
+	% Special case for start node in main (STS)
+	!,
+	print_file('\t "func_main_p$init_0" [label=entry,shape=box,style=filled];\n',[]).
+graphviz_node(_,'func_main','p$init_0#1'):-
+	% Special case for start node in main (Symb. Exec. Graph)
+	!,
+	print_file('\t "func_main_p$init_0#1" [label=entry,shape=box,style=filled];\n',[]).
+graphviz_node(_,'func___TRACER_INIT','p0'):-
+	% Special case for start node in main (STS)
+	!,
+	print_file('\t "func___TRACER_INIT_p0" [label=entry,shape=box,style=filled];\n',[]).
+graphviz_node(_,'func___TRACER_INIT','p0#1'):-
+	% Special case for start node in main (Symb. Exec. Graph)
+	!,
+	print_file('\t "func___TRACER_INIT_p0#1" [label=entry,shape=box,style=filled];\n',[]).
+graphviz_node(_,FName,Node):-
+	% Special case for start nodes (STS)
+	start(FName,[Node]),!,
+	print_file('\t "%_%" [label=entry,shape=box,style=filled];\n',[FName,Node]).
+graphviz_node(Statement,FName,Node):- 
+	Statement == branch, !,
+	% Add a non-terminal  ("branch" node)
+	print_file('\t "%_%" [shape=diamond];\n',[FName,Node]).
+graphviz_node(Statement,FName,Node):-
+	Statement == not_branch, !,
+	% Add a non-terminal  ("normal" node)
+	print_file('\t "%_%" [shape=box];\n',[FName,Node]).	
+graphviz_node(Statement,FName,Node):-
+	Statement == end, !,
+	% Special case for terminal node ("end" node)
+	print_file('\t "%_%" [label="exit",shape=box,style=filled];\n',[FName,Node]).
+graphviz_node(Statement,FName,Node):-
+	Statement == user_abstracted, !,
+	% Special case for terminal node ("end" node)
+	print_file('\t "%_%" [label="user abs",shape=box,style=bold,color=blue];\n',[FName,Node]).
+
+% Add all terminal nodes (end node)
+graphviz_end_nodes(FName):-
+	bottom(FName,[PP]),
+	pp_context(FName,PP,PPContext),
+	once(graphviz_node(end,FName/*Context*/,PPContext)),
+	fail.
+graphviz_end_nodes(_).
+
+% Add all terminal nodes (end node)
+graphviz_user_abstracted_nodes(FName):-
+	warning(warning_off),		
+	abstract(FName,[PP],_,_,_,_,_,_,_,_,_,_,_,_,_),
+	warning(warning_on),
+	pp_context(FName,PP,PPContext),
+	once(graphviz_node(user_abstracted,FName/*Context*/,PPContext)),
+	fail.
+graphviz_user_abstracted_nodes(_).
+
+
+graphviz_end_nodes_no_context(FName):-
+	trans(FName,_,[_],_,_,_,_,_,_,_,_,[PC],_,_,_,_,_,_,_,_,_,_,_,_),
+	bottom(FName,[PC]),
+	once(graphviz_node(end,FName,PC)),
+	fail.
+graphviz_end_nodes_no_context(_).
+		
+graphviz_strict_header(Name,Label):-
+%        print_file('strict digraph % { \n \t label="%";\n',[Name,Label]),
+        print_file('digraph % { \n \t label="%";\n',[Name,Label]),	
+        print_file('\t size = "10,10"; \n',[]),
+	print_file("\t node [shape=plaintext,width=.1,height=.1]; \n",[]),
+	print_file("\t compound=true;\n",[]).
+graphviz_header(Name,Label):-
+        print_file('digraph % { \n \t label="%";\n',[Name,Label]),
+        print_file('\t size = "10,10";\n',[]),
+	print_file("\t node [shape=plaintext,width=.1,height=.1]; \n",[]),
+	print_file("\t compound=true;\n",[]).
+graphviz_subheader(func_main):- !,
+        print_file('\t subgraph "cluster_%" { \n \t label="%"; \n',[main,main]).
+graphviz_subheader(Name):- !,
+        print_file('\t subgraph "cluster_%" { \n \t label="%"; \n',[Name,Name]).
+graphviz_footer:-
+	print_file("}\n",[]).
+
+%----------------------------------------------------------------------%
+% graphviz_sym_graph(+OutFile)
+%----------------------------------------------------------------------%
+% Output the symbolic execution graph using the Graphviz tool.
+% Limitation: TODO assign a dictionay value to return values from calls.
+%----------------------------------------------------------------------%
+
+graphviz_sym_graph(File):-
+	telling(Old),
+	tell(File),
+	build_header(Header),
+	graphviz_header('G',Header),
+	draw_sym_graph,
+	% print_legend,
+	graphviz_footer,
+	told,
+	tell(Old).
+
+build_header('Symbolic Execution Graph w/ Interpolation'):-
+	current_tracer_flag(interpolation,y),!.
+build_header('Symbolic Execution Graph w/o Interpolation'):-
+	current_tracer_flag(interpolation,n),!.
+
+draw_sym_graph:-
+	findall_procs(Ps),
+	draw_sym_graph_IntraGroup(Ps),
+	draw_sym_graph_InterGroup.
+draw_sym_graph_IntraGroup([]):-!.
+draw_sym_graph_IntraGroup([P|Ps]):- !,
+	graphviz_subheader(P),
+        draw_graph_proc(P),
+        graphviz_footer,
+	draw_sym_graph_IntraGroup(Ps).
+
+draw_sym_graph_InterGroup:-
+	% Interprocedural transitions
+        sym_graph(FName1,FName2,Id,[PC1],[PC2],_,_,_,_,_,_,_,_,_,_,_,_),		  
+	not(FName1 == FName2),
+	graphviz_sym_graph_inter_edge(FName1,FName2,Id,PC1,PC2),
+	graphviz_start_node(FName2,PC2),
+	graphviz_node(not_branch,FName1,PC1),
+	fail.
+draw_sym_graph_InterGroup.
+
+graphviz_start_node(FName,PC):-
+	not(FName == func_main),!,
+	print_file('\t "%_%" [shape=box,style=filled];\n',[FName,PC]).
+graphviz_start_node(_,_):-!.
+
+draw_graph_proc(FName):-
+	% Normal transitions
+	draw_graph_proc_loop(FName),
+	% Subsumed transitions
+	graphviz_sym_graph_subsumed_edge(FName),
+	% Terminal success nodes
+	graphviz_end_nodes(FName),
+	% Abstracted nodes
+	graphviz_user_abstracted_nodes(FName).
+	
+draw_graph_proc_loop(FName):-
+	% Intraprocedural transitions
+        sym_graph(FName,FName,Id,[PC1],[PC2],
+		  GArr,GVars,LArr,LVars,		  
+		  NextGArr,NextGVars,NextLArr,NextLVars,
+		  CL,Statement,Feasibility,C),
+	apply_dict(global,GArr,GVars),
+	apply_dict(FName ,LArr,LVars),
+	apply_dict(global,NextGArr,NextGVars),
+	apply_dict(FName ,NextLArr,NextLVars),	
+	% Add only the non-terminal node
+	graphviz_node(Statement,FName,PC1),
+#ifdef GROUND_EXPLANATION
+    ground_graphviz_sym_graph_intra_edge(Feasibility,Id,PC1,PC2,FName,CL,C),
+#else
+    C=_, % to avoid warnings
+	graphviz_sym_graph_intra_edge(Feasibility,Id,PC1,PC2,FName,CL),
+#endif /*GROUND_EXPLANATION*/
+	fail.
+draw_graph_proc_loop(_).       
+
+% inter-procedural edges: function call or summarized.
+/*
+graphviz_sym_graph_inter_edge(FName1,FName2,Id,PC1,PC2):- 
+	Id == summarized , !, % function call summarized
+	% Add edge from one procedure to another and re-using summary
+	print_file('\t "%_%" -> "%_%" [style=dotted,color=blue,label= " ',
+		   [FName1,PC1,FName2,PC2]),
+	print_file(" (%) ",['summarized call']),				
+	print_file('\t "];\n',[]).
+*/
+graphviz_sym_graph_inter_edge(FName1,FName2,Id,PC1,PC2):- !,
+	% Add edge from one procedure to another
+	print_file('\t "%_%" -> "%_%" [label= " ',[FName1,PC1,FName2,PC2]),
+	print_file(" (%) ",[Id]),				
+	print_file('\t "];\n',[]).
+
+#ifdef GROUND_EXPLANATION
+ground_graphviz_sym_graph_intra_edge(feasible,_Id,PC1,PC2,FName,CL,C):-
+    C==1, !, %ground trans along the trace, display in thick blue colour
+	print_file('\t "%_%" -> "%_%" [style=bold,penwidth=5,color=blue,label= " ',
+        [FName,PC1,FName,PC2]),
+    graphviz_constraints(CL),
+	print_file('\t "];\n',[]).
+ground_graphviz_sym_graph_intra_edge(Feasibility,Id,PC1,PC2,FName,CL,C):-
+    C==zero, !, %normal trans
+    graphviz_sym_graph_intra_edge(Feasibility,Id,PC1,PC2,FName,CL).
+ground_graphviz_sym_graph_intra_edge(_,Id,PC1,PC2,FName,_,_):-
+    error_message("sym_graph edge from %@% -> %@% with Id % was in improper format\n",
+        [FName,PC1,FName,PC2,Id]).
+#endif /*GROUND_EXPLANATION*/
+
+% intra-procedural edges: feasible, infeasible, or subsumed.
+graphviz_sym_graph_intra_edge(feasible,_Id,PC1,PC2,FName,CL):- !,
+	% Add feasible intraprocedural edge
+	print_file('\t "%_%" -> "%_%" [style=bold,label= " ',[FName,PC1,FName,PC2]),
+        graphviz_constraints(CL),
+	print_file('\t "];\n',[]).
+graphviz_sym_graph_intra_edge(infeasible,_Id,PC1,PC2,FName,CL):- !,
+	% Add infeasible intraprocedural edge
+	% Old format:
+	%print_file('\t "%_%" -> "%_%" [arrowhead=dot,style=filled,color=red,label= " ',
+	%	   [FName,PC1,FName,PC2]),
+        %graphviz_constraints(CL),
+	%print_file('\t "];\n',[]).
+	% New format:
+	print_file('\t "%_%" -> "%_%" [style=bold,label= " ',
+		   [FName,PC1,FName,PC2]),
+        graphviz_constraints(CL),
+	print_file('\t "];\n',[]),	
+	print_file('\t "%_%" [shape=box,style=filled,color=red];\n',[FName,PC2]).	
+
+graphviz_sym_graph_subsumed_edge(FName):-
+% TODO: if there was parent-child subsumption. For the moment, there
+% is no such case.
+	nodes_subsumed(FName,[Node1],[Node2],_),
+	% "box" shape for the subsumed node
+	graphviz_node(not_branch,FName,Node1),
+	% edge for the subsumed relationship
+	% <FName,Node1> is subsumed by <FName,Node2>
+        print_file('\t "%_%" -> "%_%" [style=dotted,color=green,label="s"];\n',
+		   [FName,Node1,FName,Node2]),
+%------------------------------------------------------------------
+% 	Force subsumed and subsumer nodes to have the same rank
+%------------------------------------------------------------------	
+% 	print_file('\t { rank =same; "%_%"; "%_%"; };\n',
+%		   [FName,Node1,FName,Node2]),
+  	fail. 
+graphviz_sym_graph_subsumed_edge(_).
+
+%--------------------------------------------------------------------------%
+% graphviz_slice_STS(+OutFile,+SliceTrans)
+%--------------------------------------------------------------------------%
+% Output the Sliced State Transition System of the program using the
+% graphviz tool.
+%--------------------------------------------------------------------------%
+graphviz_slice_STS(OutFile,SliceTrans):-
+	set_counter(dict_vars,0),
+	set_counter(dict_array,0),
+	telling(Old),
+	tell(OutFile),
+	print_slicing_criteria(Target,PP),
+	printf_to_atom(Label," Sliced STS <%,%>",[PP,Target]),	
+	graphviz_strict_header('G',Label),
+	draw_sts(SliceTrans),  
+	graphviz_footer,
+	told,
+	tell(Old).
+
+draw_slice_sts_InterProc(SliceTrans):-	
+	trans(FName,Id,
+	      [PC1],_,_,_GArray,_GVars,_,_,_LArray,_LVars,
+	      [_PC2],_,_,_GArray,_GVars,_,_,_LArray,_LVars,
+	      _CL,[call(CallFName, _, _,_)],_,_Statement),
+	start(CallFName,[PC2]),
+	bottom(CallFName,[PC3]),
+	graphviz_slice_edge(call(Id),_,PC1,PC2,FName,CallFName,
+			    _,_,_,_,SliceTrans),
+	graphviz_inter_edge(CallFName,FName,return,PC3,PC1),	
+	fail.
+draw_slice_sts_InterProc(_).
+
+draw_slice_sts_IntraProc(FName,SliceTrans):-
+	trans(FName,Id,
+	      [PC1],_,_,GArray,GVars,_,_,LArray,LVars,
+	      [PC2],_,_,GArray,GVars,_,_,LArray,LVars,
+	      _,_,_,Statement),
+	% Add only the non-terminal node
+	graphviz_node(Statement,FName,PC1),
+	graphviz_slice_edge(Id,Statement,PC1,PC2,FName,FName,
+			     GArray,GVars,LArray,LVars,SliceTrans),
+	fail.
+draw_slice_sts_IntraProc(_,_).       
+
+
+% As graphviz_intra_edge but print only those marked constraints
+% corresponding to transitions that are part of the slice.
+graphviz_slice_edge(Id,_Statement,PC1,PC2,FName1,FName2,
+		    _GArrayX,_GVarsX,_LArrayX,_LVarsX,SliceTrans):-	
+	member(slice(Id,MarkedXCL),SliceTrans),!,
+%====================================================================
+% NOTE: when the transition is a function call the parent's
+% variables refer to the caller and the child's variables
+% refer to the callee.
+%====================================================================	
+	graphviz_slice_edge_in(Id,MarkedXCL,FName1,PC1,FName2,PC2).
+graphviz_slice_edge(Id,_Statement,PC1,PC2,FName1,FName2,_,_,_,_,_):- !,
+	graphviz_slice_edge_out(Id,PC1,PC2,FName1,FName2).
+
+%--------------------------------------------------------------------
+% graphviz_slice_edge_in(+Id,+MarkedXCL,+FName1,+PC1,+FName2,+PC2)
+%--------------------------------------------------------------------
+graphviz_slice_edge_in(Id,MarkedXCL,FName1,PC1,FName2,PC2):-
+	get_constraints_from_marking(Id,MarkedXCL,SliceXCL),
+	print_file('\t "%_%" -> "%_%" [label= " ',[FName1,PC1,FName2,PC2]),
+	print_if_call_to_function(Id),
+        graphviz_constraints(SliceXCL),
+	print_file('\t "];\n',[]).
+
+print_if_call_to_function(call(_)):-
+	print_file("CALL: ",[]),!.
+print_if_call_to_function(_):-!.
+
+get_constraints_from_marking(call(Id),MarkedCCL,SliceCCL):-
+       % TODO: apply dictionary in this case	 
+       trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,[call(_,_,_,CCL)|_],_,_),
+       filter_constrains_from_markings(CCL,MarkedCCL,SliceCCL).
+get_constraints_from_marking(Id,MarkedXCL,SliceXCL):-
+       trans(FName,Id,
+	     _,_,_,GArray,GVars,_,_,LArray,LVars,
+	     _,_,_,NextGArray,NextGVars,_,_,NextLArray,NextLVars,
+	     XCL,_,_,_),	
+       apply_dict(global,GArray,GVars),
+       apply_dict(FName,LArray,LVars),
+       apply_dict(global,NextGArray,NextGVars),
+       apply_dict(FName,NextLArray,NextLVars),       
+       filter_constrains_from_markings(XCL,MarkedXCL,SliceXCL).
+
+%--------------------------------------------------------------------
+% graphviz_slice_edge_out(+Id,+PC1,+PC2,+FName1,+FName2)
+%--------------------------------------------------------------------
+graphviz_slice_edge_out(call(Id),PC1,PC2,FName1,FName2):-
+       trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,[call(_,_,_,CCL)|_],_,_),
+       CCL = [],!,
+       print_file('\t "%_%" -> "%_%" []; \n',[FName1,PC1,FName2,PC2]).
+graphviz_slice_edge_out(Id,PC1,PC2,FName1,FName2):-
+       trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,XCL,_,_,_),
+       XCL = [],!,
+       print_file('\t "%_%" -> "%_%" []; \n',[FName1,PC1,FName2,PC2]).
+graphviz_slice_edge_out(_,PC1,PC2,FName1,FName2):- !, 
+       print_file('\t "%_%" -> "%_%" [label= "SKIP" ]; \n',[FName1,PC1,FName2,PC2]).
+
+
+%==================================================================================
+% filter_constrains_from_markings(+XCL,+MarkedXCL,-SliceXCL)
+%==================================================================================
+filter_constrains_from_markings(XCL,MarkedXCL,SliceXCL):-
+	length(XCL,N1),
+	length(MarkedXCL,N2),
+	N1 = N2,!,
+	filter_constrains_from_markings_aux(XCL,MarkedXCL,SliceXCL).
+
+filter_constrains_from_markings_aux([],[],[]):-!.
+filter_constrains_from_markings_aux([C|CL],[M|Ms],[C|Ss]):-
+	is_marked_term(M),!,
+	filter_constrains_from_markings_aux(CL,Ms,Ss).
+filter_constrains_from_markings_aux([_|CL],[_|Ms],Ss):-
+        !,
+	filter_constrains_from_markings_aux(CL,Ms,Ss).
+	
+% Print the criteria <program point, variables>
+% Assume that "main" procedure is in the slice.
+print_slicing_criteria(Target,end_program) :-
+	init_slicing_goal(func_main,SGA,SGV,SLA,SLV,TGA,TGV,TLA,TLV),
+	once(apply_dict(func_main,SLA,SLV)),
+	once(apply_dict(global,SGA,SGV)),
+	append(TLA,TLV,T1),
+	append(TGV,T1,T2),
+	append(TGA,T2,Target).
+
+%----------------------------------------------------------------------%
+%----------------------------------------------------------------------%
+% Auxiliary predicates for pretty-printer
+%----------------------------------------------------------------------%
+%----------------------------------------------------------------------%
+graphviz_constraints([])    :- !.
+graphviz_constraints([C])   :- !,
+	graphviz_symbolic_expr(C).
+graphviz_constraints([C|Cs]):- !,
+	graphviz_symbolic_expr(C),
+	print_file(", ",[]),
+	graphviz_constraints(Cs).
+% Arithmetic operators
+graphviz_symbolic_expr(X):-
+	var(X), !,
+	print_file("%",[X]).
+graphviz_symbolic_expr(tt):- !.
+graphviz_symbolic_expr(ff):- print_file("fail",[]),!.
+graphviz_symbolic_expr(eq(A,B)):-!,
+	graphviz_symbolic_expr(A),
+	print_file("=",[]),
+	graphviz_symbolic_expr(B).
+% New constraint to represent things like &y by using
+% addref(SY,ref(SH,SAndSY)). Before it was eq
+graphviz_symbolic_expr(addref(A,B)):- !,
+        graphviz_symbolic_expr(A),
+	print_file("=",[]),
+        graphviz_symbolic_expr(B).
+% Special case: return void;
+graphviz_symbolic_expr(assign('ReturnValue',X)):-
+	var(X),!,
+	print_file("return void",[]).
+% Special case: return Expr;
+graphviz_symbolic_expr(assign('ReturnValue',X)):-
+	!,
+	print_file("return ",[]),
+	graphviz_symbolic_expr(X).
+graphviz_symbolic_expr(assign(A,B)):-!,
+	graphviz_symbolic_expr(A),
+	print_file(":=",[]),
+	graphviz_symbolic_expr(B).
+graphviz_symbolic_expr(gt(A,B)):- !,
+	graphviz_symbolic_expr(A),
+	print_file(">",[]),
+	graphviz_symbolic_expr(B).
+graphviz_symbolic_expr(geq(A,B)):- !,
+	graphviz_symbolic_expr(A),
+	print_file(">=",[]),
+	graphviz_symbolic_expr(B).
+% Array operators
+graphviz_symbolic_expr(ref(A,I)):- !,
+	print_file("read(",[]),
+	graphviz_symbolic_expr(A),
+	print_file(",",[]),	
+	graphviz_symbolic_expr(I),
+	print_file(")",[]).
+graphviz_symbolic_expr(upd(A,I,Val)):- !,
+	print_file("upd(",[]),
+	graphviz_symbolic_expr(A),
+	print_file(",",[]),
+	graphviz_symbolic_expr(I),
+	print_file(",",[]),
+	graphviz_symbolic_expr(Val),
+	print_file(")",[]).
+graphviz_symbolic_expr(arreq(A1,A2)):- !,
+        graphviz_symbolic_expr(A1),
+	print_file("=",[]),
+        graphviz_symbolic_expr(A2).
+graphviz_symbolic_expr(arrassign(A1,A2)):- !,
+        graphviz_symbolic_expr(A1),
+	print_file(":=",[]),
+        graphviz_symbolic_expr(A2).
+graphviz_symbolic_expr(NumExpr):- 
+	graphviz_num_symbolic_expr(NumExpr), !.
+% Numeric expressions
+graphviz_num_symbolic_expr(A):- 
+	var(A),!,
+	print_file("%",[A]).
+graphviz_num_symbolic_expr(F):-
+	functor(F,Name,_Arity),
+	uninterpreted_function(Name),!,
+	print_file("*",[]). % '*' means unknown value
+graphviz_num_symbolic_expr(A):- 
+	atomic(A), !,
+	print_file("%",[A]).
+graphviz_num_symbolic_expr(minus(A)):- !,
+	print_file("-",[]),
+	graphviz_symbolic_expr(A).
+graphviz_num_symbolic_expr(minus(A,B)):- !,
+	graphviz_symbolic_expr(A),	
+	print_file("-",[]),
+	graphviz_symbolic_expr(B).
+graphviz_num_symbolic_expr(plus(A,B)):- !,
+	graphviz_symbolic_expr(A),
+	print_file("+",[]),
+	graphviz_symbolic_expr(B).
+graphviz_num_symbolic_expr(mult(A,B)):- !,
+	graphviz_symbolic_expr(A),
+	print_file("*",[]),
+	graphviz_symbolic_expr(B).
+graphviz_num_symbolic_expr(div(A,B)):- !,
+	graphviz_symbolic_expr(A),
+	print_file("/",[]),
+	graphviz_symbolic_expr(B).
+
+% Code to simulate findall/3:
+assert_list(H):- 
+	retract('$list'(T)), 
+	!, 
+	insert_if_not_member(H,T,L), 
+	fassert('$list'(L)).
+assert_list(H):- 
+	fassert('$list'([H])),!.
+
+findall_procs(Ls):- '$list'(Ls),!.
+findall_procs(Ls):- compute_findall_procs, '$list'(Ls),!.
+
+compute_findall_procs:-
+	trans(P,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_),
+	assert_list(P), 
+	fail.
+compute_findall_procs.
+
+%==================================================================%
+% print_sym_graph/1 prints out all the info required to build the
+% symbolic execution graph executed by the unfolder.
+%==================================================================%
+print_sym_graph(FileName):-
+	telling(Old),
+	tell(FileName),
+	print_sym_graph_aux,
+	told,
+	tell(Old).
+print_sym_graph_aux:-
+	sym_graph(FName0,FName1,Id,[PP0],[PP1],_,_,_,_,_,_,_,_,_,_,feasible,_),		  
+	print_file("edge(%,%@%,%@%) . \n",[Id,FName0,PP0,FName1,PP1]),					   
+	fail.
+print_sym_graph_aux:-
+	sym_graph(FName0,FName1,Id,[PP0],[PP1],_,_,_,_,_,_,_,_,_,_,infeasible,_),		  
+	print_file("inf_edge(%,%@%,%@%) . \n",[Id,FName0,PP0,FName1,PP1]),					   
+	fail.
+print_sym_graph_aux:-
+	% nodes_subsumed(FName,PP0,PP1,_)
+	% PP0 subsumes PP1. It's also asserted by TRACER.
+	nodes_subsumed(FName,[PP0],[PP1],_),
+	print_file("edge(subsumes,%@%,%@%) . \n",[FName,PP1,FName,PP0]),
+	fail.
+#ifdef  SLICE_PSCFG
+print_sym_graph_aux:-
+    trans_in_slice_pscfg(FName,PPContext,Id),
+    print_file("trans_in_slice_pscfg(%@%,%).\n",[FName,PPContext,Id]),
+    fail.
+#endif  /*SLICE_PSCFG*/
+print_sym_graph_aux.
+
+%-----------------------------------------------------------------------------%
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+%-----------------------------------------------------------------------------%
+% The use of print_sym_graph assumes that all sym_graph/17 facts have
+% been already stored in memory. For large programs, this is a
+% limitation because we may run out of code space.
+%
+% We use instead print_sym_graph_edge_on_file/1 to print the symbolic
+% execution graph directly to a file. This avoids the memory
+% limitation but it will be slower.
+%-----------------------------------------------------------------------------%
+% This format is used (I think) in case we want to build a C
+% program from the symbolic execution tree
+/*
+print_sym_graph_edge_on_file(FeasibleFlag,SymGraphEdge):-
+	'$sym_graph_file'(FileName),
+	telling(Old),
+	% tell_unsafe_append(FileName),
+	tell_append(FileName),
+	print_sym_graph_edge_on_file_aux(SymGraphEdge,FeasibleFlag),
+	told,
+	tell(Old),!.
+print_sym_graph_edge_on_file(_,_):-!.
+print_sym_graph_edge_on_file_aux(normal_edge(FName0,FName1,Id,[PP0],[PP1]),feasible):-
+	print_file("edge(%,%@%,%@%) . \n",[Id,FName0,PP0,FName1,PP1]),!.
+print_sym_graph_edge_on_file_aux(normal_edge(FName0,FName1,Id,[PP0],[PP1]),infeasible):-
+	print_file("inf_edge(%,%@%,%@%) . \n",[Id,FName0,PP0,FName1,PP1]),!.
+print_sym_graph_edge_on_file_aux(subsumed_edge(FName,[PP0],[PP1]),_FeasibleFlag):-
+	print_file("edge(subsumes,%@%,%@%) . \n",[FName,PP1,FName,PP0]),!.
+*/
+print_sym_graph_edge_on_file(SymGraphEdge):-
+	'$sym_graph_file'(FileName),
+	telling(Old),
+	tell_append(FileName),
+	print_sym_graph_edge_on_file_aux(SymGraphEdge),
+	told,
+	tell(Old),!.
+print_sym_graph_edge_on_file(_,_):-!.
+
+print_sym_graph_edge_on_file_aux(
+	sym_graph(FNameFrom,FNameTo,_,[PPFrom],[PPTo],
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+		  XCL,Statement,feasible,_)):-
+	apply_dict_to_constraints_list(FNameFrom,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				  FNameTo,
+				  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+				  XCL,XCL1),
+	print_file("%.\n",[e(FNameFrom,PPFrom,FNameTo,PPTo,Statement,XCL1)]).	
+print_sym_graph_edge_on_file_aux(_):-!.
+
+record_sym_graph_filename(FileName):-
+	fassert('$sym_graph_file'(FileName)),!.
+cleanup_sym_graph_file:-
+	retractall('$sym_graph_file'(_)).
+%----------------------------------------------------------------------------------%
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+%----------------------------------------------------------------------------------%
+
+%==================================================================================%
+% record_sym_graph_edge/7 memoizes all transitions executed by the
+% unfolder to be able to further construct an explicit symbolic
+% execution graph.
+%==================================================================================%
+#ifndef  MINMAX
+record_sym_graph_edge(feasible,
+		      src( FName,_PP0,_SGlobalArr0,_SGlobalVar0,_SLocalArr0,_SLocalVar0),
+		      dest(FName,PP1 ,_SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1),
+		      _Id,_XCL,_Statement,[LoopStackTop|_LoopStack]):-
+	% Special case: The destination node is a looping point. Thus, do not
+	% increment the context counter. We reuse the one in the loop
+	% stack.
+
+        loopstack$point_with_context(LoopStackTop,FNameX,PPX,ContextPPX),
+	FNameX == FName,
+	PPX == PP1, !,
+	% Here to attach context to program point
+	twice_top_context_stack(_,PP0Context),	
+        attach_context_to_pc2(PPX,ContextPPX,PP1Context),
+        record_sym_graph_subsumed_edge_aux(FName,PP1,PP0Context,PP1Context).
+	
+% #ifdef  RECORD_SYM_GRAPH_ON_FILE
+%         % To avoid warnings
+%         SGlobalArr0=_, SGlobalVar0=_, SLocalArr0=_, SLocalVar0=_,
+%         SGlobalArr1=_, SGlobalVar1=_, SLocalArr1=_, SLocalVar1=_,     
+%         XCL =_ ,Statement=_, 
+%         print_sym_graph_edge_on_file(feasible,
+% 				     normal_edge(FName,FName,Id,PP0Context,PP1Context)).
+% #else
+%         fassert(sym_graph(FName,FName,Id,PP0Context,PP1Context,
+%  			  SGlobalArr0,SGlobalVar0,SLocalArr0,SLocalVar0,
+%  			  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,     
+%  			  XCL,Statement,feasible)).
+% #endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+#endif  /*!MINMAX*/
+
+#ifdef  MINMAX
+record_sym_graph_edge(feasible /* feasible or infeasible*/,
+		     src( FName,PP0,_SGlobalArr0,_SGlobalVar0,_SLocalArr0,_SLocalVar0),
+		     dest(FName,PP1,_SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1),
+		     _Id,_XCL,_Statement,_LoopStack):-
+	% Looping point
+        PP0 == PP1,!,
+	
+	% Here to attach context to program point
+	twice_top_context_stack(PP1Context,PP0Context),
+
+	record_sym_graph_subsumed_edge_aux(FName,PP0,PP0Context,PP1Context).
+#endif  /*MINMAX*/
+#ifdef GROUND_EXPLANATION
+record_sym_graph_edge(_FeasibleFlag /* feasible or infeasible*/,
+		     _,_,
+		     _Id,_XCL,_Statement,_LoopStack):-	
+    dont_collect_sym_graph, !.
+#endif /*GROUND_EXPLANATION*/
+record_sym_graph_edge(FeasibleFlag /* feasible or infeasible*/,
+		     src( FName,_PP0,SGlobalArr0,SGlobalVar0,SLocalArr0,SLocalVar0),
+		     dest(FName,_PP1,SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+		     Id,XCL,Statement,_LoopStack):-	
+	% Here to attach context to program point
+	twice_top_context_stack(PP1Context,PP0Context),
+	% Here to record
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+% This format is used (I think) in case we want to build a C
+% program from the symbolic execution tree
+/*
+        % To avoid warnings
+        SGlobalArr0=_, SGlobalVar0=_, SLocalArr0=_, SLocalVar0=_,
+        SGlobalArr1=_, SGlobalVar1=_, SLocalArr1=_, SLocalVar1=_,     
+        XCL =_ ,Statement=_,
+        print_sym_graph_edge_on_file(FeasibleFlag,
+				     normal_edge(FName,FName,Id,PP0Context,PP1Context)),
+*/	
+	print_sym_graph_edge_on_file(
+		sym_graph(FName,FName,Id,PP0Context,PP1Context,
+			  SGlobalArr0,SGlobalVar0,SLocalArr0,SLocalVar0,
+			  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,     
+			  XCL,Statement,FeasibleFlag,_)).	
+#else   /*RECORD_SYM_GRAPH_ON_FILE*/
+        counter_value(follow_ground_trace, C),
+#ifdef GROUND_EXPLANATION
+        debug_message("asserting sym graph edge: %@% -> %@%\n",
+                            [FName,PP0Context,FName,PP1Context]),
+#endif /*GROUND_EXPLANATION*/
+        fassert(sym_graph(FName,FName,Id,PP0Context,PP1Context,
+			  SGlobalArr0,SGlobalVar0,SLocalArr0,SLocalVar0,
+			  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,     
+			  XCL,Statement,FeasibleFlag,C)).
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+%============================================================================%
+% record_sym_graph_inter_edge/8 memoizes all call/return transitions
+% executed by the unfolder to be able to further construct an explicit
+% symbolic execution graph.
+%============================================================================%
+#ifdef GROUND_EXPLANATION
+record_sym_graph_inter_edge(call,_,_,_,_,_,_):- dont_collect_sym_graph, !.
+#endif /*GROUND_EXPLANATION*/
+record_sym_graph_inter_edge(call,
+			    caller(CallerFName,PP1Context),
+			    callee(CalleeFName,PP2Context),_,_,_,_):-
+	%---------------------------------------------------------------
+	% CALL edge
+	%---------------------------------------------------------------
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+% This format is used (I think) in case we want to build a C
+% program from the symbolic execution tree
+/*
+        print_sym_graph_edge_on_file(feasible,
+				     normal_edge(CallerFName,CalleeFName,call,
+						 PP1Context,PP2Context)).
+*/
+        print_sym_graph_edge_on_file(
+		sym_graph(CallerFName,CalleeFName,call,PP1Context,PP2Context,
+			  _,_,_,_,_,_,_,_,_,_,_,_)).
+#else
+    counter_value(follow_ground_trace, C),
+#ifdef GROUND_EXPLANATION
+        debug_message("asserting sym graph call: %@% -> %@%\n",
+                            [CallerFName,PP1Context,CalleeFName,PP2Context]),
+#endif /*GROUND_EXPLANATION*/
+	fassert(sym_graph(CallerFName,CalleeFName,call,PP1Context,PP2Context,
+			  _,_,_,_,_,_,_,_,_,_,_,C)).
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+/*
+record_sym_graph_inter_edge(return,
+			    caller(CallerFName,CallerPP0Context),
+			    callee(CalleeFName,CalleePP0),
+			    src( CallerFName,_CallerPP0,
+				 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+			    dest(CallerFName,CallerPP1Context,
+				 SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+			    CallerId, XCL):-
+	%---------------------------------------------------------------------%
+	% RETURN is a SPECIAL CASE because it contains two edges: one
+	% edge from the callee to the caller and another for the
+	% continuation in the caller.
+	%---------------------------------------------------------------------%
+	% return edge
+	% PPP1 has already the context attached (from the call stack)
+	attach_context_to_pc(CalleeFName,CalleePP0,CalleePP0Context), 
+	fassert(sym_graph(CalleeFName,CallerFName,
+			  return,
+			  CalleePP0Context,CallerPP0Context,
+			  _,_,_,_,_,_,_,_,_,_,_)),
+	% continuation transition in the caller
+	fassert(sym_graph(CallerFName,CallerFName,CallerId,
+			  CallerPP0Context,CallerPP1Context,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			  XCL,not_branch,feasible)).
+*/
+#ifdef GROUND_EXPLANATION
+record_sym_graph_inter_edge(return,_,_,_,_CallerId, _XCL):-
+    dont_collect_sym_graph, !.
+#endif /*GROUND_EXPLANATION*/
+record_sym_graph_inter_edge(return,
+			    % This is that pp where the function is called
+			    caller(CallerFName,_CallerPP0,_CallerPP0Context,
+				   _SGlobalArr0,_SGlobalVar0,_SLocalArr0,_SLocalVar0),
+			    % This is the last pp executed in the callee 
+			    callee(CalleeFName,CalleePP0),
+			    % This is the continuation pp in the caller
+			    continuation(CallerFName,_CallerPP1,CallerPP1Context,
+					 _SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1),
+			    _CallerId, _XCL):-
+        %---------------------------------------------------------------
+	% RETURN edge
+	%---------------------------------------------------------------
+	% PPP1 has already the context attached (from the call stack)
+	attach_context_to_pc(CalleeFName,CalleePP0,CalleePP0Context),	
+	% CONTINUATION transition in the caller
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+% This format is used (I think) in case we want to build a C
+% program from the symbolic execution tree
+/*
+        print_sym_graph_edge_on_file(feasible,
+				     normal_edge(CalleeFName,CallerFName,return,
+						 CalleePP0Context,CallerPP1Context)).
+*/
+        print_sym_graph_edge_on_file(
+	        sym_graph(CalleeFName,CallerFName,return,
+			  CalleePP0Context,CallerPP1Context,
+			  _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar,
+			  _SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1,
+			  _XCL,not_branch,feasible,_)).
+#else	
+    counter_value(follow_ground_trace, C),
+#ifdef GROUND_EXPLANATION
+        debug_message("asserting sym graph ret : %@% -> %@%\n",
+                            [CalleeFName,CalleePP0Context,CallerFName,CallerPP1Context]),
+#endif /*GROUND_EXPLANATION*/
+	fassert(sym_graph(CalleeFName,CallerFName,return,
+			  CalleePP0Context,CallerPP1Context,
+			  _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar,
+			  _SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1,
+			  _XCL,not_branch,feasible,C)).
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+
+%=============================================================================%
+% record_sym_graph_subsumed_edge(+FName,PP,+Node)
+%=============================================================================%
+% Some node at <FName,PP> is subsumed by Node2.  The specific node is
+% obtained from top_context_stack/1.
+%=============================================================================%
+% IMPORTANT ASSUMPTION: For the moment, subsumed edges make only sense
+% inside the same function call.
+%=============================================================================%
+record_sym_graph_subsumed_edge(FName,PP,PPContextSubsumer):-			       
+	!,
+	top_context_stack(PPContextSubsumed),
+	% Here to record 
+	record_sym_graph_subsumed_edge_aux(FName,PP,PPContextSubsumed,PPContextSubsumer).
+record_sym_graph_subsumed_edge_aux(_,_,PPContextSubsumed,PPContextSubsumer):-
+	% Just a sanity check.
+	PPContextSubsumed == PPContextSubsumer,!.
+#ifdef GROUND_EXPLANATION
+record_sym_graph_subsumed_edge_aux(_FName,_PP,_PPContextFrom,_PPContextTo):-
+    dont_collect_sym_graph, !.
+#endif /*GROUND_EXPLANATION*/
+record_sym_graph_subsumed_edge_aux(FName,PP,PPContextFrom,PPContextTo):-
+	%----------------------------------------------------------------------%
+ 	% Special case: if <FName,PP> is a loop exit transition then
+ 	% we don't draw it like a subsumed edge due to a technicality
+ 	% with -tree-traces requirements	
+	%----------------------------------------------------------------------%	
+ 	block(_,FName,_,PP,_,l,_,_,_,_,_),!,	
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+% This format is used (I think) in case we want to build a C
+% program from the symbolic execution tree
+/*
+        print_sym_graph_edge_on_file(feasible,
+				     normal_edge(FName,FName,exit,
+						 PPContextFrom,PPContextTo)).
+*/
+        print_sym_graph_edge_on_file(
+	        sym_graph(FName,FName,exit,PPContextFrom,PPContextTo,
+			  _,_,_,_,_,_,_,_,[],not_branch,feasible,_)).
+#else
+        counter_value(follow_ground_trace, C),
+#ifdef GROUND_EXPLANATION
+        debug_message("asserting sym graph subs: %@% -> %@%\n",
+                            [FName,PPContextFrom,FName,PPContextTo]),
+#endif /*GROUND_EXPLANATION*/
+        fassert(sym_graph(FName,FName,exit,PPContextFrom,PPContextTo,
+			  _,_,_,_,_,_,_,_,[],not_branch,feasible,C)).			 			  
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+record_sym_graph_subsumed_edge_aux(FName,_PP,PPContextSubsumed,PPContextSubsumer):-
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+% This format is used (I think) in case we want to build a C
+% program from the symbolic execution tree
+/*
+        print_sym_graph_edge_on_file(feasible,
+				     subsumed_edge(FName,
+						   PPContextSubsumed,PPContextSubsumer)).
+*/
+        % To avoid warnings
+        FName=_,PPContextSubsumed=_,PPContextSubsumer=_.
+#else
+    counter_value(follow_ground_trace, C),
+	fassert(nodes_subsumed(FName,PPContextSubsumed,PPContextSubsumer,C)).
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+
+
+record_sym_graph_edge2(_,Src,Dest,_,_,_,_):-
+%-------------------------------------------------------------------% 	
+% Special case: break/goto transitions inside a loop
+% Do nothing	 
+%-------------------------------------------------------------------% 		
+       Src =src(FName,PP0,_,_,_,_),
+       Dest=dest(FName,PP1,_,_,_,_),       
+       block(_,FName,PPEntry,PP1,_,l,_,_,_,_,_),
+       not(PPEntry=PP0),
+       !.
+record_sym_graph_edge2(FeasibleFlag,Src,Dest,Id,XCL,Statement,Loops):-
+       record_sym_graph_edge(FeasibleFlag,Src,Dest,Id,XCL,Statement,Loops).
+
+
+#ifdef GROUND_EXPLANATION
+record_sym_graph_unstructured_loop_exit(_):-dont_collect_sym_graph, !.
+#endif /*GROUND_EXPLANATION*/
+record_sym_graph_unstructured_loop_exit(Id):-
+%-------------------------------------------------------------------% 	
+% Special case: break/goto transitions inside a loop
+%-------------------------------------------------------------------%
+       trans(FName,Id,PP0,_,_,_,_,_,_,_,_,PP1,_,_,_,_,_,_,_,_,_,_,_,_),
+       block(_,FName,PPEntry,PP1,_,l,_,_,_,_,_),
+       not(PPEntry=PP0),
+       !,
+       attach_context_to_pc(FName,PP0,[PP0Context]),
+       % Add edge from PP0Context to current PP1Context (not new
+       % context)
+       PP1=[PP1Aux],	     
+       %------------------------------------------------------------%
+       % FIXME
+       %------------------------------------------------------------%
+       % We force a transition from PP0Context to PP1#1
+       % K=1,       
+       % We force a transition from PP0Context to PP1#K where K is the
+       % last visited context       
+       context(FName,PP1Aux,K1),
+       K = K1 - 1,       
+       %------------------------------------------------------------%       
+       printf_to_atom(PP1Context,"%#%",[PP1Aux,K]),
+       %print_message("Adding edge from % to % \n",[PP0Context,PP1Context]),
+#ifdef RECORD_SYM_GRAPH_ON_FILE
+       print_sym_graph_edge_on_file(
+		sym_graph(FName,FName,Id,[PP0Context],[PP1Context],
+			 _SGlobalArr0,_SGlobalVar0,_SLocalArr0,_SLocalVar0,
+			 _SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1,     
+			 [],not_branch,feasible,_)).
+#else
+       counter_value(follow_ground_trace, C),
+#ifdef GROUND_EXPLANATION
+        debug_message("asserting sym graph lxit: %@% -> %@%\n",
+                            [FName,PP0Context,FName,PP1Context]),
+#endif /*GROUND_EXPLANATION*/
+       fassert(sym_graph(FName,FName,Id,[PP0Context],[PP1Context],
+			 _SGlobalArr0,_SGlobalVar0,_SLocalArr0,_SLocalVar0,
+			 _SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1,     
+			 [],not_branch,feasible,C)).
+#endif /*RECORD_SYM_GRAPH_ON_FILE*/ 
+record_sym_graph_unstructured_loop_exit(_):-!.
+	
+%============================================================================%
+% Code to keep track of different context identifiers associated with
+% the same program point.  Assume that PC is a singleton (one
+% processor)
+%============================================================================%
+context_value(FName,[PC],Val):-
+	context(FName,PC,Val),!.
+context_value(_,_,0):-!.
+
+incr_context(FName,[PC]):-
+	retract(context(FName,PC,OldVal)),!,
+	fassert(context(FName,PC,OldVal + 1)).
+incr_context(FName,[PC]):-
+	fassert(context(FName,PC,1)).
+
+attach_context_to_pc(FName,[PC],[PC0]):-
+	context(FName,PC,Id),!,
+        printf_to_atom(PC0,"%#%",[PC,Id]),
+	add_pp_context(FName,PC,PC0).
+attach_context_to_pc(FName,[PC],[PC0]):-
+        !,
+	printf_to_atom(PC0,"%#0",[PC]),
+	add_pp_context(FName,PC,PC0).
+add_pp_context(FName,PP,PP0):-
+	pp_context(FName,PP,PP0),!.
+add_pp_context(FName,PP,PP0):-
+	fassert(pp_context(FName,PP,PP0)),!.
+
+attach_context_to_pc2([PC],Context,[PP0]):-
+  	printf_to_atom(PP0,"%#%",[PC,Context]).
+
+#ifdef MINMAX
+get_ancestor_pp_context(FName,PP,LoopStack,PPContext):-
+	LoopStack = [LoopStackTop|_],
+	loopstack$point_with_context(LoopStackTop,FName,PP,ContextId),
+	!,
+	attach_context_to_pc2(PP,ContextId,[PPContext]).
+get_ancestor_pp_context(FName,PP,[_|LoopStack],PPContext):-
+	get_ancestor_pp_context(FName,PP,LoopStack,PPContext).
+get_ancestor_pp_context(FName,PP,_,_):-
+	error_message("GRAPHVIZ ERROR The loop stack is empty and loop % % is not found\n",
+		      [FName,PP]).	
+#endif  /*!MINMAX*/
+
+#ifndef MINMAX
+get_next_pp_context(FName,PP,LoopStack,PPContext):-
+	% If looping point, reuse PPContext.	
+	LoopStack = [LoopStackTop|_],
+	loopstack$point_with_context(LoopStackTop,FName,PP,ContextId),
+	!,
+	attach_context_to_pc2(PP,ContextId,[PPContext]).
+#endif  /*!MINMAX*/
+get_next_pp_context(FName,PP,_LoopStack,PPContext):-
+	% Otherwise, produce a new one and return.
+	!,
+	incr_context(FName,PP),
+	attach_context_to_pc(FName,PP,[PPContext]).
+
+%========================================================================%
+% Code to handle a stack stored in persistent memory accessible via
+% assert's and retract's
+%========================================================================%
+push_context_stack(FName,PPContext):-	
+	retract(pp_context_stack(Stack)),
+	!,
+	fassert(pp_context_stack([pp(FName,PPContext)|Stack])).
+	%view_context_stack.
+push_context_stack(FName,PPContext):-
+	!,
+	fassert(pp_context_stack([pp(FName,PPContext)])).
+	%view_context_stack.
+	
+pop_context_stack:-
+	retract(pp_context_stack([_|Rest])),!,
+	fassert(pp_context_stack(Rest)).
+pop_context_stack:-
+	pp_context_stack(S),
+	error_message("pop_context_stack: % \n",[S]).
+	
+top_context_stack([PPContextA]):-	
+	pp_context_stack([pp(_,PPContextA)|_]),!.
+top_context_stack(_):-
+	pp_context_stack(S),
+	error_message("top_context_stack: % \n",[S]).
+
+twice_top_context_stack([PPContextA],[PPContextB]):-
+	pp_context_stack([pp(_,PPContextA),pp(_,PPContextB)|_]),!.
+twice_top_context_stack(_,_):-
+	pp_context_stack(S),
+	error_message("twice_top_context_stack: % \n",[S]).
+
+% for debugging:
+view_context_stack:-
+	pp_context_stack(Stack),
+	!, print_message("Context STACK: %\n",[Stack]).
+view_context_stack:-!.

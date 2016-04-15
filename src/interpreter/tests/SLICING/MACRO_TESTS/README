@@ -1,0 +1,12 @@
+Update by Jorge (19/07/2012)
+
+These errors seem to be easy to fix. The current compiler is less
+tolerant than older versions and complain now about errors.
+
+
+tracer slicer cdaudio.c -witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y
+     [java] Fatal error in line 4883: could not find size of array Addr_func_CdAudio535DeviceControl__cdaudioDataOut_
+
+tracer slicer floppy.c -witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y
+    [java] Fatal error: error occurred during compilation: CIL failed
+

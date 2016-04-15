@@ -1,0 +1,2132 @@
+"dgraph/dGraphModel.ml" 68 3191 3204 "dgraph/dGraphModel.ml" 68 3191 3216
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 70 3218 3232 "dgraph/dGraphModel.ml" 70 3218 3238
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 70 3218 3239 "dgraph/dGraphModel.ml" 70 3218 3240
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 73 3316 3338 "dgraph/dGraphModel.ml" 73 3316 3339
+type(
+  G.vertex -> G.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 73 3316 3342 "dgraph/dGraphModel.ml" 73 3316 3358
+)
+"dgraph/dGraphModel.ml" 73 3316 3342 "dgraph/dGraphModel.ml" 73 3316 3354
+type(
+  (G.vertex -> G.vertex -> unit) -> G.t -> unit
+)
+ident(
+  ext_ref G.iter_edges
+)
+"dgraph/dGraphModel.ml" 73 3316 3355 "dgraph/dGraphModel.ml" 73 3316 3356
+type(
+  G.vertex -> G.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 73 3316 3338 "dgraph/dGraphModel.ml" 73 3316 3339
+)
+"dgraph/dGraphModel.ml" 73 3316 3357 "dgraph/dGraphModel.ml" 73 3316 3358
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 73 3316 3342 "dgraph/dGraphModel.ml" 73 3316 3358
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 74 3359 3383 "dgraph/dGraphModel.ml" 74 3359 3384
+type(
+  G.edge -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 74 3359 3387 "dgraph/dGraphModel.ml" 74 3359 3405
+)
+"dgraph/dGraphModel.ml" 74 3359 3387 "dgraph/dGraphModel.ml" 74 3359 3401
+type(
+  (G.edge -> unit) -> G.t -> unit
+)
+ident(
+  ext_ref G.iter_edges_e
+)
+"dgraph/dGraphModel.ml" 74 3359 3402 "dgraph/dGraphModel.ml" 74 3359 3403
+type(
+  G.edge -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 74 3359 3383 "dgraph/dGraphModel.ml" 74 3359 3384
+)
+"dgraph/dGraphModel.ml" 74 3359 3404 "dgraph/dGraphModel.ml" 74 3359 3405
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 74 3359 3387 "dgraph/dGraphModel.ml" 74 3359 3405
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 75 3406 3427 "dgraph/dGraphModel.ml" 75 3406 3428
+type(
+  G.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 75 3406 3429 "dgraph/dGraphModel.ml" 75 3406 3450
+)
+"dgraph/dGraphModel.ml" 75 3406 3429 "dgraph/dGraphModel.ml" 75 3406 3430
+type(
+  G.vertex
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 75 3406 3433 "dgraph/dGraphModel.ml" 75 3406 3450
+)
+"dgraph/dGraphModel.ml" 75 3406 3433 "dgraph/dGraphModel.ml" 75 3406 3444
+type(
+  (G.vertex -> unit) -> G.t -> G.vertex -> unit
+)
+ident(
+  ext_ref G.iter_pred
+)
+"dgraph/dGraphModel.ml" 75 3406 3445 "dgraph/dGraphModel.ml" 75 3406 3446
+type(
+  G.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 75 3406 3427 "dgraph/dGraphModel.ml" 75 3406 3428
+)
+"dgraph/dGraphModel.ml" 75 3406 3447 "dgraph/dGraphModel.ml" 75 3406 3448
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 75 3406 3449 "dgraph/dGraphModel.ml" 75 3406 3450
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 75 3406 3429 "dgraph/dGraphModel.ml" 75 3406 3430
+)
+"dgraph/dGraphModel.ml" 75 3406 3433 "dgraph/dGraphModel.ml" 75 3406 3450
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 76 3451 3474 "dgraph/dGraphModel.ml" 76 3451 3475
+type(
+  G.edge -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 76 3451 3476 "dgraph/dGraphModel.ml" 76 3451 3499
+)
+"dgraph/dGraphModel.ml" 76 3451 3476 "dgraph/dGraphModel.ml" 76 3451 3477
+type(
+  G.vertex
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 76 3451 3480 "dgraph/dGraphModel.ml" 76 3451 3499
+)
+"dgraph/dGraphModel.ml" 76 3451 3480 "dgraph/dGraphModel.ml" 76 3451 3493
+type(
+  (G.edge -> unit) -> G.t -> G.vertex -> unit
+)
+ident(
+  ext_ref G.iter_pred_e
+)
+"dgraph/dGraphModel.ml" 76 3451 3494 "dgraph/dGraphModel.ml" 76 3451 3495
+type(
+  G.edge -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 76 3451 3474 "dgraph/dGraphModel.ml" 76 3451 3475
+)
+"dgraph/dGraphModel.ml" 76 3451 3496 "dgraph/dGraphModel.ml" 76 3451 3497
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 76 3451 3498 "dgraph/dGraphModel.ml" 76 3451 3499
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 76 3451 3476 "dgraph/dGraphModel.ml" 76 3451 3477
+)
+"dgraph/dGraphModel.ml" 76 3451 3480 "dgraph/dGraphModel.ml" 76 3451 3499
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 77 3500 3521 "dgraph/dGraphModel.ml" 77 3500 3522
+type(
+  G.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 77 3500 3525 "dgraph/dGraphModel.ml" 77 3500 3540
+)
+"dgraph/dGraphModel.ml" 77 3500 3525 "dgraph/dGraphModel.ml" 77 3500 3536
+type(
+  (G.vertex -> unit) -> G.t -> G.vertex -> unit
+)
+ident(
+  ext_ref G.iter_succ
+)
+"dgraph/dGraphModel.ml" 77 3500 3537 "dgraph/dGraphModel.ml" 77 3500 3538
+type(
+  G.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 77 3500 3521 "dgraph/dGraphModel.ml" 77 3500 3522
+)
+"dgraph/dGraphModel.ml" 77 3500 3539 "dgraph/dGraphModel.ml" 77 3500 3540
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 77 3500 3525 "dgraph/dGraphModel.ml" 77 3500 3540
+call(
+  tail
+)
+type(
+  G.vertex -> unit
+)
+"dgraph/dGraphModel.ml" 78 3541 3564 "dgraph/dGraphModel.ml" 78 3541 3565
+type(
+  G.edge -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 78 3541 3568 "dgraph/dGraphModel.ml" 78 3541 3585
+)
+"dgraph/dGraphModel.ml" 78 3541 3568 "dgraph/dGraphModel.ml" 78 3541 3581
+type(
+  (G.edge -> unit) -> G.t -> G.vertex -> unit
+)
+ident(
+  ext_ref G.iter_succ_e
+)
+"dgraph/dGraphModel.ml" 78 3541 3582 "dgraph/dGraphModel.ml" 78 3541 3583
+type(
+  G.edge -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 78 3541 3564 "dgraph/dGraphModel.ml" 78 3541 3565
+)
+"dgraph/dGraphModel.ml" 78 3541 3584 "dgraph/dGraphModel.ml" 78 3541 3585
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 78 3541 3568 "dgraph/dGraphModel.ml" 78 3541 3585
+call(
+  tail
+)
+type(
+  G.vertex -> unit
+)
+"dgraph/dGraphModel.ml" 79 3586 3609 "dgraph/dGraphModel.ml" 79 3586 3610
+type(
+  G.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 79 3586 3613 "dgraph/dGraphModel.ml" 79 3586 3630
+)
+"dgraph/dGraphModel.ml" 79 3586 3613 "dgraph/dGraphModel.ml" 79 3586 3626
+type(
+  (G.vertex -> unit) -> G.t -> unit
+)
+ident(
+  ext_ref G.iter_vertex
+)
+"dgraph/dGraphModel.ml" 79 3586 3627 "dgraph/dGraphModel.ml" 79 3586 3628
+type(
+  G.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 79 3586 3609 "dgraph/dGraphModel.ml" 79 3586 3610
+)
+"dgraph/dGraphModel.ml" 79 3586 3629 "dgraph/dGraphModel.ml" 79 3586 3630
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 79 3586 3613 "dgraph/dGraphModel.ml" 79 3586 3630
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 80 3631 3665 "dgraph/dGraphModel.ml" 80 3631 3666
+type(
+  G.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 80 3631 3667 "dgraph/dGraphModel.ml" 80 3631 3674
+)
+"dgraph/dGraphModel.ml" 80 3631 3667 "dgraph/dGraphModel.ml" 80 3631 3668
+type(
+  G.vertex
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 80 3631 3671 "dgraph/dGraphModel.ml" 80 3631 3674
+)
+"dgraph/dGraphModel.ml" 80 3631 3671 "dgraph/dGraphModel.ml" 80 3631 3672
+type(
+  G.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 80 3631 3665 "dgraph/dGraphModel.ml" 80 3631 3666
+)
+"dgraph/dGraphModel.ml" 80 3631 3673 "dgraph/dGraphModel.ml" 80 3631 3674
+type(
+  G.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 80 3631 3667 "dgraph/dGraphModel.ml" 80 3631 3668
+)
+"dgraph/dGraphModel.ml" 80 3631 3671 "dgraph/dGraphModel.ml" 80 3631 3674
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 81 3675 3700 "dgraph/dGraphModel.ml" 81 3675 3701
+type(
+  string -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 82 3704 3710 "dgraph/dGraphModel.ml" 82 3704 3764
+)
+"dgraph/dGraphModel.ml" 82 3704 3710 "dgraph/dGraphModel.ml" 82 3704 3722
+type(
+  (string -> XDot.cluster_layout -> unit) ->
+  (string, XDot.cluster_layout) Hashtbl.t -> unit
+)
+ident(
+  ext_ref Hashtbl.iter
+)
+"dgraph/dGraphModel.ml" 82 3704 3728 "dgraph/dGraphModel.ml" 82 3704 3729
+type(
+  string
+)
+ident(
+  def k "dgraph/dGraphModel.ml" 82 3704 3730 "dgraph/dGraphModel.ml" 82 3704 3738
+)
+"dgraph/dGraphModel.ml" 82 3704 3730 "dgraph/dGraphModel.ml" 82 3704 3731
+type(
+  XDot.cluster_layout
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 82 3704 3735 "dgraph/dGraphModel.ml" 82 3704 3738
+)
+"dgraph/dGraphModel.ml" 82 3704 3735 "dgraph/dGraphModel.ml" 82 3704 3736
+type(
+  string -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 81 3675 3700 "dgraph/dGraphModel.ml" 81 3675 3701
+)
+"dgraph/dGraphModel.ml" 82 3704 3737 "dgraph/dGraphModel.ml" 82 3704 3738
+type(
+  string
+)
+ident(
+  int_ref k "dgraph/dGraphModel.ml" 82 3704 3728 "dgraph/dGraphModel.ml" 82 3704 3729
+)
+"dgraph/dGraphModel.ml" 82 3704 3735 "dgraph/dGraphModel.ml" 82 3704 3738
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 82 3704 3723 "dgraph/dGraphModel.ml" 82 3704 3739
+type(
+  string -> XDot.cluster_layout -> unit
+)
+"dgraph/dGraphModel.ml" 82 3704 3740 "dgraph/dGraphModel.ml" 82 3704 3746
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 82 3704 3740 "dgraph/dGraphModel.ml" 82 3704 3764
+type(
+  (string, XDot.cluster_layout) Hashtbl.t
+)
+"dgraph/dGraphModel.ml" 82 3704 3710 "dgraph/dGraphModel.ml" 82 3704 3764
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 85 3797 3824 "dgraph/dGraphModel.ml" 85 3797 3835
+type(
+  G.t -> G.vertex -> G.vertex -> G.edge
+)
+ident(
+  ext_ref G.find_edge
+)
+"dgraph/dGraphModel.ml" 85 3797 3836 "dgraph/dGraphModel.ml" 85 3797 3837
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 85 3797 3824 "dgraph/dGraphModel.ml" 85 3797 3837
+call(
+  stack
+)
+type(
+  G.vertex -> G.vertex -> G.edge
+)
+"dgraph/dGraphModel.ml" 85 3797 3843 "dgraph/dGraphModel.ml" 85 3797 3852
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 85 3797 3856 "dgraph/dGraphModel.ml" 85 3797 3868
+type(
+  G.vertex -> G.vertex -> G.edge
+)
+"dgraph/dGraphModel.ml" 85 3797 3820 "dgraph/dGraphModel.ml" 85 3797 3868
+type(
+  G.vertex -> G.vertex -> G.edge
+)
+type(
+  G.vertex -> G.vertex -> G.edge
+)
+"dgraph/dGraphModel.ml" 86 3869 3891 "dgraph/dGraphModel.ml" 86 3869 3901
+type(
+  G.t -> G.vertex -> G.vertex -> bool
+)
+ident(
+  ext_ref G.mem_edge
+)
+"dgraph/dGraphModel.ml" 86 3869 3902 "dgraph/dGraphModel.ml" 86 3869 3903
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 86 3869 3891 "dgraph/dGraphModel.ml" 86 3869 3903
+call(
+  tail
+)
+type(
+  G.vertex -> G.vertex -> bool
+)
+type(
+  G.vertex -> G.vertex -> bool
+)
+"dgraph/dGraphModel.ml" 87 3904 3928 "dgraph/dGraphModel.ml" 87 3904 3940
+type(
+  G.t -> G.edge -> bool
+)
+ident(
+  ext_ref G.mem_edge_e
+)
+"dgraph/dGraphModel.ml" 87 3904 3941 "dgraph/dGraphModel.ml" 87 3904 3942
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 87 3904 3928 "dgraph/dGraphModel.ml" 87 3904 3942
+call(
+  tail
+)
+type(
+  G.edge -> bool
+)
+type(
+  G.edge -> bool
+)
+"dgraph/dGraphModel.ml" 88 3943 3967 "dgraph/dGraphModel.ml" 88 3943 3979
+type(
+  G.t -> G.vertex -> bool
+)
+ident(
+  ext_ref G.mem_vertex
+)
+"dgraph/dGraphModel.ml" 88 3943 3980 "dgraph/dGraphModel.ml" 88 3943 3981
+type(
+  G.t
+)
+"dgraph/dGraphModel.ml" 88 3943 3967 "dgraph/dGraphModel.ml" 88 3943 3981
+call(
+  tail
+)
+type(
+  G.vertex -> bool
+)
+type(
+  G.vertex -> bool
+)
+"dgraph/dGraphModel.ml" 89 3982 3999 "dgraph/dGraphModel.ml" 89 3982 4006
+type(
+  G.E.t -> G.E.vertex
+)
+type(
+  G.E.t -> G.E.vertex
+)
+ident(
+  ext_ref G.E.src
+)
+"dgraph/dGraphModel.ml" 90 4007 4024 "dgraph/dGraphModel.ml" 90 4007 4031
+type(
+  G.E.t -> G.E.vertex
+)
+type(
+  G.E.t -> G.E.vertex
+)
+ident(
+  ext_ref G.E.dst
+)
+"dgraph/dGraphModel.ml" 93 4050 4076 "dgraph/dGraphModel.ml" 93 4050 4082
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 93 4050 4076 "dgraph/dGraphModel.ml" 93 4050 4089
+type(
+  XDot.bounding_box
+)
+type(
+  XDot.bounding_box
+)
+"dgraph/dGraphModel.ml" 95 4091 4120 "dgraph/dGraphModel.ml" 95 4091 4121
+type(
+  X.HV.key
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 96 4124 4130 "dgraph/dGraphModel.ml" 97 4170 4206
+)
+"dgraph/dGraphModel.ml" 96 4124 4134 "dgraph/dGraphModel.ml" 96 4124 4143
+type(
+  XDot.node_layout X.HV.t -> X.HV.key -> XDot.node_layout
+)
+ident(
+  ext_ref X.HV.find
+)
+"dgraph/dGraphModel.ml" 96 4124 4144 "dgraph/dGraphModel.ml" 96 4124 4150
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 96 4124 4144 "dgraph/dGraphModel.ml" 96 4124 4167
+type(
+  XDot.node_layout X.HV.t
+)
+"dgraph/dGraphModel.ml" 96 4124 4168 "dgraph/dGraphModel.ml" 96 4124 4169
+type(
+  X.HV.key
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 95 4091 4120 "dgraph/dGraphModel.ml" 95 4091 4121
+)
+"dgraph/dGraphModel.ml" 96 4124 4134 "dgraph/dGraphModel.ml" 96 4124 4169
+call(
+  stack
+)
+type(
+  XDot.node_layout
+)
+"dgraph/dGraphModel.ml" 97 4170 4181 "dgraph/dGraphModel.ml" 97 4170 4190
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 97 4170 4194 "dgraph/dGraphModel.ml" 97 4170 4206
+type(
+  XDot.node_layout
+)
+"dgraph/dGraphModel.ml" 96 4124 4130 "dgraph/dGraphModel.ml" 97 4170 4206
+type(
+  XDot.node_layout
+)
+"dgraph/dGraphModel.ml" 99 4208 4235 "dgraph/dGraphModel.ml" 99 4208 4236
+type(
+  X.HE.key
+)
+ident(
+  def e "dgraph/dGraphModel.ml" 100 4239 4245 "dgraph/dGraphModel.ml" 101 4283 4319
+)
+"dgraph/dGraphModel.ml" 100 4239 4249 "dgraph/dGraphModel.ml" 100 4239 4258
+type(
+  XDot.edge_layout X.HE.t -> X.HE.key -> XDot.edge_layout
+)
+ident(
+  ext_ref X.HE.find
+)
+"dgraph/dGraphModel.ml" 100 4239 4259 "dgraph/dGraphModel.ml" 100 4239 4265
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 100 4239 4259 "dgraph/dGraphModel.ml" 100 4239 4280
+type(
+  XDot.edge_layout X.HE.t
+)
+"dgraph/dGraphModel.ml" 100 4239 4281 "dgraph/dGraphModel.ml" 100 4239 4282
+type(
+  X.HE.key
+)
+ident(
+  int_ref e "dgraph/dGraphModel.ml" 99 4208 4235 "dgraph/dGraphModel.ml" 99 4208 4236
+)
+"dgraph/dGraphModel.ml" 100 4239 4249 "dgraph/dGraphModel.ml" 100 4239 4282
+call(
+  stack
+)
+type(
+  XDot.edge_layout
+)
+"dgraph/dGraphModel.ml" 101 4283 4294 "dgraph/dGraphModel.ml" 101 4283 4303
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 101 4283 4307 "dgraph/dGraphModel.ml" 101 4283 4319
+type(
+  XDot.edge_layout
+)
+"dgraph/dGraphModel.ml" 100 4239 4245 "dgraph/dGraphModel.ml" 101 4283 4319
+type(
+  XDot.edge_layout
+)
+"dgraph/dGraphModel.ml" 103 4321 4351 "dgraph/dGraphModel.ml" 103 4321 4352
+type(
+  string
+)
+ident(
+  def c "dgraph/dGraphModel.ml" 104 4355 4361 "dgraph/dGraphModel.ml" 105 4405 4441
+)
+"dgraph/dGraphModel.ml" 104 4355 4365 "dgraph/dGraphModel.ml" 104 4355 4377
+type(
+  (string, XDot.cluster_layout) Hashtbl.t -> string -> XDot.cluster_layout
+)
+ident(
+  ext_ref Hashtbl.find
+)
+"dgraph/dGraphModel.ml" 104 4355 4378 "dgraph/dGraphModel.ml" 104 4355 4384
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 104 4355 4378 "dgraph/dGraphModel.ml" 104 4355 4402
+type(
+  (string, XDot.cluster_layout) Hashtbl.t
+)
+"dgraph/dGraphModel.ml" 104 4355 4403 "dgraph/dGraphModel.ml" 104 4355 4404
+type(
+  string
+)
+ident(
+  int_ref c "dgraph/dGraphModel.ml" 103 4321 4351 "dgraph/dGraphModel.ml" 103 4321 4352
+)
+"dgraph/dGraphModel.ml" 104 4355 4365 "dgraph/dGraphModel.ml" 104 4355 4404
+call(
+  stack
+)
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphModel.ml" 105 4405 4416 "dgraph/dGraphModel.ml" 105 4405 4425
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 105 4405 4429 "dgraph/dGraphModel.ml" 105 4405 4441
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphModel.ml" 104 4355 4361 "dgraph/dGraphModel.ml" 105 4405 4441
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphModel.ml" 109 4450 4456 "dgraph/dGraphModel.ml" 109 4450 4466
+type(
+  ?cmd:string -> ?tmp_name:string -> G.t -> model
+)
+ident(
+  def from_graph "dgraph/dGraphModel.ml" 123 4920 4929 "dgraph/dGraphModel.ml" 125 4931 4934
+)
+"dgraph/dGraphModel.ml" 109 4450 4469 "dgraph/dGraphModel.ml" 109 4450 4472
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 109 4450 4473 "dgraph/dGraphModel.ml" 109 4450 4478
+type(
+  string
+)
+type(
+  string
+)
+type(
+  string
+)
+ident(
+  int_ref *sth* "dgraph/dGraphModel.ml" 109 4450 4473 "dgraph/dGraphModel.ml" 109 4450 4478
+)
+type(
+  string option
+)
+type(
+  string option
+)
+type(
+  string
+)
+ident(
+  def *sth* "dgraph/dGraphModel.ml" 109 4450 4473 "dgraph/dGraphModel.ml" 109 4450 4478
+)
+type(
+  string option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphModel.ml" 109 4450 4473 "dgraph/dGraphModel.ml" 109 4450 4478
+)
+type(
+  string option
+)
+ident(
+  def *opt* "dgraph/dGraphModel.ml" 109 4450 4467 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 109 4450 4482 "dgraph/dGraphModel.ml" 109 4450 4490
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 109 4450 4493 "dgraph/dGraphModel.ml" 109 4450 4501
+type(
+  string
+)
+type(
+  string
+)
+type(
+  string
+)
+ident(
+  int_ref *sth* "dgraph/dGraphModel.ml" 109 4450 4493 "dgraph/dGraphModel.ml" 109 4450 4501
+)
+type(
+  string option
+)
+type(
+  string option
+)
+type(
+  string
+)
+ident(
+  def *sth* "dgraph/dGraphModel.ml" 109 4450 4493 "dgraph/dGraphModel.ml" 109 4450 4501
+)
+type(
+  string option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphModel.ml" 109 4450 4493 "dgraph/dGraphModel.ml" 109 4450 4501
+)
+type(
+  string option
+)
+ident(
+  def *opt* "dgraph/dGraphModel.ml" 109 4450 4480 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 109 4450 4503 "dgraph/dGraphModel.ml" 109 4450 4504
+type(
+  G.t
+)
+ident(
+  def g "dgraph/dGraphModel.ml" 111 4533 4537 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 111 4533 4558 "dgraph/dGraphModel.ml" 111 4533 4573
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 112 4577 4585 "dgraph/dGraphModel.ml" 112 4577 4593
+type(
+  string
+)
+ident(
+  def dot_file "dgraph/dGraphModel.ml" 113 4644 4648 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 112 4577 4595 "dgraph/dGraphModel.ml" 112 4577 4598
+type(
+  out_channel
+)
+ident(
+  def out "dgraph/dGraphModel.ml" 113 4644 4648 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 112 4577 4585 "dgraph/dGraphModel.ml" 112 4577 4598
+type(
+  string * out_channel
+)
+"dgraph/dGraphModel.ml" 112 4577 4601 "dgraph/dGraphModel.ml" 112 4577 4624
+type(
+  ?mode:open_flag list ->
+  ?temp_dir:string -> string -> string -> string * out_channel
+)
+ident(
+  ext_ref Filename.open_temp_file
+)
+"dgraph/dGraphModel.ml" 112 4577 4625 "dgraph/dGraphModel.ml" 112 4577 4633
+type(
+  string
+)
+ident(
+  int_ref tmp_name "dgraph/dGraphModel.ml" 109 4450 4482 "dgraph/dGraphModel.ml" 109 4450 4490
+)
+"dgraph/dGraphModel.ml" 112 4577 4634 "dgraph/dGraphModel.ml" 112 4577 4640
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 112 4577 4601 "dgraph/dGraphModel.ml" 112 4577 4640
+call(
+  stack
+)
+type(
+  string * out_channel
+)
+"dgraph/dGraphModel.ml" 113 4644 4648 "dgraph/dGraphModel.ml" 113 4644 4668
+type(
+  out_channel -> G.t -> unit
+)
+ident(
+  ext_ref DumpDot.output_graph
+)
+"dgraph/dGraphModel.ml" 113 4644 4669 "dgraph/dGraphModel.ml" 113 4644 4672
+type(
+  out_channel
+)
+ident(
+  int_ref out "dgraph/dGraphModel.ml" 112 4577 4595 "dgraph/dGraphModel.ml" 112 4577 4598
+)
+"dgraph/dGraphModel.ml" 113 4644 4673 "dgraph/dGraphModel.ml" 113 4644 4674
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphModel.ml" 109 4450 4503 "dgraph/dGraphModel.ml" 109 4450 4504
+)
+"dgraph/dGraphModel.ml" 113 4644 4648 "dgraph/dGraphModel.ml" 113 4644 4674
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 114 4676 4680 "dgraph/dGraphModel.ml" 114 4676 4689
+type(
+  out_channel -> unit
+)
+ident(
+  ext_ref Pervasives.close_out
+)
+"dgraph/dGraphModel.ml" 114 4676 4690 "dgraph/dGraphModel.ml" 114 4676 4693
+type(
+  out_channel
+)
+ident(
+  int_ref out "dgraph/dGraphModel.ml" 112 4577 4595 "dgraph/dGraphModel.ml" 112 4577 4598
+)
+"dgraph/dGraphModel.ml" 114 4676 4680 "dgraph/dGraphModel.ml" 114 4676 4693
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 116 4730 4738 "dgraph/dGraphModel.ml" 116 4730 4744
+type(
+  X.graph_layout
+)
+ident(
+  def layout "dgraph/dGraphModel.ml" 121 4857 4861 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 118 4758 4766 "dgraph/dGraphModel.ml" 118 4758 4781
+type(
+  ?cmd:string -> dot_file:string -> G.t -> X.graph_layout
+)
+ident(
+  ext_ref X.layout_of_dot
+)
+"dgraph/dGraphModel.ml" 118 4758 4783 "dgraph/dGraphModel.ml" 118 4758 4786
+type(
+  string
+)
+ident(
+  int_ref cmd "dgraph/dGraphModel.ml" 109 4450 4469 "dgraph/dGraphModel.ml" 109 4450 4472
+)
+"dgraph/dGraphModel.ml" 118 4758 4788 "dgraph/dGraphModel.ml" 118 4758 4796
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphModel.ml" 112 4577 4585 "dgraph/dGraphModel.ml" 112 4577 4593
+)
+"dgraph/dGraphModel.ml" 118 4758 4797 "dgraph/dGraphModel.ml" 118 4758 4798
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphModel.ml" 109 4450 4503 "dgraph/dGraphModel.ml" 109 4450 4504
+)
+"dgraph/dGraphModel.ml" 118 4758 4766 "dgraph/dGraphModel.ml" 118 4758 4798
+call(
+  stack
+)
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 119 4800 4822 "dgraph/dGraphModel.ml" 119 4800 4825
+type(
+  string
+)
+ident(
+  def err "dgraph/dGraphModel.ml" 119 4800 4829 "dgraph/dGraphModel.ml" 119 4800 4849
+)
+"dgraph/dGraphModel.ml" 119 4800 4811 "dgraph/dGraphModel.ml" 119 4800 4825
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 119 4800 4829 "dgraph/dGraphModel.ml" 119 4800 4834
+type(
+  exn -> X.graph_layout
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/dGraphModel.ml" 119 4800 4845 "dgraph/dGraphModel.ml" 119 4800 4848
+type(
+  string
+)
+ident(
+  int_ref err "dgraph/dGraphModel.ml" 119 4800 4822 "dgraph/dGraphModel.ml" 119 4800 4825
+)
+"dgraph/dGraphModel.ml" 119 4800 4835 "dgraph/dGraphModel.ml" 119 4800 4849
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 119 4800 4829 "dgraph/dGraphModel.ml" 119 4800 4849
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 117 4748 4754 "dgraph/dGraphModel.ml" 119 4800 4849
+type(
+  X.graph_layout
+)
+"dgraph/dGraphModel.ml" 121 4857 4865 "dgraph/dGraphModel.ml" 121 4857 4870
+type(
+  model
+)
+ident(
+  def model "dgraph/dGraphModel.ml" 122 4895 4899 "dgraph/dGraphModel.ml" 123 4920 4929
+)
+"dgraph/dGraphModel.ml" 121 4857 4873 "dgraph/dGraphModel.ml" 121 4857 4882
+type(
+  X.graph_layout -> G.t -> model
+)
+"dgraph/dGraphModel.ml" 121 4857 4883 "dgraph/dGraphModel.ml" 121 4857 4889
+type(
+  X.graph_layout
+)
+ident(
+  int_ref layout "dgraph/dGraphModel.ml" 116 4730 4738 "dgraph/dGraphModel.ml" 116 4730 4744
+)
+"dgraph/dGraphModel.ml" 121 4857 4890 "dgraph/dGraphModel.ml" 121 4857 4891
+type(
+  G.t
+)
+ident(
+  int_ref g "dgraph/dGraphModel.ml" 109 4450 4503 "dgraph/dGraphModel.ml" 109 4450 4504
+)
+"dgraph/dGraphModel.ml" 121 4857 4873 "dgraph/dGraphModel.ml" 121 4857 4891
+call(
+  stack
+)
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 122 4895 4899 "dgraph/dGraphModel.ml" 122 4895 4909
+type(
+  string -> unit
+)
+ident(
+  ext_ref Sys.remove
+)
+"dgraph/dGraphModel.ml" 122 4895 4910 "dgraph/dGraphModel.ml" 122 4895 4918
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphModel.ml" 112 4577 4585 "dgraph/dGraphModel.ml" 112 4577 4593
+)
+"dgraph/dGraphModel.ml" 122 4895 4899 "dgraph/dGraphModel.ml" 122 4895 4918
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 123 4920 4924 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+ident(
+  int_ref model "dgraph/dGraphModel.ml" 121 4857 4865 "dgraph/dGraphModel.ml" 121 4857 4870
+)
+"dgraph/dGraphModel.ml" 122 4895 4899 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 121 4857 4861 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 116 4730 4734 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 114 4676 4680 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 113 4644 4648 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 112 4577 4581 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 111 4533 4537 "dgraph/dGraphModel.ml" 123 4920 4929
+type(
+  model
+)
+"dgraph/dGraphModel.ml" 138 5181 5187 "dgraph/dGraphModel.ml" 138 5181 5194
+type(
+  XDot.edge_layout
+)
+ident(
+  def default "dgraph/dGraphModel.ml" 140 5282 5284 "dgraph/dGraphModel.ml" 141 5333 5336
+)
+"dgraph/dGraphModel.ml" 138 5181 5197 "dgraph/dGraphModel.ml" 138 5181 5216
+type(
+  draw:XDotDraw.operation list ->
+  ldraw:XDotDraw.operation list ->
+  hdraw:XDotDraw.operation list ->
+  tdraw:XDotDraw.operation list ->
+  hldraw:XDotDraw.operation list ->
+  tldraw:XDotDraw.operation list -> XDot.edge_layout
+)
+ident(
+  ext_ref XDot.mk_edge_layout
+)
+"dgraph/dGraphModel.ml" 139 5217 5227 "dgraph/dGraphModel.ml" 139 5217 5229
+type(
+  XDotDraw.operation list
+)
+"dgraph/dGraphModel.ml" 139 5217 5237 "dgraph/dGraphModel.ml" 139 5217 5239
+type(
+  XDotDraw.operation list
+)
+"dgraph/dGraphModel.ml" 139 5217 5247 "dgraph/dGraphModel.ml" 139 5217 5249
+type(
+  XDotDraw.operation list
+)
+"dgraph/dGraphModel.ml" 139 5217 5257 "dgraph/dGraphModel.ml" 139 5217 5259
+type(
+  XDotDraw.operation list
+)
+"dgraph/dGraphModel.ml" 139 5217 5268 "dgraph/dGraphModel.ml" 139 5217 5270
+type(
+  XDotDraw.operation list
+)
+"dgraph/dGraphModel.ml" 139 5217 5279 "dgraph/dGraphModel.ml" 139 5217 5281
+type(
+  XDotDraw.operation list
+)
+"dgraph/dGraphModel.ml" 138 5181 5197 "dgraph/dGraphModel.ml" 139 5217 5281
+call(
+  stack
+)
+type(
+  XDot.edge_layout
+)
+"dgraph/dGraphModel.ml" 140 5282 5288 "dgraph/dGraphModel.ml" 140 5282 5295
+type(
+  t -> t -> int
+)
+ident(
+  def compare "dgraph/dGraphModel.ml" 140 5282 5332 "dgraph/dGraphModel.ml" 141 5333 5336
+)
+"dgraph/dGraphModel.ml" 140 5282 5314 "dgraph/dGraphModel.ml" 140 5282 5332
+type(
+  t -> t -> int
+)
+type(
+  t -> t -> int
+)
+ident(
+  ext_ref Pervasives.compare
+)
+"dgraph/dGraphModel.ml" 143 5338 5352 "dgraph/dGraphModel.ml" 143 5338 5394
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 143 5338 5352 "dgraph/dGraphModel.ml" 143 5338 5400
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 144 5401 5415 "dgraph/dGraphModel.ml" 144 5401 5430
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 150 5541 5543 "dgraph/dGraphModel.ml" 151 5553 5563
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 154 5619 5630 "dgraph/dGraphModel.ml" 154 5619 5634
+type(
+  Graph.Dot_ast.node_id -> Graph.Dot_ast.attr list -> XDot.node_layout
+)
+ident(
+  def node "dgraph/dGraphModel.ml" 157 5694 5701 "dgraph/dGraphModel.ml" 159 5735 5743
+)
+"dgraph/dGraphModel.ml" 154 5619 5637 "dgraph/dGraphModel.ml" 154 5619 5658
+type(
+  Graph.Dot_ast.node_id -> Graph.Dot_ast.attr list -> XDot.node_layout
+)
+ident(
+  ext_ref XDot.read_node_layout
+)
+"dgraph/dGraphModel.ml" 157 5694 5705 "dgraph/dGraphModel.ml" 157 5694 5709
+type(
+  Graph.Dot_ast.attr list -> XDot.edge_layout
+)
+ident(
+  def edge "dgraph/dGraphModel.ml" 157 5694 5733 "dgraph/dGraphModel.ml" 159 5735 5743
+)
+"dgraph/dGraphModel.ml" 157 5694 5712 "dgraph/dGraphModel.ml" 157 5694 5733
+type(
+  Graph.Dot_ast.attr list -> XDot.edge_layout
+)
+ident(
+  ext_ref XDot.read_edge_layout
+)
+"dgraph/dGraphModel.ml" 150 5541 5543 "dgraph/dGraphModel.ml" 159 5735 5744
+call(
+  stack
+)
+"dgraph/dGraphModel.ml" 164 5863 5877 "dgraph/dGraphModel.ml" 164 5863 5878
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 164 5863 5879 "dgraph/dGraphModel.ml" 164 5863 5892
+type(
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t
+)
+"dgraph/dGraphModel.ml" 164 5863 5893 "dgraph/dGraphModel.ml" 164 5863 5905
+type(
+  XDot.bounding_box
+)
+"dgraph/dGraphModel.ml" 169 5996 6018 "dgraph/dGraphModel.ml" 169 5996 6019
+type(
+  DotG.vertex -> DotG.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 169 5996 6022 "dgraph/dGraphModel.ml" 169 5996 6041
+)
+"dgraph/dGraphModel.ml" 169 5996 6022 "dgraph/dGraphModel.ml" 169 5996 6037
+type(
+  (DotG.vertex -> DotG.vertex -> unit) -> DotG.t -> unit
+)
+ident(
+  ext_ref DotG.iter_edges
+)
+"dgraph/dGraphModel.ml" 169 5996 6038 "dgraph/dGraphModel.ml" 169 5996 6039
+type(
+  DotG.vertex -> DotG.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 169 5996 6018 "dgraph/dGraphModel.ml" 169 5996 6019
+)
+"dgraph/dGraphModel.ml" 169 5996 6040 "dgraph/dGraphModel.ml" 169 5996 6041
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 169 5996 6022 "dgraph/dGraphModel.ml" 169 5996 6041
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 170 6042 6066 "dgraph/dGraphModel.ml" 170 6042 6067
+type(
+  DotG.edge -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 170 6042 6070 "dgraph/dGraphModel.ml" 170 6042 6091
+)
+"dgraph/dGraphModel.ml" 170 6042 6070 "dgraph/dGraphModel.ml" 170 6042 6087
+type(
+  (DotG.edge -> unit) -> DotG.t -> unit
+)
+ident(
+  ext_ref DotG.iter_edges_e
+)
+"dgraph/dGraphModel.ml" 170 6042 6088 "dgraph/dGraphModel.ml" 170 6042 6089
+type(
+  DotG.edge -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 170 6042 6066 "dgraph/dGraphModel.ml" 170 6042 6067
+)
+"dgraph/dGraphModel.ml" 170 6042 6090 "dgraph/dGraphModel.ml" 170 6042 6091
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 170 6042 6070 "dgraph/dGraphModel.ml" 170 6042 6091
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 171 6092 6113 "dgraph/dGraphModel.ml" 171 6092 6114
+type(
+  DotG.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 171 6092 6115 "dgraph/dGraphModel.ml" 171 6092 6139
+)
+"dgraph/dGraphModel.ml" 171 6092 6115 "dgraph/dGraphModel.ml" 171 6092 6116
+type(
+  DotG.vertex
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 171 6092 6119 "dgraph/dGraphModel.ml" 171 6092 6139
+)
+"dgraph/dGraphModel.ml" 171 6092 6119 "dgraph/dGraphModel.ml" 171 6092 6133
+type(
+  (DotG.vertex -> unit) -> DotG.t -> DotG.vertex -> unit
+)
+ident(
+  ext_ref DotG.iter_pred
+)
+"dgraph/dGraphModel.ml" 171 6092 6134 "dgraph/dGraphModel.ml" 171 6092 6135
+type(
+  DotG.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 171 6092 6113 "dgraph/dGraphModel.ml" 171 6092 6114
+)
+"dgraph/dGraphModel.ml" 171 6092 6136 "dgraph/dGraphModel.ml" 171 6092 6137
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 171 6092 6138 "dgraph/dGraphModel.ml" 171 6092 6139
+type(
+  DotG.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 171 6092 6115 "dgraph/dGraphModel.ml" 171 6092 6116
+)
+"dgraph/dGraphModel.ml" 171 6092 6119 "dgraph/dGraphModel.ml" 171 6092 6139
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 172 6140 6163 "dgraph/dGraphModel.ml" 172 6140 6164
+type(
+  DotG.edge -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 172 6140 6165 "dgraph/dGraphModel.ml" 172 6140 6191
+)
+"dgraph/dGraphModel.ml" 172 6140 6165 "dgraph/dGraphModel.ml" 172 6140 6166
+type(
+  DotG.vertex
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 172 6140 6169 "dgraph/dGraphModel.ml" 172 6140 6191
+)
+"dgraph/dGraphModel.ml" 172 6140 6169 "dgraph/dGraphModel.ml" 172 6140 6185
+type(
+  (DotG.edge -> unit) -> DotG.t -> DotG.vertex -> unit
+)
+ident(
+  ext_ref DotG.iter_pred_e
+)
+"dgraph/dGraphModel.ml" 172 6140 6186 "dgraph/dGraphModel.ml" 172 6140 6187
+type(
+  DotG.edge -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 172 6140 6163 "dgraph/dGraphModel.ml" 172 6140 6164
+)
+"dgraph/dGraphModel.ml" 172 6140 6188 "dgraph/dGraphModel.ml" 172 6140 6189
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 172 6140 6190 "dgraph/dGraphModel.ml" 172 6140 6191
+type(
+  DotG.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 172 6140 6165 "dgraph/dGraphModel.ml" 172 6140 6166
+)
+"dgraph/dGraphModel.ml" 172 6140 6169 "dgraph/dGraphModel.ml" 172 6140 6191
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 173 6192 6213 "dgraph/dGraphModel.ml" 173 6192 6214
+type(
+  DotG.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 173 6192 6217 "dgraph/dGraphModel.ml" 173 6192 6235
+)
+"dgraph/dGraphModel.ml" 173 6192 6217 "dgraph/dGraphModel.ml" 173 6192 6231
+type(
+  (DotG.vertex -> unit) -> DotG.t -> DotG.vertex -> unit
+)
+ident(
+  ext_ref DotG.iter_succ
+)
+"dgraph/dGraphModel.ml" 173 6192 6232 "dgraph/dGraphModel.ml" 173 6192 6233
+type(
+  DotG.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 173 6192 6213 "dgraph/dGraphModel.ml" 173 6192 6214
+)
+"dgraph/dGraphModel.ml" 173 6192 6234 "dgraph/dGraphModel.ml" 173 6192 6235
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 173 6192 6217 "dgraph/dGraphModel.ml" 173 6192 6235
+call(
+  tail
+)
+type(
+  DotG.vertex -> unit
+)
+"dgraph/dGraphModel.ml" 174 6236 6259 "dgraph/dGraphModel.ml" 174 6236 6260
+type(
+  DotG.edge -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 174 6236 6263 "dgraph/dGraphModel.ml" 174 6236 6283
+)
+"dgraph/dGraphModel.ml" 174 6236 6263 "dgraph/dGraphModel.ml" 174 6236 6279
+type(
+  (DotG.edge -> unit) -> DotG.t -> DotG.vertex -> unit
+)
+ident(
+  ext_ref DotG.iter_succ_e
+)
+"dgraph/dGraphModel.ml" 174 6236 6280 "dgraph/dGraphModel.ml" 174 6236 6281
+type(
+  DotG.edge -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 174 6236 6259 "dgraph/dGraphModel.ml" 174 6236 6260
+)
+"dgraph/dGraphModel.ml" 174 6236 6282 "dgraph/dGraphModel.ml" 174 6236 6283
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 174 6236 6263 "dgraph/dGraphModel.ml" 174 6236 6283
+call(
+  tail
+)
+type(
+  DotG.vertex -> unit
+)
+"dgraph/dGraphModel.ml" 175 6284 6307 "dgraph/dGraphModel.ml" 175 6284 6308
+type(
+  DotG.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 175 6284 6311 "dgraph/dGraphModel.ml" 175 6284 6331
+)
+"dgraph/dGraphModel.ml" 175 6284 6311 "dgraph/dGraphModel.ml" 175 6284 6327
+type(
+  (DotG.vertex -> unit) -> DotG.t -> unit
+)
+ident(
+  ext_ref DotG.iter_vertex
+)
+"dgraph/dGraphModel.ml" 175 6284 6328 "dgraph/dGraphModel.ml" 175 6284 6329
+type(
+  DotG.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 175 6284 6307 "dgraph/dGraphModel.ml" 175 6284 6308
+)
+"dgraph/dGraphModel.ml" 175 6284 6330 "dgraph/dGraphModel.ml" 175 6284 6331
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 175 6284 6311 "dgraph/dGraphModel.ml" 175 6284 6331
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 176 6332 6366 "dgraph/dGraphModel.ml" 176 6332 6367
+type(
+  DotG.vertex -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 176 6332 6368 "dgraph/dGraphModel.ml" 176 6332 6375
+)
+"dgraph/dGraphModel.ml" 176 6332 6368 "dgraph/dGraphModel.ml" 176 6332 6369
+type(
+  DotG.vertex
+)
+ident(
+  def v "dgraph/dGraphModel.ml" 176 6332 6372 "dgraph/dGraphModel.ml" 176 6332 6375
+)
+"dgraph/dGraphModel.ml" 176 6332 6372 "dgraph/dGraphModel.ml" 176 6332 6373
+type(
+  DotG.vertex -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 176 6332 6366 "dgraph/dGraphModel.ml" 176 6332 6367
+)
+"dgraph/dGraphModel.ml" 176 6332 6374 "dgraph/dGraphModel.ml" 176 6332 6375
+type(
+  DotG.vertex
+)
+ident(
+  int_ref v "dgraph/dGraphModel.ml" 176 6332 6368 "dgraph/dGraphModel.ml" 176 6332 6369
+)
+"dgraph/dGraphModel.ml" 176 6332 6372 "dgraph/dGraphModel.ml" 176 6332 6375
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 177 6376 6401 "dgraph/dGraphModel.ml" 177 6376 6402
+type(
+  cluster -> unit
+)
+ident(
+  def f "dgraph/dGraphModel.ml" 177 6376 6405 "dgraph/dGraphModel.ml" 177 6376 6448
+)
+"dgraph/dGraphModel.ml" 177 6376 6405 "dgraph/dGraphModel.ml" 177 6376 6417
+type(
+  (cluster -> Graph.Dot_ast.attr list -> unit) ->
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t -> unit
+)
+ident(
+  ext_ref Hashtbl.iter
+)
+"dgraph/dGraphModel.ml" 177 6376 6423 "dgraph/dGraphModel.ml" 177 6376 6424
+type(
+  cluster
+)
+ident(
+  def k "dgraph/dGraphModel.ml" 177 6376 6425 "dgraph/dGraphModel.ml" 177 6376 6433
+)
+"dgraph/dGraphModel.ml" 177 6376 6425 "dgraph/dGraphModel.ml" 177 6376 6426
+type(
+  Graph.Dot_ast.attr list
+)
+"dgraph/dGraphModel.ml" 177 6376 6430 "dgraph/dGraphModel.ml" 177 6376 6431
+type(
+  cluster -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphModel.ml" 177 6376 6401 "dgraph/dGraphModel.ml" 177 6376 6402
+)
+"dgraph/dGraphModel.ml" 177 6376 6432 "dgraph/dGraphModel.ml" 177 6376 6433
+type(
+  cluster
+)
+ident(
+  int_ref k "dgraph/dGraphModel.ml" 177 6376 6423 "dgraph/dGraphModel.ml" 177 6376 6424
+)
+"dgraph/dGraphModel.ml" 177 6376 6430 "dgraph/dGraphModel.ml" 177 6376 6433
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 177 6376 6418 "dgraph/dGraphModel.ml" 177 6376 6434
+type(
+  cluster -> Graph.Dot_ast.attr list -> unit
+)
+"dgraph/dGraphModel.ml" 177 6376 6435 "dgraph/dGraphModel.ml" 177 6376 6448
+type(
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t
+)
+"dgraph/dGraphModel.ml" 177 6376 6405 "dgraph/dGraphModel.ml" 177 6376 6448
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphModel.ml" 180 6481 6508 "dgraph/dGraphModel.ml" 180 6481 6522
+type(
+  DotG.t -> DotG.vertex -> DotG.vertex -> DotG.edge
+)
+ident(
+  ext_ref DotG.find_edge
+)
+"dgraph/dGraphModel.ml" 180 6481 6523 "dgraph/dGraphModel.ml" 180 6481 6524
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 180 6481 6508 "dgraph/dGraphModel.ml" 180 6481 6524
+call(
+  stack
+)
+type(
+  DotG.vertex -> DotG.vertex -> DotG.edge
+)
+"dgraph/dGraphModel.ml" 180 6481 6530 "dgraph/dGraphModel.ml" 180 6481 6539
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 180 6481 6543 "dgraph/dGraphModel.ml" 180 6481 6555
+type(
+  DotG.vertex -> DotG.vertex -> DotG.edge
+)
+"dgraph/dGraphModel.ml" 180 6481 6504 "dgraph/dGraphModel.ml" 180 6481 6555
+type(
+  DotG.vertex -> DotG.vertex -> DotG.edge
+)
+type(
+  DotG.vertex -> DotG.vertex -> DotG.edge
+)
+"dgraph/dGraphModel.ml" 181 6556 6578 "dgraph/dGraphModel.ml" 181 6556 6591
+type(
+  DotG.t -> DotG.vertex -> DotG.vertex -> bool
+)
+ident(
+  ext_ref DotG.mem_edge
+)
+"dgraph/dGraphModel.ml" 181 6556 6592 "dgraph/dGraphModel.ml" 181 6556 6593
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 181 6556 6578 "dgraph/dGraphModel.ml" 181 6556 6593
+call(
+  tail
+)
+type(
+  DotG.vertex -> DotG.vertex -> bool
+)
+type(
+  DotG.vertex -> DotG.vertex -> bool
+)
+"dgraph/dGraphModel.ml" 182 6594 6618 "dgraph/dGraphModel.ml" 182 6594 6633
+type(
+  DotG.t -> DotG.edge -> bool
+)
+ident(
+  ext_ref DotG.mem_edge_e
+)
+"dgraph/dGraphModel.ml" 182 6594 6634 "dgraph/dGraphModel.ml" 182 6594 6635
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 182 6594 6618 "dgraph/dGraphModel.ml" 182 6594 6635
+call(
+  tail
+)
+type(
+  DotG.edge -> bool
+)
+type(
+  DotG.edge -> bool
+)
+"dgraph/dGraphModel.ml" 183 6636 6660 "dgraph/dGraphModel.ml" 183 6636 6675
+type(
+  DotG.t -> DotG.vertex -> bool
+)
+ident(
+  ext_ref DotG.mem_vertex
+)
+"dgraph/dGraphModel.ml" 183 6636 6676 "dgraph/dGraphModel.ml" 183 6636 6677
+type(
+  DotG.t
+)
+"dgraph/dGraphModel.ml" 183 6636 6660 "dgraph/dGraphModel.ml" 183 6636 6677
+call(
+  tail
+)
+type(
+  DotG.vertex -> bool
+)
+type(
+  DotG.vertex -> bool
+)
+"dgraph/dGraphModel.ml" 184 6678 6695 "dgraph/dGraphModel.ml" 184 6678 6705
+type(
+  DotG.E.t -> DotG.E.vertex
+)
+type(
+  DotG.E.t -> DotG.E.vertex
+)
+ident(
+  ext_ref DotG.E.src
+)
+"dgraph/dGraphModel.ml" 185 6706 6723 "dgraph/dGraphModel.ml" 185 6706 6733
+type(
+  DotG.E.t -> DotG.E.vertex
+)
+type(
+  DotG.E.t -> DotG.E.vertex
+)
+ident(
+  ext_ref DotG.E.dst
+)
+"dgraph/dGraphModel.ml" 188 6752 6778 "dgraph/dGraphModel.ml" 188 6752 6790
+type(
+  XDot.bounding_box
+)
+type(
+  XDot.bounding_box
+)
+ident(
+  ext_ref XDot.bounding_box
+)
+"dgraph/dGraphModel.ml" 189 6791 6822 "dgraph/dGraphModel.ml" 189 6791 6834
+type(
+  DotG.V.t -> DotG.V.label
+)
+type(
+  DotG.V.t -> DotG.V.label
+)
+ident(
+  ext_ref DotG.V.label
+)
+"dgraph/dGraphModel.ml" 190 6835 6864 "dgraph/dGraphModel.ml" 190 6835 6876
+type(
+  DotG.E.t -> DotG.E.label
+)
+type(
+  DotG.E.t -> DotG.E.label
+)
+ident(
+  ext_ref DotG.E.label
+)
+"dgraph/dGraphModel.ml" 191 6877 6907 "dgraph/dGraphModel.ml" 191 6877 6908
+type(
+  cluster
+)
+ident(
+  def c "dgraph/dGraphModel.ml" 192 6911 6917 "dgraph/dGraphModel.ml" 195 7003 7039
+)
+"dgraph/dGraphModel.ml" 192 6911 6921 "dgraph/dGraphModel.ml" 192 6911 6926
+type(
+  Graph.Dot_ast.attr list
+)
+"dgraph/dGraphModel.ml" 193 6929 6934 "dgraph/dGraphModel.ml" 193 6929 6946
+type(
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t ->
+  cluster -> Graph.Dot_ast.attr list
+)
+ident(
+  ext_ref Hashtbl.find
+)
+"dgraph/dGraphModel.ml" 193 6929 6947 "dgraph/dGraphModel.ml" 193 6929 6960
+type(
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t
+)
+"dgraph/dGraphModel.ml" 193 6929 6961 "dgraph/dGraphModel.ml" 193 6929 6962
+type(
+  cluster
+)
+ident(
+  int_ref c "dgraph/dGraphModel.ml" 191 6877 6907 "dgraph/dGraphModel.ml" 191 6877 6908
+)
+"dgraph/dGraphModel.ml" 193 6929 6934 "dgraph/dGraphModel.ml" 193 6929 6962
+call(
+  stack
+)
+type(
+  Graph.Dot_ast.attr list
+)
+"dgraph/dGraphModel.ml" 193 6929 6968 "dgraph/dGraphModel.ml" 193 6929 6977
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 193 6929 6981 "dgraph/dGraphModel.ml" 193 6929 6993
+type(
+  Graph.Dot_ast.attr list
+)
+"dgraph/dGraphModel.ml" 193 6929 6930 "dgraph/dGraphModel.ml" 193 6929 6993
+type(
+  Graph.Dot_ast.attr list
+)
+"dgraph/dGraphModel.ml" 195 7003 7009 "dgraph/dGraphModel.ml" 195 7003 7033
+type(
+  Graph.Dot_ast.attr list -> XDot.cluster_layout
+)
+ident(
+  ext_ref XDot.read_cluster_layout
+)
+"dgraph/dGraphModel.ml" 195 7003 7034 "dgraph/dGraphModel.ml" 195 7003 7039
+type(
+  Graph.Dot_ast.attr list
+)
+ident(
+  int_ref attrs "dgraph/dGraphModel.ml" 192 6911 6921 "dgraph/dGraphModel.ml" 192 6911 6926
+)
+"dgraph/dGraphModel.ml" 195 7003 7009 "dgraph/dGraphModel.ml" 195 7003 7039
+call(
+  tail
+)
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphModel.ml" 192 6911 6917 "dgraph/dGraphModel.ml" 195 7003 7039
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphModel.ml" 198 7047 7053 "dgraph/dGraphModel.ml" 198 7047 7058
+type(
+  DotG.t ->
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t -> XDot.bounding_box -> model
+)
+ident(
+  def model "dgraph/dGraphModel.ml" 198 7047 7070 "dgraph/dGraphModel.ml" 199 7071 7074
+)
+"dgraph/dGraphModel.ml" 198 7047 7061 "dgraph/dGraphModel.ml" 198 7047 7070
+type(
+  DotG.t ->
+  (cluster, Graph.Dot_ast.attr list) Hashtbl.t -> XDot.bounding_box -> model
+)
+"dgraph/dGraphModel.ml" 202 7141 7145 "dgraph/dGraphModel.ml" 202 7141 7153
+type(
+  ?cmd:string -> string -> DotModel.model
+)
+ident(
+  def read_dot "dgraph/dGraphModel.ml" 219 7792 7792 --
+)
+"dgraph/dGraphModel.ml" 202 7141 7156 "dgraph/dGraphModel.ml" 202 7141 7159
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 202 7141 7160 "dgraph/dGraphModel.ml" 202 7141 7165
+type(
+  string
+)
+type(
+  string
+)
+type(
+  string
+)
+ident(
+  int_ref *sth* "dgraph/dGraphModel.ml" 202 7141 7160 "dgraph/dGraphModel.ml" 202 7141 7165
+)
+type(
+  string option
+)
+type(
+  string option
+)
+type(
+  string
+)
+ident(
+  def *sth* "dgraph/dGraphModel.ml" 202 7141 7160 "dgraph/dGraphModel.ml" 202 7141 7165
+)
+type(
+  string option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphModel.ml" 202 7141 7160 "dgraph/dGraphModel.ml" 202 7141 7165
+)
+type(
+  string option
+)
+ident(
+  def *opt* "dgraph/dGraphModel.ml" 202 7141 7154 "dgraph/dGraphModel.ml" 215 7641 7697
+)
+"dgraph/dGraphModel.ml" 202 7141 7167 "dgraph/dGraphModel.ml" 202 7141 7175
+type(
+  string
+)
+ident(
+  def dot_file "dgraph/dGraphModel.ml" 203 7178 7180 "dgraph/dGraphModel.ml" 215 7641 7697
+)
+"dgraph/dGraphModel.ml" 203 7178 7184 "dgraph/dGraphModel.ml" 203 7178 7192
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 203 7178 7199 "dgraph/dGraphModel.ml" 203 7178 7222
+type(
+  string -> string
+)
+ident(
+  ext_ref Filename.chop_extension
+)
+"dgraph/dGraphModel.ml" 203 7178 7223 "dgraph/dGraphModel.ml" 203 7178 7231
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphModel.ml" 202 7141 7167 "dgraph/dGraphModel.ml" 202 7141 7175
+)
+"dgraph/dGraphModel.ml" 203 7178 7199 "dgraph/dGraphModel.ml" 203 7178 7231
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 204 7232 7271 "dgraph/dGraphModel.ml" 204 7232 7272
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 204 7232 7254 "dgraph/dGraphModel.ml" 204 7232 7272
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 204 7232 7276 "dgraph/dGraphModel.ml" 204 7232 7284
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphModel.ml" 202 7141 7167 "dgraph/dGraphModel.ml" 202 7141 7175
+)
+"dgraph/dGraphModel.ml" 203 7178 7195 "dgraph/dGraphModel.ml" 204 7232 7284
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 205 7288 7294 "dgraph/dGraphModel.ml" 205 7288 7303
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 205 7288 7306 "dgraph/dGraphModel.ml" 205 7288 7314
+type(
+  string
+)
+ident(
+  int_ref basename "dgraph/dGraphModel.ml" 203 7178 7184 "dgraph/dGraphModel.ml" 203 7178 7192
+)
+"dgraph/dGraphModel.ml" 205 7288 7315 "dgraph/dGraphModel.ml" 205 7288 7316
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"dgraph/dGraphModel.ml" 205 7288 7317 "dgraph/dGraphModel.ml" 205 7288 7324
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 205 7288 7306 "dgraph/dGraphModel.ml" 205 7288 7324
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 206 7328 7334 "dgraph/dGraphModel.ml" 206 7328 7341
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 206 7328 7344 "dgraph/dGraphModel.ml" 206 7328 7358
+type(
+  (string -> string -> string -> string, unit, string) format ->
+  string -> string -> string -> string
+)
+ident(
+  ext_ref Printf.sprintf
+)
+"dgraph/dGraphModel.ml" 206 7328 7359 "dgraph/dGraphModel.ml" 206 7328 7378
+type(
+  (string -> string -> string -> string, unit, string) format
+)
+"dgraph/dGraphModel.ml" 206 7328 7379 "dgraph/dGraphModel.ml" 206 7328 7382
+type(
+  string
+)
+ident(
+  int_ref cmd "dgraph/dGraphModel.ml" 202 7141 7156 "dgraph/dGraphModel.ml" 202 7141 7159
+)
+"dgraph/dGraphModel.ml" 206 7328 7383 "dgraph/dGraphModel.ml" 206 7328 7391
+type(
+  string
+)
+ident(
+  int_ref dot_file "dgraph/dGraphModel.ml" 202 7141 7167 "dgraph/dGraphModel.ml" 202 7141 7175
+)
+"dgraph/dGraphModel.ml" 206 7328 7392 "dgraph/dGraphModel.ml" 206 7328 7401
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/dGraphModel.ml" 205 7288 7294 "dgraph/dGraphModel.ml" 205 7288 7303
+)
+"dgraph/dGraphModel.ml" 206 7328 7344 "dgraph/dGraphModel.ml" 206 7328 7401
+call(
+  stack
+)
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 209 7427 7435 "dgraph/dGraphModel.ml" 209 7427 7446
+type(
+  string -> int
+)
+ident(
+  ext_ref Sys.command
+)
+"dgraph/dGraphModel.ml" 209 7427 7447 "dgraph/dGraphModel.ml" 209 7427 7454
+type(
+  string
+)
+ident(
+  int_ref dot_cmd "dgraph/dGraphModel.ml" 206 7328 7334 "dgraph/dGraphModel.ml" 206 7328 7341
+)
+"dgraph/dGraphModel.ml" 209 7427 7435 "dgraph/dGraphModel.ml" 209 7427 7454
+type(
+  int
+)
+"dgraph/dGraphModel.ml" 210 7460 7466 "dgraph/dGraphModel.ml" 210 7460 7467
+type(
+  int
+)
+"dgraph/dGraphModel.ml" 211 7477 7482 "dgraph/dGraphModel.ml" 211 7477 7487
+type(
+  DotB.G.t
+)
+"dgraph/dGraphModel.ml" 211 7477 7489 "dgraph/dGraphModel.ml" 211 7477 7491
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 211 7477 7493 "dgraph/dGraphModel.ml" 211 7477 7506
+type(
+  Graph.Dot.clusters_hash
+)
+"dgraph/dGraphModel.ml" 211 7477 7482 "dgraph/dGraphModel.ml" 211 7477 7506
+type(
+  DotB.G.t * string * Graph.Dot.clusters_hash
+)
+"dgraph/dGraphModel.ml" 212 7509 7512 "dgraph/dGraphModel.ml" 212 7509 7553
+type(
+  string -> DotB.G.t * string * Graph.Dot.clusters_hash
+)
+ident(
+  ext_ref DotParser.parse_bounding_box_and_clusters
+)
+"dgraph/dGraphModel.ml" 212 7509 7554 "dgraph/dGraphModel.ml" 212 7509 7563
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/dGraphModel.ml" 205 7288 7294 "dgraph/dGraphModel.ml" 205 7288 7303
+)
+"dgraph/dGraphModel.ml" 212 7509 7512 "dgraph/dGraphModel.ml" 212 7509 7563
+call(
+  stack
+)
+type(
+  DotB.G.t * string * Graph.Dot.clusters_hash
+)
+"dgraph/dGraphModel.ml" 213 7567 7568 "dgraph/dGraphModel.ml" 213 7567 7582
+type(
+  DotG.t -> Graph.Dot.clusters_hash -> XDot.bounding_box -> DotModel.model
+)
+ident(
+  ext_ref DotModel.model
+)
+"dgraph/dGraphModel.ml" 213 7567 7583 "dgraph/dGraphModel.ml" 213 7567 7588
+type(
+  DotB.G.t
+)
+ident(
+  int_ref graph "dgraph/dGraphModel.ml" 211 7477 7482 "dgraph/dGraphModel.ml" 211 7477 7487
+)
+"dgraph/dGraphModel.ml" 213 7567 7589 "dgraph/dGraphModel.ml" 213 7567 7602
+type(
+  Graph.Dot.clusters_hash
+)
+ident(
+  int_ref clusters_hash "dgraph/dGraphModel.ml" 211 7477 7493 "dgraph/dGraphModel.ml" 211 7477 7506
+)
+"dgraph/dGraphModel.ml" 213 7567 7604 "dgraph/dGraphModel.ml" 213 7567 7626
+type(
+  string -> XDot.bounding_box
+)
+ident(
+  ext_ref XDot.read_bounding_box
+)
+"dgraph/dGraphModel.ml" 213 7567 7627 "dgraph/dGraphModel.ml" 213 7567 7629
+type(
+  string
+)
+ident(
+  int_ref bb "dgraph/dGraphModel.ml" 211 7477 7489 "dgraph/dGraphModel.ml" 211 7477 7491
+)
+"dgraph/dGraphModel.ml" 213 7567 7603 "dgraph/dGraphModel.ml" 213 7567 7630
+call(
+  stack
+)
+type(
+  XDot.bounding_box
+)
+"dgraph/dGraphModel.ml" 213 7567 7568 "dgraph/dGraphModel.ml" 213 7567 7630
+call(
+  tail
+)
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 210 7460 7471 "dgraph/dGraphModel.ml" 214 7631 7640
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 215 7641 7647 "dgraph/dGraphModel.ml" 215 7641 7648
+type(
+  int
+)
+"dgraph/dGraphModel.ml" 215 7641 7652 "dgraph/dGraphModel.ml" 215 7641 7657
+type(
+  exn -> DotModel.model
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/dGraphModel.ml" 215 7641 7668 "dgraph/dGraphModel.ml" 215 7641 7696
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 215 7641 7658 "dgraph/dGraphModel.ml" 215 7641 7697
+type(
+  exn
+)
+"dgraph/dGraphModel.ml" 215 7641 7652 "dgraph/dGraphModel.ml" 215 7641 7697
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 209 7427 7429 "dgraph/dGraphModel.ml" 215 7641 7697
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 206 7328 7330 "dgraph/dGraphModel.ml" 215 7641 7697
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 205 7288 7290 "dgraph/dGraphModel.ml" 215 7641 7697
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 203 7178 7180 "dgraph/dGraphModel.ml" 215 7641 7697
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 219 7792 7796 "dgraph/dGraphModel.ml" 219 7792 7805
+type(
+  string -> DotModel.model
+)
+ident(
+  def read_xdot "dgraph/dGraphModel.ml" 223 7912 7976 --
+)
+"dgraph/dGraphModel.ml" 219 7792 7806 "dgraph/dGraphModel.ml" 219 7792 7815
+type(
+  string
+)
+ident(
+  def xdot_file "dgraph/dGraphModel.ml" 220 7818 7820 "dgraph/dGraphModel.ml" 223 7912 7976
+)
+"dgraph/dGraphModel.ml" 220 7818 7824 "dgraph/dGraphModel.ml" 220 7818 7829
+type(
+  DotB.G.t
+)
+"dgraph/dGraphModel.ml" 220 7818 7831 "dgraph/dGraphModel.ml" 220 7818 7833
+type(
+  string
+)
+"dgraph/dGraphModel.ml" 220 7818 7835 "dgraph/dGraphModel.ml" 220 7818 7848
+type(
+  Graph.Dot.clusters_hash
+)
+"dgraph/dGraphModel.ml" 220 7818 7824 "dgraph/dGraphModel.ml" 220 7818 7848
+type(
+  DotB.G.t * string * Graph.Dot.clusters_hash
+)
+"dgraph/dGraphModel.ml" 221 7851 7855 "dgraph/dGraphModel.ml" 221 7851 7896
+type(
+  string -> DotB.G.t * string * Graph.Dot.clusters_hash
+)
+ident(
+  ext_ref DotParser.parse_bounding_box_and_clusters
+)
+"dgraph/dGraphModel.ml" 221 7851 7897 "dgraph/dGraphModel.ml" 221 7851 7906
+type(
+  string
+)
+ident(
+  int_ref xdot_file "dgraph/dGraphModel.ml" 219 7792 7806 "dgraph/dGraphModel.ml" 219 7792 7815
+)
+"dgraph/dGraphModel.ml" 221 7851 7855 "dgraph/dGraphModel.ml" 221 7851 7906
+call(
+  stack
+)
+type(
+  DotB.G.t * string * Graph.Dot.clusters_hash
+)
+"dgraph/dGraphModel.ml" 223 7912 7914 "dgraph/dGraphModel.ml" 223 7912 7928
+type(
+  DotG.t -> Graph.Dot.clusters_hash -> XDot.bounding_box -> DotModel.model
+)
+ident(
+  ext_ref DotModel.model
+)
+"dgraph/dGraphModel.ml" 223 7912 7929 "dgraph/dGraphModel.ml" 223 7912 7934
+type(
+  DotB.G.t
+)
+ident(
+  int_ref graph "dgraph/dGraphModel.ml" 220 7818 7824 "dgraph/dGraphModel.ml" 220 7818 7829
+)
+"dgraph/dGraphModel.ml" 223 7912 7935 "dgraph/dGraphModel.ml" 223 7912 7948
+type(
+  Graph.Dot.clusters_hash
+)
+ident(
+  int_ref clusters_hash "dgraph/dGraphModel.ml" 220 7818 7835 "dgraph/dGraphModel.ml" 220 7818 7848
+)
+"dgraph/dGraphModel.ml" 223 7912 7950 "dgraph/dGraphModel.ml" 223 7912 7972
+type(
+  string -> XDot.bounding_box
+)
+ident(
+  ext_ref XDot.read_bounding_box
+)
+"dgraph/dGraphModel.ml" 223 7912 7973 "dgraph/dGraphModel.ml" 223 7912 7975
+type(
+  string
+)
+ident(
+  int_ref bb "dgraph/dGraphModel.ml" 220 7818 7831 "dgraph/dGraphModel.ml" 220 7818 7833
+)
+"dgraph/dGraphModel.ml" 223 7912 7949 "dgraph/dGraphModel.ml" 223 7912 7976
+call(
+  stack
+)
+type(
+  XDot.bounding_box
+)
+"dgraph/dGraphModel.ml" 223 7912 7914 "dgraph/dGraphModel.ml" 223 7912 7976
+call(
+  tail
+)
+type(
+  DotModel.model
+)
+"dgraph/dGraphModel.ml" 220 7818 7820 "dgraph/dGraphModel.ml" 223 7912 7976
+type(
+  DotModel.model
+)

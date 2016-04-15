@@ -1,0 +1,1484 @@
+###############################################################################
+# Preliminary notes:                                                          #
+# ------------------                                                          #
+# Mark "-": change with an impact for users (and possibly developers).        #
+# Mark "o": change with an impact for developers only.                        #
+# Mark "+": change for Frama-C-commits audience (not in html version)         #
+# Mark "*": bug fixed.                                                        #
+# Mark "!": change that can break compatibility with existing development.    #
+# '#nnn'   : BTS entry #nnn                                                   #
+# '#!nnn'  : BTS private entry #nnn                                           #
+# For compatibility with old change log formats:                              #
+# '#?nnn'  : OLD-BTS entry #nnn                                               #
+###############################################################################
+
+#####################################
+Open Source Release Nitrogen_20111001
+#####################################
+
+-  Rte        [2011/10/07] No longer position 'Don't know' statuses
+-  Value      [2011/10/07] New alarm for left shift of negative values.
+	      Minor other changes related to shift operation alarms.
+o*! Rte       [2011/10/06] Correct plug-in name for dynamically registered
+	      RTE functions.
+-* Kernel     [2011/10/06] Warn when the plug-in specified by -load-module
+	      or -load-script is not found (used to remain silent)
+-!* Kernel    [2011/10/06] Do not normalize Pre in Old, especially where Old
+	      is not allowed.
+-  Value      [2011/10/01] Do not continue evaluating successive 'requires'
+	      or 'ensures' clauses if one of them is false.
+-  Kernel     [2011/10/01] New kind of command-line parameter, for commands
+	      that do heavy output. Used for Value, Pdg and Metrics.
+-* Cil        [2011/09/30] Correctly handle casts in switch. Fixes #961.
+-! Rte        [2011/09/30] Option -rte-precond is not entailed by -rte-all
+	      anymore (precontion annotations must now be required explicitly).
+-* Aorai      [2011/09/30] Generation of loop invariant for intermediate
+	      counter + fixes various issues
+-! Slicing    [2011/09/30] Option -slice-print is now deprecated: use instead
+	      <normal slicing command> -then-on 'Slicing export' -print
+-  From       [2011/09/29] Display results function by function, instead of
+	      as one big block (may lower memory consumption considerably).
+-  Value      [2011/09/27] New option -remove-redundant-alarms for removing
+	      redundant alarms. This was previously done by default. Use this
+	      option if you are going to inspect alarms emitted by Value.
+-* Kernel     [2011/09/26] Treat long bitfields the same way as gcc and clang.
+	      Fixes #!959.
+-* Kernel     [2011/09/26] New exception for Ast.UntypedFiles.get when no
+	      untyped AST is available. Fixes #954.
+-  Value      [2011/09/23] New alarm, for programs that do not respect
+	      C99 6.5.16.1:3 (overlapping assignment from lvalue to lvalue).
+	      Partially supported (not emitted in some cases).
+-* Kernel     [2011/09/23] Fixes various performance issues when parsing very
+	      large functions. Fixes #!965.
+-  Value      [2011/09/23] Improved precision of if (x!=c) when the value set
+	      of x is an interval of 9 elements.
+-* Slicing    [2011/09/23] Use correct function during generation of
+	      sliced project. Fixes #!950.
+o* Kernel     [2011/09/22] Copy visitor creates new kf before visiting a
+	      function, allowing to use it for creating Property.t items in
+	      the new project during visit (fixes #!942).
+-* Value      [2011/09/22] Much more clever when interpreting logic terms,
+	      including those containing \old (eg. formals in postconditions)
+-  Value      [2011/09/21] Raised cut-off limit between sets and intervals
+	      from 7 to 8 elements.
+-  Value      [2011/09/21] New informative message when not using.
+	      -val-signed-overflow-alarms "2's complement assumed for overflow"
+o! Value      [2011/09/18] Changed the representation of Ival.t. If an
+	      external plug-in matches "Ival.Set s", a simple fix is
+              to add "let s = Ival.set_of_array s in" as first line of
+	      that case.
+-  Value      [2011/09/16] Improved precision of &.
+-  Value      [2011/09/16] Improved precision when using -all-rounding-modes.
+o  Kernel     [2011/09/09] Map_common_interface to have a merge function for
+	      Ocaml < 3.12.
+o  Kernel     [2011/09/09] Quadruple datatype.
+-  Value      [2011/09/09] Better message when interpretation stops
+	      for a function argument.
+-  Pdg        [2011/09/06] Pdg can now be saved on disk.
+-* Logic      [2011/04/20] Fix bug #!501: volatile clauses relative to
+	      partially volatile lvalues are handled by the kernel.
+-  Pdg        [2011/09/03] Improved time and space complexity on big functions.
+-  Cil        [2011/09/02] Add support for GCC specific cast from field of
+	      union to union
+-* Cil        [2011/09/02] Fix merging bug (#!948).
+-* Slicing    [2011/09/02] Fix incorrect simplification of single-statement
+	      block in presence of label.
+-  Value      [2011/09/02] Wide strings more supported.
+-  Kernel     [2011/09/02] Improve space complexity of function stmt_can_reach.
+-  Semantic Constant Folding [2011/09/02] All options are prefixed by "scf".
+	      Use -scf-help for the details. Fixed #!946.
+	      Compatibility is preserved thanks to option aliases.
+-  Value      [2011/08/30] Remove non-relevant variables from the 'Modifies'
+	      clauses of the GUI.
+o! Kernel     [2011/08/30] Add parameter ~with_locals to Db.accept_base
+	      (prior this, ~with_locals was implicitly false)
+o! Value      [2011/08/30] Signature change in CilE: plugins that want to
+	      emit Value analysis alarms must define their own emitters.
+o! Value      [2011/08/30] Add some missing ~with_alarms arguments, notably
+	      to offsetmaps copy and paste.
+o! Kernel     [2011/08/29] Export datatype Varinfo.Hptset. Signature change
+	      in functor Abstract_interp.Make_Hashconsed_Lattice_Set.
+-  Metrics    [2011/08/26] New command-line options to compute the functions
+	      potentially called from a given function, and the percentage
+	      of functions analyzed by the value analysis.
+-  Value      [2011/08/25] Improve handling of assigns in library functions.
+-  Occurrence [2011/08/25] Better pretty-printing: do not display 
+	      internal ids anymore.
+-! Value      [2011/08/24] Improve behavior in presence of errors during
+	      the computation of the initial state. Allow non ISO global
+	      initializers using the value of constant globals defined earlier.
+o! Kernel     [2011/08/23] Getters of Dynamic.Parameter now get an extra
+	      argument of type unit. May improve efficiency a lot.
+-* Kernel     [2011/08/23] Fixes visitor bug + properly refresh ids of
+	      properties in code transformation (in particular loop unrolling).
+-* Kernel     [2011/08/15] Add parameter ~declarations to
+	      Globals.FileIndex.get_functions. Prevent duplication bug
+	      in properties navigator of the GUI.
+-  Inout      [2011/08/12] Operational inputs and outputs are now more precise
+	      for library functions: assigns clause are evaluated at each call.
+o! Inout      [2011/08/12] Interface change. Non_contextual renamed to
+	      Cumulative_analysis.
+-* Cil        [2011/08/10] Fix conversion bug for f(i++) or f(++i) when i has
+	      size less than int, and f expects an int (bug #911).
+-  Value      [2011/08/10] Loop invariants are now used to improve analysis.
+-  Value      [2011/08/09] Uses "complete behaviors" information.
+-  Scope      [2011/08/09] "Show Defs" is now an interprocedural analysis.
+o! Value      [2011/08/09] Module Cvalue_type renamed to Cvalue.
+	      Module Relations_type removed. Use Cvalue instead.
+-  Value      [2011/08/04] Postconditions containing \old are now handled.
+-  Kernel     [2011/08/04] Current pragmas no longer give rise to code
+	      annotations (as they do not contain anything that can be proven).
+-! Gui        [2011/08/04] Improve labels under the icons of the toolbar. Smart
+	      constructors in Menu_manager now require a label and a tooltip.
+o  Kernel     [2011/08/04] Add Kernel.Unicode.without_unicode, which applies
+	      a function without upsetting the Unicode option in the gui.
+-* Impact     [2011/08/04] Correct a journalisation bug in gui mode.
+-  Value      [2011/08/01] More precise when an alarm is emited in a loop.
+o! Kernel     [2011/08/01] Signature of Plugin renamed for consistency.
+              Use carbon2nitrogen for automatic translation.
+o! Kernel     [2011/08/01] Annotations.replace and
+	      Globals.Annotations.replace_all are removed.
+o! Kernel     [2011/08/01] Add IPLemma, IPNotacsl and IPConjunction as new
+	      constructors of Property.t; remove IPBehavior.
+-  Kernel     [2011/08/01] Better pretty printing of lists of any elements
+o! Kernel     [2011/08/01] Properties_status is now called
+	      Property_status. Fully new interface.
+o! Cil        [2011/08/01] Removing types about validity status from the AST.
+   	      Use module Property_status instead.
+o  Kernel     [2011/07/25] Adding option ~dkey to Log.debug functions.
+	      See Log.Messages for details.
+o! Kernel     [2011/07/22] Modification of Log.print_on_console. No more
+	      based on Format.kfprintf to avoid deadlock when
+	      error are raised by plugin pretty printers.
+-* Logic      [2011/07/22] Fixes bug #885 (wrong insertion of cast).
+-* Logic      [2011/07/21] Fixes bug #!887 (merging logic constants).
+o* Kernel     [2011/07/20] Ensures that a unique kf is generated per function
+	      in each project, avoid using kf for project A in project B.
+-! Kernel     [2011/07/18] Better handling of comments with -keep-comments
+	      and new API. See Cabshelper.Comments and Globals.get_comments_*
+o! Aorai      [2011/07/12] Redefinition of internal structures before
+	      enabling Ya extensions for sequences
+o! Value      [2011/07/11] Add argument "exact" to Lmap.paste_offsetmap (which
+	      was preciously supposed to be always true).
+-* Cil        [2011/07/06] Correct obscure Cil bug linked to the removal of
+	      trivial unspecified sequences or blocks. Fixes bug #882.
+-  Value      [2011/07/05] Option -val-builtin: experimental support for
+	      builtins that can fail (by calling a fallback C function).
+-  Value      [2011/07/04] New builtin Frama_C_dump_each_file, which dumps
+	      the entire memory state into successive files.
+o* Logic      [2011/06/29] Fixes bug #751 (Cil.lconstant now returns terms of
+	      type integer and not int)
+-  Metrics    [2011/06/27] Improves efficiency of metrics computation.
+o! Cil        [2011/06/24] Improve performances of Cil_datatype.Typ.{compare,
+              equal, hash}.
+-  Cil        [2011/06/22] Cache results of offsets computations.
+-* Logic      [2011/06/22] Fixed issue #!866 (merging specs included twice)
+o  Kernel     [2011/06/16] Exporting Property_status.self state
+o! Kernel     [2011/06/16] Dynamic.load_module searches in plugin path as
+	      advertised in its documentation
+o*! Cil       [2011/06/14] Support for large constants in programs. My_bigint
+	      is now used instead of Int64.t in the AST. Fixes #!858.
+o* Kernel     [2011/06/10] Fix dynamic access to function [is_default] of
+	      parameters.
+o! Kernel     [2011/06/10] New way for handling abstract type in the type
+	      library.
+-* Value      [2011/06/09] Remove some uneeded warnings when comparing function
+	      pointers with NULL. Fixes bug #!855.
+-* Kernel     [2011/06/09] Correct syntactic loop unrolling in presence of
+	      switch. Fixes bug #861.
+o! Kernel     [2011/06/09] Remove function CilE.update_gotos.
+o! Kernel     [2011/06/09] new function Kernel_function.set_spec which
+	      must be called whenever the spec of a kf is modified.
+o! Kernel     [2011/06/08] Remove Kernel_datatype (merge with Cil_datatatype).
+o! Kernel     [2011/06/07] Most types of module Property are now private.
+	      Use smart constructors instead.
+o  Kernel     [2011/06/07] New function Dynamic.is_plugin_present.
+-* Cil        [2011/06/07] Fixes bug #857 (problem with some C enum value and
+	      Ocaml 32 bits 3.11.0).
+-* Logic      [2011/06/06] Normalization of assigns clause: \result and
+	      \exit_status only appear if a \from is specified.
+	      Fixes #!557, #!845
+o! Kernel     [2011/06/06] Structural_descr.pack is now a private type.
+	      Use smart constructors instead.
+-  Value      [2011/06/04] Emit \pointer_comparable alarm for unspecified.
+              equality test between literal strings such as "foo" == "foo".
+-  GUI        [2011/06/03] Double-clicking on a warning now displays the
+	      pretty-printed source location
+o! Value      [2011/06/03] Functions valid_* now take an argument ~for_writing
+	      Pass true when the lvalue being considered is used for
+	      writing in the program. Pass false when unsure.
+-  Value      [2011/06/03] Literal strings are now read-only.
+-  Value      [2011/06/03] More agressive state reduction when emiting
+	      pointer_comparable assertions. Use option
+        	-undefined-pointer-comparison-propagate-all if you liked
+	      the old behavior better.
+o  GUI        [2011/06/02] Menu_manager now support check menus and toggle
+	      buttons
+-  Value      [2011/06/02] New option -no-val-show-progress
+-  Cil        [2011/06/02] Pretty-printing lval and term_lval the same way
+-  Cil        [2011/06/01] Normalization of lval: T+1 ==> &T[1] when T is in
+	      fact an array (implies *(T+1) ==> T[1])
+-* Logic      [2011/05/31] can have a local binding for a predicate (even
+              a constant one) without spurious warnings from typechecker.
+       	      (fixes #!848)
++  Ptests     [2011/05/31] Add -xunit option to support JUnit like output.
+o  Kernel     [2011/05/31] Cil_datatype.LogicLabel implemented
+o  Kernel     [2011/05/31] New function File.new_machdep in order to
+	      register a new machdep dynamically.
+-  Dominators,Postdominators [2011/05/31] No feedback by default. Use
+              -dominators-verbose 2 or -postdominators-verbose 2 if you need it.
+-* Project    [2011/05/31] Fix sharing bug when copying project.
+-  Value      [2011/05/31] Alarms may pretty print the abstract value culprit
+	      for the potential violation. This is particularly informative for
+	      certain alarms.
+-  Cil        [2011/05/30] Support for &"constant_string" in parser.
+-* Kernel     [2011/05/29] Fixed macros in limit.h.
+-  GUI        [2011/05/28] Support to display the state of the absolute memory.
+o! Kernel     [2011/05/26] Module Parameters is dead. Each module
+	      corresponding to a parameters is moved to Kernel. Module
+	      Parameters.Dynamic is now Dynamic.Parameter while
+	      Parameters.get_selection_context is now
+	      Plugin.get_selection_context. You can use the script
+	      bin/carbon2nitrogen to perform the translation (almost)
+	      automatically.
+-  Value      [2011/05/24] Option -val-after-results to control the recording
+	      of post-statement states. Active by default in the GUI.
+-* Cil        [2011/05/24] Fixes bug #832 (spurious warning for read/write
+	      accesses in undefined order)
+o! Logic      [2011/05/24] Add possibility to cast integer to C integral
+	      type when type-checking (Changes parameter of Logic_typing.Make)
+o! Kernel     [2011/05/24] Kernel_function.find_return may now raise
+	      exception Kernel_function.No_Statement.
+-* Cil        [2011/05/17] Fixes bug #771 (spurious warning for read/write
+	      accesses in undefined order).
+-* Kernel     [2011/05/13] Support GCC like typing of enums.
+-  GUI        [2011/05/13] Add history for navigating source code.
+o! GUI        [2011/05/13] Signature change for Filetree#add_select_function,
+              Filetree#select_global and Menu_manager.entry. Deprecate
+              Design.apply_on_selected.
+-* Kernel     [2011/05/12] Fixed typing of bitfields whose size is equal to the
+	      size of int (bugs #823, #817).
+-* Value      [2011/05/11] Fixed undocumented builtin is_base_aligned.
+-* Value      [2011/05/11] Fixed bug when bitfield receives the result of
+	      a function call (bug #819).
+-  GUI        [2011/05/10] Menu to configure what is displayed in the filetree.
+-* Logic      [2011/05/08] Fixed overloading resolution (fixes bug #655).
+-* Logic      [2011/05/06] Fixed issue with -pp-annot (fix bug #691 and #812).
+o  Kernel     [2011/05/05] Kernel now accepts declarations as main entry point.
+-  Aorai      [2011/05/04] Automaton is handled by contract of leaf functions.
+o  Cil        [2011/05/04] Various smart constructors and ast helper functions.
+-* Cil        [2011/05/04] Fixes wrong precedence of not in predicate when
+	      pretty-printing.
+-  GUI	      [2011/05/04] Automatically show the main function at launch.
+-  GUI	      [2011/05/04] Hide empty plugins columns in the filetree. Add
+	      support for hiding globals entirely.
+o! GUI	      [2011/05/04] Signature change for Filetree#append_pixbuf_column.
+o! Kernel     [2011/05/03] Remove Db_types module. All types are now in
+	      Cil_types. Moved type Alarms.t to Cil_types.alarm.
+-* Kernel     [2011/05/02] Support for GCC packed and aligned attributes and
+              for GCC pack pragmas. Fixes #719.
+-* Configure  [2011/05/02] Fix bug #!262: --disable-plugin works for external
+	      plugins compiled from within Frama-C kernel.
+-  Dataflow   [2011/04/29] Improve precision of backwards dataflow algorithm
+	      and of postdominators on 'if' with a missing branch
+-* Pdg        [2011/04/28] Better precision in the dependencies.
+              Fix bug #787, #789 and #802 : infinite loops creation in slicing.
+o  Value      [2011/04/28] Changed representation of bases for literal strings
+	      in preparation of related checks.
+o  Postdominators [2011/04/27] Add Db.PostdominatorsValue: postdominators
+	      taking into account value analysis results
+-* Value      [2011/04/24] Fixed crash for high values of -subdivide-float-var
+-  Value      [2011/04/24] Improved results for operation % by zero.
+	      Removed message about binary operators raising exceptions.
+o  Value      [2011/04/24] Defunctorized Lattice_Interval_Set.
+-* Logic      [2011/04/20] Fix bug #761: adding \old in ensures clause for
+	      parameters does not capture terms in associated offset.
+-* Logic      [2011/04/20] Fix bug #!501: volatile clauses are
+	      handled by the kernel.
+-* Slicing    [2011/04/20] Fix bug #799: missing label in sliced program.
+-* Value      [2011/04/17] Fix bug #798: calls to functions that
+	      return a value with latent conversion.
+-* Cil        [2011/04/15] Fix bug #785: promotion between long long and an
+	      unsigned same-sized type.
+-* Cil        [2011/04/14] Fix bugs #780 and #791: use ids unique
+	      between projects for varinfos, statements and expressions.
+o*! Cil       [2011/04/14] Remove incorrect Cil_const.Build_Counter; use
+	      State_builder.SharedCounter instead.
+-! Value      [2011/04/14] Use hash-consed sets of statements, making
+	      many analyses faster and leaner for large functions or idioms
+	      that make functions large at normalization
+              (e.g. large initialized local arrays).
+-* Kernel     [2011/04/14] Fix 'make clean' of plug-ins.
+-* Kernel     [2011/04/13] Fix bug #769: merging issue for declared struct.
+o* Kernel     [2011/04/13] Fix bug #790: AST integrity checker issue.
+-* Pdg        [2011/04/13] Fix bug #787 but leads to less precise dependencies.
+-* Slicing    [2011/04/02] Fix bug #786: missing label in sliced program.
+-* Value      [2011/04/12] Correctly emit \pointer_comparable(...) alarms.
+-* From       [2011/04/11] Fix  #781: handling of function calls with an implict
+	      cast for the assignment of the result.
+o  Makefile   [2011/04/08] Add target to launch the tests of a specific
+	      dynamic internal plugin from Frama-C's main Makefile.
+-* Aorai      [2011/04/08] Existing assigns are augmented with the locations
+	      corresponding to the instrumentation of the automaton.
+-  Value      [2011/04/05] Each precondition can get a specific validity status.
+-* Kernel     [2011/04/01] Fixed bug #770 and #769, part 1. Fixed typo in
+	      anonFieldName (was annonFieldName).
+-* Kernel     [2011/04/1] Fixed bug #775. Large octal and hexadecimal constants
+	      are now correctly typed.
+-* Occurrence [2011/04/01] Fixed bug when journalising.
+-* Slicing    [2011/04/01] Fixed bug #774: journalisation works again.
+o  Kernel     [2011/03/30] Removed type Log.source. From now on all locations
+	      have type Lexing.position.
+-  Kernel     [2011/03/30] Some messages may be printed several time for
+	      the same line if they refer to different columns.
+-* Value      [2011/03/30] Fixed bug #689. Each postcondition can get a
+	      specific validity status.
+-* Impact     [2011/03/30] Bug fixed when plug-in `Security_slicing'
+	      cannot be loaded or is incompatible with Impact.
+-* Impact     [2011/03/30] Bug fixed with '-impact-pragma f' on an unknown
+	      function f.
+-* Security_slicing [2011/03/30] Fixed bug #768 about exception raised when
+	      analysing variadic functions. A warning is now emitted:
+	      the function is ignored by the analyzer, thus the result is
+	      potentially incorrect.
+o! Kernel     [2011/03/29] Alternative signature for dataflow initial state.
+	      A few IntHash replaced by Stmt.Hashtbl.
+-  Users      [2011/03/28] Calls to this plug-in are now written in the journal.
+-* Value      [2011/03/26] Some floating-point alarms could be printed several
+	      times. Fixed.
+o! Kernel     [2011/03/25] get rid of bin/sed_inplace (use ISED from
+	      share/Makefile.common where needed, which was the recommended
+              way from the beginning).
+o* Kernel     [2011/03/25] Makefile.plugin and .dynamic more robust wrt
+	      external plugins (can make doc clean depend more easily;
+	      fixes bug #754, improves bug #742).
+-* Logic      [2011/03/24] \at(t,L) when t is a C array is now a logic array
+	      whose content is the one of t at L, not the address of the first
+	      element of t (which stays the same between L and Here anyway).
+	      partial fix of bug #761.
+-  Kernel     [2011/03/24] \at(p,Old) is pretty-printed as \old(p).
+o! Cil	      [2011/03/24] AST changed: removing Told and Pold constructs.
+o! Kernel     [2011/03/11] Following items are now deprecated:
+	      function Kernel_function.pretty_name: use Kernel_function.pretty
+	      module UseUnicode: use module Unicode.
+o! Kernel     [2011/03/11] Remove several kernel functions:
+	      Ast_info.pretty_vname: use Cil_datatype.Varinfo.pretty_vname
+	      Cil.print_utf8: use module Parameters.UseUnicode-
+	      Clexer.keep_comment: use module Parameters.PrintComments
+	      Cabshelper.continue_annot_error_set: 
+	      Cabshelper.continue_annot_error_set: use
+	      Parameters.ContinueOnAnnotError.off
+	      all Cil, Cilmsg and CilE functions for pretty printing: use Kernel
+	      ones instead.
+-  From       [2011/03/11] Display name of called function when displaying
+	      results of option -calldeps.
+o!* Logic     [2011/03/11] Implementation of statement contracts for function
+	      behaviors.
+-* Value      [2011/03/11] Fixed crash with ACSL assertions involving
+	      floating-point variables (bug #752).
+-* Logic      [2011/03/10] Fixed bug #744 (comparison between arithmetic types
+	      is done in the smallest possible type).
+-* Kernel     [2011/03/10] Bug fixed in File.create_project_from_visitor
+	      potentially impacted programs transformation.
+-* Kernel     [2011/03/10] Bug fixed in pretty printer.
+	      (incorrect precedences leading to missing parenthesis).
+-  Kernel     [2011/03/09] Big integers can now be displayed using hexadecimal
+              notation.
+-  Value      [2011/03/06] Improved option -subdivide-float-var when used
+	      without -all-rounding-modes. Improvement marginal for
+	      double computations and significant for float ones.
+o! Cil        [2011/03/04] AST changed: 'a before_after type is deleted. All
+	      annotations are now attached before.
+-* Value      [2011/03/04] Fixed correctness bug when bitfield initializer
+	      exceeds range (bug #721) (jrrt).
+o! Value      [2011/03/02] Minor interface changes in Value. Replace
+              some meaningless kinstr by stmt, and make the callbacks lazy.
+o! From       [2011/03/02] Minor interface changes in From. Replace
+              some meaningless kinstr by stmt, and make the callbacks lazy.
+-! Cil        [2011/03/02] Fixed #720 (incorrect simplification of switch).
+-  Kernel     [2011/03/02] Better error message when plug-in crashes on
+	      loading (bts #737).
+o  Kernel     [2011/03/02] New function File.create_rebuilt_project_from_visitor
+-  Cil        [2011/02/24] Implement precise dataflow on switch
+	      constructs. As side effect, improve precision of value analysis.
+o* Kernel     [2011/02/24] Fixed bug #727 (visiting a GFun spec in frama-c
+	      visitor was not done in the appropriate context).
+o* Ptests     [2011/02/24] Ptests adds filename of current test before the
+	      options given to frama-c (see #736).
+-  Aorai      [2011/02/24] Deterministic automata.
+-* Aorai      [2011/02/24] Fix issue in translation of guards + better error
+	      messages.
+o! Inout      [2011/02/23] Db.InOutContext becomes Db.Operational_inputs.
+-  Inout      [2011/02/23] Correctness in presence of recursive calls.
+	      See issue #733.
+-  Value      [2011/02/23] Improved informative messages about addresses
+	      of locals escaping their scope.
+o! Kernel     [2011/02/22] Change semantics of ChangeDoChildrenPost for
+	      vstmt_aux. See developer's manual for more precision.
+-  Value      [2011/02/22] Take Flush-To-Zero possibility into account
+	      for single-precision floats.
+-  Kernel     [2011/02/22] Exit status on unknown error is now 125. 127 and
+              126 are reserved for the shell by POSIX.
+o!* Kernel    [2011/02/21] Extlib.temp_file_cleanup_at_exit and
+	      Extlib.temp_dir_cleanup_at_exit may now raise exception
+	      Temp_file_error. They may raise an unspecified exception before.
+-* Value      [2011/02/20] Fixed bug #732: Synthetic results were partial
+	      when -slevel was set not high enough to unroll loops
+	      completely.
+-  Inout      [2011/02/20] Improved messages in presence of recursive calls
+o! Kernel     [2011/02/18] Bts #729: calling function Plugin.is_visible
+	      (resp. Plugin.is_invisible) forces to display
+	      (resp. prevents from displaying) the corresponding
+	      parameters in an help message.
+o! Kernel     [2011/02/18] module Service_graph: function entry_point in
+	      input and output of functor Make now returns an option type.
+-  Syntactic Callgraph [2011/02/18] Fixed issue #723: syntactic callgraph
+	      does not require an entry point anymore. If no entry point,
+	      services are less precise yet.
+-* Cil        [2011/02/17] Fixed bug #725 (type-checking && operator).
+-  Inout      [2011/02/17] Improved precision of the computation of
+	      operational inputs in presence of function calls.
+-* Logic      [2011/02/17] Fixed bug #714 about lexing ACSL characters and
+	      strings.
+o  Cil/Logic  [2011/02/16] New functions Clexer.is_c_keyword and
+	      Logic_lexer.is_acsl_keyword.
+-! Cil        [2011/02/16] Enumerated constants are kept in the AST.
+-* Aorai      [2011/02/16] State names used as enum constant are checked to be
+	      admissible fresh C identifiers.
+-* Value      [2011/02/15] Fixed bug when passing struct as argument to
+	      function with a big-endian target architecture.
+-  Value      [2011/02/15] Uniformized message displayed when no information
+	      is available for a function.
+-  Logic      [2011/02/14] Added support for bitwise operators --> and <--> into
+	      ACSL formula.
+-* Slicing    [2011/04/02] Fixed bug #709: missing statements in sliced program.
+-* Value      [2011/02/14] Fixed bug when passing bitfield
+	      as argument to function. (jrrt)
+-* Value      [2011/02/12] Fixed forgotten warning when passing completely
+	      undefined lvalue as argument to function. (jrrt)
+-* Value      [2011/02/12] Fixed correctness bug involving nested structs
+	      (jrrt).
+-* Value      [2011/02/12] Fixed crash when passing invalid argument to
+	      function, found by John Regehr using random testing (jrrt).
+-* Value      [2011/02/09] Fixed representation of unknown single-precision
+	      floats in initial context (it used to be the same as for
+	      an unknown double).
+-* Value      [2011/02/09] Changes related to 0., +0., -0., sort of thing.
+	      Unwarranted loss of precision fixed.
+
+###################################
+Open Source Release Carbon_20110201
+###################################
+
+-  WP         [2011/02/07] Plug-in WP removed from kernel-releases (now an
+	      independent plug-in).
+-  Logic      [2011/02/04] Mentioning a formal on the left-hand side of an
+	      assigns clause is now an
+	      error when type-checking logic annotations.
+o! Logic      [2011/02/04] Refactoring of assigns and from AST representation
+	      and of Property.identified_property.
+-  Value      [2011/02/04] Changes in Frama_C_memcpy built-in. Still not
+	      perfect.
+-  Value      [2011/02/04] Is is now possible to call Frama_C_show_each
+	      without ..._x.
+-  Value      [2011/02/04] Generate independent assertions for signed
+	      overflow and signed underflow. In many cases only one is
+	      generated (win!).
+o! Value      [2011/02/02] Renamed copy to copy_offsmap in Offsetmaps.
+	      The name "copy" clashed with Datatypes.
+o  Kernel     [2011/02/01] New syntactic context for memory accesses with
+              user-supplied validity range.
++  WP         [2011/01/31] Option -wp-warnings to display additional
+	      informations for 'Stronger' and 'Degenerated' goals.
++  WP         [2011/01/24] Option -wp-split-dim <n> to limit spliting
+	      up to 2**n sub-goals (see -wp-split option).
+-! Kernel     [2011/01/27] Handle errors better when they occur when exiting
+	      Frama-C. Slight semantic changes for exit code:
+	      - old code 5 is now 127;
+	      - code 5 is now: error raised when exiting Frama-C normally;
+	      - code 6: error raised when exiting Frama-C abnormally.
+-  Kernel     [2011/01/27] Improve performance on platform with dynami.c
+	      loading. Mainly impact value analysis
+	      (for developers: improve efficiency of Dynamic.get).
+-  Value      [2011/01/25] Change in initial states generated by -lib-entry
+	      Much smaller. Perhaps more representative.
++  WP         [2011/01/24] When -rte-precond is not used,
+	      wp generates a separate proof obligation for each call site.
+-! Configure  [2011/01/24] Frama-C does not require Apron anymore (Why
+	      does for Jessie). Thus fix bug #647.
+-  Value      [2011/01/22] More aggressive handling of if(x>e) where x has
+	      type double.
+o* Kernel     [2011/01/20] Fix bug #677. As a side-effect, function
+	      Plugin.add_alias is now deprecated and replaced by
+	      Plugin.add_aliases.
+o  Kernel     [2011/01/21] New function in API:
+	      Kernel_function.find_syntactic_callsites.
++  WP	      [2011/01/20] Options -wp-status-xxx to refine goal selection.
+o  Report     [2011/01/20] Option -report no longer survive after -then.
++  WP         [2011/01/19] Clarification of -save/-then effect on WP.
+*  Slicing    [2011/01/19] Fixed bug #673.
+-  Value      [2011/01/19] Various minor speed improvements.
+-* Value      [2011/01/19] Fixed correctness bug involving pointers to signed
+	      integer pointing to memory locations containing unsigned
+	      integers or vice versa.
+-* Kernel     [2011/01/19] Fixed bug if an empty string is given on the
+	      command line while an option name is expected. There is now a
+	      proper error message.
+-  Logic      [2011/01/16] Fix priority bug in parser.
+-  Slicing    [2011/01/14] New options added for fixing bug #668.
+o  Sparecode  [2011/01/14] API modified for fixing #668.
+o  GUI        [2011/01/13] Added support for icons in Gtk_helper.Icon.
+-* GUI        [2011/01/12] Fixed bug #666. Do not display misleading
+              "After statement".
+-  Value      [2011/01/12] Improve performance of callbacks.
+-  GUI        [2011/01/11] Display more precise state after statement
+	      (http://blog.frama-c.com/index.php?post/2011/01/11/Seven-errors-game).
+-o Value      [2011/01/11] New callback for recording the state after a
+	      statement.
++* WP         [2011/01/10] Fixed incorrect status refresh problem in the GUI.
+-* Kernel     [2011/01/10] Fixed #!313. Entry point with a specification
+	      is no longer wiped out.
+-* GUI        [2011/01/10] Fixed 100% cpu load while external command
+	      are launched.
+-  Value      [2011/01/09] Disabled incorrect interpretation of
+	      ACSL statement contracts.
+-  Value      [2011/01/07] Interpretation of ==> in ACSL annotations.
+-* Value      [2011/01/07] Fixed obscure crash that could happen during
+	      very imprecise analyses.
+-* Makefile   [2011/01/06] Fixed bug #!660 related to a default
+	      Frama-C-compatible ocamlgraph installation under Cygwin
+	      (i.e. in a Win32 path containing the ':' character).
+-  Value      [2011/01/06] Improved precision of & operator.
+-  Value      [2011/01/05] Added check that denormals work correctly on
+	      host computer (correction would be affected otherwise).
+o! Kernel     [2011/01/05] Remove Messages.disable_echo (can be done using
+	      Log module) and Messages.depend (can be done using Messages.self).
+-  Value      [2011/01/05] New alarm for float -> int cast overflows.
+-  Value      [2011/01/04] Improved precision of | operator.
++* WP         [2011/01/04] Fixed bug #702 on Coq output with large integers.
+-* Inout      [2010/12/22] Return statement dependencies were forgotten in
+	      operational input computations. Fixed.
+o! Kernel     [2010/12/21] Remove API function Messages.enable_collect:
+	      please let the kernel do the job.
+-  GUI        [2010/12/21] Implement feature #635: display messages in the
+	      messages panel while loading a batch session in the GUI. The
+	      batch session must have been previously executed with the
+	      new option -collect-messages.
+-* Makefile   [2010/12/21] Fixed bug #637: "make install -n" did wrongly
+	      create directories.
+-! GUI        [2010/12/21] Gui options start by -gui and not -GUI
+-  Makefile   [2010/12/21] Fixed bug #!638. By default, warnings are no more
+	      errors when compiling a public Frama-C distribution and plug-ins.
+	      SVN versions of Frama-C are still compiled with "-warn-error A".
+o* Cil	      [2010/12/20] Fixed bug #645. Ast_info.constant_expr,
+	      Cil.[zero,one,new_exp,makeZeroInit,mone,kinteger64_repr,
+	      kinteger64,kinteger,integer,constFoldBinOp,mkAddrOf,
+	      mkAddrOrStartOf,mkString,parseInt,sizeOf] no longer use
+	      an optional argument ?loc. It is now a non optional labeled
+	      argument. Previous default value of loc was
+	      ~loc:Cil_datatype.Location.unkown which is most of the time
+	      not accurate.
+
+###################################
+Open Source Release Carbon_20101202
+###################################
+
+-* WP         [2010/12/16] Fixed bug #639: no more Coq compilation to shared
+	      directory.
+- WP          [2010/12/16] Accessibility of all provers from gui.
+
+###################################
+Open Source Release Carbon_20101201
+###################################
+
+-! Kernel     [2010/12/13] Fixed bug #548: limit.h now syntactically correct.
+	      Architectures other than x86_32 still unsupported.
+-  Value      [2010/12/12] New option -float-normal (undocumented)
+-  Value      [2010/12/12] Removed undocumented option -float-digits
+-  Value      [2010/12/10] New option
+	      named -undefined-pointer-comparison-propagate-all
+-* Configure  [2010/12/10] Always configure OcamlGraph local version (if
+	      used) when configuring Frama-C.
+-* Value      [2010/12/09] Fixed bug that could happen in programs casting
+	      address of floating-point type to address of integer type
+o! Kernel     [2010/12/07] Remove function Globals.has_entry_point. Use
+	      Globals.entry_point instead.
+-* Syntactic callgraph [2010/12/07] Fixed bug #!587: proper error message
+	      when the entry point is invalid.
+-* Value      [2010/12/06] Do not evaluate annotations right after
+	      propagation is stopped.
+-  Inout      [2010/12/03] Improve printing of -out -input -deps
+-  Value      [2010/12/03] Preliminary support for interpreting C type float
+	      as IEEE 754 single-precision.
+-* Value      [2010/12/02] Emit proper ACSL alarm for overflowing
+	      floating-point binary and unary operators. Fixed #259.
+-* Value      [2010/12/02] Emit alarm for overflowing floating-point constants
+	      instead of crashing.
+-  Value      [2010/12/02] Emit alarm for uninitialized arguments to library
+	      functions.
+-  Value      [2010/12/01] Improved speed of options -slevel* for arguments
+	      in the thousands. Synthetizing results remains slow, so consider
+	      options -no-results* if you take advantage of them.
+-  Value      [2010/11/24] Do not emit alarm for uninitialized arguments to
+	      non-library functions. Necessary for structs.
+	      Relevant messages changed a little.
+-! Cil        [2010/11/16] Cil normalization takes care of abrupt clauses
+o  Kernel     [2010/11/15] New Task module: a monadic library for calling
+	      asynchroneous commands from the toplevel and the gui.
+o! Kernel     [2010/11/05] File.check_file takes a new argument, allowing to
+	      describe which AST fails integrity check in case of trouble.
+-!* Kernel    [2010/11/05] Fixed #620 (default assigns generation).
+o! Cil        [2010/11/04] Changed type of doGuard in forward dataflow
+-* Value      [2010/10/29] Disappearance of non termination messages from the
+              log. The messages were inconsistent.
+-! Cil        [2010/10/15] Clean up local variables handling and pretty-printing
+	      modified pBlock method interface (unified pBlock and pInnerBlock)
+o! Cil        [2010/10/13] Extending logic label for plugin purpose.
+-! GUI        [2010/10/08] New graph viewer, requires ocamlgraph > 1.5
+-* Logic      [2010/09/30] Priority is used for pretty printing predicates.
+o!* Kernel    [2010/09/30] Major changes in the kernel. Mainly merge the old
+	      modules Datatype and Type into a single most powerful
+	      library called Type. The API of these libraries changes.
+
+	      Consequently, some other API changes. By side effect, a lot
+	      of functions of module Cilutil has been removed and replaced
+	      by their counterpart in module Cil_datatype.
+
+	      The script bin/boron2carbon.sh fixes most changes
+	      automatically. Feel free to use it to upgrade your plug-in.
+
+	      In the process, some minor bugs found and fixed in the
+	      Frama-C kernel.
+o! Cil        [2010/09/20] Changed ignored pure exp hook + hook for conditional
+	      evaluation of side-effects
+-* Value      [2010/09/18] Fixed memory leak.
+o! Cil        [2010/09/14] Cil and Cabs expression have now a location.
+o  Ptests     [2010/09/01] Slightly changed semantics of CMD and STDOPT.
+	      See developer manual for more info
+-* Logic      [2010/08/31] Fixed #570 (implicit conversion to void*)
+	      and fixes issue in overloading resolution
+-* Value      [2010/08/27] Fixed performance bug that could lead to "stack
+	      overflow" error during large analyses.
+-* Logic      [2010/08/27] Fixed #549 (Arrays in the logic)
+-* Cil        [2010/08/27] Fixed #542 (now raises parse error when
+	      C function call dot not provide correct number of arguments)
+-  Value      [2010/08/26] "assert(TODO)", used when a property to check in the
+	      analyzed code cannot be expressed as ACSL and the user should
+	      read the English explanation (e.g. "accessing uninitialized
+	      left-value") instead, could look unprofessional to the superficial
+	      onlooker. "assert(Ook)" will now be used instead.
+-  Value      [2010/08/23] Lowered memory consumption slightly.
+o! Value      [2010/08/22] Renamed Int.eq into Int.equal. Removed Int.neq
+-* Configure  [2010/08/18] get rid of known_plugins.ac (fix #462)
+-* Logic      [2010/08/18] Better error messages for logic parser and
+	      other fix (fix #512, #538, #!553, #!560)
+-* Kernel     [2010/08/17] CL options for cabs2cil flags (fix #506)
+-* Occurrence [2010/08/17] Fix bug #550: crash when selecting an
+	      occurrence if the entry point set by "-main" is incorrect.
+-* Logic      [2010/08/16] ACSL identifiers starting with a \ are not replaced
+	      by pre-processing when a macro of the same name exists (fix #541)
+-  Value      [2010/07/28] Clean local variables passed by address to callees
+	      from results of -val.
+-  Inout      [2010/07/28] Clean local variables passed by address to callees
+	      from results of -input, -out, -deps
+-! Value      [2010/07/28] Abort analysis when recursion is encountered.
+-! Value      [2010/07/23] Structures passed as function arguments now
+	      precisely handled.
+o! Value      [2010/07/21] Function Cvalue_type.V.is_top rebaptized is_imprecise
+o! Value      [2010/07/21] There was one too many function called "find_ival".
+	      One was renamed to "project_ival".
+-  Value      [2010/07/19] Improved precision of analysis for program short s[]=
+	      {0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1};main(){return((int*)s)[u()];}
+-* Value      [2010/07/14] Fixed bug involving typedefs when using
+	      option -val-signed-overflow-alarms.
+-* Kernel     [2010/07/12] Tried to fix all permissions on *.{c,h} files
+-* Makefile   [2010/07/05] Fix bug #528 when building a dynamic plug-in in a
+	      sandbox.
+-  Configure  [2010/07/05] Better detection of native dynlink support.
+-* GUI        [2010/06/30] Fixed parsing of floats in frama-c-gui.config
+-  Cil        [2010/06/30] Be less agressive during inline function merge.
+	      Alpha equivalent function are now kept separate.
+-  GUI        [2010/06/29] One tooltip by parameter in the launcher
+o! Cil        [2010/06/23] Removed function varinfo_from_vid. You can use
+	      maps or hashtables indexed by varinfos directly instead.
+o! Kernel     [2010/06/21] New implementation of module Properties_status
+o! Cil        [2010/06/15] global_annotation has location information
+o  Cil        [2010/06/11] Cil.makeLocalVar now inserts the variable into one
+	      of the function's local blocks.
+-* Value      [2010/06/11] Some "Misaligned" imprecision origins were
+	      wrongly classified as "Arithmetic". Fixed.
+-* Logic      [2010/06/11] Fix bug #!498 (behaviors within same scope
+	      must now have unique names)
+o* Logic      [2010/06/10] Fix bug #505 (Associate default label for
+	      predicates with a single label parameter and no argument)
+o!* Project   [2010/06/08] Reimplementation of the project library (the
+	      contents of directory src/project). New API.
+o! Cil        [2010/06/04] Preliminary support for function calls in
+	      UnspecifiedSequence
+o  Cil        [2010/06/04] Support for custom extension in grammar of behaviors.
+	      See Logic_typing.register_behavior_extension.
+-* Value      [2010/06/03] Do not emit an alarm for the comparison of
+	      function addresses to NULL.
+-* Cil        [2010/06/02] Fixed bug #440 (remove spurious block generation
+	      at parsing time that clashed with label scoping rule in ACSL)
+-* Value      [2010/06/01] Fixed correctness bug involving the comparison
+	      of a variable of type float or double.
+-  Inout      [2010/06/01] Improved precision for option -inout-with-formals
+*  Cil        [2010/05/31] Fixed bugs #451 (break outside of loop/switch)
+	      and #452 (spurious 'body of f call falls through' warnings)
+-* Cil        [2010/05/31] Extended grammar of pragma lines.
+o* Cil        [2010/05/28] Fix bug #489: constant literal present in original
+	      source are preserved in the AST. NB: this implies that they might
+	      be explicitely cast when an integer conversion occur.
+-* Kernel     [2010/05/28] Fixed bug in handling of -cpp-command
+o! Cil        [2010/05/21] Remove deprecated annotation_status of AAssert
+	      in the AST
+o! Kernel     [2010/05/20] Added field b_extended in behaviors to
+	      support grammar extensions
+-* Logic      [2010/05/19] Checking for loop variant position
+-  Kernel     [2010/05/19] Feature #484 about requires into named behaviors
+-* Inout      [2010/05/12] Fixed bug in -inout where operational inputs of
+	      called library function were improperly infered from assigns
+-* Value      [2010/05/12] Fixed bug with extern variables of incomplete type
+-* Logic      [2010/05/11] Fixed wrong precedence of <==>
+-  Value      [2010/05/11] Improved Frama_C_memcpy built-in.
+-  From       [2010/05/11] Improved interpretation of assigns clauses
+-  Inout      [2010/05/05] Improve option -inout-with-formals: cleanup local
+	      variables	that come from out of call tree functions.
+-  GUI        [2010/05/07] In expressions 't[v]', allow to select 't' (when
+	      it is a variable). To select the entire expression 't[v]', click
+	      on the ']' on the right.
+o  Kernel     [2010/05/07] Deprecate Globals.Functions.find_englobing_kf.
+              Use Kernel_function.find_englobing_kf which has a much better
+	      complexity instead.
+-  Value      [2010/05/06] More consistent naming scheme for generating shorter
+	      names when using -lib-entry. "star_" becomes "S_".
+-  Value      [2010/05/05] Tweak in -slevel* options. A little slower for some
+	      programs, much faster for others.
+-  Inout      [2010/05/04] New option -inout-with-formals similar to -inout but
+	      without locals and with formals
+-  Inout      [2010/05/04] Improved precision of -inout with possibly invalid
+	      pointers.
+-  Value      [2010/05/03] Variables now uninitialized by default. Improves
+	      -deps, -input, -output when addresses of local variables
+	      are passed as arguments of called functions.
+o! Logic      [2010/04/30] Parameterize search of field in logic typing functor
+	      in a similar way to search of other C symbols
+o!* Kernel    [2010/04/30] Fix bug #!441 (keep track of original names in AST)
+-* Makefile   [2010/04/24] Fix bug #461 when installing the GUI on a
+	      bytecode-only architecture
+-* Makefile   [2010/04/24] Fix bug #460 when using a non-local ocamlgraph
+-  GUI        [2010/04/27] First support for persistent GUI configuration.
+		GtkPaned ratios, main and launcher window dimensions are
+		saved to file frama-c-gui.config in the user's home directory.
+-  Value      [2010/04/26] Yet more small improvements in value analysis
+	      of large programs.
+-* GUI        [2010/04/26] Fix bug with toolbar button 'duplicate project'
+-  Value      [2010/04/26] More optimization of library functions
+-* Logic      [2010/04/23] fix bug #!454 (multiple labels in same statement)
+-  Security_slicing [2010/04/23] Only use the GUI; does not require it anymore
+o! Kernel     [2010/04/22] Ptmap (resp. Ptset) is renamed into Hptmap (Hptset)
+-! Obfuscator [2010/04/22] Option -obfuscate is now part of a new dynamic
+	      plug-in `Obfuscator' (fixed issue #!265).
+	      The behaviour of this option is now journalized and may be
+	      run by other plug-ins.
+-* Makefile   [2010/04/20] Fixed potential generation of corrupted .o
+-  GUI        [2010/04/19] Better graph display. Require ocamlgraph > 1.4
+-  Value      [2010/04/19] Optimization in the handling of library functions
+-* Slicing    [2010/04/16] Fixed bug #!448 about -keep-annotations option
+-* Configure  [2010/04/14] Fixed bug in configuration of external plug-ins
++  Logic      [2010/04/13] #!346 Formals have an \old label when used in post
+	      conditions
+
+##################################
+Open Source Release Boron_20100401
+##################################
+
+-  Kernel     [2010/04/12] Preliminary standard C library in $FRAMAC_SHARE/libc
+o* Cil        [2010/04/12] New hook after Cabs elaboration (fix bug #!446)
+o! Kernel     [2010/04/12] Slight modification of Hook API
+o* Configure  [2010/04/09] Improved dependencies handling (fix #!054)
+-  Value      [2010/04/08] Experimental new option -val-signed-overflow-alarms
+-  Value      [2010/04/04] Experimental new option -subdivide-float-var
+-  Logic      [2010/04/02] Adding "\pi" as built-in symbol
+-! Configure  [2010/03/24] Compiling the GUI now requires LablGnomeCanvas.
+-* Makefile   [2010/03/24] Fix bug for generating .o files through recursive
+	      calls to Make in quiet mode (VERBOSEMAKE unset)
+o! Kernel     [2010/03/23] Dynamic.register and Dynamic.get are more
+	      robust, but take an extra parameter
+-  Value      [2010/03/23] New options -no-results and -no-results-function,
+	      improved replacements for undocumented option -klr
+-+ Kernel     [2010/03/23] New saving/loading algorithms. Option -load is
+	      faster, and rid of its previous allocation peak
+-! Logic      [2010/03/22] Support for "reads \nothing"
+-! Logic      [2010/03/19] Support for type abbreviation in logic
+-  Value      [2010/03/11] Suppressed undocumented option -klr
+-  Value      [2010/03/10] New option -slevel-function f:n for fine-tuning
+	      semantic unrolling.
+-  Kernel     [2010/03/05] New option "-plugin-h" as an alias for option
+	      "-plugin-help"
+-  Logic      [2010/02/23] If a C typedef integer, real or boolean exists, it
+	      takes precedence over corresponding logic type. The logic type
+	      remains accessible through its utf-8 denomination.
+-  Value      [2010/02/22] Interpreting post-conditions about \result
+	      in contracts for functions that have implementations.
+o! Kernel     [2010/02/22] Type changes in Db.Properties.Interp. Use
+	      ~result:None to get your plug-in to compile again.
+o! Kernel     [2010/02/22] Kernel_function.Set now implemented with Patricia.
+o! Value      [2010/02/21] Changed type of functions
+	      Db.Value.*_to_kernel_function. These functions now return a
+	      Kernel_function.Set.t. Use Kernel_function.Set.elements to
+	      transform this set into a list.
+o! Project    [2010/02/19] Project.register_todo_on_clear is deprecated
+	      and replaced by Project.register_todo_before_clear
+-  Value      [2010/02/19] Improved precision when loop index has type
+	      char or short. Fixes bug #325
+o! Kernel     [2010/02/17] Log.protect is replaced by Cmdline.protect
+-!* Logic     [2010/02/17] Arrays and pointers are distinct in the logic, as
+	      per ACSL reference. Fixes bug #396
+-* Makefile   [2010/02/16] Fixed 'make clean' in plug-in directory (bug #!407)
+o! Kernel     [2010/02/15] Major changes in API of module Annotations: add
+	      possible dependencies from/to a single annotation of a statement
+-+ Value      [2010/02/14] New options -no-results and -no-results-all,
+	      improved replacements for undocumented option -klr
+-! Value      [2010/02/14] Clarified progress messages
+-* Cil        [2010/02/10] Fix crash in parser when double definition of
+	      variable in two different files, in some order (fixed bug #213)
+-  Slicing    [2010/02/04] Assigns clauses was missing from the sliced program
+	      (fixed bug #393)
+-!* Logic     [2010/02/03] Full support for \let (fixed bug #!344)
+-  Kernel     [2010/02/03] Backtrace when Frama-C is crashing (only if
+	      Frama-C is compiled with caml >= 3.11.0)
+-  Security_slicing [2010/02/01] New experimental and quite undocumented
+	      plug-in. Sub-part of the old plug-in security. Only usable
+	      through the GUI.
+-! Security   [2010/02/01] No more distributed.
+-* Cil        [2010/02/01] Bug fixed with incompatible declarations of C
+	      functions
+-* Logic      [2010/01/29] complete/disjoint behaviors do not accept
+	      undefined behaviors anymore (fixed bug #364)
+-* Logic      [2010/01/27] Default label is "Old" inside \old(...)
+-  Value      [2010/01/25] New display option -float-relative
+-* Value      [2010/01/25] Fixed uncaught exception that could happen
+              in analysis of programs with floating-point operations.
+-  Value      [2010/01/22] Preliminary support of post-conditions for
+	      library functions.
+-  Value      [2010/01/21] Take into account all known flush-to-zero
+	      floating-point variants. No option seems necessary for now.
+-  Value      [2010/01/20] Improved precision of floating-point operations
++-* Logic     [2010/01/18] \let is supported (except \let id = pred; pred)
+-  GUI        [2010/01/18] Add a menu entry for setting C source files of
+	      the current project
+-* GUI        [2010/01/18] Fixed bug while choosing 'New project' if
+	      -cpp-command is set (fixed bug #374)
+-  GUI        [2010/01/18] New menu entries for loading ocaml scripts and
+	      ocaml object files (fixed issue #!318)
+-! Inout      [2010/01/17] -out and -out-external now obey -inout-verbose option
+	      Generated logs re-ordered a little.
+-  GUI        [2010/01/15] Plug-in panels can be detached with drag and drop.
+o! Kernel     [2010/01/15] Type.register is more robust but gets a
+	      modified interface (fixed issue #!276)
+-* Kernel     [2010/01/15] -load-script did not clean up compiled files
+	      after exiting (fixed bug #!371)
+-  Impact     [2010/01/15] In the GUI filetree, for each function, a
+	      bullet shows if some statements are highlighted
+-  GUI        [2010/01/15] Now possible to save/load a single project
+	      (fixed issue #!9)
+o! Kernel     [2010/01/14] New implementation of save/load with small
+	      changes in the project API. Loading is now rid of its
+	      previous allocation peak and faster.
+-  GUI        [2010/01/14] View property status in GUI. Fixed a bug on reset
+	      with strange reactive zones in default buffer.
+-* Logic      [2010/01/14] More utf-8 identifier accepted (fixes bug #366)
+-* Value      [2010/01/13] Fixed bug #372
+-  Value      [2010/01/08] New option -all-rounding-modes (floating-point)
+	      New dependency on C99 functions to control the FPU.
+o! GUI        [2009/12/17] New implementation for the menubar and the
+	      toolbar. API fully changed for adding an item in these bars.
+-! GUI        [2009/12/04] Drop gtksourceview 1.x dependency and replace it
+	      with gtksourceview 2.x.
+-* Makefile   [2009/12/03] Some GUI library files was not installed
+o  Kernel     [2009/11/30] Support for dynamic uses of StringSet parameters
+-* Kernel     [2009/11/30] -kernel-debug and -kernel-verbose did not work
+	      as expected (bts #!343).
+-  Configure  [2009/11/27] Dynamic plug-ins are now statically linked by
+	      default whenever native dynlink is not usable (bts #!301).
+o! Kernel     [2009/11/24] Use of global logic constants is now a
+	      TLval (TVar _,TNoOffset) instead of TApp(_,[])
+-  Value      [2009/11/24] Handling of behavior-specific assertions now
+	      correct (albeit imprecise).
+-! Kernel     [2009/11/19] The journal is generated only if the GUI is
+	      crashing, or if the option -journal-enable is explicitely
+	      set (fixed issue #!330).
++-  Value      [2009/11/19] New option -slevel-exclude f for fine-tuning
+	      semantic unrolling.
+-  Logic      [2009/11/13] ordering of clauses in contracts
+-* Logic      [2009/11/10] Fixed bug #228, #327 (syntax garbage at end of
+	      contracts)
+-  GUI        [2009/11/09] Now possible to delete the current project.
+-  GUI        [2009/11/09] New shortcut buttons.
+-  GUI        [2009/11/04] Options *-verbose, *-debug and -quiet are now
+	      settable via the launcher dialog box (bts #!317).
+-* Logic      [2009/11/04] Fixed bug #272 (complete behaviors wo name)
+-  Logic      [2009/11/03] Better error message when using = in annotations
+-* Makefile   [2009/11/02] Fixed bug #310: improve robustness againts new
+	      ocaml warnings.
+-  Kernel     [2009/11/02] New option -no-dynlink in order to prevent
+	      loading of dynamic plug-ins.
+-* Makefile   [2009/10/28] Fixed bug #305: make did not terminate when all
+	      plug-ins were disabled.
+-* Configure  [2009/10/28] Fixed bug with -help.
+-  Kernel     [2009/10/28] Better -*-help.
+-  Kernel     [2009/10/28] Better error messages when a dynamic plug-in
+	      cannot be loaded.
+-  Kernel     [2009/10/21] Clarification of the multiple accesses warning.
+	      Becomes "undefined multiple accesses in expression".
+-* Value      [2009/10/21] Some "loss of precision" messages were
+	      duplicated and failed to be localized. Fixed.
+o  Kernel     [2009/10/18] Extlib now contains various functions to replace
+	      Sys.command but with portability and efficiency in mind.
+-*! Logic     [2009/10/16] Support for abrupt clauses; Modifies AST
+-  Syntactic_callgraph [2009/10/15] Big speedup for showing the callgraph in
+	      the GUI. Require ocamlgraph >= 1.4.
+o! Kernel     [2009/10/13] Module Db.Properties.Status replaced by module
+	      Properties_status.
+o! Kernel     [2009/10/13] Function Db.Properties.predicate_on_stmt and
+	      Db.Properties.get_user_assert does not exist anymore.
+-* Value      [2009/10/12] Synthetic validity status for assertions.
+-* Syntactic_callgraph [2009/10/12] Fixed bug in services computation.
+-* GUI        [2009/10/09] Instantaneous actions are no longer cancelable but
+	      are as fast as possible now.
+o! GUI        [2009/10/09] Methods protect and full_protect of
+	      main_window_extension_points now have an additional arguments.
+o  Kernel     [2009/10/08] Add unique id for elements in Db.Properties.Status
+	      tables.
+-  Kernel     [2009/10/08] Add status for all clauses
+-  Cil        [2009/10/08] Extend logic pretty printer to handle all specific
+	      clauses
+-! GUI        [2009/10/08] Extend type Pretty_source.localizable
+o! Cil        [2009/09/28] pAssigns now prints directly a whole list of assigns
+-  GUI	      [2009/09/28] Assigns clauses are now localizable in GUI
+-  Value      [2009/09/25] Improved treatment of "assigns p[..]" clauses
+	      in -input
+
+######################################
+Open Source Release Beryllium_20090902
+######################################
+
+-* Obfuscator [2009/09/23] obfuscator does not lose links between logic
+	      and C variables anymore (bts #250).
+	      Obfuscator now gives a specific name to formal parameters.
+-  Journal    [2009/09/23] Better handling of exceptions.
+-! Value      [2009/09/21] Computed values not displayed on -load. Use -val
+		-load to force display of computed values.
+		Use -val -quiet to compute without printing results.
+o  Cil        [2009/09/21] New pIdentifiedPredicate method in pretty-printer
+-* GUI        [2009/09/21] Elimination of repeated messages (bts #237).
+-! Syntactic callgraph [2009/09/18] Improvement of the GUI of syntactic
+	      callgraph. Require ocamlgraph > 1.2.
+-  Kernel     [2009/09/18] Slightly less false alarms with
+	      -warn-unspecified-order
+o  Cil        [2009/09/18] Deprecated Cil.get_status.
+		Use Db.Properties.Status.* instead.
+o* Makefile   [2009/09/18] Fixed bugs with the use of PLUGIN_EXTRA_BYTE
+	      and PLUGIN_EXTRA_OPT by plug-ins.
+-  Value      [2009/09/15] Stopped displaying temporary variables introduced
+	      by normalization of source code, and block-local variables.
+-!* Makefile  [2009/09/14] Fixed bug #236. Require ocamlgraph version > 1.2.
+-  Configure  [2009/09/13] Detection of dot if required.
+-  Syntactic_callgraph [2009/09/11] Better implementation for
+	      computing the service graph: faster + correctly handle
+	      cycles.
+-! Syntactic_callgraph [2009/09/11] -cg-services-only is not
+	      relevant anymore.
+-  Makefile   [2009/09/09] Now possible to build custom binaries for
+	      plug-ins. Roughly these binaries are frama-c[.byte] + the
+	      plug-in statically-linked. The goal is called "static" in the
+	      plug-in's makefile.
+-* Value      [2009/09/08] Fixed display bug when logging the call stack
+	      introduced in Beryllium.
+-  Value      [2009/09/08] Improved treatment of "assigns p[..]" clauses
+	      in value analysis. Other plug-ins (outputs,...) have not
+	      had the same improvement yet.
+-* Makefile   [2009/09/08] Frama-C compiles even if ocamlopt is not available.
+-* Project    [2009/09/08] Fixed bug involving loading and options
+	      previously set while saving.
+-* GUI        [2009/09/08] Release the terminal when the splash window is
+	      deleted.
+-  Jessie     [2009/09/08] Is no longer built within Frama-C. It becomes
+	      part of Why.
+-  Makefile   [2009/09/08] Why is no longer a compilation dependency.
+	      It is required only at runtime for the experimental WP plugin.
+-* Makefile   [2009/09/07] Fixed compilation error occuring on a platform
+	      which does not support native dynlink and with ocaml >= 3.11
+	      (bts #224).
+
+######################################
+Open Source Release Beryllium_20090901
+######################################
+
+-! Syntactic_callgraph [2009/08/27] New design of the callgraph in the GUI.
+	      Frama-C now requires ocamlgraph 1.2.
+-  Logic      "reads" clauses on logic functions and predicates, which
+	      disappeared with the introduction of axiomatic blocks, have been
+              resurected. Beware that the semantics is slightly different
+	      from before: see ACSL document for details. It is used to
+	      automatically generate footprint axioms.
+-  GUI        [2009/08/18] Improved display of summary information when
+	      selecting a file.
+-  Kernel     [2009/08/05] New options -kernel-help, -kernel-verbose and
+	      -kernel-debug (bts #!205).
+-  Syntactic_callgraph [2009/08/04] New option -cg-services-only to
+	      only computes the graph of services
+-  Value      [2009/07/29] Improved treatment of conditions involving
+	      char or short variables.
+-  GUI        [2009/07/28] Possible to stop the GUI while computing analysis
+o! Project    [2009/07/26] Preliminary support for direct unmarshalling.
+	      Datatypes must define value descr. Using Unmarshal.Direct is
+	      okay for now.
+-* Makefile   [2009/07/24] Fixed bug with static linking of plug-ins using
+	      external libraries (bts #200)
+-  Value      [2009/07/22] Improved integer division. Now returns best effort
+	      results when 0 is among the possible values for the divisor.
+-* Project    [2009/07] Fixed bug causing delays with -load (bts #180)
+-  GUI        [2009/07/08] New message panel
+-* Journal    [2009/07/07] Fix generation of invalid variable name in journal
+-* Semantic Constant Folding [2009/07/07] Fix bad journalisation
+-  GUI        [2009/07/03] Redesign the dialog box for running analysis
+o! Cil        [2009/06/24] Added 2 components to Cil_types.typ to optimize
+	      bitsSizeOf. The proper way to get a default value is
+	      Cil.empty_size_cache. The added value must not be shared by types.
+	      No one should need to read this value directly.
+-  GUI        [2009/06/24] Graphical customization now uses Gtk rc files.
+	      A default file is loaded from FRAMAC_SHARE/frama-c.rc.
+	      The end user can provide its custom
+	      FRAMAC_SHARE/frama-c-user.rc to override defaults.
+-* Project    [2009/06/24] Fixed bug with save/load in multi-project
+	      contexts (bts #!161)
+-* Kernel     [2009/06/24] Restore compatibility with ocaml 3.10.2
+-* Configure  [2009/06/24] Fixed bug with --disable-gui in configure.in
+
+######################################
+Open Source Release Beryllium_20090601
+######################################
+
+o  Value      [2009/06/23] New constructor Signed_overflow_alarm for type
+	      Alarms.t
+-! Jessie     [2009/06/23] Option for launching jessie is now -jessie, not
+	      -jessie-analysis
+-* Jessie     [2009/06/23] Fixed contract for strchr() and strrchr() in
+	      string.h
+-* Jessie     [2009/06/23] Support for label Post in assigns clauses.
+	      Fixes bug #160
+-! Jessie     [2009/06/18] GUI mode is now the default, options -jessie-gui and
+	      -jessie-goals do not exists anymore
+-* Jessie     [2009/06/18] Full support for loop assigns, including those
+	      implictly generated from function's assigns, fixes bug #41
+-  GUI	      [2009/06/18] Change the warning to panel to preserve decent
+	      performance. This imposes lablgtk 2.12 at least.
+-  Semantic_callgraph [2009/06/15] small change in the computation of services:
+	      the roots are now the same as the syntactic callgraph (while
+	      there is no function pointer).
+-! Semantic_callgraph [2009/06/15] new options -scg-dump and -scg-init-func
+	      consistent with the options -cg-dump and -cg-init-func of
+	      the syntactic callgraph.
+o  Users      [2009/06/15] Users are now computed on need while calling
+	      !Db.Users.get
+-  Journal    [2009/06/15] Journal disabled by default in batch mode
+-! Kernel     [2009/06/10] FRAMAC_DYN_PATH is now called FRAMAC_PLUGIN
+-* GUI	      [2009/06/10] Changes having to do with dependencies between
+	      computations. Hopefully less problems exist now than before.
+-* Jessie     [2009/06/09] Support for loop assigns, partially fixes bug #41
+	      see tests/jessie/bts0041-bis.c for details
+o! Kernel     [2009/06/09] Db.Main.extend is now of type unit -> unit
+-  Kernel     [2009/06/08] By default, Frama-C stops on annotation errors.
+	      Option -continue-annotation-error
+o  GUI        [2009/06/05] The plug-in GUI is now packed with the core plug-in
+-* Jessie     [2009/06/05] Fix bug #!8, compilation of jessie with Apron
+-* Configure  [2009/06/05] Fixed issues in configure and makefile if
+	      lablgtk2 is not enabled.
+o! Kernel     [2009/06/03] Moved lightweigth annotation support from
+	      Jessie to Kernel. They are now available for all plugins.
+	      Support for lightweight global invariants on globals has
+	      been dropped.
+-* Project    [2009/06/03] Fixed bug #!113: loading a session containing
+	      a project p referring to another project generated a new
+	      incorrect project p.
+o! Project    [2009/06/03] Remove functions Project.save and Project.load:
+	      cannot ensure their correctness.
+-  Kernel     [2009/05/29] New options -no-type and -no-obj
+-  Kernel     [2009/05/29] New environment variable FRAMAC_LIB
+-  Kernel     [2009/05/29] When loading a module via -load-module, the
+	      dynamically registered options are now recognized on the
+	      command line.
+-  Kernel     [2009/05/29] New option -load-script to dynamically compile and
+	      load an ocaml script.
+-! Journal    [2009/05/29] Option -journal-loader-run does not exist anymore.
+	      Use -load-module instead.
+o! Logic      [2009/05/29] Tresult has a type attached to it
+-* Jessie     [2009/05/22] fixed bugs #!63 and #71 (labels and \at)
+-  Slicing    [2009/05/20] New option "-slicing-keep-annotations"
+o  Pdg        [2009/05/20] The functions that return nodes from an annotations
+              now also return a list of the variables declarations nodes.
+-  Kernel     [2009/05/18] Each boolean option now has an opposite.
+-  Kernel     [2009/05/15] New alias "-h" and "--help" for "-help" (bug #61).
+o  Kernel     [2009/05/15] Possibility to define alias for options.
+-  Kernel     [2009/05/14] Better message for errors on the command line.
+-  Kernel     [2009/05/14] Syntax "-option-name=value" is now valid on the
+	      command line. In such a case, [value] may begin by '-',
+	      which is forbidden for the usual syntax "-option-name value".
+-* Value      [2009/05/11] Fixed bug with the interpretation of "==>".
+-  Value      [2009/05/04] Improved reduction for (ptr-ptr) expressions.
+-  Value      [2009/04/28] Trivially redundant alarms are now
+	      automatically discharged.
+-  Value      [2009/04/28] Improved results for
+	         char ones[] = "11111111";
+                 col_ones = 1 + * (int*) ones;
+o  Configure  [2009/04/21] Explicitly require >= OCaml 3.10.0
+-! Inout      [2009/04/17] -input_with_formals is now called -input-with-formals
+-! Kernel     [2009/04/15] New implementation of command line parsing
+-* Kernel     [2009/04/08] Frama-C has now a very early initialisation step.
+	      That's fixed minor issues with -journal-disable
+	      (bts #!14 and #!16).
+o! Kernel     [2009/04/07] Cil_state is now called Ast and Cil_state.file
+	      is now called Ast.get.
+-* Sparecode  [2009/04/07] Selected an annotation attached to a function call
+              made a wrong propagation in the visibility of the call (bts #!3).
+-* Sparecode  [2009/04/07] The generated project lost some useful
+	      parameters like the entry point (bts #!10).
+o  Makefile   [2009/04/03] Independent Makefile for dynamic plug-ins.
+-  Configure  [2009/04/01] Auto-detection of lablgtk2's custom tree model.
+-* Configure  [2009/04/01] Fixed bug with --disable-* options (except when
+	      '*' was a plug-in name).
+-  Logic      [2009/03/27] Overloaded logic symbols.
+-* Jessie     [2009/03/27] proper message when \lambda is encountered
+	      (bts #?7528).
+-  Configure  [2009/03/27] better message when a plug-in isn't enable by
+	      default.
+-* Syntactic_callgraph [2009/03/26] Fixed bug when the callgraph is
+	      computed twice
+-* Logic      [2009/03/24] Fixed bugs in type unification.
+-* Value      [2009/03/23] Fixed bug that could appear with assignments
+	      like t[5] = t[4]; where t[4] is not a singleton.
+o* Makefile   [2009/03/20] Fixed "dist" and "bdist" targets that had been
+	      broken on 02/27.
+-* Value      [2009/03/20] Fixed performance bug.
+-  GUI        [2009/03/20] Environment variables FRAMAC_MONOSPACEFONT and
+	      FRAMAC_GENERALFONT.
+o! Cil       [2009/03/19] C expressions now have a unique ID.
+	      See frama-c-commits for details.
+-* From       [2009/03/17] Improved dependencies + bug fixes
+-* GUI        [2009/03/17] Fixed bug with some utf8 strings.
+-* Value      [2009/03/13] Fixed correctness bug that had a tiny chance to
+	      manifest itself when analyzing code that dereferences casted
+	      pointers.
+-* Logic      [2009/03/11] Fixed predicate typing of \pointer_comparable.
+-* Logic      [2009/03/11] Changed \result_finite_float into \is_finite_float.
+	      Alarm generation is still untyped.
+-* Logic      [2009/03/11] Allow \ as first letter of identifier.
+o  Makefile   [2009/02/27] New implementation of (un)verbose mode (bts #?442).
+-* Value      [2009/02/24] Miscellaneous fixes and tuning.
+-* Cil        [2009/02/23] Keep track of variables that have block scope
+	      (bts #?218) uninitialize them at the exit of corresponding
+	      block.
+-  InOut      [2009/02/18] Add -out-external option.
+-* Cil        [2009/02/18] Fixed some localization problems with frontc visitor.
+o! Logic      [2009/02/13] Merge terms and tsets in the AST.
+-  Value      [2009/02/09] Adjustments in the appearance of some alarms
+-* Cil        [2009/02/03] Fixed parsing of global initializers like "(3>0)?0:1"
+	      when Cil.lowerConstants is false.
+o  GUI        [2009/01/29] Add function
+	      Design.main_window_extension_points#help_message.
+o! Kernel     [2009/01/28] Dynamic plug-ins have to take care about
+	      journalisation.
+o! Kernel     [2009/01/26] Type of Db.register changed in order to be able
+	      to say that a function call must never be written in the journal.
+-  Journal    [2009/01/23] Operations on projects (bts #?436) and code
+	      outputs are journalised.
+o! Kernel     [2009/01/23] File.pretty does not take anymore a formatter
+	      as argument.
+	      The default output is the one specified by option -ocode.
+-  Journal    [2009/01/23] Journalisation of functions with labels is now
+	      possible (bts #?427).
+-  Journal    [2009/01/21] Journalisation of plug-ins slicing, sparecode,
+	      impact and security done.
+-  Value      [2009/01/20] Minor changes in floating-point handling.
+-* Journal    [2009/01/19] Fixed bug with -disable-journal and type with
+	      no pretty-printer.
+-  Configure  [2009/01/19] New option -with-all-static in order to
+	      statically link all plug-ins, except those explicitely
+	      specified as dynamic (bts #?430).
+-* Journal    [2009/01/19] Fixed bug in journalisation of non-functional values.
+-* Makefile   [2009/01/19] Fixed bug whenever all plug-ins should be static.
+-* Makefile   [2009/01/19] Fixed bug in compilation of dynamic plug-ins
+	      with a GUI.
+-* Logic      [2009/01/09] Fixed bug in type-checking of polymorphic functions.
+-  Logic      [2009/01/09] Support for concrete type definition.
+-  Aorai      [2009/01/08] Aorai is now a dynamic plug-in.
+-  Jessie     [2009/01/08] Jessie is now a dynamic plug-in (bts #?419).
+-  Configure  [2009/01/08] For each dynamic plug-in P, a new option
+	      --with-P-static is added to configure.in for linking P
+	      statically with Frama-C.
+o  Configure  [2009/01/08] No longer require to modify the end of
+	      configure.in when you add a new plug-in.
+o  Kernel     [2009/01/06] Dynamic plug-ins can now register their own
+	      types (abstract from the outside) and operations on such
+	      types (bts #?413).
+o! Kernel     [2009/01/05] Some changes in API of module Type
+	      (bts #?410). In particular:
+	      1) module	FunTbl no longer exist. Replaced by Type.Tbl
+	      2) Merge of pretty printer registration with type
+	      registration. No more in module Journal. Only in module Type.
+-* GUI        [2008/12/22] Reentrancy fix with left panels.
+-* Impact     [2008/12/22] In the GUI, fixed bug while the analysis raised
+	      an exception. It is now properly catched and displayed on stderr.
+-  Impact     [2008/12/22] In the GUI, highlight the selected statement in cyan.
+-! Impact     [2008/12/22] Do not select anymore the selected statements
+	      except if they are effectively impacted themselves (bts #?411).
+-! GUI	      [2008/12/21] Code annotation and all globals are now
+	      reactive to selections (bts #?359 and #?387).
+-* Jessie     [2008/12/20] Support constant sizeof and alignof in logic
+	      terms (bts #?396).
+-* GUI	      [2008/12/20] Fix a bug with broken UTF-8 output on stdout
+	      (bts #?420).
+-  GUI	      [2008/12/20] Add 2 separate pages for stdout and stderr
+	      redirections .
+-  Syntactic_callgraph [2008/12/20] Separate services are now created for
+	      callees of the entry point.
+-  Impact     [2008/12/19] Slicing after impact is now possible (bts #?301).
+-* Impact     [2008/12/19] Bug fixed in the GUI (on project switching).
+-  Value      [2008/12/18] Improved support for state reduction on a
+	      memory read.
+
+####################################
+Open Source Release Lithium_20081201
+####################################
+
+-! GUI        [2008/12/09] Improved consistency of some information messages.
+-  Value      [2008/12/09] Abstract structs are now supported in
+	      conjunction with option -lib-entry, and invalid to access.
+-! Value      [2008/12/09] Removed outdated warning about uninitialized
+	      const variables.
+o! Cil        [2008/12/09] Modified typeForInsertedCast hook to take as
+	      arguments the expression and its original type in addition
+	      to the destination type.
+o* Makefile   [2008/12/02] Fixed various bugs in Makefile.template.
+-  Logic      [2008/11/24] Added support for (wide) string constants in
+	      ACSL formula.
+-! Kernel     [2008/11/21] Changed the definition of non-determinist
+	      functions in builtin.c. These functions no longer rely on a
+	      volatile variable. Analysis logs may change slightly as a result.
+-  Value      [2008/11/21] Introduced preliminary support for state
+	      reductions on a memory read access. This should eliminate
+	      some redundant alarms.
+-  Sparecode  [2008/11/20] New option -rm-unused-globals to remove unused
+	      global variables and types.
+-! Slicing    [2008/11/20] Unused global variables and types are now
+	      removed in sparecode analysis and slicing results.
+o  Cil        [2008/11/17] New methods current_function and current_kf
+	      methods (bts #?406).
+o! Cil        [2008/11/17] enum items now have their own type and are
+	      shared between declaration and use.
+o  Cil        [2008/11/17] New methods for visiting compinfo, enuminfo,
+	      fieldinfo and enumitem (prevents potential misuse of copy
+	      visitor for these types).
+-* Jessie     [2008/11/14] Fixed bug with multiple labels in axiomatic
+	      definitions.
+-  Jessie     [2008/11/14] Added example tests/jessie/minimum_sort.c in
+	      Jessie tutorial.
+-* Jessie     [2008/11/10] Fixed problem with array in logical annotations.
+-* Jessie     [2008/11/05] Fixed problem with memory model preventing the
+	      proof of some pointer programs. The solution is to require
+	      pointers that are compared to belong to the same allocated
+	      memory block, which can be expressed in logical annotations
+	      using equality of \base_addr constructs.
+-  Impact     [2008/11/04] In the GUI, new panel to manage impact analysis
+	      actions.
+o  Makefile   [2008/11/03] Support for native compilation in Makefile.template
+	      (require ocaml >= 3.11).
+
+####################################
+Open Source Release Lithium_20081002
+####################################
+
+-! Value      [2008/10/23] Changed behavior of option
+	      -context-valid-pointers to make it more like the
+	      documentation says it is.
+-* Value      [2008/10/23] Fixed a bug introduced with the "value
+	      concatenation" feature where an imprecise value obtained by
+	      reading misaligned data would have the origin "Arithmetic"
+	      instead of "Misaligned".
+-* Value      [2008/10/14] Fixed huge bug in the computation of the
+	      dependencies of an expression. Differences are most visible
+	      in the results of options -input and -deps, and of course
+	      all she slicing options that make use of these.
+o! Value      [2008/10/14] Removed argument ~skip_base_deps from all
+	      functions in Db.Value that had one. This argument did not
+	      make sense.
+-  Slicing    [2008/10/07] In the GUI, slicing request related to values
+	      returned by functions is available from the contextual submenu.
+-  Slicing    [2008/10/07] In the GUI, new panel to manage slicing actions.
+-  Semantic_callgraph [2008/09/24] New option -scg-dump to dump a semantic
+	      callgraph to stdout.
+-  Logic      [2008/09/23] Support for address-of operator (&) in tsets.
+-  Logic      [2008/09/18] Basic support for sets as first-class value.
+-  Kernel     [2008/09/15] Added option -warn-unspecified-order to display
+	      a warning for each unspecified sequence containing writes.
+o  Ptests     [2008/09/11] Added config option STDOPT (see developer's
+	      manual for details).
+o! Kernel     [2008/09/11] Refined UnspecifiedSequence information.
+-! Value      [2008/09/11] Raise alarm for undefined behavior caused by
+	      side-effects in UnspecifiedSequence (except for function calls).
+-  Value      [2008/09/11] Added option -no-unspecified-access to disable
+	      alarm above.
+-  Logic      [2008/09/04] Support for \separated.
+-  Inout      [2008/09/04] New option -input_with_formals.
+-  Journal    [2008/08/28] New options available -load-journal, -journal-name,
+	      -journal-disable for user management of journals.
+-  Journal    [2008/08/22] Journalization available (only Cmdline and
+	      Occurrence are done yet).
+-* Logic      [2008/08/21] Fixed typing error of pointer lval hidden by typdefs.
+-  Deps       [2008/08/01] In the GUI, the "Dependencies" contextual menu
+	      provides the old "Scope" and "Show Def" features in addition
+	      to the new "Zones" feature. These three actions can be
+	      launch together with the "All" button.
+-  Slicing    [2008/07/22] In the GUI, implemented feature request related to
+	      highlighting when the source function is called, for CAT/AF
+	      evaluation.
+-  Project    [2008/07/21] Projectification of machdep (bts #?101).
+-* Logic      [2008/07/21] Fixed bug "0 can be seen as pointer to any
+	      type" (bts #?338).
+-* Pdg        [2008/07/21] Fixed bugs for CAT/AF evaluation.
+-  GUI        [2008/07/18] Lower the bound on maximum number of displayed
+	      globals to 20 (bts #?342).
+-  Slicing    [2008/07/18] In the GUI, request related to read/write
+	      accesses to lvalues is available from the contextual submenu.
+-* Slicing    [2008/07/18] In the GUI, fixed bugs related to enabling/disabling
+	      conditions of the slicing submenu.
+-  Kernel     [2008/07/17] Dynamic linking of plugin available (experimental).
+o! Cil        [2008/07/17] AST changes for unspecified sequences (experimental).
+-* Jessie     [2008/07/16] Fixed path problems with binary distributions.
+
+###################################
+Open Source Release Helium_20080701
+###################################
+
+-  Occurrence [2008/07/11] Occurrences of a variable can be computed from
+	      any occurrence of the program (not only from its declaration).
+-  Project    [2008/07/11] Loading works even if the configuration while
+	      saving is not exactly equal to the one while loading.
+-  Pdg        [2008/07/09] Improvement of the precision of interprocedural
+	      analysis (bts #?179).
+-* Impact     [2008/07/02] Fixed bug when a function is undefined (bts #?322).
+-  Logic      [2008/07/02] Typing of recursive logic functions.
+-  Logic      [2008/07/02] Enforce correct return type of logic functions.
+-  Sparecode  [2008/07/01] New option -sparecode-no-annot
+	      (bts #?331 and #?334).
+-* Pdg        [2008/06/26] Fixed bug in interprocedural analysis (bts #?324).
+-  Slicing    [2008/06/24] In the GUI, slicing contextual submenu available.
+-! Logic      [2008/06/24] Merge predicates and logic functions when
+	      linking multiple c files.
+o! Logic      [2008/06/24] AST changes for invariants.
+-! GUI        [2008/06/23] Enforce lablgtksourceview dependency and
+	      suppressed camlp4 need.
+-  GUI	      [2008/06/23] First rehighlight support.
+-  Slicing    [2008/06/19] Some slicing requests are available from the GUI.
+-  Configure  [2008/06/19] ./configure will not emit so many warning when
+	      gui is not available (bts #?296).
+-  GUI        [2008/06/18] Invalidate display cache on project switching.
+-! Value      [2008/06/18] Do not emit imprecision tracing warning  when a
+	      lval=lval is optimized.
+-  Value      [2008/06/18] New option -context-width for auto-allocated
+	      context pointer width. Defaults to 2.
+-  Makefile   [2008/06/17] Prefix install directories by the value of DESTDIR
+	      (patch contributed by Igor Galic).
+-! Logic      [2008/06/17] \valid* predicates rejects void pointers.
+-! Value      [2008/06/16] Removed last top from merging leaf functions returns.
+-  Value      [2008/06/13] Some partial builtin_va_start support
+-  Value      [2008/06/13] New implicit context generation with a fixed
+	      width of 6 (an option will be available later).
+-! Value      [2008/06/12] Remove remaining TOP in value analysis: WELL at
+	      amx-valid-depth and for leaf functions.
+-  GUI        [2008/06/10] Improve speed of configuration menu.
+-! Kernel     [2008/06/10] Change -lib-entry option into a
+	      boolean. "-lib-entry foo" becomes "-lib-entry -main foo"
+-  Metrics    [2008/06/10] Number of syntactic calls by functions and
+	      potential entry points.
+-  Metrics    [2008/06/10] New option -metrics-dump.
+-! Constfold  [2008/06/09] Semantic constant folding does not introduce
+	      casts by default.
+-  Constfold  [2008/06/09] New option -cast-from-constant has been added
+	      to allows cast introductions.
+-! Kernel     [2008/06/06] Do not remove unused static functions.
+-! Logic      [2008/06/05] Quantification over arrays are interpreted as
+	      quantification over pointers to be consistent with
+	      predicates and C function calls.
+-  Logic      [2008/06/05] Pretty printing of pointer accesses in terms
+	      and tsets are now much nicer. For example *(T+(0+i..j))
+	      becomes T[0+i..j].
+-! Value      [2008/06/05] Separate warnings for uninitialized and
+	      addresses escaping their scopes (these used to be grouped
+	      together as "unspecified" alarms)
+-* Makefile   [2008/06/04] Fixed bug in "make distclean" (bts #?308).
+-* Logic      [2008/06/03] Correct typing for predicates: no more
+	      dangerous promotions.
+-  Logic      [2008/06/03] Typing of terms: implement ACSL semantics for
+	      integral/real promotions.
+-  Logic      [2008/06/03] Better error messages for logic typing errors.
+-! Logic      [2008/06/03] Support for constant predicates and functions
+	      (breaks 0-argument old syntax).
+-* Kernel     [2008/06/03] Correct promotion rules from bitfields to integers.
+-* Kernel     [2008/06/02] -machdep was ignored (bts #?309).
+
+#####################################
+Open Source Release Hydrogen_20080502
+#####################################
+
+o* Makefile   [2008/05/21] Fixed bug in "make clean-doc" (and "make distclean").
+-  GUI        [2008/05/19] All internal options are available in the GUI
+	      preferences pannel.
+
+#####################################
+Open Source Release Hydrogen_20080501
+#####################################
+
+-! Value      [2008/04/24] Display a warning whenever an unitialized value
+	      causes the death of a branch.
+-  GUI        [2008/04/18] Project names are pairwise different in the GUI.
+-* GUI        [2008/04/17] Win32 default fonts fixed.
+-  Value      [2008/04/14] In the GUI, function level information displayed in
+	      Information panel.
+-  GUI        [2008/04/14] Progress added in existing plugins.
+-  GUI        [2008/04/10] Buffer memoization for speedup.
+-  GUI        [2008/04/10] Persistent position.
+-  GUI        [2008/04/10] No file selection on startup.
+-  Scope      [2008/04/09] First release of the plug-in (bts #?191).
+-  Impact     [2008/04/08] Available from toplevel through -impact-pragma
+	      and -impact-print.
+o  Project    [2008/04/08] Warnings are project compliant.
+-  GUI        [2008/04/07] Large improvements in reactivity
+-* GUI        [2008/04/07] Prefs/Execute bugs fixed.
+o  GUI        [2008/04/07] Project management redesigned for older Gtk and
+	      for the best.
+-* Project    [2008/04/07] Fixed bug in save/load with duplicated computations.
+-* Project    [2008/04/07] Inconsistent data with multiple projects and
+	      while removing projects.
+-* Kernel     [2008/04/01] Various Win32 path fixes.
+-  Kernel     [2008/04/01] Option -no-unicode : do not print Unicode chars.
+
+################################
+Binary release Hydrogen_20080302
+################################
+
+-  Occurrence [2008/03/17] New option -occurrence.
+-  Occurrence [2008/03/17] First release of the plug-in.
+-* GUI        [2008/03/16] GUI no longer frozen during computations.
+-  GUI        [2008/03/16] 'New' menu entry.
+-* Makefile   [2008/03/14] Fixed bug with GUI compilation.
+-* Project    [2008/03/14] Fixed bug with checksum computation during save/load.
+-* Slicing    [2008/02/25] Fixed bug in interprocedural slicing (bts #?201).
+
+###########################################
+First Open Source Release Hydrogen_20080301
+###########################################
+- First release

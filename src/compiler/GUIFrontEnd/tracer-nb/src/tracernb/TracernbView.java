@@ -1,0 +1,1214 @@
+/*
+ * TracernbView.java
+ */
+
+package tracernb;
+
+import org.jdesktop.application.Action;
+import org.jdesktop.application.ResourceMap;
+import org.jdesktop.application.SingleFrameApplication;
+import org.jdesktop.application.FrameView;
+import org.jdesktop.application.TaskMonitor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.util.Vector;
+import java.util.Map;
+import java.io.*;
+
+/**
+ * main frame of the application
+ * @author vijay
+ */
+public class TracernbView extends FrameView {
+
+    ProcessManager pm = null;
+
+    // set up all directory and file paths
+    private static final String RUNTIME_DIR = TracerOptions.TRUNK_DIR + "/runtime";
+
+    private static final String TRACER_DIR = TracerOptions.TRUNK_DIR + "/src/clpr";
+
+    private static final String BASEBIN_DIR = TracerOptions.TRUNK_DIR + "/classes";
+
+    private static final String LIB_DIR = TracerOptions.TRUNK_DIR + "/lib";
+
+    private static final String CRYSTAL_DIR = TracerOptions.TRUNK_DIR + "/src/java/CRYSTAL";
+
+    private static final String TESTS_DIR = TRACER_DIR + "/tests";
+
+    private static final String SOURCE_FILE = RUNTIME_DIR + "/program.c";
+
+    private static final String COMPILED_FILE = RUNTIME_DIR + "/program.clp";
+
+    private static final String LOG_FILE = RUNTIME_DIR + "/log";
+
+    private static final int SAFETY = 0, SLICING = 1, WCET = 2;
+
+    private int app = 0; // one of {SAFETY, SLICING, WCET}
+
+    public TracernbView(SingleFrameApplication app) {
+        super(app);
+
+        initComponents();
+        cleanRuntime();
+        switch(TracerOptions.TRACER_VER) {
+            case 1:
+                t2menu_run.setVisible(false);
+                t2menu_view.setVisible(false);
+                break;
+            case 2:
+                jMenuRun.setVisible(false);
+                jTextFieldCLPRCmd.setVisible(false);
+                jButtonDisplayGraph.setVisible(false);
+                break;
+            default:
+                FATAL.error("invalid tracer version specified in TracerOptions");
+        }
+
+        // status bar initialization - message timeout, idle icon and busy animation, etc
+        ResourceMap resourceMap = getResourceMap();
+        int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
+        messageTimer = new Timer(messageTimeout, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                statusMessageLabel.setText("");
+            }
+        });
+        messageTimer.setRepeats(false);
+        int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
+        for (int i = 0; i < busyIcons.length; i++) {
+            busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
+        }
+        busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
+                statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
+            }
+        });
+        idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
+        statusAnimationLabel.setIcon(idleIcon);
+
+        // connecting action tasks to status bar via TaskMonitor
+        TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
+        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                String propertyName = evt.getPropertyName();
+                if ("started".equals(propertyName)) {
+                    if (!busyIconTimer.isRunning()) {
+                        statusAnimationLabel.setIcon(busyIcons[0]);
+                        busyIconIndex = 0;
+                        busyIconTimer.start();
+                    }
+                } else if ("done".equals(propertyName)) {
+                    busyIconTimer.stop();
+                    statusAnimationLabel.setIcon(idleIcon);
+                } else if ("message".equals(propertyName)) {
+                    String text = (String)(evt.getNewValue());
+                    statusMessageLabel.setText((text == null) ? "" : text);
+                    messageTimer.restart();
+                } else if ("progress".equals(propertyName)) {
+                    int value = (Integer)(evt.getNewValue());
+                }
+            }
+        });
+    }
+
+    @Action
+    public void showAboutBox() {
+        if (aboutBox == null) {
+            JFrame mainFrame = TracernbApp.getApplication().getMainFrame();
+            aboutBox = new TracernbAboutBox(mainFrame);
+            aboutBox.setLocationRelativeTo(mainFrame);
+        }
+        aboutBox.setVisible(true);
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextAreaSource = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextAreaOutput = new javax.swing.JTextArea();
+        menuBar = new javax.swing.JMenuBar();
+        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        jMenuFileOpen = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+        jMenuRun = new javax.swing.JMenu();
+        jMenuSafety = new javax.swing.JMenu();
+        jMenuSafetyAllPaths = new javax.swing.JMenuItem();
+        jMenuSafetyPathByPath = new javax.swing.JMenuItem();
+        jMenuSlicing = new javax.swing.JMenu();
+        jMenuPSSlicingWithWitness = new javax.swing.JMenuItem();
+        jMenuPSSlicingWithoutWitness = new javax.swing.JMenuItem();
+        jMenuPISlicing = new javax.swing.JMenuItem();
+        jMenuWCET = new javax.swing.JMenu();
+        jMenuPSWCETWithWitness = new javax.swing.JMenuItem();
+        jMenuPSWCETWithoutWitness = new javax.swing.JMenuItem();
+        jMenuPIWCET = new javax.swing.JMenuItem();
+        jMenuRunCLPR = new javax.swing.JMenuItem();
+        t2menu_run = new javax.swing.JMenu();
+        t2menu_safety = new javax.swing.JMenuItem();
+        t2menu_WCET = new javax.swing.JMenu();
+        t2menu_WCET_wit = new javax.swing.JMenuItem();
+        t2menu_WCET_noWit = new javax.swing.JMenuItem();
+        t2menu_WCET_PI = new javax.swing.JMenuItem();
+        t2menu_slicing = new javax.swing.JMenu();
+        t2menu_slicing_wit = new javax.swing.JMenuItem();
+        t2menu_slicing_noWit = new javax.swing.JMenuItem();
+        t2menu_slicing_PI = new javax.swing.JMenuItem();
+        t2menu_view = new javax.swing.JMenu();
+        t2menu_TS = new javax.swing.JMenuItem();
+        t2menu_SEG = new javax.swing.JMenuItem();
+        t2menu_STS = new javax.swing.JMenuItem();
+        javax.swing.JMenu helpMenu = new javax.swing.JMenu();
+        javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
+        statusPanel = new javax.swing.JPanel();
+        javax.swing.JSeparator statusPanelSeparator = new javax.swing.JSeparator();
+        statusMessageLabel = new javax.swing.JLabel();
+        statusAnimationLabel = new javax.swing.JLabel();
+        jTextFieldCLPRCmd = new javax.swing.JTextField();
+        jButtonDisplayGraph = new javax.swing.JButton();
+
+        mainPanel.setName("mainPanel"); // NOI18N
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        jTextAreaSource.setColumns(20);
+        jTextAreaSource.setRows(5);
+        jTextAreaSource.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextAreaSource.setName("jTextAreaSource"); // NOI18N
+        jScrollPane2.setViewportView(jTextAreaSource);
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        jTextAreaOutput.setColumns(20);
+        jTextAreaOutput.setEditable(false);
+        jTextAreaOutput.setRows(5);
+        jTextAreaOutput.setName("jTextAreaOutput"); // NOI18N
+        jScrollPane3.setViewportView(jTextAreaOutput);
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)))
+        );
+
+        menuBar.setName("menuBar"); // NOI18N
+
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(tracernb.TracernbApp.class).getContext().getResourceMap(TracernbView.class);
+        fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
+        fileMenu.setName("fileMenu"); // NOI18N
+
+        jMenuFileOpen.setText(resourceMap.getString("jMenuFileOpen.text")); // NOI18N
+        jMenuFileOpen.setName("jMenuFileOpen"); // NOI18N
+        jMenuFileOpen.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuFileOpenMouseClicked(evt);
+            }
+        });
+        jMenuFileOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuFileOpenActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jMenuFileOpen);
+
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(tracernb.TracernbApp.class).getContext().getActionMap(TracernbView.class, this);
+        exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
+        exitMenuItem.setName("exitMenuItem"); // NOI18N
+        fileMenu.add(exitMenuItem);
+
+        menuBar.add(fileMenu);
+
+        jMenuRun.setText(resourceMap.getString("jMenuRun.text")); // NOI18N
+        jMenuRun.setName("jMenuRun"); // NOI18N
+
+        jMenuSafety.setText(resourceMap.getString("jMenuSafety.text")); // NOI18N
+        jMenuSafety.setName("jMenuSafety"); // NOI18N
+
+        jMenuSafetyAllPaths.setText(resourceMap.getString("jMenuSafetyAllPaths.text")); // NOI18N
+        jMenuSafetyAllPaths.setName("jMenuSafetyAllPaths"); // NOI18N
+        jMenuSafetyAllPaths.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuSafetyAllPathsActionPerformed(evt);
+            }
+        });
+        jMenuSafety.add(jMenuSafetyAllPaths);
+
+        jMenuSafetyPathByPath.setText(resourceMap.getString("jMenuSafetyPathByPath.text")); // NOI18N
+        jMenuSafetyPathByPath.setName("jMenuSafetyPathByPath"); // NOI18N
+        jMenuSafetyPathByPath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuSafetyPathByPathActionPerformed(evt);
+            }
+        });
+        jMenuSafety.add(jMenuSafetyPathByPath);
+
+        jMenuRun.add(jMenuSafety);
+
+        jMenuSlicing.setText(resourceMap.getString("jMenuSlicing.text")); // NOI18N
+        jMenuSlicing.setName("jMenuSlicing"); // NOI18N
+
+        jMenuPSSlicingWithWitness.setText(resourceMap.getString("jMenuPSSlicingWithWitness.text")); // NOI18N
+        jMenuPSSlicingWithWitness.setName("jMenuPSSlicingWithWitness"); // NOI18N
+        jMenuPSSlicingWithWitness.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuPSSlicingWithWitnessActionPerformed(evt);
+            }
+        });
+        jMenuSlicing.add(jMenuPSSlicingWithWitness);
+
+        jMenuPSSlicingWithoutWitness.setText(resourceMap.getString("jMenuPSSlicingWithoutWitness.text")); // NOI18N
+        jMenuPSSlicingWithoutWitness.setName("jMenuPSSlicingWithoutWitness"); // NOI18N
+        jMenuSlicing.add(jMenuPSSlicingWithoutWitness);
+
+        jMenuPISlicing.setText(resourceMap.getString("jMenuPISlicing.text")); // NOI18N
+        jMenuPISlicing.setName("jMenuPISlicing"); // NOI18N
+        jMenuSlicing.add(jMenuPISlicing);
+
+        jMenuRun.add(jMenuSlicing);
+
+        jMenuWCET.setText(resourceMap.getString("jMenuWCET.text")); // NOI18N
+        jMenuWCET.setName("jMenuWCET"); // NOI18N
+
+        jMenuPSWCETWithWitness.setText(resourceMap.getString("jMenuPSWCETWithWitness.text")); // NOI18N
+        jMenuPSWCETWithWitness.setName("jMenuPSWCETWithWitness"); // NOI18N
+        jMenuPSWCETWithWitness.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuPSWCETWithWitnessActionPerformed(evt);
+            }
+        });
+        jMenuWCET.add(jMenuPSWCETWithWitness);
+
+        jMenuPSWCETWithoutWitness.setText(resourceMap.getString("jMenuPSWCETWithoutWitness.text")); // NOI18N
+        jMenuPSWCETWithoutWitness.setName("jMenuPSWCETWithoutWitness"); // NOI18N
+        jMenuWCET.add(jMenuPSWCETWithoutWitness);
+
+        jMenuPIWCET.setText(resourceMap.getString("jMenuPIWCET.text")); // NOI18N
+        jMenuPIWCET.setName("jMenuPIWCET"); // NOI18N
+        jMenuWCET.add(jMenuPIWCET);
+
+        jMenuRun.add(jMenuWCET);
+
+        jMenuRunCLPR.setText(resourceMap.getString("jMenuRunCLPR.text")); // NOI18N
+        jMenuRunCLPR.setName("jMenuRunCLPR"); // NOI18N
+        jMenuRunCLPR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuRunCLPRActionPerformed(evt);
+            }
+        });
+        jMenuRun.add(jMenuRunCLPR);
+
+        menuBar.add(jMenuRun);
+
+        t2menu_run.setText(resourceMap.getString("t2menu_run.text")); // NOI18N
+        t2menu_run.setName("t2menu_run"); // NOI18N
+
+        t2menu_safety.setText(resourceMap.getString("t2menu_safety.text")); // NOI18N
+        t2menu_safety.setName("t2menu_safety"); // NOI18N
+        t2menu_safety.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_safetyActionPerformed(evt);
+            }
+        });
+        t2menu_run.add(t2menu_safety);
+
+        t2menu_WCET.setText(resourceMap.getString("t2menu_WCET.text")); // NOI18N
+        t2menu_WCET.setName("t2menu_WCET"); // NOI18N
+
+        t2menu_WCET_wit.setText(resourceMap.getString("t2menu_WCET_wit.text")); // NOI18N
+        t2menu_WCET_wit.setName("t2menu_WCET_wit"); // NOI18N
+        t2menu_WCET_wit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_WCET_witActionPerformed(evt);
+            }
+        });
+        t2menu_WCET.add(t2menu_WCET_wit);
+
+        t2menu_WCET_noWit.setText(resourceMap.getString("t2menu_WCET_noWit.text")); // NOI18N
+        t2menu_WCET_noWit.setName("t2menu_WCET_noWit"); // NOI18N
+        t2menu_WCET_noWit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_WCET_noWitActionPerformed(evt);
+            }
+        });
+        t2menu_WCET.add(t2menu_WCET_noWit);
+
+        t2menu_WCET_PI.setText(resourceMap.getString("t2menu_WCET_PI.text")); // NOI18N
+        t2menu_WCET_PI.setName("t2menu_WCET_PI"); // NOI18N
+        t2menu_WCET_PI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_WCET_PIActionPerformed(evt);
+            }
+        });
+        t2menu_WCET.add(t2menu_WCET_PI);
+
+        t2menu_run.add(t2menu_WCET);
+
+        t2menu_slicing.setText(resourceMap.getString("t2menu_slicing.text")); // NOI18N
+        t2menu_slicing.setName("t2menu_slicing"); // NOI18N
+
+        t2menu_slicing_wit.setText(resourceMap.getString("t2menu_slicing_wit.text")); // NOI18N
+        t2menu_slicing_wit.setName("t2menu_slicing_wit"); // NOI18N
+        t2menu_slicing_wit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_slicing_witActionPerformed(evt);
+            }
+        });
+        t2menu_slicing.add(t2menu_slicing_wit);
+
+        t2menu_slicing_noWit.setText(resourceMap.getString("t2menu_slicing_noWit.text")); // NOI18N
+        t2menu_slicing_noWit.setName("t2menu_slicing_noWit"); // NOI18N
+        t2menu_slicing_noWit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_slicing_noWitActionPerformed(evt);
+            }
+        });
+        t2menu_slicing.add(t2menu_slicing_noWit);
+
+        t2menu_slicing_PI.setText(resourceMap.getString("t2menu_slicing_PI.text")); // NOI18N
+        t2menu_slicing_PI.setName("t2menu_slicing_PI"); // NOI18N
+        t2menu_slicing_PI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_slicing_PIActionPerformed(evt);
+            }
+        });
+        t2menu_slicing.add(t2menu_slicing_PI);
+
+        t2menu_run.add(t2menu_slicing);
+
+        menuBar.add(t2menu_run);
+
+        t2menu_view.setText(resourceMap.getString("t2menu_view.text")); // NOI18N
+        t2menu_view.setName("t2menu_view"); // NOI18N
+
+        t2menu_TS.setText(resourceMap.getString("t2menu_TS.text")); // NOI18N
+        t2menu_TS.setName("t2menu_TS"); // NOI18N
+        t2menu_TS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_TSActionPerformed(evt);
+            }
+        });
+        t2menu_view.add(t2menu_TS);
+
+        t2menu_SEG.setText(resourceMap.getString("t2menu_SEG.text")); // NOI18N
+        t2menu_SEG.setName("t2menu_SEG"); // NOI18N
+        t2menu_SEG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_SEGActionPerformed(evt);
+            }
+        });
+        t2menu_view.add(t2menu_SEG);
+
+        t2menu_STS.setText(resourceMap.getString("t2menu_STS.text")); // NOI18N
+        t2menu_STS.setName("t2menu_STS"); // NOI18N
+        t2menu_STS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                t2menu_STSActionPerformed(evt);
+            }
+        });
+        t2menu_view.add(t2menu_STS);
+
+        menuBar.add(t2menu_view);
+
+        helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
+        helpMenu.setName("helpMenu"); // NOI18N
+
+        aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
+        aboutMenuItem.setName("aboutMenuItem"); // NOI18N
+        helpMenu.add(aboutMenuItem);
+
+        menuBar.add(helpMenu);
+
+        statusPanel.setName("statusPanel"); // NOI18N
+
+        statusPanelSeparator.setName("statusPanelSeparator"); // NOI18N
+
+        statusMessageLabel.setName("statusMessageLabel"); // NOI18N
+
+        statusAnimationLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        statusAnimationLabel.setName("statusAnimationLabel"); // NOI18N
+
+        jTextFieldCLPRCmd.setText(resourceMap.getString("jTextFieldCLPRCmd.text")); // NOI18N
+        jTextFieldCLPRCmd.setName("jTextFieldCLPRCmd"); // NOI18N
+        jTextFieldCLPRCmd.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldCLPRCmdKeyPressed(evt);
+            }
+        });
+
+        jButtonDisplayGraph.setText(resourceMap.getString("jButtonDisplayGraph.text")); // NOI18N
+        jButtonDisplayGraph.setName("jButtonDisplayGraph"); // NOI18N
+        jButtonDisplayGraph.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDisplayGraphActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        statusPanel.setLayout(statusPanelLayout);
+        statusPanelLayout.setHorizontalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 851, Short.MAX_VALUE)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(statusMessageLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 827, Short.MAX_VALUE)
+                .addComponent(statusAnimationLabel)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonDisplayGraph)
+                .addGap(592, 592, 592)
+                .addComponent(jTextFieldCLPRCmd, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                .addGap(24, 24, 24))
+        );
+        statusPanelLayout.setVerticalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addComponent(statusPanelSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCLPRCmd, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonDisplayGraph))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(statusMessageLabel)
+                    .addComponent(statusAnimationLabel))
+                .addGap(3, 3, 3))
+        );
+
+        setComponent(mainPanel);
+        setMenuBar(menuBar);
+        setStatusBar(statusPanel);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jMenuFileOpenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuFileOpenMouseClicked
+        
+    }//GEN-LAST:event_jMenuFileOpenMouseClicked
+
+    private void jMenuFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuFileOpenActionPerformed
+        JFileChooser jfc = new JFileChooser();
+	
+        // For now this is the default directory
+	String baseDir = TESTS_DIR;
+
+	// Set the current directory
+	File f = null;
+        try{
+            f = new File(new File(baseDir).getCanonicalPath());
+            jfc.setCurrentDirectory(f);
+        }
+        catch (IOException e) {
+            FATAL.error("in setting the current directory. " + e.getMessage());
+        }
+
+	// Adding a filter (only .c files)
+        jfc.addChoosableFileFilter(new CFilter());
+        int result = jfc.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Read the file and write it to JTextArea
+            try{
+                String strLine;
+                File selectedFile = jfc.getSelectedFile();
+                FileInputStream in = new FileInputStream(selectedFile);
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(in));
+		jTextAreaSource.setText(null);
+                while ((strLine = br.readLine()) != null) {
+                    jTextAreaSource.append(strLine + "\n");
+                }
+                jButtonDisplayGraph.setEnabled(false);
+            }
+            catch(Exception e){
+                FATAL.error("in opening selected file. " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jMenuFileOpenActionPerformed
+
+    /**
+     * cleans the runtime folder
+     */
+    public void cleanRuntime() {
+        File runtime = new File(RUNTIME_DIR);
+
+        if(!runtime.exists())
+            runtime.mkdir();
+        else
+            for (File f: runtime.listFiles())
+                f.delete();
+    }
+
+    /**
+     * saves source program to the file ANT_PATH/tracer-nb-source.c
+     */
+    private void saveSourceToFile() {
+        File f = new File(SOURCE_FILE);
+
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(f));
+            out.write(jTextAreaSource.getText());
+            DEBUG.print("wrote contents of source to file " + SOURCE_FILE);
+            out.close();
+        }
+        catch (IOException e) {
+            FATAL.error("in trying to write source to file. " + e.getMessage());
+        }
+    }
+
+    /**
+     * runs pointer-analysis tool Crystal on the source file
+     * @return exit code of Crystal
+     */
+    private int runCrystal() {
+
+        Vector <String> cmdList = new Vector <String> ();
+
+        cmdList.add("./crystal");
+        cmdList.add("-v=20");
+        cmdList.add(SOURCE_FILE);
+
+        // set up the directory and environment
+        ProcessBuilder pb = new ProcessBuilder(cmdList);
+        pb.directory(new File(CRYSTAL_DIR + "/bin"));
+
+        // set up the process manager
+        ProcessManager crystal_pm = new ProcessManager(pb);
+        jTextAreaOutput.setText(null);
+        crystal_pm.getOutputPipe().setLogOutputMode(new File(LOG_FILE));
+
+        // run it! and wait for it to complete
+        DEBUG.print("\n\n==================");
+        DEBUG.print("running pointer-analysis tool Crystal...");
+        DEBUG.print("==================\n\n");
+
+        new Thread(crystal_pm).start();
+        try {
+            synchronized(crystal_pm.getLock()) {
+                crystal_pm.getLock().wait();
+            }
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in trying to wait for Crystal to finish. " +
+                    e.getMessage());
+        }
+
+        return crystal_pm.getExitValue();
+    }
+
+    /**
+     * compiles the file SOURCE_FILE to COMPILED_FILE
+     * @return true if the compilation succeeds. false otherwise
+     */
+    private int runAntlr() {
+
+        /**
+        //////// DO NOT CHANGE THE ORDER OF THE FOLLOWING FILES!!! ////////
+        String classPath = "";
+        classPath += LIB_DIR + "/antlr.jar";
+        classPath += ":" + LIB_DIR + "/grammars.jar";
+        classPath += ":" + LIB_DIR + "/crystal.jar";
+        classPath += ":" + LIB_DIR + "/java-cup-11a.jar";
+        classPath += ":" + LIB_DIR + "/java-cup-11a-runtime.jar";
+        classPath += ":" + LIB_DIR + "/JFlex.jar";
+        classPath += ":" + BASEBIN_DIR;
+        classPath += ":" + LIB_DIR + "/jung-1.7.6.jar";
+        classPath += ":" + LIB_DIR + "/commons-collections-3.2.1.jar";
+        classPath += ":" + LIB_DIR + "/colt.jar";
+        classPath += ":" + LIB_DIR + "/appframework-1.0.3.jar";
+        classPath += ":" + LIB_DIR + "/swing-worker-1.1.jar";
+
+
+        Vector <String> cmdList = new Vector <String> ();
+        
+        cmdList.add("java");
+
+        cmdList.add("-cp");
+
+        cmdList.add(classPath);
+
+        cmdList.add("Main");
+
+        cmdList.add(SOURCE_FILE);
+
+        cmdList.add(COMPILED_FILE);
+
+        // set up the directory and environment
+        ProcessBuilder pb = new ProcessBuilder(cmdList);
+        pb.directory(new File(BASEBIN_DIR));
+
+        // set up the process manager
+        ProcessManager antlr_pm = new ProcessManager(pb);
+        jTextAreaOutput.setText(null);
+        antlr_pm.getOutputPipe().setLogOutputMode(new File(LOG_FILE));
+
+        // run it! and wait for it to complete
+        DEBUG.print("\n\n==================");
+        DEBUG.print("compiling your source program...");
+        DEBUG.print("==================\n\n");
+
+        new Thread(antlr_pm).start();
+        try {
+            synchronized(antlr_pm.getLock()) {
+                antlr_pm.getLock().wait();
+            }
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in trying to wait for compiler to finish. " +
+                    e.getMessage());
+        }
+
+        return antlr_pm.getExitValue();
+         *
+         */
+
+        DEBUG.print("\n\n==================");
+        DEBUG.print("compiling your source program...");
+        DEBUG.print("==================\n\n");
+
+        String [] compilerArgs = new String [2];
+        compilerArgs[0] = SOURCE_FILE;
+        compilerArgs[1] = COMPILED_FILE;
+
+        try {
+            compiler.ClauseFactory.reset();
+            compiler.OPTIONS.GUI_RUN = true;
+            compiler.OPTIONS.trunk_dir = TracerOptions.TRUNK_DIR;
+
+            compiler.Main.main(compilerArgs);
+            return 0;
+        }
+        catch (Exception e) {
+            return 1; // error handling done by calling function
+        }
+    }
+
+    /**
+     * makes tracer in the folder ANT_PATH/src/clpr
+     * @return exit value of make
+     */
+    private int makeTracer() {
+
+        // set up the directory and environment
+        ProcessBuilder pb = new ProcessBuilder("make");
+        pb.directory(new File(TRACER_DIR));
+        Map <String, String> env = pb.environment();
+        env.put("PATH", System.getenv("PATH"));
+
+        // set up the process manager
+        ProcessManager makeTracer_pm = new ProcessManager(pb);
+        jTextAreaOutput.setText(null);
+        makeTracer_pm.getOutputPipe().setLogOutputMode(new File(LOG_FILE));
+
+        // run it! and wait for it to complete
+        DEBUG.print("\n\n==================");
+        DEBUG.print("making tracer...");
+        DEBUG.print("==================\n\n");
+
+        new Thread(makeTracer_pm).start();
+        try {
+            synchronized(makeTracer_pm.getLock()) {
+                makeTracer_pm.getLock().wait();
+            }
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in trying to wait for make tracer to finish. " +
+                    e.getMessage());
+        }
+
+        return makeTracer_pm.getExitValue();
+    }
+
+    /**
+     * appends the run() command to the specified file
+     * @param app - the file specified (safety.clp, slicer.clp, wcet.clp)
+     */
+    public void appendRunCommand(String app) {
+        try {
+            File f = new File(TRACER_DIR + "/" + app);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
+            String ls = System.getProperty("line.separator");
+
+            bw.append("% added by Tracer-nb GUIFrontEnd" + ls);
+            bw.append(":- run('" + COMPILED_FILE + "')." + ls);
+            bw.append(":- halt." + ls);
+
+            bw.close();
+        }
+        catch (IOException e) {
+            FATAL.error("in appending run command to tracer files. " + e.getMessage());
+        }
+    }
+
+    /**
+     * runs CLPR in the folder CLPR_DIR
+     */
+    private void runCLPR() {
+        if(pm == null || !pm.isRunning()) {
+            pm = new ProcessManager(TracerOptions.CLPR_DIR, "clpr");
+
+            jTextAreaOutput.setText(null);
+
+            pm.getOutputPipe().setGUIOutputMode(jTextAreaOutput);
+            new Thread(pm).start();
+
+            DEBUG.print("\n\n==================");
+            DEBUG.print("CLPR started");
+            DEBUG.print("==================\n\n");
+        }
+    }
+
+    /**
+     * saves source to file, compiles using antlr, makes tracer and runs CLPR
+     * @return true if all the steps are successful. false otherwise.
+     */
+    private boolean setupPrelims() {
+
+        ////////////////////
+        // STEP 0: clean runtime dir
+        ////////////////////
+        cleanRuntime();
+
+        ////////////////////
+        // STEP 1: save to file
+        ////////////////////
+        saveSourceToFile();
+
+        ////////////////////
+        // STEP 2: run Crystal
+        ////////////////////
+        if(compiler.OPTIONS.ALIAS_ANALYSIS) {
+            if(runCrystal() != 0) { // Crystal failure
+                DEBUG.message("Error running Crystal or compilation failed!\nCheck the file " + LOG_FILE + " for errors");
+                return false;
+            }
+            DEBUG.print("pointer analysis complete!");
+        }
+
+        ////////////////////
+        // STEP 3: compile file using antlr
+        ////////////////////
+        if(runAntlr() != 0) { // compilation failure
+            DEBUG.message("Compilation failed!\nCheck the file " + LOG_FILE + " for errors");
+            return false;
+        }
+        DEBUG.print("compilation success!");
+
+        ////////////////////
+        // STEP 4: make tracer
+        ////////////////////
+        if(makeTracer() != 0) { // tracer make failure
+            DEBUG.message("Tracer make failed!\nCheck the file " + LOG_FILE + " for errors");
+            return false;
+        }
+        DEBUG.print("tracer made!");
+
+        ////////////////////
+        // STEP 5: run CLPR
+        ////////////////////
+        runCLPR();
+        return true;
+    }
+
+    /**
+     * runs zgrviewer on a generated dot file
+     */
+    private void runZGRViewer() {
+        // create the antlr command
+        Vector <String> cmdList = new Vector <String> ();
+        cmdList.add("./run.sh");
+
+        switch(app) {
+            case SAFETY:
+                cmdList.add(COMPILED_FILE + "_GRAPH.dot");
+                break;
+            case SLICING:
+                cmdList.add(COMPILED_FILE + "_Sliced_STS.dot");
+                break;
+            case WCET:
+                cmdList.add(COMPILED_FILE + "_GRAPH.dot");
+                break;
+        }
+
+        // set up the directory and environment
+        ProcessBuilder pb = new ProcessBuilder(cmdList);
+        pb.directory(new File(TracerOptions.ZGR_DIR));
+
+        // set up the process manager
+        ProcessManager zgr_pm = new ProcessManager(pb);
+        zgr_pm.getOutputPipe().setConsoleOutputMode();
+
+        // run it! and wait for it to complete
+        DEBUG.print("\n\n==================");
+        DEBUG.print("displaying graph...");
+        DEBUG.print("==================\n\n");
+
+        new Thread(zgr_pm).start();
+    }
+
+    private void jMenuRunCLPRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuRunCLPRActionPerformed
+        runCLPR();
+    }//GEN-LAST:event_jMenuRunCLPRActionPerformed
+
+    private void jTextFieldCLPRCmdKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldCLPRCmdKeyPressed
+        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            if(pm != null && pm.isRunning())
+                pm.getInputPipe().setInput(jTextFieldCLPRCmd.getText());
+            jTextFieldCLPRCmd.setText(null);
+        }
+    }//GEN-LAST:event_jTextFieldCLPRCmdKeyPressed
+
+    private void jMenuSafetyAllPathsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSafetyAllPathsActionPerformed
+        if(!setupPrelims())
+            return;
+
+        try {
+            appendRunCommand("safety.clp");
+
+            // set options and provide input
+            synchronized(pm.getInputPipe().getLock()) {
+                pm.getInputPipe().setInput("set_tracer_flag(run_one_path,n).");
+                pm.getInputPipe().getLock().wait();
+
+                pm.getInputPipe().setInput("consult('" + TRACER_DIR + "/safety.clp').");
+                pm.getInputPipe().getLock().wait();
+            }
+            jButtonDisplayGraph.setEnabled(true);
+            app = SAFETY;
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in running safety all paths. " + e.getMessage());
+        }
+    }//GEN-LAST:event_jMenuSafetyAllPathsActionPerformed
+
+    private void jMenuSafetyPathByPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSafetyPathByPathActionPerformed
+        if(!setupPrelims())
+            return;
+
+        try {
+            appendRunCommand("safety.clp");
+
+            synchronized(pm.getInputPipe().getLock()) {
+                // set tracer option for path by path
+                pm.getInputPipe().setInput("set_tracer_flag(run_one_path,y).");
+                pm.getInputPipe().getLock().wait();
+
+                pm.getInputPipe().setInput("consult('" + TRACER_DIR + "/safety.clp').");
+                pm.getInputPipe().getLock().wait();
+            }
+            jButtonDisplayGraph.setEnabled(true);
+            app = SAFETY;
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in consulting required files in CLPR. " + e.getMessage());
+        }
+    }//GEN-LAST:event_jMenuSafetyPathByPathActionPerformed
+
+    private void jButtonDisplayGraphActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDisplayGraphActionPerformed
+        runZGRViewer();
+    }//GEN-LAST:event_jButtonDisplayGraphActionPerformed
+
+    private void jMenuPSSlicingWithWitnessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuPSSlicingWithWitnessActionPerformed
+        if(!setupPrelims())
+            return;
+
+        try {
+            appendRunCommand("slicer.clp");
+
+            synchronized(pm.getInputPipe().getLock()) {
+                pm.getInputPipe().setInput("consult('" + TRACER_DIR + "/slicer.clp').");
+                pm.getInputPipe().getLock().wait();
+            }
+            jButtonDisplayGraph.setEnabled(true);
+            app = SLICING;
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in consulting required files in CLPR. " + e.getMessage());
+        }
+    }//GEN-LAST:event_jMenuPSSlicingWithWitnessActionPerformed
+
+    private void jMenuPSWCETWithWitnessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuPSWCETWithWitnessActionPerformed
+        if(!setupPrelims())
+            return;
+
+        try {
+            appendRunCommand("wcet.clp");
+
+            synchronized(pm.getInputPipe().getLock()) {
+                pm.getInputPipe().setInput("consult('" + TRACER_DIR + "/wcet.clp').");
+                pm.getInputPipe().getLock().wait();
+            }
+            jButtonDisplayGraph.setEnabled(true);
+            app = WCET;
+        }
+        catch (InterruptedException e) {
+            FATAL.error("in consulting required files in CLPR. " + e.getMessage());
+        }
+    }//GEN-LAST:event_jMenuPSWCETWithWitnessActionPerformed
+
+    /*
+     * ****************************************************
+     * CODE BELOW IS FOR TRACER"2" WHICH USES SCRIPTS
+     * TO RUN ANTLR, TRACER, CLPR & OUTPUT THE RESULT...
+     * CODE FOR TRACER"1" THAT USES PIPES IS PRESENT ABOVE
+     * AND IS ACCESSED BY MODIFYING VALUE OF TRACER_VER
+     * NOTE: SOME FUNCTIONS ARE COMMON TO BOTH VERSIONS
+     * ****************************************************
+     */
+
+    class RunTracer extends SwingWorker<Void, Void> {
+
+        private String app, file;
+        int arg;
+        private Progress prog;
+
+        protected RunTracer(String app, String file, int arg) {
+            this.app = app;
+            this.file = file;
+            this.arg = arg;
+            prog = new Progress();
+        }
+
+        /**
+         * arg = 1: -witnesses y
+         * arg = 2: -witnesses n
+         * arg = 3: -path-sensitive n
+         */
+        protected Void doInBackground() {
+            t2_setupPrelims();
+            TracernbApp.getApplication().getMainFrame().setEnabled(false);
+            
+            Vector<String> cmdlist = new Vector<String>();
+            cmdlist.add("./bin/tracer");
+            cmdlist.add(app);
+            cmdlist.add(file);
+            switch(arg) {
+                case 1: cmdlist.add("-witnesses"); cmdlist.add("y"); break;
+                case 2: cmdlist.add("-witnesses"); cmdlist.add("n"); break;
+                case 3: cmdlist.add("-path-sensitive"); cmdlist.add("n"); break;
+            }
+
+            ProcessBuilder pb = new ProcessBuilder(cmdlist);
+            pb.directory(new File(TracerOptions.TRACER_SCRIPT_DIR));
+            ProcessManager pm = new ProcessManager(pb);
+            pm.getOutputPipe().setGUIOutputMode(jTextAreaOutput);
+
+            prog.setVisible(true);
+
+            pm.run(); // blocks till execution is over
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            prog.setVisible(false);
+            TracernbApp.getApplication().getMainFrame().setEnabled(true);
+            
+            if(app.equals("safety")) {
+                String s = jTextAreaOutput.getText();
+                if(s.contains("SAFE ;-)"))
+                    s = "The program is SAFE!";
+                else if(s.contains("UNSAFE"))
+                    s = "The program is UNSAFE!";
+                else
+                    s = "Unexpected error in determining safety of program!";
+                JOptionPane.showMessageDialog(null, s, "TRACER", JOptionPane.PLAIN_MESSAGE);
+            }
+        }
+    }
+
+    private boolean t2_setupPrelims() {
+        cleanRuntime();
+        saveSourceToFile();
+
+	if(compiler.OPTIONS.ALIAS_ANALYSIS) {
+            if(runCrystal() != 0) { // Crystal failure
+                DEBUG.message("Error running Crystal or compilation failed!\nCheck the file " + LOG_FILE + " for errors");
+                return false;
+            }
+            DEBUG.print("pointer analysis complete!");
+        }
+
+        jTextAreaOutput.setText("");
+        return true;
+    }
+
+
+    private void t2_runZGRViewer(String file) {
+        if(!(new File(file).exists())) {
+            DEBUG.message("dot file " + file + " not found!");
+            return;
+        }
+        Vector <String> cmdList = new Vector <String> ();
+        cmdList.add("./run.sh");
+        cmdList.add(file);
+        ProcessBuilder pb = new ProcessBuilder(cmdList);
+        pb.directory(new File(TracerOptions.ZGR_DIR));
+
+        ProcessManager zgr = new ProcessManager(pb);
+        zgr.getOutputPipe().setConsoleOutputMode();
+
+        new Thread(zgr).start();
+    }
+
+    private void t2menu_safetyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_safetyActionPerformed
+        RunTracer t = new RunTracer("safety", SOURCE_FILE, 0);
+        t.execute();
+    }//GEN-LAST:event_t2menu_safetyActionPerformed
+
+    private void t2menu_WCET_witActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_WCET_witActionPerformed
+        RunTracer t = new RunTracer("wcet", SOURCE_FILE, 1);
+        t.execute();
+    }//GEN-LAST:event_t2menu_WCET_witActionPerformed
+
+    private void t2menu_WCET_noWitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_WCET_noWitActionPerformed
+        RunTracer t = new RunTracer("wcet", SOURCE_FILE, 2);
+        t.execute();
+    }//GEN-LAST:event_t2menu_WCET_noWitActionPerformed
+
+    private void t2menu_WCET_PIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_WCET_PIActionPerformed
+        RunTracer t = new RunTracer("wcet", SOURCE_FILE, 3);
+        t.execute();
+    }//GEN-LAST:event_t2menu_WCET_PIActionPerformed
+
+    private void t2menu_slicing_witActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_slicing_witActionPerformed
+        RunTracer t = new RunTracer("slicer", SOURCE_FILE, 1);
+        t.execute();
+    }//GEN-LAST:event_t2menu_slicing_witActionPerformed
+
+    private void t2menu_slicing_noWitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_slicing_noWitActionPerformed
+        RunTracer t = new RunTracer("slicer", SOURCE_FILE, 2);
+        t.execute();
+    }//GEN-LAST:event_t2menu_slicing_noWitActionPerformed
+
+    private void t2menu_slicing_PIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_slicing_PIActionPerformed
+        RunTracer t = new RunTracer("slicer", SOURCE_FILE, 3);
+        t.execute();
+    }//GEN-LAST:event_t2menu_slicing_PIActionPerformed
+
+    private void t2menu_SEGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_SEGActionPerformed
+        t2_runZGRViewer(COMPILED_FILE + "_GRAPH.dot");
+}//GEN-LAST:event_t2menu_SEGActionPerformed
+
+    private void t2menu_STSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_STSActionPerformed
+        t2_runZGRViewer(COMPILED_FILE + "_Sliced_STS.dot");
+}//GEN-LAST:event_t2menu_STSActionPerformed
+
+    private void t2menu_TSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_t2menu_TSActionPerformed
+        t2_runZGRViewer(COMPILED_FILE + "_STS.dot");
+    }//GEN-LAST:event_t2menu_TSActionPerformed
+
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDisplayGraph;
+    private javax.swing.JMenuItem jMenuFileOpen;
+    private javax.swing.JMenuItem jMenuPISlicing;
+    private javax.swing.JMenuItem jMenuPIWCET;
+    private javax.swing.JMenuItem jMenuPSSlicingWithWitness;
+    private javax.swing.JMenuItem jMenuPSSlicingWithoutWitness;
+    private javax.swing.JMenuItem jMenuPSWCETWithWitness;
+    private javax.swing.JMenuItem jMenuPSWCETWithoutWitness;
+    private javax.swing.JMenu jMenuRun;
+    private javax.swing.JMenuItem jMenuRunCLPR;
+    private javax.swing.JMenu jMenuSafety;
+    private javax.swing.JMenuItem jMenuSafetyAllPaths;
+    private javax.swing.JMenuItem jMenuSafetyPathByPath;
+    private javax.swing.JMenu jMenuSlicing;
+    private javax.swing.JMenu jMenuWCET;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextAreaOutput;
+    private javax.swing.JTextArea jTextAreaSource;
+    private javax.swing.JTextField jTextFieldCLPRCmd;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JLabel statusAnimationLabel;
+    private javax.swing.JLabel statusMessageLabel;
+    private javax.swing.JPanel statusPanel;
+    private javax.swing.JMenuItem t2menu_SEG;
+    private javax.swing.JMenuItem t2menu_STS;
+    private javax.swing.JMenuItem t2menu_TS;
+    private javax.swing.JMenu t2menu_WCET;
+    private javax.swing.JMenuItem t2menu_WCET_PI;
+    private javax.swing.JMenuItem t2menu_WCET_noWit;
+    private javax.swing.JMenuItem t2menu_WCET_wit;
+    private javax.swing.JMenu t2menu_run;
+    private javax.swing.JMenuItem t2menu_safety;
+    private javax.swing.JMenu t2menu_slicing;
+    private javax.swing.JMenuItem t2menu_slicing_PI;
+    private javax.swing.JMenuItem t2menu_slicing_noWit;
+    private javax.swing.JMenuItem t2menu_slicing_wit;
+    private javax.swing.JMenu t2menu_view;
+    // End of variables declaration//GEN-END:variables
+
+    private final Timer messageTimer;
+    private final Timer busyIconTimer;
+    private final Icon idleIcon;
+    private final Icon[] busyIcons = new Icon[15];
+    private int busyIconIndex = 0;
+
+    private JDialog aboutBox;
+}
+
+class CFilter extends javax.swing.filechooser.FileFilter {
+    public boolean accept(File file) {
+	String filename = file.getName();
+	return (file.isDirectory() || filename.endsWith(".c"));
+    }
+    public String getDescription() {
+	return "*.c";
+    }
+}
+
+/**
+ * print fatal errors and kill the application
+ * TODO: improve to display a message box and continue the application
+ * @author vijay
+ */
+class FATAL {
+    public static void error(String s) {
+        System.out.flush();
+        System.out.println("Fatal error: " + s);
+        System.exit(1);
+    }
+}
+
+/**
+ * debug printouts and messages
+ * @author vijay
+ */
+class DEBUG {
+    private static final boolean debug = true;
+
+    public static void print(String s) {
+        if(debug)
+            System.out.println(s);
+    }
+
+    public static void message(String s) {
+        JOptionPane.showMessageDialog(null, s, "TRACER", JOptionPane.WARNING_MESSAGE);
+    }
+}

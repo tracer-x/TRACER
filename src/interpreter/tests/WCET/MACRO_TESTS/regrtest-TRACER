@@ -1,0 +1,213 @@
+#!/bin/bash
+
+source ./regrtest-expected-results
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=tracer 
+
+CHECK_RESULTS=0 # 1: check results obtained against
+		#    regtest-expected-results.
+                # 0: no check
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+TESTS_HOME=`dirname "$abspath"` 
+
+currtest=""
+block="" 
+
+# counters
+counter=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -help        print this message
+  -block s     run the tests in block s (default "all")
+  -all         run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+    case "$1" in
+	-help)
+	    usage
+	    exit 1
+	    ;;
+	-block)
+	    shift
+	    block="$block$1"
+	    ;;
+	
+	-all)
+	    shift	    
+	    block="ALL"
+	    ;;     
+	*)
+	    echo "unknown arg: $1"
+	    usage
+	    exit 0
+	    ;;
+    esac
+    shift
+done
+
+
+# just does a bunch of greps on the *.out file
+function getstats {
+    echo $1 >> $stat
+    if grep "Analysis time" test_${currtest}_${counter}.out; then	
+        # Here we print to file the bunch of greps
+	echo `grep -ie "Total WCET" test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "States visited" test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "# subsumed nodes"  test_${currtest}_${counter}.out` >> $stat
+	echo `grep -ie "# witnesses failed"  test_${currtest}_${counter}.out` >> $stat
+        # Here we store in variables the results of greps	
+	wcet=`grep -ie "Total WCET" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+	states=`grep -ie "States visited" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+	subsumed=`grep -ie "# subsumed nodes" test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'`  
+	unsat=`grep -ie "# witnesses failed"  test_${currtest}_${counter}.out | sed 's@\(.*\):\(.*\)@\2@g'` 
+	
+    else	
+	dies=$[ $dies + 1]	
+    fi	
+}
+
+function cleanDirectory {
+    cd $1
+    rm -f *.clp
+    rm -f *.dot
+    rm -f *.TRACES
+    rm -f *.out
+    cd ${TESTS_HOME}    
+    rm -f *_CIL.c
+}
+
+
+# short_name full_name options
+function run {
+    currtest=$2
+    echo "[${counter}] ${currtest}.c" >> $log
+    echo "------------ [$currtest] $* ------------"
+    ${TRACER_CMMD} wcet $3.c $4 > test_${currtest}_${counter}.out
+    getstats $2
+    if [ ${CHECK_RESULTS} -eq 1 ]; then 
+	checkstats $1 $2
+    fi	
+    counter=$[ ${counter} + 1]
+}
+# for now, we don't include array constraints
+witnesses_options=" -witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y" 
+blockWITNESSES(){
+    echo -e "Path-sensitive w/ witnesses \n" >> $stat
+    run "witness" adpcm adpcm_prep "$witnesses_options -ignore-nonlinear y -path-datastructure naive"
+    run "witness" mpeg mpeg "$witnesses_options -ignore-nonlinear y -path-datastructure naive"
+    run "witness" susan_thin susan_thin_prep "$witnesses_options -ignore-nonlinear y -path-datastructure naive"
+    run "witness" statemate statemate_prep "$witnesses_options -optim-interpolants y " 
+    run "witness" linpack linpack_abstract_prep_OK "-path-datastructure naive  $witnesses_options"    
+    run "witness" kbfiltr kbfiltr "$witnesses_options"
+    run "witness" cdaudio cdaudio "$witnesses_options"
+    run "witness" diskperf diskperf "$witnesses_options"
+    run "witness" floppy  floppy "$witnesses_options -ignore-nonlinear y"
+#   run "nowitness" serial serial "$witnesses_options -ignore-comp-errors y"
+    run "witness" qpmouse qpmouse "$witnesses_options"
+    run "witness" tlan tlan "$witnesses_options"
+    run "witness" tcas tcas "$witnesses_options"
+}
+
+blockNOWITNESSES(){
+    echo -e "Path-sensitive w/o witnesses \n" >> $stat
+    run "nowitness" adpcm adpcm_prep "-witnesses n -clean-after-dump y -include-pointers y -path-datastructure naive "
+    run "nowitness" mpeg mpeg "-witnesses n -alias y -clean-after-dump y -include-pointers y"
+    run "nowitness" susan_thin susan_thin_prep "-witnesses n -clean-after-dump y -include-pointers y -path-datastructure naive"
+   run "nowitness" statemate statemate_prep_inlined "-witnesses n -clean-after-dump y -include-pointers y"
+   run "nowitness" linpack linpack_abstract_prep_OK "-witnesses n -clean-after-dump y -path-datastructure naive -include-pointers y"
+    run "nowitness" kbfiltr kbfiltr "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" cdaudio cdaudio "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" diskperf diskperf "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" floppy floppy "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" qpmouse qpmouse "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    # for serial: we don't include array constraints
+#   run "nowitness" serial serial "-witnesses n -clean-after-dump y -optim-interpolants y -ignore-comp-errors y"
+    run "nowitness" tlan tlan "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+    run "nowitness" tcas tcas "-witnesses n -clean-after-dump y -include-pointers y -ignore-comp-errors y"
+}
+
+blockPATHINSENSITIVE(){
+    echo -e "Path-insensitive \n" >> $stat
+    run "pathins" adpcm adpcm_prep "-path-sensitive n -clean-after-dump y -include-pointers y -path-datastructure naive"
+    run "pathins" mpeg mpeg "-path-sensitive n -alias y -clean-after-dump y -include-pointers y"
+    run "pathins" susan_thin susan_thin_prep "-path-sensitive n -clean-after-dump y -include-pointers y"
+    run "pathins" statemate statemate_prep_inlined "-path-sensitive n -clean-after-dump y -include-pointers y" 
+    run "pathins" linpack linpack_abstract_prep_OK "-path-sensitive n -clean-after-dump y -include-pointers y"
+    run "pathins" kbfiltr kbfiltr "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+    run "pathins" cdaudio cdaudio "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+    run "pathins" diskperf diskperf "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+    run "pathins" floppy floppy "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+    # for serial: we don't include array constraints
+    run "pathins" serial serial "-path-sensitive n -clean-after-dump y -ignore-comp-errors y"
+    run "pathins" qpmouse qpmouse "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+    run "pathins" tlan tlan "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+    run "pathins" tcas tcas "-path-sensitive n -include-pointers y -clean-after-dump y -ignore-comp-errors y"
+}
+
+runAllTests(){
+    blockWITNESSES
+    blockNOWITNESSES
+    blockPATHINSENSITIVE    
+}
+
+echo $block
+case "$block" in
+    WITNESSES)
+	shift
+	blockWITNESSES
+	;;
+    NOWITNESSES)
+	shift
+	blockNOWITNESSES
+	;;
+    PATHINSENSITIVE)
+	shift
+	blockPATHINSENSITIVE
+	;;      
+    ALL)
+	shift
+	runAllTests
+	;;
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 0
+	;;
+esac  
+shift
+
+# Clean temporary files
+cleanDirectory "."
+
+# Print some stuff
+echo "No Answer:             $dies"     >> $log
+
+exit 1

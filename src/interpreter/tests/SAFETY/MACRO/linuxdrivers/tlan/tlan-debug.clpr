@@ -1,0 +1,11 @@
+print_tlan_state(i149, %func_spin_lock_irqsave   %% DEBUG for tlan-TRACER.c
+		 [_,_,_,_,In_irq,_,LockStatus,_,_,_,_,_,_,_,_,_,_,_]):-	
+	print_message("[spin_lock_irqsave]   In_irq:% LockStatus: % \n",
+		      [In_irq,LockStatus]),
+	read(_).
+print_tlan_state(i156, %func_spin_unlock_irqrestore %% DEBUG for tlan-TRACER.c
+		 [_,_,_,_,In_irq,_,LockStatus,_,_,_,_,_,_,_,_,_,_,_]):-
+	print_message("[spin_unlock_irqsave] In_irq:% LockStatus: % \n",
+		      [In_irq,LockStatus]),
+	read(_).
+print_tlan_state(_,_).

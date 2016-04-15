@@ -1,0 +1,94 @@
+
+loop1([X,Y,Pixel_Count,Black_Pixel,
+         X,Y,Pixel_Count,Black_Pixel], 0) :- Y>=200, !.
+loop1([_X,Y,Pixel_Count,Black_Pixel,
+         Xf,Yf,Pixel_Countf,Black_Pixelf], T+U) :-
+	Black_Pixel=0,
+	loop2b0([Y/2,Y,Pixel_Count,Black_Pixel,
+                 Xf1,Yf1,Pixel_Countf1,Black_Pixelf1], U),
+	loop1([Xf1,Yf1+1,Pixel_Countf1,Black_Pixelf1,
+               Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+loop1([_X,Y,Pixel_Count,Black_Pixel,
+         Xf,Yf,Pixel_Countf,Black_Pixelf], T+U) :-
+	Black_Pixel>0,
+	loop2b1([Y/2,Y,Pixel_Count,Black_Pixel,
+                 Xf1,Yf1,Pixel_Countf1,Black_Pixelf1], U),
+	loop1([Xf1,Yf1+1,Pixel_Countf1,Black_Pixelf1,
+               Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+loop2b0([X,Y,Pixel_Count,Black_Pixel,
+         X,Y,Pixel_Count,Black_Pixel], 0) :- Black_Pixel=0, X>=640-Y/2, !.
+loop2b0([X,Y,Pixel_Count,_Black_Pixel,
+         Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	loop2b1([X+1,Y,Pixel_Count,_Black_Pixel1,
+                 Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+loop2b0([X,Y,Pixel_Count,Black_Pixel,
+         Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	loop2b0([X+1,Y,Pixel_Count,Black_Pixel,
+	         Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+loop2b1([X,Y,Pixel_Count,Black_Pixel,
+         X,Y,Pixel_Count,Black_Pixel], 0) :- Black_Pixel>0, X>=640-Y/2, !.
+loop2b1([X,Y,Pixel_Count,Black_Pixel,
+         Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	loop2b1([X+1,Y,Pixel_Count,Black_Pixel,
+                 Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+
+
+straightline1(0, [X,Y,_Pixel_Count,_Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	straightline1(1, [X,Y,0,0,
+                         Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(1, [X,_Y,Pixel_Count,Black_Pixel,
+                  Xf,Yf,Pixel_Countf,Black_Pixelf], T+U) :-
+	loop1([X,0,Pixel_Count,Black_Pixel,
+               Xf1,Yf1,Pixel_Countf1,Black_Pixelf1], U),
+	straightline1(2, [Xf1,Yf1,Pixel_Countf1,Black_Pixelf1,
+                          Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+
+straightline1(2, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Pixel_Count=0,
+	straightline1(3, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(2, [X,Y,Pixel_Count,Black_Pixel,
+                  Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Pixel_Count<0,
+	straightline1(4, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(2, [X,Y,Pixel_Count,Black_Pixel,
+                  Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Pixel_Count>0,
+	straightline1(4, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(3, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	straightline1(5, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(4, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	straightline1(5, [X,Y,Pixel_Count,Black_Pixel,
+                          Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(5, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+100) :-
+	Black_Pixel=0,
+	straightline1(6, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(5, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Black_Pixel<0,
+	straightline1(7, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(5, [X,Y,Pixel_Count,Black_Pixel,
+	          Xf,Yf,Pixel_Countf,Black_Pixelf], T+1) :-
+	Black_Pixel>0,
+	straightline1(7, [X,Y,Pixel_Count,Black_Pixel,
+	                  Xf,Yf,Pixel_Countf,Black_Pixelf], T).
+straightline1(7, [X,Y,Pixel_Count,Black_Pixel,
+	          X,Y,Pixel_Count,Black_Pixel], 0).
+
+
+
+
+

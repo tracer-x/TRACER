@@ -1,0 +1,159 @@
+TRACER Toolkit
+----------------
+
+Authors: Jorge A. Navas, Andrew E. Santosa, and Vijayaraghavan Murali
+
+For technical questions/ bug report contact:
+
+Jorge A. Navas
+The University of Melbourne
+Email: jorge.navas@unimelb.edu.au
+
+Description: TRACER is a verification tool based on symbolic execution
+for finite-state safety properties of sequential C programs.  TRACER
+builds a finite symbolic execution tree over-approximating the set of
+all concrete reachable states. If the error location cannot be reached
+from any symbolic path then the program is reported as
+safe. Otherwise, the program may contain a bug. TRACER reports a false
+alarm only if the theorem prover fails to prove a valid claim.
+
+The most innovative features of TRACER stem from how it tackles the
+"path-explosion" problem and the presence of unbounded loops. TRACER
+computes weakest preconditions as interpolants and integrates a novel
+counterexample-guided refinement phase within the symbolic execution
+process.
+
+REQUIREMENTS
+--------------
+linux 
+jdk  > 1.5 
+bash shell
+
+INSTALLATION
+--------------
+tar -zxvf tracer.0.1.tar.gzip
+export TRACER_PATH=_here_path_to_tracer.0.1_
+
+FILES and DIRECTORIES
+-----------------------
+- tracer.0.1 is the main script 
+
+- lib/C2CLP.jar is the compiler for C programs. It uses
+  CIL (lib/cilly) to translate the program into a CLP (Constraint Logic
+  Program) program. It also uses:
+
+  * Crystal, a program analysis infrastructure for C developed at
+    Cornell University (http://www.cs.cornell.edu/projects/crystal/).  
+    We use it for alias analysis.
+    
+  * Interproc (lib/frontend) an abstract interpretation-based analyzer
+    that uses the Apron Abstract Domain Library.
+    (http://pop-art.inrialpes.fr/people/bjeannet/bjeannet-forge/interproc/). 
+    We use it for providing inductive invariants.
+
+  * CLP-Prover (lib/clp-prover) a constrain-based tool for interpolant
+    generation available from http://www.mpi-sws.org/~rybal/clp-prover
+        
+  * InvGen (lib/invgen) an invariant generator available from
+    http://pub.ist.ac.at/~agupta/invgen/.
+
+- lib/clpr and lib/clpr.init are the files of the CLP(R) system
+  version 1.2b, a Constraint Logic Program system developed at IBM.
+
+- src/tracer.0.1_debug.clpr is the implementation of the symbolic
+  execution interpreter written in CLP(R).
+
+- src/tracer.0.1.clpr is an optimized implementation of the symbolic
+  execution interpreter written in CLP(R).
+
+- tests/ and benchmarks/ are small programs used for regression tests
+  and real benchmarks.
+
+
+USAGE
+------
+
+  % ./tracer.0.1 -help
+
+  usage: ./tracer.0.1 program [options]
+  program is the name of the program to be verified.
+  General options:
+
+  -help                            print this message
+  -optimized-version         [n|y] turn on/off an optimized version (default n)
+                                   If y then dot files are not generated.
+  -alias                     [n|y] turn on/off alias analysis  (default y)
+                                   (unsound if n)
+  -mccarthy                  [n|y] turn on/off mccarthy solver (default n)
+  -convert-strict-ineq       [n|y] convert strict inequalities into
+                                   non-strict inequalities     (default n)
+  -convert-eq-to-ineq        [n|y] convert equality into inequalities (default n)
+  -intp                         x  choose interpolation method
+                                   x=none  -- no interpolation  
+                                   x=sp    -- use of strongest postconditions (default)
+                                   x=wp    -- use of weakest preconditions.
+                                   x=clp   -- use CLP-Prover 
+  -loop-inv                     x  use external loop invariants (default none)
+                                   x=none      -- none
+                                   x=octagon   -- octagon   abstract domain
+                                   x=polyhedra -- polyhedra abstract domain
+                                   x=invgen    -- InvGen tool
+  -h                            x  choose heuristics during refinement
+                                   x is integer between [1...4] (default 2)
+
+INPUT
+-------
+A program should be annotated at least with one
+_TRACER_abort(cond). Of course, multiple _TRACER_abort(cond) are also
+allowed.
+
+OUTPUT
+---------
+TRACER generates automatically dot files of the transition system
+associated with the program and the symbolic execution
+tree. If "-optimized-version y" then those dot files are not
+generated.
+
+If the program is unsafe, TRACER also displays the feasible
+counterexample.
+
+ABOUT OPTIONS
+--------------
+
+- "-convert-strict-ineq y" converts x>y into x>=y+1 and x<y into x+1<=y.  
+  Note this is sound only if x and y are integers.
+
+- "-convert-eq-to-ineq y" converts x=y into x>=y and x<=y.
+
+- "h [1...4]" chooses different heuristics to guide the refinement.
+   1-2 refine starting bottom-up from the spurious counterexample.
+   3-4 refine starting top-down from the spurious counterexample.
+
+ABOUT EXTERNAL TOOLS
+----------------------
+
+- CLP-Prover is used optionally to compute interpolants (-intp clp)
+  and it is available from http://www.mpi-sws.org/~rybal/clp-prover/
+
+- InvGen is used optionally to generate loop invariants (-loop-inv
+  invgen) and it is available from http://pub.ist.ac.at/~agupta/invgen/
+
+- InterProc is used optionally to provide inductive
+  invariants (-loop-inv octagon and -loop-inv polyhedra) and it is
+  available from
+  http://pop-art.inrialpes.fr/people/bjeannet/bjeannet-forge/interproc.
+
+LIMITATIONS
+-----------
+* No support for recursive functions
+* Unsound with function pointers
+
+EXAMPLES
+---------
+./tests/regrtest -all
+
+BENCHMARKS
+----------
+./benchmarks/regrtest -all
+
+

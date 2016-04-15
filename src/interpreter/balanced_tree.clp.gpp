@@ -1,0 +1,355 @@
+% balanced_tree.clp.gpp
+
+%-------------------------------------------------------------------------%
+% Insertion and search in 234-trees.  234 trees are B-trees of order 4.
+% Insertion maintains height-balance.
+%-------------------------------------------------------------------------%
+% This file is part of type inference system designed by
+% M. Bruynooghe and J. Gallagher. Version 1.3 created by jpg on
+% 08/08/2006. (c) Roskilde University.
+%-------------------------------------------------------------------------%
+% export
+%        insert_tree/4 search_tree/3 search_replace_tree/5	 
+% 	 traverse_tree/2 traversekey_tree/2 traverseval_tree/2
+%        % for testing
+%        balanced_tree_test/0  
+%-------------------------------------------------------------------------%
+% Structure of 234-trees
+%
+% Tree234 ::= root |  
+%             node(Records, Succs) |
+%	      leaf(Records)
+%
+% NonRootTree234 ::= 
+%             node(Records, Succs) |
+%	      leaf(Records)
+%
+% -- max length(Records) = 3  
+% -- length(Succs) = 1+length(Records)
+%
+% Records ::= [Record] | [Record|Records] 
+% Succs   ::= [NonRootTree234,NonRootTree234] | 
+%             [NonRootTree234|Succs]
+%
+% -- Key is compared using key_lt, key_eq, and key_gt
+%
+% Record  ::= rec(Key, Vlist)
+% Key     ::= Number
+% Vlist   ::= Term
+%-------------------------------------------------------------------------%
+
+%-------------------------------------------------------------------------%
+%                   API for comparing keys
+%-------------------------------------------------------------------------%
+key_lt(K1,K2):-
+	% K1,K2 is arithmetic type without generating constraints
+	not(not(K1 < K2)).
+
+key_eq(K1,K2):-
+	K1 == K2.
+
+key_gt(K1,K2):-
+	% K1,K2 is arithmetic type without generating constraints
+	% constraints	
+	not(not(K1 > K2)).
+		
+%-------------------------------------------------------------------------%
+% insert_tree(+OldT,+Key,+Val,-NewT) 
+% Insert in a 234 tree OldT a new record rec(Key,Val) and return a new 234
+% tree NewT. Assume that Key is not in OldT.
+%-------------------------------------------------------------------------%
+insert_tree(root,K,V,leaf([rec(K,V)])) :- !.
+insert_tree(T,K,V,T2) :-
+	insert_base_tree(T,K,V,T1),
+	splitroot(T1,T2).
+
+insert_base_tree(leaf(Recs),K,V,leaf(Recs1)) :-
+	insertleaf(K,Recs,V,Recs1).
+insert_base_tree(node(Recs,Succs),K,V,NewTree) :-
+	findinterval(K,Recs,N,Succs,Succ),
+	insert_base_tree(Succ,K,V,Tree1),
+	newtree(Tree1,N,Recs,Succs,NewTree).
+
+insertleaf(K,[rec(K1,V1)|Rs],V,[rec(K,V),rec(K1,V1)|Rs]) :-
+	key_lt(K,K1),!.
+insertleaf(K,[R|Rs],V,[R|Rs1]) :- !, insertleaf(K,Rs,V,Rs1).
+insertleaf(K,[],V,[rec(K,V)]):-!.
+
+findinterval(K,[rec(K1,_)|_],1,[S|_],S) :-
+	key_lt(K,K1),!.
+/*------------------------------------------------------------------------*/
+#if     (CLP_SYS == CLPR)
+/*------------------------------------------------------------------------*/
+findinterval(K,[_|Rs],N+1,[_|Ss],S) :-	
+	!, findinterval(K,Rs,N,Ss,S).
+/*------------------------------------------------------------------------*/
+#elif   (CLP_SYS == SWI)
+/*------------------------------------------------------------------------*/
+findinterval(K,[_|Rs],N1,[_|Ss],S) :-	
+	!, findinterval(K,Rs,N,Ss,S),
+	N1 is N + 1.
+/*------------------------------------------------------------------------*/
+#endif
+/*------------------------------------------------------------------------*/
+findinterval(_,[],1,[S],S):-!.
+
+
+newtree(leaf([K1,K2,K3,K4]),N,Recs,Succs,NewTree) :- !,
+	promote(N,leaf([K1]),leaf([K3,K4]),K2,Recs,Succs,NewTree).
+newtree(node([K1,K2,K3,K4],[S1,S2|Ss]),N,Recs,Succs,NewTree) :- !,
+	promote(N,node([K1],[S1,S2]),node([K3,K4],Ss),K2,Recs,Succs,NewTree).
+newtree(T,N,Recs,Succs,NewTree) :- replace_subtree(N,Succs,T,Recs,NewTree).
+
+replace_subtree(1,[_|Ss],T,Recs,node(Recs,[T|Ss])).
+replace_subtree(2,[S1,_|Ss],T,Recs,node(Recs,[S1,T|Ss])).
+replace_subtree(3,[S1,S2,_|Ss],T,Recs,node(Recs,[S1,S2,T|Ss])).
+replace_subtree(4,[S1,S2,S3,_],T,Recs,node(Recs,[S1,S2,S3,T])).
+
+promote(1,S11,S12,K2,Recs,[_|Succs],node([K2|Recs],[S11,S12|Succs])).
+promote(2,S11,S12,K2,[J1|Recs],[R1,_|Ss],node([J1,K2|Recs],[R1,S11,S12|Ss])).
+promote(3,S11,S12,K2,[J1,J2|Recs],[R1,R2,_|Ss],
+	node([J1,J2,K2|Recs],[R1,R2,S11,S12|Ss])).
+promote(4,S11,S12,K2,[J1,J2,J3|Recs],[R1,R2,R3,_],
+	node([J1,J2,J3,K2|Recs],[R1,R2,R3,S11,S12])).
+
+splitroot(leaf([K1,K2,K3,K4]),node([K2],[leaf([K1]),leaf([K3,K4])])) :- !.
+splitroot(node([K1,K2,K3,K4],[S1,S2|Ss]),
+	       node([K2],[node([K1],[S1,S2]),node([K3,K4],Ss)])) :- !.
+splitroot(T,T).
+
+%-------------------------------------------------------------------------%
+% search_tree(+Tree,+Key,-Val) 
+% Search for key Key in a 234 tree Tree and return Val.
+%-------------------------------------------------------------------------%
+search_tree(leaf([rec(K1,V1)|Rs]),K,Vs) :-
+	returnleaf(K,K1,V1,Rs,Vs).
+search_tree(node(Rs,Ss),K,Vs) :-
+	searchinterval(K,Rs,Ss,S), !,
+	searchsubtree(S,K,Vs).
+
+returnleaf(K,K1,Vs,_,Vs) :-
+	key_eq(K,K1),!.
+returnleaf(K,_,_,[rec(K2,V1)|Rs],Vs) :-
+	!, returnleaf(K,K2,V1,Rs,Vs).
+
+searchinterval(K,[rec(K1,_)|Rs],[_|Ss],S) :-
+	key_gt(K,K1),!,
+	searchinterval(K,Rs,Ss,S).
+searchinterval(K,[rec(K1,Vs)|_],[S|_],R) :-
+	!, check_interval_found(K,K1,Vs,S,R).
+searchinterval(_,[],[S],S):-!.
+
+check_interval_found(K,K1,Vs,_,result(Vs)) :-
+	key_eq(K,K1),!.
+check_interval_found(_,_,_,S,S).
+
+searchsubtree(result(Vs),_,Vs) :- !.
+searchsubtree(S,K,Vs) :- search_tree(S,K,Vs).
+
+%-------------------------------------------------------------------------%
+% search_replace_tree(+OldT,+Key,?OldVal,-NewT,+NewVal) 
+% Search in a 234 tree OldT for Key, replace its old value OldVal with
+% NewVal, and return a new 234 tree NewT.
+%-------------------------------------------------------------------------%
+search_replace_tree(leaf([rec(K1,V1)|Rs]),K,Vs,leaf(Rs1),Vs1) :-
+	replaceleaf(K,K1,V1,Rs,Vs,Rs1,Vs1).
+search_replace_tree(node(Rs,Ss),K,Vs,node(Rs1,Ss1),Vs1) :-
+	replace_interval(K,Rs,Ss,S,Rs1,Ss1,S1), !,
+	search_replace_subtree(S,K,Vs,S1,Vs1).
+
+replaceleaf(K,K1,Vs,R2,Vs,[rec(K,Vs1)|R2],Vs1) :-
+	key_eq(K,K1),!.
+replaceleaf(K,K1,V1,[rec(K2,V2)|Rs],Vs,[rec(K1,V1)|Rs1],Vs1) :-
+	replaceleaf(K,K2,V2,Rs,Vs,Rs1,Vs1).
+
+replace_interval(K,[rec(K1,Vs)|Rs],[S1|Ss],S,[rec(K1,Vs)|Rs1],[S1|Ss1],S2) :-
+	key_gt(K,K1),!,
+	replace_interval(K,Rs,Ss,S,Rs1,Ss1,S2).
+replace_interval(K,[rec(K1,Vs)|Rs],[S|Ss],V1,[rec(K2,Vs1)|Rs],[S1|Ss],V2) :-
+	!, check_replace_interval(K,K1,K2,Vs,V1,Vs1,V2,S,S1).
+replace_interval(_,[],[S],S,[],[S1],S1):-!.
+
+check_replace_interval(K,K1,K,Vs,val(Vs),Vs1,val(Vs1),S,S) :-
+	key_eq(K,K1),!.	
+check_replace_interval(_,K1,K1,Vs,S,Vs,S1,S,S1).
+
+search_replace_subtree(val(Vs),_,Vs,val(Vs1),Vs1) :- !.
+search_replace_subtree(S,K,Vs,S1,Vs1) :-
+	search_replace_tree(S,K,Vs,S1,Vs1).
+
+%-------------------------------------------------------------------------%
+% traverse the tree in order, returning keys
+%-------------------------------------------------------------------------%
+traversekey_tree(T,L) :-
+	travkey_tree(T,L,[]).
+
+travkey_tree(root,L,L).
+travkey_tree(leaf(Rs),L0,L1) :-
+	traverse_leafkeys(Rs,L0,L1).
+travkey_tree(node(Rs,Ss),L0,L1) :-
+	traversekey_each(Rs,Ss,L0,L1).
+
+traversekey_each([],[S],L0,L1) :-
+	travkey_tree(S,L0,L1).
+traversekey_each([rec(K,_)|Rs],[S|Ss],L0,L2) :-
+	travkey_tree(S,L0,[K|L1]),
+	traversekey_each(Rs,Ss,L1,L2).
+
+traverse_leafkeys([],L0,L0).
+traverse_leafkeys([rec(K,_)|Rs],[K|L0],L2) :-
+	traverse_leafkeys(Rs,L0,L2).
+%-------------------------------------------------------------------------%
+% traverse the tree in order, returning values
+%-------------------------------------------------------------------------%
+traverseval_tree(T,L) :-
+	travval_tree(T,L,[]).
+
+travval_tree(root,L,L).
+travval_tree(leaf(Rs),L0,L1) :-
+	traverse_leafvals(Rs,L0,L1).
+travval_tree(node(Rs,Ss),L0,L1) :-
+	traverseval_each(Rs,Ss,L0,L1).
+
+traverseval_each([],[S],L0,L1) :-
+	travval_tree(S,L0,L1).
+traverseval_each([rec(_,Val)|Rs],[S|Ss],L0,L2) :-
+	travval_tree(S,L0,[Val|L1]),
+	traverseval_each(Rs,Ss,L1,L2).
+
+traverse_leafvals([],L0,L0).
+traverse_leafvals([rec(_,Val)|Rs],[Val|L0],L2) :-
+	traverse_leafvals(Rs,L0,L2).
+
+
+%-------------------------------------------------------------------------%
+% traverse the tree in order, returning keys and records
+%-------------------------------------------------------------------------%
+traverse_tree(T,L) :-
+	trav_tree(T,L,[]).
+
+trav_tree(root,L,L).
+trav_tree(leaf(Rs),L0,L1) :-
+	traverse_leaf(Rs,L0,L1).
+trav_tree(node(Rs,Ss),L0,L1) :-
+	traverse_each(Rs,Ss,L0,L1).
+
+traverse_each([],[S],L0,L1) :-
+	trav_tree(S,L0,L1).
+traverse_each([R|Rs],[S|Ss],L0,L2) :-
+	trav_tree(S,L0,[R|L1]),
+	traverse_each(Rs,Ss,L1,L2).
+
+traverse_leaf([],L0,L0).
+traverse_leaf([R|Rs],[R|L0],L2) :-
+	traverse_leaf(Rs,L0,L2).
+
+#ifdef  DEBUG_USE
+%================================================================%
+%                           Tests
+%================================================================%
+balanced_tree_test:-
+	insert_tree(root,1,['val_1'],T1),
+	insert_tree(T1,2,['val_2'],T2),
+	insert_tree(T2,3,['val_3'],T3),
+	insert_tree(T3,4,['val_4'],T4),
+	insert_tree(T4,5,['val_5'],T5),
+	insert_tree(T5,6,['val_6'],T6),
+	insert_tree(T6,7,['val_7'],T7),
+	insert_tree(T7,8,['val_8'],T8),
+	insert_tree(T8,9,['val_9'],T9),
+	insert_tree(T9,10,['val_10'],T10),
+        print_message("Tree:  % \n\n",[T10]),
+	
+%         node([rec(4, [val_4])],
+% 	     [node([rec(2, [val_2])],
+% 		   [leaf([rec(1, [val_1])]),
+% 		    leaf([rec(3, [val_3])])]),
+% 	      node([rec(6, [val_6]),
+% 		    rec(8, [val_8])],
+% 		   [leaf([rec(5, [val_5])]),
+% 		    leaf([rec(7, [val_7])]),
+% 		    leaf([rec(9, [val_9]),
+% 			  rec(10, [val_10])])])]) 
+% 	 ------4------
+%       /             \  
+%      2            6---8  
+%     / \          /  |  \
+%    1	 3        5   7  9-10
+	
+	insert_tree(T10,11,['val_11'],T11),
+	insert_tree(T11,12,['val_12'],T12),
+	insert_tree(T12,13,['val_13'],T13),
+	insert_tree(T13,14,['val_14'],T14),
+
+	print_message("Tree:  % \n\n",[T14]),
+
+% 	node([rec(4, [val_4]),
+% 	      rec(8, [val_8])],
+% 	     [node([rec(2, [val_2])],
+% 		   [leaf([rec(1, [val_1])]),
+% 		    leaf([rec(3, [val_3])])]),
+% 	      node([rec(6, [val_6])],
+% 		   [leaf([rec(5, [val_5])]),
+% 		    leaf([rec(7, [val_7])])]),
+% 	      node([rec(10, [val_10]),
+% 		    rec(12, [val_12])],
+% 		   [leaf([rec(9, [val_9])]),
+% 		    leaf([rec(11, [val_11])]),
+% 		    leaf([rec(13, [val_13]),
+% 			  rec(14, [val_14])])])])
+	
+% 	  ----4-----8------
+%        |       |         |
+%        2       6      10---12  
+%       / \     / \     /  |  \
+%      1  3    5   7   9  11  13-14
+
+	insert_tree(T14,15,['val_15'],T15),
+	insert_tree(T15,16,['val_16'],T16),
+	insert_tree(T16,17,['val_17'],T17),
+	insert_tree(T17,18,['val_18'],T18),
+	insert_tree(T18,19,['val_19'],T19),
+	insert_tree(T19,20,['val_20'],T20),
+	insert_tree(T20,21,['val_21'],T21),
+	insert_tree(T21,22,['val_22'],T22),	
+	print_message("Tree:  % \n\n",[T22]),
+
+%         node([rec(8, [val_8])],
+% 	     [node([rec(4, [val_4])],
+% 		   [node([rec(2, [val_2])],
+% 			 [leaf([rec(1, [val_1])]),
+% 			  leaf([rec(3, [val_3])])]),
+% 		    node([rec(6, [val_6])],
+% 			 [leaf([rec(5, [val_5])]),
+% 			  leaf([rec(7, [val_7])])])]),
+% 	      node([rec(12, [val_12]),
+% 		    rec(16, [val_16])],
+% 		   [node([rec(10, [val_10])],
+% 			 [leaf([rec(9, [val_9])]),
+% 			  leaf([rec(11, [val_11])])]),
+% 		    node([rec(14, [val_14])],
+% 			 [leaf([rec(13, [val_13])]),
+% 			  leaf([rec(15, [val_15])])]),
+% 		    node([rec(18, [val_18]),
+% 			  rec(20, [val_20])],
+% 			 [leaf([rec(17, [val_17])]),
+% 			  leaf([rec(19, [val_19])]),
+% 			  leaf([rec(21, [val_21]),
+% 				rec(22, [val_22])])])])]) 
+
+% 	 -----8------
+%       /            |          
+%      4           12----16     
+%     /  \         /  |    \
+%    2    6      10   14    18---20 
+%   / \  / \     / \  | \   |  |   \
+%  1  3 5  7    9  11 13 15 17 19  21-22
+
+
+	search_tree(T10,5,Val),
+	print_message("Value of key 5: % \n", [Val]).
+	%traversekey_tree(T10,Keys),
+	%print_message("Keys: % \n",[Keys]),
+	%traverseval_tree(T10,Values),
+	%print_message("Values: % \n",[Values]).
+#endif  /*DEBUG_USE*/

@@ -1,0 +1,150 @@
+:- dynamic(slicing_answer,8).
+
+% clpr -cs 40000000 -hs 10000000 -ls 5000000 -ts 5000000 assert.clpr
+%        main(1000). main(2000). main(4000). main(8000).  main(16000). main(32000)
+% Time :   1.44        2.8         5.5         10.95         22.18       43.88
+% Speed:   694         714         727          729           721         735
+
+
+% no_style_check(all),
+%        main(1000). main(2000). main(4000). main(8000).  main(16000). main(32000)
+% Time :   1.34        2.74        5.54        10.83         21.76        47.04
+% Speed:   746         729          722         738          735           680
+
+% Av.Speed: 725 asserts/seconds
+
+% no_style_check(all),
+%        main_ground(1000). main_ground(2000). main_ground(4000). main_ground(8000).  main_ground(16000). main_ground(32000)
+% Time :       0.05              0.11               0.17              0.32                0.57               1.12
+% Speed:      20000             18181              23529             25000               28070               28571
+% Av.Speed: 23891 asserts/seconds
+
+% no_style_check(all),
+%           ground2(1000). ground2(2000). ground2(4000). ground2(8000).  ground2(16000). ground2(32000)
+% Time :       0.19              0.36         0.64            1.25             2.57          4.99
+% Speed:       5263              5555         6250            6400             6225          6412
+% Av.Speed: 4214 asserts/seconds
+
+% no_style_check(all),
+%           ground3(1000). ground3(2000). ground3(4000). ground3(8000).  ground3(16000). ground3(32000)
+% Time :       0.14              0.23         0.41            0.84             1.6          3.18
+% Speed:       7141              8695         9756            9523            10000        10062
+% Av.Speed: 9196 asserts/seconds
+
+main_ground(N):-
+        no_style_check(all),	
+	FName= func_main,
+	Depth= 0,
+	ML = '00000100010000000110000000001110000000',
+	Reps = [rep(2 ,'0','00000000000000000000','','00000000000000000000'),
+		rep(10,'0','00000000000000000000','','00000000000000000000'),
+		rep(15,'0','00000000000000000000','','00000000000000000000'),
+		rep(31,'0','00000000000000000000','','00000000000000000000'),
+		rep(33,'0','00000000000000000000','','00000000000000000000')],
+        GlobalArrMark='0',
+	GlobalVarMark='10000000100001000000',
+	LocalArrMark='',
+	LocalVarMark='00000000010100000000',
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	printf("Time: %\n",[Time]).
+
+main_ground2(N):-
+        no_style_check(all),	
+	FName= func_main,
+	Depth= 0,
+	ML = [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0],
+	Reps = [rep(2 ,[0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		       [] ,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
+		rep(10,[0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		       [] ,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
+		rep(15,[0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		       [] ,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
+		rep(31,[0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		       [], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
+		rep(33,[0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		       [] ,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])],
+        GlobalArrMark=[0],
+	GlobalVarMark=[1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0],
+	LocalArrMark=[],
+	LocalVarMark=[0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0],
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	printf("Time: %\n",[Time]).
+
+main_ground3(N):-
+        no_style_check(all),	
+	FName= func_main,
+	Depth= 0,
+	ML = f(0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0),
+	Reps = [rep(2 ,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(10,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(15,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(31,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f, f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(33,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))],
+        GlobalArrMark=f(0),
+	GlobalVarMark=f(1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0),
+	LocalArrMark=f,
+	LocalVarMark=f(0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0),
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	printf("Time: %\n",[Time]).
+
+
+main(N):-
+	no_style_check(all),
+	FName= func_main,
+	Depth= 0,
+	ML = [_,_,_,_,_,o,_,_,_,o,_,_,_,_,_,_,_,o,o,_,_,_,_,_,_,_,_,_,o,o,o,_,_,_,_,_,_,_],
+	Reps = [rep(2,[_H],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(10,[_H],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(15,[_H],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(31,[_H],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]),
+		rep(33,[_H],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_])],
+        GlobalArrMark=[_],
+	GlobalVarMark=[o,_,_,_,_,_,_,_,o,_,_,_,_,o,_,_,_,_,_,_],
+	LocalArrMark=[],
+	LocalVarMark=[_,_,_,_,_,_,_,_,_,o,_,o,_,_,_,_,_,_,_,_],
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	printf("Time: %\n",[Time]).
+
+p(0,_,_,_,_,_,_,_,_):-!.
+p(N,
+  FName,Depth, 
+  ML,
+  Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark):-
+       N > 0,!,
+       T= slicing_answer(FName,Depth,
+			 ML,
+			 Reps,
+			 GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+       
+       assert(T),
+       %retract(T),
+       
+       report_diagnostic,
+       p(N-1,
+	 FName,Depth+1, 
+	 ML,
+	 Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark).
+
+report_diagnostic:-
+	diagnostic(A,B,C,D,E,F,G),
+	print_diagnostic_info(A,B,C,D,E,F,G).
+print_diagnostic_info(AA,BB,CC,DD,EE,FF,GG):-
+	Unit  = 1048576,  % Mb
+	Base = 1, % diagnostic returns already memory usage in bytes
+        printf("Total %.1fMb Code %.1fMb Stack %.1fMb Heap %.1fMb ",
+	       [(AA*Base)/Unit,(BB*Base)/Unit,(CC*Base)/Unit,(DD*Base)/Unit]),
+	printf("Trail %.1fMb Solver %.1fMb PTerms %.1fMb \n",
+	       [(EE*Base)/Unit,(FF*Base)/Unit,(GG*Base)/Unit]).

@@ -1,0 +1,679 @@
+% tracer_solver_external.clp.gpp
+
+%=============================================================================%
+%                       External constraint solver
+%=============================================================================%
+% This file contains all operations needed to interact with other
+% solvers. The solver can be called through CLP(R) library calls.
+%=============================================================================%
+% export
+%
+%   for stats
+%   extern_solver_init_counters/0
+%   for stats
+%   extern_solver_print_stats/0                     
+%
+%   extern_solver_add_cnstr/2  
+%   extern_solver_add_cnstr_and_check_sat_and_undo/2
+%   extern_solver_add_cnstr_and_check_sat/2
+%   extern_solver_unsat_core/2
+%   extern_solver_add_choice_point/0 
+%   extern_solver_backtrack/0
+%
+%   technicality for function calls
+%   instantiate_func_ret_caller/6  
+%   instantiate_func_ret_callee/4  
+%
+%   For projection/existencial quantification (see notes below)
+%
+%   extern_solver_project_solver_context/2
+%=============================================================================%
+%   CLP(R) library calls
+%   add_choice_point_extern_solver/0
+%   backtrack_extern_solver/0
+%   assrt_cnstr_extern_solver/1
+%   check_sat_extern_solver/1
+%   unsat_core_extern_solver/2
+%   display_model_extern_solver/0
+%
+% TODO:
+%
+% - Not implemented for wp.
+% - Not implemented for minmax.
+% - Not implemented for analyses with witnesses (w/o witnesses may be
+%   ok)
+%
+% NOTE:
+%
+% All constraints must be parsed before they are fed into the external
+% solver. This operation is thus external solver-dependent. For Z3 the
+% parsing is quite straightforward except that we need to say explicit
+% if a variable is integer or array.
+%
+% CAUTIOUS: don't use var/1. Instead, use myvar/1. The builtin var/1
+% succeeds if the argument is a variable but it also renames it. We
+% don't want to rename free variables!
+%=============================================================================%
+
+
+extern_solver_init_counters:-
+        set_counter(extern_solver_add_cnstr_timing,0),
+	set_counter(extern_solver_check_sat_timing,0),
+	set_counter(extern_solver_num_of_unsat,0),
+	set_counter(extern_solver_num_of_sat,0),
+	set_counter(extern_solver_unsat_core_timing,0),		
+	counter_value(extern_solver_parse_infer_arr_vars_timing,0),
+	counter_value(extern_solver_parse_timing, 0).
+
+% For tracer_profile.clp.gpp
+% extern_solver_forward_timing(T0+T1+T2+T3):-
+% 	counter_value(extern_solver_add_cnstr_timing,T0),
+% 	counter_value(extern_solver_check_sat_timing,T1),
+% 	counter_value(extern_solver_parse_infer_arr_vars_timing,T2),
+% 	counter_value(extern_solver_parse_timing, T3).
+	
+extern_solver_print_stats:-
+	counter_value(extern_solver_add_cnstr_timing,T0),
+	counter_value(extern_solver_check_sat_timing,T1),
+	counter_value(extern_solver_check_unsat_core_timing,UnsatCoreT),	
+	counter_value(extern_solver_parse_infer_arr_vars_timing,ParseT1),
+	counter_value(extern_solver_parse_timing, ParseT2),
+	counter_value(extern_solver_num_of_unsat,Unsat),
+	counter_value(extern_solver_num_of_sat,Sat),		
+	print_separator,	
+	print_message("External solver (Z3 SMT) stats: \n",[]),
+	print_message("\tTotal time              : % sec \n",[T0+T1+ParseT1+ParseT2+UnsatCoreT]),
+	print_message("\t\tAssert constraints into solver   : % sec \n",[T0]),
+	print_message("\t\tCheck satisfiability of the store: % sec \n",[T1]),
+	print_message("\t\tUnsatisfiable cores              : % sec \n",[UnsatCoreT]),	
+	print_message("\t\tParsing of expressions : % sec \n",[ParseT1+ParseT2]),
+	print_message("\t\t\t Infer array variables : % sec \n",[ParseT1]),
+	print_message("\t\t\t Parse expressions     : % sec \n",[ParseT2]),
+	print_message("\tNumber of sat queries   : % \n",[Sat]),
+	print_message("\tNumber of unsat queries : % \n",[Unsat]).
+
+extern_solver_add_choice_point:-
+	debug_message("[EXTERNAL SOLVER] ADDED CHOICE POINT \n",[]),				
+	add_choice_point_extern_solver.
+	
+extern_solver_backtrack:-
+	debug_message("[EXTERNAL SOLVER] BACKTRACK LAST CHOICE POINT \n",[]),		
+	backtrack_extern_solver.
+
+check_sat_extern_solver_wrapper:-
+#ifdef  PROFILE
+        ctime(T0),
+#endif
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	check_sat_extern_solver(Res),!,
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(extern_solver_check_sat_timing,T1-T0),
+#endif 	
+	check_sat_extern_solver_wrapper_aux(Res).
+check_sat_extern_solver_wrapper_aux(Res):- Res == 0, !, fail. % unsat
+check_sat_extern_solver_wrapper_aux(_)  :- !.  % sat (1) or undefined (2)
+
+%----------------------------------------------------------------------%
+% Wrapper for using naive or partition
+%----------------------------------------------------------------------%
+extern_solver_add_cnstr_path(CL,State):-
+	current_tracer_flag(path_datastructure,naive),!,
+	extern_solver_add_cnstr(CL,State).
+extern_solver_add_cnstr_path(Es,State):-
+	current_tracer_flag(path_datastructure,partition),!,
+	convert_path_to_list(Es,CL),
+	extern_solver_add_cnstr(CL,State).
+
+%----------------------------------------------------------------------%
+% Wrapper for parsing constraints before adding them into the solver.
+%----------------------------------------------------------------------%
+extern_solver_add_cnstr(CL,State):-
+	State=state(_,SGA,_,SLA,_),
+	append(SGA,SLA,ArrayVars),
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+	extern_solver_parse_list(CL,ArrayVars,ParsedCL),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(extern_solver_parse_timing,T1-T0),
+#endif  /*PROFILE*/
+	extern_solver_add_cnstr0(ParsedCL,State).
+
+extern_solver_add_cnstr0([],_State) :- !.
+extern_solver_add_cnstr0([C|R],State) :-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+	extern_solver_add_cnstr_aux(C),
+#ifdef  DEBUG_USE	
+        print_message("\tadding into the solver \n\t",[]),	
+        State=state(FName,SGA,SGV,SLA,SLV),	
+	pretty_printer_constraints_list(FName,SGA,SGV,SLA,SLV,[C]),
+	%debug_message("\t%\n",[C]),
+#endif  /*DEBUG_USE*/	
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(extern_solver_add_cnstr_timing,T1-T0), 	
+#endif  /*PROFILE*/
+	extern_solver_add_cnstr0(R,State).
+
+
+extern_solver_add_cnstr_aux(tt)   :- !.
+extern_solver_add_cnstr_aux(ff)   :- !, fail.
+extern_solver_add_cnstr_aux(C) :-
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.	
+	assrt_cnstr_extern_solver(C),
+	!.
+extern_solver_add_cnstr_aux(C) :-
+	error_message("extern_solver_add_cnstr_aux/3 failed with % \n",[C]).
+
+%-------------------------------------------------------------------------%
+% Add XCL into the store and succeed iff the store is satisfiable.
+% After evaluation the solver is unmodified (i.e., the bindings are
+% undone)
+%-------------------------------------------------------------------------%
+extern_solver_add_cnstr_and_check_sat_and_undo([],_State):-!.
+extern_solver_add_cnstr_and_check_sat_and_undo(XCL,State):-
+	debug_message("[EXTERNAL SOLVER] BEGIN checking sat ... \n",[]),
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	extern_solver_add_choice_point,
+        extern_solver_add_cnstr(XCL,State),
+        check_sat_extern_solver_wrapper,
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	extern_solver_backtrack,
+	debug_message("\tquery is sat\n\tbacktracking ...\n",[]),		
+	debug_message("[EXTERNAL SOLVER] END \n\n",[]),
+	!. % to avoid backtracking
+extern_solver_add_cnstr_and_check_sat_and_undo(_,_):-
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.	
+	extern_solver_backtrack,
+	debug_message("\tquery is unsat\n\tbacktracking ...\n",[]),
+	debug_message("[EXTERNAL SOLVER] END \n\n",[]),	
+	!,
+	fail.
+
+%-------------------------------------------------------------------------%
+% Insert a choice point, add XCL into the store and succeed iff the
+% store is satisfiable Only if store is unsat the bindings are undone
+% by backtracking to the last choice point.
+%-------------------------------------------------------------------------%
+extern_solver_add_cnstr_and_check_sat([],_State):-
+	!,
+	extern_solver_add_choice_point.
+extern_solver_add_cnstr_and_check_sat(XCL,State):-
+	debug_message("[EXTERNAL SOLVER] BEGIN checking sat ... \n",[]),
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	extern_solver_add_choice_point,
+        extern_solver_add_cnstr(XCL,State),
+        check_sat_extern_solver_wrapper,
+	add_counter(extern_solver_num_of_sat,1),	
+        debug_message("\tquery is sat \n",[]),
+	debug_message("[EXTERNAL SOLVER] END \n\n",[]),
+	!. % to avoid backtracking
+extern_solver_add_cnstr_and_check_sat(_,_):-
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+	extern_solver_backtrack,
+	debug_message("\tquery is unsat\n",[]),
+	debug_message("[EXTERNAL SOLVER] END \n\n",[]),
+	add_counter(extern_solver_num_of_unsat,1),
+	!,
+	fail.
+%-------------------------------------------------------------------------%
+% extern_solver_unsat_core(+NegImplied,+CL,-ML)
+%-------------------------------------------------------------------------%
+% * If NegImplied is of the form [L] where L is a list of constraints
+% c1,...,cn then NegImplied is interpreted as a conjunction of the
+% constraints c1,...cn.
+%
+% * If NegImplied is of the form [L1,...Ln] where each Li is a list of
+% constraints then NegImplied is interpreted as a disjunction of each
+% Li
+%
+% ML has the same length than CL. If the i-th element of ML is marked
+% ('o') then the i-th element of CL is part of the unsat core.
+%-------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+% Linear arithmetic
+test_extern_solver_unsat_core_1:-	
+	extern_solver_unsat_core([[gt(X1,5),gt(Y,0)]],
+				 [assign(X0,1),
+				  assign(X1,plus(X0,1)),
+				  assign(Y,5)],ML1),
+	print_message("computed ML:%\n",[ML1]),
+	print_message("must be  ML:[o, o, _]\n",[]),
+	extern_solver_unsat_core([[gt(A1,0),gt(B,5)]],
+				 [assign(A0,1),
+				  assign(A1,plus(A0,1)),
+				  assign(B,5)],ML2),
+	print_message("computed ML:%\n",[ML2]),
+	print_message("must be  ML:[_, _, o]\n",[]),
+	print_message("should raise an error\n",[]),		
+	extern_solver_unsat_core([[gt(P1,0),gt(Q,5)]],
+				 [assign(P0,1),
+				  assign(P1,plus(P0,1)),
+				  assign(Q,6)],ML3),
+	print_message("computed ML:%\n",[ML3]).
+test_extern_solver_unsat_core_2:-
+	extern_solver_unsat_core([[gt(1,X)],[gt(X,1)],[gt(Y,1)],[gt(1,Y)]],
+				 [assign(X,1),assign(Y,1)],ML),
+	print_message("computed ML:%\n",[ML]),
+	print_message("must be  ML:[o,o]\n",[]).
+test_extern_solver_unsat_core_3 :-
+	extern_solver_unsat_core([[eq(X, 5.000000), eq(Y, 10.000000)]],
+				 [assign(X, 5.000000), assign(Y, 0)],ML),
+	print_message("computed ML:%\n",[ML]),
+	print_message("must be  ML:[_,o]\n",[]).
+% Arrays+Linear arithmetic
+test_extern_solver_unsat_core_4 :-
+	extern_solver_unsat_core([[gt(Z0,8),gt(8,Z0)]],
+				 [arrassign(A1,upd(A0,X0,3)),arrassign(A2,upd(A1,Y0,5)),
+				  gt(X0,Y0),eq(ref(A2,Y0),Z0)], ML),
+	print_message("computed ML:%\n",[ML]),
+	print_message("must be  ML:[_,o]\n",[]).	
+#endif  /*DEBUG_USE*/
+
+%-------------------------------------------------------------------------%
+% Wrapper for parsing constraints before computing unsat core
+%-------------------------------------------------------------------------%
+extern_solver_unsat_core([],_,_):- !.
+extern_solver_unsat_core(NegImplied,CL,ML):-	
+	/* PREPROCESSING */
+	debug_message("[EXTERNAL SOLVER] BEGIN computing unsat core ... \n",[]),
+%	print_message("NegImplied:% CL:% \n",[NegImplied,CL]),
+	flatten(NegImplied,CL0),	
+	append(CL0,CL,AllCL),
+	infer_array_variables_fixpo(AllCL,ArrayVars),
+#ifdef  PROFILE
+	ctime(T0),
+#endif  /*PROFILE*/
+	extern_solver_parse_list_of_lists(NegImplied,ArrayVars,ParsedNegImplied),
+	extern_solver_parse_list(CL,ArrayVars,ParsedCL),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(extern_solver_parse_timing,T1-T0),
+#endif  /*PROFILE*/
+	/* COMPUTING UNSAT CORE */
+#ifdef  PROFILE
+        ctime(T2),
+#endif  /*PROFILE*/
+        fcopy_term(t(ParsedNegImplied,ParsedCL),t(ParsedNegImplied0,ParsedCL0)),
+	extern_solver_unsat_core0(ParsedNegImplied0,ParsedCL0,ML),
+#ifdef  PROFILE
+        ctime(T3),
+	add_counter(extern_solver_check_unsat_core_timing,T3-T2),			
+#endif  /*PROFILE*/
+	debug_message("[EXTERNAL SOLVER] END \n\n",[]),
+	!.
+extern_solver_unsat_core(NegImplied,CL,_):-
+	error_message("unsat_core failed because the formula is sat \n\t % and % UNSAT?.\n",
+		      [NegImplied,CL]).
+
+%--------------------------------------------------------------------------------%
+% extern_solver_unsat_core_aux(NegImplied,CL,ML)
+%--------------------------------------------------------------------------------%
+% NegImplied is a list of lists
+%--------------------------------------------------------------------------------%
+extern_solver_unsat_core0([],_,_):- !.
+extern_solver_unsat_core0([L],CL,ML):-
+	extern_solver_unsat_core_conjunctive(L,CL,ML), !.
+extern_solver_unsat_core0(Lss,CL,ML):-
+	extern_solver_unsat_core_disjunctive(Lss,CL,ML), !.
+
+%--------------------------------------------------------------------------------%
+% extern_solver_unsat_core_conjunctive(+L,+CL,-ML)
+%--------------------------------------------------------------------------------%
+% L is interpreted as a conjunction of positive literals.
+% Pre: L in conjunction with CL is unsatisfiable
+%--------------------------------------------------------------------------------%
+extern_solver_unsat_core_conjunctive(L,CL,ML):-
+	append_symbolic_list(L,CL,ML,NewCL,NewML),
+	unsat_core(NewCL,NewML).
+extern_solver_unsat_core_conjunctive(_,_,_):-
+	error_message("unsat core failed. The query was sat.\n",[]).
+
+%--------------------------------------------------------------------------------%
+% extern_solver_unsat_core_disjunctive(+Lss,+CL,-ML)
+%--------------------------------------------------------------------------------%
+% Lss is interpreted as a disjunction of negative literals.
+% Pre: each disjunct in conjunction with CL is unsatisfiable
+%--------------------------------------------------------------------------------%
+extern_solver_unsat_core_disjunctive([],_,_):-!.
+extern_solver_unsat_core_disjunctive([Ls|Lss],CL,ML):-
+	append_symbolic_list(Ls,CL,ML,NewCL,NewML),	
+	unsat_core(NewCL,NewML),
+        extern_solver_unsat_core_disjunctive(Lss,CL,ML).
+extern_solver_unsat_core_disjunctive(_,_,_):-
+	error_message("extern_solver_unsat_core_disjunctive/3\n",[]).
+
+%-------------------------------------------------------------------------%
+% Succeed iff CL is inconsistent and ML is the unsat core. The solver
+% context is as before this predicate was called.
+%-------------------------------------------------------------------------%
+unsat_core_and_undo(CL,ML):-
+	extern_solver_add_choice_point,
+        unsat_core_extern_solver(CL,BitVector),
+	extern_solver_backtrack,
+	convert_bitvector2markedlist(BitVector,ML),
+	!.
+unsat_core_and_undo(_,_):-
+	extern_solver_backtrack,
+	!,
+	fail.
+
+unsat_core(CL,ML):-
+	extern_solver_add_choice_point,
+        unsat_core_extern_solver(CL,BitVector),
+	extern_solver_backtrack,
+	convert_bitvector2markedlist(BitVector,ML).
+
+convert_bitvector2markedlist([],[]):-!.
+convert_bitvector2markedlist([1|Xs],[o|Ys]):-
+	convert_bitvector2markedlist(Xs,Ys).
+convert_bitvector2markedlist([0|Xs],[_|Ys]):-
+	convert_bitvector2markedlist(Xs,Ys).
+
+%-------------------------------------------------------------------------%
+% extern_solver_negate_proj_interpolant(+,-)
+%-------------------------------------------------------------------------%
+% Projection (a.k.a. existential quantification) allows us to compact
+% a conjunction of constraints. In particular, this is important to
+% make from an unsatisfiable cores a valid interpolant.
+%
+% FIXME: not sure if projection can be obtained from Z3. In principle,
+% we could use existencial quantification but it's something we have
+% not explored. Instead, for the theory of linear arithmetic over
+% reals and theory of arrays we rely on project_solver_context/2.
+%
+% However, if new theories are added (e.g., bitvectors) then we must
+% add a new projection operation.
+%-------------------------------------------------------------------------%
+extern_solver_project_solver_context(State,ProjState):-	
+	project_solver_context_aux(State,ProjState).
+
+%================================================================================%
+% Quite tricky step: the following two predicates are needed to
+% propagate the return value from the callee to the caller. Due to
+% renaming done by CLP we have problems to connect the return value
+% from callee to caller. To avoid these problems, we assign a ground
+% variable name (e.g., '$VAR'('foo$ret')) to the return value. By
+% doing this, we don't care about CLP renaming anymore.
+%================================================================================%
+instantiate_func_ret_caller([],_,_,_,_,[]):-!.
+instantiate_func_ret_caller(XCL,CalleeFName,CallerFName,CallerNextPP,RV,XCL2):-
+        % modify r.h.s
+	printf_to_atom(Ret,"%$%",[CalleeFName,ret]),
+	replace_variable(XCL,RV,'$VAR'(Ret),XCL1),
+	% modify also l.h.s in cases like "return bar()"
+	instantiate_func_ret_callee(XCL1,CallerFName,CallerNextPP,XCL2),
+	!.
+instantiate_func_ret_caller(_,_,_,_,_,_):-
+	error_message("instantiate_func_ret_caller/6 failed\n",[]).
+
+replace_variable([],_,_,[]):-!.
+replace_variable([X|Xs],Y,Val,[Val|Ys]):-
+	myvar(X), X == Y, !,
+	replace_variable(Xs,Y,Val,Ys).
+replace_variable([X|Xs],Y,Val,[X|Ys])    :-
+	myvar(X), !,
+	replace_variable(Xs,Y,Val,Ys).
+replace_variable([X|Xs],Y,Val,[X|Ys]):-
+	atomic(X),!,
+	replace_variable(Xs,Y,Val,Ys).
+replace_variable([Y|Ys],X,Val,[Z|Zs]):-
+	Y=..[A|Args],
+	replace_variable(Args,X,Val,NArgs),
+	Z=..[A|NArgs],
+	replace_variable(Ys,X,Val,Zs).
+
+instantiate_func_ret_callee([],_,_,[]):-!.
+instantiate_func_ret_callee([assign(_,Rhs)],FName,PP,[assign('$VAR'(Ret),Rhs)]):-
+	bottom(FName,PP),
+	printf_to_atom(Ret,"%$%",[FName,ret]),
+	!.
+instantiate_func_ret_callee(XCL,_,_,XCL):-!.
+%instantiate_func_ret_callee(_,_,_):-
+%	error_message("instantiate_func_ret_callee/3 failed\n",[]).
+
+%================================================================================%
+%         PARSING from TRACER format to external solver format
+%================================================================================%
+
+extern_solver_parse_list_of_lists([],_,[]):-!.
+extern_solver_parse_list_of_lists([Ls|Lss],ArrVars,[Zs|Zss]):-
+        extern_solver_parse_list(Ls,ArrVars,Zs),
+	extern_solver_parse_list_of_lists(Lss,ArrVars,Zss).
+
+extern_solver_parse_list([],_,[]):-!.
+extern_solver_parse_list([ref(_,_,_)|Es],ArrayVars,Es1):-
+	!, extern_solver_parse_list(Es,ArrayVars,Es1).
+extern_solver_parse_list([E0|Es],ArrayVars,[E1|Es1]):-
+	extern_solver_parse_expr(E0,ArrayVars,E1),
+	%debug_message("PARSED % -> % \n",[E0,E1]),
+	extern_solver_parse_list(Es,ArrayVars,Es1).
+
+
+%-----------------------------------------------------------------------------%
+% Parse an expression to external solver format assuming array
+% variables are known
+%-----------------------------------------------------------------------------%
+% FIXME: expressions like x := y > z are not currently accepted.
+%-----------------------------------------------------------------------------%
+extern_solver_parse_expr(tt,_,tt) :- !.
+extern_solver_parse_expr(ff,_,ff) :- !.
+%-----------------------------------------------------------------------------%
+extern_solver_parse_expr(assign(A,B),ArrayVars,assign(arr(A),arr(B))) :-
+	% If the l.h.s is an array variable then B must be also an
+	% array variable.	
+	memberGndchk(A,ArrayVars),
+	% it's possible assign(X,unk(...)) where X is an array
+	% variable. Here we prefer to skip X.
+	( myvar(B) ; B = '$VAR'(_)),
+	!.
+extern_solver_parse_expr(assign(A,B),ArrayVars,assign(arr(A),arr(B))) :-
+	% If the r.h.s is an array variable then B must be also an
+	% array variable (assignment for matching local with formal
+	% parameters in a function call)
+	memberGndchk(B,ArrayVars),
+	( myvar(A) ; A = '$VAR'(_)),
+	!.
+extern_solver_parse_expr(assign(A,B),_,assign(X,Y)) :-
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y),!.
+%-----------------------------------------------------------------------------%
+extern_solver_parse_expr(arrassign(A,B),_,assign(arr(A),Y)) :-
+	% Assume A is always a variable!
+	% extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y),!.
+%-----------------------------------------------------------------------------%
+extern_solver_parse_expr(eq(A,B),ArrayVars,eq(arr(A),arr(B))) :-
+	% If the l.h.s is an array variable then B must be also an
+	% array variable.
+	memberGndchk(A,ArrayVars),
+	myvar(B),
+	!.	
+extern_solver_parse_expr(eq(A,B),ArrayVars,eq(arr(A),arr(B))) :-
+	% If the r.h.s is an array variable then B must be also an
+	% array variable (assignment for matching local with formal
+	% parameters in a function call)			
+	% note: in principle we don't match formal/local parameters
+	% with eq/2 constraints. But just in case ....
+	memberGndchk(B,ArrayVars),
+	myvar(A),
+	!.		
+extern_solver_parse_expr(eq(A,B),_,eq(X,Y)) :-
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y),!.
+%-----------------------------------------------------------------------------%
+extern_solver_parse_expr(gt(A,B),_,gt(X,Y)) :-
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y),!.
+extern_solver_parse_expr(geq(A,B),_,geq(X,Y)) :-
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y),!.
+extern_solver_parse_expr(C,_,_) :-
+	error_message("extern_solver_parse_expr/3 :: % not supported \n",[C]).
+
+%-----------------------------------------------------------------------------%
+% Parse a subexpression to external solver format
+%-----------------------------------------------------------------------------%
+extern_solver_parse_subexpr(V,V) :- myvar(V),!.
+% Hook to allow adding constraints into the external solver which
+% contain ground variable names. The normal case is to add CLP
+% variables (_hxxx or _txxx) as variable names.
+extern_solver_parse_subexpr('$VAR'(X),'$VAR'(X)):-!.
+extern_solver_parse_subexpr(F,F) :- uninterpreted_function(F),!.			  	
+extern_solver_parse_subexpr(A,A) :- atomic(A), !.
+extern_solver_parse_subexpr(ref(A,I),ref(B,I)) :-
+	myvar(I), !,
+	extern_solver_parse_arrsubexpr(A,B).
+extern_solver_parse_subexpr(ref(A,I),ref(B,I)) :-
+	atomic(I), !,
+	extern_solver_parse_arrsubexpr(A,B).
+% extern_solver_parse_subexpr(ref(A,I),ref(B,J)) :-
+% 	I=[_|_], !,
+% 	extern_solver_parse_subexpr(A,B),
+% 	extern_solver_parse_subexpr(I,J), !.
+extern_solver_parse_subexpr(ref(A,I),ref(B,J)) :-
+	extern_solver_parse_arrsubexpr(A,B),
+	extern_solver_parse_subexpr(I,J), !.
+extern_solver_parse_subexpr(upd(A,I,X),upd(B,J,Y)) :-
+	extern_solver_parse_arrsubexpr(A,B),
+	extern_solver_parse_subexpr(I,J),
+	extern_solver_parse_subexpr(X,Y), !.
+extern_solver_parse_subexpr(minus(A),minus(X)) :- !,
+	extern_solver_parse_subexpr(A,X).
+extern_solver_parse_subexpr(plus(A,B),plus(X,Y)) :- !,
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y).
+extern_solver_parse_subexpr(minus(A,B),minus(X,Y)) :- !,
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y).
+extern_solver_parse_subexpr(mult(A,B),mult(X,Y)) :- !,
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y).
+extern_solver_parse_subexpr(div(A,B),div(X,Y)) :- !,
+	extern_solver_parse_subexpr(A,X),
+	extern_solver_parse_subexpr(B,Y).
+% Default case: unknown constraint
+extern_solver_parse_subexpr(_,_Fresh):-!.
+	%error_message("% is unknown subexpression\n",[C]).
+	
+% The external solver needs to distinguish somehow integer/real
+% variables from array variables. Here we make the distinction.
+extern_solver_parse_arrsubexpr(A,arr(A)):- myvar(A),!.
+extern_solver_parse_arrsubexpr(A,B):-
+	extern_solver_parse_subexpr(A,B).
+
+%--------------------------------------------------------------------------------%
+% Predicate to infer all array variables from a list of constraints.
+%--------------------------------------------------------------------------------%
+infer_array_variables_fixpo(CL,Vs):-
+#ifdef  PROFILE
+        ctime(T0),
+#endif  /*PROFILE*/
+	infer_array_variables_fixpo0(0,CL,[],Vs),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(extern_solver_parse_infer_arr_vars_timing,T1-T0),
+#endif  /*PROFILE*/
+        !. 
+	
+infer_array_variables_fixpo0(1,_CL,Vs,Vs) :-!.
+infer_array_variables_fixpo0(_,CL,Vs0,Vs2):-	
+	infer_imm_array_variables_from_constraints(CL,Vs0,Vs1),
+	is_fixpo_reached(Vs0,Vs1,Flag),	
+	infer_array_variables_fixpo0(Flag,CL,Vs1,Vs2).
+
+is_fixpo_reached(Vs1,Vs2,1):- Vs1 == Vs2,!.
+is_fixpo_reached(_,_,0):- !.	
+						
+infer_imm_array_variables_from_constraints([],Acc,Acc).
+infer_imm_array_variables_from_constraints([C|Cs],Acc,Acc2):-
+	infer_imm_array_variables(C,Acc,Acc1),
+	infer_imm_array_variables_from_constraints(Cs,Acc1,Acc2).
+
+infer_imm_array_variables(tt,Acc,Acc):-!.
+infer_imm_array_variables(ff,Acc,Acc):-!.
+infer_imm_array_variables(arrassign(A,B),Acc,Vs):-
+	insert_if_not_memberGndchk(A,Acc,Acc1),
+	infer_imm_array_variables_aux(B,Acc1,Vs).
+infer_imm_array_variables(assign(A,B),Acc,Acc1):-
+	myvar(B),	
+	memberGndchk(A,Acc),!,
+	insert_if_not_memberGndchk(B,Acc,Acc1).
+infer_imm_array_variables(assign(A,B),Acc,Acc1):-
+	myvar(A),
+	memberGndchk(B,Acc),!,
+	insert_if_not_memberGndchk(A,Acc,Acc1).
+infer_imm_array_variables(assign(_A,B),Acc,Vs):-
+	infer_imm_array_variables_aux(B,Acc,Vs).
+infer_imm_array_variables(gt(_A,B),Acc,Vs):-
+	infer_imm_array_variables_aux(B,Acc,Vs).
+infer_imm_array_variables(geq(_A,B),Acc,Vs):-
+	infer_imm_array_variables_aux(B,Acc,Vs).
+infer_imm_array_variables(eq(_A,B),Acc,Vs):-
+	infer_imm_array_variables_aux(B,Acc,Vs).
+
+infer_imm_array_variables_aux(A,Acc,Acc):-
+	basic_type(A),!.
+infer_imm_array_variables_aux(ref(A,I),Acc,Acc2):-
+	myvar(A),!,
+	insert_if_not_memberGndchk(A,Acc,Acc1),
+	infer_imm_array_variables_aux(I,Acc1,Acc2).
+infer_imm_array_variables_aux(ref(A,I),Acc,Acc2):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),
+	infer_imm_array_variables_aux(I,Acc1,Acc2).
+infer_imm_array_variables_aux(upd(A,I,X),Acc0,Acc3):-
+	myvar(A),!,
+	insert_if_not_memberGndchk(A,Acc0,Acc1),	
+	infer_imm_array_variables_aux(I,Acc1,Acc2),
+	infer_imm_array_variables_aux(X,Acc2,Acc3).
+infer_imm_array_variables_aux(upd(A,I,X),Acc,Acc3):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),	
+	infer_imm_array_variables_aux(I,Acc1,Acc2),
+	infer_imm_array_variables_aux(X,Acc2,Acc3).
+infer_imm_array_variables_aux(minus(A),Acc,Acc1):-
+	infer_imm_array_variables_aux(A,Acc,Acc1).
+infer_imm_array_variables_aux(plus(A,B),Acc,Acc2):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),
+	infer_imm_array_variables_aux(B,Acc1,Acc2).
+infer_imm_array_variables_aux(minus(A,B),Acc,Acc2):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),
+	infer_imm_array_variables_aux(B,Acc1,Acc2).
+infer_imm_array_variables_aux(mult(A,B),Acc,Acc2):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),
+	infer_imm_array_variables_aux(B,Acc1,Acc2).
+infer_imm_array_variables_aux(div(A,B),Acc,Acc2):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),
+	infer_imm_array_variables_aux(B,Acc1,Acc2).
+infer_imm_array_variables_aux(mod(A,B),Acc,Acc2):-
+	infer_imm_array_variables_aux(A,Acc,Acc1),
+	infer_imm_array_variables_aux(B,Acc1,Acc2).
+infer_imm_array_variables_aux(A,Acc,Acc):-
+	% Uninterpreted function with > 0 input arguments	
+        functor(A,FName,_),
+	uninterpreted_function(FName),!.	
+infer_imm_array_variables_aux(A,_,_):-
+	error_message(" right-hand side constraint % not allowed \n",[A]).	
+	
+basic_type(X):- myvar(X),!.
+basic_type(X):- uninterpreted_function(X),!.
+basic_type(X):- atomic(X),!.
+
+

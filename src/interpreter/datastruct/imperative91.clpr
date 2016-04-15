@@ -1,0 +1,48 @@
+% This is another simple example that demonstrates that induction hypothesis
+% is being searched, not always the first (original assertion) is used.
+
+coinductionlimit(1).   % Limit coinduction to depth 2.
+unfolddepthbound(2).
+solver(arith).
+
+% Imperative version of McCarthy's 91 function
+
+unfold(mccarthy(K,N,C,Nf),
+       [
+        body([mccarthy(K1,N,C1,Nf)], [eq(K,0), eq(K1,1), eq(C1,1)]),
+	body([mccarthy(K1,N,C,Nf)], [eq(K,1), eq(K1,2), neq(C,0)]),
+	body([], [eq(K,1), eq(C,0), eq(N,Nf)]),
+	body([mccarthy(K1,N,C,Nf)], [eq(K,2), eq(K1,3), gt(N,100)]),
+	body([mccarthy(K1,N,C,Nf)], [eq(K,2), eq(K1,4), geq(100,N)]),
+	body([mccarthy(K1,N1,C1,Nf)],
+	     [eq(K,3), eq(K1,1), eq(N1,minus(N,10)), eq(C1,minus(C,1))]),
+	body([mccarthy(K1,N1,C1,Nf)],
+	     [eq(K,4), eq(K1,1), eq(N1,plus(N,11)), eq(C1,plus(C,1))]),
+	     
+       ]).
+
+% McCarthy's 91 function
+unfold(m(X,Y),
+       [
+	body([m(A,B),m(B,Y)], [eq(A,plus(X,11)), geq(100,X)]),
+	body([], [eq(X,plus(Y,10)), gt(X,100)])
+       ]).
+
+% To Prove:
+%
+% mccarthy(0,N,_,Nf) |= m(N,Nf)
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [mccarthy(K,N,_,Nf)], UnfoldableGAtoms),
+	addunfoldlevel(0, [m(N,Nf)], UnfoldableHAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [eq(K,0)],
+		     [], UnfoldableHAtoms, [], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

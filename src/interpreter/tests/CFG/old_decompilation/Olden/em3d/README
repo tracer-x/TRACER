@@ -1,0 +1,25 @@
+/* For copyright information, see olden_v1.0/COPYRIGHT */
+***********************
+olden_v1.0/benchmarks/em3d/README
+January 3, 1995
+Martin C. Carlisle
+
+This directory contains an Olden implementation of EM3D:
+
+D. Culler, A. Dusseau, S. Goldstein, A. Krishnamurthy, S. Lumetta, T. von 
+Eicken and K. Yelick. "Parallel Programming in Split-C".  Supercomputing 93
+pages 262-273
+
+as coded by Martin C. Carlisle
+**********************
+
+Makefile - "make em3d" to create executable
+
+args.c - handle command line arguments
+main.c - main routine
+em3d.[ch] - computation routines
+make_graph.[ch] - create graph
+util.[ch] - utilities (random #s, stats)
+
+
+

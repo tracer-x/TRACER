@@ -1,0 +1,55 @@
+#!/bin/bash
+set -x
+prog=${1}
+
+if  [ -f ${prog} ] 
+then       
+filename=`basename ${prog}`
+dirname=`dirname ${prog}`
+basename_NOSUFFIX=${filename%.c}
+
+basename_C=${basename_NOSUFFIX}.c
+basename_CLP=${basename_NOSUFFIX}.clp
+
+abspath_C="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_C"
+abspath_CLP="`cd \"$dirname\" 2>/dev/null && pwd || echo \"$dirname\"`/$basename_CLP"
+else
+echo "${prog} does not exist"
+exit 2
+fi  	
+
+decompiled_C=${basename_NOSUFFIX}-dec.c
+postprocess_C=${basename_NOSUFFIX}-dec-cil.c
+output_C=${basename_NOSUFFIX}-PSSCFG.c
+
+echo "Generating SE tree..."
+decompi ${basename_C}
+if [ $? != 0 ]
+then
+echo "FATAL ERROR generating the symbolic execution tree. Make sure the program is annotated with _SLICE."
+exit 1
+fi
+
+cilly ${decompiled_C} --out ${postprocess_C} --noPrintLn --noWrap > /dev/null 2>&1
+if [ $? != 0 ]
+then
+echo "ERROR post-processing the generated SE tree. Please run cilly on ${decompiled_C} for more info"
+exit 1
+fi
+
+echo "Slicing..."
+time frama-c-wrapper ${postprocess_C} ${output_C} > /dev/null 2>&1
+
+rm -f *.clp
+rm -f *.TRACES
+rm -f *.dot
+rm -f *.pdf
+rm -f *.armc
+rm -f *.qarmc
+rm -f *_CIL.c
+
+echo "DONE!"
+
+rm -f ${cillied_C}
+rm -f ${decompiled_C}
+rm -f ${postprocess_C}

@@ -1,0 +1,147 @@
+
+Point to note:
+
+We use a static analysis tool for comparison rather than an
+optimizing compiler. This is because DCE is usually done at the
+intermediate representation level, and at that stage there is
+usually no way to recover the source code from it, making it
+harder to measure the improvement. But we have an academic example
+to show that even a highly optimized gcc -O3 is not able to catch
+certain dead code, which we do. Technically, if our idea were
+implemented at the IR level, it would be equivalent to
+implementing a new path-sensitive optimization pass for the
+compiler (say gcc -O4).
+
+The static analysis tool we use is a commercial tool called Goanna
+which is also widely used as a plugin for MS Visual Studio and
+Eclipse. A simple example can be used to show that Goanna's
+unreachable code analysis uses constant propagation.
+
+
+DEAD1 = decompilation
+DEAD2 = goanna
+
+
+  Benchmark           LOC       DEAD1        DEAD2
+
+====================================================
+
+  compress           371          2           0
+
+i9: 404
+-----------
+-
+
+====================================================
+
+    mpeg            1561          29           2
+
+i126: 586
+i279: 749
+i280: 751
+i283: 756 757
+i284: 760
+i288: 762
+i289: 763 764
+i566: 1029
+i567: 1031
+i570: 1035
+i571: 1037 1038
+i572: 1040
+i573: 1041
+-----------
+mpeg.c_cilly.c:585: warning: Goanna[RED-cmp-never] Comparison never holds
+mpeg.c_cilly.c:588: warning: Goanna[RED-cmp-always] Comparison always holds
+
+
+====================================================
+
+   wuftpd parser    1214           46          6 
+
+i2: 760
+i6: 764
+i7: 766
+i10: 768
+i11: 769
+i12: 770 771
+i19: 777 778 779
+i26: 784 785 786
+i39: 794 795
+i94: 845
+i136: 890
+i150: 910
+i922: 1486
+-----------
+wuftpd-part.c_cilly.c:761: warning: Goanna[RED-cmp-never] Comparison never holds
+wuftpd-part.c_cilly.c:765: warning: Goanna[RED-cmp-never] Comparison never holds
+wuftpd-part.c_cilly.c:1482: warning: Goanna[RED-cmp-never] Comparison never holds
+
+
+====================================================
+
+   statemate          910         388          340
+
+i469 (line 1079) is a typical example that can only be detected by
+PS. the conditions if (X2 != 0UL) and if (time - X2 == 1UL) are
+contradictory since time = 1UL has been declared before (look for
+this defn.)
+
+i57: 566 567 568 569
+i68: 577 578 579 580
+i76: 586 587 588 589
+i87: 597 598 599 600
+i153: 700 701 702
+i175: 726 727 728 729
+i199: 751 752 753 754
+i207: 760 761 762 763
+i215: 769 770 771 772
+i220: 776 777 778 779
+i237: 795 796 797 798 799
+i249: 808 809 810 811 812 813
+i260: 821 822 823 824 825 826
+i273: 834 835 836 837
+i286: 853 854 855 856 857
+i300: 866 867 868
+i308: 874 875 876 877 878
+i320: 884 885 886
+i327: 892 893 894 895
+i333: 902 903 904 905
+i340: 914 915 916 917
+i352: 924 925
+i353: 927 928 929 930 931 932 933
+i361: 939 940 941 942 943 944 945 946 947
+i370: 952 953 954 955
+i377: 962 963 964 965
+i386: 971 972
+i387: 974 975 976 977 978 979 980
+i395: 986 987 988 989 990 991 992 993 994
+i400: 999 1000 1001 1002
+i412: 1008 1009 1010 1011 1012
+i420: 1017 1018 1019 1020 1021 1022
+i427: 1030 1031 1032 1033 1034 1035 1036
+i437: 1044 1045 1046 1047 1048
+i452: 1055 1056 1057
+i469: 1079 1080 1081 1082 1083 1084
+i488: 1099 1100 1101 1102
+i510: 1112 1113 1114 1115
+-----------
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:563: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:574: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:594: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:749: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:758: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:767: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:790: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:832: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:841: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:863: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:890: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:899: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:923: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:937: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:959: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:970: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:984: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+statemate-shorter-TRACER-timed-safe-1.c_cilly.c:1026: warning: Goanna[RED-case-reach] Switch case is unreachable, given the range of the switch condition.
+
+

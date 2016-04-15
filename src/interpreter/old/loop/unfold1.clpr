@@ -1,0 +1,1209 @@
+
+:- dynamic(conflict, 3).
+
+%==============================================================================
+% Sample program
+%==============================================================================
+
+:- consult('test-loop-1.clpr'), consult('test-loop-1-loop.clpr').
+%:- consult('test-loop-2.clpr'), consult('test-loop-2-loop.clpr').
+%:- consult('test-loop-3.clpr'), consult('test-loop-3-loop.clpr').
+%:- consult('test-loop-4.clpr'), consult('test-loop-4-loop.clpr').
+%:- consult('test-loop-5.clpr'), consult('test-loop-5-loop.clpr').
+%:- consult('test-loop-6.clpr'), consult('test-loop-6-loop.clpr').
+%:- consult('test-loop-7.clpr'), consult('test-loop-7-loop.clpr').
+
+trans1(State, PostState, NotInSet, Id) :-
+	trans2(Id, State, PostState),
+	not_included(Id, NotInSet).
+
+%------------------------------------------------------------------------------
+% Notice that the LoopStack is simply copied.
+%------------------------------------------------------------------------------
+trans2(Id, state(PC, V, SV, CL, ML, LoopStack),
+                 state(PC1, V1, SV1, CL1, ML1, LoopStack)) :-
+	trans(_, Id, PC,  _, GV,  _, SGV,  _, LV,  _, SLV,
+                     PC1, _, GV1, _, SGV1, _, LV1, _, SLV1,
+		     XCL, _, _, _),
+	append(GV, LV, V),
+	append(SGV, SLV, SV),
+	append(GV1, LV1, V1),
+	append(SGV1, SLV1, SV1),
+	append(XCL, CL, CL1),
+	pad(XCL, ML, ML1).
+
+%------------------------------------------------------------------------------
+% The initial state: notice that the loop stack is empty
+%------------------------------------------------------------------------------
+init_state(state(PC, V, SV, CL, ML, [])) :-
+	init_goal(_, PC, _, _, GV, _, SGV, _, LV, _, SLV, CL),
+	append(GV, LV, V),
+	append(SGV, SLV, SV),
+	pad(CL, [], ML).
+
+error(State) :-
+	State = state([$unsafe], _, _, _, _, _).
+
+final(PC) :- bottom(func_main, PC).
+
+looping_point(State) :-
+	State = state(PC, _, _, _, _, _), is_loop(PC).
+
+%==============================================================================
+% subsumed: Subsumption checking (unfinished)
+%==============================================================================
+:- dynamic(table, 4).
+
+subsumed(State, InterpCond) :- 
+	State = state(PC, V, _SV, _CL, _ML, _LoopStack),
+	table(_, PC, V, InterpCond),
+	unsatisfiable_disjunction(InterpCond).
+
+unsatisfiable_disjunction(InterpCond) :-
+	satisfiable_disjunct(InterpCond), !, fail.
+unsatisfiable_disjunction(_InterpCond).
+
+%==============================================================================
+% memo: Memoing states
+%==============================================================================
+memo(NodeId, Depth, State) :-
+	copy_answer(Depth, State),
+	State = state(PC, _V, SV, CL, ML, LoopStack),
+	Path = [r(SV, CL, ML)|LoopStack],
+	find_next_min(Path, _MinId, _MinType, _MinDepth,
+		      MinCL, MinML, CL1, ML1, _),
+	printf("STORING PC=%\n", [PC]),
+	printf("MinCL=%\n", [MinCL]),
+	printf("MinML=%\n", [MinML]),
+	printf("CL1=%\n", [CL1]),
+	printf("ML1=%\n", [ML1]),
+	store(NodeId, PC, SV, MinCL, MinML, CL1, ML1).
+
+store(NodeId, PC, SV, MinCL, MinML, CL, ML) :-
+	store_aux(NodeId, PC, SV, MinCL, MinML, CL, ML).
+store(_NodeId, _PC, _SV, _MinCL, _MinML, _CL, _ML).
+
+store_aux(NodeId, PC, SV, MinCL, MinML, CL, ML) :-
+	evaluate_marked(MinCL, MinML),
+	evaluate_marked(CL, ML),
+	copy_to_unbound_variables(SV, SV1),
+	dump(SV, SV1, DumpCL),
+	make_symbolic(DumpCL, CL1, _),
+	negate_list_numeric2(CL1, NegDisjunct),
+	assert(table(NodeId, PC, SV1, NegDisjunct)), !, fail.
+
+%==============================================================================
+% clear_table(NodeId): Clear all entries in the memo table with Id > NodeId
+%==============================================================================
+clear_table(NodeId) :-
+	NodeId < X,
+	retract(table(X, _, _, _)),
+	fail.
+clear_table(_NodeId).
+
+%==============================================================================
+% Evaluate "needed" constraints only
+%==============================================================================
+evaluate_marked([], []).
+evaluate_marked([C|CL], [M|ML]) :-
+	M==o, !,
+	constraint_symbolic(C, _, _),
+	evaluate_marked(CL, ML).
+evaluate_marked([_|CL], [_|ML]) :-
+	evaluate_marked(CL, ML).
+
+
+%==============================================================================
+% assert_answer: Record answer of post-order traversal
+%==============================================================================
+
+:- dynamic(answer, 3).
+
+assert_answer(Depth, State) :-
+	State = state(_, _, _, _, ML, LoopStack),
+	remove_constraints_from_loopstack(LoopStack, LoopStackML),
+	assert(answer(Depth, ML, LoopStackML)).
+
+load_answer(Depth, State) :-
+	retract(answer(Depth, ML, LoopStackML)),
+	State = state(_, _, _, _, ML, LoopStack),
+	remove_constraints_from_loopstack(LoopStack, LoopStackML).
+
+copy_answer(Depth, State) :-
+	%----------------------------------------------------------------------
+	% Typically this is used for answer that's already collated
+	%----------------------------------------------------------------------
+	answer(Depth, ML, LoopStackML),
+	State = state(_, _, _, _, ML, LoopStack),
+	remove_constraints_from_loopstack(LoopStack, LoopStackML).
+
+remove_constraints_from_loopstack([], []).
+remove_constraints_from_loopstack([r(_SV, _CL, ML)|R], [r(ML)|S]) :-
+	remove_constraints_from_loopstack(R, S).
+remove_constraints_from_loopstack([p(_NodeId, Type, _Depth, _PC, _SV, _CL, ML)
+				   |R],
+				  [p(Type, ML)|S]) :-
+	remove_constraints_from_loopstack(R, S).
+
+%==============================================================================
+% clear_answer(Depth): Clear answers of depth Depth
+%==============================================================================
+clear_answer(Depth) :-
+	robust_retract(answer(Depth, _, _)),
+	fail.
+clear_answer(_Depth).
+
+%==============================================================================
+% Get a new state where sibling min answer has been applied
+%==============================================================================
+apply_sibling_min_answers(Depth, State, NewState) :-
+	%----------------------------------------------------------------------
+	% Peek siblings' (collated) answers. We assume that the answers are
+	% already collated.
+	%----------------------------------------------------------------------
+	answer(Depth, ML, LoopStackML),	
+	State = state(PC, _V, SV, CL, ML, LoopStack),
+	apply_sibling_min_to_loopstack(LoopStackML, LoopStack),
+	Path = [r(SV, CL, ML)|LoopStack],
+	find_next_min(Path, _MinId, _MinType, _MinDepth, MinCL, MinML,
+		      CL, ML, _), 
+	%----------------------------------------------------------------------
+	% We abstract the evaluated constraint using the min abstraction
+	%----------------------------------------------------------------------
+	evaluate_abstraction(V1, SV, CL, ML, MinCL, MinML),
+	NewState = state(PC, V1, SV, CL, ML, LoopStack).
+
+apply_sibling_min_to_loopstack([], []).
+apply_sibling_min_to_loopstack([r(ML)|R], [r(_SV, _CL, ML)|S]) :-
+	apply_sibling_min_to_loopstack(R, S).
+apply_sibling_min_to_loopstack([p(Type, ML1)|R],
+			       [p(_NodeId, Type, _Depth, _PC, _SV, _CL, ML2)|
+				S]) :-
+	nonvar(Type), !,
+	Type = min,
+	copy_must_delete_markings(ML1, ML2),
+	apply_sibling_min_to_loopstack(R, S).
+apply_sibling_min_to_loopstack([p(Type, ML)|R],
+			       [p(_NodeId, Type, _Depth, _PC, _SV, _CL, ML)|
+				S]) :-
+	apply_sibling_min_to_loopstack(R, S).
+
+%------------------------------------------------------------------------------
+% We copy must delete ('x') markings only
+%------------------------------------------------------------------------------
+copy_must_delete_markings([], []).
+copy_must_delete_markings([X|R], [X|S]) :-
+	X==x, !,
+	copy_must_delete_markings(R, S).
+copy_must_delete_markings([_|R], [_|S]) :-
+	copy_must_delete_markings(R, S).
+
+
+:- dynamic(evaluate_abstraction_memo, 1).
+	
+evaluate_abstraction(V1, SV, CL, ML, MinCL, MinML) :-
+	assert(evaluate_abstraction_memo(t(SV, CL, ML, MinCL, MinML))),
+	retract(evaluate_abstraction_memo(t(V1, CL1, _ML1, MinCL1, MinML1))),
+	pick_non_deleted_constraints(MinCL1, MinML1, AbstractMinCL1, _),
+	constraint_symbolic(AbstractMinCL1, _, _),
+	constraint_symbolic(CL1, _, _), !.
+
+pick_non_deleted_constraints([], [], [], []).
+pick_non_deleted_constraints([_|R], [X|S], T, U) :-
+	X==x, !,
+	pick_non_deleted_constraints(R, S, T, U).
+pick_non_deleted_constraints([C|R], [M|S], [C|T], [M|U]) :-
+	pick_non_deleted_constraints(R, S, T, U).
+
+%==============================================================================
+% Here we combine the answers from min transitions into just one answer
+%==============================================================================
+collate_answers(Depth) :-
+	retract(answer(Depth, ML, LoopStackML)), !,
+	collate_answers_aux(Depth, ML, LoopStackML).
+collate_answers(_Depth) :-
+	%----------------------------------------------------------------------
+	% This is when we ain't got no answer
+	%----------------------------------------------------------------------
+	true.
+
+collate_answers_aux(Depth, ML, LoopStackML) :-
+	retract(answer(Depth, ML, LoopStackML)), !,
+	collate_answers_aux(Depth, ML, LoopStackML).
+collate_answers_aux(Depth, ML, LoopStackML) :-
+	assert(answer(Depth, ML, LoopStackML)).
+	
+
+
+
+%==============================================================================
+% Wrapper
+%==============================================================================
+
+run :-
+	init_state(State),
+	set_counter(node_id, 0),
+	unfold(0, State).
+
+append([], B, B).
+append([X|A], B, [X|C]) :- append(A, B, C).
+
+pad([], B, B).
+pad([_|A], B, [_|C]) :- pad(A, B, C).
+
+not_included(_, []).
+not_included(Item, [X|_]) :- Item == X, !, fail.
+not_included(Item, [_|R]) :- not_included(Item, R).
+
+copy_to_unbound_variables([], []).
+copy_to_unbound_variables([_|R], [_|S]) :-
+	copy_to_unbound_variables(R, S).
+
+:- dynamic(copy_term_memo, 1).
+
+copy_term(X, Y) :-
+	assert(copy_term_memo(X)),
+	robust_retract(copy_term_memo(Y)).
+
+robust_retract(A) :-
+	warning(warning_off),	
+	call(A),
+	warning(warning_on),	
+	oncerule(A, ABody),
+	robust_retract_rule(A, ABody).
+
+oncerule(A, B) :-
+	rule(A, B), !.
+
+robust_retract_rule(A, true) :- !, retract(A).
+robust_retract_rule(A, B)    :-    retract(A :- B).
+
+	      
+%==============================================================================
+% Superstructure of loop invariant-generating unfolder
+%==============================================================================
+
+unfold(Depth, State) :-
+	%----------------------------------------------------------------------
+	% Here we get new node identifier, to be used in generating projection
+	% when loop is encountered, also to identify part of table that need
+	% to be cleared
+	%----------------------------------------------------------------------
+	add_counter(node_id, 1),
+	counter_value(node_id, NodeId),
+	!,
+	unfold_aux(NodeId, Depth, State).
+
+unfold_aux(_NodeId, Depth, State) :-
+	print_state(Depth, State),
+	fail.
+unfold_aux(_NodeId, Depth, _State) :-
+	%----------------------------------------------------------------------
+	% There's a conflict up in the tree, immediately backtrack
+	%----------------------------------------------------------------------
+	conflict(Depth1, _, _), Depth1 < Depth, 
+	printf("CONFLICT\n", []),
+	!, fail.
+unfold_aux(_NodeId, _Depth, State) :-
+	%----------------------------------------------------------------------
+	% Finding an error point
+	%----------------------------------------------------------------------
+	error(State),
+	!,
+	% Defined below
+	unfold_error(State). 
+unfold_aux(_NodeId, Depth, State) :-
+	%----------------------------------------------------------------------
+	% Safely ends: We store the state itself as answer without marking
+	%----------------------------------------------------------------------
+	final(State),
+	assert_answer(Depth, State),
+	!, fail.
+unfold_aux(_NodeId, Depth, State) :-
+	%----------------------------------------------------------------------
+	% Subsumed
+	%----------------------------------------------------------------------
+	subsumed(State, InterpCond),
+	!,
+	printf("SUBSUMED\n", []),
+	%----------------------------------------------------------------------
+	% We interpolate as long as the state stays subsumed
+	%----------------------------------------------------------------------
+	interpolate(State, InterpCond),
+	assert_answer(Depth, State),
+	!, fail.
+unfold_aux(NodeId, Depth, State) :-
+	looping_point(State), !,
+	printf("LOOPING POINT FOUND\n", []),
+	%----------------------------------------------------------------------
+	% Looping point (either start or backedge) found
+	%----------------------------------------------------------------------
+	% Defined below
+	unfold_loop(NodeId, Depth, State).
+unfold_aux(_NodeId, Depth, State) :-
+	%----------------------------------------------------------------------
+	% Try to execute a transition
+	%----------------------------------------------------------------------
+	unfold_trans(Depth, State).
+unfold_aux(NodeId, Depth, State) :-
+	%----------------------------------------------------------------------
+ 	% No conflict
+	% Here collate_answers combine the answers of min and max
+	%----------------------------------------------------------------------
+	collate_answers(Depth),
+	memo(NodeId, Depth, State),
+	!, fail.
+
+
+
+%==============================================================================
+% Unfold transitions: Take the enabled and then disabled transitions
+%==============================================================================
+unfold_trans(Depth, State) :-
+	test_outgoing_trans(State, Enabled, Disabled),
+	printf("FOUND ENABLED=% DISABLED=%\n", [Enabled, Disabled]),
+	!,
+	unfold_trans_aux(Depth, State, Enabled, Disabled).
+
+unfold_trans_aux(Depth, State, _Enabled, Disabled) :-
+	unfold_enabled(Depth, State, Disabled).
+unfold_trans_aux(Depth, State, Enabled, _Disabled) :-
+	unfold_disabled(Depth, State, Enabled).
+
+%==============================================================================
+% Test feasibility of outgoing transitions, separate them into enabled and
+% disabled transitions
+%==============================================================================
+test_outgoing_trans(State, Enabled, Disabled) :-
+	test_outgoing_trans_aux(State, [], [], [], Enabled, Disabled).
+
+test_outgoing_trans_aux(State, Enabled, Disabled, All,
+                        OutEnabled, OutDisabled) :-
+	State =.. [state, PC|_],
+	State1 = state(PC, _, _, _, _, _),
+	trans1(State1, _, All, Id),
+	!,
+	test_enabled_trans(State, State1, Enabled, Disabled, All, Id,
+                           OutEnabled, OutDisabled).
+test_outgoing_trans_aux(_State, Enabled, Disabled, _All, 
+                        Enabled, Disabled).
+
+test_enabled_trans(State, State1, Enabled, Disabled, All, Id,
+		   OutEnabled, OutDisabled) :-
+	states_nonunifiable(State, State1),
+	test_outgoing_trans_aux(State, Enabled, [Id|Disabled], [Id|All],
+                                OutEnabled, OutDisabled).
+test_enabled_trans(State, _State1, Enabled, Disabled, All, Id,
+                   OutEnabled, OutDisabled) :-
+	test_outgoing_trans_aux(State, [Id|Enabled], Disabled, [Id|All],
+                                OutEnabled, OutDisabled).
+
+states_nonunifiable(State, State1) :-
+	State = State1, !, fail.
+states_nonunifiable(_State, _State1).
+
+%==============================================================================
+% Unfold enabled transitions
+%==============================================================================
+unfold_enabled(Depth, State, Disabled) :-
+	State =.. [state, PC|_],
+	State1 = state(PC, _, _, _, _, _),
+	trans1(State1, PostState, Disabled, _),
+	unfold_enabled_abstract(Depth, State, State1, PostState).
+
+unfold_enabled_abstract(Depth, State, AbsState, PostState) :-
+	apply_sibling_min_answers(Depth, State, AbsState), !,
+	printf("SIBLING MIN APPL\nState=%\nAbsState=%\n", [State, AbsState]),
+	unfold_enabled_unfold_backtrack(Depth, AbsState, PostState).
+unfold_enabled_abstract(Depth, State, State, PostState) :-
+	unfold_enabled_unfold_backtrack(Depth, State, PostState).
+
+
+%==============================================================================
+% unfold_enabled_unfold_backtrack:
+% Unfold the next state and propagate answer backward
+%==============================================================================
+unfold_enabled_unfold_backtrack(Depth, _State, PostState) :-
+	unfold(Depth+1, PostState).
+unfold_enabled_unfold_backtrack(Depth, State, PostState) :-
+	%----------------------------------------------------------------------
+	% We propagate answer backward
+	%----------------------------------------------------------------------
+	load_answer(Depth+1, PostState),
+	assert_answer(Depth, State), !,
+	%----------------------------------------------------------------------
+	% We immmediately collate answers from enabled transitions
+	% The collation here is such that we have a unified view on the 
+	% min information to be propagated to sibling transitions
+	%----------------------------------------------------------------------
+	collate_answers(Depth),
+	!, fail.
+
+%==============================================================================
+% Unfold disabled transitions
+%==============================================================================
+unfold_disabled(Depth, State, Enabled) :-
+	%----------------------------------------------------------------------
+	% We go pick sibling min answers and run the current goal with them
+	%----------------------------------------------------------------------
+	apply_sibling_min_answers(Depth, State, State1), !,
+	State =.. [state, PC|_],
+	State2 = state(PC, _, _, _, _, _),
+	trans1(State2, PostState, Enabled, Id),
+	printf("Attempting Min-Abstracted Transition\n", []),
+	printf("ENABLED SET=% EXECUTED PREVIOUSLY DISABLED=%\n",
+	       [Enabled, Id]),
+	%----------------------------------------------------------------------
+	% We still need to check for satisfiability, and interpolate when
+	% necessary, as the min abstraction may still not enable the transition
+	%----------------------------------------------------------------------
+	unfold_sat_test(Depth, State1, State2, PostState).
+unfold_disabled(Depth, State, Enabled) :-
+	%----------------------------------------------------------------------
+	% No min answers
+	%----------------------------------------------------------------------
+	State =.. [state, PC|_],
+	State1 = state(PC, _, _, _, _, _),
+	trans1(State1, PostState, Enabled, _),
+	%----------------------------------------------------------------------
+	% Since the transitions are disabled, we call unfold_sat_test just to
+	% generate interpolants
+	%----------------------------------------------------------------------
+	unfold_sat_test(Depth, State, State1, PostState).
+
+%==============================================================================
+% Subroutine for handling infeasible transitions
+%==============================================================================
+unfold_sat_test(Depth, State, State1, PostState) :-
+	State = State1,  % Unifiable
+	!,
+	unfold_enabled_unfold_backtrack(Depth, State, PostState).
+unfold_sat_test(Depth, State, State1, PostState) :-
+	printf("Unsat at depth %\n", [Depth]),
+	%----------------------------------------------------------------------
+	% The current transition is infeasible
+	%----------------------------------------------------------------------
+
+	%----------------------------------------------------------------------
+	% We first unify the symbolic part
+	%----------------------------------------------------------------------
+	State = state(_, _, SV, CL, ML, LoopStack),
+	State1 = state(_, _, SV, CL, ML, LoopStack),
+	interpolate_false_node(PostState),
+	printf("CL=% ML=%\n", [CL, ML]),
+	assert_answer(Depth, State),
+	!, 
+	%----------------------------------------------------------------------
+	% Fail here to force unfold_nonexit/unfold_exit pick another transition
+	%----------------------------------------------------------------------
+	fail. 
+
+interpolate_false_node(State) :-
+	State = state(_, _, SV, LastSegCL, LastSegML, LoopStack),
+	Path = [r(SV, LastSegCL, LastSegML)|LoopStack],
+	find_next_min(Path, _MinId, _MinType, _MinDepth, MinCL, MinML,
+		      CL, ML, _Path1),
+	!,
+	pick_non_deleted_constraints(MinCL, MinML, MinCL1, MinML1),
+	append(CL, MinCL1, NewCL),
+	append(ML, MinML1, NewML),
+	printf("interpolate_false_node\n", []),
+	printf("filter([tt], %, %, no_check)\n", [NewCL, NewML]),
+	filter([tt], NewCL, NewML, no_check).
+
+%==============================================================================
+% Subroutine for handling error points
+%==============================================================================
+unfold_error(State) :-
+	%----------------------------------------------------------------------
+	% We try to lock constraints that are locked in some min
+	%----------------------------------------------------------------------
+	lock_constraints(State), !, fail.
+unfold_error(_State) :-
+	%----------------------------------------------------------------------
+	% No conflict point, this is a real error, the only point
+	% where the tracer succeeds.
+	%----------------------------------------------------------------------
+	writeln(error_found).
+
+lock_constraints(State) :-
+	State = state(_, _, SV, CL, ML, LoopStack),
+	Path = [r(SV, CL, ML)|LoopStack],
+	lock_constraints_segments_iter(Path).
+
+lock_constraints_segments_iter(Path) :-
+	printf("find_next_min(%, _MinId, _MinType, %, %, %, %, %, Path1)\n",
+	       [Path, MinDepth, MinCL, MinML, CL, ML]),
+	find_next_min(Path, _MinId, _MinType, MinDepth, MinCL, MinML,
+		      CL, ML, Path1),
+	!,
+	lock_constraints_segments_iter_aux(Path1, MinDepth,
+					   MinCL, MinML, CL, ML).
+
+lock_constraints_segments_iter_aux(_Path, 0, [], [], _CL, _ML) :-
+	%----------------------------------------------------------------------
+	% No more min found: This is a real error
+	%----------------------------------------------------------------------
+	!, fail.
+lock_constraints_segments_iter_aux(Path, MinDepth, MinCL, MinML, CL, ML) :-
+	satisfiable_segment(MinCL, MinML, CL), !,
+	lock_constraints_segments_iter_aux2(Path, MinDepth, MinCL, MinML,
+					    CL, ML).
+
+
+lock_constraints_segments_iter_aux2(Path, _MinDepth, MinCL, _MinML, CL, ML) :-
+	satisfiable_segment_no_abstraction(MinCL, CL), !,
+	%----------------------------------------------------------------------
+	% Error point is satisfiable even without abstraction
+	%----------------------------------------------------------------------
+	find_next_min(Path, _PreMinId, _PrevMinType, PrevMinDepth,
+		      PrevMinCL, PrevMinML, PrevCL, PrevML, Path1),
+	append(CL, PrevCL, CL1),
+	append(ML, PrevML, ML1),
+	lock_constraints_segments_iter_aux(Path1, PrevMinDepth,
+					   PrevMinCL, PrevMinML,
+					   CL1, ML1).
+lock_constraints_segments_iter_aux2(_Path, MinDepth, MinCL, _MinML, CL, ML) :-
+	%----------------------------------------------------------------------
+	% The abstraction is unsatisfiable: check for conflicting constraints
+	%----------------------------------------------------------------------
+	printf("Abstraction is unsatisfiable\n", []),
+	copy_to_unbound_variables(MinCL, FreshMinML),
+	append(ML, FreshMinML, NewML),
+	append(CL, MinCL, NewCL),
+	filter([tt], NewCL, NewML, no_check),
+	%----------------------------------------------------------------------
+	% Restart from the conflicting min
+	%----------------------------------------------------------------------
+	printf("Asserting conflict(%, %, %)\n", [MinDepth, MinCL, FreshMinML]),
+	assert(conflict(MinDepth, MinCL, FreshMinML)).
+
+
+%==============================================================================
+% satisfiable_segment
+%==============================================================================
+satisfiable_segment(MinCL, MinML, CL) :-
+	pick_non_deleted_constraints(MinCL, MinML, MinCL1, _),
+	satisfiable_segment_aux(MinCL1, CL), !, fail.
+satisfiable_segment(_MinCL, _MinML, _CL).
+
+%==============================================================================
+% satisfiable_segment_no_abstraction
+%==============================================================================
+satisfiable_segment_no_abstraction(MinCL, CL) :-
+	satisfiable_segment_aux(MinCL, CL), !, fail.
+satisfiable_segment_no_abstraction(_MinCL, _CL).
+
+%------------------------------------------------------------------------------
+% satisfiable_segment_aux
+%------------------------------------------------------------------------------
+satisfiable_segment_aux(MinCL, CL) :-
+	constraint_symbolic(MinCL, _, _),
+	constraint_symbolic(CL, _, _), !, fail.
+satisfiable_segment_aux(_MinCL, _CL).
+
+%==============================================================================
+% Get the complete CL
+%==============================================================================
+complete_cl(State, OutCL) :-
+	State = state(_, _, _, CL, _, LoopStack),
+	extract_cl_from_loopstack(LoopStack, CL1),
+	append(CL, CL1, OutCL).
+
+extract_cl_from_loopstack([], []).
+extract_cl_from_loopstack([r(_, CL, _)|R], OutCL) :-
+	!,
+	extract_cl_from_loopstack(R, S),
+	append(CL, S, OutCL).
+extract_cl_from_loopstack([_|R], S) :-
+	extract_cl_from_loopstack(R, S).
+	
+%==============================================================================
+% Subroutine for handling looping points
+%==============================================================================
+unfold_loop(NodeId, Depth, State) :-
+	State = state(_, _, SV, _, _, _),
+	repeated_pp(State, AType, ASV, ACL, AML, Path), !,
+	printf("Found a repeated program point:\n", []),
+	unfold_loop_ii(NodeId, Depth, State, SV, Path, AType, ASV, ACL, AML).
+unfold_loop(NodeId, Depth, State) :-
+	unfold_loop_redo_on_conflict(NodeId, Depth, State).
+
+
+%==============================================================================
+% unfold_loop_ii: Test if we can produce an invariant for the looping path
+%                 consisting of only individually invariant constraints
+%==============================================================================
+unfold_loop_ii(_NodeId, Depth, State, SV, Path, AType, ASV, ACL, AML) :-
+	test_individual_invariance(SV, Path, ASV, ACL, AML, IICL), !,
+
+	printf("Individually invariant: %\n", [IICL]),
+	%----------------------------------------------------------------------
+	% We first mark the projection as min
+	%----------------------------------------------------------------------
+	AType = min,
+
+	%----------------------------------------------------------------------
+	% We interpolate
+	%----------------------------------------------------------------------
+	copy_term(t(ASV, IICL), t(SV, IICL1)),
+	interpolate_from_min(State, IICL1),
+
+	printf("Asserting answer %\n", [State]),
+	assert_answer(Depth, State),
+	!, fail.
+unfold_loop_ii(NodeId, Depth, State, _SV, _Path, _AType, _ASV, _ACL, _AML) :-
+	%----------------------------------------------------------------------
+	% Deletion does not match with locked predicates:
+	% We unroll the loop (unfold as usual)
+	%----------------------------------------------------------------------
+	printf("Cannot produce invariant due to locking\n", []),
+	unfold_loop_redo_on_conflict(NodeId, Depth, State).
+
+%==============================================================================
+% unfold_loop_redo_on_conflict
+% We produce a projection and keep on redoing this point while there are
+% conflicts and new locks added
+%==============================================================================
+unfold_loop_redo_on_conflict(NodeId, Depth, State) :-
+	project_constraints(Depth, State, State1),
+	unfold_loop_redo_on_conflict_aux(NodeId, Depth, State1).
+
+unfold_loop_redo_on_conflict_aux(_NodeId, Depth, State) :-
+	unfold_trans(Depth, State).
+unfold_loop_redo_on_conflict_aux(NodeId, Depth, State) :-
+	retract(conflict(Depth, MinCL, MinML)),
+	apply_lock(State, MinCL, MinML, State1),
+	clear_table(NodeId),
+	clear_answer(Depth),
+	unfold_trans(Depth, State1).
+
+apply_lock(State, MinCL, MinML, State1) :-
+	State = state(PC, V, SV, CL, ML,
+		      [p(NodeId, Type, Depth, PC, SV, MinCL, _)|R]),
+	State1 = state(PC, V, SV, CL, ML,
+		       [p(NodeId, Type, Depth, PC, SV, MinCL, MinML)|R]).
+
+
+%==============================================================================
+% interpolate_from_min
+%==============================================================================
+interpolate_from_min(State, IICL) :-
+	negate_list_numeric2(IICL, NegIICL),
+	interpolate(State, NegIICL).
+
+interpolate(State, NegDisjunction) :-
+	State = state(_PC, _V, SV, CL, ML, LoopStack),
+	Path = [r(SV, CL, ML)|LoopStack],
+	find_next_min(Path, _MinId, _MinType, _MinDepth,
+		      MinCL, MinML, CL, ML, _Path1),
+	pick_non_deleted_constraints(MinCL, MinML, MinCL1, MinML1),
+	append(CL, MinCL1, NewCL),
+	append(ML, MinML1, NewML),
+	printf("filter(%, %, %, no_check)\n", [NegDisjunction, NewCL, NewML]),
+	filter(NegDisjunction, NewCL, NewML, no_check).
+
+
+%==============================================================================
+% Find an ancestor
+%==============================================================================
+repeated_pp(State, AType, ASV, ACL, AML, [r(SV, CL, ML)|PathInLoopStack]) :-
+	State = state(PC, _, SV, CL, ML, LoopStack),
+	repeated_pp_search_pc(PC, LoopStack, AType, ASV, ACL, AML,
+	                      PathInLoopStack).
+
+repeated_pp_search_pc(PC, [p(_, Type, _, PC, ASV, ACL, AML)|_],
+	              Type, ASV, ACL, AML, []) :- !.
+repeated_pp_search_pc(PC, [p(_, Type, _, _, _, _, _)|R],
+		      AType, ASV, ACL, AML, S) :-
+	var(Type), !,
+	repeated_pp_search_pc(PC, R, AType, ASV, ACL, AML, S).
+repeated_pp_search_pc(PC, [X|R], AType, ASV, ACL, AML, [X|S]) :-
+	%----------------------------------------------------------------------
+	% Note here that we copy min type of p() and r() to the output
+	%----------------------------------------------------------------------
+	repeated_pp_search_pc(PC, R, AType, ASV, ACL, AML, S).
+
+
+%==============================================================================
+% test_individual_invariance: Get individual invariant constraints
+%
+% This algorithm simply iterates over each constraint and test if it is
+% individually invariant. A constraint c is individually invariant if the
+% execution of c through a path in the loop body results in c itself.
+%
+% Here we start backward from c itself and since in the path in a loop
+% body, several abstractions (min applications) may exist, we generalize
+% by interpolation the abstractions further while maintaining c (or
+% subsequent abstraction). In this way, we can eventually test that the
+% interpolated incoming context is satisfied by c itself.
+%
+% There is another possible version where in the interpolated incoming
+% context we check the set of constraints that is included in the
+% interpolation. We again attempt to propagate this set backward until
+% we reach a fixpoint set. In this way, we get a set of interdependent
+% constraints instead of just a single constraint.
+%==============================================================================
+test_individual_invariance(SV, Path, ASV, ACL, AML, IICL) :-
+	%----------------------------------------------------------------------
+	% We examine only constraints that are not deleted by sibling
+	%----------------------------------------------------------------------
+	pick_non_deleted_constraints(ACL, AML, ACL1, AML1),
+	test_individual_invariance_aux(SV, Path, ASV, ACL1, AML1, IICL).
+
+test_individual_invariance_aux(_, _, _, [], [], []).
+test_individual_invariance_aux(SV, Path, ASV, [AC|ACL], [_|AML], [AC|IICL]) :-
+	individual_invariant(SV, Path, ASV, AC), !,
+	test_individual_invariance_aux(SV, Path, ASV, ACL, AML, IICL).
+test_individual_invariance_aux(SV, Path, ASV, [_|ACL], [x|AML], IICL) :-
+	test_individual_invariance_aux(SV, Path, ASV, ACL, AML, IICL).
+
+%==============================================================================
+% individual_invariant: Test if an ancestor constraint AC is individually
+% invariant
+%==============================================================================
+individual_invariant(SV, Path, ASV, AC) :-
+	get_first_negated_implied(SV, ASV, [AC], NegImplied),
+	ii_segment(ASV, AC, Path, NegImplied).
+
+%==============================================================================
+% Find a segment in the path from ancestor to current state, and if:
+% 1) The path does not start in min (but from the ancestor itself), 
+%    attempt a satisfiability test
+% 2) The path starts in min abstraction, generate an interpolation of the min
+%    as long as the constraint is implied
+%==============================================================================
+ii_segment(ASV, AC, Path, NegImplied) :-
+	find_next_min(Path, _, _, _, MinCL, MinML, RelCL, RelML, Path1), !,
+	ii_segment_aux(ASV, AC, Path1, MinCL, MinML, RelCL, RelML, NegImplied).
+
+ii_segment_aux(_ASV, AC, _, [], [], RelCL, RelML, NegImplied) :-
+	!,
+	RelCL1 = [AC|RelCL],
+
+	%----------------------------------------------------------------------
+	% We do not want to mark the real ML here, so we mark the copy
+	%----------------------------------------------------------------------
+	copy_to_unbound_variables(RelML, RelMLCopy),
+	RelML1 = [_|RelMLCopy],
+
+	individual_invariant_test(RelCL1, RelML1, NegImplied).
+ii_segment_aux(ASV, AC, Path, MinCL, MinML, RelCL, RelML, NegImplied) :-
+
+	append(RelCL, MinCL, CL),
+
+	%----------------------------------------------------------------------
+	% We do not want to mark the real ML here, so we mark the copy
+	%----------------------------------------------------------------------
+	copy_to_unbound_variables(RelML, RelMLCopy),
+	copy_to_unbound_variables(MinML, MinMLCopy),
+	append(RelMLCopy, MinMLCopy, MLCopy),
+	individual_invariant_test(CL, MLCopy, NegImplied), !,
+
+	get_negated_implied_from_interpolated_min(MinCL, MinMLCopy,
+						  NegImplied1),
+
+	ii_segment(ASV, AC, Path, NegImplied1).
+
+
+%==============================================================================
+% Try to find the next min abstraction up in the path. If not found, return
+% the path to the ancestor.
+%==============================================================================
+find_next_min([], _MinId, _MinType, MinDepth, MinCL, MinML, CL, ML, []) :-
+	MinCL = [], MinML = [], CL = [], ML = [], !,
+	MinDepth = 0.
+find_next_min([r(_, CL, ML),
+	       p(MinId, MinType, MinDepth, _, _, MinCL, MinML)|Path],
+	      MinId, MinType, MinDepth, MinCL, MinML, CL, ML,
+              Path) :- 
+	nonvar(MinType), !.
+find_next_min([r(_, CL, ML)|Path],
+	      MinId, MinType, MinDepth, MinCL, MinML, RelCL, RelML,
+	      OutPath) :- !,
+	find_next_min(Path,
+		      MinId, MinType, MinDepth, MinCL, MinML,
+		      CL1, ML1, OutPath),
+	append(CL, CL1, RelCL),
+	append(ML, ML1, RelML).
+find_next_min([_|Path],
+	      MinId, MinType, MinDepth, MinCL, MinML, RelCL, RelML,
+	      OutPath) :-
+	find_next_min(Path, MinId, MinType, MinDepth, MinCL, MinML,
+		      RelCL, RelML, OutPath).
+
+
+%==============================================================================
+% Test for satisfiability, in which case we fail.
+%==============================================================================
+individual_invariant_test(CL, _ML, NegImplied) :-
+	individual_invariant_test_aux(CL, NegImplied), !, fail.
+individual_invariant_test(CL, ML, NegImplied) :-
+	filter(NegImplied, CL, ML, no_check).
+
+individual_invariant_test_aux(CL, NegImplied) :-
+	constraint_symbolic(CL, _, _),
+	satisfiable_disjunct(NegImplied).
+
+satisfiable_disjunct([C|_]) :-
+	constraint_symbolic(C, _, _).
+satisfiable_disjunct([_|R]) :-
+	satisfiable_disjunct(R).
+
+%==============================================================================
+% Get first thing to prove unsatisfiable, by negating constraints
+%==============================================================================
+:- dynamic(get_first_negated_implied_memo, 1).
+
+get_first_negated_implied(SV, ASV, ACL, NegImplied) :-
+	assert(get_first_negated_implied_memo(t(ASV, ACL))),
+	retract(get_first_negated_implied_memo(t(SV, CL))),
+	negate_list_numeric2(CL, NegImplied), !.
+
+%==============================================================================
+% Get the thing to prove unsatisfiable, based on the marking of the
+% constraints in the min abstraction
+%==============================================================================
+get_negated_implied_from_interpolated_min(CL, ML, NegImplied) :-
+	get_important_constraints(CL, ML, CL1),
+	negate_list_numeric2(CL1, NegImplied).
+
+get_important_constraints([], [], []).
+get_important_constraints([C|R], [M|S], [C|T]) :-
+	M==o, !,
+	get_important_constraints(R, S, T).
+get_important_constraints([_|R], [_|S], T) :-
+	get_important_constraints(R, S, T).
+
+%==============================================================================
+% We Change CL into a shorter projected version
+%==============================================================================
+:- dynamic(project_constraints_memo, 1).
+
+project_constraints(Depth, InState, OutState) :-
+	InState = state(PC, V, SV, CL, ML, LoopStack),
+	OutState = state(PC, OutV, SV, [], [], LoopStack1),
+	dump(V, SV, SCL1),
+	make_symbolic(SCL1, CL1, _),
+	assert(project_constraints_memo(t(SV, CL1))),
+	retract(project_constraints_memo(t(OutV, CL2))),
+	constraint_symbolic(CL2, _, _),
+	copy_to_unbound_variables(CL1, ML1), 
+	%----------------------------------------------------------------------
+	% We save incoming context in the stack
+	% n for node, p for projection, r for relation (to previous projection
+        % point / abstraction
+	%----------------------------------------------------------------------
+	counter_value(node_id, NodeId),
+	LoopStack1 = [p(NodeId, _, Depth, PC, SV, CL1, ML1),
+	              r(SV, CL, ML)|LoopStack],
+	!.
+
+%==============================================================================
+% Just for printing
+%==============================================================================
+print_state(Depth, State) :-
+	printf("Depth = %", [Depth]),
+	dump([State]),
+	read(_).
+
+
+%==============================================================================
+% Imported procedures from main tracer branch
+%==============================================================================
+
+%==============================================================================
+% make_symbolic(+DumpCL, -CL, -FreeL)
+% convert a dumped constraints in DumpCL into symbolic constraints CL, also
+% outputs FreeL, a list of free variables in DumpCL (and CL), with possible
+% duplicates
+%==============================================================================
+make_symbolic(DumpCL, CL, FreeL) :-
+	make_symbolic_aux(pos, DumpCL, _, [], CL, [], FreeL).
+
+make_symbolic_aux(_, [], [], InCL, InCL, InFreeL, InFreeL) :- !.
+make_symbolic_aux(CFlag, [A|R], [U|S], InCL, OutCL,
+	          InFreeL, OutFreeL) :- !,
+	symb_conversion(CFlag, A, U, InCL, CL1, InFreeL, FreeL1),
+	make_symbolic_aux(CFlag, R, S, CL1, OutCL, FreeL1, OutFreeL).
+make_symbolic_aux(CFlag, C, SC, InCL, OutCL, InFreeL, OutFreeL) :-
+	C=..[A|Args],
+	copy_to_unbound_list(Args, SArgs),
+	SC1=..[A|SArgs],
+	symb_conversion(CFlag, SC1, SC, InCL, CL1, InFreeL, FreeL1), !,
+	make_symbolic_aux(term, Args, SArgs, CL1, OutCL, FreeL1, OutFreeL).
+
+symb_conversion(pos, A, B, InCL, OutCL, InFreeL, OutFreeL) :- !,
+	symb_conversion_pos(A, B, InCL, OutCL, InFreeL, OutFreeL).
+symb_conversion(neg, A, B, InCL, OutCL, InFreeL, OutFreeL) :- !,
+	symb_conversion_neg(A, B, InCL, OutCL, InFreeL, OutFreeL).
+symb_conversion(term, A, B, InCL, InCL, InFreeL, OutFreeL) :- !,
+	symb_conversion_term(A, B, InFreeL, OutFreeL).
+
+symb_conversion_pos('='(U,V),  eq(A,B),  InCL, [eq(A,B)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('<'(U,V),  gt(A,B),  InCL, [gt(A,B)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('<='(U,V), geq(A,B), InCL, [geq(A,B)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('>'(U,V),  gt(B,A),  InCL, [gt(B,A)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('>='(U,V), geq(B,A), InCL, [geq(B,A)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos(real(_),   tt,       InCL, InCL,
+                    InFreeL, InFreeL) :- !.
+symb_conversion_pos(C,         C,        InCL, [C|InCL],
+	            InFreeL, InFreeL).
+
+symb_conversion_neg('='(U,V),  gt(B,A),  InCL, [gt(B,A),gt(A,B)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('<'(U,V),  geq(B,A), InCL, [geq(B,A)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('<='(U,V), gt(B,A),  InCL, [gt(B,A)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('>'(U,V),  geq(A,B), InCL, [geq(A,B)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('>='(U,V), gt(A,B),  InCL, [gt(A,B)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg(real(_),   ff,       InCL, InCL, InFreeL, InFreeL) :- !.
+symb_conversion_neg(_,         ff,       InCL, InCL, InFreeL, InFreeL).
+
+symb_conversion_term(V,        V,          InFreeL, [V|InFreeL]) :- var(V), !.
+symb_conversion_term(A,        A,          InFreeL, InFreeL)     :- atomic(A), !.
+symb_conversion_term(quote(- (U)),  minus(0,A), InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, OutFreeL).
+symb_conversion_term(quote(U - V), minus(A,B), InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(quote(U + V), plus(A,B),  InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(quote(U * V), mult(A,B),  InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(quote(U / V), div(A,B),   InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(T, OutT, InFreeL, OutFreeL) :-
+	T=..[N|ArgList],
+	symb_conversion_term_list(ArgList, ArgList1, InFreeL, OutFreeL),
+	OutT=..[N|ArgList1], !.
+symb_conversion_term(T,        T,          InFreeL, InFreeL).
+
+symb_conversion_term_list([], [], FreeL, FreeL).
+symb_conversion_term_list([T|R], [U|S], InFreeL, OutFreeL) :-
+	symb_conversion_term(T, U, InFreeL, FreeL1), !,
+	symb_conversion_term_list(R, S, FreeL1, OutFreeL).
+
+%==============================================================================
+% constraint_symbolic
+%==============================================================================
+constraint_symbolic([], ArrRef, ArrRef) :- !.
+constraint_symbolic([C|R], InArrRef, OutArrRef) :- !,
+	constraint_symbolic_list([C|R], InArrRef, OutArrRef).
+
+constraint_symbolic(tt,ArrRef,ArrRef) :- !.
+constraint_symbolic(assign(A,B), InArrRef, OutArrRef) :- !,
+ 	numconstraint_symbolic(A,M, InArrRef, ArrRef1),
+ 	numconstraint_symbolic(B,N, ArrRef1, OutArrRef),
+	M=N.
+constraint_symbolic(eq(A,B),InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+	M=N.
+constraint_symbolic(gt(A,B),InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+	M>N.
+constraint_symbolic(geq(A,B),InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+	M>=N.
+constraint_symbolic(addref(A,B), InArrRef, OutArrRef) :- !,
+	numconstraint_symbolic(A,M, InArrRef, ArrRef1),
+	numconstraint_symbolic(B,N, ArrRef1, OutArrRef),
+	M=N.
+constraint_symbolic(ff,_,_) :- !, fail.
+
+constraint_symbolic_list([], ArrRef, ArrRef) :- !.
+constraint_symbolic_list([C|R], InArrRef, OutArrRef) :-
+	constraint_symbolic(C, InArrRef, ArrRef1),
+	constraint_symbolic_list(R, ArrRef1, OutArrRef).
+
+%------------------------------------------------------------------------------
+% Numeric expression evaluator
+%------------------------------------------------------------------------------
+numconstraint_symbolic(A,A,ArrRef,ArrRef) :- var(A), !.
+numconstraint_symbolic(A,A,ArrRef,ArrRef) :- atomic(A), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,I,X)|OutArrRef]) :-
+	var(I), !,
+	numconstraint_symbolic(A,B,InArrRef,OutArrRef), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,I,X)|OutArrRef]) :-
+	atomic(I), !,
+	numconstraint_symbolic(A,B,InArrRef,OutArrRef).
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	I=[_|_], !,
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic_list(I,J,ArrRef1,OutArrRef), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic(I,J,ArrRef1,OutArrRef), !.
+numconstraint_symbolic(upd(A,I,X),upd(B,J,Y),InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic(I,J,ArrRef1,ArrRef2),
+	numconstraint_symbolic(X,Y,ArrRef2,OutArrRef), !.
+numconstraint_symbolic(minus(A),-N,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,N,InArrRef,OutArrRef).
+numconstraint_symbolic(plus(A,B),E+F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(minus(A,B),E-F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(mult(A,B),E*F,InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef), !.
+numconstraint_symbolic(div(A,B),E/F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(mod(_,_), _ , InArrRef, InArrRef ) :- !.
+
+numconstraint_symbolic_list([], [], ArrRef, ArrRef).
+numconstraint_symbolic_list([X|R], [Y|S], InArrRef, OutArrRef) :-
+	numconstraint_symbolic(X, Y, InArrRef, ArrRef1),
+	numconstraint_symbolic_list(R, S, ArrRef1, OutArrRef).
+
+
+%------------------------------------------------------------------------------
+% negate_list_numeric2/2: Produce a negation of symbolic constraints.
+%------------------------------------------------------------------------------
+negate_list_numeric2(CL,NCL1):-
+	negate_list_numeric2_aux(CL,[],NCL1).
+
+negate_list_numeric2_aux([],NL,NL):-!.
+negate_list_numeric2_aux([C|R],Acc,NL):-
+	negate_numeric2(C,NCs),!,
+	append_constraints(NCs,Acc,NAcc),
+	negate_list_numeric2_aux(R,NAcc,NL).
+
+negate_numeric2(eq(A,B),     [gt(A,B),gt(B,A)]).
+negate_numeric2(assign(A,B), [gt(A,B),gt(B,A)]).
+negate_numeric2(gt(A,B),     [geq(B,A)]).
+negate_numeric2(geq(A,B)   , [gt(B,A)]).
+negate_numeric2(ff         , [tt]).
+negate_numeric2(tt         , []).
+
+append_constraints([],Acc,Acc):-!.
+append_constraints([NC],Acc,[NC|Acc]):-!.
+append_constraints([NC1,NC2],Acc,[NC1,NC2|Acc]):-!.
+
+
+filter(NegImplied, CL, ML, CheckNeeded) :-
+	filter_aux0(NegImplied, CL, ML, CheckNeeded),!.
+
+%------------------------------------------------------------------------------
+% filter_aux0-2: Interpolate differently based on flags
+%------------------------------------------------------------------------------
+filter_aux0(NegImplied, CL, ML, CheckFlag) :-
+	filter_aux1(NegImplied, CL, ML, CheckFlag).
+
+filter_aux1(NegImplied, CL, ML, check) :- !,
+	%----------------------------------------------------------------------
+	% First we check that we can filter, otherwise, we have
+	% found an error (safety violation).
+	%----------------------------------------------------------------------
+	filter_sufficient(NegImplied, CL, []), !,
+	filter_aux2(NegImplied, CL, ML).
+filter_aux1(NegImplied, CL, ML, no_check) :-
+	%----------------------------------------------------------------------
+	% Here we do not need to check because assume that it is
+	% called from a context where we can filter.
+	%----------------------------------------------------------------------
+	filter_aux2(NegImplied, CL, ML).
+
+filter_aux2(NegImplied,CL,ML):-
+	filter_deletion(CL, ML, NegImplied, []).
+
+%==============================================================================
+% filter_deletion: 1/2 N^2 algorithm to filter, this is achieved by
+% maintaining constraints in the constraint store that resulted form partial
+% evaluation of CL. As a consequence, here we need to use assert/retract to
+% preserve marking list ML when clearing the constraint store through failure.
+% This approach can be slower/faster then the earlier version depending on
+% verification problem. 
+%==============================================================================
+:- dynamic(filter_deletion_t, 1).
+
+filter_deletion(CL, ML, NegImplied, ArrRef) :-
+	% This should always fail, therefore we fetch the output ML
+	% in the second clause
+	filter_deletion_aux1(CL, ML, NegImplied, ArrRef).
+filter_deletion(_, ML, _, _) :-
+	retract(filter_deletion_t(ML)).
+
+filter_deletion_aux1(CL, ML, NegImplied, ArrRef) :-
+	% This should always succeed
+	filter_deletion_aux2(CL, ML, NegImplied, ArrRef),
+	fassert(filter_deletion_t(ML)), !, fail.
+
+filter_deletion_aux2([], [], _NegImplied, _ArrRef).
+filter_deletion_aux2([C|RestCL], [o|RestML], NegImplied, ArrRef) :-
+	%----------------------------------------------------------------------
+	% We assume all tts are converted from arrassign, which,
+	% are conservatively important constraints
+	%----------------------------------------------------------------------
+	C==tt, !,
+	filter_deletion_aux2(RestCL, RestML, NegImplied, ArrRef).
+filter_deletion_aux2([_|RestCL], [_|RestML], NegImplied, ArrRef) :-
+	filter_sufficient(NegImplied, RestCL, ArrRef), !,
+	filter_deletion_aux2(RestCL, RestML, NegImplied, ArrRef).
+filter_deletion_aux2([C|RestCL], [o|RestML], NegImplied, ArrRef) :-
+	filter_deletion_aux3(C, RestCL, RestML, NegImplied, ArrRef).
+
+filter_deletion_aux3(C, RestCL, RestML, NegImplied, ArrRef) :-
+	constraint_symbolic(C, ArrRef, ArrRef1), 
+	!,
+	filter_deletion_aux2(RestCL, RestML, NegImplied, ArrRef1).
+filter_deletion_aux3(_C, _RestCL, _RestML, _NegImplied, _ArrRef).
+
+%------------------------------------------------------------------------------
+% filter_sufficient(+NegImplied,+CL,+ArrRef)
+%------------------------------------------------------------------------------
+% Succeed is forall C \in NegImplied. C ^ CL ^ ArrRef (and refs from C
+% and CL) is UNSAT
+%------------------------------------------------------------------------------
+filter_sufficient([], _, _).
+filter_sufficient([C|_], L1, ArrRef) :-
+	filter_satisfiable(C, L1, ArrRef), !, fail.
+filter_sufficient([_|R], L1, ArrRef) :-
+	filter_sufficient(R, L1, ArrRef).
+
+%------------------------------------------------------------------------------
+% filter_satisfiable(+C,+Ls,+ArrRef): New array-capable version
+%------------------------------------------------------------------------------
+% Succeed if C ^ L1 ^ ArrRef (and other refs from C and L1) is
+% satisfiable.
+%------------------------------------------------------------------------------
+filter_satisfiable(C, L1, ArrRef) :-
+	constraint_symbolic(C, ArrRef, ArrRef1),
+	constraint_symbolic(L1, ArrRef1, _).

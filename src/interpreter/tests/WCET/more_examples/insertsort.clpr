@@ -1,0 +1,220 @@
+trans(func_main,
+	[0],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[1],[H,A],[],[SH,SA],[],[],[ReturnValue,INext,J,Temp],[],[SReturnValue,SINext,SJ,STemp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[1],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[2],[H,A],[],[SH,SA],[],[],[ReturnValue,I,JNext,Temp],[],[SReturnValue,SI,SJNext,STemp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[2],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[3],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,TempNext],[],[SReturnValue,SI,SJ,STempNext],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[3],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[4],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,0,0))],
+	[],
+	[]) :-
+	ANext=upd(A,0,0).
+trans(func_main,
+	[4],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[5],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,1,11))],
+	[],
+	[]) :-
+	ANext=upd(A,1,11).
+trans(func_main,
+	[5],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[6],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,2,10))],
+	[],
+	[]) :-
+	ANext=upd(A,2,10).
+trans(func_main,
+	[6],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[7],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,3,9))],
+	[],
+	[]) :-
+	ANext=upd(A,3,9).
+trans(func_main,
+	[7],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[8],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,4,8))],
+	[],
+	[]) :-
+	ANext=upd(A,4,8).
+trans(func_main,
+	[8],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[9],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,5,7))],
+	[],
+	[]) :-
+	ANext=upd(A,5,7).
+trans(func_main,
+	[9],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[10],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,6,6))],
+	[],
+	[]) :-
+	ANext=upd(A,6,6).
+trans(func_main,
+	[10],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[11],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,7,5))],
+	[],
+	[]) :-
+	ANext=upd(A,7,5).
+trans(func_main,
+	[11],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[12],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,8,4))],
+	[],
+	[]) :-
+	ANext=upd(A,8,4).
+trans(func_main,
+	[12],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[13],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,9,3))],
+	[],
+	[]) :-
+	ANext=upd(A,9,3).
+trans(func_main,
+	[13],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[14],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,10,2))],
+	[],
+	[]) :-
+	ANext=upd(A,10,2).
+trans(func_main,
+	[14],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[15],[H,A],[],[SH,SA],[],[],[ReturnValue,INext,J,Temp],[],[SReturnValue,SINext,SJ,STemp],
+	[eq(SINext,2)],
+	[],
+	[]) :-
+	INext=2.
+trans(func_main,
+	[15],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[17],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[geq(10,SI)],
+	[],
+	[]) :-
+	I<=10.
+trans(func_main,
+	[17],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[18],[H,A],[],[SH,SA],[],[],[ReturnValue,I,JNext,Temp],[],[SReturnValue,SI,SJNext,STemp],
+	[eq(SJNext,SI)],
+	[],
+	[]) :-
+	JNext=I.
+trans(func_main,
+	[18],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[20],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[gt(ref(SA,minus(SJ,1)),ref(SA,SJ))],
+	[],
+	[ref(A,J-1,ARef1),ref(A,J,ARef0)]) :-
+	ARef0<ARef1.
+trans(func_main,
+	[20],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[21],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,TempNext],[],[SReturnValue,SI,SJ,STempNext],
+	[eq(STempNext,ref(SA,SJ))],
+	[],
+	[ref(A,J,ARef0)]) :-
+	TempNext=ARef0.
+trans(func_main,
+	[21],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[22],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,SJ,ref(SA,minus(SJ,1))))],
+	[],
+	[ref(A,J-1,ARef0)]) :-
+	ANext=upd(A,J,ARef0).
+trans(func_main,
+	[22],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[23],[H,ANext],[],[SH,SANext],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[arreq(SANext,upd(SA,minus(SJ,1),STemp))],
+	[],
+	[]) :-
+	ANext=upd(A,J-1,Temp).
+trans(func_main,
+	[23],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[24],[H,A],[],[SH,SA],[],[],[ReturnValue,I,JNext,Temp],[],[SReturnValue,SI,SJNext,STemp],
+	[eq(SJNext,minus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J-1.
+trans(func_main,
+	[18],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[19],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[geq(ref(SA,SJ),ref(SA,minus(SJ,1)))],
+	[],
+	[ref(A,J-1,ARef1),ref(A,J,ARef0)]) :-
+	ARef0>=ARef1.
+trans(func_main,
+	[24],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[18],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[19],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[25],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[25],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[26],[H,A],[],[SH,SA],[],[],[ReturnValue,INext,J,Temp],[],[SReturnValue,SINext,SJ,STemp],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[]) :-
+	INext=I+1.
+trans(func_main,
+	[15],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[16],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[gt(SI,10)],
+	[],
+	[]) :-
+	I>10.
+trans(func_main,
+	[26],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[15],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[16],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[27],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[27],[H,A],[],[SH,SA],[],[],[ReturnValue,I,J,Temp],[],[SReturnValue,SI,SJ,STemp],
+	[28],[H,A],[],[SH,SA],[],[],[ReturnValueNext,I,J,Temp],[],[SReturnValueNext,SI,SJ,STemp],
+	[eq(SReturnValueNext,1)],
+	[],
+	[]) :-
+	ReturnValueNext=1.
+%--------------------------------------------------
+loop(func_main, [18],[19], 10, [n,u],[],[],[n,n,u,u]).
+loop(func_main, [15],[16], 10, [n,u],[],[],[n,u,u,u]).
+%--------------------------------------------------
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_main, [28]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], [_,_],[],[_,_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+:- consult('../src/clpr/wcetmulti.clpr').

@@ -1,0 +1,42 @@
+
+----------------------------------------------------------------------
+                               deletion           wp
+-----------------------------------------------------------------------
+Programs          result     #states time |  #state  time   #UD   #UWP
+-----------------------------------------------------------------------
+kbfiltr-safe       SAFE      1396    1.63 |   748    1.21    47     0
+kbfiltr-unsafe-1   UNSAFE     446    0.45 |   378    0.45    N/A   N/A
+kbfiltr-unsafe-2   UNSAFE     274    0.27 |   206    0.25    N/A   N/A
+cdaudio            SAFE     13814   25.47 | 12056   27.07    64     0
+diskperf           SAFE      5465   14.18 |  4310   10.42    32     3
+floppy             SAFE      3078    5.57 |  2369    4.61    92     2 
+tlan               SAFE      4892   12.46 |  4892   10.42     0     0
+tcas_1a            SAFE      5399    4.79 |  3274    4.02     2    59
+tcas_1b            SAFE      5418    4.63 |  1113    1.1      2    10
+tcas_2a            SAFE      5399    4.58 |  3274    3.97     2    59
+tcas_2b            UNSAFE      82    0.02 |    82    0.02    N/A   N/A
+tcas_3a            UNSAFE     218    0.11 |   218    0.16    N/A   N/A
+tcas_3b            SAFE      5388    4.55 |  3267    3.94     0    59
+tcas_4a            UNSAFE     218    0.11 |   218    0.15    N/A   N/A
+tcas_4b            UNSAFE      82    0.11 |    82    0.02    N/A   N/A
+tcas_5a            SAFE      5399    4.58 |  3267    3.96     0    59
+tcas_5b            UNSAFE      82    0.11 |    82    0.02    N/A   N/A
+-----------------------------------------------------------------------
+
+Run our safety algorithm WITHOUT MINMAX
+
+Row deletion  : compute interpolant using deletion algorithm
+Row wp        : compute interpolants computing weaker preconditions
+column #states: number of nodes of the symbolic execution tree
+column #time  : timing in seconds.
+column #UWP   : number of potential unsound wp's on guards.
+
+Very important is the column #UD (Num of "unavoidable
+disjunctions"). I've realized that our algorithm for computing weaker
+preconditions CANNOT BE EXACT if we want to avoid
+disjunctions. Sometimes the reason of infeasibility is intrinsically a
+disjunction or simply the user adds a disjunctive safety condition. In
+that case, we try to use the deletion vector to try to simplify. In
+the worst case, if it's not possible we return the deletion
+vector. The column #UD reflects the number of times that we just
+return the deletion vector.

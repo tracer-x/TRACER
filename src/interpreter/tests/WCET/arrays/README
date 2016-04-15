@@ -1,0 +1,10 @@
+Examples that are modified:
+
+fir.c
+bs.c
+st.c
+
+Typical modifications include replacement of unknown
+operators, such as >> with division, etc., and modify passing
+of arrays in arguments.
+

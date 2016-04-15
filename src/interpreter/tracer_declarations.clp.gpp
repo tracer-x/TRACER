@@ -1,0 +1,391 @@
+%============================================================================%
+% Begin preamble pragmas
+%============================================================================%
+#if     !(UNFOLD_OPT==SAFETY)
+% MINMAX option only possible if SAFETY
+#undef  MINMAX
+#endif 
+
+#ifdef  MINMAX
+% The following options are not available with MINMAX
+#undef  ENCODE_MEMO
+#undef  PIPEMEMO
+#endif  /*MINMAX*/
+
+#if     (UNFOLD_OPT==WCET) || (UNFOLD_OPT==SLICING) || (UNFOLD_OPT==LIVE)
+%% This is to attempt avoiding the error "Fatal Error: Run out of
+%% registers during compilation" if witnesses are used.
+% #define ONLY_LINEAR_WITNESSES
+#endif  /*(UNFOLD_OPT==WCET) || (UNFOLD_OPT==SLICING) || (UNFOLD_OPT==LIVE)*/
+
+#if     (UNFOLD_OPT==SLICING)
+% The following two options are not fully tested. Hence, don't use
+% them unless you know what you are doing.
+% #define SLICING_SPEEDUP_TRANS_IN_SLICE
+% #define OPTIMIZED_FIXPO
+#endif  /*(UNFOLD_OPT==SLICING)*/
+
+#if (defined(PRINT_SYM_GRAPH)|| defined(STSDOT) || defined(TREEDOT)|| defined(SLICEDSTSDOT))
+#define GRAPHVIZ_USE
+#ifdef  PRINT_SYM_GRAPH
+% We write on a file the facts needed to produce the symbolic
+% graph. It's slower but avoid memory limitations in large programs.
+%#define RECORD_SYM_GRAPH_ON_FILE
+#endif  /*PRINT_SYM_GRAPH*/      
+#endif 
+
+#ifdef  USEWP
+#define NEWPARTITION
+#endif  /*USEWP*/
+
+#ifdef  PIPEMEMO
+% PIPEMEMO
+% Memo table entries are stored in another slave. The entries must be
+% encoded first.
+% For simplicity this option is only implemented on the top of the
+% PIPEDUMP_AND_ANSWERS option. Thus, it doesn't work if PIPEDUMP is
+% selected.
+%
+% Reuse code space after a fixpoint iteration (useful if slicing).
+#define PIPEMEMO_REUSE_CS
+% It needs memo table entries to be encoded (if witnesses). For
+% safety, this option is not required.
+#define ENCODE_MEMO
+% It needs all the machinery from PIPEDUMP_AND_ANSWERS.
+#define PIPEDUMP_AND_ANSWERS
+#endif  /*PIPEMEMO*/
+
+#ifdef  ENCODE_MEMO
+% Optimization to decode memo table entries lazily.
+#define ENCODE_MEMO_OPT   
+#endif  /*ENCODE_MEMO*/
+
+#ifdef  PIPEDUMP_AND_ANSWERS
+% Reuse code space after an answer is retracted.
+#define PIPEDUMP_AND_ANSWERS_REUSE_CS    
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+% PIPEDUMP
+% Dump is done in a slave process in order to use a new separate
+% solver space which each time is called. In particular:
+% - Before storing interpolant in the memo table.
+% - Before storing witnesses.
+% PIPEDUMP_AND_ANSWERS
+% In addition, all answers are stored in another slave to have
+% available more code space. The memo table is still stored in the
+% master.
+%
+% Answers (i.e., interpolants and witnesses passed from children to
+% parents) need to be encoded.
+#define ENCODE_CHILD_PARENT   
+#endif  /*defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+
+#ifdef  DEBUG_USE
+#define PIPE_DEBUG
+#define MINI_DEBUG_USE
+% MINI_DEBUG_USE shows only transitions visited.
+#endif  /* DEBUG_USE */
+
+#ifndef PROFILE
+% Redundant markings profile can only be enabled when profiling is enabled
+#undef  REDUNDANT_MARKINGS_PROFILE
+#endif
+
+%% To output number total of transitions, number of transitions never
+%% reached, number of guards evaluated to true or false, etc.
+%#define OUTPUT_TRUE_FALSE_TRANS_INFO 
+%% To output detailed memory information.
+%#define OUTPUT_MEMORY_INFO
+
+% Output warnings/errors
+#if     (defined(USEWP) && defined(ENCODE_MEMO_OPT))
+%#error  "ENCODE_MEMO_OPT and USEWP may be in conflict"
+#endif  /*(defined(USEWP) && defined(ENCODE_MEMO_OPT))*/
+
+#ifdef  EXTERNAL_SOLVER
+%% TODO:
+%% - Not implemented for other interpolants (e.g., wp).
+%% - Not implemented for minmax.
+%% - Not implemented for analyses with witnesses (w/o witnesses may be ok)
+%
+%% IMPORTANT OBSERVATION:
+%
+%% Z3 DOES handle signed integers in the range -2^31-1 ... 2^31
+%% However, many Windows drivers use unsigned numbers up to 2^32
+%% Therefore, Z3 cannot be used for those programs
+#warning "**** Make sure CLP(R) was compiled USE_EXTERNAL_SOLVER=1"
+#endif  /*EXTERNAL_SOLVER*/
+%============================================================================%
+%                        End preamble pragmas
+%============================================================================%
+
+%============================================================================%
+%                  Dynamic predicates declaration.
+%============================================================================%
+% FIXME (CLPR bug): the declaration of dynamic predicates needs to be
+% before the use of any of them. Otherwise, SEG FAULT may occur.
+%============================================================================%
+
+:- dynamic(program, 1).
+:- dynamic(user_options, 1).
+:- dynamic(program_point, 1).
+:- dynamic(func_program_point, 2).
+:- dynamic(processnum, 1).
+#ifdef PROFILE
+%  Declaration of dynamic predicates for profiling
+%
+%  Keep track of the number of infeasible paths
+:- dynamic(infeasible_paths,2).
+%  Keep track of the number of feasible paths
+:- dynamic(feasible_paths,2).
+%  Keep track of the number of times that a transition is satisfiable
+%  or not
+:- dynamic(trans_profile_info,3).
+#endif /*PROFILE*/
+
+#ifndef MINMAX
+%  To store interpolants of exit paths of a loop
+%  exit_interp(+Depth,+FName,?ML,?Intp)
+#if     (UNFOLD_OPT==SAFETY || UNFOLD_OPT==WCET)
+:- dynamic(exit_interp, 4).
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+:- dynamic(exit_interp, 3).
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+#endif  /*!MINMAX*/
+
+#if     UNFOLD_OPT==WCET
+#ifdef  UNUSED_CODE
+%  To be used for compositional WCET (outdated)
+:- dynamic(copy_constraint_symbolic_to_evaluated_memo, 9).
+#endif  /*UNUSED_CODE*/
+#endif  /*UNFOLD_OPT==WCET*/
+
+%  To be used for copy_term  (copy arbitrary terms, including rules)
+:- dynamic(copy_term_memo, 1).
+%  To be used for fcopy_term (copy only facts)
+:- dynamic(fcopy_term_memo, 1).
+%============================================================================%
+#ifdef MINMAX
+%  Fact for returning conflict information
+:- dynamic(conflict, 2).
+%  Fact to make sure that loop invariants from abstract interpretation
+%  are considered only once. Otherwise, we wouldn't terminate.
+:- dynamic(using_inductive_invariants, 2).
+:- dynamic(disable_inductive_invariants, 2).
+% To speed up the execution of project_mintests/9 which is an
+% important bottleneck (unused for now).
+:- dynamic(project_mintests_cache,7).
+% Record at which tree depth a conflict occurred. This is needed for
+% some refinement heuristics
+:- dynamic(history_table_of_conflicts,2).
+#endif /*MINMAX*/
+%#ifdef DIDODEBUG
+%============================================================================%
+% From tracer_debug.clp.gpp
+%============================================================================%
+%:- dynamic(trace_info, 1).
+%#endif
+%============================================================================%
+% From tracer_flags.clp.gpp
+%============================================================================%
+:- dynamic('$tracer_flag',2).
+%#ifdef  GRAPHVIZ_USE
+%============================================================================%
+% From tracer_graphviz.clp.gpp
+%============================================================================%
+%  sym_graph(FName1,FName2,Id,PC1Context,PC2Context,
+%            SGArr1,SGVar1,SLArr1,SLVar1,GArr2,SGVar2,SLArr2,SLVar2,
+%            NewCL2,Statement,Feasibility,FollowingGroundTrace)            
+:- dynamic(sym_graph,17).
+%  pp_context(FName,PP,PPV)
+%  PP is the program point and PPV a unique identifier for the context
+:- dynamic(pp_context,3).
+:- dynamic('$list',1).
+:- dynamic(nodes_subsumed,4).
+:- dynamic(context,3).
+%  To simulate a stack in persistent memory
+:- dynamic(pp_context_stack,1).
+#ifdef  RECORD_SYM_GRAPH_ON_FILE
+:- dynamic('$sym_graph_file',1).
+#endif 
+%#endif  /*GRAPHVIZ_USE*/
+%============================================================================%
+% From tracer_interpolants.clp.gpp
+%============================================================================%
+:- dynamic(compute_unsat_core_deletion_t, 1).
+%============================================================================%
+% From tracer_preprocess.clp.gpp
+%============================================================================%
+%  infl(TransId,ListTransId).
+:- dynamic(infl,2).
+%  list_trans_id(List_of_Trans_Ids).
+:- dynamic(list_trans_id,1).
+%  list_trans_id(List_of_Call_Trans_Ids).
+:- dynamic(list_call_trans_id,1).
+%  block_of_trans(TransId,BlockId)
+:- dynamic(block_of_trans,2).
+:- dynamic('$return',2).
+:- dynamic('$branch',1).
+:- dynamic('$MYVAR',4).
+%============================================================================%
+% From tracer_safety.clp.gpp
+%============================================================================%
+%  safety_answer to store answers of children nodes to be collated by
+%  parent node
+#ifdef MINMAX
+#ifdef GC_INTP_INFEASIBLE
+:- dynamic(safety_answer, 7).
+#else
+:- dynamic(safety_answer, 6).
+#endif /*GC_INTP_INFEASIBLE*/
+#else  
+:- dynamic(safety_answer, 3).
+#endif /* MINMAX */
+% Output counterexample
+:- dynamic(path_edge,1).
+#ifdef MINMAX
+%============================================================================%
+% From tracer_safety_minimax.clp.gpp
+%============================================================================%
+:- dynamic(min_mark_child_point_memo, 1).
+:- dynamic(gc_root_depth, 1).
+:- dynamic(encountered_during_gc, 2).
+:- dynamic(crest_path, 1).
+:- dynamic(half_interpolant_pp, 3).
+:- dynamic(fast_verification, 1).
+:- dynamic(num_visited_children, 2).
+#ifdef GROUND_EXPLANATION
+%============================================================================%
+% From tracer_ground_explanation.clp.gpp
+%============================================================================%
+:- dynamic(level_zero, 2).
+:- dynamic(ground_trace, 1).
+:- dynamic(myconflict, 1).
+#endif /*GROUND_EXPLANATION*/
+#endif /*MINMAX*/
+
+#if   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%============================================================================%
+%  From tracer_analysis.clp.gpp
+%============================================================================%
+%  To store answers of children nodes to be collated
+%  by parent node
+#ifdef  SLICE_PSCFG
+:- dynamic(analysis_answer, 8). % to include the "Aux" argument
+#else
+:- dynamic(analysis_answer, 7).
+#endif
+%  To store caller state when a function call
+:- dynamic(analysis_caller_answer,5).
+%  For stats
+:- dynamic('$temp$', 6).
+#endif /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/
+
+#if   UNFOLD_OPT==SLICING
+%============================================================================%
+% From tracer_slicer.clp.gpp
+%============================================================================%
+% REMOVE
+% #ifdef  SLICING_CONTROL_OPT
+% :- dynamic(slicing_answer, 8).
+% #else
+% :- dynamic(slicing_answer, 7).
+% #endif  /*SLICING_CONTROL_OPT*/
+%  trans_in_slice to store the slice
+:- dynamic(trans_in_slice, 2).
+:- dynamic(trans_in_slice_pscfg, 3).
+#ifdef  SLICE_FOOTPRINT_OPT
+:- dynamic(dependencies_at_endif, 6).
+:- dynamic(dependencies_at_if, 6).
+#endif
+%  For slicing stats
+:- dynamic(empty_guards,1).
+:- dynamic(func_already_counted,1).
+%  For post-processing
+:- dynamic('$sibling', 1).
+#endif  /*UNFOLD_OPT==SLICING*/
+
+%============================================================================%
+% From tracer_loops_fixpo.clp.gpp
+%============================================================================%
+#if    (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+% loop_fixpoint to store fixpoint iteration
+:- dynamic(loop_fixpoint, 7).
+%  This represents the memo entries related to the TableSpace
+:- dynamic(record_tablespace_content_memo, 3).
+%  This represents the hierarchy of TableSpace (parent-child relationships)
+:- dynamic(tablespace_structure_memo, 2).
+#ifdef  PROFILE	
+:- dynamic(fixp_iteration_timing,1).
+#endif  /*PROFILE*/
+#ifdef  OPTIMIZED_FIXPO
+%  Here a special memo table only for storing the results of the whole
+%  loops
+:- dynamic(loop_memotable,16).
+%  Used to control execution of clauses
+:- dynamic(reusable_fixpo_loop,2).
+%  To cleanup tablespace lazily
+:- dynamic(pending_clear_tablespace,3).
+%  This represents the relation between TableSpace and loop start PCs
+:- dynamic(relation_tablespace_loop,3).
+#endif  /*OPTIMIZED_FIXPO*/
+#endif /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/
+
+#if    UNFOLD_OPT==TESTING
+%============================================================================%
+% From tracer_tester.clp.gpp
+%============================================================================%
+:- dynamic(narrowing_abstraction,3).
+#endif /*UNFOLD_OPT==TESTING*/
+
+#if    UNFOLD_OPT==WCET
+%============================================================================%
+% From tracer_wcet.clp.gpp
+%============================================================================%
+%  to store answers (bound and witness) of children nodes to be passed
+%  to parents
+:- dynamic(wcet_answer, 7).
+%  to store answers (bound and witness) from the exit paths of a loop.
+:- dynamic(wcet_exit_answer, 4).
+#ifdef  UNUSED_CODE
+%============================================================================%
+% Dynamic predicates for supporting compositional function calls
+% OUTDATED 
+%============================================================================%
+% proc_wcet_answer: store answers (similar to wcet_answer) of
+% procedures and functions when compositional reasoning.  In this
+% case, the parent has to collate by applying addition rather than
+% maximum.
+%#ifdef  USEWP
+%:- dynamic(proc_wcet_answer, 10).
+%#else
+%:- dynamic(proc_wcet_answer, 9).
+%#endif
+% wcet_answer_ext: an extension to wcet_answer to store the
+% context at the end of a funcion call. In the future, it should be
+% included as extra arguments in wcet_answer.
+%:- dynamic(wcet_answer_ext,7).
+% summarization(FName,CLIn,CLOut,A,
+%               SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+%		WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+%               WArrRef)
+%:- dynamic(summarization,13).
+#endif   /*UNUSED_CODE*/
+#endif   /*UNFOLD_OPT==WCET*/
+
+%============================================================================%
+% From tracer_interpolant_others.clp.gpp
+%============================================================================%
+#ifdef  PROFILE
+:- dynamic(marked_guard, 1).
+#endif  /*PROFILE*/
+% To store the interpolant of the caller
+:- dynamic(interp_caller,3).
+% To store intermediate results (non-disjunctive wp's)
+:- dynamic(wp_conflict_set,1).
+%============================================================================%
+% From union_find.clp.gpp
+%============================================================================%
+:- dynamic('$equiv_class',4).
+

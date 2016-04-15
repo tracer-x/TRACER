@@ -1,0 +1,238 @@
+Program:
+--------
+Initially, i!=0, j=0
+<0> while (i!=0) do
+<1>   k := i->next
+      i->next := j
+      j := i
+      i := k
+    end do
+
+CLP Representation:
+-------------------
+p(0,H,I,J,Hf,Jf) :- p(1,H,I,J,Hf,Jf), I!=0.
+p(0,H,I,J,Hf,Jf) :- p(2,H,I,J,Hf,Jf), I=0.
+p(1,H,I,J,Hf,Jf) :- p(0,<H,I+1,J>,H[I+1],I,Hf,Jf).
+p(2,H,I,J,H,J).
+
+Specifications:
+---------------
+alist(H,L,{}) :- L=0.
+alist(H,L,S * {L}) :- L!=0, alist(H,H[L+1],S).
+
+% reverse(H,I,End,H',J) : the reverse of a list in H from the cell I
+%      up to but not including End is the null-terminating list in H'
+%      starting from J.
+
+reverse(H,I,I,H',0).
+reverse(H,I,OldNext,H',J) :-
+    H'[J+1]=NewNext,
+    H[J+1]=OldNext,
+    reverse(H,I,J,H',NewNext).
+
+% The above version cannot be used for loop invariant since we
+% would also require extra predicate (eqlist) to denote that the
+% rest of the list is unchanged.
+
+% The version that we use below is using array updates, this
+% at the time specifies reverse and equality of unupdated part of the list.
+
+reverse(H,I,I,H,0).
+reverse(H,I,OldNext,<H',J+1,NewNext>,J) :-
+    H'[J+1]=OldNext,
+    reverse(H,I,J,H',NewNext).
+
+
+Proof:
+------
+
+1.  p(0,H,I,J,Hf,Jf), J=0, alist(H,I,S)
+        |= reverse(H,I,0,Hf,Jf), alist(Hf,Jf,S)
+
+1'. p(0,H,I,J,Hf,Jf), H0=H, I0=I, J=0, alist(H,I,S)
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+
+2.  CUT 1'
+    p(0,H,I,J,Hf,Jf), reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U), T*U=S
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+
+3a. LU 2
+    p(2,H,0,J,Hf,Jf), reverse(H0,I0,0,H,J), alist(H,J,T), alist(H,0,U), T*U=S
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+
+3b. LU 2
+    p(1,H,I,J,Hf,Jf), reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U), T*U=S,
+    I!=0
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+
+4.  LU 3a
+    reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,T), alist(Hf,0,U), T*U=S
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+
+5.  LU 4 (alist(Hf,0,U))
+    reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+        |= reverse(H0,I0,0,Jf,Hf), alist(Hf,Jf,S)
+    DP
+
+6.  LU 3b
+    p(0,H',I',J',Hf,Jf), reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0, H'=<H,I+1,J>, I'=H[I+1], J'=I
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+
+6.  AP 2,5
+    reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S),
+        reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0, H'=<H,I+1,J>, I'=H[I+1], J'=I
+        |= reverse(H0,I0,0,Hf,Jf), alist(Hf,Jf,S)
+    DP
+
+-------------------------------------------------------------------------------
+2.1 CUT
+    alist(H,I,S), H0=H, I0=I, J=0
+        |= reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U), T*U=S
+
+2.2 RU 2.1
+    alist(H,I,S), H0=H, I0=I, J=0
+        |= alist(H,J,T), alist(H,I,U), H0=H, I0=I, J=0, T*U=S
+
+2.3 RU 2.2
+    alist(H,I,S), H0=H, I0=I, J=0
+        |= alist(H,I,S), H0=H, I0=I, J=0
+    DP
+
+-------------------------------------------------------------------------------
+
+The proofs of 6a and 6b can be combined, but given separately for
+clarity.
+
+6a.1 SUBSUMPTION
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0, H'=<H,I+1,J>, I'=H[I+1], J'=I
+         |= reverse(H0,I0,I',H',J')
+
+6a.1' SIMPLIFY 6a.1
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0
+         |= reverse(H0,I0,H[I+1],<H,I+1,J>,I)
+
+6a.2 RU 6a.1'
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0, J'=I
+         |= reverse(H0,I0,I,H,J)
+     DP
+
+-------------------------------------------------------------------------------
+
+6b.1 SUBSUMPTION
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0, H'=<H,I+1,J>, I'=H[I+1], J'=I
+         |= alist(H',J',?T'), alist(H',I',?U'), ?T'*?U'=S
+
+6b.1' SIMPLIFY 6b.1
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+        T*U=S, I!=0
+         |= alist(<H,I+1,J>,I,?T'), alist(<H,I+1,J>,H[I+1],?U'), ?T'*?U'=S
+
+6b.2 LU 6b.1'
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,H[I+1],U1),
+        U=U1*{I}, T*U=S, I!=0
+         |= alist(<H,I+1,J>,I,?T'), alist(<H,I+1,J>,H[I+1],?U'), ?T'*?U'=S
+
+6b.3 RU 6b.2
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,H[I+1],U1),
+        U=U1*{I}, T*U=S, I!=0
+         |= I!=0, ?T=?T1 * {I}, alist(<H,I+1,J>,<H,I+1,J>[I+1],?T1),
+            alist(<H,I+1,J>,H[I+1],?U'), ?T*?U'=S
+
+6b.4 Instantiate ?T1->T, ?U'->U1
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,H[I+1],U1),
+        U=U1*{I}, T*U=S, I!=0
+         |= I!=0, ?T=T * {I}, alist(<H,I+1,J>,<H,I+1,J>[I+1],T),
+            alist(<H,I+1,J>,H[I+1],U1), ?T*U1=S
+
+6b.5 Quantify out ?T in the rhs
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,H[I+1],U1),
+        U=U1*{I}, T*U=S, I!=0
+         |= I!=0, alist(<H,I+1,J>,<H,I+1,J>[I+1],T),
+            alist(<H,I+1,J>,H[I+1],U1), T * {I} *U1=S
+
+6b.6 SEP alist(<H,I+1,J>,<H,I+1,J>[I+1],T) -> alist(H,<H,I+1>[I+1],T), I+1 !in T
+         alist(<H,I+1,J>,H[I+1],U1) -> alist(H,H[I+1],U1), I+1 !in U1
+     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,H[I+1],U1),
+        U=U1*{I}, T*U=S, I!=0
+         |= I!=0, alist(H,<H,I+1,J>[I+1],T), I+1 !in T,
+            alist(H,H[I+1],U1), I+1 !in U1, T * {I} *U1=S
+
+6b.7 Convert to constraints
+     U=U1*{I}, T*U=S, I!=0
+         |= I!=0, in(I,T * {I}), 
+            H=H, <H,I+1,J>[I+1]=J, T=T, I+1 !in T,
+            H=H, H[I+1]=H[I+1], U1=U1, I+1 !in U1, T * {I} *U1=S
+
+6b.8 Convert to integer constraints (convert I+1 !in T to #(I,T)=0
+     and I+1 !in U1 to #(I,U1)=0), we add #(I,{I})=1 to the lhs
+
+     #(I,U)=#(I,U1)+#(I,{I}), #(I,U1)+#(I,{I})<=1, 
+     #(I,U)<=1, #(I,U)>=0, #(I,U1)<=1, #(I,U1)>=0, #(I,{I})<=1, #(I,{I})>=0,
+     #(I,S)=#(I,T)+#(I,U), #(I,T)+#(I,U)<=1, #(I,S)>=0, #(I,S)<=1,
+     #(I,U)<=1, #(I,U)>=0, #(I,T)<=1, #(I,T)>=0, I!=0, #(I,{I})=1
+     |=
+     I!=0, #(I,T)+#(I,{I})<=1,
+     #(I,T)<=1, #(I,T)>=0, #(I,{I})<=1, #(I,{I})>=0,
+     H=H, <H,I+1,J>[I+1]=J, T=T, #(I,T)=0,
+     H=H, H[I+1]=H[I+1], U1=U1, #(I,U1)=0, 
+     #(I,S)=#(I,T)+#(I,{I})+#(I,U1),
+     #(I,T)+#(I,{I})<=1,
+     #(I,T)+#(I,U1)<=1,
+     #(I,{I})+#(I,U1)<=1,
+     #(I,S)<=1, #(I,S)>=0,
+     #(I,{I})<=1, #(I,{I})>=0,
+     #(I,T)<=1, #(I,T)>=0,
+     #(I,U1)<=1, #(I,U1)>=0
+
+6b.9 Constraint proof
+     #(I,U)=#(I,U1)+#(I,{I}),
+     #(I,U1)+#(I,{I})<=1, 
+     #(I,S)=#(I,T)+#(I,U),
+     #(I,T)+#(I,U)<=1,
+     #(I,U)<=1, #(I,U)>=0,
+     #(I,U1)<=1, #(I,U1)>=0,
+     #(I,{I})<=1, #(I,{I})>=0,
+     #(I,S)>=0, #(I,S)<=1,
+     #(I,T)<=1, #(I,T)>=0, 
+     I!=0
+     |=
+     I!=0,                 (I!=0)
+     1=#(I,T)+#(I,{I}),    (#(I,U)=#(I,U1)+#(I,{I}),
+                            #(I,T)+#(I,U)<=1, #(I,T)>=0, #(I,{I})=1)
+     #(I,T)+#(I,{I})<=1,   (#(I,U)=#(I,U1)+#(I,{I}),
+                            #(I,T)+#(I,U)<=1, #(I,T)>=0, #(I,{I})=1)
+     1<=1,                 (true)
+     1>=0,                 (true)
+     H=H,                  (true)
+     <H,I+1,J>[I+1]=J,     (true by AIP)
+     T=T,                  (true)
+     #(I,T)=0,             (#(I,U)=#(I,U1)+#(I,{I}), #(I,{I})=1,
+                            #(I,T)+#(I,U)<=1, #(I,T)>=0)
+     H=H,                  (true)
+     H[I+1]=H[I+1],        (true)
+     U1=U1,                (true)
+     #(I,U1)=0,            (#(I,U1)+#(I,{I})<=1, #(I,{I})=1, #(I,U1)>=0)
+     #(I,S)=#(I,T)+#(I,{I})+#(I,U1),
+                           (#(I,U)=#(I,U1)+#(I,{I}), #(I,S)=#(I,T)+#(I,U))
+     #(I,T)+#(I,U1)<=1,    (#(I,U)=#(I,U1)+#(I,{I}), #(I,T)+#(I,U)<=1,
+                            #(I,T)>=0,
+                            #(I,U1)+#(I,{I})<=1, #(I,{I})=1, #(I,U1)>=0)
+     #(I,{I})+#(I,U1)<=1,  (#(I,U1)+#(I,{I})<=1)
+     #(I,T)<=1,            (#(I,T)<=1),
+     #(I,T)>=0,            (#(I,T)>=0),
+     #(I,{I})<=1,          (#(I,{I})<=1),
+     #(I,{I})>=0,          (#(I,{I})>=0),
+     #(I,S)<=1,            (#(I,S)<=1),
+     #(I,S)>=0,            (#(I,S)>=0),
+     #(I,U1)<=1,           (#(I,U1)<=1),
+     #(I,U1)>=0            (#(I,U1)>=0)
+     DP
+
+
+

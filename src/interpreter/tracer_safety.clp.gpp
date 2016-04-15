@@ -1,0 +1,595 @@
+% tracer_safety.clp.gpp
+
+%==========================================================================
+% This file implements a verifier to prove safety conditions. The
+% handle of loops is quite straightforward. Each time a loop is
+% encountered a loop invariant is inferred automatically. The main
+% limitation is that it may raise false negatives if loop invariants
+% are not strong enough for proving the absence of bugs. Details are
+% in "An Interpolation Method for CLP traversal", CP'09.
+%==========================================================================
+% KNOWN BUGS:
+%==========================================================================
+
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% cleanup_safety
+%--------------------------------------------------------------------------%
+cleanup_safety:-
+        retractall(safety_answer(_,_,_)).
+
+%--------------------------------------------------------------------------%
+% safety_check_error_path
+%--------------------------------------------------------------------------%
+safety_check_error_path(FName,PP,Id,
+			GlobalArr, GlobalVar, LocalArr, LocalVar,ArrRef,
+			SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			CL) :-
+	%==================================================================%
+	% A error path is encountered whenever we reach a special
+	% program point. The error must be real. Thus, we just halt
+	% and report information to the user.
+	%==================================================================%
+	is_error_reachable(PP),
+	!,	
+        report_unsafe_path(FName,PP,Id,
+			   GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL).
+
+%---------------------------------------------------------------------------------%
+% Report to stdout that the program is unsafe
+%---------------------------------------------------------------------------------%
+report_unsafe_path(_FName,_PP,Id,
+		   _GlobalArr ,_GlobalVar ,_LocalArr ,_LocalVar,_ArrRef,
+		   _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar,_CL):-		  
+	%print_message("VIOLATION OF SAFETY PROPERTY at %  ;-( \n",
+	%	      [FName],red),
+	%-------------------------------------------------------------------------%
+        % Here we just show the state at the moment TRACER reached the
+        % error.
+	%-------------------------------------------------------------------------%	
+	%pretty_printer_path(CL,
+	%                    FName,                
+	%	             SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#ifndef RECORD_SYM_GRAPH_ON_FILE	
+	%-------------------------------------------------------------------------%	
+	% Show the feasible counterexample in friendly format
+	%-------------------------------------------------------------------------%	
+        % FIXME: we should do the same than in minmax. In minmax we
+        % use PathStack to keep the current path at any moment. Then,
+        % if program is unsafe we just look at PathStack. Instead,
+        % right now we try to get the counterexample from the
+        % information we store to display the symbolic tree. It's very
+        % expensive for large programs and actually not sure it's
+        % correct.
+	%-------------------------------------------------------------------------%
+	find_path_from_memory_tree(Id,Path),
+	write_error_log(/*'counterexample.log'*/_,Path).
+#else
+        % To avoid warnings
+        Id=_.
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/ 	
+
+#ifndef RECORD_SYM_GRAPH_ON_FILE	
+%=================================================================================%
+% Traverse the path backwards while apply dictionary
+%=================================================================================%
+% Assume that the symbolic execution tree is stored in memory!
+% Note that for now you should run with option "-tree-traces y"
+%=================================================================================%
+find_path_from_memory_tree(Id,Path):-
+	sym_graph(_,FNameTo,Id,_,[PPTo],_,_,_,_,_,_,_,_,_,_,feasible,_),
+	fassert(path_edge([])),
+	find_path_from_tree_aux(FNameTo,PPTo),
+	retract(path_edge(Path)),
+	!.
+find_path_from_memory_tree(_,[]):- !.
+find_path_from_tree_aux(FNameTo,PPTo):-
+	sym_graph(FNameFrom,FNameTo,_,[PPFrom],[PPTo],
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+		  XCL,Statement,feasible,_),
+	retract(path_edge(Suffix)),	
+	% important to apply here the dictionary. Otherwise, we need
+	% to assert also the set of variables and then we run out of
+	% registers!	
+	apply_dict_to_constraints_list(FNameFrom,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				  FNameTo,
+				  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+				  XCL,XCL1),
+	fassert(path_edge(
+	        [e(FNameFrom,PPFrom,FNameTo,PPTo,Statement,XCL1)|Suffix])),
+	find_path_from_tree_aux(FNameFrom,PPFrom).
+find_path_from_tree_aux(_,_):-!.
+
+%-------------------------------------------------------------------------------%
+% Write the counterexample to either a file or standard output
+%-------------------------------------------------------------------------------%
+write_error_log(OutFile,ErrorPath):-
+	var(OutFile),
+	!,
+	print_message("FEASIBLE COUNTEREXAMPLE:\n",[]),
+	output_path(ErrorPath),
+	print_message("\n",[]).
+write_error_log(OutFile,ErrorPath):-
+	telling(Old),
+	tell(OutFile),
+	print_message("FEASIBLE COUNTEREXAMPLE:\n",[]),
+	output_path(ErrorPath),
+	print_message("\n",[]),
+	told,
+	tell(Old).
+output_path([]).
+output_path([e(FNameFrom,PPFrom,FNameTo,PPTo,GuardFlag,XCL)|R]):-		       
+	output_path_edge(GuardFlag,FNameFrom,PPFrom,FNameTo,PPTo,XCL),
+	output_path(R).
+output_path_edge(_,FNameFrom,PPFrom,_FNameTo,_PPTo,XCL):-
+	XCL=[],
+	!,
+	print_file("%@% \n",[FNameFrom,PPFrom]).
+output_path_edge(_,FNameFrom,PPFrom,_FNameTo,_PPTo,XCL):-
+	print_file("%@%: % \n",[FNameFrom,PPFrom,XCL]).		
+#endif  /*RECORD_SYM_GRAPH_ON_FILE*/
+
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% safety_bound_reached(+,+,+,+,+,+,+,+,+,+,+)
+% search depth bound reached
+%--------------------------------------------------------------------------%
+safety_bound_reached(FName,Depth, CL, ML,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar):-
+	interp_gen_success_path(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,Intp),
+	assert_safety_answer(Depth, FName, CL, ML, Intp).
+	
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% safety_success_path(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+% successful end of a path
+%--------------------------------------------------------------------------%
+safety_success_path(FName, Depth, _PP, CL, ML,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    _GlobalArr, _GlobalVar, _LocalArr, _LocalVar, _ArrRef):-
+        interp_gen_success_path(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,Intp),	
+	assert_safety_answer(Depth, FName, CL, ML, Intp).
+
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% safety_fail_path(+,+,+,+,+,+,+,+,+)
+% Infeasible path has been encountered
+%--------------------------------------------------------------------------%
+safety_fail_path(FName,Depth, CL, ML,
+		 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, XCL):-
+% note ML is already marked with relevant constraints
+        interp_gen_infeasible_path(FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   CL,ML,XCL,Intp),
+        assert_safety_answer(Depth, FName, CL, ML, Intp),
+#ifdef  DEBUG_USE
+        print_op_debugging(infeasible,
+			   FName,_,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar).	
+#else
+	% To prevent warnings
+	SGlobalArr=_, SGlobalVar=_, SLocalArr=_, SLocalVar=_.
+#endif  /*DEBUG_USE*/ 
+
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% safety_loop_back_edge(+,+,+,+,+,+,+,+,+,+)
+% Back-edge transition has been encountered
+%--------------------------------------------------------------------------%
+safety_loop_back_edge(FName, Depth, _PP, CL, ML, Intp,
+		      _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar):-
+        assert_safety_answer(Depth, FName, CL, ML,Intp).
+
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% safety_loop_exit(+,+,+,+,+,+,+,+,+,?,-)
+% process answer when exit condition of the loop is taken
+%--------------------------------------------------------------------------%
+safety_loop_exit(FName, _Id, Depth, PP,
+                 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		 _CL, ML, Intp):-
+	collate_marked_constraints(Depth, FName, PP,
+				   SGlobalArr, SGlobalVar,SLocalArr , SLocalVar,
+				   ML, Intp),	
+	assert_exit_interp(Depth,FName,ML,Intp),
+	!. % cut added for being able to include the second clause
+	   % in order to catch potential errors.
+safety_loop_exit(FName,_,_,PP,_,_,_,_,_,_,_):-
+	error_message("unexpected failure in safety_loop_exit/11 [%,%]\n",
+		      [FName,PP]).
+
+%--------------------------------------------------------------------------%
+% Once the body loop has been traversed then we combine interpolants
+% from the paths taken from the exit condition of the loop and the
+% paths within the loop, and store it in the table.
+%--------------------------------------------------------------------------%
+unfold_safety_loop(Depth, Id, FName, PP, _ExitPP,
+		   GlobalArr, GlobalVar, LocalArr, LocalVar,
+		   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		   CL, _ML, CallStack, ArrRef, _Loops, TableSpace) :-
+	
+	debug_message("\nSPECIAL STEP: BEGIN compute interpolant for loop\n",[],
+		      magenta),
+	%----------------------------------------------------------------------%
+	% First, we obtain the interpolant from the body loop
+	%----------------------------------------------------------------------%
+	debug_message("\tInterpolant from LOOP BODY %:% \n",[FName,PP],magenta),
+	
+	% Note: this code is confusing becase
+	% safety_combine_answers/12 does not pass the Intp variable to
+	% retract_safety_loop_answer/9.  The interpolant of the body
+	% loop is computed and asserted by
+	% safety_combine_answers/12. Then,
+	% retract_safety_loop_answer/9 will retract it and combine it
+	% with the interpolant from the exit.
+		
+	safety_combine_answers(FName, PP, Id, Depth, CL, ML,_,
+			       % note that we don't instantiate it (see above note)
+	                       _,  
+	                       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+
+	%----------------------------------------------------------------------%
+	% Second, we obtain the interpolant from the exit loop and
+	% combine (union) with the interpolant from the body
+	%----------------------------------------------------------------------%
+
+	retract_safety_loop_answer(Depth,FName,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   CL, ML,LoopIntp),
+				  
+#ifdef  DEBUG_USE
+        print_op_debugging(loop_interpolant,
+			   FName,PP,_,
+			   CL,ML,LoopIntp,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+#endif  /* DEBUG_USE */	
+	
+	assert_safety_answer(Depth,FName,CL,ML,LoopIntp),
+	
+      	%----------------------------------------------------------------------
+        % Third, store the interpolant as usual
+        %----------------------------------------------------------------------
+
+        store(FName, Id, PP, GlobalArr, GlobalVar, LocalArr, LocalVar,
+	      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	      ArrRef, CL, ML, LoopIntp,
+	      CallStack, _Answer,
+#ifdef  OPTIMIZED_FIXPO
+              _,
+#endif 	/*OPTIMIZED_FIXPO*/     
+	      TableSpace),
+
+       debug_message("\tStored in MEMOTABLE the interpolant for the WHOLE LOOP\n",[],
+		     magenta),
+       debug_message("END compute interpolant for loop\n",[],magenta),
+       !, 
+       fail.
+
+%------------------------------------------------------------------------%
+% Generic operation
+%
+% safety_combine_answers(+FName,+PP, +Id,+Depth,?CL,?ML,-Answer,+,+,+,+,+)
+%------------------------------------------------------------------------%
+% Combine all interpolants from the children.
+%------------------------------------------------------------------------%
+safety_combine_answers(FName, PP, _Id, Depth, CL, ML,_,Intp,
+	 	       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar):-
+	collate_marked_constraints(Depth, FName, PP,
+				   SGlobalArr, SGlobalVar,SLocalArr , SLocalVar,
+				   ML, Intp),
+	% Moved inside collate_marked_constraints/9:
+	% remove_all_duplicates_limit_size(FName, Intp2, Intp),
+	% pretty_printer_interp(FName,Depth,"COMBINE -- \n",
+	%                       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	%                       Intp),
+	
+        assert_safety_answer(Depth, FName, CL, ML, Intp),
+#ifdef  DEBUG_USE
+        print_op_debugging(combine,
+			   FName,_,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),			   
+#endif  /*DEBUG_USE*/
+        true.
+
+
+%------------------------------------------------------------------------%
+% collate_marked_constraints(+Depth,+FName,+PP,+SGlobalArr,...,-ML,-Intp)
+%------------------------------------------------------------------------%
+% Combine all bitvector interpolants (ML) and other interpolants
+% (e.g., weakest preconditions) at level Depth
+%------------------------------------------------------------------------%
+collate_marked_constraints(Depth,FName,PP,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   OutML,OutIntp) :-
+	retract_safety_answer___(Depth,ML,Intp),
+%----DEBUGGING------------------------------------------------------------%	
+%	count_num_of_safety_answers(Depth,N),
+%	print_message("Number of children: % \n",[N+1]),
+%-------------------------------------------------------------------------%
+	collate_marked_constraints_aux(Depth,FName,PP,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       ML,OutML,Intp,OutIntp0),
+	%-----------------------------------------------------------------------
+	% Special step for function calls
+	%-----------------------------------------------------------------------	
+	merge_caller_interp(FName,PP,Depth,
+			    OutIntp0,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    OutIntp1),
+	
+	interp_simplify_after_combined(FName,OutIntp1,OutIntp).
+collate_marked_constraints(_,_,_,_,_,_,_,_,_):-
+	error_message("collate_marked_constraints/9 failed\n",[]).
+
+collate_marked_constraints_aux(Depth,FName,PP,
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       ML,OutML,Intp,OutIntp) :-
+	retract_safety_answer___(Depth,ML,Intp1),
+%-----DEBUGGING-----------------------------------------------------------%			
+%	interp_size(Intp,N1),interp_size(Intp1,N2),
+%	print_message(" combining % % \n",[N1,N2]),
+%-------------------------------------------------------------------------%
+#ifdef  PROFILE	
+	ctime(Time0),
+#endif  /*PROFILE*/		
+	interp_combine(Intp,Intp1,
+		       Depth,FName,PP,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		       Intp2),
+#ifdef  PROFILE	
+	ctime(Time1),
+	add_counter(time_interp_combine_operator,Time1-Time0),
+#endif  /*PROFILE*/			
+	collate_marked_constraints_aux(Depth,FName,PP,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       ML,OutML,Intp2,OutIntp).
+collate_marked_constraints_aux(_,_,_,_,_,_,_,OutML,OutML,OutIntp,OutIntp).
+
+%------------------------------------------------------------------------%
+% Generic operation
+% pre operator (i.e., pre-image computation)
+%------------------------------------------------------------------------%
+safety_pre_operator(FName,Depth, Id,		    
+		    PC1, % child's PC
+		    Statement, % whether guard or not
+		    CallStack,
+                    XCL,
+		    CL,	   % Constraints at the parent		    
+		    CL1,  % Constraints at the child		    
+		    ML,   % Marked constraints at the parent		    
+		    ML1,  % Marked constraints at the child
+		    % father's variables
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    % child's  variables
+		    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif	/*PROFILE*/
+        functionOfChildAndParent(Id,FName,PC1,CallStack,FNameOfChild,FNameOfParent),	
+        retract_safety_answer(Depth+1, FName, CL1, ML1, Intp1),	
+        %----------------------------------------------------------------------
+        % Bind the variables of Intp1 to next state variables, and Intp to
+	% previous state variables
+        %----------------------------------------------------------------------
+#ifdef  PROFILE
+        ctime(Time1),	
+#endif	/*PROFILE*/			
+	interp_pre_operator(Intp1,ML1,
+			    Id, FNameOfChild, 
+			    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			    XCL,Statement,CL,ML,
+			    FNameOfParent, SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Intp),
+#ifdef  PROFILE
+        ctime(Time2),
+	add_counter(time_interp_pre_operator,Time2-Time1),
+#endif	/*PROFILE*/			
+#ifdef  DEBUG_USE
+        print_op_debugging(pre,
+			   FName,_,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+#endif  /*DEBUG_USE*/
+	assert_safety_answer(Depth, FName, CL, ML, Intp),
+#ifdef  PROFILE
+        ctime(Time3),
+	add_counter(pre_safety,Time3-Time0),
+#endif
+        true.
+
+%----------------------------------------------------------------------%
+% Generic operation
+%
+% safety_reuse_answer(+,+,+,+,+,+,+,+,+)
+% Store reused interpolant when a node is subsumed
+%----------------------------------------------------------------------%
+safety_reuse_answer(FName,Depth,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    CL,ML,Intp):-
+	assert_safety_answer(Depth,FName,CL,ML,Intp),
+#ifdef  DEBUG_USE
+        print_op_debugging(subsumption,
+			   FName,_,Depth,
+			   CL,ML,Intp,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar).
+#else
+        % To avoid warnings
+        SGlobalArr=_, SGlobalVar=_, SLocalArr=_, SLocalVar=_.
+#endif  /*DEBUG_USE*/
+	
+
+/********************************************************************/
+/*                  BEGIN assert/retract operations                 */
+/********************************************************************/
+% If path_datastructure is partition, then Es is a more efficient
+% encoding of CL and ML. Hence, we need to get ML from Es in order to
+% assert only ML.
+%------------------------------------------------------------------------------
+% assert_safety_answer(+,+,+,+,+)
+%------------------------------------------------------------------------------
+assert_safety_answer(Depth,_FName,_,ML,Intp):-
+	current_tracer_flag(path_datastructure,naive),!,
+	assert_safety_answer___(Depth,ML,Intp).
+
+
+assert_safety_answer(Depth,_FName,Es,ML,Intp):-
+	current_tracer_flag(path_datastructure,partition),!,
+	% Transfer marked constraints from Es to ML
+#ifndef NEWPARTITION
+	convert_partition2naive_ifNotVar(Es,ML),
+#else   
+	Es = _,
+#endif  /*NEWPARTITION*/
+#ifdef  PROFILE
+	ctime(Time0),
+#endif
+	assert_safety_answer___(Depth,ML,Intp),
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(assert_timing,Time1-Time0).
+#else
+        true.
+#endif
+
+% TODO: encode Intp if user wants
+assert_safety_answer___(Depth,ML,Intp):-
+#ifdef  ENCODE_CHILD_PARENT
+#ifdef  PROFILE
+        ctime(T0),
+#endif 	/*PROFILE*/			
+	encode_marked_list(ML,MLX),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(encode_interpolant_answers,T1-T0),
+#endif  /*PROFILE*/       
+	fassert(safety_answer(Depth,MLX,Intp)).
+#else   
+        fassert(safety_answer(Depth,ML,Intp)).
+#endif  /*ENCODE_CHILD_PARENT*/
+
+%------------------------------------------------------------------------------
+% retract_safety_answer(+Depth,+FName,-CL,-ML,-Intp)
+%------------------------------------------------------------------------------
+retract_safety_answer(Depth,_FName,_,ML,Intp):-
+	current_tracer_flag(path_datastructure,naive),!,
+	retract_safety_answer___(Depth,ML,Intp).
+
+retract_safety_answer(Depth,_FName,Es,ML,Intp):-
+	current_tracer_flag(path_datastructure,partition),!,
+	% Transfer marked constraints from ML to Es
+#ifndef NEWPARTITION
+	convert_partition2naive(Es,_,ML),
+#else   
+	Es = _,
+#endif  /*!NEWPARTITION*/
+#ifdef  PROFILE
+	ctime(Time0),
+#endif	/*PROFILE*/ 		
+	retract_safety_answer___(Depth,ML,Intp),
+#ifdef  PROFILE
+	ctime(Time1),
+	add_counter(retract_timing,Time1-Time0).
+#else
+        true.
+#endif	/*PROFILE*/
+
+% TODO: decode Intp is user wants
+retract_safety_answer___(Depth,ML,Intp):-
+#ifdef  ENCODE_CHILD_PARENT
+	retract(safety_answer(Depth,MLX,Intp)),
+#ifdef  PROFILE
+	ctime(T0),
+#endif	/*PROFILE*/	
+	decode_marked_list(MLX,ML),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(decode_interpolant_answers,T1-T0),
+#endif  /*PROFILE*/
+        true.
+#else   
+	retract(safety_answer(Depth,ML,Intp)).
+#endif  /*ENCODE_CHILD_PARENT*/
+
+%------------------------------------------------------------------------------
+% Operation for retracting interpolants from the loop 
+%------------------------------------------------------------------------------
+retract_safety_loop_answer(Depth,
+			   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   _,ML,Intp):-
+ 	current_tracer_flag(path_datastructure,naive),!,
+        retract_safety_loop_answer___(Depth, FName,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      ML,Intp).
+retract_safety_loop_answer(Depth,
+			   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   Es, ML, Intp):-
+	current_tracer_flag(path_datastructure,partition),!,
+ 	%-----------------------------------------------------%
+ 	% Transfer marked constraints from ML to Es
+ 	%-----------------------------------------------------%	
+#ifndef NEWPARTITION
+ 	convert_partition2naive(Es,_,ML),
+#else   
+	% To prevent warnings
+	Es = _,
+#endif  /*!NEWPARTITION*/
+ 	%-----------------------------------------------------%
+        retract_safety_loop_answer___(Depth,FName,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      ML,Intp).
+%------------------------------------------------------------------------------
+% Low-level operation for retracting interpolants from the loop
+%------------------------------------------------------------------------------
+retract_safety_loop_answer___(Depth,FName,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,ML, Intp) :-
+	retract_safety_answer(Depth, FName,_, ML, Intp1),
+	retract_exit_interp(Depth, FName, ML, Intp2),
+	interp_merge_loop_interpolant(Intp1,Intp2,
+				      FName,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      Intp).
+
+#ifdef  PIPEDUMP_AND_ANSWERS
+pipe_master_store_safety_answer(Depth,ML,Intp):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("assert_answer(%,%,%,%) .\n",
+				  [Depth,ML,Intp,MsgTimeStamp1]),
+#else
+	write_store_answers_slave("assert_answer(%,%,%) .\n",
+				  [Depth,ML,Intp]),
+#endif /*PROFILE*/
+	read_from_store_answers_slave(_).
+        %%%%
+        % No answer from slave.
+        %%%%
+pipe_master_remove_safety_answer(Depth,ML,Intp):-
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_store_answers_slave("retract_answer(%,%,%,%) .\n",
+				  [Depth, ML, Intp, MsgTimeStamp1]),
+#else
+	write_store_answers_slave("retract_answer(%,%,%) .\n",
+				  [Depth,ML,Intp]),
+#endif /*PROFILE*/
+	read_from_store_answers_slave(X),
+	process_slave_output(X,Reply),
+	!,
+	pipe_master_remove_safety_answer_aux(Reply,Depth,ML,Intp).	
+					     
+pipe_master_remove_safety_answer_aux(reply_args(fail),_,_,_):-    !,fail.
+pipe_master_remove_safety_answer_aux(reply_args(Depth,ML,Intp),Depth,ML,Intp):-!.				     
+#endif /*PIPEDUMP_AND_ANSWERS*/	
+/********************************************************************/
+/*              END assert/retract operations                       */
+/********************************************************************/

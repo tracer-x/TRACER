@@ -1,0 +1,413 @@
+#!/bin/bash
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=tracer 
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+# to get the path only - not the script name - add
+TESTS_HOME=`dirname "$abspath"`
+
+currtest=""
+block=""
+extra_options=" "
+# counters
+counter=0
+success=0
+failure=0
+unexSuccess=0
+unexFailure=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options] 
+  -help         print this message
+  -Wt <options> pass string options to TRACER
+  -block s      run the tests in block s (default "all")
+  -all          run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+    case "$1" in	
+	-help)
+	    usage
+	    exit 1
+	    ;;
+	-block)
+	    shift
+	    block="$block$1"
+	    ;;     
+	-Wt)
+	    shift 
+	    extra_options="$1"
+	    ;;	 
+	-all)
+	    block="ALL"
+	    ;;	
+	*)
+	    echo "unknown arg: $1"
+	    usage
+	    exit 0
+	    ;;	
+    esac
+    shift
+done
+
+
+#takes  no args -- just does a bunch of greps on the *.out file
+function getstatsSAFE() {
+if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}   
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+    success=$[ $success + 1 ]
+else 
+    if grep "UNSAFE" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexFailure=$[ $unexFailure + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]	
+    fi
+fi
+}
+
+function getstatsUNSAFE() {
+if grep "UNSAFE" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}      
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program UNSAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+    failure=$[ $failure + 1 ]
+else 
+    if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexSuccess=$[ $unexSuccess + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]	
+    fi
+fi
+}
+
+function cleanDirectory {
+    rm -f $1/*.clp
+    rm -f $1/*.dot
+    rm -f $1/*.TRACES
+    rm -f $1/*.out
+    rm -f $1/*_CIL.c
+}
+
+function runSAFE {
+    currtest=$2
+    options="-minmax y $3 $extra_options"
+    echo "[${counter}] ${currtest}.c" >> ${log}    
+    echo "------------ [$currtest] $1.c $options ------------"
+    ${TRACER_CMMD} safety $1.c $options > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+}
+
+function runUNSAFE {
+    currtest=$2
+    options="-minmax y $3 $extra_options"
+#   options=$3
+    echo "[${counter}] ${currtest}.c" >> ${log}   
+    echo "------------ [$currtest] $1.c $options ------------"
+    ${TRACER_CMMD} safety $1.c $options > test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+}
+
+
+blockFOO(){
+    runSAFE   "foo" "foo" "-alias y "
+    runUNSAFE "foo-unsafe" "foo-unsafe" "-alias y "
+    runSAFE   "foo1" "foo1" "-alias y "
+    runUNSAFE "foo1-unsafe" "foo1-unsafe" "-alias y "
+    runSAFE   "foo2" "foo2" "-alias y "
+    runUNSAFE "foo2-unsafe" "foo2-unsafe" "-alias y "
+    runSAFE   "multiple-foo-1" "multiple-foo-1" "-alias y "
+    runUNSAFE "multiple-foo-1-unsafe" "multiple-foo-1-unsafe" "-alias y "
+}
+
+blockFUNCTION(){
+    runSAFE   "funcall-0" "funcall-0" "-alias y "
+    runSAFE   "funcall-1" "funcall-1" "-alias y "
+    runUNSAFE "funcall-2" "funcall-2" "-alias y "
+    runSAFE   "funcall-3" "funcall-3" "-alias y -mccarthy y -mccarthy-limit -1 "
+    runUNSAFE "funcall-10" "funcall-10" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "funcall-4" "funcall-4" "-alias y "
+    runSAFE   "funcall-5" "funcall-5" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "funcall-11" "funcall-11" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "funcall-6" "funcall-6" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "funcall-7" "funcall-7" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "funcall-12" "funcall-12" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "funcall-8" "funcall-8" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "funcall-9" "funcall-9" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "funcall-14" "funcall-14" "-alias y "
+    runUNSAFE "funcall-15" "funcall-15" "-alias y"
+    runSAFE   "funcall-16" "funcall-16" "-alias y"
+
+}
+
+blockSYSCALL(){
+    runUNSAFE "sys_foo1" "sys_foo1" "-alias y "
+    runUNSAFE "sys_foo1-unsafe-1" "sys_foo1-unsafe-1" "-alias y "
+    runUNSAFE "sys-foo1-unsafe-2" "sys-foo1-unsafe-2" "-alias y " 
+}
+
+blockUSERABS(){
+    runSAFE "abstraction/test-1-abs"  "test-1-abs"  "-alias y "
+    runSAFE "abstraction/test-2-abs"  "test-2-abs"  "-alias y "
+    runSAFE "abstraction/test-3-abs"  "test-3-abs"  "-alias y "
+    runSAFE "abstraction/test-4-abs"  "test-4-abs"  "-alias y -convert-strict-ineq y -minmax-optimist-subs n "
+    runSAFE "abstraction/test-5-abs"  "test-5-abs"  "-alias y -mccarthy y "
+    runSAFE "abstraction/test-6-abs"  "test-6-abs"  "-alias y -mccarthy y "
+    runSAFE "abstraction/test-7-abs"  "test-7-abs"  "-alias y "
+    runSAFE "abstraction/test-8a-abs" "test-8a-abs" "-alias y -convert-strict-ineq y "
+    runSAFE "abstraction/test-8b-abs" "test-8b-abs" "-alias y -convert-strict-ineq y "
+    # Check we don't unroll loop
+    runSAFE "abstraction/test-8c-abs" "test-8c-abs" "-alias y -convert-strict-ineq y -loop-inv octagon "
+    # Check we don't unroll loops
+    runSAFE "abstraction/test-8d-abs" "test-8d-abs" "-alias y -convert-strict-ineq y -loop-inv octagon "
+    runSAFE "abstraction/test-9-abs"  "test-9-abs"  "-alias y -mccarthy y "
+    runSAFE "abstraction/test-10-abs" "test-10-abs" "-alias y -mccarthy y "
+    runSAFE "abstraction/test-11-abs" "test-11-abs" "-alias y -mccarthy y "
+    runSAFE "abstraction/test-12-abs" "test-12-abs" "-alias y -mccarthy y -convert-strict-ineq y"
+    runSAFE "abstraction/test-13-abs" "multiple3" "-alias y -mccarthy y -convert-strict-ineq y -loop-inv invgen -minmax-optimist-subs n"
+}
+    
+blockLOOP(){
+    runSAFE   "test-loop-1" "test-loop-1" "-alias y "
+    runSAFE   "test-loop-2" "test-loop-2" "-alias y "
+    runUNSAFE "test-loop-17" "test-loop-17" "-alias y "
+    runSAFE   "test-loop-3" "test-loop-3" "-alias y "
+    runUNSAFE "test-loop-16" "test-loop-16" "-alias y "
+    runSAFE   "test-loop-11" "test-loop-11" "-alias y "
+    runSAFE   "test-loop-14" "test-loop-14" "-alias y "
+    runUNSAFE "test-loop-4" "test-loop-4" "-alias y "
+    runSAFE   "test-loop-5" "test-loop-5" "-alias y "
+    runSAFE   "test-loop-6" "test-loop-6" "-alias y "
+    runSAFE   "test-loop-7" "test-loop-7" "-alias y "
+    runSAFE   "test-loop-8" "test-loop-8" "-alias y "
+    runSAFE   "test-loop-9" "test-loop-9" "-alias y "
+    runSAFE   "test-loop-10" "test-loop-10" "-alias y "
+    runSAFE   "test-loop-13" "test-full-unroll" "-alias y "
+    runSAFE   "test-loop-12" "test-full-unroll" "-alias y "
+    runSAFE   "test-loop-15" "test-full-unroll" "-alias y "
+    runSAFE   "test-loop-25" "test-full-unroll" "-alias y "
+    #----------------------------------------------------------------------
+    # Problems
+    #----------------------------------------------------------------------
+    # We depend on the result of projection to produce the suitable
+    # invariant. 
+    #----------------------------------------------------------------------
+    # runSAFE "test-loop-18" "test-loop-18" "-alias y -mccarthy y"   
+    # runSAFE "test-loop-20" "test-loop-20" "-alias y -mccarthy y"
+    # runSAFE "test-loop-21" "test-loop-21" "-alias y -mccarthy y"
+    #----------------------------------------------------------------------
+    # For the following, we need to refine using some kind of wp on the
+    # safety property. The problem can be solved if abstrations are
+    # used.
+    #----------------------------------------------------------------------
+    # runSAFE "test-loop-path-invariant" "pathinvariant" "-alias y -mccarthy y "
+    # runSAFE "test-loop-24" "test-loop-24" "-alias y -mccarthy y "  
+    #----------------------------------------------------------------------
+    runSAFE   "test-loop-allzeros-a" "allzeros-a" "-alias y -mccarthy y "
+    runSAFE   "test-loop-allzeros-b" "allzeros-b" "-alias y -mccarthy y "
+    runUNSAFE "test-loop-allzeros-unsafe-a" "allzeros-unsafe-a" "-alias y -mccarthy y "
+    runUNSAFE "test-loop-allzeros-unsafe-b" "allzeros-unsafe-b" "-alias y -mccarthy y "
+    runSAFE   "test-loop-19" "test-loop-19" "-alias y -mccarthy y"
+    #----------------------------------------------------------------------
+    # TRACER currently runs forever here but BLAST does not
+    # The solution is in how we refine
+    #----------------------------------------------------------------------
+    # runUNSAFE "test-loop-22" "test-loop-22" "-alias y "
+    #----------------------------------------------------------------------
+    runUNSAFE "test-loop-23" "test-loop-23" "-alias y "
+    runSAFE   "test-goto-1" "test-goto-1" "-alias y "
+    runSAFE   "test-goto-2" "test-goto-2" "-alias y "
+    runSAFE   "test-goto-3" "test-goto-3" "-alias y "
+}
+
+blockSTRUCT(){
+    runSAFE   "test-struct-1" "test-struct-1" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-struct-2" "test-struct-2" "-alias y -mccarthy y -mccarthy-limit -1"    
+    runSAFE   "test-struct-3" "test-struct-3" "-alias y -mccarthy y -mccarthy-limit -1"    
+    runUNSAFE "test-struct-4" "test-struct-4" "-alias y -mccarthy y -mccarthy-limit -1"    
+}
+
+blockARRAYS(){
+    # Problems here:
+    # runSAFE   "array/test1" "test1" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runSAFE   "array/test2" "test2" "-alias y  -mccarthy y -mccarthy-limit -1 -h 2"
+    runSAFE   "array/test3" "test3" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runSAFE   "array/test5" "test5" "-alias y  -mccarthy y -mccarthy-limit -1 -h 2"
+    runSAFE   "test-array-1" "test-array-1" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-array-2" "test-array-2" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-array-3" "test-array-3" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-array-4" "test-array-4" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-array-5" "test-array-5" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-array-6" "test-array-6" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-array-7" "test-array-7" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-array-8" "test-array-8" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-array-9" "test-array-9" "-alias y -mccarthy y -mccarthy-limit -1"
+    # Problems here:
+    # runSAFE "test-array-10"  "test-array-10"  "-alias y -mccarthy y -mccarthy-limit -1"
+    # runSAFE "test-array-13"  "test-array-13"  "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-array-10a" "test-array-10a" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-array-11"  "test-array-11"  "-alias y -mccarthy y -mccarthy-limit -1"
+    # FIXME: include unsafe versions of 10,10a, 11, 13 etc
+ }
+
+blockALIAS() {
+    # Crystal has problems with expressions like STUCK: goto STUCK
+    runSAFE   "alias/incref" "incref" "-alias n -mccarthy y "
+    runUNSAFE "alias/incref-unsafe"   "incref-unsafe" "-alias n -mccarthy y "
+    runUNSAFE "alias/incref-unsafe1"  "incref-unsafe1" "-alias n -mccarthy y "
+
+    runUNSAFE "swap" "swap" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-alias-1" "test-alias-1" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-alias-2" "test-alias-2" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-alias-3" "test-alias-3" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-alias-4" "test-alias-4" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-alias-5" "test-alias-5" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-alias-6" "test-alias-6" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-DASH-1" "test-DASH-1" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "test-DASH-2" "test-DASH-3" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-DASH-3" "test-DASH-3" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-DASH-4" "test-DASH-4" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runSAFE   "test-DASH-5" "test-DASH-5" "-alias y  -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/alias1" "alias1" "-alias y -mccarthy y -mccarthy-limit -1"    
+    runUNSAFE "alias/alias1-unsafe" "alias1-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/alias2" "alias2" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/alias2-unsafe" "alias2-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/alias3" "alias3" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/alias3-unsafe" "alias3-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/field" "field"  "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/field-unsafe" "field-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/memtemp" "memtemp" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/memtemp-unsafe" "memtemp-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/ptest0" "ptest0" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/ptest0-unsafe" "ptest0-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/ptest1" "ptest1" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/ptest1-unsafe" "ptest1-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/ptest2" "ptest2" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/ptest2-unsafe" "ptest2-unsafe" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/swap1" "swap1" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/swap" "swap" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/swap-a" "swap-a" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/swap-bug" "swap-bug" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/swap2" "swap2" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/swap2-bug" "swap2-bug" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/swap3" "swap3" "-alias y -mccarthy y -mccarthy-limit -1"
+    #runSAFE   "alias/swap3a" "swap3a" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/swap3-bug" "swap3-bug" "-alias y -mccarthy y -mccarthy-limit -1"
+    runSAFE   "alias/swap4" "swap4" "-alias y -mccarthy y -mccarthy-limit -1"
+    runUNSAFE "alias/swap4-bug" "swap4-bug" "-alias y -mccarthy y -mccarthy-limit -1"
+}
+
+runAllTests(){
+    blockFOO
+    blockFUNCTION
+    blockSYSCALL
+    blockLOOP
+    blockARRAYS
+    blockSTRUCT
+    blockALIAS
+    blockUSERABS
+}
+
+# process args
+echo $block
+case "$block" in    
+    FOO)
+	shift
+	blockFOO
+	;;    
+    FUNCTION)
+	shift
+	blockFUNCTION
+	;;    
+    SYSCALL)
+	shift
+	blockSYSCALL
+	;;
+    ALIAS)
+	shift
+	blockALIAS
+	;;
+    ARRAYS)
+	shift
+	blockARRAYS
+	;;
+    LOOP)
+	shift
+	blockLOOP
+	;;
+    USERABS)
+	shift
+	blockUSERABS    
+	;;
+    STRUCT)
+	shift
+	blockSTRUCT
+	;;    
+    ALL)
+	shift 
+	runAllTests
+	;;
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 0
+	;;
+esac  
+shift
+   
+# Clean temporary files
+cleanDirectory "."
+cleanDirectory "alias"
+cleanDirectory "array"
+
+echo ""                                     >> ${log}   
+echo ""                                     
+echo "Successful tests:      $success"      >> ${log}   
+echo "Successful tests:      $success"     
+echo "Failed as expected:    $failure"      >> ${log}      
+echo "Failed as expected:    $failure"      
+echo "Unexpected success:    $unexSuccess"  >> ${log}   
+echo "Unexpected success:    $unexSuccess"  
+echo "Unexpected failure:    $unexFailure"  >> ${log}   
+echo "Unexpected failure:    $unexFailure"  
+echo "No Answer:             $dies"         >> ${log}   
+echo "No Answer:             $dies"         
+
+exit 1
+
+

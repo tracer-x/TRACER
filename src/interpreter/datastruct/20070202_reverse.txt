@@ -1,0 +1,78 @@
+Program:
+--------
+Initially, i!=0, j=0
+<0> while (i!=0) do
+<1>   k := i->next
+      i->next := j
+      j := i
+      i := k
+    end do
+
+CLP Representation:
+-------------------
+p(0,H,I,J,Hf,Jf) :- p(1,H,I,J,Hf,Jf), I!=0.
+p(0,H,I,J,Hf,Jf) :- p(3,H,I,J,Hf,Jf), I=0.
+p(1,H,I,J,Hf,Jf) :- p(0,<H,I+1,J>,H[I+1],I,Hf,Jf).
+p(3,H,I,J,H,J).
+
+Specifications:
+---------------
+
+(the following is not actually used, but kept for archive)
+reverse(H,X,H,X).
+reverse(H,X,<H1,Y+1,T>,Y) :- reverse(H,X,H1,T), H[T+1]=Y.
+
+The following is the actual specification used:
+
+reverse(H,I,I,H,0).
+reverse(H,I,E,<H1,E1+1,J>,E1) :-
+    H1[E1+1]=E, reverse(H,I,E1,H1,J).
+
+Proof:
+------
+
+1.  p(0,H,I,J,Hf,Jf), J=0 |= reverse(H,I,0,Hf,Jf).
+
+1'. p(0,H,I,J,Hf,Jf), H0=H, I0=I, J=0
+        |= reverse(H0,I0,0,Hf,Jf).
+
+2.  CUT 1'
+    p(0,H,I,J,Hf,Jf), reverse(H0,I0,I,H,J)
+        |= reverse(H0,I0,0,Hf,Jf).
+
+3a. LU 2
+    p(3,H,I,J,Hf,Jf), reverse(H0,I0,I,H,J), I=0
+        |= reverse(H0,I0,0,Hf,Jf)
+
+3b. LU 2
+    p(1,H,I,J,Hf,Jf), reverse(H0,I0,I,H,J), I!=0
+        |= reverse(H0,I0,0,Hf,Jf)
+
+4.  LU 3a
+    reverse(H0,I0,0,Hf,Jf) |= reverse(H0,I0,0,Hf,Jf).
+    DP
+
+5.  LU 3b
+    p(0,H',I',J',Hf,Jf), reverse(H0,I0,I,H,J), I!=0,
+    H'=<H,I+1,J>, I'=H[I+1], J'=I
+        |= reverse(H0,I0,0,Hf,Jf)
+
+6.  AP 5
+    reverse(H0,I0,Hf,Jf), reverse(H0,I0,I,H,J), I!=0,
+    H'=<H,I+1,J>, I'=H[I+1], J'=I
+        |= reverse(H0,I0,0,Hf,Jf)
+    DP
+
+
+6.1  SUBSUMPTION
+     reverse(H0,I0,I,H,J), I!=0, H'=<H,I+1,J>, I'=H[I+1], J'=I
+         |= reverse(H0,I0,I',H',J').
+
+6.1'
+     reverse(H0,I0,I,H,J), I!=0 
+         |= reverse(H0,I0,H[I+1],<H,I+1,J>,I).
+
+6.2 RU 6.1'
+     reverse(H0,I0,I,H,J), I!=0 
+         |= reverse(H0,I0,I,H,J)
+     DP

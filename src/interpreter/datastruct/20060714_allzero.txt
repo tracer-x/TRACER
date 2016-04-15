@@ -1,0 +1,151 @@
+Program:
+
+{p = x}
+<0> while (p != null) do
+         p->elem := 0 
+    <1>  p := p->next <2>
+    end <3>
+
+
+p(0,H,P,Hf,Pf) :- P=null, p(3,H,P,Hf,Pf).
+p(0,H,P,Hf,Pf) :- P!=null, p(1,<H,P,0>,P,Hf,Pf).
+p(1,H,P,Hf,Pf) :- p(2,H,H[P+1],Hf,Pf).
+p(2,H,P,Hf,Pf) :- P=null, p(3,H,P,Hf,Pf).
+p(2,H,P,Hf,Pf) :- P!=null, p(1,<H,P,0>,P,Hf,Pf).
+p(3,H,P,H,P).
+
+Specification:
+
+allz(H,X,X,<H,X,0>) :- X!=null.
+allz(H,X,Y,<H1,X,0>) :- allz(H,T,Y,H1), H[X+1]=T, X!=null.
+
+Assertion:
+
+N0:
+
+p(0,H,P,Hf,Pf), P!=null, P=P0
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+
+N1: LEFT UNFOLD OF N0
+
+p(1,H',P,Hf,Pf), P!=null, P=P0, H'=<H,P,0>
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+
+N2: LEFT GENERALIZE N1
+
+p(1,H',P,Hf,Pf), allz(H,P0,P,H')
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+
+-------------------------------------------------------------------------------
+PROOF OF GENERALIZATION
+
+G0:
+P!=null, P=P0, H'=<H,P,0> |= allz(H,P0,P,H')
+
+G1: SIMPLIFY G0
+P!=null |= allz(H,P,P,<H,P,0>)
+
+G2: RIGHT UNFOLD G1
+P!=null |= P!=null
+STOP: DIRECT PROOF
+
+-------------------------------------------------------------------------------
+
+N3: LEFT UNFOLD N2
+
+p(2,H',P',Hf,Pf), allz(H,P0,P,H'), P'=H'[P+1]
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+
+N4: LEFT UNFOLD N3 (LOOP EXIT)
+
+p(3,H',P',Hf,Pf), allz(H,P0,P,H'), P'=H'[P+1], P'=null
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+
+N5: LEFT UNFOLD N4, OBTAINING Hf=H', Pf=P'
+
+allz(H,P0,P,Hf), Pf=Hf[P+1], Pf=null
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+
+N6: RENAMING Y|->P IN N5
+
+allz(H,P0,P,Hf), Pf=Hf[P+1], Pf=null
+|= allz(H,P0,P,Hf), Pf=Hf[P+1], Pf=null
+STOP: DIRECT PROOF
+
+
+N7: LEFT UNFOLD N3 (RECURSE)
+
+p(1,H'',P',Hf,Pf), allz(H,P0,P,H'), P'=H'[P+1], P'!=null, H''=<H',P',0>
+|= allz(H,P0,?Y,Hf), Pf=Hf[?Y+1], Pf=null
+STOP: LHS SUBSUMED BY LHS OF N2
+
+
+        PROOF OF SUBSUMPTION:
+
+        N71:
+        allz(H,P0,P,H'), P'=H'[P+1], P'!=null, H''=<H',P',0>
+        |= allz(H,P0,P',H'')
+
+        N72: SIMPLIFY N71
+        allz(H,P0,P,H'), H'[P+1]!=null
+        |= allz(H,P0,H'[P+1],<H',H'[P+1],0>)
+
+	N73: LEFT UNFOLD N72
+	allz(H,H[P0+1],P,H1), H'=<H1,P0,0>, P0!=null, H'[P+1]!=null
+        |= allz(H,P0,H'[P+1],<H',H'[P+1],0>)
+
+	N74: SIMPLIFY N73
+	allz(H,H[P0+1],P,H1), H1[P+1]!=null, P0!=null
+        |= allz(H,P0,H1[P+1],<<H1,P0,0>,H1[P+1],0>)
+
+	N75: COINDUCTION N72
+	allz(H,H[P0+1],H1[P+1],<H1,H1[P+1],0>), P0!=null
+        |= allz(H,P0,H1[P+1],<<H1,P0,0>,H1[P+1],0>)
+
+	N76: RIGHT UNFOLD N75
+	allz(H,H[P0+1],H1[P+1],<H1,H1[P+1],0>), P0!=null
+        |= 
+	allz(H,H[P0+1],H1[P+1],?H2), P0!=null,
+	<<H1,P0,0>,H1[P+1],0>=<?H2,P0,0>
+
+	N77: SUBSTITUTE H2|-><H1,H1[P+1],0>
+	allz(H,H[P0+1],H1[P+1],<H1,H1[P+1],0>), P0!=null
+        |= 
+	allz(H,H[P0+1],H1[P+1],<H1,H1[P+1],0>), P0!=null,
+	<<H1,P0,0>,H1[P+1],0>=<<H1,H1[P+1],0>,P0,0>
+
+	N78: SIMPLIFY N77 REMOVING
+	     <<H1,P0,0>,H1[P+1],0>=<<H1,H1[P+1],0>,P0,0> (EQUIVALENT TO true)
+	allz(H,H[P0+1],H1[P+1],<H1,H1[P+1],0>), P0!=null
+        |= 
+	allz(H,H[P0+1],H1[P+1],<H1,H1[P+1],0>), P0!=null
+	STOP: DIRECT PROOF
+
+        -----------------------------------------------------------------------
+
+	N78: LEFT UNFOLD N72
+	H'=<H,P0,0>, P0=P, P0!=null, H'[P+1]!=null
+        |= allz(H,P0,H'[P+1],<H',H'[P+1],0>)
+
+	N79: SIMPLIFY N78
+	P0!=null, H[P0+1]!=null
+        |= allz(H,P0,H[P0+1],<<H,P0,0>,H[P0+1],0>)
+
+	N7A: RIGHT UNFOLD N79
+	P0!=null, H[P0+1]!=null
+        |= 
+	allz(H,H[P0+1],H[P0+1],H1), <H1,P0,0>=<<H,P0,0>,H[P0+1],0>,
+	P0!=null
+
+	N7B: RIGHT UNFOLD N7A
+	P0!=null, H[P0+1]!=null
+        |= 
+	P0!=null, H[P0+1]!=null,
+	<<H,H[P0+1],0>,P0,0>=<<H,P0,0>,H[P0+1],0>
+	
+	N7C: SIMPLIFY <<H,H[P0+1],0>,P0,0>=<<H,P0,0>,H[P0+1],0> TO true
+	P0!=null, H[P0+1]!=null
+        |= 
+	P0!=null, H[P0+1]!=null
+	STOP: DIRECT PROOF
+

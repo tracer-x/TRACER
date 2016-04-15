@@ -1,0 +1,192 @@
+/* stats.c */
+
+/* #define MAX 1000 */
+
+
+/* Statistics Program:
+ * This program computes for two arrays of numbers the sum, the
+ * mean, the variance, and standard deviation.  It then determines the
+ * correlation coefficient between the two arrays.
+ */
+
+int Seed;
+double ArrayA[1000], ArrayB[1000];
+double SumA, SumB;
+double Coef;
+
+main ()
+{
+   long StartTime, StopTime;
+   float TotalTime;
+   double MeanA, MeanB, VarA, VarB, StddevA, StddevB /*, Coef*/;
+
+   InitSeed ();
+/*    printf ("\n   *** Statictics TEST ***\n\n"); */
+
+/*    StartTime = ttime(); */
+
+   Initialize_ArrayA();
+   Calc_Sum_Mean_ArrayA(SumA, MeanA);
+   Calc_Var_Stddev_ArrayA(MeanA, VarA, StddevA);
+
+   Initialize_ArrayB();
+   Calc_Sum_Mean_ArrayB(SumB, MeanB);
+   Calc_Var_Stddev_ArrayB(MeanB, VarB, StddevB);
+
+   /* Coef will have to be used globally in Calc_LinCorrCoef since it would
+      be beyond the 6 registers used for passing parameters
+   */
+   Calc_LinCorrCoef(MeanA, MeanB /*, &Coef*/);
+
+    StopTime = ttime(); 
+   TotalTime = (StopTime - StartTime) / 1000.0;
+/*    printf("     Sum A = %12.4f,      Sum B = %12.4f\n", SumA, SumB); */
+/*    printf("    Mean A = %12.4f,     Mean B = %12.4f\n", MeanA, MeanB); */
+/*    printf("Variance A = %12.4f, Variance B = %12.4f\n", VarA, VarB); */
+/*    printf(" Std Dev A = %12.4f, Variance B = %12.4f\n", StddevA, StddevB); */
+/*    printf("\nLinear Correlation Coefficient = %f\n", Coef); */
+}
+
+
+InitSeed ()
+/*
+ * Initializes the seed used in the random number generator.
+ */
+{
+   Seed = 0;
+}
+
+
+void Calc_Sum_Mean_ArrayA(Sum, Mean)
+double *Sum;
+double *Mean;
+{
+   int i;
+
+   *Sum = 0;
+   for (i = 0; i < 1000; i++)
+      *Sum += ArrayA[i];
+   *Mean = *Sum / 1000;
+}
+
+void Calc_Sum_Mean_ArrayB(Sum, Mean)
+double *Sum;
+double *Mean;
+{
+   int i;
+
+   *Sum = 0;
+   for (i = 0; i < 1000; i++)
+      *Sum += ArrayB[i];
+   *Mean = *Sum / 1000;
+}
+
+double Square(x)
+double x;
+{
+  /* Originally, x*x, but we can't handle nonlinears for the moment */
+  return x+x;
+}
+
+
+void Calc_Var_Stddev_ArrayA(Mean, Var, Stddev)
+double Mean, *Var, *Stddev;
+{
+   int i;
+   double diffs;
+
+   diffs = 0.0;
+   for (i = 0; i < 1000; i++)
+      diffs += Square(ArrayA[i] - Mean);
+   *Var = diffs/1000;
+   *Stddev = sqrt(*Var);
+}
+
+void Calc_Var_Stddev_ArrayB(Mean, Var, Stddev)
+double Mean, *Var, *Stddev;
+{
+   int i;
+   double diffs;
+
+   diffs = 0.0;
+   for (i = 0; i < 1000; i++)
+      diffs += Square(ArrayB[i] - Mean);
+   *Var = diffs/1000;
+   *Stddev = sqrt(*Var);
+}
+
+
+void Calc_LinCorrCoef(MeanA, MeanB /*, Coef*/)
+double MeanA, MeanB /*, *Coef*/;
+{
+   int i;
+   double numerator, Aterm, Bterm;
+
+   numerator = 0.0;
+/*    Aterm = Bterm = 0.0; */
+   Bterm = 0.0;
+   Aterm = Bterm;
+   for (i = 0; i < 1000; i++) {
+      numerator += (ArrayA[i] - MeanA) * (ArrayB[i] - MeanB);
+      Aterm += Square(ArrayA[i] - MeanA);
+      Bterm += Square(ArrayB[i] - MeanB);
+      }
+
+   /* Coef used globally */
+   Coef = numerator / (sqrt(Aterm) * sqrt(Bterm));
+}
+    
+double sqrt(double x)
+{
+  /* At the moment just halve the value */
+  return (double)(x/2);
+}
+
+
+void Initialize_ArrayA()
+/*
+ * Intializes the given array with random integers.
+ */
+{
+  register int i;
+
+for (i=0; i < 1000; i++)
+   ArrayA [i] = i + RandomInteger ()/8095.0;
+}
+
+void Initialize_ArrayB()
+/*
+ * Intializes the given array with random integers.
+ */
+{
+  register int i;
+
+for (i=0; i < 1000; i++)
+   ArrayB [i] = i + RandomInteger ()/8095.0;
+}
+
+
+RandomInteger()
+/*
+ * Generates random integers between 0 and 8095
+ */
+{
+  /* We replaced % with - */
+   Seed = ((Seed * 133) + 81) - 8095;
+   return (Seed);
+}
+
+
+int ttime()
+/*
+ * This function returns in milliseconds the amount of compiler time
+ *  used prior to it being called.
+ */
+{
+   struct tms buffer;
+   int utime;
+
+/*    times(&buffer); */
+/*    utime = (buffer.tms_utime / 60.0) * 1000.0; */
+   return (utime);
+}

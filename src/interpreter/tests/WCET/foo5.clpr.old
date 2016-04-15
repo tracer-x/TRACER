@@ -1,0 +1,119 @@
+trans(func_foo, 1,
+	[0],[H],[],[SH],[],[],[ReturnValue,N,Sum,Product],[],[SReturnValue,SN,SSum,SProduct],
+	[1],[H],[],[SH],[],[],[ReturnValue,N,SumNext,Product],[],[SReturnValue,SN,SSumNext,SProduct],
+	[eq(SSumNext,0)],
+	[],
+	[],
+	not_branch) :-
+	SumNext=0.
+trans(func_foo, 2,
+	[1],[H],[],[SH],[],[],[ReturnValue,N,Sum,Product],[],[SReturnValue,SN,SSum,SProduct],
+	[2],[H],[],[SH],[],[],[ReturnValue,N,Sum,ProductNext],[],[SReturnValue,SN,SSum,SProductNext],
+	[eq(SProductNext,1)],
+	[],
+	[],
+	not_branch) :-
+	ProductNext=1.
+trans(func_foo, 3,
+	[2],[H],[],[SH],[],[],[ReturnValue,N,Sum,Product],[],[SReturnValue,SN,SSum,SProduct],
+	[3],[H],[],[SH],[],[],[ReturnValue,N,SumNext,Product],[],[SReturnValue,SN,SSumNext,SProduct],
+	[eq(SSumNext,plus(SSum,SN))],
+	[],
+	[],
+	not_branch) :-
+	SumNext=Sum+N.
+trans(func_foo, 4,
+	[3],[H],[],[SH],[],[],[ReturnValue,N,Sum,Product],[],[SReturnValue,SN,SSum,SProduct],
+	[4],[H],[],[SH],[],[],[ReturnValue,N,Sum,ProductNext],[],[SReturnValue,SN,SSum,SProductNext],
+	[eq(SProductNext,mult(SProduct,SN))],
+	[],
+	[],
+	not_branch) :-
+	ProductNext=Product*N.
+trans(func_foo, 5,
+	[4],[H],[],[SH],[],[],[ReturnValue,N,Sum,Product],[],[SReturnValue,SN,SSum,SProduct],
+	[5],[H],[],[SH],[],[],[ReturnValueNext,N,Sum,Product],[],[SReturnValueNext,SN,SSum,SProduct],
+	[eq(SReturnValueNext,SSum)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Sum.
+trans(func_main, 6,
+	[0],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[1],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z],[],[SReturnValue,SXNext,SY,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 7,
+	[1],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[2],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 8,
+	[2],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext],[],[SReturnValue,SX,SY,SZNext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 9,
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[4],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z],[],[SReturnValue,SXNext,SY,SZ],
+	[eq(SXNext,SRV0)],
+	[call(func_foo,[RV0,5|_],[SRV0,_V1|_],[eq(_V1,5)])],
+	[],
+	not_branch) :-
+	XNext=RV0.
+trans(func_main, 10,
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[5],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[eq(SYNext,SRV2)],
+	[call(func_foo,[RV2,5|_],[SRV2,_V2|_],[eq(_V2,5)])],
+	[],
+	not_branch) :-
+	YNext=RV2.
+trans(func_main, 11,
+	[5],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext],[],[SReturnValue,SX,SY,SZNext],
+	[eq(SZNext,plus(SX,SY))],
+	[],
+	[],
+	not_branch) :-
+	ZNext=X+Y.
+trans(func_main, 12,
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[7],[H],[],[SH],[],[],[ReturnValueNext,X,Y,Z],[],[SReturnValueNext,SX,SY,SZ],
+	[eq(SReturnValueNext,SZ)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Z.
+%--------------------------------------------------
+%--------------------------------------------------
+start(func_foo, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_foo, [5]).
+bottom(func_main, [7]).
+%--------------------------------------------------
+freshlocalarrays(func_foo,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_foo,[_,_,_,_]).
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+
+%--------------------------------------------------
+% For slicing
+%--------------------------------------------------
+init_slicing_goal(func_main,SA,SV,[],[SR,SX,SY,SZ]):-	
+	freshlocalarrays(func_main, SA), 
+	freshlocalvars(func_main, SV),
+	SV = [SR,SX,SY,SZ].

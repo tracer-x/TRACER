@@ -1,0 +1,39 @@
+coinductionlimit(1).
+solver(array).
+
+declare_unification_type(reverse, [arreq,eq,eq,arreq,eq]).
+
+% reverse(H,I,I,H,0).
+% reverse(H,I,E,<H1,E1+1,J>,E1) :-
+%    H1[E1+1]=E, reverse(H,I,E1,H1,J).
+
+unfold(reverse(H,I,E,H1,E1),
+	[
+         body([], [eq(I,E),arreq(H,H1),eq(E1,0)]),
+	 body([reverse(H,I,E1,H1,J)],
+	      [arreq(H1,upd(H1,plus(E1,1),J)), eq(ref(H1,plus(E1,1)),E)])
+        ]).
+
+% To Prove:
+%     reverse(H0,I0,I,H,J), I!=0, H'=<H,I+1,J>, I'=H[I+1], J'=I
+%         |= reverse(H0,I0,I',H',J').
+
+run :-
+	init_counters,
+ 	addunfoldlevel(0, [reverse(H0,I0,I,H,J)],
+ 	               UnfoldableGAtoms),
+        addunfoldlevel(0, [reverse(H0,I0,I1,H1,J1)],
+ 		       UnfoldableHAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms,
+                 [gt(I,0), arreq(H1,upd(H,plus(I,1),J)),
+		  eq(I1,ref(H,plus(I,1))), eq(J1,I)],
+		 [], UnfoldableHAtoms,
+                 [], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

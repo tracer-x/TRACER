@@ -1,0 +1,37 @@
+tcas_1a
+--------
+
+           Preprocessed     |    Original  |
+-------------------------------------------|
+CLOC              : 32297   |      167     |
+Gen symbolic graph: 32sec   |       -      |
+Gen C program     : 38sec   |       -      |
+Compile C program : 4m13s   |      16s     |
+Prove property    :         |      17s     |
+-------------------------------------------
+
+tcas_inlined
+---------------
+
+-------------------------------------------
+                  |   Prep   |  Original  |
+------------------------------------------|
+CLOC              | 2492     |    155     |
+Compile original  | 10s      |            |
+Gen symbolic graph| 20.5s    |     -      |
+Gen C program     | 14s      |     -      |
+Compile C program | 12s      |    10s     |
+-------------------------------------------   
+Total             | 56.5s    |    10s     |
+-------------------------------------------   
+1a  (safe)        | 4.69s    |    11.98s  |
+1b  (safe)        | 4.75s    |    12.36s  |
+2a  (safe)        | 4.86s    |    12.01s  |
+2b  (unsafe)      | 0.03s    |     0.04s  |
+3a  (unsafe)      | 0.17s    |     0.31s  | 
+3b  (safe)        | 4.74s    |    11.87s  |
+4a  (unsafe)      | 0.17s    |     0.32s  |
+4b  (unsafe)      | 0.04s    |     0.04s  | 
+5a  (safe)        | 4.77s    |    12.03s  |
+5b  (unsafe)      | 0.02s    |     0.04s  |
+-------------------------------------------   

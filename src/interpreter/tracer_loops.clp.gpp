@@ -1,0 +1,922 @@
+% tracer_loops.clp.gpp
+
+%=========================================================================%
+% unfold_loop: General handling of loops
+%=========================================================================%
+% We assume that loop entries and exits can be identified. 
+%
+% Some TRACER analyses need a fixpoint to compute the final solution
+% (see unfold_loop_until_fixpoint/36).
+%
+% export
+%   extension for handling loops
+%   unfold_loop/29
+%   generation of loop invariants
+%   generate_loop_invariant/30
+%   compute interpolant in a back-edge
+%   get_interpolant_from_loop_exit/10
+%   assert/retract interpolants from the exit paths of the loops
+%   assert_exit_interp/3/4
+%   exit paths of loops
+%   retract_exit_interp/3/4
+%
+%   loopstack$point/3
+%   loopstack$point_with_context/4
+%   loopstack$state/8
+%
+% TODO:
+% - Include array references in the loop invariant generation.
+%=========================================================================%
+unfold_loop(Depth, Id, FName, PP, ExitPP,
+	    % Bitvector with abstracted variables
+	    _UpdGlobalArr, _UpdGlobalVar, _UpdLocalArr, _UpdLocalVar,
+	    % Before abstraction
+	    _SGlobalArr  , _SGlobalVar  , _SLocalArr  , _SLocalVar,
+	    % After abstraction
+	    AbsGlobalArr, AbsGlobalVar, AbsLocalArr, AbsLocalVar,
+	    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+	    _CL, _ML, CL1, ML1, CallStack, ArrRef1, Loops,TableSpace):-
+	
+	unfold_loop_aux(Depth, Id, FName, PP, ExitPP,
+			AbsGlobalArr, AbsGlobalVar, AbsLocalArr, AbsLocalVar,
+			SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			CL1, ML1, CallStack, ArrRef1, Loops,
+			TableSpace).
+%-------------------------------------------------------------------------%
+% At this point, the whole analysis for the loop has been
+% finished. Collect the answer from all paths of the loop and generate
+% interpolant.
+%-------------------------------------------------------------------------%
+unfold_loop(Depth, Id, FName, PP, _ExitPP,
+	    % Bitvector with abstracted variables
+	    UpdGlobalArr, UpdGlobalVar, UpdLocalArr, UpdLocalVar,	    
+	    % Before abstraction
+	    SGlobalArr  , SGlobalVar  , SLocalArr  , SLocalVar,
+	    % After abstraction
+	    %------------------------------------------------------------------
+	    % Here we don't need evaluated abstraction variables:
+	    % we only need symbolic variables, which are at the same time
+	    % the state variables of both CL and CL1. Neither constraint
+	    % sets are evaluated, so this is fine.
+	    %------------------------------------------------------------------
+	    _AbsGlobalArr , _AbsGlobalVar , _AbsLocalArr , _AbsLocalVar,
+	    AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,	    
+	    CL, ML, CL1, ML1, _CallStack, _ArrRef1, _Loops, _TableSpace):-
+        debug_message("Begin LOOP PRE-OP at %@% \n", [FName, PP],cyan),	
+	%------------------------------------------------------------------%
+	% At this point, once the interpolant Int for the whole loop
+	% (body + exits) has been computed, we first retrieve it.
+	%------------------------------------------------------------------%	
+#if     (UNFOLD_OPT==SAFETY) ||  (UNFOLD_OPT==SLICING) || (UNFOLD_OPT==LIVE)
+        % To prevent warnings
+        Id=_,
+#endif 	
+#if     (UNFOLD_OPT==SAFETY)	
+	retract_safety_answer(Depth, FName, CL1, ML1, WP1),
+	% To prevent warnings
+	UpdGlobalArr=_,UpdGlobalVar=_,UpdLocalArr=_,UpdLocalVar=_,
+	% KEY STEP: propagate back only invariant witnesses	
+#elif	(UNFOLD_OPT==WCET)
+        retract_wcet_answer(Depth,FName,_Id,
+			    CL1,ML1,WP1,WCET,Witness),
+	backward_propagation_witness_across_abstraction(FName,
+							UpdGlobalArr, UpdGlobalVar,
+							UpdLocalArr , UpdLocalVar,
+							Witness     , AbsWitness),
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        retract_analysis_answer(FName,Depth,CL1,ML1,Witnesses,
+				GlobalArrMark,GlobalVarMark,
+				LocalArrMark,LocalVarMark,Aux),
+	WP1=nil,WP=_,	
+	backward_propagation_witnesses_across_abstraction(FName,
+							  UpdGlobalArr, UpdGlobalVar,
+							  UpdLocalArr , UpdLocalVar,
+							  Witnesses   , AbsWitnesses),
+#endif  /*UNFOLD_OPT==SAFETY*/
+        % KEY STEP: propagate back interpolant
+	backward_propagation_interp_across_abstraction(FName,
+						       AbsSGlobalArr,AbsSGlobalVar,
+						       AbsSLocalArr ,AbsSLocalVar,
+						       CL1, ML1, WP1,
+						       SGlobalArr   ,SGlobalVar,
+						       SLocalArr    ,SLocalVar, 
+						       CL, ML, WP),
+	
+	%------------------------------------------------------------------%
+	% Finally, the new interpolant+answer are stored.
+	%------------------------------------------------------------------%
+#if     (UNFOLD_OPT==SAFETY)
+	assert_safety_answer(Depth, FName,CL,ML,WP),
+#elif   (UNFOLD_OPT==WCET)
+        assert_wcet_answer(Depth,FName, Id, CL, ML, WP, WCET, AbsWitness),			  
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+	record_analysis_answer(rule,FName,Depth, CL, ML,
+			       AbsWitnesses,
+			       GlobalArrMark,GlobalVarMark,
+			       LocalArrMark ,LocalVarMark,Aux),
+#endif  /*UNFOLD_OPT==SAFETY*/
+#ifdef  DEBUG_USE
+        print_op_debugging(pre_abstraction,
+			   FName,PP,Depth,
+			   CL,ML,WP,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),	
+	print_message("END LOOP PRE-OP.\n",[],cyan),
+#endif  /*DEBUG_USE*/
+#ifdef  EXTERNAL_SOLVER
+        % This is a builtin CLP(R) predicate. Make sure you compile
+        % CLP(R) with option -DEXTERNAL_SOLVER. Otherwise, this call
+        % will fail.
+        extern_solver_backtrack,
+#endif  /*EXTERNAL_SOLVER*/
+	!,
+	fail.
+%-------------------------------------------------------------------------%
+% Step 1: It forces first to take the (all) loop exit first.
+%-------------------------------------------------------------------------%
+unfold_loop_aux(Depth, _Id, FName, /*in*/PP, /*in*/ExitPP,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		CL, ML, CallStack, ArrRef, [_|Loops], TableSpace) :-
+
+	go_exit_loop(FName, Depth, /*out*/Id1, /*in*/PP, /*out*/PPi,
+		     GlobalArrX, GlobalVarX, SGlobalArr, SGlobalVar,
+		     LocalArrX, LocalVarX, SLocalArr, SLocalVar,
+		     /*in*/ExitPP,
+		     GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+		     LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+		     CL, ML, XCL, ArrRefX,Statement),
+	%------------------------------------------------------------------%
+	% Note: if PPi = PP then it's a structured loop exit else
+	% it's an structured loop exit due to break's or goto's.
+	%------------------------------------------------------------------%
+#ifdef  GRAPHVIZ_USE
+        get_next_pp_context(FName,ExitPP,Loops,ExitPPContext),
+        push_context_stack(FName,ExitPPContext),
+#endif 				
+	unfold_aux2(Depth, Id1,
+	            GlobalArr, GlobalVar, LocalArr, LocalVar, 
+		    GlobalArrX, GlobalVarX, LocalArrX, LocalVarX,
+		    FName, PPi,ExitPP,Statement,
+		    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		    CL, XCL, ML, CallStack, ArrRefX, ArrRef, Loops,
+		    _UnknownVars, TableSpace).
+
+%-------------------------------------------------------------------------%
+% Step 2: compute the final answer from the whole subtree associated
+% with ALL loop exits
+%-------------------------------------------------------------------------%
+unfold_loop_aux(Depth, Id, FName, PP, _ExitPP,
+		_GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+		SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		CL, _ML, _CallStack, _ArrRef, _Loops, _TableSpace) :-
+#if    	(UNFOLD_OPT != SAFETY)
+	% To prevent warnings
+        CL=_,
+#endif  /*(UNFOLD_OPT != SAFETY)*/
+#if     (UNFOLD_OPT != SLICING && UNFOLD_OPT != LIVE)
+	% To prevent warnings
+        Id=_,
+#endif  /*(UNFOLD_OPT != SLICING && UNFOLD_OPT != LIVE)*/	
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        analysis_loop_exit(FName, Id, Depth, PP,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   _ExitML),	
+#elif   (UNFOLD_OPT==WCET)
+        wcet_loop_exit(FName, Depth, PP,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		       _ExitML,_ExitWP),
+#elif   (UNFOLD_OPT==SAFETY)
+        safety_loop_exit(FName, Id, Depth,PP,
+                         SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 CL, _ExitML,_ExitWP),
+#endif  /*(UNFOLD_OPT==SLICING)*/
+	fail.
+%=============================================================================%
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%=============================================================================%
+% Step 3: Compute a fixpoint for producing a conservative solution for
+% the whole loop.
+unfold_loop_aux(Depth, Id, FName, PP, ExitPP,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		CL, ML, CallStack, ArrRef, LoopStack,
+		TableSpace) :-
+#ifdef  PROFILE
+        add_counter(entry_loop_analysis,1),
+	set_counter(fixpoint_iteration,0),
+#endif  /*PROFILE*/
+        LoopStack=[LoopInfo|_],
+        %----------------------------------------------------------------------
+        % Key step for treatment of loops: we store here the
+        % interpolant from the loop exit. Then, whenever a back edge
+        % is found inside the loop, we use this interpolant.
+        %----------------------------------------------------------------------
+        store_interpolant_from_loop_exit(Depth, FName, PP, 
+					 SGlobalArr,SGlobalVar,
+					 SLocalArr, SLocalVar,ArrRef,
+					 CL, LoopInfo),
+	unfold_loop_body(Depth, Id, FName, PP, ExitPP,
+			 GlobalArr, GlobalVar, LocalArr, LocalVar,
+			 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 CL, ML, CallStack, ArrRef, LoopStack,
+			 TableSpace).
+
+unfold_loop_body(Depth, _Id, FName, PP, ExitPP,
+		 GlobalArr, GlobalVar, LocalArr, LocalVar,
+		 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		 CL, ML, CallStack, ArrRef, Loops, TableSpace) :-
+		 
+#ifdef  PROFILE								
+        add_counter(fixpoint_iteration,1),
+        add_counter(total_fixpoint_iteration,1),		
+#endif  /*PROFILE*/
+#ifdef  PIPEMEMO_REUSE_CS
+        % We add a mark in the code space area of the slave to
+        % remember where the fixpoint iteration started.
+        pipe_master_cs_mark(set),
+#endif  /*PIPEMEMO_REUSE_CS*/	
+        counter_value(current_tablespace, NewTableSpace-1),
+	set_counter(current_tablespace, NewTableSpace),
+        debug_message("New fixpoint iteration for (%,%)\n",
+		      [TableSpace, NewTableSpace],magenta),
+        record_tablespace_structure(TableSpace, NewTableSpace),
+#ifdef  PROFILE
+        %ctime(T0),
+	% Note: with nested loops we need to assert this fact in a
+	% FIFO manner by using fasserta/1
+	%fasserta(fixp_iteration_timing(T0)),
+#endif  /*PROFILE*/
+        trans(FName, Id1, PP, 
+	      GlobalArrX, GlobalVarX, SGlobalArr, SGlobalVar,
+	      LocalArrX, LocalVarX, SLocalArr, SLocalVar,
+	      PP1, GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+              LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	      XCL, [], ArrRefX,Statement),
+	not(PP1=ExitPP),
+	debug_message("\n---- Taking entry transition (%), % from % to %\n\n",
+		      [Id1,FName,PP,PP1],magenta),	
+        %----------------------------------------------------------------%
+	% Note that given a loop, there might exist multiple
+	% transitions to the body loop.  Here, we go once through the
+	% whole body loop, for each one of those transitions, and
+	% store all required info.
+        %----------------------------------------------------------------%
+#ifdef  GRAPHVIZ_USE
+	get_next_pp_context(FName,PP1,Loops,PP1Context),
+        push_context_stack(FName,PP1Context),
+#endif  /*GRAPHVIZ_USE*/
+#ifdef  OPTIMIZED_FIXPO
+% If attempt_reusing_fixpo fails then there is an asserted fact
+% reusable_fixpo_loop/2 as side effect. It means that the loop is an
+% inner loop which is not affected by the changes done by the outer
+% loop's fixpoint. Therefore, there is no need to redo the computation
+% of this inner loop. Otherwise, it success without no side effect,
+% and the analysis of the loop will be done as usual.
+        attempt_reusing_fixpo(TableSpace, FName, PP, PP1, Depth,
+			      CL, ML, CallStack),
+#endif  /*OPTIMIZED_FIXPO*/
+        unfold_aux2(Depth, Id1,
+	            GlobalArr, GlobalVar, LocalArr, LocalVar,
+		    GlobalArrX, GlobalVarX, LocalArrX, LocalVarX,
+		    FName, PP, PP1, Statement,
+		    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		    CL, XCL, ML, CallStack, ArrRefX, ArrRef, Loops,
+		    _UnknownVars,NewTableSpace).
+#ifdef  OPTIMIZED_FIXPO
+unfold_loop_body(_Depth, _Id, FName, PP, _ExitPP,
+		 _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+		 _SGlobalArr, _SGlobalVar, _SLocalArr, _SLocalVar,
+		 _CL, _ML, _CallStack, _ArrRef, _Loops,
+		 _TableSpace) :-
+	%------------------------------------------------------------%
+        % Here, we already know that we don't need to redo the
+        % fixpoint (we also already asserted answer for parent and
+        % stored interpolant in memo).
+        %------------------------------------------------------------%
+	retract(reusable_fixpo_loop(FName,PP)),
+	!,
+	fail.	
+#endif /*OPTIMIZED_FIXPO*/
+unfold_loop_body(Depth, _Id, FName, PP, ExitPP,
+		 GlobalArr, GlobalVar, LocalArr, LocalVar,
+		 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		 CL, ML, CallStack, ArrRef, Loops,
+		 TableSpace) :-
+        %----------------------------------------------------------------%	
+	% Check if another iteration is needed.
+	% Otherwise, we found a fixpoint
+        %----------------------------------------------------------------%
+        unfold_loop_until_fixpoint(Depth, _Id1,
+				   GlobalArr, GlobalVar, LocalArr, LocalVar, 
+				   _GlobalArrX,_GlobalVarX,_LocalArrX,_LocalVarX,
+				   FName, PP, _PP1, ExitPP,_Statement,
+				   _GlobalArr1,_GlobalVar1,_LocalArr1,_LocalVar1,
+				   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   _SGlobalArr1,_SGlobalVar1,_SLocalArr1,_SLocalVar1,
+				   CL, _XCL, ML, CallStack, _ArrRefX, ArrRef, Loops,
+				   TableSpace).
+%=============================================================================%
+#elif   (UNFOLD_OPT == WCET) || (UNFOLD_OPT == SAFETY)
+%=============================================================================%
+% Step 3: In WCET or non-minmax SAFETY we traverse only once the body
+% loop with the loop invariant as state.
+%------------------------------------------------------------------------------
+% Loop entry
+%------------------------------------------------------------------------------
+unfold_loop_aux(Depth, _Id, FName, PP, ExitPP,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		CL, ML, CallStack, ArrRef, LoopStack, TableSpace) :-
+
+	LoopStack = [LoopInfo|_],
+        %----------------------------------------------------------------------
+        % Key step for treatment of loops: we store here the
+        % interpolant from the loop exit. Then, whenever a back edge
+        % is found inside the loop, we use this interpolant.
+        %----------------------------------------------------------------------
+        store_interpolant_from_loop_exit(Depth, FName, PP, 
+					 SGlobalArr,SGlobalVar,
+					 SLocalArr, SLocalVar,ArrRef,
+					 CL, LoopInfo),
+	trans(FName, Id1, PP, 
+	      GlobalArrX, GlobalVarX, SGlobalArr, SGlobalVar,
+	      LocalArrX, LocalVarX, SLocalArr, SLocalVar,
+	      PP1, GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+              LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	      XCL, [], ArrRefX,Statement),
+	
+	not(PP1=ExitPP),
+	debug_message("Taking entry transition % from % to %\n",
+		      [FName,PP,PP1],magenta),
+#ifdef  GRAPHVIZ_USE
+	get_next_pp_context(FName,PP1,LoopStack,PP1Context),	
+        push_context_stack(FName,PP1Context),
+#endif
+	unfold_aux2(Depth, Id1,
+	            GlobalArr, GlobalVar, LocalArr, LocalVar, 
+		    GlobalArrX, GlobalVarX, LocalArrX, LocalVarX,
+		    FName, PP, PP1, Statement,
+		    GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		    CL, XCL, ML, CallStack, ArrRefX, ArrRef, LoopStack,
+		    _UnknownVars,TableSpace).
+unfold_loop_aux(Depth, Id, FName, PP, ExitPP,
+		GlobalArr, GlobalVar, LocalArr, LocalVar,
+		SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		CL, ML, CallStack, ArrRef, Loops, TableSpace) :-
+#ifdef  PROFILE
+        % To count the number of times the loop analysis is finished.
+	add_counter(num_loops_analyzed,1),
+#endif	/*PROFILE*/
+#if     (UNFOLD_OPT ==  WCET)	
+	unfold_wcet_loop(Depth, Id, FName, PP, ExitPP,
+			 GlobalArr, GlobalVar, LocalArr, LocalVar,
+			 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 CL, ML, CallStack, ArrRef, Loops,TableSpace).
+#elif   (UNFOLD_OPT ==  SAFETY)
+	unfold_safety_loop(Depth, Id, FName, PP, ExitPP,
+			   GlobalArr, GlobalVar, LocalArr, LocalVar,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   CL, ML, CallStack, ArrRef, Loops,TableSpace).
+#endif  /*(UNFOLD_OPT ==  WCET)	*/
+%=============================================================================%
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%=============================================================================%
+% Important: A loop is identified as a pair PP-ExitPP in the CLP
+% program. However, since the loop can have multiple unstructured
+% exits (through break's) in reality we have multiple PP_i-ExitPP.
+%-----------------------------------------------------------------------------%
+go_exit_loop(FName, _Depth, Id1, _PP, PPi,
+	     GlobalArrX, GlobalVarX, SGlobalArr, SGlobalVar,
+	     LocalArrX, LocalVarX, SLocalArr, SLocalVar,
+	     ExitPP, GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+	     LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	     _CL, _ML, XCL, ArrRefX,Statement):-
+	%---------------------------------------------------------------------%
+	% By backtracking we traverse all transitions that reach the
+	% (unique) exit of the loop.
+        %---------------------------------------------------------------------%
+	set_counter(exists_at_least_one_loop_exit,0),
+	trans(FName, Id1, PPi, 
+              GlobalArrX, GlobalVarX, SGlobalArr, SGlobalVar,
+	      LocalArrX, LocalVarX, SLocalArr, SLocalVar,
+	      ExitPP, GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+              LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	      XCL, [], ArrRefX,Statement),
+	add_counter(exists_at_least_one_loop_exit,1),
+        debug_message("---- Taking transitions to exit the loop %@% - % with id %\n",
+                      [FName,PPi,ExitPP,Id1],magenta).
+go_exit_loop(FName, Depth, Id, PP, _PPi, 
+	     _GlobalArrX, _GlobalVarX, _SGlobalArr, _SGlobalVar,
+	     _LocalArrX, _LocalVarX, _SLocalArr, _SLocalVar,
+	     ExitPP, GlobalArr1, GlobalVar1, SGlobalArr1, SGlobalVar1,
+	     LocalArr1, LocalVar1, SLocalArr1, SLocalVar1,
+	     CL, ML, _XCL, ArrRefX,_Statement):-
+	store_sanity_answer_for_exit_loop(FName, Depth, Id, PP,
+					  CL, ML,
+					  GlobalArr1 , GlobalVar1 , LocalArr1, LocalVar1,
+					  SGlobalArr1, SGlobalVar1,SLocalArr1, SLocalVar1,
+					  ArrRefX),	
+        debug_message("\n--- No more exit transitions for the loop %@% - % \n\n",
+		      [FName,PP,ExitPP],magenta),		
+	!,
+	fail.
+
+%-------------------------------------------------------------------------%
+% store_sanity_answer_for_exit_loop
+%-------------------------------------------------------------------------%
+% This is when we cannot detect ahead of time the exits of the
+% loop. This is a clear symptom that something will fail but just in
+% case we produce an empty answer to avoid breaking further operations
+% (e.g., combine) and be able to continue
+%-------------------------------------------------------------------------%
+store_sanity_answer_for_exit_loop(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	counter_value(exists_at_least_one_loop_exit,N),
+	N > 0,
+	!.
+store_sanity_answer_for_exit_loop(FName, Depth, Id, PP,
+				  CL, ML,
+ 				  GlobalArr , GlobalVar , LocalArr, LocalVar,
+				  SGlobalArr, SGlobalVar,SLocalArr, SLocalVar,
+				  ArrRef):-
+	print_message("Warning: no loop exit identified for %::% \n",
+		      [FName,PP],red),	
+#if     (UNFOLD_OPT==WCET)
+        wcet_success_path(FName,Depth, Id, PP,CL,ML,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+#elif   (UNFOLD_OPT == TESTING)
+        tester_success_path(FName,Depth,PP,CL,ML,	
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    ArrRef),
+        % To prevent warnings
+	Id=_,
+#elif   (UNFOLD_OPT==SAFETY)
+        safety_success_path(FName,Depth,PP,CL,ML,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    ArrRef),
+        % To prevent warnings
+        Id=_,
+#elif   (UNFOLD_OPT==SLICING)
+        slice_success_path(FName,Depth,Id,PP,CL,ML,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+#elif   (UNFOLD_OPT==LIVE)
+        live_success_path(FName,Depth,Id,PP,CL,ML,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),	
+#endif  /*UNFOLD_OPT==WCET*/
+        !.
+
+
+	
+%------------------------------------------------------------------------------%
+% store_interpolant_from_loop_exit(+,+,+,+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------%
+% If current_tracer_flag(other_interp,n), then it takes the interpolant from the
+% exit condition of the loop. Then, evaluate only constraints which
+% are marked by the interpolant and project the solver state,
+% generating a list of symbolic constraints. Finally, this list is
+% negated and pushed on the loop stack.
+% If current_tracer_flag(other_interp,y) the interpolant is e.g., the weakest
+% precondition computed already from the loop exit.
+%------------------------------------------------------------------------------%
+store_interpolant_from_loop_exit(Depth, FName, PP, 
+				 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_ArrRef,
+				 CL, LoopInfo):-
+#if     (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==WCET)			
+	exit_interp(Depth,FName,LoopExitML,LoopExitWP),
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)			
+        exit_interp(Depth,FName,LoopExitML),
+	LoopExitWP=nil,
+#endif  /*(UNFOLD_OPT==SAFETY)*/
+        store_interpolant_from_loop_exit_aux(FName,PP,
+					     SGlobalArr,SGlobalVar,
+					     SLocalArr,SLocalVar,
+					     CL,LoopExitML,LoopExitWP,LoopInfo),
+	!.
+store_interpolant_from_loop_exit(_,_,_,_,_,_,_,_,_,_):-
+	error_message("store_interpolant_from_loop_exit/10 failed.\n",[]).
+
+%------------------------------------------------------------------------------%
+% Wrapper for storing the interpolant from the loop exit.
+%------------------------------------------------------------------------------%
+store_interpolant_from_loop_exit_aux(FName,PP,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     CL,LoopExitML,_,LoopInfo):-
+       current_tracer_flag(other_interp,n),              
+       make_negated_projected_interpolant(SGlobalArr,SGlobalVar,
+					  SLocalArr,SLocalVar,
+					  CL,LoopExitML,NegIntp),       
+       loopstack$state(LoopInfo,FName,PP,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,NegIntp,_),
+#ifdef DEBUG_USE
+       print_message("\tStored interpolant for the loop exit %:% \n\t",[FName,PP],
+		     yellow),
+       pretty_printer_constraints_list(FName,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       NegIntp),
+#endif /*DEBUG_USE*/
+       !.
+store_interpolant_from_loop_exit_aux(FName,PP,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     CL,ML,LoopExitWP,LoopInfo):-
+       current_tracer_flag(other_interp,y),
+       LoopExitWP = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,WPConj,_),
+       negate_interp_conjuncts(WPConj,NegWPConj),
+       interp_create_subsumed_interpolant(FName,
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					  CL,ML, 
+					  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					  NegWPConj, WPOut),
+       WPOut = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,WPConjOut,_),
+       negate_interp_conjuncts(WPConjOut,NegWPConjOut),
+       loopstack$state(LoopInfo,FName,PP,
+		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_, NegWPConjOut),
+#ifdef DEBUG_USE
+       print_op_debugging(loop_exit_interpolant,
+			  FName,PP,_Depth,
+			  CL, ML,
+			  state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				NegWPConjOut,_),
+			  SGlobalArr, SGlobalVar, SLocalArr, SLocalVar),
+#endif  /*DEBUG_USE*/       
+       !.
+% store_interpolant_from_loop_exit_aux(FName,PP,
+% 				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+% 				     _,_,LoopExitWP,LoopInfo):-
+%        current_tracer_flag(other_interp,y),
+%        LoopExitWP = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,WPCond,_),       
+%        loopstack$state(LoopInfo,FName,PP,
+% 		       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_,WPCond),
+% #ifdef DEBUG_USE
+%        print_message("\tStored interpolant for the loop exit %:% \n\t",[FName,PP],
+% 		      yellow),
+%        WP=state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,WPCond,_),
+%        pretty_printer_interp(FName,_,"\tWeakest-pre -- ",
+%                              SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+%                              WP),
+% #endif  /*DEBUG_USE*/       
+%        !.
+store_interpolant_from_loop_exit_aux(_,_,_,_,_,_,_,_,_,_):-
+	error_message("store_interpolant_from_loop_exit_aux/10 failed.\n",[]).
+				     
+%------------------------------------------------------------------------------%
+% get_interpolant_from_loop_exit(+,+,+,+,+,+,+,+,-,-)
+%------------------------------------------------------------------------------%
+get_interpolant_from_loop_exit(FName,PP,LoopInfo,
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       CL,ML,WP):-
+	%---------------------------------------------------------------------	
+	% obtain the interpolant from the loop exit
+	%---------------------------------------------------------------------	
+	get_interpolant_from_loop_exit__(LoopInfo,FName,PP,
+					 TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					 NegIntp),
+	%---------------------------------------------------------------------
+	% produce interpolant from the subsumed state
+	%---------------------------------------------------------------------
+        create_subsumed_interpolant(FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    CL, ML,
+				    TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+				    NegIntp,WP),
+	!.
+get_interpolant_from_loop_exit(_,_,_,_,_,_,_,_,_,_):-
+	error_message("get_interpolant_from_loop_exit/10 failed.\n",[]).
+
+%------------------------------------------------------------------------------%
+% Wrapper for retrieving the interpolant from the loop exit.
+%------------------------------------------------------------------------------%
+get_interpolant_from_loop_exit__(LoopInfo,FName,PP,
+				 TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,NegIntp):-
+	current_tracer_flag(other_interp,n),!,
+	loopstack$state(LoopInfo,FName,PP,
+			TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,NegIntp,_).
+get_interpolant_from_loop_exit__(LoopInfo,FName,PP,
+				 TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,NegWPCond):-
+	current_tracer_flag(other_interp,y),!,
+	loopstack$state(LoopInfo,FName,PP,
+			TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,_,NegWPCond).
+
+%==============================================================================%
+%                      STATIC LOOP INVARIANT DISCOVERY 
+%==============================================================================%
+%------------------------------------------------------------------------------%
+% generate_loop_invariant/30: Generate automatically a loop invariant
+% by propagating only constraints which are statically invariant to
+% the loop (i.e., lhs is not modified). Optionally, inductive
+% invariants generated by other means (e.g., abstract interpretation)
+% can be considered to strengthen those invariants.
+%------------------------------------------------------------------------------%
+generate_loop_invariant(_Depth, _Id, _FName, _PP,
+			% Initial state at the entry of the loop
+			GlobalArr ,GlobalVar ,LocalArr ,LocalVar,	
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			% Bitvector representing variables that change
+			% inside the loop
+			_UpdGlobalArr,_UpdGlobalVar,_UpdLocalArr,_UpdLocalVar,
+			% Abstrated (invariant) state 
+			AbsGlobalArr ,AbsGlobalVar ,AbsLocalArr ,AbsLocalVar,
+			AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar,			
+			_CL,_ML,CL1,ML1,_ArrRef,ArrRef1):-
+	current_tracer_flag(path_sensitive,n),!,
+#ifdef  DEBUG_USE			
+	print_message("TRUE LOOP INVARIANT GENERATED. \n",[],yellow),
+#endif	/*DEBUG_USE*/
+	%%
+	% If path-insensitive the loop invariant is true (i.e., forget
+	% everything)
+	%%
+	% Build a well-formed path <CL,ML>
+	init_constraints_path([],CL1,ML1),	
+	ArrRef1 = [],
+	% Generate fresh set of variables
+ 	copy_to_unbound_list(GlobalArr  , AbsGlobalArr),
+ 	copy_to_unbound_list(GlobalVar  , AbsGlobalVar),
+ 	copy_to_unbound_list(LocalArr   , AbsLocalArr),
+ 	copy_to_unbound_list(LocalVar   , AbsLocalVar),
+ 	copy_to_unbound_list(SGlobalArr , AbsSGlobalArr),
+ 	copy_to_unbound_list(SGlobalVar , AbsSGlobalVar),
+ 	copy_to_unbound_list(SLocalArr  , AbsSLocalArr),
+ 	copy_to_unbound_list(SLocalVar  , AbsSLocalVar).
+generate_loop_invariant(_Depth, _Id, FName, PP,
+			% Initial state at the entry of the loop
+			_GlobalArr,_GlobalVar,_LocalArr ,_LocalVar,	
+			SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			% Bitvector representing variables that change
+			% inside the loop
+			UpdGlobalArr, UpdGlobalVar, UpdLocalArr, UpdLocalVar,
+			% Abstrated (invariant) state 
+			AbsGlobalArr,AbsGlobalVar, AbsLocalArr,AbsLocalVar,
+			AbsSGlobalArr,AbsSGlobalVar, AbsSLocalArr,AbsSLocalVar,			
+			CL, _ML, CL1, ML1, ArrRef, ArrRef1):-			
+	debug_message("BEGIN GENERATION OF LOOP INVARIANT \n",[],yellow),
+#ifdef  PROFILE	
+	ctime(Time0),
+#endif	/*PROFILE*/
+	%----------------------------------------------------------------------
+        % Construction of the loop invariant
+        %----------------------------------------------------------------------
+        % We eliminate any constraint originated from any variable
+        % that may be updated within the loop. Moreover, we attempt at
+        % strengthening it by adding assertions inferred by an
+        % abstract domain.
+
+        /************************************************************/
+	/*
+	   Here we need to make a copy of CL to evaluate it later.
+	   The copy is needed because we will use later the symbolic
+	   variables before abstraction (SGlobalArr,SGlobalVar, etc)
+	*/
+	/************************************************************/	
+	fcopy_term(t(SGlobalArr ,SGlobalVar ,SLocalArr ,SLocalVar ,ArrRef,CL),
+		   t(SGlobalArrX,SGlobalVarX,SLocalArrX,SLocalVarX,ArrRefX,CLX)),
+
+        loop_invariant_abstraction(FName,
+				   % (Copy) Initial state
+				   SGlobalArrX ,SGlobalVarX,SLocalArrX  ,SLocalVarX,
+				   % Bitvector recording unchanged variables in the loop
+				   UpdGlobalArr,UpdGlobalVar,UpdLocalArr,UpdLocalVar,
+				   % Abstracted state
+				   AbsGlobalArr,AbsGlobalVar,AbsLocalArr,AbsLocalVar),
+
+	/* FIXME: select invariant array references. For now, empty.*/
+	evaluate_constraints_path(CLX,  ArrRefX, _ /*AbsArrRef*/),
+
+	%------------------------------------------------------------------%
+	% IMPORTANT STEP: this can strengthen the static loop
+	% invariant using assertions inferred by an abstract domain.
+	%------------------------------------------------------------------%	
+	read_external_invariants(FName, PP,
+				 AbsGlobalArr, AbsGlobalVar,
+				 AbsLocalArr , AbsLocalVar),
+		
+	project_solver_context(state(AbsGlobalArr , AbsGlobalVar,
+				     AbsLocalArr  , AbsLocalVar, [] /*AbsArrRef*/),
+			       state(AbsSGlobalArr, AbsSGlobalVar,
+				     AbsSLocalArr , AbsSLocalVar , InvariantCL0)),
+	
+        %==================================================================%
+        % Key adhoc step: any constraint from CL which involves local
+        % variables from other functions MUST be propagated through
+        % the loop.
+        %==================================================================%
+	get_constraints_from_other_functions(SGlobalArr,SGlobalVar,
+					     SLocalArr,SLocalVar,CL,IrrelCL),
+	append(IrrelCL,InvariantCL0,InvariantCL),
+	%------------------------------------------------------------------%
+	% Build a well-formed path formula <CL,ML>
+	%------------------------------------------------------------------%
+	init_constraints_path(InvariantCL,CL1,ML1),
+	
+#ifdef  DEBUG_USE
+        print_message("Context before loop inv: \n",[]),
+	pretty_printer_path(CL,
+			    FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+			    
+        print_message("Abstracted after loop inv: \n",[]),       
+	pretty_printer_constraints_list(FName,
+					AbsSGlobalArr,AbsSGlobalVar,
+					AbsSLocalArr,AbsSLocalVar,
+					InvariantCL),
+#endif	/*DEBUG_USE*/
+#ifdef  PROFILE	
+        ctime(Time1),
+	add_counter(loop_invariant_timing,Time1-Time0),
+#endif  /*PROFILE*/
+	/* FIXME: array references are just restarted as empty for the
+	 * moment */
+	ArrRef1=[],
+#ifdef  DEBUG_USE	
+	print_message("END GENERATION OF LOOP INVARIANT \n",[],yellow),
+#endif	/*DEBUG_USE*/
+	!. % To avoid backtracking to anything before.
+	
+%---------------------------------------------------------------------------%
+% get_constraints_from_other_functions(+SGlobalArr,...,+CL,-IrrelCL)
+%---------------------------------------------------------------------------%
+% IrrelCL contains all constraints from CL that do not intersect with
+% SGlobalArr,...
+%---------------------------------------------------------------------------%
+get_constraints_from_other_functions(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     CL,IrrelCL):-
+        append(SGlobalArr,SGlobalVar,RelVs0),
+	append(RelVs0    ,SLocalArr ,RelVs1),
+	append(RelVs1    ,SLocalVar ,RelVs),
+	irrel_rel_constraints_from_path(CL,RelVs,IrrelCL,_),
+	!.
+get_constraints_from_other_functions(_,_,_,_,_,_):-
+	error_message("get_constraints_from_other_functions/6 failed\n",[]).
+
+% similar to get_constraints_from_other_functions but it assumes that CL
+% is always a list of constraints.
+get_constraints_from_other_functions2(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      CL,IrrelCL):-
+        append(SGlobalArr,SGlobalVar,RelVs0),
+	append(RelVs0    ,SLocalArr ,RelVs1),
+	append(RelVs1    ,SLocalVar ,RelVs),
+	irrel_rel_constraints(CL,RelVs,IrrelCL,_),
+	!.
+get_constraints_from_other_functions2(_,_,_,_,_,_):-
+	error_message("get_constraints_from_other_functions2/6 failed\n",[]).
+
+%===========================================================================%
+% Generation of loop invariants.
+%===========================================================================%
+#ifdef  DEBUG_USE
+test_loop_invariant_abstraction:-
+	GlobalArr = [_SH],
+	GlobalVar = [],
+	LocalArr  = [],
+	LocalVar  = [_Ptr,_X,_Y,_Z],
+	loop_invariant_abstraction(
+		func_main,GlobalArr,GlobalVar,LocalArr,LocalVar,
+	        [u],[],[],[u,n,n,n],
+		AbsGlobalArr,AbsGlobalVar,AbsLocalArr,AbsLocalVar),
+	print_message("Before % % % % \n After % % % % \n",
+	       [GlobalArr,GlobalVar,LocalArr,LocalVar,
+		AbsGlobalArr,AbsGlobalVar,AbsLocalArr,AbsLocalVar]).
+#endif	/*DEBUG_USE*/
+%---------------------------------------------------------------------------%
+% loop_invariant_abstraction
+%---------------------------------------------------------------------------%
+loop_invariant_abstraction(_FName,
+			   GlobalArr   ,GlobalVar   ,LocalArr   ,LocalVar,
+			   UpdGlobalArr,UpdGlobalVar,UpdLocalArr,UpdLocalVar,
+			   AbsGlobalArr,AbsGlobalVar,AbsLocalArr,AbsLocalVar):-
+	keep_invariant_state(GlobalArr,UpdGlobalArr,AbsGlobalArr,
+			     _NInvGA,_NNonInvGA),
+	keep_invariant_state(GlobalVar,UpdGlobalVar,AbsGlobalVar,
+			     _NInvGV,_NNonInvGV),
+	keep_invariant_state(LocalArr,UpdLocalArr,AbsLocalArr,
+			     _NInvLA,_NNonInvLA),
+	keep_invariant_state(LocalVar,UpdLocalVar,AbsLocalVar,
+			     _NInvLV,_NNonInvLV).
+
+% #ifdef  PROFILE	
+% 	print_loop_inv_stats(NInvGA   ,NInvGV,
+% 			     NInvLA   ,NInvLV,
+% 			     NNonInvGA,NNonInvGV,
+% 			     NNonInvLA,NNonInvLV).
+% #else
+%         % To avoid warnings
+%         NInvGA=_,NInvGV=_,NInvLA=_,NInvLV=_,
+% 	NNonInvGA=_,NNonInvGV=_,NNonInvLA=_,NNonInvLV=_.
+% #endif  /*PROFILE*/
+
+% #if     (defined(PROFILE) && defined(MINI_DEBUG_USE))
+% NOTE: This predicate does not provide too much. Just the number of
+% abstracted variable but nothing about the abstracted constraints.
+% print_loop_inv_stats(NumOfInvGlobalArr,NumOfInvGlobalVar,
+% 		     NumOfInvLocalArr ,NumOfInvLocalVar,
+% 		     NumOfNonInvGlobalArr,NumOfNonInvGlobalVar,
+% 		     NumOfNonInvLocalArr ,NumOfNonInvLocalVar):-	
+% 	TotalInv = NumOfInvGlobalArr + NumOfInvGlobalVar+
+% 	           NumOfInvLocalArr  + NumOfInvLocalVar,	
+% 	TotalNonInv= NumOfNonInvGlobalArr + NumOfNonInvGlobalVar +
+%     	             NumOfNonInvLocalArr  + NumOfNonInvLocalVar,
+%         print_message("\t[LOOP INV] Total num of variables: % \n",
+% 	       [TotalInv+TotalNonInv]),			             
+%         print_message("\t[LOOP INV] Total num of non-abstracted variables: % \n",
+% 	       [TotalInv]),	
+%         print_message("\t[LOOP INV] Total num of abstracted variables: % \n",
+% 	       [TotalNonInv]),
+% 	check_div_by_zero(TotalNonInv,TotalInv+TotalNonInv,PercNonInv),
+% 	print_message("\t[LOOP INV] Percentage of constraints thrown away: % \n",
+% 	       [PercNonInv*100]).
+% #else
+%print_loop_inv_stats(_,_,_,_,_,_,_,_).
+%#endif  /*(defined(PROFILE) && defined(MINI_DEBUG_USE))*/
+
+%---------------------------------------------------------------------------%
+% keep_invariant_state(+,+,-,-,-)
+% Keep only invariant variables, considering also aliased variables.
+%---------------------------------------------------------------------------%
+keep_invariant_state([],[],[],0,0):-!.
+keep_invariant_state([V|Vs],[UpdV|UpdVs],[V|AbsVs],1+NInv,NNonInv):-        
+	is_syntactic_invariant(UpdV),	
+	!,
+	%-----------------------------------------------------------%
+	% Here, the variable is proved to be invariant to the loop.
+	%-----------------------------------------------------------%		
+	keep_invariant_state(Vs,UpdVs,AbsVs,NInv,NNonInv).
+keep_invariant_state([_V|Vs],[_|UpdVs],[_|AbsVs],NInv,1+NNonInv):-
+	!,
+	%-----------------------------------------------------------%
+	% The variable is not invariant to the loop.
+	%-----------------------------------------------------------%	
+	keep_invariant_state(Vs,UpdVs,AbsVs,NInv,NNonInv).
+
+is_syntactic_invariant(n). % u: updated | n: non-updated
+
+%------------------------------------------------------------------------------
+% assert_exit_interp(+Depth,+FName,+ML,+WP)
+% Store interpolants from the exit paths of the loop.
+%------------------------------------------------------------------------------
+#if     (UNFOLD_OPT==SAFETY || UNFOLD_OPT==WCET)
+assert_exit_interp(Depth,_,ML,Intp) :-
+#ifdef  PROFILE
+	ctime(T0),
+#endif	/*PROFILE*/						
+        fassert(exit_interp(Depth,_,ML,Intp)),
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(assert_timing,T1-T0).
+#else   
+        true.
+#endif  /*PROFILE*/
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+assert_exit_interp(Depth,_,ML) :-
+#ifdef  PROFILE
+	ctime(T0),
+#endif	/*PROFILE*/									
+        fassert(exit_interp(Depth,_,ML)),
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(assert_timing,T1-T0).
+#else   
+        true.
+#endif	/*PROFILE*/					
+#endif  /*UNFOLD_OPT==SAFETY || UNFOLD_OPT==WCET */
+
+%------------------------------------------------------------------------------
+% retract_exit_interp(+Depth,+FName,-ML,-Intp)
+% Retract interpolants from the exit paths of the loop.
+%------------------------------------------------------------------------------
+#if     (UNFOLD_OPT==SAFETY || UNFOLD_OPT==WCET)
+retract_exit_interp(Depth,_,ML,Intp) :-
+#ifdef  PROFILE
+	ctime(T0),
+#endif	/*PROFILE*/	
+        retract(exit_interp(Depth,_,ML,Intp)),
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(retract_timing,T1-T0),
+#endif	/*PROFILE*/	
+        true.
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+retract_exit_interp(Depth,_,ML) :-
+#ifdef  PROFILE
+	ctime(T0),
+#endif	/*PROFILE*/					
+        retract(exit_interp(Depth,_,ML)),
+#ifdef  PROFILE
+	ctime(T1),
+	add_counter(retract_timing,T1-T0),
+#endif	/*PROFILE*/
+        true.
+#endif  /*UNFOLD_OPT==SAFETY || UNFOLD_OPT==WCET */
+	
+	
+
+
+

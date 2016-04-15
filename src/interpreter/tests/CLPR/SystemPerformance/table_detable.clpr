@@ -1,0 +1,17 @@
+:- dynamic(slicing_answer,8).
+
+main:- 
+   table(slicing_answer(p5,
+			f,
+			[rep(9, i13, [], [], [], [], [])],
+			b(f),
+			b,
+			b,
+			b(f, f, f, f, f, f, f, o),
+			_)),
+      
+   detable(slicing_answer(p5,A,B,C,D,E,F,G)),
+   printf("detable/1 succeed % \n",[slicing_answer(A,B,C,D,E,F,G)]),
+   !.
+main:-
+   printf("detable/1 failed\n",[]).	

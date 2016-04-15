@@ -1,0 +1,203 @@
+trans(func_fib, 1,
+	[0],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[1],[H],[],[SH],[],[],[ReturnValue,N,INext,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SINext,SFnew,SFold,STemp,SAns],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fib, 2,
+	[1],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,FnewNext,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnewNext,SFold,STemp,SAns],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fib, 3,
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,FoldNext,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFoldNext,STemp,SAns],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fib, 4,
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,TempNext,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STempNext,SAns],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fib, 5,
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,AnsNext],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAnsNext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fib, 6,
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,FnewNext,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnewNext,SFold,STemp,SAns],
+	[eq(SFnewNext,1)],
+	[],
+	[],
+	not_branch) :-
+	FnewNext=1.
+trans(func_fib, 7,
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[7],[H],[],[SH],[],[],[ReturnValue,N,INext,Fnew,FoldNext,Temp,Ans],[],[SReturnValue,SN,SINext,SFnew,SFoldNext,STemp,SAns],
+	[eq(SFoldNext,0),eq(SINext,2)],
+	[],
+	[],
+	not_branch) :-
+	FoldNext=0,INext=2.
+trans(func_fib, 8,
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[9],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[geq(SN,SI)],
+	[],
+	[],
+	branch) :-
+	I<=N.
+trans(func_fib, 9,
+	[9],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[10],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,TempNext,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STempNext,SAns],
+	[eq(STempNext,SFnew)],
+	[],
+	[],
+	not_branch) :-
+	TempNext=Fnew.
+trans(func_fib, 10,
+	[10],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[11],[H],[],[SH],[],[],[ReturnValue,N,I,FnewNext,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnewNext,SFold,STemp,SAns],
+	[eq(SFnewNext,plus(SFnew,SFold))],
+	[],
+	[],
+	not_branch) :-
+	FnewNext=Fnew+Fold.
+trans(func_fib, 11,
+	[11],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[12],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,FoldNext,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFoldNext,STemp,SAns],
+	[eq(SFoldNext,STemp)],
+	[],
+	[],
+	not_branch) :-
+	FoldNext=Temp.
+trans(func_fib, 12,
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[8],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[gt(SI,SN)],
+	[],
+	[],
+	branch) :-
+	I>N.
+trans(func_fib, 13,
+	[12],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[7],[H],[],[SH],[],[],[ReturnValue,N,INext,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SINext,SFnew,SFold,STemp,SAns],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[],
+	not_branch) :-
+	INext=I+1.
+trans(func_fib, 14,
+	[8],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[13],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_fib, 15,
+	[13],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[14],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,AnsNext],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAnsNext],
+	[eq(SAnsNext,SFnew)],
+	[],
+	[],
+	not_branch) :-
+	AnsNext=Fnew.
+trans(func_fib, 16,
+	[14],[H],[],[SH],[],[],[ReturnValue,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValue,SN,SI,SFnew,SFold,STemp,SAns],
+	[15],[H],[],[SH],[],[],[ReturnValueNext,N,I,Fnew,Fold,Temp,Ans],[],[SReturnValueNext,SN,SI,SFnew,SFold,STemp,SAns],
+	[eq(SReturnValueNext,SAns)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Ans.
+trans(func_main, 17,
+	[0],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[1],[H],[],[SH],[],[],[ReturnValue,ANext,Out],[],[SReturnValue,SANext,SOut],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 18,
+	[1],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[2],[H],[],[SH],[],[],[ReturnValue,ANext,OutNext],[],[SReturnValue,SANext,SOutNext],
+	[eq(SANext,1)],
+	[],
+	[],
+	not_branch) :-
+	ANext=1.
+trans(func_main, 19,
+	[2],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[4],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[gt(50,SA)],
+	[],
+	[],
+	branch) :-
+	A<50.
+trans(func_main, 20,
+	[4],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[5],[H],[],[SH],[],[],[ReturnValue,A,OutNext],[],[SReturnValue,SA,SOutNext],
+	[eq(SOutNext,SRV0)],
+	[call(func_fib,[RV0,A|_],[SRV0,_V1|_],[eq(_V1,SA)])],
+	[],
+	not_branch) :-
+	OutNext=RV0.
+trans(func_main, 21,
+	[2],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[3],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[geq(SA,50)],
+	[],
+	[],
+	branch) :-
+	A>=50.
+trans(func_main, 22,
+	[5],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[2],[H],[],[SH],[],[],[ReturnValue,ANext,Out],[],[SReturnValue,SANext,SOut],
+	[eq(SANext,plus(SA,1))],
+	[],
+	[],
+	not_branch) :-
+	ANext=A+1.
+trans(func_main, 23,
+	[3],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[6],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 24,
+	[6],[H],[],[SH],[],[],[ReturnValue,A,Out],[],[SReturnValue,SA,SOut],
+	[7],[H],[],[SH],[],[],[ReturnValueNext,A,Out],[],[SReturnValueNext,SA,SOut],
+	[eq(SReturnValueNext,SOut)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Out.
+%--------------------------------------------------
+loop(func_fib, [7],[8], 50, [n],[],[],[n,n,u,u,u,u,n]).
+loop(func_main, [2],[3], 50, [n],[],[],[n,u,u]).
+%--------------------------------------------------
+start(func_fib, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_fib, [15]).
+bottom(func_main, [7]).
+%--------------------------------------------------
+freshlocalarrays(func_fib,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_fib,[_,_,_,_,_,_,_]).
+freshlocalvars(func_main,[_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).

@@ -1,0 +1,1061 @@
+%------------------------------------------------------------------------------
+% Recursive assertion prover
+% Prototype 2/10/2008 by Andrew E. Santosa
+%------------------------------------------------------------------------------
+% In unfolding G |= H, when G contains the atoms A1 ... An and H
+% contains the atoms B1 ... Bm. When Ai is unfolded, we will never
+% unfold A1 ... Ai-1 anymore. When Bj is unfolded, we will never
+% unfold A1 ... An, B1 ... Bj-1 anymore. This minimally covers all
+% possible combinations of G and H.
+%------------------------------------------------------------------------------
+% To do: combine find_existential_variables and classify_by_sharing
+%        for efficiency
+%        cleanup congruence closure solver
+%------------------------------------------------------------------------------
+
+% Unfold depth bound for each initial atom
+
+unfolddepthbound(1).
+
+% Trace depth bound, unfold path depth bound for all unfold paths
+
+% tracedepthbound(100).
+
+tracedepthbound(2).
+
+% Coinduction limit: Number of possible coinduction attempts in a trace,
+% so as not to spawn subproofs forever
+
+coinductionlimit(1).
+
+:- dynamic(obligation, 6).
+
+%==============================================================================
+% Pretty printing
+%==============================================================================
+
+removeatm([], []).
+removeatm([atm(_,X)|R], [X|S]) :- removeatm(R, S).
+
+prettyprint(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+            NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints) :- !,
+	set_counter(variable_number, 0),
+	append(NonUnfoldableGAtoms, UnfoldableGAtoms, GAtoms),
+	append(NonUnfoldableHAtoms, UnfoldableHAtoms, HAtoms),
+	removeatm(GAtoms, GAtoms1),
+	removeatm(HAtoms, HAtoms1),
+	prettyprintlist(" , ", GAtoms1),
+	printf(",", []),
+	prettyprintlist(" , ", GConstraints),
+	printf("\n\t|=\n", []),
+	prettyprintlist(" , ", HAtoms1),
+	printf(",", []),
+	prettyprintlist(" , ", HConstraints),
+	printf("\n", []).
+
+prettyprint(A) :-
+	var(A), counter_value(variable_number, N),
+	printf_to_atom(A, "v%", [N]), printf("%", [A]),
+        add_counter(variable_number, 1), !.
+prettyprint(A) :-
+	atomic(A), printf("%", [A]), !.
+prettyprint(access(A,B,C)) :-
+	prettyprint(A), printf("[", []), prettyprint(B), printf("]=", []),
+	prettyprint(C), !.
+prettyprint(multiseteq(A,B)) :-
+	prettyprint(A),	printf("=", []), prettyprint(B), !.
+prettyprint(arrayeq(A,B)) :-
+	prettyprint(A),	printf("=", []), prettyprint(B), !.
+prettyprint(eq(A,B)) :-
+	prettyprint(A),	printf("=", []), prettyprint(B), !.
+prettyprint(plus(A,B)) :-
+	prettyprint(A),	printf("+", []), prettyprint(B), !.
+prettyprint(gt(A,B)) :-
+	prettyprint(A),	printf(">", []), prettyprint(B), !.
+prettyprint(union(L)) :- prettyprintlist("U", L), !.
+prettyprint(disjoint(L)) :- prettyprintlist("(X)", L), !.
+prettyprint(multiset(L)) :-
+	printf("{", []),
+	prettyprintlist(",", L),
+	printf("}", []), !.
+prettyprint(aupd(A,B,C)) :-
+	printf("<", []), prettyprint(A),
+	printf(",", []), prettyprint(B),
+	printf(",", []), prettyprint(C),
+	printf(">", []), !.
+prettyprint(A) :-
+	A =.. [X|L],
+	printf("%(", [X]),
+        prettyprintlist(",", L),
+        printf(")", []), !.
+
+prettyprintlist(_Op, []) :- !.
+prettyprintlist(_Op, [X]) :-
+	prettyprint(X), !.
+prettyprintlist(Op, [X,Y|R]) :-
+	prettyprint(X),	printf("%", [Op]),
+        prettyprintlist(Op, [Y|R]), !.
+
+%------------------------------------------------------------------------------
+
+addunfoldlevel(_UnfoldLevel, [], []).
+addunfoldlevel(UnfoldLevel, [X|R], [atm(UnfoldLevel,X)|S]) :-
+	addunfoldlevel(UnfoldLevel, R, S).
+
+append([], B, B).
+append([X|A], B, [X|C]) :- append(A, B, C).
+
+pair([], [], []).
+pair([A|R], [B|S], [pair(A,B)|T]) :-
+	pair(R, S, T).
+
+union2([], B, B).
+union2(A, [], A).
+union2([X|A], [Y|B], [X,Y|C]) :-
+	union2(A, B, C).
+
+length([], 0).
+length([_], 1) :- !.
+length([_, _], 2) :- !.
+length([_|R], N+1) :- length(R, N).
+
+%==============================================================================
+% Left unfolding
+%==============================================================================
+
+% Try to make all left unfolds fail (proven)
+
+lprove(Depth, CoindLevel, 
+        NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+        NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	add_counter(assertionnumber, 1),
+	printf("Depth = % Coinduction Level = %\n", [Depth, CoindLevel]),
+%        printf("% % % |= % % %\n", [NonUnfoldableGAtoms, UnfoldableGAtoms,
+%                                    GConstraints,
+%				    NonUnfoldableHAtoms, UnfoldableHAtoms,
+%				    HConstraints]),
+        prettyprint(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                    NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints),
+%	printf("% % % % % %\n", 
+%               [Depth, GAtoms, GConstraints, HAtoms, HConstraints, Table]),
+        read(_), fail.
+
+% First try to check if constraint proof succeed.
+
+lprove(Depth, _CoindLevel,
+	NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, _Table) :-
+	printf("Attempting constraint proof at level %\n", [Depth]),
+	constraintproof(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	                NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints),
+	!, fail.
+
+% Second try to use coinduction: use ancestor to prove the
+% current assertion
+
+lprove(Depth, CoindLevel,
+	NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	%-----------------------------------------------------------------------
+	% Apply coinduction proof only when we have not reach coinduction
+	% depth limit.
+	%-----------------------------------------------------------------------
+	CoindLevel < X, coinductionlimit(X),
+	printf("Attempting coinduction at level %\n", [Depth]),
+%        printf("matchtable(%,%,%,%,%,%,%,_)\n", [CoindLevel, NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints, NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints]),
+	matchtable(CoindLevel,
+	           NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	           NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+                   Table),
+	!, fail.
+
+% The following two failed clauses should instead be a success
+% (failure to prove), but we keep them as a failures for the moment in
+% order to search the whole tree.
+
+lprove(_Depth, _CoindLevel,
+        _NonUnfoldableGAtoms, [], _GConstraints, 
+        _NonUnfoldableHAtoms, [], _HConstraints, _Table) :- 
+	printf("NO UNFOLD ATOMS\n", []), !, fail.
+
+lprove(Depth, CoindLevel,
+	NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	%-----------------------------------------------------------------------
+	% No further unfold if bound is reached
+	%-----------------------------------------------------------------------
+	Depth < X, tracedepthbound(X),
+	printf("Attempting left unfold at level %\n", [Depth]),
+	left_unfold(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                    GList),
+	printf("LEFT UNFOLD\n", []),
+	prove_all(Depth+1, CoindLevel, GList, 
+	          NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+	      [obligation(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                          NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints)|
+               Table]), !, fail.
+
+% rprove1 should be enclosed with "not," but we keep it so for the
+% moment to generate all proof tree nodes.
+
+lprove(Depth, CoindLevel,
+	NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	%-----------------------------------------------------------------------
+	% No further unfold if bound is reached
+	%-----------------------------------------------------------------------
+	Depth < X, tracedepthbound(X),
+	printf("Attempting right unfold at level %\n", [Depth]),
+	append(UnfoldableGAtoms, NonUnfoldableGAtoms, GAtoms),
+	rprove1(Depth, CoindLevel, 
+	            GAtoms, GConstraints,
+		    NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+		    Table), !, fail.
+
+lprove(_Depth, _CoindLevel,
+	_NonUnfoldableGAtoms, _UnfoldableGAtoms, _GConstraints,
+	_NonUnfoldableHAtoms, _UnfoldableHAtoms, _HConstraints, _Table).
+	%-----------------------------------------------------------------------
+	% We have exhausted all means of proving: succeed this predicate
+	% (failure of proof).
+	%-----------------------------------------------------------------------
+
+%------------------------------------------------------------------------------
+
+
+left_unfold(NonUnfoldableGAtoms,
+	    [atm(UnfoldLevel,GPureAtom)|UnfoldableGAtoms],
+            GConstraints, GList) :-
+	UnfoldLevel < X, unfolddepthbound(X),
+	unfold(GPureAtom, BodyList),
+	addtoallbodies(UnfoldLevel+1,
+                       NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                       BodyList, GList).
+left_unfold(NonUnfoldableGAtoms, [GAtom|UnfoldableGAtoms], 
+            GConstraints, GList) :-
+	left_unfold([GAtom|NonUnfoldableGAtoms], 
+                    UnfoldableGAtoms, GConstraints, GList).
+
+addtoallbodies(_UnfoldLevel, 
+               _NonUnfoldableGAtoms, _UnfoldableGAtoms, _GConstraints, [], []).
+addtoallbodies(UnfoldLevel,
+               NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+          [body(BAtoms, BConstraints)|R],
+          [goal(NonUnfoldableGAtoms, UnfoldableGAtoms1, GConstraints1)|S]) :-
+	addunfoldlevel(UnfoldLevel, BAtoms, BAtoms1),
+	once(union2(BAtoms1, UnfoldableGAtoms, UnfoldableGAtoms1)),
+	once(union2(BConstraints, GConstraints, GConstraints1)),
+	addtoallbodies(UnfoldLevel, 
+                       NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                       R, S).
+
+%------------------------------------------------------------------------------
+% prove_all
+% Prove all left unfolds, in which case succeed, otherwise, fail.
+%------------------------------------------------------------------------------
+
+% Case when the whole proof is succesful (all goals proved)
+prove_all(_Depth, _CoindLevel, [],
+          _NonUnfoldableHAtoms, _UnfoldableHAtoms, _HConstraints, _Table).
+
+% Case when one of the resulting obligations is succesful
+prove_all(Depth, CoindLevel,
+	  [goal(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints)|R],
+          NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	not(lprove(Depth, CoindLevel,
+	          NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+		  NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table)),
+	!,
+	prove_all(Depth, CoindLevel, R,
+                  NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table).
+
+%==============================================================================
+% Right unfolding
+%==============================================================================
+
+% Try to find one proof success by right unfold.
+
+rprove1(Depth, CoindLevel, GAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	right_unfold(NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+	             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1),
+	printf("RIGHT UNFOLD\n", []),
+	rprove(Depth+1, CoindLevel,
+	       GAtoms, GConstraints,
+	       NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1,
+               Table).
+
+%-------------------------------------------------------------------------------
+% Try to search for one proof by right unfold.
+% The procedure succeeds when a proof can be found.
+%-------------------------------------------------------------------------------
+
+rprove(Depth, _CoindLevel, 
+        GAtoms, GConstraints,
+        NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	add_counter(assertionnumber, 1),
+	printf("Depth = %\n", [Depth]),
+        prettyprint(GAtoms, [], GConstraints,
+                    NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints),
+%	printf("% % % % % %\n", 
+%               [Depth, GAtoms, GConstraints, HAtoms, HConstraints, Table]),
+        read(_), fail.
+
+rprove(Depth, _CoindLevel, 
+	GAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, _Table) :-
+	printf("Attempting constraint proof at level %\n", [Depth]),
+	constraintproof([], GAtoms, GConstraints,
+	                NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints).
+
+rprove(_Depth, _CoindLevel,
+        _GAtoms, _GConstraints, 
+        _NonUnfoldableHAtoms, [], _HConstraints, _Table) :- 
+	printf("NO UNFOLD ATOMS\n", []), !, fail.
+
+rprove(Depth, _CoindLevel,
+        _GAtoms, _GConstraints,
+        _NonUnfoldableHAtoms, _UnfoldableHAtoms, _HConstraints, _Table) :-
+	tracedepthbound(Depth), !, fail.
+
+rprove(Depth, CoindLevel,
+	GAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	right_unfold(NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+	             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1),
+	printf("RIGHT UNFOLD\n", []),
+	rprove(Depth+1, CoindLevel,
+	      GAtoms, GConstraints,
+	      NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1, Table).
+
+
+%------------------------------------------------------------------------------
+
+right_unfold(NonUnfoldableHAtoms,
+	     [atm(UnfoldLevel,HPureAtom)|UnfoldableHAtoms], HConstraints,
+             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1) :-
+	UnfoldLevel < X, unfolddepthbound(X),
+	unfold(HPureAtom, BodyList),
+	addtobody(UnfoldLevel+1,
+                  NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+                  BodyList, 
+		  NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1).
+right_unfold(NonUnfoldableHAtoms, [HAtom|UnfoldableHAtoms], HConstraints,
+             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1) :-
+	right_unfold([HAtom|NonUnfoldableHAtoms], UnfoldableHAtoms, 
+	             HConstraints, 
+	             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1).
+
+addtobody(UnfoldLevel,
+          NonUnfoldableAtoms, UnfoldableAtoms, GConstraints,
+          [body(BAtoms, BConstraints)|_],
+          NonUnfoldableAtoms, UnfoldableAtoms1, GConstraints1) :-
+	addunfoldlevel(UnfoldLevel, BAtoms, BAtoms1),
+	once(union2(BAtoms1, UnfoldableAtoms, UnfoldableAtoms1)),
+	once(union2(BConstraints, GConstraints, GConstraints1)).
+addtobody(UnfoldLevel, 
+	  NonUnfoldableAtoms, UnfoldableAtoms, GConstraints,
+          [_|R],
+	  NonUnfoldableAtoms1, UnfoldableAtoms1, GConstraints1) :-
+	addtobody(UnfoldLevel,
+	          NonUnfoldableAtoms, UnfoldableAtoms, GConstraints,
+                  R, 
+		  NonUnfoldableAtoms1, UnfoldableAtoms1, GConstraints1).
+
+%==============================================================================
+% Constraint Proof
+%==============================================================================
+
+% For now, proof always fails
+% constraintproof(_GAtoms1, _GAtoms2, _GConstraints,
+% 	          _HAtoms1, _HAtoms2, _HConstraints) :- !, fail.
+
+constraintproof(GAtoms1, GAtoms2, GConstraints,
+                HAtoms1, HAtoms2, HConstraints) :-
+	%----------------------------------------------------------------------
+	% First we test that the rhs atoms signatures is the subeset of
+	% the lhs atom signatures
+	%----------------------------------------------------------------------
+	append_signature(GAtoms1, GAtoms2, GAtoms, GSig),
+	append_signature(HAtoms1, HAtoms2, HAtoms, HSig),
+%	printf("subset(%, %)\n", [HSig, GSig]),
+	subset(HSig, GSig),
+
+	%----------------------------------------------------------------------
+	% Find existentially quantified variables (appearing in rhs but not
+	% in lhs)
+	%----------------------------------------------------------------------
+	find_existential_variables(GAtoms, GConstraints,
+	                           HAtoms, HConstraints, EV),
+
+	%----------------------------------------------------------------------
+	% We classify the rhs atoms (into list of lists) on whether they
+	% share an existentially-quantified variable or not. An existentially-
+	% quantified variables here defined to be rhs variables not appearing
+	% in the lhs.
+	%
+	% An alternative would be to consider all variables universal
+	% (this assumption makes the assertion stronger, whose proof proves
+	% the original assertion with existentially-quantified variables).
+	%----------------------------------------------------------------------
+%	printf("classify_by_sharing(%, %, %, HC, HSC)\n", [GAtoms, GConstraints, HAtoms]),
+	classify_by_sharing(GAtoms, GConstraints,
+	                    HAtoms, HAtomsClasses, HSigClasses),
+	once(length(HAtomsClasses, N)),
+	printf("Split the assertion into %\n", [N]),
+	%----------------------------------------------------------------------
+	% We now perform constraint proof for each rhs atom classes whose
+	% elements share existential variables
+	%----------------------------------------------------------------------
+%	printf("constraintproof_classes(%, %, %, %, %, %)\n", [GSig, GAtoms, GConstraints, HSigClasses, HAtomsClasses, HConstraints]),
+	constraintproof_classes(GSig, GAtoms, GConstraints,
+	                        HSigClasses, HAtomsClasses, HConstraints, EV).
+
+%------------------------------------------------------------------------------
+% constraintproof_classes(GSig, GAtoms, GConstraints,
+%                         HSigClasses, HAtomsClasses, HConstraints)
+% Given lhs signatures (GSig), atoms (GAtoms), constraints (GConstraints),
+% rhs signature classes (HSigClasses), atoms classes (HAtomsClasses), and
+% constraints (HConstraints), prove for each atoms set HAtoms in HAtomsClasses,
+% GAtoms, GConstraints |= HAtoms, HConstraints
+%------------------------------------------------------------------------------
+
+% test :- constraintproof_classes(
+% [sig(reverse, 5), sig(alist, 3), sig(alist, 3)],
+% [reverse(_h2, _h3, _h4, _h5, _h6), alist(_h5, _h6, _h10), alist(_h5, _h4, _h14)],
+% [disjoint([_h10, _h14]), multiseteq(_h132, union([_h10, _h14])), gt(_h4, 0), access(_h5, plus(_h4, 1), _h46)],
+% [[sig(reverse, 5)], [sig(alist, 3)], [sig(alist, 3)]],
+% [[reverse(_h2, _h3, _h46, aupd(_h5, plus(_h4, 1), _h6), _h4)], [alist(aupd(_h5, plus(_h4, 1), _h6), _h4, _h59)], [alist(aupd(_h5, plus(_h4, 1), _h6), _h46, _h70)]], [disjoint([_h59, _h70]), multiseteq(_h132, union([_h59, _h70]))]).
+
+% test :- constraintproof_classes([], [], [multiseteq(_h10, union([_h302, multiset([_h6, plus(_h6, 1)])])), eq(_h3, _h4), gt(_h6, 0), disjoint([_h10, _h14]), access(_h5, plus(_h6, 1), _h301), arrayeq(_h2, _h5), multiseteq(_h132, union([_h10, _h14])), eq(_h6, 0), gt(_h4, 0), access(_h5, plus(_h4, 1), _h46)], [], [], [eq(_h724, _h4), disjoint([_h302, _h14]), arrayeq(_h737, _h5), multiseteq(_h742, union([_h302, _h14])), eq(_h301, 0), gt(_h4, 0), access(_h5, plus(_h4, 1), _h765)])
+
+constraintproof_classes(_GSig, _GAtoms, GConstraints, [], [], HConstraints, EV) :-
+	%-----------------------------------------------------------------------
+	% The set_counter here is just for pretty printing later
+	%-----------------------------------------------------------------------
+	set_counter(unification_variant, 1),
+	%-----------------------------------------------------------------------
+	% In case rhs has no atoms, prove constraint implication with
+	% empty unifiers
+	%-----------------------------------------------------------------------
+	constraintproof_aux(GConstraints, HConstraints, [], EV).
+constraintproof_classes(GSig, GAtoms, GConstraints, 
+	                [HSig|HSigClasses], [HAtoms|HAtomsClasses],
+			HConstraints, EV) :-
+	%-----------------------------------------------------------------------
+	% In case rhs has atoms
+	%-----------------------------------------------------------------------
+	constraintproof_classes_with_atoms(GSig, GAtoms, GConstraints,
+	                                   [HSig|HSigClasses],
+					   [HAtoms|HAtomsClasses],
+					   HConstraints, EV).
+
+constraintproof_classes_with_atoms(_GSig, _GAtoms, _GConstraints,
+                                   [], [], _HConstraints, _EV).
+constraintproof_classes_with_atoms(GSig, GAtoms, GConstraints, 
+                                   [HSig|HSigClasses], [HAtoms|HAtomsClasses],
+			           HConstraints, EV) :-
+	gen_signature(HAtoms, HSig),
+	%-----------------------------------------------------------------------
+	% The set_counter here is just for pretty printing later
+	%-----------------------------------------------------------------------
+	set_counter(unification_variant, 1),
+	%-----------------------------------------------------------------------
+	% Generate all possible unifiers of rhs atom to lhs atoms with matching
+	% signature.
+	%-----------------------------------------------------------------------
+%	printf("signature_subset(%, %, %, %, U)\n", [HSig, GSig, HAtoms, GAtoms]),
+	signature_subset(HSig, GSig, HAtoms, GAtoms, _, Unifier),
+%	printf("constraintproof_aux(%, %, %, %)\n",
+%	       [GConstraints, HConstraints, Unifier, EV]),
+	constraintproof_aux(GConstraints, HConstraints, Unifier, EV),
+	constraintproof_classes_with_atoms(GSig, GAtoms, GConstraints,
+	                                   HSigClasses, HAtomsClasses,
+					   HConstraints, EV).
+
+
+
+%------------------------------------------------------------------------------
+% gen_signature/2: gen_signature(A, B) succeeds where B is the signatures list
+% of the atoms in list A, in the corresponding order
+%------------------------------------------------------------------------------
+
+gen_signature([], []).
+gen_signature([Atom|R], [sig(Symb,N)|S]) :-
+	Atom =.. [Symb|Args],
+	length(Args, N),
+	gen_signature(R, S).
+
+%------------------------------------------------------------------------------
+% subset/2: subset(A, B) succeeds when the elements of list A is a subset
+% of the elements of list B
+%------------------------------------------------------------------------------
+
+subset([], _).
+subset([X|Set1], Set2) :-
+	subset_aux(X, Set2, Set3), subset(Set1, Set3).
+
+subset_aux(X, [X|Set1], Set1) :- !.
+subset_aux(X, [Y|Set1], [Y|Set2]) :- subset_aux(X, Set1, Set2).
+
+%------------------------------------------------------------------------------
+% test :- classify_by_sharing([reverse(_h2, _h3, _h4, _h5, _h6), alist(_h5, _h6, _h10), alist(_h5, _h4, _h14)], [disjoint([_h10, _h14]), multiseteq(_h132, union([_h10, _h14])), gt(_h4, 0), access(_h5, plus(_h4, 1), _h46)], [reverse(_h2, _h3, _h46, aupd(_h5, plus(_h4, 1), _h6), _h4), alist(aupd(_h5, plus(_h4, 1), _h6), _h4, _h59), alist(aupd(_h5, plus(_h4, 1), _h6), _h46, _h70)], L1, L2), printf("% %\n", [L1, L2]).
+
+
+:- dynamic(classify_by_sharing_t, 3).
+
+classify_by_sharing(GAtoms, GConstraints, HAtoms, HAtomsClasses, HSigClasses) :-
+	assert(classify_by_sharing_t(GAtoms, GConstraints, HAtoms)),
+	retract(classify_by_sharing_t(GAtoms1, GConstraints1, HAtoms1)),
+	label_variables(0, GAtoms1, N),
+	label_variables(N, GConstraints1, _),
+	pair(HAtoms1, HAtoms, HAtomPairs),
+	classify_by_sharing_aux(HAtomPairs, HAtomsClasses, HSigClasses).
+
+classify_by_sharing_aux([], [], []).
+classify_by_sharing_aux([AtomPair|OtherAtomPairs],
+	            [[Atom|SharingAtoms]|S], [SharingSigs|T]) :-
+	AtomPair = pair(_, Atom),
+	sharing_set(AtomPair, OtherAtomPairs, SharingAtoms, RemainingAtomPairs),
+	gen_signature([Atom|SharingAtoms], SharingSigs), 
+	classify_by_sharing_aux(RemainingAtomPairs, S, T).
+
+sharing_set(_AtomPair, [], [], []).
+sharing_set(AtomPair1, [AtomPair2|OtherAtomPairs], [Atom2|SharingAtoms1], T) :-
+	AtomPair1 = pair(Atom11, _),
+	AtomPair2 = pair(Atom21, Atom2),
+	once(sharing_variable(Atom11, Atom21)), !,
+	sharing_set(AtomPair2, OtherAtomPairs, SharingAtoms,
+	            RemainingAtomPairs), 
+	sharing_set(AtomPair1, RemainingAtomPairs, S, T),
+	append(SharingAtoms, S, SharingAtoms1).
+sharing_set(AtomPair1, [AtomPair2|R], S, [AtomPair2|T]) :-
+	sharing_set(AtomPair1, R, S, T).
+
+:- dynamic(sharing_variable_p, 2).
+
+sharing_variable(A, B) :-
+	assert(sharing_variable_p(A, B)),
+	sharing_variable_p(A1, B1),
+	sharing_variable_p(A2, B2),
+	retract(sharing_variable_p(_, _)),
+	label_variables(0, [A1], _),
+	label_variables(1, [A2], _),
+	not B1 = B2.
+
+label_variables(N, [], N).
+label_variables(N, [X|R], M) :-
+	var(X), !,
+	printf_to_atom(X, "v%", [N]),
+	label_variables(N+1, R, M).
+label_variables(N, [X|R], K) :-
+	X =.. [_|Arg],
+	label_variables(N, Arg, M),
+	label_variables(M, R, K).
+
+%------------------------------------------------------------------------------
+% find_existential_variables
+% Should this just be combined with classify_by_sharing for efficiency?
+%------------------------------------------------------------------------------
+
+:- dynamic(find_existential_variables_t, 4).
+
+find_existential_variables(GAtoms, GConstraints,
+	                   HAtoms, HConstraints, EV) :-
+	assert(find_existential_variables_t(GAtoms, GConstraints,
+	                                    HAtoms, HConstraints)),
+	retract(find_existential_variables_t(GAtoms1, GConstraints1,
+	                                     HAtoms1, HConstraints1)),
+	label_variables(0, GAtoms1, N),
+	label_variables(N, GConstraints1, _),
+	gather_variable(HAtoms1, HAtoms, V1, V2),
+	gather_variable(HConstraints1, HConstraints, V3, V4),
+	append(V1, V3, V5),
+	append(V2, V4, V6),
+	label_variables(0, V5, _),
+	once(remove_multiple_occurrence(V5, V6, EV)).
+
+gather_variable(A, B, [A], [B]) :- var(A), !.
+gather_variable([], [], [], []) :- !.
+gather_variable([A|R], [B|S], V1, V2) :- !,
+	gather_variable(A, B, V3, V4),
+	gather_variable(R, S, V5, V6),
+	append(V3, V5, V1),
+	append(V4, V6, V2).
+gather_variable(A, B, [], []) :-
+	A =.. [_|_], var(B), !.
+gather_variable(A, B, V1, V2) :-
+	A =.. [_|A1], B =.. [_|B1],
+	gather_variable(A1, B1, V1, V2).
+
+remove_multiple_occurrence([], [], []).
+remove_multiple_occurrence([A|R], [B|S], [B|T]) :-
+	not in(A, R),
+	remove_multiple_occurrence(R, S, T).
+remove_multiple_occurrence([_|R], [_|S], T) :-
+	remove_multiple_occurrence(R, S, T).
+
+in(A, [A|_]) :- !.
+in(A, [_|R]) :- in(A, R).
+
+
+%------------------------------------------------------------------------------
+% signature_subset/6:
+% signature_subset(Sig1, Sig2, Atoms1, Atoms2, RemainingAtoms2, Unifier)
+% Sig1: Input signature list of input Atoms1
+% Sig2: Input signature list of input Atoms2
+% Atoms1: 1st Atom set (list in the same order as Sig1)
+% Atoms2: 2nd Atom set (list in the same order as Sig2)
+% RemainingAtoms2: Output atoms in Atoms2 that are not included in Atoms1
+% Unifier: Output unifier of the arguments of matching atoms in Atoms1
+%          and Atoms2
+%
+% This procedure tests if Atoms1 is a subset of Atoms2, and if so,
+% returns the difference in RemainingAtoms2, and the unifier for the
+% arguments of matching atoms.
+%------------------------------------------------------------------------------
+
+signature_subset([], _RemainingSigs, [], RemainingAtoms, RemainingAtoms, []).
+signature_subset([Sig|S1], S2, [Atom|R1], R2, RemainingAtoms, U1) :-
+	match_signature(Sig, S2, S3, Atom, R2, R3, Unif),
+	append(Unif, U, U1),
+	signature_subset(S1, S3, R1, R3, RemainingAtoms, U).
+
+match_signature(Sig, [Sig|S], S, Atom, [Atom1|T], T, Unif) :- 
+	Atom =.. [_|Args1], Atom1 =.. [_|Args2],
+	unify_arguments(Args1, Args2, Unif).
+match_signature(Sig, [X|R], [X|S], Atom, [Y|T], [Y|U], Unif) :-
+	match_signature(Sig, R, S, Atom, T, U, Unif).
+
+% test :- signature_subset([sig(s, 2), sig(s, 2)],[sig(s, 2), sig(s, 2), sig(s, 2)],[s(A, B), s(B, C)],[s(h(X), Y), s(Z, Xf), s(Y, Z)],Rem,Unif).
+test :- signature_subset([sig(s, 2), sig(s, 2)], [sig(s, 2), sig(s, 2)], [s(h(X), Z), s(Z, Xf)], [s(Y, Xf), s(h(X), Y)], Rem, U).
+
+%-------------------------------------------------------------------------------
+% Part (***) of the code depends on the ordering of the arguments of eq
+%-------------------------------------------------------------------------------
+unify_arguments([], [], []).
+unify_arguments([A1|R], [A2|S], [eq(A1,A2)|T]) :-
+	unify_arguments(R, S, T).
+
+%-------------------------------------------------------------------------------
+% At the moment this is just a stub that asks whether the implication
+% actually holds.
+% Here we need to be able to eliminate existentially-quantified variables,
+% defined to be variables appearing in the rhs but not in the lhs.
+%-------------------------------------------------------------------------------
+
+%% constraintproof_aux(GConstraints, HConstraints, Unifier, _EV) :- !,
+%% %	printf("% |= % %\n", [GConstraints, HConstraints, Unifier]),
+%% 	counter_value(unification_variant, N),
+%% 	add_counter(unification_variant, 1),
+%% 	set_counter(variable_number, 1),
+%% 	printf("For argument unification # %, proving\n", [N]),
+%% 	prettyprintlist(" , ", GConstraints),
+%% 	printf(" |= ", []),
+%% 	prettyprintlist(" , ", HConstraints),
+%% 	printf(" , ", []),
+%% 	prettyprintlist(" , ", Unifier),
+%% 	printf("\n", []),
+%%         printf("Does it hold? (y/n)\n", []),
+%% 	read(X), X=y.
+
+%-------------------------------------------------------------------------------
+% Below is the congruence-closure-based solver and simple arithmetic
+% sanity test. Enough to run "function idempotence" proof automatically
+%-------------------------------------------------------------------------------
+
+% test :- constraintproof_aux([eq(X, X), neq(Y, error), eq(p(Y), 0)], [neq(Y, error), eq(p(Y), 0)], [eq(h(Y), h(Y)), eq(W, Z), eq(W, Z), eq(Xf, Xf)], [W]).
+
+:- dynamic(cproof_t, 1).
+
+constraintproof_aux(GConstraints, HConstraints, Unifier, ExtVar) :-
+%	printf("% |= % %\n", [GConstraints, HConstraints, Unifier]),
+	assert(cproof_t(t(GConstraints, HConstraints, Unifier, ExtVar))),
+	retract(cproof_t(t(GConstraints1, HConstraints1, Unifier1, ExtVar1))),
+	
+	label_variables(0, ExtVar1, N),
+%	printf("existential_unifier(%, %, A, B)\n", [ExtVar1, Unifier1]),
+	once(existential_unifier(ExtVar1, Unifier1, ExtUnifier, NonExtUnifier)),
+	substitute_terms(N, ExtUnifier, HConstraints1, HConstraints2),
+	existential_unifier_closure(ExtUnifier, [], TClosure),
+	closure_to_constraints(TClosure, NewUnifier),
+
+	not satisfiable_negation(GConstraints1, HConstraints2),
+	not satisfiable_negation(GConstraints1, NonExtUnifier),
+	not satisfiable_negation(GConstraints1, NewUnifier),
+	printf("PROOF OK\n", []).
+
+satisfiable_negation(GConstraints, HConstraints) :-
+	once(negate_list(HConstraints, NegHConstraints)),
+	label_variables(0, GConstraints, N),
+	label_variables(N, NegHConstraints, _),
+	satisfiable_negation_aux(GConstraints, NegHConstraints).
+
+existential_unifier(_ExtVar, [], [], []).
+existential_unifier(ExtVar, [eq(A, B)|R], [eq(A,B)|S], T) :-
+	not var(A), in(A, ExtVar),
+	existential_unifier(ExtVar, R, S, T).
+existential_unifier(ExtVar, [Equality|R], S, [Equality|T]) :-
+	existential_unifier(ExtVar, R, S, T).
+
+existential_unifier_closure([], Closure, Closure).
+existential_unifier_closure([eq(A,B)|R], Closure, Closure2) :-
+	once(update_eu_closure(A, B, Closure, Closure1)),
+	existential_unifier_closure(R, Closure1, Closure2).
+
+update_eu_closure(A, B, [], [t(A,[B])]).
+update_eu_closure(A, B, [t(A,Class)|R], [t(A,[B|Class])|R]).
+update_eu_closure(A, B, [TClass|R], [TClass|S]) :-
+	update_eu_closure(A, B, R, S).
+
+
+satisfiable_negation_aux(G, [C|_]) :-
+%	printf("congruence_closure(%, Closure, Ineq)\n", [[C|G]]),
+	once(congruence_closure([C|G], Closure, Inequalities)),
+	%-----------------------------------------------------------------------
+	% Test sanity: we don't want different numeric values
+	% in one congruence class, not required for uif-only problems
+	%-----------------------------------------------------------------------
+	test_arithmetic_sanity(Closure),
+	test_inequalities(Closure, Inequalities).
+satisfiable_negation_aux(G, [_|R]) :-
+	satisfiable_negation_aux(G, R).
+
+congruence_closure([], [], []).
+congruence_closure([neq(A,B)|R], Closure, [neq(A,B)|S]) :-
+	congruence_closure(R, Closure, S).
+congruence_closure([eq(A,B)|R], Closure1, S) :-
+	congruence_closure(R, Closure, S),
+	once(update_closure(A, B, Closure, Closure1)).
+
+update_closure(A, B, Closure, Closure1) :-
+	once(find(A, Closure, AClass, ClosureNoA)),
+	once(update_closure_aux(B, AClass, ClosureNoA, Closure1)).
+
+update_closure_aux(B, AClass, ClosureNoA, [AClass|ClosureNoA]) :-
+	once(contain(B, AClass)).
+update_closure_aux(B, AClass, ClosureNoA, [ABClass|ClosureNoAB]) :-
+	once(find(B, ClosureNoA, BClass, ClosureNoAB)),
+	append(AClass, BClass, ABClass).
+
+find(A, [], [A], []).
+find(A, [Class|R], Class, R) :- once(contain(A, Class)).
+find(A, [C|R], Class, [C|S]) :- find(A, R, Class, S).
+
+contain(A, [A|_]).
+contain(A, [_|R]) :- contain(A, R).
+
+negate_list([], []).
+negate_list([eq(A,B)|R], [neq(A,B)|S]) :- negate_list(R, S).
+negate_list([neq(A,B)|R], [eq(A,B)|S]) :- negate_list(R, S).
+negate_list([_|R], [tt|S]) :- negate_list(R, S).
+
+test_inequalities(_, []).
+test_inequalities(Closure, [neq(A,B)|R]) :-
+	once(find(A, Closure, AClass, _)),
+	not contain(B, AClass),
+	test_inequalities(Closure, R).
+
+%-------------------------------------------------------------------------------
+% test_arithmetic_sanity/1: Tests whether different numeric values exist
+% in the same congruence class. Can be expanded in the future to more
+% complex arithmetic expressions instead of just numeric constant
+%-------------------------------------------------------------------------------
+test_arithmetic_sanity([]).
+test_arithmetic_sanity([Class|R]) :-
+	test_arithmetic_sanity_aux(Class, _),
+	test_arithmetic_sanity(R).
+
+test_arithmetic_sanity_aux([], _).
+test_arithmetic_sanity_aux([A|R], A) :-
+	arithmetic(A),
+	test_arithmetic_sanity_aux(R, A).
+test_arithmetic_sanity_aux([A|R], X) :-
+	not arithmetic(A),
+	test_arithmetic_sanity_aux(R, X).
+
+%==============================================================================
+% Coinduction (Recursive Proof) Routines
+%==============================================================================
+
+%-------------------------------------------------------------------------------
+% matchtable/7: Prove an obligation using the table
+%
+% matchtable(CoindLevel,
+%            GAtoms1, GAtoms2, GConstraints,
+%            HAtoms1, HAtoms2, HConstraints, Table)
+% CoindLevel: Current coinduction depth (input)
+% GAtoms1, GAtoms2: Two lists of lhs atoms (input)
+% GConstraints: Symbolic lhs constraints (input)
+% HAtoms1, HAtoms2: Two lists of rhs atoms (input)
+% HConstraints: Symbolic rhs constraints (input)
+% Table: The table (input)
+%-------------------------------------------------------------------------------
+
+matchtable(CoindLevel,
+	   GAtoms1, GAtoms2, GConstraints,
+	   HAtoms1, HAtoms2, HConstraints, Table) :-
+	append_signature(GAtoms1, GAtoms2, GAtoms, GSig),
+	not GAtoms=[],
+	append_signature(HAtoms1, HAtoms2, HAtoms, HSig),
+	find_obligation_matching_signature(
+	        GSig, GAtoms, GSig3, GAtoms3, Table,
+	        AncGSig, AncGAtoms, AncGConstraints,
+                AncHSig, AncHAtoms, AncHConstraints),
+	coinductive(CoindLevel,
+	            GSig3, GAtoms3, GConstraints,
+	            HSig, HAtoms, HConstraints,
+                    AncGSig, AncGAtoms, AncGConstraints,
+		    AncHSig, AncHAtoms, AncHConstraints).
+
+%-------------------------------------------------------------------------------
+% append_signature(A, B, C, D).
+% Input: two lists A and B of the form
+%        [atm(_, X1), atm(_, X2), ...]
+% Output: appended actual atoms list in C: [X1, X2, ...] and 
+%         signatures in D: [sig(_, _), ...]
+%-------------------------------------------------------------------------------
+
+append_signature([], [], [], []).
+append_signature([], [A|GAtoms2], GAtoms, GSig) :-
+	append_signature([A|GAtoms2], [], GAtoms, GSig).
+append_signature([A|GAtoms1], GAtoms2, [B|GAtoms], [sig(S,N)|GSig]) :-
+	A = atm(_, B), B =.. [S|Args], length(Args, N),
+	append_signature(GAtoms1, GAtoms2, GAtoms, GSig).
+
+
+%-------------------------------------------------------------------------------
+% find_obligation_matching_signature
+% find_obligation_matching_signature(
+%     Sig, Atoms, Sig1, Atoms1, Table,
+%     GSig, GAtoms, GConstraints, HSig, HAtoms, HConstraints)
+%
+% Find ancestor obligation whose lhs atoms's signatures is a subset of the
+% current obligation's lhs atoms. Typically 
+%
+% Sig: Signature (input)
+% Atoms: Atoms corresponding to signature (input)
+% Sig1: Reordering of Sig according to signatures in GAtoms (output)
+% Atoms1: Reordering of Atoms1 according to signatures in GAtoms (output)
+% GSig, GAtoms, GConstraints, HSig, HAtoms, HConstraints: Ancestor obligation
+% matching signature (with signatures GSig and HSig)
+%-------------------------------------------------------------------------------
+
+find_obligation_matching_signature(Sig, Atoms, Sig1, Atoms1, [Obligation|_],
+	GSig, GAtoms, GConstraints, HSig, HAtoms, HConstraints) :-
+	Obligation = obligation(GAtoms1, GAtoms2, GConstraints,
+	                        HAtoms1, HAtoms2, HConstraints),
+	append_signature(GAtoms1, GAtoms2, GAtoms, GSig),
+	signature_set_match(GSig, Sig, Atoms, Sig1, Atoms1),
+	printf("Found tabled obligation matching signature of current assertion.\n", [Sig, GSig]),
+        append_signature(HAtoms1, HAtoms2, HAtoms, HSig).
+find_obligation_matching_signature(Sig, Atoms, Sig1, Atoms1, [_|R],
+	GSig, GAtoms, GConstraints, HSig, HAtoms, HConstraints) :-
+	find_obligation_matching_signature(Sig, Atoms, Sig1, Atoms1, R,
+	GSig, GAtoms, GConstraints, HSig, HAtoms, HConstraints).
+
+%-------------------------------------------------------------------------------
+% match_single_signature(A, B, C, D, E, F)
+% Given a signature A, if B = L1 . A . L2, and D is the list of atoms
+% corresponding to signature list B, then return C = L1 . L2,
+% E is the atom in D corresponding to signature A, and F is the
+% list D - E.
+%-------------------------------------------------------------------------------
+match_single_signature(Sig, [Sig|R], R, [A|S], A, S).
+match_single_signature(Sig, [Sig1|R], [Sig1|S], [A|T], B, [A|U]) :-
+	match_single_signature(Sig, R, S, T, B, U).
+
+signature_set_match([], S, Atoms, S, Atoms).
+signature_set_match([Sig|R], S, Atoms, [Sig|Sig1], [A|Atoms1]) :- 
+	once(match_single_signature(Sig, S, S1, Atoms, A, AtomsNoA)), 
+	signature_set_match(R, S1, AtomsNoA, Sig1, Atoms1).
+
+%-------------------------------------------------------------------------------
+% coinductive/13:
+% Checking that 
+% AncGAtoms, AncHConstraints |= AncHAtoms, AncHConstraints
+% implies
+% GAtoms, GConstraints |= HAtoms, HConstraints
+%-------------------------------------------------------------------------------
+:- dynamic(refresh_variables, 1).
+
+coinductive(CoindLevel,
+	    GSig, GAtoms, GConstraints,
+	    _HSig, HAtoms, HConstraints,
+	    GSig1, AncGAtoms, AncGConstraints,
+	    _HSig1, AncHAtoms, AncHConstraints) :-
+	assert(refresh_variables(t(AncGAtoms, AncGConstraints,
+	                           AncHAtoms, AncHConstraints))),
+	retract(refresh_variables(t(GAtoms1, GConstraints1,
+	                            HAtoms1, HConstraints1))),
+
+	%-----------------------------------------------------------------------
+	% It is possible to get a number of possible unifiers, resulting
+	% in nonunique coinduction
+	%-----------------------------------------------------------------------
+
+	printf("signature_subset(%,%,%,%,Rem,Unif)\n", [GSig1,GSig,GAtoms1,GAtoms]),
+	signature_subset(GSig1, GSig, GAtoms1, GAtoms, RemainingAtoms, Unifier),
+
+
+%        unify_lhs_atoms(GAtoms, GAtoms1, RemainingGAtoms),
+%	printf("label_variables_in_unifier(0, %, N)\n", [Unifier]),
+	label_variables_in_unifier(0, Unifier, N),
+%	printf("substitute_terms(%,%,%,GConstraints2)\n", [N,Unifier,GConstraints1]),
+	substitute_terms(N, Unifier, GConstraints1, GConstraints2),
+%	append(GConstraints1, Unifier, GConstraints2),
+
+	%-----------------------------------------------------------------------
+	% Add equality constraints generated from unifier
+	% This is best explained using example:
+	% Suppose that we force the subsumption of s(A,B) to s(C,C),
+	% then we get the unifier C=A, C=B, but this should actually
+	% restrict A and B to A=B.
+	%-----------------------------------------------------------------------
+	printf("unifier_congruence_closure(%, Constraints)\n", [Unifier]),
+	unifier_congruence_closure(Unifier, EqualityConstraints),
+	append(EqualityConstraints, GConstraints2, GConstraints3),
+	
+	%-----------------------------------------------------------------------
+	% We note that the spawned proof has existentially-quantified variables
+	% in the rhs: those variables not appearing in the lhs. This is
+	% because the unifier produced above are typically of the form
+	% f(X) = g(Y), where f(X) is an argument of the ancestor atom, and
+	% hence X is existentially quantified (since both assertions are
+	% renamed away by the assert/retract above, while g(Y) is an argument of
+	% the subsumed goal, and hence Y here is universally quantified.
+	%-----------------------------------------------------------------------
+%	printf("spawn_proof(%,%,%,[],%)\n", [CoindLevel,RemainingAtoms,GConstraints,GConstraints2]),
+	printf("SPAWN SUBSUMPTION TEST\n", []),
+	spawn_proof(CoindLevel,
+	            RemainingAtoms, GConstraints, [], GConstraints3),
+
+	% Note here we take simple approach ResidGAtoms1 = HAtoms1,
+	% we could also use the also valid but more complex append one below.
+%	ResidGAtoms1 = HAtoms1,
+
+	%-----------------------------------------------------------------------
+	% Perform subsitutions (H' theta)
+	%-----------------------------------------------------------------------
+	substitute_terms(N, Unifier, HConstraints1, HConstraints2),
+	substitute_terms(N, Unifier, HAtoms1, HAtoms2),
+	append(HAtoms2, RemainingAtoms, ResidGAtoms),
+	append(EqualityConstraints, HConstraints2, HConstraints3),
+	append(HConstraints3, GConstraints, ResidGConstraints),
+
+	printf("SPAWN RESIDUAL PROOF\n", []),
+	spawn_proof(CoindLevel,
+	            ResidGAtoms, ResidGConstraints, HAtoms, HConstraints).
+
+
+%-------------------------------------------------------------------------------
+% unifier_congruence_closure: Computing equality constraints out of unifier
+%-------------------------------------------------------------------------------
+unifier_congruence_closure(Unifier, Constraints) :-
+	unifier_congruence_closure_aux(Unifier, [], TClosure),
+	closure_to_constraints(TClosure, Constraints).
+
+closure_to_constraints([], []).
+closure_to_constraints([t(_, [_])|R], Constraints) :-
+	closure_to_constraints(R, Constraints).
+closure_to_constraints([t(_, [A,B|R])|S], Constraints) :-
+	closure_to_constraints(S, T),
+	closure_to_constraints_aux(A, [B|R], T, Constraints).
+
+closure_to_constraints_aux(_A, [], Constraints, Constraints).
+closure_to_constraints_aux(A, [B|R], Constraints, [eq(A,B)|S]) :-
+	closure_to_constraints_aux(A, R, Constraints, S).
+
+unifier_congruence_closure_aux([], Closure, Closure).
+unifier_congruence_closure_aux([Equality|R], Closure, Closure2) :-
+	once(add_equality(Closure, Equality, Closure1)),
+	unifier_congruence_closure_aux(R, Closure1, Closure2).
+
+add_equality([], eq(A,B), [t(A,[B])]).
+add_equality([t(A,Class)|R], eq(A, B), [t(A,[B|Class])|R]).
+add_equality([TClass|R], Equality, [TClass|S]) :-
+	add_equality(R, Equality, S).
+
+
+%-------------------------------------------------------------------------------
+% (***)
+% Here we assume certain ordering of arguments in the input unifier, we
+% only ground the variables in the lhs.
+%-------------------------------------------------------------------------------
+label_variables_in_unifier(N, [], N).
+label_variables_in_unifier(N, [eq(A1,_)|R], O) :-
+	label_variables(N, [A1], M),
+	label_variables_in_unifier(M, R, O).
+
+%-------------------------------------------------------------------------------
+% get_matching_term(N, Term, UnifierList, Result)
+% N: Input, a variable label number not in UnifierList
+% Term: Term to match
+% Result: The match in the unifier
+%-------------------------------------------------------------------------------
+get_matching_term(N, A, [eq(C,B)|_], B) :-
+	%-----------------------------------------------------------------------
+	% Here we attempt to label A (a fresh copy D of it), and check
+	% that it is still the case that A=D, that is, A is exactly labeled
+	% with the same terms for the same variables. In which case, we
+	% return B as the matching term (containing variables)
+	%-----------------------------------------------------------------------
+	assert(refresh_variables(t(A))),
+	retract(refresh_variables(t(D))),
+	label_variables(N, [D], _), C = D.
+get_matching_term(N, A, [_|R], B) :- get_matching_term(N, A, R, B).
+
+%-------------------------------------------------------------------------------
+% substitute_terms(Q, Unifier, Terms, Modified)
+% Unifier: List of eq(A,B), where A is ground term
+% Q: A number used to ground variables with term such that
+%    the grounding terms are disjoint from As in Unifier
+% Terms: The list of terms where A is to be replaced with B
+% Modified: The modified list of terms
+%-------------------------------------------------------------------------------
+substitute_terms(_Q, _Unifier, [], []).
+substitute_terms(Q, Unifier, [A|R], [A|S]) :-
+	var(A), !,
+%	printf("substitute_terms(%, %, %, S)\n", [Q, Unifier, R]),
+	substitute_terms(Q, Unifier, R, S).
+substitute_terms(Q, Unifier, [A|R], [B|S]) :-
+%	printf("get_matching_term(%, %, %, B)\n", [Q, A, Unifier]),
+	once(get_matching_term(Q, A, Unifier, B)), !,
+%	printf("substitute_terms(%, %, %, S)\n", [Q, Unifier, R]),
+	substitute_terms(Q, Unifier, R, S).
+substitute_terms(Q, Unifier, [A|R], [B|S]) :-
+	A =.. [Name|M], !,
+%	printf("substitute_terms(%, %, %, S)\n", [Q, Unifier, M]),
+	substitute_terms(Q, Unifier, M, N),
+	B =.. [Name|N],
+%	printf("substitute_terms(%, %, %, S)\n", [Q, Unifier, R]),
+	substitute_terms(Q, Unifier, R, S).
+
+
+%-------------------------------------------------------------------------------
+% unify_lhs_atoms/3: When proving G |= H implied by parent
+% G' |= H', attempts to unify arguments of the atoms in G
+% with arguments of the atoms in G', assuming that the atoms
+% are already ordered accordingly in the input lists.
+% It outputs the remaining atoms in G, if any, as the third argument.
+%-------------------------------------------------------------------------------
+%% unify_lhs_atoms(R, [], R).
+%% unify_lhs_atoms([A|R], [A|S], Remain) :-
+%% 	unify_lhs_atoms(R, S, Remain).
+
+%-------------------------------------------------------------------------------
+% spawn_proof/5:
+% Spawns new proof process of
+% GAtoms, GConstraints |= HAtoms, HConstraints,
+% increasing coinduction level
+%-------------------------------------------------------------------------------
+spawn_proof(CoindLevel, GAtoms, GConstraints,
+            HAtoms, HConstraints) :-
+	addunfoldlevel(0, GAtoms, UnfoldableGAtoms),
+	addunfoldlevel(0, HAtoms, UnfoldableHAtoms),
+	lprove(0, CoindLevel+1, [],
+	       UnfoldableGAtoms, GConstraints,
+               [], UnfoldableHAtoms, HConstraints, []), 
+        !, fail.
+spawn_proof(_CoindLevel, _GAtoms, _GConstraints, _HAtoms, _HConstraints).
+

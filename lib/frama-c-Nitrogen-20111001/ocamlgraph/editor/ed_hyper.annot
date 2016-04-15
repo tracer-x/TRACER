@@ -1,0 +1,5105 @@
+"editor/ed_hyper.ml" 23 1357 1361 "editor/ed_hyper.ml" 23 1357 1368
+type(
+  float * float -> float * float
+)
+ident(
+  def ~-& "editor/ed_hyper.ml" 24 1390 1390 --
+)
+"editor/ed_hyper.ml" 23 1357 1370 "editor/ed_hyper.ml" 23 1357 1371
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 23 1357 1378 "editor/ed_hyper.ml" 23 1357 1388
+)
+"editor/ed_hyper.ml" 23 1357 1373 "editor/ed_hyper.ml" 23 1357 1374
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 23 1357 1378 "editor/ed_hyper.ml" 23 1357 1388
+)
+"editor/ed_hyper.ml" 23 1357 1369 "editor/ed_hyper.ml" 23 1357 1375
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 23 1357 1379 "editor/ed_hyper.ml" 23 1357 1381
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 23 1357 1381 "editor/ed_hyper.ml" 23 1357 1382
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 23 1357 1370 "editor/ed_hyper.ml" 23 1357 1371
+)
+"editor/ed_hyper.ml" 23 1357 1379 "editor/ed_hyper.ml" 23 1357 1382
+type(
+  float
+)
+"editor/ed_hyper.ml" 23 1357 1384 "editor/ed_hyper.ml" 23 1357 1386
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 23 1357 1386 "editor/ed_hyper.ml" 23 1357 1387
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 23 1357 1373 "editor/ed_hyper.ml" 23 1357 1374
+)
+"editor/ed_hyper.ml" 23 1357 1384 "editor/ed_hyper.ml" 23 1357 1387
+type(
+  float
+)
+"editor/ed_hyper.ml" 23 1357 1378 "editor/ed_hyper.ml" 23 1357 1388
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 24 1390 1394 "editor/ed_hyper.ml" 24 1390 1400
+type(
+  'a * float -> 'a * float
+)
+ident(
+  def ~& "editor/ed_hyper.ml" 26 1421 1421 --
+)
+"editor/ed_hyper.ml" 24 1390 1402 "editor/ed_hyper.ml" 24 1390 1403
+type(
+  'a
+)
+ident(
+  def x "editor/ed_hyper.ml" 24 1390 1410 "editor/ed_hyper.ml" 24 1390 1418
+)
+"editor/ed_hyper.ml" 24 1390 1405 "editor/ed_hyper.ml" 24 1390 1406
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 24 1390 1410 "editor/ed_hyper.ml" 24 1390 1418
+)
+"editor/ed_hyper.ml" 24 1390 1401 "editor/ed_hyper.ml" 24 1390 1407
+type(
+  'a * float
+)
+"editor/ed_hyper.ml" 24 1390 1411 "editor/ed_hyper.ml" 24 1390 1412
+type(
+  'a
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 24 1390 1402 "editor/ed_hyper.ml" 24 1390 1403
+)
+"editor/ed_hyper.ml" 24 1390 1414 "editor/ed_hyper.ml" 24 1390 1416
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 24 1390 1416 "editor/ed_hyper.ml" 24 1390 1417
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 24 1390 1405 "editor/ed_hyper.ml" 24 1390 1406
+)
+"editor/ed_hyper.ml" 24 1390 1414 "editor/ed_hyper.ml" 24 1390 1417
+type(
+  float
+)
+"editor/ed_hyper.ml" 24 1390 1410 "editor/ed_hyper.ml" 24 1390 1418
+type(
+  'a * float
+)
+"editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  def +& "editor/ed_hyper.ml" 29 1477 1477 --
+)
+"editor/ed_hyper.ml" 26 1421 1433 "editor/ed_hyper.ml" 26 1421 1435
+type(
+  float
+)
+ident(
+  def x1 "editor/ed_hyper.ml" 26 1421 1441 "editor/ed_hyper.ml" 27 1452 1474
+)
+"editor/ed_hyper.ml" 26 1421 1437 "editor/ed_hyper.ml" 26 1421 1439
+type(
+  float
+)
+ident(
+  def y1 "editor/ed_hyper.ml" 26 1421 1441 "editor/ed_hyper.ml" 27 1452 1474
+)
+"editor/ed_hyper.ml" 26 1421 1432 "editor/ed_hyper.ml" 26 1421 1440
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 26 1421 1442 "editor/ed_hyper.ml" 26 1421 1444
+type(
+  float
+)
+ident(
+  def x2 "editor/ed_hyper.ml" 27 1452 1454 "editor/ed_hyper.ml" 27 1452 1474
+)
+"editor/ed_hyper.ml" 26 1421 1446 "editor/ed_hyper.ml" 26 1421 1448
+type(
+  float
+)
+ident(
+  def y2 "editor/ed_hyper.ml" 27 1452 1454 "editor/ed_hyper.ml" 27 1452 1474
+)
+"editor/ed_hyper.ml" 26 1421 1441 "editor/ed_hyper.ml" 26 1421 1449
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 27 1452 1455 "editor/ed_hyper.ml" 27 1452 1457
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 26 1421 1433 "editor/ed_hyper.ml" 26 1421 1435
+)
+"editor/ed_hyper.ml" 27 1452 1458 "editor/ed_hyper.ml" 27 1452 1460
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 27 1452 1461 "editor/ed_hyper.ml" 27 1452 1463
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 26 1421 1442 "editor/ed_hyper.ml" 26 1421 1444
+)
+"editor/ed_hyper.ml" 27 1452 1455 "editor/ed_hyper.ml" 27 1452 1463
+type(
+  float
+)
+"editor/ed_hyper.ml" 27 1452 1465 "editor/ed_hyper.ml" 27 1452 1467
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 26 1421 1437 "editor/ed_hyper.ml" 26 1421 1439
+)
+"editor/ed_hyper.ml" 27 1452 1468 "editor/ed_hyper.ml" 27 1452 1470
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 27 1452 1471 "editor/ed_hyper.ml" 27 1452 1473
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 26 1421 1446 "editor/ed_hyper.ml" 26 1421 1448
+)
+"editor/ed_hyper.ml" 27 1452 1465 "editor/ed_hyper.ml" 27 1452 1473
+type(
+  float
+)
+"editor/ed_hyper.ml" 27 1452 1454 "editor/ed_hyper.ml" 27 1452 1474
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 29 1477 1481 "editor/ed_hyper.ml" 29 1477 1487
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  def -& "editor/ed_hyper.ml" 32 1533 1533 --
+)
+"editor/ed_hyper.ml" 29 1477 1489 "editor/ed_hyper.ml" 29 1477 1491
+type(
+  float
+)
+ident(
+  def x1 "editor/ed_hyper.ml" 29 1477 1497 "editor/ed_hyper.ml" 30 1508 1530
+)
+"editor/ed_hyper.ml" 29 1477 1493 "editor/ed_hyper.ml" 29 1477 1495
+type(
+  float
+)
+ident(
+  def y1 "editor/ed_hyper.ml" 29 1477 1497 "editor/ed_hyper.ml" 30 1508 1530
+)
+"editor/ed_hyper.ml" 29 1477 1488 "editor/ed_hyper.ml" 29 1477 1496
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 29 1477 1498 "editor/ed_hyper.ml" 29 1477 1500
+type(
+  float
+)
+ident(
+  def x2 "editor/ed_hyper.ml" 30 1508 1510 "editor/ed_hyper.ml" 30 1508 1530
+)
+"editor/ed_hyper.ml" 29 1477 1502 "editor/ed_hyper.ml" 29 1477 1504
+type(
+  float
+)
+ident(
+  def y2 "editor/ed_hyper.ml" 30 1508 1510 "editor/ed_hyper.ml" 30 1508 1530
+)
+"editor/ed_hyper.ml" 29 1477 1497 "editor/ed_hyper.ml" 29 1477 1505
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 30 1508 1511 "editor/ed_hyper.ml" 30 1508 1513
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 29 1477 1489 "editor/ed_hyper.ml" 29 1477 1491
+)
+"editor/ed_hyper.ml" 30 1508 1514 "editor/ed_hyper.ml" 30 1508 1516
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 30 1508 1517 "editor/ed_hyper.ml" 30 1508 1519
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 29 1477 1498 "editor/ed_hyper.ml" 29 1477 1500
+)
+"editor/ed_hyper.ml" 30 1508 1511 "editor/ed_hyper.ml" 30 1508 1519
+type(
+  float
+)
+"editor/ed_hyper.ml" 30 1508 1521 "editor/ed_hyper.ml" 30 1508 1523
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 29 1477 1493 "editor/ed_hyper.ml" 29 1477 1495
+)
+"editor/ed_hyper.ml" 30 1508 1524 "editor/ed_hyper.ml" 30 1508 1526
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 30 1508 1527 "editor/ed_hyper.ml" 30 1508 1529
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 29 1477 1502 "editor/ed_hyper.ml" 29 1477 1504
+)
+"editor/ed_hyper.ml" 30 1508 1521 "editor/ed_hyper.ml" 30 1508 1529
+type(
+  float
+)
+"editor/ed_hyper.ml" 30 1508 1510 "editor/ed_hyper.ml" 30 1508 1530
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  def *& "editor/ed_hyper.ml" 35 1605 1605 --
+)
+"editor/ed_hyper.ml" 32 1533 1545 "editor/ed_hyper.ml" 32 1533 1547
+type(
+  float
+)
+ident(
+  def x1 "editor/ed_hyper.ml" 32 1533 1553 "editor/ed_hyper.ml" 33 1564 1602
+)
+"editor/ed_hyper.ml" 32 1533 1549 "editor/ed_hyper.ml" 32 1533 1551
+type(
+  float
+)
+ident(
+  def y1 "editor/ed_hyper.ml" 32 1533 1553 "editor/ed_hyper.ml" 33 1564 1602
+)
+"editor/ed_hyper.ml" 32 1533 1544 "editor/ed_hyper.ml" 32 1533 1552
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 32 1533 1554 "editor/ed_hyper.ml" 32 1533 1556
+type(
+  float
+)
+ident(
+  def x2 "editor/ed_hyper.ml" 33 1564 1566 "editor/ed_hyper.ml" 33 1564 1602
+)
+"editor/ed_hyper.ml" 32 1533 1558 "editor/ed_hyper.ml" 32 1533 1560
+type(
+  float
+)
+ident(
+  def y2 "editor/ed_hyper.ml" 33 1564 1566 "editor/ed_hyper.ml" 33 1564 1602
+)
+"editor/ed_hyper.ml" 32 1533 1553 "editor/ed_hyper.ml" 32 1533 1561
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 33 1564 1567 "editor/ed_hyper.ml" 33 1564 1569
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 32 1533 1545 "editor/ed_hyper.ml" 32 1533 1547
+)
+"editor/ed_hyper.ml" 33 1564 1569 "editor/ed_hyper.ml" 33 1564 1571
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 33 1564 1571 "editor/ed_hyper.ml" 33 1564 1573
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 32 1533 1554 "editor/ed_hyper.ml" 32 1533 1556
+)
+"editor/ed_hyper.ml" 33 1564 1567 "editor/ed_hyper.ml" 33 1564 1573
+type(
+  float
+)
+"editor/ed_hyper.ml" 33 1564 1574 "editor/ed_hyper.ml" 33 1564 1576
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 33 1564 1577 "editor/ed_hyper.ml" 33 1564 1579
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 32 1533 1549 "editor/ed_hyper.ml" 32 1533 1551
+)
+"editor/ed_hyper.ml" 33 1564 1579 "editor/ed_hyper.ml" 33 1564 1581
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 33 1564 1581 "editor/ed_hyper.ml" 33 1564 1583
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 32 1533 1558 "editor/ed_hyper.ml" 32 1533 1560
+)
+"editor/ed_hyper.ml" 33 1564 1577 "editor/ed_hyper.ml" 33 1564 1583
+type(
+  float
+)
+"editor/ed_hyper.ml" 33 1564 1567 "editor/ed_hyper.ml" 33 1564 1583
+type(
+  float
+)
+"editor/ed_hyper.ml" 33 1564 1585 "editor/ed_hyper.ml" 33 1564 1587
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 32 1533 1545 "editor/ed_hyper.ml" 32 1533 1547
+)
+"editor/ed_hyper.ml" 33 1564 1587 "editor/ed_hyper.ml" 33 1564 1589
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 33 1564 1589 "editor/ed_hyper.ml" 33 1564 1591
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 32 1533 1558 "editor/ed_hyper.ml" 32 1533 1560
+)
+"editor/ed_hyper.ml" 33 1564 1585 "editor/ed_hyper.ml" 33 1564 1591
+type(
+  float
+)
+"editor/ed_hyper.ml" 33 1564 1592 "editor/ed_hyper.ml" 33 1564 1594
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 33 1564 1595 "editor/ed_hyper.ml" 33 1564 1597
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 32 1533 1549 "editor/ed_hyper.ml" 32 1533 1551
+)
+"editor/ed_hyper.ml" 33 1564 1597 "editor/ed_hyper.ml" 33 1564 1599
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 33 1564 1599 "editor/ed_hyper.ml" 33 1564 1601
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 32 1533 1554 "editor/ed_hyper.ml" 32 1533 1556
+)
+"editor/ed_hyper.ml" 33 1564 1595 "editor/ed_hyper.ml" 33 1564 1601
+type(
+  float
+)
+"editor/ed_hyper.ml" 33 1564 1585 "editor/ed_hyper.ml" 33 1564 1601
+type(
+  float
+)
+"editor/ed_hyper.ml" 33 1564 1566 "editor/ed_hyper.ml" 33 1564 1602
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 35 1605 1609 "editor/ed_hyper.ml" 35 1605 1615
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  def /& "editor/ed_hyper.ml" 39 1722 1722 --
+)
+"editor/ed_hyper.ml" 35 1605 1617 "editor/ed_hyper.ml" 35 1605 1619
+type(
+  float
+)
+ident(
+  def x1 "editor/ed_hyper.ml" 35 1605 1625 "editor/ed_hyper.ml" 37 1667 1719
+)
+"editor/ed_hyper.ml" 35 1605 1621 "editor/ed_hyper.ml" 35 1605 1623
+type(
+  float
+)
+ident(
+  def y1 "editor/ed_hyper.ml" 35 1605 1625 "editor/ed_hyper.ml" 37 1667 1719
+)
+"editor/ed_hyper.ml" 35 1605 1616 "editor/ed_hyper.ml" 35 1605 1624
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 35 1605 1626 "editor/ed_hyper.ml" 35 1605 1628
+type(
+  float
+)
+ident(
+  def x2 "editor/ed_hyper.ml" 36 1636 1638 "editor/ed_hyper.ml" 37 1667 1719
+)
+"editor/ed_hyper.ml" 35 1605 1630 "editor/ed_hyper.ml" 35 1605 1632
+type(
+  float
+)
+ident(
+  def y2 "editor/ed_hyper.ml" 36 1636 1638 "editor/ed_hyper.ml" 37 1667 1719
+)
+"editor/ed_hyper.ml" 35 1605 1625 "editor/ed_hyper.ml" 35 1605 1633
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 36 1636 1642 "editor/ed_hyper.ml" 36 1636 1644
+type(
+  float
+)
+"editor/ed_hyper.ml" 36 1636 1647 "editor/ed_hyper.ml" 36 1636 1649
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 35 1605 1626 "editor/ed_hyper.ml" 35 1605 1628
+)
+"editor/ed_hyper.ml" 36 1636 1649 "editor/ed_hyper.ml" 36 1636 1651
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 36 1636 1651 "editor/ed_hyper.ml" 36 1636 1653
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 35 1605 1626 "editor/ed_hyper.ml" 35 1605 1628
+)
+"editor/ed_hyper.ml" 36 1636 1647 "editor/ed_hyper.ml" 36 1636 1653
+type(
+  float
+)
+"editor/ed_hyper.ml" 36 1636 1654 "editor/ed_hyper.ml" 36 1636 1656
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 36 1636 1657 "editor/ed_hyper.ml" 36 1636 1659
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 35 1605 1630 "editor/ed_hyper.ml" 35 1605 1632
+)
+"editor/ed_hyper.ml" 36 1636 1659 "editor/ed_hyper.ml" 36 1636 1661
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 36 1636 1661 "editor/ed_hyper.ml" 36 1636 1663
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 35 1605 1630 "editor/ed_hyper.ml" 35 1605 1632
+)
+"editor/ed_hyper.ml" 36 1636 1657 "editor/ed_hyper.ml" 36 1636 1663
+type(
+  float
+)
+"editor/ed_hyper.ml" 36 1636 1647 "editor/ed_hyper.ml" 36 1636 1663
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1671 "editor/ed_hyper.ml" 37 1667 1673
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 35 1605 1617 "editor/ed_hyper.ml" 35 1605 1619
+)
+"editor/ed_hyper.ml" 37 1667 1673 "editor/ed_hyper.ml" 37 1667 1675
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 37 1667 1675 "editor/ed_hyper.ml" 37 1667 1677
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 35 1605 1626 "editor/ed_hyper.ml" 35 1605 1628
+)
+"editor/ed_hyper.ml" 37 1667 1671 "editor/ed_hyper.ml" 37 1667 1677
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1678 "editor/ed_hyper.ml" 37 1667 1680
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 37 1667 1681 "editor/ed_hyper.ml" 37 1667 1683
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 35 1605 1621 "editor/ed_hyper.ml" 35 1605 1623
+)
+"editor/ed_hyper.ml" 37 1667 1683 "editor/ed_hyper.ml" 37 1667 1685
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 37 1667 1685 "editor/ed_hyper.ml" 37 1667 1687
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 35 1605 1630 "editor/ed_hyper.ml" 35 1605 1632
+)
+"editor/ed_hyper.ml" 37 1667 1681 "editor/ed_hyper.ml" 37 1667 1687
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1670 "editor/ed_hyper.ml" 37 1667 1688
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1688 "editor/ed_hyper.ml" 37 1667 1690
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 37 1667 1690 "editor/ed_hyper.ml" 37 1667 1692
+type(
+  float
+)
+ident(
+  int_ref n2 "editor/ed_hyper.ml" 36 1636 1642 "editor/ed_hyper.ml" 36 1636 1644
+)
+"editor/ed_hyper.ml" 37 1667 1670 "editor/ed_hyper.ml" 37 1667 1692
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1695 "editor/ed_hyper.ml" 37 1667 1697
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 37 1667 1697 "editor/ed_hyper.ml" 37 1667 1699
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 35 1605 1617 "editor/ed_hyper.ml" 35 1605 1619
+)
+"editor/ed_hyper.ml" 37 1667 1695 "editor/ed_hyper.ml" 37 1667 1699
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1699 "editor/ed_hyper.ml" 37 1667 1701
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 37 1667 1701 "editor/ed_hyper.ml" 37 1667 1703
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 35 1605 1630 "editor/ed_hyper.ml" 35 1605 1632
+)
+"editor/ed_hyper.ml" 37 1667 1695 "editor/ed_hyper.ml" 37 1667 1703
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1704 "editor/ed_hyper.ml" 37 1667 1706
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 37 1667 1707 "editor/ed_hyper.ml" 37 1667 1709
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 35 1605 1621 "editor/ed_hyper.ml" 35 1605 1623
+)
+"editor/ed_hyper.ml" 37 1667 1709 "editor/ed_hyper.ml" 37 1667 1711
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 37 1667 1711 "editor/ed_hyper.ml" 37 1667 1713
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 35 1605 1626 "editor/ed_hyper.ml" 35 1605 1628
+)
+"editor/ed_hyper.ml" 37 1667 1707 "editor/ed_hyper.ml" 37 1667 1713
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1694 "editor/ed_hyper.ml" 37 1667 1714
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1714 "editor/ed_hyper.ml" 37 1667 1716
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 37 1667 1716 "editor/ed_hyper.ml" 37 1667 1718
+type(
+  float
+)
+ident(
+  int_ref n2 "editor/ed_hyper.ml" 36 1636 1642 "editor/ed_hyper.ml" 36 1636 1644
+)
+"editor/ed_hyper.ml" 37 1667 1694 "editor/ed_hyper.ml" 37 1667 1718
+type(
+  float
+)
+"editor/ed_hyper.ml" 37 1667 1669 "editor/ed_hyper.ml" 37 1667 1719
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 36 1636 1638 "editor/ed_hyper.ml" 37 1667 1719
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 39 1722 1726 "editor/ed_hyper.ml" 39 1722 1733
+type(
+  float -> float * float -> float * float
+)
+ident(
+  def *.& "editor/ed_hyper.ml" 42 1762 1762 --
+)
+"editor/ed_hyper.ml" 39 1722 1734 "editor/ed_hyper.ml" 39 1722 1735
+type(
+  float
+)
+ident(
+  def f "editor/ed_hyper.ml" 39 1722 1736 "editor/ed_hyper.ml" 40 1745 1759
+)
+"editor/ed_hyper.ml" 39 1722 1737 "editor/ed_hyper.ml" 39 1722 1738
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 40 1745 1747 "editor/ed_hyper.ml" 40 1745 1759
+)
+"editor/ed_hyper.ml" 39 1722 1740 "editor/ed_hyper.ml" 39 1722 1741
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 40 1745 1747 "editor/ed_hyper.ml" 40 1745 1759
+)
+"editor/ed_hyper.ml" 39 1722 1736 "editor/ed_hyper.ml" 39 1722 1742
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 40 1745 1748 "editor/ed_hyper.ml" 40 1745 1749
+type(
+  float
+)
+ident(
+  int_ref f "editor/ed_hyper.ml" 39 1722 1734 "editor/ed_hyper.ml" 39 1722 1735
+)
+"editor/ed_hyper.ml" 40 1745 1749 "editor/ed_hyper.ml" 40 1745 1751
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 40 1745 1751 "editor/ed_hyper.ml" 40 1745 1752
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 39 1722 1737 "editor/ed_hyper.ml" 39 1722 1738
+)
+"editor/ed_hyper.ml" 40 1745 1748 "editor/ed_hyper.ml" 40 1745 1752
+type(
+  float
+)
+"editor/ed_hyper.ml" 40 1745 1754 "editor/ed_hyper.ml" 40 1745 1755
+type(
+  float
+)
+ident(
+  int_ref f "editor/ed_hyper.ml" 39 1722 1734 "editor/ed_hyper.ml" 39 1722 1735
+)
+"editor/ed_hyper.ml" 40 1745 1755 "editor/ed_hyper.ml" 40 1745 1757
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 40 1745 1757 "editor/ed_hyper.ml" 40 1745 1758
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 39 1722 1740 "editor/ed_hyper.ml" 39 1722 1741
+)
+"editor/ed_hyper.ml" 40 1745 1754 "editor/ed_hyper.ml" 40 1745 1758
+type(
+  float
+)
+"editor/ed_hyper.ml" 40 1745 1747 "editor/ed_hyper.ml" 40 1745 1759
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 42 1762 1766 "editor/ed_hyper.ml" 42 1762 1774
+type(
+  float * float -> float
+)
+ident(
+  def norm_sqr "editor/ed_hyper.ml" 45 1801 1801 --
+)
+"editor/ed_hyper.ml" 42 1762 1776 "editor/ed_hyper.ml" 42 1762 1777
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 43 1784 1786 "editor/ed_hyper.ml" 43 1784 1798
+)
+"editor/ed_hyper.ml" 42 1762 1779 "editor/ed_hyper.ml" 42 1762 1780
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 43 1784 1786 "editor/ed_hyper.ml" 43 1784 1798
+)
+"editor/ed_hyper.ml" 42 1762 1775 "editor/ed_hyper.ml" 42 1762 1781
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 43 1784 1786 "editor/ed_hyper.ml" 43 1784 1787
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 42 1762 1776 "editor/ed_hyper.ml" 42 1762 1777
+)
+"editor/ed_hyper.ml" 43 1784 1787 "editor/ed_hyper.ml" 43 1784 1789
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 43 1784 1789 "editor/ed_hyper.ml" 43 1784 1790
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 42 1762 1776 "editor/ed_hyper.ml" 42 1762 1777
+)
+"editor/ed_hyper.ml" 43 1784 1786 "editor/ed_hyper.ml" 43 1784 1790
+type(
+  float
+)
+"editor/ed_hyper.ml" 43 1784 1791 "editor/ed_hyper.ml" 43 1784 1793
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 43 1784 1794 "editor/ed_hyper.ml" 43 1784 1795
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 42 1762 1779 "editor/ed_hyper.ml" 42 1762 1780
+)
+"editor/ed_hyper.ml" 43 1784 1795 "editor/ed_hyper.ml" 43 1784 1797
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 43 1784 1797 "editor/ed_hyper.ml" 43 1784 1798
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 42 1762 1779 "editor/ed_hyper.ml" 42 1762 1780
+)
+"editor/ed_hyper.ml" 43 1784 1794 "editor/ed_hyper.ml" 43 1784 1798
+type(
+  float
+)
+"editor/ed_hyper.ml" 43 1784 1786 "editor/ed_hyper.ml" 43 1784 1798
+type(
+  float
+)
+"editor/ed_hyper.ml" 45 1801 1805 "editor/ed_hyper.ml" 45 1801 1809
+type(
+  float * float -> float
+)
+ident(
+  def norm "editor/ed_hyper.ml" 48 1842 1842 --
+)
+"editor/ed_hyper.ml" 45 1801 1811 "editor/ed_hyper.ml" 45 1801 1812
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 46 1819 1821 "editor/ed_hyper.ml" 46 1819 1839
+)
+"editor/ed_hyper.ml" 45 1801 1814 "editor/ed_hyper.ml" 45 1801 1815
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 46 1819 1821 "editor/ed_hyper.ml" 46 1819 1839
+)
+"editor/ed_hyper.ml" 45 1801 1810 "editor/ed_hyper.ml" 45 1801 1816
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 46 1819 1821 "editor/ed_hyper.ml" 46 1819 1825
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sqrt
+)
+"editor/ed_hyper.ml" 46 1819 1826 "editor/ed_hyper.ml" 46 1819 1827
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 45 1801 1811 "editor/ed_hyper.ml" 45 1801 1812
+)
+"editor/ed_hyper.ml" 46 1819 1827 "editor/ed_hyper.ml" 46 1819 1829
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 46 1819 1829 "editor/ed_hyper.ml" 46 1819 1830
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 45 1801 1811 "editor/ed_hyper.ml" 45 1801 1812
+)
+"editor/ed_hyper.ml" 46 1819 1826 "editor/ed_hyper.ml" 46 1819 1830
+type(
+  float
+)
+"editor/ed_hyper.ml" 46 1819 1831 "editor/ed_hyper.ml" 46 1819 1833
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 46 1819 1834 "editor/ed_hyper.ml" 46 1819 1835
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 45 1801 1814 "editor/ed_hyper.ml" 45 1801 1815
+)
+"editor/ed_hyper.ml" 46 1819 1835 "editor/ed_hyper.ml" 46 1819 1837
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 46 1819 1837 "editor/ed_hyper.ml" 46 1819 1838
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 45 1801 1814 "editor/ed_hyper.ml" 45 1801 1815
+)
+"editor/ed_hyper.ml" 46 1819 1834 "editor/ed_hyper.ml" 46 1819 1838
+type(
+  float
+)
+"editor/ed_hyper.ml" 46 1819 1825 "editor/ed_hyper.ml" 46 1819 1839
+type(
+  float
+)
+"editor/ed_hyper.ml" 46 1819 1821 "editor/ed_hyper.ml" 46 1819 1839
+type(
+  float
+)
+"editor/ed_hyper.ml" 48 1842 1846 "editor/ed_hyper.ml" 48 1842 1855
+type(
+  float * float -> float * float
+)
+ident(
+  def normalize "editor/ed_hyper.ml" 52 1914 1914 --
+)
+"editor/ed_hyper.ml" 48 1842 1857 "editor/ed_hyper.ml" 48 1842 1858
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 49 1865 1867 "editor/ed_hyper.ml" 50 1897 1911
+)
+"editor/ed_hyper.ml" 48 1842 1860 "editor/ed_hyper.ml" 48 1842 1861
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 49 1865 1867 "editor/ed_hyper.ml" 50 1897 1911
+)
+"editor/ed_hyper.ml" 48 1842 1856 "editor/ed_hyper.ml" 48 1842 1862
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 49 1865 1871 "editor/ed_hyper.ml" 49 1865 1872
+type(
+  float
+)
+"editor/ed_hyper.ml" 49 1865 1875 "editor/ed_hyper.ml" 49 1865 1879
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sqrt
+)
+"editor/ed_hyper.ml" 49 1865 1880 "editor/ed_hyper.ml" 49 1865 1881
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 48 1842 1857 "editor/ed_hyper.ml" 48 1842 1858
+)
+"editor/ed_hyper.ml" 49 1865 1881 "editor/ed_hyper.ml" 49 1865 1883
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 49 1865 1883 "editor/ed_hyper.ml" 49 1865 1884
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 48 1842 1857 "editor/ed_hyper.ml" 48 1842 1858
+)
+"editor/ed_hyper.ml" 49 1865 1880 "editor/ed_hyper.ml" 49 1865 1884
+type(
+  float
+)
+"editor/ed_hyper.ml" 49 1865 1885 "editor/ed_hyper.ml" 49 1865 1887
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 49 1865 1888 "editor/ed_hyper.ml" 49 1865 1889
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 48 1842 1860 "editor/ed_hyper.ml" 48 1842 1861
+)
+"editor/ed_hyper.ml" 49 1865 1889 "editor/ed_hyper.ml" 49 1865 1891
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 49 1865 1891 "editor/ed_hyper.ml" 49 1865 1892
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 48 1842 1860 "editor/ed_hyper.ml" 48 1842 1861
+)
+"editor/ed_hyper.ml" 49 1865 1888 "editor/ed_hyper.ml" 49 1865 1892
+type(
+  float
+)
+"editor/ed_hyper.ml" 49 1865 1879 "editor/ed_hyper.ml" 49 1865 1893
+type(
+  float
+)
+"editor/ed_hyper.ml" 49 1865 1875 "editor/ed_hyper.ml" 49 1865 1893
+type(
+  float
+)
+"editor/ed_hyper.ml" 50 1897 1900 "editor/ed_hyper.ml" 50 1897 1901
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 48 1842 1857 "editor/ed_hyper.ml" 48 1842 1858
+)
+"editor/ed_hyper.ml" 50 1897 1901 "editor/ed_hyper.ml" 50 1897 1903
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 50 1897 1903 "editor/ed_hyper.ml" 50 1897 1904
+type(
+  float
+)
+ident(
+  int_ref n "editor/ed_hyper.ml" 49 1865 1871 "editor/ed_hyper.ml" 49 1865 1872
+)
+"editor/ed_hyper.ml" 50 1897 1900 "editor/ed_hyper.ml" 50 1897 1904
+type(
+  float
+)
+"editor/ed_hyper.ml" 50 1897 1906 "editor/ed_hyper.ml" 50 1897 1907
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 48 1842 1860 "editor/ed_hyper.ml" 48 1842 1861
+)
+"editor/ed_hyper.ml" 50 1897 1907 "editor/ed_hyper.ml" 50 1897 1909
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 50 1897 1909 "editor/ed_hyper.ml" 50 1897 1910
+type(
+  float
+)
+ident(
+  int_ref n "editor/ed_hyper.ml" 49 1865 1871 "editor/ed_hyper.ml" 49 1865 1872
+)
+"editor/ed_hyper.ml" 50 1897 1906 "editor/ed_hyper.ml" 50 1897 1910
+type(
+  float
+)
+"editor/ed_hyper.ml" 50 1897 1899 "editor/ed_hyper.ml" 50 1897 1911
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 49 1865 1867 "editor/ed_hyper.ml" 50 1897 1911
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 52 1914 1918 "editor/ed_hyper.ml" 52 1914 1922
+type(
+  float -> float * float
+)
+ident(
+  def expi "editor/ed_hyper.ml" 57 1977 1977 --
+)
+"editor/ed_hyper.ml" 52 1914 1923 "editor/ed_hyper.ml" 52 1914 1924
+type(
+  float
+)
+ident(
+  def t "editor/ed_hyper.ml" 53 1927 1929 "editor/ed_hyper.ml" 53 1927 1943
+)
+"editor/ed_hyper.ml" 53 1927 1930 "editor/ed_hyper.ml" 53 1927 1933
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.cos
+)
+"editor/ed_hyper.ml" 53 1927 1934 "editor/ed_hyper.ml" 53 1927 1935
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 52 1914 1923 "editor/ed_hyper.ml" 52 1914 1924
+)
+"editor/ed_hyper.ml" 53 1927 1930 "editor/ed_hyper.ml" 53 1927 1935
+type(
+  float
+)
+"editor/ed_hyper.ml" 53 1927 1937 "editor/ed_hyper.ml" 53 1927 1940
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sin
+)
+"editor/ed_hyper.ml" 53 1927 1941 "editor/ed_hyper.ml" 53 1927 1942
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 52 1914 1923 "editor/ed_hyper.ml" 52 1914 1924
+)
+"editor/ed_hyper.ml" 53 1927 1937 "editor/ed_hyper.ml" 53 1927 1942
+type(
+  float
+)
+"editor/ed_hyper.ml" 53 1927 1929 "editor/ed_hyper.ml" 53 1927 1943
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 57 1977 1981 "editor/ed_hyper.ml" 57 1977 1983
+type(
+  float -> float
+)
+ident(
+  def th "editor/ed_hyper.ml" 62 2061 2061 --
+)
+"editor/ed_hyper.ml" 57 1977 1984 "editor/ed_hyper.ml" 57 1977 1985
+type(
+  float
+)
+ident(
+  def t "editor/ed_hyper.ml" 58 1988 1990 "editor/ed_hyper.ml" 60 2031 2059
+)
+"editor/ed_hyper.ml" 58 1988 1994 "editor/ed_hyper.ml" 58 1988 1997
+type(
+  float
+)
+"editor/ed_hyper.ml" 58 1988 2000 "editor/ed_hyper.ml" 58 1988 2003
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.exp
+)
+"editor/ed_hyper.ml" 58 1988 2004 "editor/ed_hyper.ml" 58 1988 2005
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 57 1977 1984 "editor/ed_hyper.ml" 57 1977 1985
+)
+"editor/ed_hyper.ml" 58 1988 2000 "editor/ed_hyper.ml" 58 1988 2005
+type(
+  float
+)
+"editor/ed_hyper.ml" 59 2006 2012 "editor/ed_hyper.ml" 59 2006 2015
+type(
+  float
+)
+"editor/ed_hyper.ml" 59 2006 2018 "editor/ed_hyper.ml" 59 2006 2021
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.exp
+)
+"editor/ed_hyper.ml" 59 2006 2023 "editor/ed_hyper.ml" 59 2006 2025
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 59 2006 2025 "editor/ed_hyper.ml" 59 2006 2026
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 57 1977 1984 "editor/ed_hyper.ml" 57 1977 1985
+)
+"editor/ed_hyper.ml" 59 2006 2022 "editor/ed_hyper.ml" 59 2006 2027
+type(
+  float
+)
+"editor/ed_hyper.ml" 59 2006 2018 "editor/ed_hyper.ml" 59 2006 2027
+type(
+  float
+)
+"editor/ed_hyper.ml" 60 2031 2034 "editor/ed_hyper.ml" 60 2031 2037
+type(
+  float
+)
+ident(
+  int_ref ept "editor/ed_hyper.ml" 58 1988 1994 "editor/ed_hyper.ml" 58 1988 1997
+)
+"editor/ed_hyper.ml" 60 2031 2038 "editor/ed_hyper.ml" 60 2031 2040
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 60 2031 2041 "editor/ed_hyper.ml" 60 2031 2044
+type(
+  float
+)
+ident(
+  int_ref emt "editor/ed_hyper.ml" 59 2006 2012 "editor/ed_hyper.ml" 59 2006 2015
+)
+"editor/ed_hyper.ml" 60 2031 2033 "editor/ed_hyper.ml" 60 2031 2045
+type(
+  float
+)
+"editor/ed_hyper.ml" 60 2031 2045 "editor/ed_hyper.ml" 60 2031 2047
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 60 2031 2048 "editor/ed_hyper.ml" 60 2031 2051
+type(
+  float
+)
+ident(
+  int_ref ept "editor/ed_hyper.ml" 58 1988 1994 "editor/ed_hyper.ml" 58 1988 1997
+)
+"editor/ed_hyper.ml" 60 2031 2052 "editor/ed_hyper.ml" 60 2031 2054
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 60 2031 2055 "editor/ed_hyper.ml" 60 2031 2058
+type(
+  float
+)
+ident(
+  int_ref emt "editor/ed_hyper.ml" 59 2006 2012 "editor/ed_hyper.ml" 59 2006 2015
+)
+"editor/ed_hyper.ml" 60 2031 2047 "editor/ed_hyper.ml" 60 2031 2059
+type(
+  float
+)
+"editor/ed_hyper.ml" 60 2031 2033 "editor/ed_hyper.ml" 60 2031 2059
+type(
+  float
+)
+"editor/ed_hyper.ml" 58 1988 1990 "editor/ed_hyper.ml" 60 2031 2059
+type(
+  float
+)
+"editor/ed_hyper.ml" 62 2061 2065 "editor/ed_hyper.ml" 62 2061 2068
+type(
+  float -> float
+)
+ident(
+  def ath "editor/ed_hyper.ml" 65 2110 2110 --
+)
+"editor/ed_hyper.ml" 62 2061 2069 "editor/ed_hyper.ml" 62 2061 2070
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 63 2073 2075 "editor/ed_hyper.ml" 63 2073 2107
+)
+"editor/ed_hyper.ml" 63 2073 2075 "editor/ed_hyper.ml" 63 2073 2078
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2078 "editor/ed_hyper.ml" 63 2073 2080
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 63 2073 2080 "editor/ed_hyper.ml" 63 2073 2083
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.log
+)
+"editor/ed_hyper.ml" 63 2073 2085 "editor/ed_hyper.ml" 63 2073 2088
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2089 "editor/ed_hyper.ml" 63 2073 2091
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 63 2073 2092 "editor/ed_hyper.ml" 63 2073 2093
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 62 2061 2069 "editor/ed_hyper.ml" 62 2061 2070
+)
+"editor/ed_hyper.ml" 63 2073 2084 "editor/ed_hyper.ml" 63 2073 2094
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2094 "editor/ed_hyper.ml" 63 2073 2096
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 63 2073 2097 "editor/ed_hyper.ml" 63 2073 2100
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2101 "editor/ed_hyper.ml" 63 2073 2103
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 63 2073 2104 "editor/ed_hyper.ml" 63 2073 2105
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 62 2061 2069 "editor/ed_hyper.ml" 62 2061 2070
+)
+"editor/ed_hyper.ml" 63 2073 2096 "editor/ed_hyper.ml" 63 2073 2106
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2083 "editor/ed_hyper.ml" 63 2073 2107
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2080 "editor/ed_hyper.ml" 63 2073 2107
+type(
+  float
+)
+"editor/ed_hyper.ml" 63 2073 2075 "editor/ed_hyper.ml" 63 2073 2107
+type(
+  float
+)
+"editor/ed_hyper.ml" 65 2110 2114 "editor/ed_hyper.ml" 65 2110 2116
+type(
+  float
+)
+ident(
+  def pi "editor/ed_hyper.ml" 66 2143 2143 --
+)
+"editor/ed_hyper.ml" 65 2110 2119 "editor/ed_hyper.ml" 65 2110 2141
+type(
+  float
+)
+"editor/ed_hyper.ml" 66 2143 2147 "editor/ed_hyper.ml" 66 2143 2156
+type(
+  float
+)
+ident(
+  def pi_over_2 "editor/ed_hyper.ml" 67 2168 2168 --
+)
+"editor/ed_hyper.ml" 66 2143 2159 "editor/ed_hyper.ml" 66 2143 2161
+type(
+  float
+)
+ident(
+  int_ref pi "editor/ed_hyper.ml" 65 2110 2114 "editor/ed_hyper.ml" 65 2110 2116
+)
+"editor/ed_hyper.ml" 66 2143 2161 "editor/ed_hyper.ml" 66 2143 2163
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 66 2143 2163 "editor/ed_hyper.ml" 66 2143 2166
+type(
+  float
+)
+"editor/ed_hyper.ml" 66 2143 2159 "editor/ed_hyper.ml" 66 2143 2166
+type(
+  float
+)
+"editor/ed_hyper.ml" 67 2168 2172 "editor/ed_hyper.ml" 67 2168 2181
+type(
+  float
+)
+ident(
+  def pi_over_4 "editor/ed_hyper.ml" 69 2194 2194 --
+)
+"editor/ed_hyper.ml" 67 2168 2184 "editor/ed_hyper.ml" 67 2168 2186
+type(
+  float
+)
+ident(
+  int_ref pi "editor/ed_hyper.ml" 65 2110 2114 "editor/ed_hyper.ml" 65 2110 2116
+)
+"editor/ed_hyper.ml" 67 2168 2186 "editor/ed_hyper.ml" 67 2168 2188
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 67 2168 2188 "editor/ed_hyper.ml" 67 2168 2191
+type(
+  float
+)
+"editor/ed_hyper.ml" 67 2168 2184 "editor/ed_hyper.ml" 67 2168 2191
+type(
+  float
+)
+"editor/ed_hyper.ml" 69 2194 2198 "editor/ed_hyper.ml" 69 2194 2201
+type(
+  float * float
+)
+ident(
+  def one "editor/ed_hyper.ml" 71 2217 2217 --
+)
+"editor/ed_hyper.ml" 69 2194 2205 "editor/ed_hyper.ml" 69 2194 2208
+type(
+  float
+)
+"editor/ed_hyper.ml" 69 2194 2210 "editor/ed_hyper.ml" 69 2194 2213
+type(
+  float
+)
+"editor/ed_hyper.ml" 69 2194 2204 "editor/ed_hyper.ml" 69 2194 2214
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 71 2217 2221 "editor/ed_hyper.ml" 71 2217 2230
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  def translate "editor/ed_hyper.ml" 74 2271 2271 --
+)
+"editor/ed_hyper.ml" 71 2217 2231 "editor/ed_hyper.ml" 71 2217 2232
+type(
+  float * float
+)
+ident(
+  def a "editor/ed_hyper.ml" 71 2217 2233 "editor/ed_hyper.ml" 72 2237 2268
+)
+"editor/ed_hyper.ml" 71 2217 2233 "editor/ed_hyper.ml" 71 2217 2234
+type(
+  float * float
+)
+ident(
+  def z "editor/ed_hyper.ml" 72 2237 2239 "editor/ed_hyper.ml" 72 2237 2268
+)
+"editor/ed_hyper.ml" 72 2237 2240 "editor/ed_hyper.ml" 72 2237 2241
+type(
+  float * float
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 71 2217 2231 "editor/ed_hyper.ml" 71 2217 2232
+)
+"editor/ed_hyper.ml" 72 2237 2242 "editor/ed_hyper.ml" 72 2237 2244
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref +& "editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+)
+"editor/ed_hyper.ml" 72 2237 2245 "editor/ed_hyper.ml" 72 2237 2246
+type(
+  float * float
+)
+ident(
+  int_ref z "editor/ed_hyper.ml" 71 2217 2233 "editor/ed_hyper.ml" 71 2217 2234
+)
+"editor/ed_hyper.ml" 72 2237 2239 "editor/ed_hyper.ml" 72 2237 2247
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 72 2237 2247 "editor/ed_hyper.ml" 72 2237 2249
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref /& "editor/ed_hyper.ml" 35 1605 1609 "editor/ed_hyper.ml" 35 1605 1615
+)
+"editor/ed_hyper.ml" 72 2237 2250 "editor/ed_hyper.ml" 72 2237 2253
+type(
+  float * float
+)
+ident(
+  int_ref one "editor/ed_hyper.ml" 69 2194 2198 "editor/ed_hyper.ml" 69 2194 2201
+)
+"editor/ed_hyper.ml" 72 2237 2254 "editor/ed_hyper.ml" 72 2237 2256
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref +& "editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+)
+"editor/ed_hyper.ml" 72 2237 2258 "editor/ed_hyper.ml" 72 2237 2260
+type(
+  float * float -> float * float
+)
+ident(
+  int_ref ~& "editor/ed_hyper.ml" 24 1390 1394 "editor/ed_hyper.ml" 24 1390 1400
+)
+"editor/ed_hyper.ml" 72 2237 2260 "editor/ed_hyper.ml" 72 2237 2261
+type(
+  float * float
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 71 2217 2231 "editor/ed_hyper.ml" 71 2217 2232
+)
+"editor/ed_hyper.ml" 72 2237 2257 "editor/ed_hyper.ml" 72 2237 2262
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 72 2237 2263 "editor/ed_hyper.ml" 72 2237 2265
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref *& "editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+)
+"editor/ed_hyper.ml" 72 2237 2266 "editor/ed_hyper.ml" 72 2237 2267
+type(
+  float * float
+)
+ident(
+  int_ref z "editor/ed_hyper.ml" 71 2217 2233 "editor/ed_hyper.ml" 71 2217 2234
+)
+"editor/ed_hyper.ml" 72 2237 2257 "editor/ed_hyper.ml" 72 2237 2267
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 72 2237 2249 "editor/ed_hyper.ml" 72 2237 2268
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 72 2237 2239 "editor/ed_hyper.ml" 72 2237 2268
+call(
+  tail
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 74 2271 2275 "editor/ed_hyper.ml" 74 2271 2280
+type(
+  float * float -> float * float -> float -> float * float
+)
+ident(
+  def gamma "editor/ed_hyper.ml" 78 2358 2358 --
+)
+"editor/ed_hyper.ml" 74 2271 2281 "editor/ed_hyper.ml" 74 2271 2282
+type(
+  float * float
+)
+ident(
+  def a "editor/ed_hyper.ml" 74 2271 2283 "editor/ed_hyper.ml" 76 2316 2355
+)
+"editor/ed_hyper.ml" 74 2271 2283 "editor/ed_hyper.ml" 74 2271 2284
+type(
+  float * float
+)
+ident(
+  def u "editor/ed_hyper.ml" 74 2271 2285 "editor/ed_hyper.ml" 76 2316 2355
+)
+"editor/ed_hyper.ml" 74 2271 2285 "editor/ed_hyper.ml" 74 2271 2286
+type(
+  float
+)
+ident(
+  def t "editor/ed_hyper.ml" 75 2289 2291 "editor/ed_hyper.ml" 76 2316 2355
+)
+"editor/ed_hyper.ml" 75 2289 2295 "editor/ed_hyper.ml" 75 2289 2299
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 75 2289 2302 "editor/ed_hyper.ml" 75 2289 2304
+type(
+  float -> float
+)
+ident(
+  int_ref th "editor/ed_hyper.ml" 57 1977 1981 "editor/ed_hyper.ml" 57 1977 1983
+)
+"editor/ed_hyper.ml" 75 2289 2305 "editor/ed_hyper.ml" 75 2289 2306
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 74 2271 2285 "editor/ed_hyper.ml" 74 2271 2286
+)
+"editor/ed_hyper.ml" 75 2289 2302 "editor/ed_hyper.ml" 75 2289 2306
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 75 2289 2307 "editor/ed_hyper.ml" 75 2289 2310
+type(
+  float -> float * float -> float * float
+)
+ident(
+  int_ref *.& "editor/ed_hyper.ml" 39 1722 1726 "editor/ed_hyper.ml" 39 1722 1733
+)
+"editor/ed_hyper.ml" 75 2289 2311 "editor/ed_hyper.ml" 75 2289 2312
+type(
+  float * float
+)
+ident(
+  int_ref u "editor/ed_hyper.ml" 74 2271 2283 "editor/ed_hyper.ml" 74 2271 2284
+)
+"editor/ed_hyper.ml" 75 2289 2302 "editor/ed_hyper.ml" 75 2289 2312
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 76 2316 2319 "editor/ed_hyper.ml" 76 2316 2320
+type(
+  float * float
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 74 2271 2281 "editor/ed_hyper.ml" 74 2271 2282
+)
+"editor/ed_hyper.ml" 76 2316 2321 "editor/ed_hyper.ml" 76 2316 2323
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref +& "editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+)
+"editor/ed_hyper.ml" 76 2316 2324 "editor/ed_hyper.ml" 76 2316 2328
+type(
+  float * float
+)
+ident(
+  int_ref utht "editor/ed_hyper.ml" 75 2289 2295 "editor/ed_hyper.ml" 75 2289 2299
+)
+"editor/ed_hyper.ml" 76 2316 2318 "editor/ed_hyper.ml" 76 2316 2329
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 76 2316 2330 "editor/ed_hyper.ml" 76 2316 2332
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref /& "editor/ed_hyper.ml" 35 1605 1609 "editor/ed_hyper.ml" 35 1605 1615
+)
+"editor/ed_hyper.ml" 76 2316 2334 "editor/ed_hyper.ml" 76 2316 2337
+type(
+  float * float
+)
+ident(
+  int_ref one "editor/ed_hyper.ml" 69 2194 2198 "editor/ed_hyper.ml" 69 2194 2201
+)
+"editor/ed_hyper.ml" 76 2316 2338 "editor/ed_hyper.ml" 76 2316 2340
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref +& "editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+)
+"editor/ed_hyper.ml" 76 2316 2342 "editor/ed_hyper.ml" 76 2316 2344
+type(
+  float * float -> float * float
+)
+ident(
+  int_ref ~& "editor/ed_hyper.ml" 24 1390 1394 "editor/ed_hyper.ml" 24 1390 1400
+)
+"editor/ed_hyper.ml" 76 2316 2344 "editor/ed_hyper.ml" 76 2316 2345
+type(
+  float * float
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 74 2271 2281 "editor/ed_hyper.ml" 74 2271 2282
+)
+"editor/ed_hyper.ml" 76 2316 2341 "editor/ed_hyper.ml" 76 2316 2346
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 76 2316 2347 "editor/ed_hyper.ml" 76 2316 2349
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref *& "editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+)
+"editor/ed_hyper.ml" 76 2316 2350 "editor/ed_hyper.ml" 76 2316 2354
+type(
+  float * float
+)
+ident(
+  int_ref utht "editor/ed_hyper.ml" 75 2289 2295 "editor/ed_hyper.ml" 75 2289 2299
+)
+"editor/ed_hyper.ml" 76 2316 2341 "editor/ed_hyper.ml" 76 2316 2354
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 76 2316 2333 "editor/ed_hyper.ml" 76 2316 2355
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 76 2316 2318 "editor/ed_hyper.ml" 76 2316 2355
+call(
+  tail
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 75 2289 2291 "editor/ed_hyper.ml" 76 2316 2355
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 78 2358 2362 "editor/ed_hyper.ml" 78 2358 2367
+type(
+  float * float -> float * float -> float -> float * float
+)
+ident(
+  def delta "editor/ed_hyper.ml" 84 2498 2498 --
+)
+"editor/ed_hyper.ml" 78 2358 2368 "editor/ed_hyper.ml" 78 2358 2369
+type(
+  float * float
+)
+ident(
+  def a "editor/ed_hyper.ml" 78 2358 2370 "editor/ed_hyper.ml" 81 2427 2466
+)
+"editor/ed_hyper.ml" 78 2358 2370 "editor/ed_hyper.ml" 78 2358 2371
+type(
+  float * float
+)
+ident(
+  def u "editor/ed_hyper.ml" 78 2358 2372 "editor/ed_hyper.ml" 81 2427 2466
+)
+"editor/ed_hyper.ml" 78 2358 2372 "editor/ed_hyper.ml" 78 2358 2373
+type(
+  float
+)
+ident(
+  def t "editor/ed_hyper.ml" 79 2376 2378 "editor/ed_hyper.ml" 81 2427 2466
+)
+"editor/ed_hyper.ml" 79 2376 2382 "editor/ed_hyper.ml" 79 2376 2386
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 79 2376 2389 "editor/ed_hyper.ml" 79 2376 2391
+type(
+  float -> float
+)
+ident(
+  int_ref th "editor/ed_hyper.ml" 57 1977 1981 "editor/ed_hyper.ml" 57 1977 1983
+)
+"editor/ed_hyper.ml" 79 2376 2392 "editor/ed_hyper.ml" 79 2376 2393
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 78 2358 2372 "editor/ed_hyper.ml" 78 2358 2373
+)
+"editor/ed_hyper.ml" 79 2376 2389 "editor/ed_hyper.ml" 79 2376 2393
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 79 2376 2394 "editor/ed_hyper.ml" 79 2376 2397
+type(
+  float -> float * float -> float * float
+)
+ident(
+  int_ref *.& "editor/ed_hyper.ml" 39 1722 1726 "editor/ed_hyper.ml" 39 1722 1733
+)
+"editor/ed_hyper.ml" 79 2376 2398 "editor/ed_hyper.ml" 79 2376 2399
+type(
+  float * float
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 78 2358 2368 "editor/ed_hyper.ml" 78 2358 2369
+)
+"editor/ed_hyper.ml" 79 2376 2389 "editor/ed_hyper.ml" 79 2376 2399
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 80 2400 2406 "editor/ed_hyper.ml" 80 2400 2410
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 80 2400 2413 "editor/ed_hyper.ml" 80 2400 2415
+type(
+  float -> float
+)
+ident(
+  int_ref th "editor/ed_hyper.ml" 57 1977 1981 "editor/ed_hyper.ml" 57 1977 1983
+)
+"editor/ed_hyper.ml" 80 2400 2416 "editor/ed_hyper.ml" 80 2400 2417
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 78 2358 2372 "editor/ed_hyper.ml" 78 2358 2373
+)
+"editor/ed_hyper.ml" 80 2400 2413 "editor/ed_hyper.ml" 80 2400 2417
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 80 2400 2418 "editor/ed_hyper.ml" 80 2400 2421
+type(
+  float -> float * float -> float * float
+)
+ident(
+  int_ref *.& "editor/ed_hyper.ml" 39 1722 1726 "editor/ed_hyper.ml" 39 1722 1733
+)
+"editor/ed_hyper.ml" 80 2400 2422 "editor/ed_hyper.ml" 80 2400 2423
+type(
+  float * float
+)
+ident(
+  int_ref u "editor/ed_hyper.ml" 78 2358 2370 "editor/ed_hyper.ml" 78 2358 2371
+)
+"editor/ed_hyper.ml" 80 2400 2413 "editor/ed_hyper.ml" 80 2400 2423
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 81 2427 2430 "editor/ed_hyper.ml" 81 2427 2431
+type(
+  float * float
+)
+ident(
+  int_ref u "editor/ed_hyper.ml" 78 2358 2370 "editor/ed_hyper.ml" 78 2358 2371
+)
+"editor/ed_hyper.ml" 81 2427 2432 "editor/ed_hyper.ml" 81 2427 2434
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref +& "editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+)
+"editor/ed_hyper.ml" 81 2427 2435 "editor/ed_hyper.ml" 81 2427 2439
+type(
+  float * float
+)
+ident(
+  int_ref atht "editor/ed_hyper.ml" 79 2376 2382 "editor/ed_hyper.ml" 79 2376 2386
+)
+"editor/ed_hyper.ml" 81 2427 2429 "editor/ed_hyper.ml" 81 2427 2440
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 81 2427 2441 "editor/ed_hyper.ml" 81 2427 2443
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref /& "editor/ed_hyper.ml" 35 1605 1609 "editor/ed_hyper.ml" 35 1605 1615
+)
+"editor/ed_hyper.ml" 81 2427 2445 "editor/ed_hyper.ml" 81 2427 2448
+type(
+  float * float
+)
+ident(
+  int_ref one "editor/ed_hyper.ml" 69 2194 2198 "editor/ed_hyper.ml" 69 2194 2201
+)
+"editor/ed_hyper.ml" 81 2427 2449 "editor/ed_hyper.ml" 81 2427 2451
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref +& "editor/ed_hyper.ml" 26 1421 1425 "editor/ed_hyper.ml" 26 1421 1431
+)
+"editor/ed_hyper.ml" 81 2427 2453 "editor/ed_hyper.ml" 81 2427 2455
+type(
+  float * float -> float * float
+)
+ident(
+  int_ref ~& "editor/ed_hyper.ml" 24 1390 1394 "editor/ed_hyper.ml" 24 1390 1400
+)
+"editor/ed_hyper.ml" 81 2427 2455 "editor/ed_hyper.ml" 81 2427 2456
+type(
+  float * float
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 78 2358 2368 "editor/ed_hyper.ml" 78 2358 2369
+)
+"editor/ed_hyper.ml" 81 2427 2452 "editor/ed_hyper.ml" 81 2427 2457
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 81 2427 2458 "editor/ed_hyper.ml" 81 2427 2460
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref *& "editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+)
+"editor/ed_hyper.ml" 81 2427 2461 "editor/ed_hyper.ml" 81 2427 2465
+type(
+  float * float
+)
+ident(
+  int_ref utht "editor/ed_hyper.ml" 80 2400 2406 "editor/ed_hyper.ml" 80 2400 2410
+)
+"editor/ed_hyper.ml" 81 2427 2452 "editor/ed_hyper.ml" 81 2427 2465
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 81 2427 2444 "editor/ed_hyper.ml" 81 2427 2466
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 81 2427 2429 "editor/ed_hyper.ml" 81 2427 2466
+call(
+  tail
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 79 2376 2378 "editor/ed_hyper.ml" 81 2427 2466
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 84 2498 2502 "editor/ed_hyper.ml" 84 2498 2508
+type(
+  float -> float -> float -> float -> float -> float -> float * float
+)
+ident(
+  def cramer "editor/ed_hyper.ml" 90 2653 2653 --
+)
+"editor/ed_hyper.ml" 84 2498 2509 "editor/ed_hyper.ml" 84 2498 2511
+type(
+  float
+)
+ident(
+  def a1 "editor/ed_hyper.ml" 84 2498 2512 "editor/ed_hyper.ml" 88 2622 2648
+)
+"editor/ed_hyper.ml" 84 2498 2512 "editor/ed_hyper.ml" 84 2498 2514
+type(
+  float
+)
+ident(
+  def a2 "editor/ed_hyper.ml" 84 2498 2515 "editor/ed_hyper.ml" 88 2622 2648
+)
+"editor/ed_hyper.ml" 84 2498 2515 "editor/ed_hyper.ml" 84 2498 2517
+type(
+  float
+)
+ident(
+  def b1 "editor/ed_hyper.ml" 84 2498 2518 "editor/ed_hyper.ml" 88 2622 2648
+)
+"editor/ed_hyper.ml" 84 2498 2518 "editor/ed_hyper.ml" 84 2498 2520
+type(
+  float
+)
+ident(
+  def b2 "editor/ed_hyper.ml" 84 2498 2521 "editor/ed_hyper.ml" 88 2622 2648
+)
+"editor/ed_hyper.ml" 84 2498 2521 "editor/ed_hyper.ml" 84 2498 2523
+type(
+  float
+)
+ident(
+  def c1 "editor/ed_hyper.ml" 84 2498 2524 "editor/ed_hyper.ml" 88 2622 2648
+)
+"editor/ed_hyper.ml" 84 2498 2524 "editor/ed_hyper.ml" 84 2498 2526
+type(
+  float
+)
+ident(
+  def c2 "editor/ed_hyper.ml" 85 2529 2531 "editor/ed_hyper.ml" 88 2622 2648
+)
+"editor/ed_hyper.ml" 85 2529 2535 "editor/ed_hyper.ml" 85 2529 2539
+type(
+  float
+)
+"editor/ed_hyper.ml" 85 2529 2542 "editor/ed_hyper.ml" 85 2529 2544
+type(
+  float
+)
+ident(
+  int_ref a1 "editor/ed_hyper.ml" 84 2498 2509 "editor/ed_hyper.ml" 84 2498 2511
+)
+"editor/ed_hyper.ml" 85 2529 2544 "editor/ed_hyper.ml" 85 2529 2546
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 85 2529 2546 "editor/ed_hyper.ml" 85 2529 2548
+type(
+  float
+)
+ident(
+  int_ref b2 "editor/ed_hyper.ml" 84 2498 2518 "editor/ed_hyper.ml" 84 2498 2520
+)
+"editor/ed_hyper.ml" 85 2529 2542 "editor/ed_hyper.ml" 85 2529 2548
+type(
+  float
+)
+"editor/ed_hyper.ml" 85 2529 2549 "editor/ed_hyper.ml" 85 2529 2551
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 85 2529 2552 "editor/ed_hyper.ml" 85 2529 2554
+type(
+  float
+)
+ident(
+  int_ref a2 "editor/ed_hyper.ml" 84 2498 2512 "editor/ed_hyper.ml" 84 2498 2514
+)
+"editor/ed_hyper.ml" 85 2529 2554 "editor/ed_hyper.ml" 85 2529 2556
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 85 2529 2556 "editor/ed_hyper.ml" 85 2529 2558
+type(
+  float
+)
+ident(
+  int_ref b1 "editor/ed_hyper.ml" 84 2498 2515 "editor/ed_hyper.ml" 84 2498 2517
+)
+"editor/ed_hyper.ml" 85 2529 2552 "editor/ed_hyper.ml" 85 2529 2558
+type(
+  float
+)
+"editor/ed_hyper.ml" 85 2529 2542 "editor/ed_hyper.ml" 85 2529 2558
+type(
+  float
+)
+"editor/ed_hyper.ml" 86 2559 2565 "editor/ed_hyper.ml" 86 2559 2569
+type(
+  float
+)
+"editor/ed_hyper.ml" 86 2559 2572 "editor/ed_hyper.ml" 86 2559 2574
+type(
+  float
+)
+ident(
+  int_ref c1 "editor/ed_hyper.ml" 84 2498 2521 "editor/ed_hyper.ml" 84 2498 2523
+)
+"editor/ed_hyper.ml" 86 2559 2574 "editor/ed_hyper.ml" 86 2559 2576
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 86 2559 2576 "editor/ed_hyper.ml" 86 2559 2578
+type(
+  float
+)
+ident(
+  int_ref b2 "editor/ed_hyper.ml" 84 2498 2518 "editor/ed_hyper.ml" 84 2498 2520
+)
+"editor/ed_hyper.ml" 86 2559 2572 "editor/ed_hyper.ml" 86 2559 2578
+type(
+  float
+)
+"editor/ed_hyper.ml" 86 2559 2579 "editor/ed_hyper.ml" 86 2559 2581
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 86 2559 2582 "editor/ed_hyper.ml" 86 2559 2584
+type(
+  float
+)
+ident(
+  int_ref c2 "editor/ed_hyper.ml" 84 2498 2524 "editor/ed_hyper.ml" 84 2498 2526
+)
+"editor/ed_hyper.ml" 86 2559 2584 "editor/ed_hyper.ml" 86 2559 2586
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 86 2559 2586 "editor/ed_hyper.ml" 86 2559 2588
+type(
+  float
+)
+ident(
+  int_ref b1 "editor/ed_hyper.ml" 84 2498 2515 "editor/ed_hyper.ml" 84 2498 2517
+)
+"editor/ed_hyper.ml" 86 2559 2582 "editor/ed_hyper.ml" 86 2559 2588
+type(
+  float
+)
+"editor/ed_hyper.ml" 86 2559 2572 "editor/ed_hyper.ml" 86 2559 2588
+type(
+  float
+)
+"editor/ed_hyper.ml" 87 2589 2595 "editor/ed_hyper.ml" 87 2589 2599
+type(
+  float
+)
+"editor/ed_hyper.ml" 87 2589 2602 "editor/ed_hyper.ml" 87 2589 2604
+type(
+  float
+)
+ident(
+  int_ref a1 "editor/ed_hyper.ml" 84 2498 2509 "editor/ed_hyper.ml" 84 2498 2511
+)
+"editor/ed_hyper.ml" 87 2589 2604 "editor/ed_hyper.ml" 87 2589 2606
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 87 2589 2606 "editor/ed_hyper.ml" 87 2589 2608
+type(
+  float
+)
+ident(
+  int_ref c2 "editor/ed_hyper.ml" 84 2498 2524 "editor/ed_hyper.ml" 84 2498 2526
+)
+"editor/ed_hyper.ml" 87 2589 2602 "editor/ed_hyper.ml" 87 2589 2608
+type(
+  float
+)
+"editor/ed_hyper.ml" 87 2589 2609 "editor/ed_hyper.ml" 87 2589 2611
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 87 2589 2612 "editor/ed_hyper.ml" 87 2589 2614
+type(
+  float
+)
+ident(
+  int_ref a2 "editor/ed_hyper.ml" 84 2498 2512 "editor/ed_hyper.ml" 84 2498 2514
+)
+"editor/ed_hyper.ml" 87 2589 2614 "editor/ed_hyper.ml" 87 2589 2616
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 87 2589 2616 "editor/ed_hyper.ml" 87 2589 2618
+type(
+  float
+)
+ident(
+  int_ref c1 "editor/ed_hyper.ml" 84 2498 2521 "editor/ed_hyper.ml" 84 2498 2523
+)
+"editor/ed_hyper.ml" 87 2589 2612 "editor/ed_hyper.ml" 87 2589 2618
+type(
+  float
+)
+"editor/ed_hyper.ml" 87 2589 2602 "editor/ed_hyper.ml" 87 2589 2618
+type(
+  float
+)
+"editor/ed_hyper.ml" 88 2622 2625 "editor/ed_hyper.ml" 88 2622 2629
+type(
+  float
+)
+ident(
+  int_ref xdet "editor/ed_hyper.ml" 86 2559 2565 "editor/ed_hyper.ml" 86 2559 2569
+)
+"editor/ed_hyper.ml" 88 2622 2629 "editor/ed_hyper.ml" 88 2622 2631
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 88 2622 2631 "editor/ed_hyper.ml" 88 2622 2635
+type(
+  float
+)
+ident(
+  int_ref cdet "editor/ed_hyper.ml" 85 2529 2535 "editor/ed_hyper.ml" 85 2529 2539
+)
+"editor/ed_hyper.ml" 88 2622 2625 "editor/ed_hyper.ml" 88 2622 2635
+type(
+  float
+)
+"editor/ed_hyper.ml" 88 2622 2637 "editor/ed_hyper.ml" 88 2622 2641
+type(
+  float
+)
+ident(
+  int_ref ydet "editor/ed_hyper.ml" 87 2589 2595 "editor/ed_hyper.ml" 87 2589 2599
+)
+"editor/ed_hyper.ml" 88 2622 2641 "editor/ed_hyper.ml" 88 2622 2643
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 88 2622 2643 "editor/ed_hyper.ml" 88 2622 2647
+type(
+  float
+)
+ident(
+  int_ref cdet "editor/ed_hyper.ml" 85 2529 2535 "editor/ed_hyper.ml" 85 2529 2539
+)
+"editor/ed_hyper.ml" 88 2622 2637 "editor/ed_hyper.ml" 88 2622 2647
+type(
+  float
+)
+"editor/ed_hyper.ml" 88 2622 2624 "editor/ed_hyper.ml" 88 2622 2648
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 85 2529 2531 "editor/ed_hyper.ml" 88 2622 2648
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 90 2653 2657 "editor/ed_hyper.ml" 90 2653 2668
+type(
+  float * float -> float * float -> float * float -> float * float
+)
+ident(
+  def drag_origin "editor/ed_hyper.ml" 96 2882 2882 --
+)
+"editor/ed_hyper.ml" 90 2653 2670 "editor/ed_hyper.ml" 90 2653 2672
+type(
+  float
+)
+ident(
+  def x0 "editor/ed_hyper.ml" 90 2653 2678 "editor/ed_hyper.ml" 94 2812 2880
+)
+"editor/ed_hyper.ml" 90 2653 2674 "editor/ed_hyper.ml" 90 2653 2676
+type(
+  float
+)
+ident(
+  def y0 "editor/ed_hyper.ml" 90 2653 2678 "editor/ed_hyper.ml" 94 2812 2880
+)
+"editor/ed_hyper.ml" 90 2653 2669 "editor/ed_hyper.ml" 90 2653 2677
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 90 2653 2679 "editor/ed_hyper.ml" 90 2653 2681
+type(
+  float
+)
+ident(
+  def x1 "editor/ed_hyper.ml" 90 2653 2687 "editor/ed_hyper.ml" 94 2812 2880
+)
+"editor/ed_hyper.ml" 90 2653 2683 "editor/ed_hyper.ml" 90 2653 2685
+type(
+  float
+)
+ident(
+  def y1 "editor/ed_hyper.ml" 90 2653 2687 "editor/ed_hyper.ml" 94 2812 2880
+)
+"editor/ed_hyper.ml" 90 2653 2678 "editor/ed_hyper.ml" 90 2653 2686
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 90 2653 2688 "editor/ed_hyper.ml" 90 2653 2690
+type(
+  float
+)
+ident(
+  def x2 "editor/ed_hyper.ml" 91 2698 2700 "editor/ed_hyper.ml" 94 2812 2880
+)
+"editor/ed_hyper.ml" 90 2653 2692 "editor/ed_hyper.ml" 90 2653 2694
+type(
+  float
+)
+ident(
+  def y2 "editor/ed_hyper.ml" 91 2698 2700 "editor/ed_hyper.ml" 94 2812 2880
+)
+"editor/ed_hyper.ml" 90 2653 2687 "editor/ed_hyper.ml" 90 2653 2695
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 91 2698 2705 "editor/ed_hyper.ml" 91 2698 2707
+type(
+  float
+)
+"editor/ed_hyper.ml" 91 2698 2709 "editor/ed_hyper.ml" 91 2698 2711
+type(
+  float
+)
+"editor/ed_hyper.ml" 91 2698 2704 "editor/ed_hyper.ml" 91 2698 2712
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 91 2698 2715 "editor/ed_hyper.ml" 91 2698 2724
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref translate "editor/ed_hyper.ml" 71 2217 2221 "editor/ed_hyper.ml" 71 2217 2230
+)
+"editor/ed_hyper.ml" 91 2698 2726 "editor/ed_hyper.ml" 91 2698 2728
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 91 2698 2728 "editor/ed_hyper.ml" 91 2698 2730
+type(
+  float
+)
+ident(
+  int_ref x0 "editor/ed_hyper.ml" 90 2653 2670 "editor/ed_hyper.ml" 90 2653 2672
+)
+"editor/ed_hyper.ml" 91 2698 2726 "editor/ed_hyper.ml" 91 2698 2730
+type(
+  float
+)
+"editor/ed_hyper.ml" 91 2698 2732 "editor/ed_hyper.ml" 91 2698 2734
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 91 2698 2734 "editor/ed_hyper.ml" 91 2698 2736
+type(
+  float
+)
+ident(
+  int_ref y0 "editor/ed_hyper.ml" 90 2653 2674 "editor/ed_hyper.ml" 90 2653 2676
+)
+"editor/ed_hyper.ml" 91 2698 2732 "editor/ed_hyper.ml" 91 2698 2736
+type(
+  float
+)
+"editor/ed_hyper.ml" 91 2698 2725 "editor/ed_hyper.ml" 91 2698 2737
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 91 2698 2739 "editor/ed_hyper.ml" 91 2698 2741
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 90 2653 2679 "editor/ed_hyper.ml" 90 2653 2681
+)
+"editor/ed_hyper.ml" 91 2698 2743 "editor/ed_hyper.ml" 91 2698 2745
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 90 2653 2683 "editor/ed_hyper.ml" 90 2653 2685
+)
+"editor/ed_hyper.ml" 91 2698 2738 "editor/ed_hyper.ml" 91 2698 2746
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 91 2698 2715 "editor/ed_hyper.ml" 91 2698 2746
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 92 2750 2756 "editor/ed_hyper.ml" 92 2750 2758
+type(
+  float
+)
+"editor/ed_hyper.ml" 92 2750 2761 "editor/ed_hyper.ml" 92 2750 2763
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 91 2698 2705 "editor/ed_hyper.ml" 91 2698 2707
+)
+"editor/ed_hyper.ml" 92 2750 2763 "editor/ed_hyper.ml" 92 2750 2765
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 92 2750 2765 "editor/ed_hyper.ml" 92 2750 2767
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 90 2653 2688 "editor/ed_hyper.ml" 90 2653 2690
+)
+"editor/ed_hyper.ml" 92 2750 2761 "editor/ed_hyper.ml" 92 2750 2767
+type(
+  float
+)
+"editor/ed_hyper.ml" 92 2750 2768 "editor/ed_hyper.ml" 92 2750 2770
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 92 2750 2771 "editor/ed_hyper.ml" 92 2750 2773
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 91 2698 2709 "editor/ed_hyper.ml" 91 2698 2711
+)
+"editor/ed_hyper.ml" 92 2750 2773 "editor/ed_hyper.ml" 92 2750 2775
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 92 2750 2775 "editor/ed_hyper.ml" 92 2750 2777
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 90 2653 2692 "editor/ed_hyper.ml" 90 2653 2694
+)
+"editor/ed_hyper.ml" 92 2750 2771 "editor/ed_hyper.ml" 92 2750 2777
+type(
+  float
+)
+"editor/ed_hyper.ml" 92 2750 2761 "editor/ed_hyper.ml" 92 2750 2777
+type(
+  float
+)
+"editor/ed_hyper.ml" 93 2781 2787 "editor/ed_hyper.ml" 93 2781 2789
+type(
+  float
+)
+"editor/ed_hyper.ml" 93 2781 2792 "editor/ed_hyper.ml" 93 2781 2794
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 91 2698 2705 "editor/ed_hyper.ml" 91 2698 2707
+)
+"editor/ed_hyper.ml" 93 2781 2794 "editor/ed_hyper.ml" 93 2781 2796
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 93 2781 2796 "editor/ed_hyper.ml" 93 2781 2798
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 90 2653 2692 "editor/ed_hyper.ml" 90 2653 2694
+)
+"editor/ed_hyper.ml" 93 2781 2792 "editor/ed_hyper.ml" 93 2781 2798
+type(
+  float
+)
+"editor/ed_hyper.ml" 93 2781 2799 "editor/ed_hyper.ml" 93 2781 2801
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 93 2781 2802 "editor/ed_hyper.ml" 93 2781 2804
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 91 2698 2709 "editor/ed_hyper.ml" 91 2698 2711
+)
+"editor/ed_hyper.ml" 93 2781 2804 "editor/ed_hyper.ml" 93 2781 2806
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 93 2781 2806 "editor/ed_hyper.ml" 93 2781 2808
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 90 2653 2688 "editor/ed_hyper.ml" 90 2653 2690
+)
+"editor/ed_hyper.ml" 93 2781 2802 "editor/ed_hyper.ml" 93 2781 2808
+type(
+  float
+)
+"editor/ed_hyper.ml" 93 2781 2792 "editor/ed_hyper.ml" 93 2781 2808
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2814 "editor/ed_hyper.ml" 94 2812 2820
+type(
+  float -> float -> float -> float -> float -> float -> float * float
+)
+ident(
+  int_ref cramer "editor/ed_hyper.ml" 84 2498 2502 "editor/ed_hyper.ml" 84 2498 2508
+)
+"editor/ed_hyper.ml" 94 2812 2822 "editor/ed_hyper.ml" 94 2812 2825
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2826 "editor/ed_hyper.ml" 94 2812 2828
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 94 2812 2829 "editor/ed_hyper.ml" 94 2812 2831
+type(
+  float
+)
+ident(
+  int_ref x3 "editor/ed_hyper.ml" 92 2750 2756 "editor/ed_hyper.ml" 92 2750 2758
+)
+"editor/ed_hyper.ml" 94 2812 2821 "editor/ed_hyper.ml" 94 2812 2832
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2834 "editor/ed_hyper.ml" 94 2812 2836
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 94 2812 2836 "editor/ed_hyper.ml" 94 2812 2838
+type(
+  float
+)
+ident(
+  int_ref y3 "editor/ed_hyper.ml" 93 2781 2787 "editor/ed_hyper.ml" 93 2781 2789
+)
+"editor/ed_hyper.ml" 94 2812 2833 "editor/ed_hyper.ml" 94 2812 2839
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2841 "editor/ed_hyper.ml" 94 2812 2843
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 94 2812 2843 "editor/ed_hyper.ml" 94 2812 2845
+type(
+  float
+)
+ident(
+  int_ref y3 "editor/ed_hyper.ml" 93 2781 2787 "editor/ed_hyper.ml" 93 2781 2789
+)
+"editor/ed_hyper.ml" 94 2812 2840 "editor/ed_hyper.ml" 94 2812 2846
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2848 "editor/ed_hyper.ml" 94 2812 2851
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2852 "editor/ed_hyper.ml" 94 2812 2854
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 94 2812 2855 "editor/ed_hyper.ml" 94 2812 2857
+type(
+  float
+)
+ident(
+  int_ref x3 "editor/ed_hyper.ml" 92 2750 2756 "editor/ed_hyper.ml" 92 2750 2758
+)
+"editor/ed_hyper.ml" 94 2812 2847 "editor/ed_hyper.ml" 94 2812 2858
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2860 "editor/ed_hyper.ml" 94 2812 2862
+type(
+  float
+)
+ident(
+  int_ref x2 "editor/ed_hyper.ml" 90 2653 2688 "editor/ed_hyper.ml" 90 2653 2690
+)
+"editor/ed_hyper.ml" 94 2812 2863 "editor/ed_hyper.ml" 94 2812 2865
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 94 2812 2866 "editor/ed_hyper.ml" 94 2812 2868
+type(
+  float
+)
+ident(
+  int_ref x1 "editor/ed_hyper.ml" 91 2698 2705 "editor/ed_hyper.ml" 91 2698 2707
+)
+"editor/ed_hyper.ml" 94 2812 2859 "editor/ed_hyper.ml" 94 2812 2869
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2871 "editor/ed_hyper.ml" 94 2812 2873
+type(
+  float
+)
+ident(
+  int_ref y2 "editor/ed_hyper.ml" 90 2653 2692 "editor/ed_hyper.ml" 90 2653 2694
+)
+"editor/ed_hyper.ml" 94 2812 2874 "editor/ed_hyper.ml" 94 2812 2876
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 94 2812 2877 "editor/ed_hyper.ml" 94 2812 2879
+type(
+  float
+)
+ident(
+  int_ref y1 "editor/ed_hyper.ml" 91 2698 2709 "editor/ed_hyper.ml" 91 2698 2711
+)
+"editor/ed_hyper.ml" 94 2812 2870 "editor/ed_hyper.ml" 94 2812 2880
+type(
+  float
+)
+"editor/ed_hyper.ml" 94 2812 2814 "editor/ed_hyper.ml" 94 2812 2880
+call(
+  tail
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 93 2781 2783 "editor/ed_hyper.ml" 94 2812 2880
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 92 2750 2752 "editor/ed_hyper.ml" 94 2812 2880
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 91 2698 2700 "editor/ed_hyper.ml" 94 2812 2880
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 96 2882 2886 "editor/ed_hyper.ml" 96 2882 2899
+type(
+  float * float -> float
+)
+ident(
+  def shrink_factor "editor/ed_hyper.ml" 104 2966 2966 --
+)
+"editor/ed_hyper.ml" 96 2882 2901 "editor/ed_hyper.ml" 96 2882 2902
+type(
+  float
+)
+ident(
+  def x "editor/ed_hyper.ml" 97 2909 2911 "editor/ed_hyper.ml" 97 2909 2932
+)
+"editor/ed_hyper.ml" 96 2882 2904 "editor/ed_hyper.ml" 96 2882 2905
+type(
+  float
+)
+ident(
+  def y "editor/ed_hyper.ml" 97 2909 2911 "editor/ed_hyper.ml" 97 2909 2932
+)
+"editor/ed_hyper.ml" 96 2882 2900 "editor/ed_hyper.ml" 96 2882 2906
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 97 2909 2911 "editor/ed_hyper.ml" 97 2909 2914
+type(
+  float
+)
+"editor/ed_hyper.ml" 97 2909 2915 "editor/ed_hyper.ml" 97 2909 2917
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 97 2909 2919 "editor/ed_hyper.ml" 97 2909 2920
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 96 2882 2901 "editor/ed_hyper.ml" 96 2882 2902
+)
+"editor/ed_hyper.ml" 97 2909 2920 "editor/ed_hyper.ml" 97 2909 2922
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 97 2909 2922 "editor/ed_hyper.ml" 97 2909 2923
+type(
+  float
+)
+ident(
+  int_ref x "editor/ed_hyper.ml" 96 2882 2901 "editor/ed_hyper.ml" 96 2882 2902
+)
+"editor/ed_hyper.ml" 97 2909 2919 "editor/ed_hyper.ml" 97 2909 2923
+type(
+  float
+)
+"editor/ed_hyper.ml" 97 2909 2924 "editor/ed_hyper.ml" 97 2909 2926
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 97 2909 2927 "editor/ed_hyper.ml" 97 2909 2928
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 96 2882 2904 "editor/ed_hyper.ml" 96 2882 2905
+)
+"editor/ed_hyper.ml" 97 2909 2928 "editor/ed_hyper.ml" 97 2909 2930
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 97 2909 2930 "editor/ed_hyper.ml" 97 2909 2931
+type(
+  float
+)
+ident(
+  int_ref y "editor/ed_hyper.ml" 96 2882 2904 "editor/ed_hyper.ml" 96 2882 2905
+)
+"editor/ed_hyper.ml" 97 2909 2927 "editor/ed_hyper.ml" 97 2909 2931
+type(
+  float
+)
+"editor/ed_hyper.ml" 97 2909 2918 "editor/ed_hyper.ml" 97 2909 2932
+type(
+  float
+)
+"editor/ed_hyper.ml" 97 2909 2911 "editor/ed_hyper.ml" 97 2909 2932
+type(
+  float
+)
+"editor/ed_hyper.ml" 112 3107 3111 "editor/ed_hyper.ml" 112 3107 3122
+type(
+  coord -> float -> turtle
+)
+ident(
+  def make_turtle "editor/ed_hyper.ml" 118 3183 3183 --
+)
+"editor/ed_hyper.ml" 112 3107 3123 "editor/ed_hyper.ml" 112 3107 3126
+type(
+  coord
+)
+ident(
+  def pos "editor/ed_hyper.ml" 112 3107 3127 "editor/ed_hyper.ml" 116 3178 3181
+)
+"editor/ed_hyper.ml" 112 3107 3127 "editor/ed_hyper.ml" 112 3107 3132
+type(
+  float
+)
+ident(
+  def angle "editor/ed_hyper.ml" 113 3135 3137 "editor/ed_hyper.ml" 116 3178 3181
+)
+"editor/ed_hyper.ml" 114 3140 3150 "editor/ed_hyper.ml" 114 3140 3153
+type(
+  coord
+)
+ident(
+  int_ref pos "editor/ed_hyper.ml" 112 3107 3123 "editor/ed_hyper.ml" 112 3107 3126
+)
+"editor/ed_hyper.ml" 115 3156 3166 "editor/ed_hyper.ml" 115 3156 3170
+type(
+  float -> coord
+)
+ident(
+  int_ref expi "editor/ed_hyper.ml" 52 1914 1918 "editor/ed_hyper.ml" 52 1914 1922
+)
+"editor/ed_hyper.ml" 115 3156 3171 "editor/ed_hyper.ml" 115 3156 3176
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_hyper.ml" 112 3107 3127 "editor/ed_hyper.ml" 112 3107 3132
+)
+"editor/ed_hyper.ml" 115 3156 3166 "editor/ed_hyper.ml" 115 3156 3176
+call(
+  stack
+)
+type(
+  coord
+)
+"editor/ed_hyper.ml" 113 3135 3137 "editor/ed_hyper.ml" 116 3178 3181
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 118 3183 3187 "editor/ed_hyper.ml" 118 3183 3202
+type(
+  coord -> coord -> turtle
+)
+ident(
+  def make_turtle_dir "editor/ed_hyper.ml" 125 3255 3255 --
+)
+"editor/ed_hyper.ml" 118 3183 3203 "editor/ed_hyper.ml" 118 3183 3206
+type(
+  coord
+)
+ident(
+  def pos "editor/ed_hyper.ml" 118 3183 3207 "editor/ed_hyper.ml" 122 3249 3252
+)
+"editor/ed_hyper.ml" 118 3183 3207 "editor/ed_hyper.ml" 118 3183 3210
+type(
+  coord
+)
+ident(
+  def dir "editor/ed_hyper.ml" 119 3213 3215 "editor/ed_hyper.ml" 122 3249 3252
+)
+"editor/ed_hyper.ml" 120 3218 3228 "editor/ed_hyper.ml" 120 3218 3231
+type(
+  coord
+)
+ident(
+  int_ref pos "editor/ed_hyper.ml" 118 3183 3203 "editor/ed_hyper.ml" 118 3183 3206
+)
+"editor/ed_hyper.ml" 121 3234 3244 "editor/ed_hyper.ml" 121 3234 3247
+type(
+  coord
+)
+ident(
+  int_ref dir "editor/ed_hyper.ml" 118 3183 3207 "editor/ed_hyper.ml" 118 3183 3210
+)
+"editor/ed_hyper.ml" 119 3213 3215 "editor/ed_hyper.ml" 122 3249 3252
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 125 3255 3259 "editor/ed_hyper.ml" 125 3255 3263
+type(
+  turtle -> turtle -> float
+)
+ident(
+  def dist "editor/ed_hyper.ml" 130 3372 3372 --
+)
+"editor/ed_hyper.ml" 125 3255 3264 "editor/ed_hyper.ml" 125 3255 3268
+type(
+  turtle
+)
+ident(
+  def tdep "editor/ed_hyper.ml" 125 3255 3269 "editor/ed_hyper.ml" 128 3323 3370
+)
+"editor/ed_hyper.ml" 125 3255 3269 "editor/ed_hyper.ml" 125 3255 3274
+type(
+  turtle
+)
+ident(
+  def tdest "editor/ed_hyper.ml" 126 3278 3280 "editor/ed_hyper.ml" 128 3323 3370
+)
+"editor/ed_hyper.ml" 126 3278 3284 "editor/ed_hyper.ml" 126 3278 3285
+type(
+  coord
+)
+"editor/ed_hyper.ml" 126 3278 3288 "editor/ed_hyper.ml" 126 3278 3292
+type(
+  turtle
+)
+ident(
+  int_ref tdep "editor/ed_hyper.ml" 125 3255 3264 "editor/ed_hyper.ml" 125 3255 3268
+)
+"editor/ed_hyper.ml" 126 3278 3288 "editor/ed_hyper.ml" 126 3278 3296
+type(
+  coord
+)
+"editor/ed_hyper.ml" 127 3300 3306 "editor/ed_hyper.ml" 127 3300 3307
+type(
+  coord
+)
+"editor/ed_hyper.ml" 127 3300 3310 "editor/ed_hyper.ml" 127 3300 3315
+type(
+  turtle
+)
+ident(
+  int_ref tdest "editor/ed_hyper.ml" 125 3255 3269 "editor/ed_hyper.ml" 125 3255 3274
+)
+"editor/ed_hyper.ml" 127 3300 3310 "editor/ed_hyper.ml" 127 3300 3319
+type(
+  coord
+)
+"editor/ed_hyper.ml" 128 3323 3325 "editor/ed_hyper.ml" 128 3323 3328
+type(
+  float -> float
+)
+ident(
+  int_ref ath "editor/ed_hyper.ml" 62 2061 2065 "editor/ed_hyper.ml" 62 2061 2068
+)
+"editor/ed_hyper.ml" 128 3323 3330 "editor/ed_hyper.ml" 128 3323 3334
+type(
+  float * float -> float
+)
+ident(
+  int_ref norm "editor/ed_hyper.ml" 45 1801 1805 "editor/ed_hyper.ml" 45 1801 1809
+)
+"editor/ed_hyper.ml" 128 3323 3338 "editor/ed_hyper.ml" 128 3323 3339
+type(
+  coord
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 126 3278 3284 "editor/ed_hyper.ml" 126 3278 3285
+)
+"editor/ed_hyper.ml" 128 3323 3340 "editor/ed_hyper.ml" 128 3323 3342
+type(
+  coord -> coord -> float * float
+)
+ident(
+  int_ref -& "editor/ed_hyper.ml" 29 1477 1481 "editor/ed_hyper.ml" 29 1477 1487
+)
+"editor/ed_hyper.ml" 128 3323 3343 "editor/ed_hyper.ml" 128 3323 3344
+type(
+  coord
+)
+ident(
+  int_ref b "editor/ed_hyper.ml" 127 3300 3306 "editor/ed_hyper.ml" 127 3300 3307
+)
+"editor/ed_hyper.ml" 128 3323 3337 "editor/ed_hyper.ml" 128 3323 3345
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 128 3323 3346 "editor/ed_hyper.ml" 128 3323 3348
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref /& "editor/ed_hyper.ml" 35 1605 1609 "editor/ed_hyper.ml" 35 1605 1615
+)
+"editor/ed_hyper.ml" 128 3323 3350 "editor/ed_hyper.ml" 128 3323 3353
+type(
+  float * float
+)
+ident(
+  int_ref one "editor/ed_hyper.ml" 69 2194 2198 "editor/ed_hyper.ml" 69 2194 2201
+)
+"editor/ed_hyper.ml" 128 3323 3354 "editor/ed_hyper.ml" 128 3323 3356
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref -& "editor/ed_hyper.ml" 29 1477 1481 "editor/ed_hyper.ml" 29 1477 1487
+)
+"editor/ed_hyper.ml" 128 3323 3358 "editor/ed_hyper.ml" 128 3323 3360
+type(
+  coord -> float * float
+)
+ident(
+  int_ref ~& "editor/ed_hyper.ml" 24 1390 1394 "editor/ed_hyper.ml" 24 1390 1400
+)
+"editor/ed_hyper.ml" 128 3323 3360 "editor/ed_hyper.ml" 128 3323 3361
+type(
+  coord
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 126 3278 3284 "editor/ed_hyper.ml" 126 3278 3285
+)
+"editor/ed_hyper.ml" 128 3323 3357 "editor/ed_hyper.ml" 128 3323 3362
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 128 3323 3363 "editor/ed_hyper.ml" 128 3323 3365
+type(
+  float * float -> coord -> float * float
+)
+ident(
+  int_ref *& "editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+)
+"editor/ed_hyper.ml" 128 3323 3366 "editor/ed_hyper.ml" 128 3323 3367
+type(
+  coord
+)
+ident(
+  int_ref b "editor/ed_hyper.ml" 127 3300 3306 "editor/ed_hyper.ml" 127 3300 3307
+)
+"editor/ed_hyper.ml" 128 3323 3357 "editor/ed_hyper.ml" 128 3323 3367
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 128 3323 3349 "editor/ed_hyper.ml" 128 3323 3368
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 128 3323 3335 "editor/ed_hyper.ml" 128 3323 3369
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 128 3323 3329 "editor/ed_hyper.ml" 128 3323 3370
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 128 3323 3325 "editor/ed_hyper.ml" 128 3323 3370
+call(
+  tail
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 127 3300 3302 "editor/ed_hyper.ml" 128 3323 3370
+type(
+  float
+)
+"editor/ed_hyper.ml" 126 3278 3280 "editor/ed_hyper.ml" 128 3323 3370
+type(
+  float
+)
+"editor/ed_hyper.ml" 130 3372 3376 "editor/ed_hyper.ml" 130 3372 3382
+type(
+  turtle -> turtle -> float -> float * float
+)
+ident(
+  def dir_to "editor/ed_hyper.ml" 138 3547 3547 --
+)
+"editor/ed_hyper.ml" 130 3372 3383 "editor/ed_hyper.ml" 130 3372 3387
+type(
+  turtle
+)
+ident(
+  def tdep "editor/ed_hyper.ml" 130 3372 3388 "editor/ed_hyper.ml" 133 3443 3489
+)
+"editor/ed_hyper.ml" 130 3372 3388 "editor/ed_hyper.ml" 130 3372 3393
+type(
+  turtle
+)
+ident(
+  def tdest "editor/ed_hyper.ml" 130 3372 3394 "editor/ed_hyper.ml" 133 3443 3489
+)
+"editor/ed_hyper.ml" 130 3372 3394 "editor/ed_hyper.ml" 130 3372 3395
+type(
+  float
+)
+ident(
+  def t "editor/ed_hyper.ml" 131 3398 3400 "editor/ed_hyper.ml" 133 3443 3489
+)
+"editor/ed_hyper.ml" 131 3398 3404 "editor/ed_hyper.ml" 131 3398 3405
+type(
+  coord
+)
+"editor/ed_hyper.ml" 131 3398 3408 "editor/ed_hyper.ml" 131 3398 3412
+type(
+  turtle
+)
+ident(
+  int_ref tdep "editor/ed_hyper.ml" 130 3372 3383 "editor/ed_hyper.ml" 130 3372 3387
+)
+"editor/ed_hyper.ml" 131 3398 3408 "editor/ed_hyper.ml" 131 3398 3416
+type(
+  coord
+)
+"editor/ed_hyper.ml" 132 3420 3426 "editor/ed_hyper.ml" 132 3420 3427
+type(
+  coord
+)
+"editor/ed_hyper.ml" 132 3420 3430 "editor/ed_hyper.ml" 132 3420 3435
+type(
+  turtle
+)
+ident(
+  int_ref tdest "editor/ed_hyper.ml" 130 3372 3388 "editor/ed_hyper.ml" 130 3372 3393
+)
+"editor/ed_hyper.ml" 132 3420 3430 "editor/ed_hyper.ml" 132 3420 3439
+type(
+  coord
+)
+"editor/ed_hyper.ml" 133 3443 3447 "editor/ed_hyper.ml" 133 3443 3448
+type(
+  coord
+)
+ident(
+  int_ref d "editor/ed_hyper.ml" 132 3420 3426 "editor/ed_hyper.ml" 132 3420 3427
+)
+"editor/ed_hyper.ml" 133 3443 3449 "editor/ed_hyper.ml" 133 3443 3451
+type(
+  coord -> coord -> float * float
+)
+ident(
+  int_ref -& "editor/ed_hyper.ml" 29 1477 1481 "editor/ed_hyper.ml" 29 1477 1487
+)
+"editor/ed_hyper.ml" 133 3443 3452 "editor/ed_hyper.ml" 133 3443 3453
+type(
+  coord
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 131 3398 3404 "editor/ed_hyper.ml" 131 3398 3405
+)
+"editor/ed_hyper.ml" 133 3443 3446 "editor/ed_hyper.ml" 133 3443 3454
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 133 3443 3455 "editor/ed_hyper.ml" 133 3443 3457
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref /& "editor/ed_hyper.ml" 35 1605 1609 "editor/ed_hyper.ml" 35 1605 1615
+)
+"editor/ed_hyper.ml" 133 3443 3459 "editor/ed_hyper.ml" 133 3443 3461
+type(
+  float -> float
+)
+ident(
+  int_ref th "editor/ed_hyper.ml" 57 1977 1981 "editor/ed_hyper.ml" 57 1977 1983
+)
+"editor/ed_hyper.ml" 133 3443 3462 "editor/ed_hyper.ml" 133 3443 3463
+type(
+  float
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 130 3372 3394 "editor/ed_hyper.ml" 130 3372 3395
+)
+"editor/ed_hyper.ml" 133 3443 3459 "editor/ed_hyper.ml" 133 3443 3463
+call(
+  stack
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 133 3443 3464 "editor/ed_hyper.ml" 133 3443 3467
+type(
+  float -> float * float -> float * float
+)
+ident(
+  int_ref *.& "editor/ed_hyper.ml" 39 1722 1726 "editor/ed_hyper.ml" 39 1722 1733
+)
+"editor/ed_hyper.ml" 133 3443 3469 "editor/ed_hyper.ml" 133 3443 3472
+type(
+  float * float
+)
+ident(
+  int_ref one "editor/ed_hyper.ml" 69 2194 2198 "editor/ed_hyper.ml" 69 2194 2201
+)
+"editor/ed_hyper.ml" 133 3443 3473 "editor/ed_hyper.ml" 133 3443 3475
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref -& "editor/ed_hyper.ml" 29 1477 1481 "editor/ed_hyper.ml" 29 1477 1487
+)
+"editor/ed_hyper.ml" 133 3443 3477 "editor/ed_hyper.ml" 133 3443 3479
+type(
+  coord -> float * float
+)
+ident(
+  int_ref ~& "editor/ed_hyper.ml" 24 1390 1394 "editor/ed_hyper.ml" 24 1390 1400
+)
+"editor/ed_hyper.ml" 133 3443 3479 "editor/ed_hyper.ml" 133 3443 3480
+type(
+  coord
+)
+ident(
+  int_ref a "editor/ed_hyper.ml" 131 3398 3404 "editor/ed_hyper.ml" 131 3398 3405
+)
+"editor/ed_hyper.ml" 133 3443 3476 "editor/ed_hyper.ml" 133 3443 3481
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 133 3443 3482 "editor/ed_hyper.ml" 133 3443 3484
+type(
+  float * float -> coord -> float * float
+)
+ident(
+  int_ref *& "editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+)
+"editor/ed_hyper.ml" 133 3443 3485 "editor/ed_hyper.ml" 133 3443 3486
+type(
+  coord
+)
+ident(
+  int_ref d "editor/ed_hyper.ml" 132 3420 3426 "editor/ed_hyper.ml" 132 3420 3427
+)
+"editor/ed_hyper.ml" 133 3443 3476 "editor/ed_hyper.ml" 133 3443 3486
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 133 3443 3467 "editor/ed_hyper.ml" 133 3443 3487
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 133 3443 3458 "editor/ed_hyper.ml" 133 3443 3488
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 133 3443 3445 "editor/ed_hyper.ml" 133 3443 3489
+call(
+  tail
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 132 3420 3422 "editor/ed_hyper.ml" 133 3443 3489
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 131 3398 3400 "editor/ed_hyper.ml" 133 3443 3489
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 138 3547 3551 "editor/ed_hyper.ml" 138 3547 3558
+type(
+  turtle -> float -> turtle
+)
+ident(
+  def advance "editor/ed_hyper.ml" 143 3731 3731 --
+)
+"editor/ed_hyper.ml" 138 3547 3559 "editor/ed_hyper.ml" 138 3547 3565
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 138 3547 3566 "editor/ed_hyper.ml" 140 3619 3664
+)
+"editor/ed_hyper.ml" 138 3547 3566 "editor/ed_hyper.ml" 138 3547 3570
+type(
+  float
+)
+ident(
+  def step "editor/ed_hyper.ml" 139 3573 3576 "editor/ed_hyper.ml" 140 3619 3664
+)
+"editor/ed_hyper.ml" 139 3573 3584 "editor/ed_hyper.ml" 139 3573 3589
+type(
+  coord -> coord -> float -> coord
+)
+ident(
+  int_ref gamma "editor/ed_hyper.ml" 74 2271 2275 "editor/ed_hyper.ml" 74 2271 2280
+)
+"editor/ed_hyper.ml" 139 3573 3590 "editor/ed_hyper.ml" 139 3573 3596
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 138 3547 3559 "editor/ed_hyper.ml" 138 3547 3565
+)
+"editor/ed_hyper.ml" 139 3573 3590 "editor/ed_hyper.ml" 139 3573 3600
+type(
+  coord
+)
+"editor/ed_hyper.ml" 139 3573 3601 "editor/ed_hyper.ml" 139 3573 3607
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 138 3547 3559 "editor/ed_hyper.ml" 138 3547 3565
+)
+"editor/ed_hyper.ml" 139 3573 3601 "editor/ed_hyper.ml" 139 3573 3611
+type(
+  coord
+)
+"editor/ed_hyper.ml" 139 3573 3612 "editor/ed_hyper.ml" 139 3573 3616
+type(
+  float
+)
+ident(
+  int_ref step "editor/ed_hyper.ml" 138 3547 3566 "editor/ed_hyper.ml" 138 3547 3570
+)
+"editor/ed_hyper.ml" 139 3573 3584 "editor/ed_hyper.ml" 139 3573 3616
+call(
+  stack
+)
+type(
+  coord
+)
+"editor/ed_hyper.ml" 140 3619 3630 "editor/ed_hyper.ml" 140 3619 3635
+type(
+  coord -> coord -> float -> coord
+)
+ident(
+  int_ref delta "editor/ed_hyper.ml" 78 2358 2362 "editor/ed_hyper.ml" 78 2358 2367
+)
+"editor/ed_hyper.ml" 140 3619 3636 "editor/ed_hyper.ml" 140 3619 3642
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 138 3547 3559 "editor/ed_hyper.ml" 138 3547 3565
+)
+"editor/ed_hyper.ml" 140 3619 3636 "editor/ed_hyper.ml" 140 3619 3646
+type(
+  coord
+)
+"editor/ed_hyper.ml" 140 3619 3647 "editor/ed_hyper.ml" 140 3619 3653
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 138 3547 3559 "editor/ed_hyper.ml" 138 3547 3565
+)
+"editor/ed_hyper.ml" 140 3619 3647 "editor/ed_hyper.ml" 140 3619 3657
+type(
+  coord
+)
+"editor/ed_hyper.ml" 140 3619 3658 "editor/ed_hyper.ml" 140 3619 3662
+type(
+  float
+)
+ident(
+  int_ref step "editor/ed_hyper.ml" 138 3547 3566 "editor/ed_hyper.ml" 138 3547 3570
+)
+"editor/ed_hyper.ml" 140 3619 3630 "editor/ed_hyper.ml" 140 3619 3662
+call(
+  stack
+)
+type(
+  coord
+)
+"editor/ed_hyper.ml" 139 3573 3576 "editor/ed_hyper.ml" 140 3619 3664
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 143 3731 3735 "editor/ed_hyper.ml" 143 3731 3747
+type(
+  turtle -> float -> int -> turtle
+)
+ident(
+  def advance_many "editor/ed_hyper.ml" 152 3978 3978 --
+)
+"editor/ed_hyper.ml" 143 3731 3748 "editor/ed_hyper.ml" 143 3731 3754
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 143 3731 3755 "editor/ed_hyper.ml" 149 3878 3896
+)
+"editor/ed_hyper.ml" 143 3731 3755 "editor/ed_hyper.ml" 143 3731 3756
+type(
+  float
+)
+ident(
+  def d "editor/ed_hyper.ml" 143 3731 3757 "editor/ed_hyper.ml" 149 3878 3896
+)
+"editor/ed_hyper.ml" 143 3731 3757 "editor/ed_hyper.ml" 143 3731 3762
+type(
+  int
+)
+ident(
+  def steps "editor/ed_hyper.ml" 144 3765 3767 "editor/ed_hyper.ml" 149 3878 3896
+)
+"editor/ed_hyper.ml" 144 3765 3771 "editor/ed_hyper.ml" 144 3765 3772
+type(
+  float
+)
+"editor/ed_hyper.ml" 144 3765 3775 "editor/ed_hyper.ml" 144 3765 3776
+type(
+  float
+)
+ident(
+  int_ref d "editor/ed_hyper.ml" 143 3731 3755 "editor/ed_hyper.ml" 143 3731 3756
+)
+"editor/ed_hyper.ml" 144 3765 3777 "editor/ed_hyper.ml" 144 3765 3779
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 144 3765 3781 "editor/ed_hyper.ml" 144 3765 3786
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_hyper.ml" 144 3765 3787 "editor/ed_hyper.ml" 144 3765 3792
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_hyper.ml" 143 3731 3757 "editor/ed_hyper.ml" 143 3731 3762
+)
+"editor/ed_hyper.ml" 144 3765 3780 "editor/ed_hyper.ml" 144 3765 3793
+type(
+  float
+)
+"editor/ed_hyper.ml" 144 3765 3775 "editor/ed_hyper.ml" 144 3765 3793
+type(
+  float
+)
+"editor/ed_hyper.ml" 145 3797 3807 "editor/ed_hyper.ml" 145 3797 3810
+type(
+  turtle -> int -> turtle
+)
+"editor/ed_hyper.ml" 145 3797 3811 "editor/ed_hyper.ml" 145 3797 3812
+type(
+  turtle
+)
+ident(
+  def t "editor/ed_hyper.ml" 145 3797 3815 "editor/ed_hyper.ml" 147 3838 3872
+)
+"editor/ed_hyper.ml" 146 3825 3831 "editor/ed_hyper.ml" 146 3825 3832
+type(
+  int
+)
+"editor/ed_hyper.ml" 146 3825 3836 "editor/ed_hyper.ml" 146 3825 3837
+type(
+  turtle
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 145 3797 3811 "editor/ed_hyper.ml" 145 3797 3812
+)
+"editor/ed_hyper.ml" 147 3838 3844 "editor/ed_hyper.ml" 147 3838 3845
+type(
+  int
+)
+ident(
+  def n "editor/ed_hyper.ml" 147 3838 3849 "editor/ed_hyper.ml" 147 3838 3872
+)
+"editor/ed_hyper.ml" 147 3838 3849 "editor/ed_hyper.ml" 147 3838 3852
+type(
+  turtle -> int -> turtle
+)
+ident(
+  int_ref adv "editor/ed_hyper.ml" 145 3797 3807 "editor/ed_hyper.ml" 145 3797 3810
+)
+"editor/ed_hyper.ml" 147 3838 3854 "editor/ed_hyper.ml" 147 3838 3861
+type(
+  turtle -> float -> turtle
+)
+ident(
+  int_ref advance "editor/ed_hyper.ml" 138 3547 3551 "editor/ed_hyper.ml" 138 3547 3558
+)
+"editor/ed_hyper.ml" 147 3838 3862 "editor/ed_hyper.ml" 147 3838 3863
+type(
+  turtle
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 145 3797 3811 "editor/ed_hyper.ml" 145 3797 3812
+)
+"editor/ed_hyper.ml" 147 3838 3864 "editor/ed_hyper.ml" 147 3838 3865
+type(
+  float
+)
+ident(
+  int_ref d "editor/ed_hyper.ml" 144 3765 3771 "editor/ed_hyper.ml" 144 3765 3772
+)
+"editor/ed_hyper.ml" 147 3838 3853 "editor/ed_hyper.ml" 147 3838 3866
+call(
+  stack
+)
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 147 3838 3868 "editor/ed_hyper.ml" 147 3838 3869
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_hyper.ml" 147 3838 3844 "editor/ed_hyper.ml" 147 3838 3845
+)
+"editor/ed_hyper.ml" 147 3838 3869 "editor/ed_hyper.ml" 147 3838 3870
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"editor/ed_hyper.ml" 147 3838 3870 "editor/ed_hyper.ml" 147 3838 3871
+type(
+  int
+)
+"editor/ed_hyper.ml" 147 3838 3867 "editor/ed_hyper.ml" 147 3838 3872
+type(
+  int
+)
+"editor/ed_hyper.ml" 147 3838 3849 "editor/ed_hyper.ml" 147 3838 3872
+call(
+  tail
+)
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 145 3797 3815 "editor/ed_hyper.ml" 147 3838 3872
+type(
+  int -> turtle
+)
+"editor/ed_hyper.ml" 149 3878 3880 "editor/ed_hyper.ml" 149 3878 3883
+type(
+  turtle -> int -> turtle
+)
+ident(
+  int_ref adv "editor/ed_hyper.ml" 145 3797 3807 "editor/ed_hyper.ml" 145 3797 3810
+)
+"editor/ed_hyper.ml" 149 3878 3884 "editor/ed_hyper.ml" 149 3878 3890
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 143 3731 3748 "editor/ed_hyper.ml" 143 3731 3754
+)
+"editor/ed_hyper.ml" 149 3878 3891 "editor/ed_hyper.ml" 149 3878 3896
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_hyper.ml" 143 3731 3757 "editor/ed_hyper.ml" 143 3731 3762
+)
+"editor/ed_hyper.ml" 149 3878 3880 "editor/ed_hyper.ml" 149 3878 3896
+call(
+  tail
+)
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 145 3797 3799 "editor/ed_hyper.ml" 149 3878 3896
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 144 3765 3767 "editor/ed_hyper.ml" 149 3878 3896
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 152 3978 3982 "editor/ed_hyper.ml" 152 3978 3999
+type(
+  turtle -> float -> int -> turtle list
+)
+ident(
+  def list_advance_many "editor/ed_hyper.ml" 160 4156 4156 --
+)
+"editor/ed_hyper.ml" 152 3978 4000 "editor/ed_hyper.ml" 152 3978 4006
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 152 3978 4007 "editor/ed_hyper.ml" 158 4136 4154
+)
+"editor/ed_hyper.ml" 152 3978 4007 "editor/ed_hyper.ml" 152 3978 4008
+type(
+  float
+)
+ident(
+  def d "editor/ed_hyper.ml" 152 3978 4009 "editor/ed_hyper.ml" 158 4136 4154
+)
+"editor/ed_hyper.ml" 152 3978 4009 "editor/ed_hyper.ml" 152 3978 4014
+type(
+  int
+)
+ident(
+  def steps "editor/ed_hyper.ml" 153 4017 4019 "editor/ed_hyper.ml" 158 4136 4154
+)
+"editor/ed_hyper.ml" 153 4017 4023 "editor/ed_hyper.ml" 153 4017 4024
+type(
+  float
+)
+"editor/ed_hyper.ml" 153 4017 4027 "editor/ed_hyper.ml" 153 4017 4028
+type(
+  float
+)
+ident(
+  int_ref d "editor/ed_hyper.ml" 152 3978 4007 "editor/ed_hyper.ml" 152 3978 4008
+)
+"editor/ed_hyper.ml" 153 4017 4029 "editor/ed_hyper.ml" 153 4017 4031
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 153 4017 4033 "editor/ed_hyper.ml" 153 4017 4038
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_hyper.ml" 153 4017 4039 "editor/ed_hyper.ml" 153 4017 4044
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_hyper.ml" 152 3978 4009 "editor/ed_hyper.ml" 152 3978 4014
+)
+"editor/ed_hyper.ml" 153 4017 4032 "editor/ed_hyper.ml" 153 4017 4045
+type(
+  float
+)
+"editor/ed_hyper.ml" 153 4017 4027 "editor/ed_hyper.ml" 153 4017 4045
+type(
+  float
+)
+"editor/ed_hyper.ml" 154 4049 4059 "editor/ed_hyper.ml" 154 4049 4062
+type(
+  turtle -> int -> turtle list
+)
+"editor/ed_hyper.ml" 154 4049 4063 "editor/ed_hyper.ml" 154 4049 4064
+type(
+  turtle
+)
+ident(
+  def t "editor/ed_hyper.ml" 154 4049 4067 "editor/ed_hyper.ml" 156 4091 4130
+)
+"editor/ed_hyper.ml" 155 4077 4083 "editor/ed_hyper.ml" 155 4077 4084
+type(
+  int
+)
+"editor/ed_hyper.ml" 155 4077 4088 "editor/ed_hyper.ml" 155 4077 4090
+type(
+  turtle list
+)
+"editor/ed_hyper.ml" 156 4091 4097 "editor/ed_hyper.ml" 156 4091 4098
+type(
+  int
+)
+ident(
+  def n "editor/ed_hyper.ml" 156 4091 4102 "editor/ed_hyper.ml" 156 4091 4130
+)
+"editor/ed_hyper.ml" 156 4091 4102 "editor/ed_hyper.ml" 156 4091 4103
+type(
+  turtle
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 154 4049 4063 "editor/ed_hyper.ml" 154 4049 4064
+)
+"editor/ed_hyper.ml" 156 4091 4107 "editor/ed_hyper.ml" 156 4091 4110
+type(
+  turtle -> int -> turtle list
+)
+ident(
+  int_ref adv "editor/ed_hyper.ml" 154 4049 4059 "editor/ed_hyper.ml" 154 4049 4062
+)
+"editor/ed_hyper.ml" 156 4091 4112 "editor/ed_hyper.ml" 156 4091 4119
+type(
+  turtle -> float -> turtle
+)
+ident(
+  int_ref advance "editor/ed_hyper.ml" 138 3547 3551 "editor/ed_hyper.ml" 138 3547 3558
+)
+"editor/ed_hyper.ml" 156 4091 4120 "editor/ed_hyper.ml" 156 4091 4121
+type(
+  turtle
+)
+ident(
+  int_ref t "editor/ed_hyper.ml" 154 4049 4063 "editor/ed_hyper.ml" 154 4049 4064
+)
+"editor/ed_hyper.ml" 156 4091 4122 "editor/ed_hyper.ml" 156 4091 4123
+type(
+  float
+)
+ident(
+  int_ref d "editor/ed_hyper.ml" 153 4017 4023 "editor/ed_hyper.ml" 153 4017 4024
+)
+"editor/ed_hyper.ml" 156 4091 4111 "editor/ed_hyper.ml" 156 4091 4124
+call(
+  stack
+)
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 156 4091 4126 "editor/ed_hyper.ml" 156 4091 4127
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_hyper.ml" 156 4091 4097 "editor/ed_hyper.ml" 156 4091 4098
+)
+"editor/ed_hyper.ml" 156 4091 4127 "editor/ed_hyper.ml" 156 4091 4128
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"editor/ed_hyper.ml" 156 4091 4128 "editor/ed_hyper.ml" 156 4091 4129
+type(
+  int
+)
+"editor/ed_hyper.ml" 156 4091 4125 "editor/ed_hyper.ml" 156 4091 4130
+type(
+  int
+)
+"editor/ed_hyper.ml" 156 4091 4107 "editor/ed_hyper.ml" 156 4091 4130
+call(
+  stack
+)
+type(
+  turtle list
+)
+"editor/ed_hyper.ml" 156 4091 4102 "editor/ed_hyper.ml" 156 4091 4130
+type(
+  turtle list
+)
+"editor/ed_hyper.ml" 154 4049 4067 "editor/ed_hyper.ml" 156 4091 4130
+type(
+  int -> turtle list
+)
+"editor/ed_hyper.ml" 158 4136 4138 "editor/ed_hyper.ml" 158 4136 4141
+type(
+  turtle -> int -> turtle list
+)
+ident(
+  int_ref adv "editor/ed_hyper.ml" 154 4049 4059 "editor/ed_hyper.ml" 154 4049 4062
+)
+"editor/ed_hyper.ml" 158 4136 4142 "editor/ed_hyper.ml" 158 4136 4148
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 152 3978 4000 "editor/ed_hyper.ml" 152 3978 4006
+)
+"editor/ed_hyper.ml" 158 4136 4149 "editor/ed_hyper.ml" 158 4136 4154
+type(
+  int
+)
+ident(
+  int_ref steps "editor/ed_hyper.ml" 152 3978 4009 "editor/ed_hyper.ml" 152 3978 4014
+)
+"editor/ed_hyper.ml" 158 4136 4138 "editor/ed_hyper.ml" 158 4136 4154
+call(
+  tail
+)
+type(
+  turtle list
+)
+"editor/ed_hyper.ml" 154 4049 4051 "editor/ed_hyper.ml" 158 4136 4154
+type(
+  turtle list
+)
+"editor/ed_hyper.ml" 153 4017 4019 "editor/ed_hyper.ml" 158 4136 4154
+type(
+  turtle list
+)
+"editor/ed_hyper.ml" 160 4156 4160 "editor/ed_hyper.ml" 160 4156 4164
+type(
+  turtle -> float * float -> turtle
+)
+ident(
+  def turn "editor/ed_hyper.ml" 163 4217 4217 --
+)
+"editor/ed_hyper.ml" 160 4156 4165 "editor/ed_hyper.ml" 160 4156 4171
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 160 4156 4172 "editor/ed_hyper.ml" 161 4176 4215
+)
+"editor/ed_hyper.ml" 160 4156 4172 "editor/ed_hyper.ml" 160 4156 4173
+type(
+  float * float
+)
+ident(
+  def u "editor/ed_hyper.ml" 161 4176 4178 "editor/ed_hyper.ml" 161 4176 4215
+)
+"editor/ed_hyper.ml" 161 4176 4180 "editor/ed_hyper.ml" 161 4176 4186
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 160 4156 4165 "editor/ed_hyper.ml" 160 4156 4171
+)
+"editor/ed_hyper.ml" 161 4176 4198 "editor/ed_hyper.ml" 161 4176 4204
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 160 4156 4165 "editor/ed_hyper.ml" 160 4156 4171
+)
+"editor/ed_hyper.ml" 161 4176 4198 "editor/ed_hyper.ml" 161 4176 4208
+type(
+  coord
+)
+"editor/ed_hyper.ml" 161 4176 4209 "editor/ed_hyper.ml" 161 4176 4211
+type(
+  coord -> float * float -> coord
+)
+ident(
+  int_ref *& "editor/ed_hyper.ml" 32 1533 1537 "editor/ed_hyper.ml" 32 1533 1543
+)
+"editor/ed_hyper.ml" 161 4176 4212 "editor/ed_hyper.ml" 161 4176 4213
+type(
+  float * float
+)
+ident(
+  int_ref u "editor/ed_hyper.ml" 160 4156 4172 "editor/ed_hyper.ml" 160 4156 4173
+)
+"editor/ed_hyper.ml" 161 4176 4198 "editor/ed_hyper.ml" 161 4176 4213
+call(
+  stack
+)
+type(
+  coord
+)
+"editor/ed_hyper.ml" 161 4176 4178 "editor/ed_hyper.ml" 161 4176 4215
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 163 4217 4221 "editor/ed_hyper.ml" 163 4217 4230
+type(
+  turtle -> float -> turtle
+)
+ident(
+  def turn_left "editor/ed_hyper.ml" 166 4347 4347 --
+)
+"editor/ed_hyper.ml" 163 4217 4231 "editor/ed_hyper.ml" 163 4217 4237
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 163 4217 4238 "editor/ed_hyper.ml" 164 4246 4272
+)
+"editor/ed_hyper.ml" 163 4217 4238 "editor/ed_hyper.ml" 163 4217 4243
+type(
+  float
+)
+ident(
+  def angle "editor/ed_hyper.ml" 164 4246 4248 "editor/ed_hyper.ml" 164 4246 4272
+)
+"editor/ed_hyper.ml" 164 4246 4248 "editor/ed_hyper.ml" 164 4246 4252
+type(
+  turtle -> float * float -> turtle
+)
+ident(
+  int_ref turn "editor/ed_hyper.ml" 160 4156 4160 "editor/ed_hyper.ml" 160 4156 4164
+)
+"editor/ed_hyper.ml" 164 4246 4253 "editor/ed_hyper.ml" 164 4246 4259
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 163 4217 4231 "editor/ed_hyper.ml" 163 4217 4237
+)
+"editor/ed_hyper.ml" 164 4246 4261 "editor/ed_hyper.ml" 164 4246 4265
+type(
+  float -> float * float
+)
+ident(
+  int_ref expi "editor/ed_hyper.ml" 52 1914 1918 "editor/ed_hyper.ml" 52 1914 1922
+)
+"editor/ed_hyper.ml" 164 4246 4266 "editor/ed_hyper.ml" 164 4246 4271
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_hyper.ml" 163 4217 4238 "editor/ed_hyper.ml" 163 4217 4243
+)
+"editor/ed_hyper.ml" 164 4246 4260 "editor/ed_hyper.ml" 164 4246 4272
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 164 4246 4248 "editor/ed_hyper.ml" 164 4246 4272
+call(
+  tail
+)
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 166 4347 4351 "editor/ed_hyper.ml" 166 4347 4361
+type(
+  turtle -> float -> turtle
+)
+ident(
+  def turn_right "editor/ed_hyper.ml" 169 4487 4487 --
+)
+"editor/ed_hyper.ml" 166 4347 4362 "editor/ed_hyper.ml" 166 4347 4368
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 166 4347 4369 "editor/ed_hyper.ml" 167 4377 4407
+)
+"editor/ed_hyper.ml" 166 4347 4369 "editor/ed_hyper.ml" 166 4347 4374
+type(
+  float
+)
+ident(
+  def angle "editor/ed_hyper.ml" 167 4377 4379 "editor/ed_hyper.ml" 167 4377 4407
+)
+"editor/ed_hyper.ml" 167 4377 4379 "editor/ed_hyper.ml" 167 4377 4383
+type(
+  turtle -> float * float -> turtle
+)
+ident(
+  int_ref turn "editor/ed_hyper.ml" 160 4156 4160 "editor/ed_hyper.ml" 160 4156 4164
+)
+"editor/ed_hyper.ml" 167 4377 4384 "editor/ed_hyper.ml" 167 4377 4390
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 166 4347 4362 "editor/ed_hyper.ml" 166 4347 4368
+)
+"editor/ed_hyper.ml" 167 4377 4392 "editor/ed_hyper.ml" 167 4377 4396
+type(
+  float -> float * float
+)
+ident(
+  int_ref expi "editor/ed_hyper.ml" 52 1914 1918 "editor/ed_hyper.ml" 52 1914 1922
+)
+"editor/ed_hyper.ml" 167 4377 4398 "editor/ed_hyper.ml" 167 4377 4400
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 167 4377 4400 "editor/ed_hyper.ml" 167 4377 4405
+type(
+  float
+)
+ident(
+  int_ref angle "editor/ed_hyper.ml" 166 4347 4369 "editor/ed_hyper.ml" 166 4347 4374
+)
+"editor/ed_hyper.ml" 167 4377 4397 "editor/ed_hyper.ml" 167 4377 4406
+type(
+  float
+)
+"editor/ed_hyper.ml" 167 4377 4391 "editor/ed_hyper.ml" 167 4377 4407
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 167 4377 4379 "editor/ed_hyper.ml" 167 4377 4407
+call(
+  tail
+)
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 169 4487 4491 "editor/ed_hyper.ml" 169 4487 4503
+type(
+  turtle
+)
+ident(
+  def dummy_turtle "editor/ed_hyper.ml" 179 4825 4825 --
+)
+"editor/ed_hyper.ml" 169 4487 4515 "editor/ed_hyper.ml" 169 4487 4517
+type(
+  float
+)
+"editor/ed_hyper.ml" 169 4487 4519 "editor/ed_hyper.ml" 169 4487 4521
+type(
+  float
+)
+"editor/ed_hyper.ml" 169 4487 4514 "editor/ed_hyper.ml" 169 4487 4522
+type(
+  coord
+)
+"editor/ed_hyper.ml" 169 4487 4531 "editor/ed_hyper.ml" 169 4487 4533
+type(
+  float
+)
+"editor/ed_hyper.ml" 169 4487 4535 "editor/ed_hyper.ml" 169 4487 4537
+type(
+  float
+)
+"editor/ed_hyper.ml" 169 4487 4530 "editor/ed_hyper.ml" 169 4487 4538
+type(
+  coord
+)
+"editor/ed_hyper.ml" 169 4487 4506 "editor/ed_hyper.ml" 169 4487 4540
+type(
+  turtle
+)
+"editor/ed_hyper.ml" 179 4825 4829 "editor/ed_hyper.ml" 179 4825 4838
+type(
+  int -> float
+)
+ident(
+  def step_from "editor/ed_hyper.ml" 185 5017 5017 --
+)
+"editor/ed_hyper.ml" 179 4825 4839 "editor/ed_hyper.ml" 179 4825 4840
+type(
+  int
+)
+ident(
+  def n "editor/ed_hyper.ml" 180 4843 4845 "editor/ed_hyper.ml" 180 4843 4884
+)
+"editor/ed_hyper.ml" 180 4843 4845 "editor/ed_hyper.ml" 180 4843 4848
+type(
+  float -> float
+)
+ident(
+  int_ref ath "editor/ed_hyper.ml" 62 2061 2065 "editor/ed_hyper.ml" 62 2061 2068
+)
+"editor/ed_hyper.ml" 180 4843 4850 "editor/ed_hyper.ml" 180 4843 4853
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.tan
+)
+"editor/ed_hyper.ml" 180 4843 4855 "editor/ed_hyper.ml" 180 4843 4864
+type(
+  float
+)
+ident(
+  int_ref pi_over_4 "editor/ed_hyper.ml" 67 2168 2172 "editor/ed_hyper.ml" 67 2168 2181
+)
+"editor/ed_hyper.ml" 180 4843 4865 "editor/ed_hyper.ml" 180 4843 4867
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 180 4843 4868 "editor/ed_hyper.ml" 180 4843 4870
+type(
+  float
+)
+ident(
+  int_ref pi "editor/ed_hyper.ml" 65 2110 2114 "editor/ed_hyper.ml" 65 2110 2116
+)
+"editor/ed_hyper.ml" 180 4843 4870 "editor/ed_hyper.ml" 180 4843 4872
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 180 4843 4872 "editor/ed_hyper.ml" 180 4843 4877
+type(
+  int -> float
+)
+ident(
+  ext_ref Pervasives.float
+)
+"editor/ed_hyper.ml" 180 4843 4878 "editor/ed_hyper.ml" 180 4843 4879
+type(
+  int
+)
+"editor/ed_hyper.ml" 180 4843 4879 "editor/ed_hyper.ml" 180 4843 4880
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.*
+)
+"editor/ed_hyper.ml" 180 4843 4880 "editor/ed_hyper.ml" 180 4843 4881
+type(
+  int
+)
+ident(
+  int_ref n "editor/ed_hyper.ml" 179 4825 4839 "editor/ed_hyper.ml" 179 4825 4840
+)
+"editor/ed_hyper.ml" 180 4843 4877 "editor/ed_hyper.ml" 180 4843 4882
+type(
+  int
+)
+"editor/ed_hyper.ml" 180 4843 4872 "editor/ed_hyper.ml" 180 4843 4882
+type(
+  float
+)
+"editor/ed_hyper.ml" 180 4843 4868 "editor/ed_hyper.ml" 180 4843 4882
+type(
+  float
+)
+"editor/ed_hyper.ml" 180 4843 4854 "editor/ed_hyper.ml" 180 4843 4883
+type(
+  float
+)
+"editor/ed_hyper.ml" 180 4843 4849 "editor/ed_hyper.ml" 180 4843 4884
+type(
+  float
+)
+"editor/ed_hyper.ml" 180 4843 4845 "editor/ed_hyper.ml" 180 4843 4884
+call(
+  tail
+)
+type(
+  float
+)
+"editor/ed_hyper.ml" 185 5017 5021 "editor/ed_hyper.ml" 185 5017 5036
+type(
+  turtle -> float
+)
+ident(
+  def hspace_dist_sqr "editor/ed_hyper.ml" 214 5674 5674 --
+)
+"editor/ed_hyper.ml" 185 5017 5037 "editor/ed_hyper.ml" 185 5017 5043
+type(
+  turtle
+)
+ident(
+  def turtle "editor/ed_hyper.ml" 186 5047 5049 "editor/ed_hyper.ml" 209 5629 5634
+)
+"editor/ed_hyper.ml" 186 5047 5054 "editor/ed_hyper.ml" 186 5047 5056
+type(
+  float
+)
+"editor/ed_hyper.ml" 186 5047 5058 "editor/ed_hyper.ml" 186 5047 5060
+type(
+  float
+)
+"editor/ed_hyper.ml" 186 5047 5053 "editor/ed_hyper.ml" 186 5047 5061
+type(
+  coord
+)
+"editor/ed_hyper.ml" 186 5047 5064 "editor/ed_hyper.ml" 186 5047 5070
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 185 5017 5037 "editor/ed_hyper.ml" 185 5017 5043
+)
+"editor/ed_hyper.ml" 186 5047 5064 "editor/ed_hyper.ml" 186 5047 5074
+type(
+  coord
+)
+"editor/ed_hyper.ml" 187 5075 5082 "editor/ed_hyper.ml" 187 5075 5084
+type(
+  float
+)
+"editor/ed_hyper.ml" 187 5075 5086 "editor/ed_hyper.ml" 187 5075 5088
+type(
+  float
+)
+"editor/ed_hyper.ml" 187 5075 5081 "editor/ed_hyper.ml" 187 5075 5089
+type(
+  coord
+)
+"editor/ed_hyper.ml" 187 5075 5092 "editor/ed_hyper.ml" 187 5075 5098
+type(
+  turtle
+)
+ident(
+  int_ref turtle "editor/ed_hyper.ml" 185 5017 5037 "editor/ed_hyper.ml" 185 5017 5043
+)
+"editor/ed_hyper.ml" 187 5075 5092 "editor/ed_hyper.ml" 187 5075 5102
+type(
+  coord
+)
+"editor/ed_hyper.ml" 188 5106 5111 "editor/ed_hyper.ml" 188 5106 5113
+type(
+  float
+)
+ident(
+  int_ref ax "editor/ed_hyper.ml" 186 5047 5054 "editor/ed_hyper.ml" 186 5047 5056
+)
+"editor/ed_hyper.ml" 188 5106 5113 "editor/ed_hyper.ml" 188 5106 5115
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 188 5106 5115 "editor/ed_hyper.ml" 188 5106 5117
+type(
+  float
+)
+ident(
+  int_ref dx "editor/ed_hyper.ml" 187 5075 5082 "editor/ed_hyper.ml" 187 5075 5084
+)
+"editor/ed_hyper.ml" 188 5106 5111 "editor/ed_hyper.ml" 188 5106 5117
+type(
+  float
+)
+"editor/ed_hyper.ml" 188 5106 5118 "editor/ed_hyper.ml" 188 5106 5120
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 188 5106 5121 "editor/ed_hyper.ml" 188 5106 5123
+type(
+  float
+)
+ident(
+  int_ref ay "editor/ed_hyper.ml" 186 5047 5058 "editor/ed_hyper.ml" 186 5047 5060
+)
+"editor/ed_hyper.ml" 188 5106 5123 "editor/ed_hyper.ml" 188 5106 5125
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 188 5106 5125 "editor/ed_hyper.ml" 188 5106 5127
+type(
+  float
+)
+ident(
+  int_ref dy "editor/ed_hyper.ml" 187 5075 5086 "editor/ed_hyper.ml" 187 5075 5088
+)
+"editor/ed_hyper.ml" 188 5106 5121 "editor/ed_hyper.ml" 188 5106 5127
+type(
+  float
+)
+"editor/ed_hyper.ml" 188 5106 5111 "editor/ed_hyper.ml" 188 5106 5127
+type(
+  float
+)
+"editor/ed_hyper.ml" 188 5106 5128 "editor/ed_hyper.ml" 188 5106 5129
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.<
+)
+"editor/ed_hyper.ml" 188 5106 5130 "editor/ed_hyper.ml" 188 5106 5133
+type(
+  float
+)
+"editor/ed_hyper.ml" 188 5106 5111 "editor/ed_hyper.ml" 188 5106 5133
+type(
+  bool
+)
+"editor/ed_hyper.ml" 189 5134 5142 "editor/ed_hyper.ml" 191 5158 5163
+type(
+  float
+)
+"editor/ed_hyper.ml" 192 5175 5183 "editor/ed_hyper.ml" 192 5175 5185
+type(
+  float
+)
+"editor/ed_hyper.ml" 192 5175 5188 "editor/ed_hyper.ml" 192 5175 5190
+type(
+  float
+)
+ident(
+  int_ref dy "editor/ed_hyper.ml" 187 5075 5086 "editor/ed_hyper.ml" 187 5075 5088
+)
+"editor/ed_hyper.ml" 192 5175 5195 "editor/ed_hyper.ml" 192 5175 5197
+type(
+  float
+)
+"editor/ed_hyper.ml" 192 5175 5200 "editor/ed_hyper.ml" 192 5175 5202
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 192 5175 5202 "editor/ed_hyper.ml" 192 5175 5204
+type(
+  float
+)
+ident(
+  int_ref dx "editor/ed_hyper.ml" 187 5075 5082 "editor/ed_hyper.ml" 187 5075 5084
+)
+"editor/ed_hyper.ml" 192 5175 5200 "editor/ed_hyper.ml" 192 5175 5204
+type(
+  float
+)
+"editor/ed_hyper.ml" 193 5208 5216 "editor/ed_hyper.ml" 193 5208 5221
+type(
+  float
+)
+"editor/ed_hyper.ml" 193 5208 5224 "editor/ed_hyper.ml" 193 5208 5226
+type(
+  float
+)
+ident(
+  int_ref ax "editor/ed_hyper.ml" 186 5047 5054 "editor/ed_hyper.ml" 186 5047 5056
+)
+"editor/ed_hyper.ml" 193 5208 5226 "editor/ed_hyper.ml" 193 5208 5228
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 193 5208 5228 "editor/ed_hyper.ml" 193 5208 5230
+type(
+  float
+)
+ident(
+  int_ref ax "editor/ed_hyper.ml" 186 5047 5054 "editor/ed_hyper.ml" 186 5047 5056
+)
+"editor/ed_hyper.ml" 193 5208 5224 "editor/ed_hyper.ml" 193 5208 5230
+type(
+  float
+)
+"editor/ed_hyper.ml" 193 5208 5231 "editor/ed_hyper.ml" 193 5208 5233
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 193 5208 5234 "editor/ed_hyper.ml" 193 5208 5236
+type(
+  float
+)
+ident(
+  int_ref ay "editor/ed_hyper.ml" 186 5047 5058 "editor/ed_hyper.ml" 186 5047 5060
+)
+"editor/ed_hyper.ml" 193 5208 5236 "editor/ed_hyper.ml" 193 5208 5238
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 193 5208 5238 "editor/ed_hyper.ml" 193 5208 5240
+type(
+  float
+)
+ident(
+  int_ref ay "editor/ed_hyper.ml" 186 5047 5058 "editor/ed_hyper.ml" 186 5047 5060
+)
+"editor/ed_hyper.ml" 193 5208 5234 "editor/ed_hyper.ml" 193 5208 5240
+type(
+  float
+)
+"editor/ed_hyper.ml" 193 5208 5224 "editor/ed_hyper.ml" 193 5208 5240
+type(
+  float
+)
+"editor/ed_hyper.ml" 194 5241 5249 "editor/ed_hyper.ml" 194 5241 5253
+type(
+  float
+)
+"editor/ed_hyper.ml" 194 5241 5256 "editor/ed_hyper.ml" 194 5241 5259
+type(
+  float
+)
+"editor/ed_hyper.ml" 194 5241 5259 "editor/ed_hyper.ml" 194 5241 5261
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 194 5241 5262 "editor/ed_hyper.ml" 194 5241 5264
+type(
+  float
+)
+ident(
+  int_ref ax "editor/ed_hyper.ml" 186 5047 5054 "editor/ed_hyper.ml" 186 5047 5056
+)
+"editor/ed_hyper.ml" 194 5241 5264 "editor/ed_hyper.ml" 194 5241 5266
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 194 5241 5266 "editor/ed_hyper.ml" 194 5241 5268
+type(
+  float
+)
+ident(
+  int_ref ux "editor/ed_hyper.ml" 192 5175 5183 "editor/ed_hyper.ml" 192 5175 5185
+)
+"editor/ed_hyper.ml" 194 5241 5262 "editor/ed_hyper.ml" 194 5241 5268
+type(
+  float
+)
+"editor/ed_hyper.ml" 194 5241 5269 "editor/ed_hyper.ml" 194 5241 5271
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 194 5241 5272 "editor/ed_hyper.ml" 194 5241 5274
+type(
+  float
+)
+ident(
+  int_ref ay "editor/ed_hyper.ml" 186 5047 5058 "editor/ed_hyper.ml" 186 5047 5060
+)
+"editor/ed_hyper.ml" 194 5241 5274 "editor/ed_hyper.ml" 194 5241 5276
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 194 5241 5276 "editor/ed_hyper.ml" 194 5241 5278
+type(
+  float
+)
+ident(
+  int_ref uy "editor/ed_hyper.ml" 192 5175 5195 "editor/ed_hyper.ml" 192 5175 5197
+)
+"editor/ed_hyper.ml" 194 5241 5272 "editor/ed_hyper.ml" 194 5241 5278
+type(
+  float
+)
+"editor/ed_hyper.ml" 194 5241 5261 "editor/ed_hyper.ml" 194 5241 5279
+type(
+  float
+)
+"editor/ed_hyper.ml" 194 5241 5256 "editor/ed_hyper.ml" 194 5241 5279
+type(
+  float
+)
+"editor/ed_hyper.ml" 195 5283 5290 "editor/ed_hyper.ml" 195 5283 5294
+type(
+  float
+)
+ident(
+  int_ref beta "editor/ed_hyper.ml" 194 5241 5249 "editor/ed_hyper.ml" 194 5241 5253
+)
+"editor/ed_hyper.ml" 195 5283 5295 "editor/ed_hyper.ml" 195 5283 5296
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"editor/ed_hyper.ml" 195 5283 5297 "editor/ed_hyper.ml" 195 5283 5300
+type(
+  float
+)
+"editor/ed_hyper.ml" 195 5283 5290 "editor/ed_hyper.ml" 195 5283 5300
+type(
+  bool
+)
+"editor/ed_hyper.ml" 196 5306 5312 "editor/ed_hyper.ml" 196 5306 5317
+type(
+  float
+)
+ident(
+  int_ref alpha "editor/ed_hyper.ml" 193 5208 5216 "editor/ed_hyper.ml" 193 5208 5221
+)
+"editor/ed_hyper.ml" 199 5339 5344 "editor/ed_hyper.ml" 199 5339 5349
+type(
+  float
+)
+"editor/ed_hyper.ml" 199 5339 5353 "editor/ed_hyper.ml" 199 5339 5356
+type(
+  float
+)
+"editor/ed_hyper.ml" 199 5339 5357 "editor/ed_hyper.ml" 199 5339 5359
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 199 5339 5360 "editor/ed_hyper.ml" 199 5339 5365
+type(
+  float
+)
+ident(
+  int_ref alpha "editor/ed_hyper.ml" 193 5208 5216 "editor/ed_hyper.ml" 193 5208 5221
+)
+"editor/ed_hyper.ml" 199 5339 5352 "editor/ed_hyper.ml" 199 5339 5366
+type(
+  float
+)
+"editor/ed_hyper.ml" 199 5339 5366 "editor/ed_hyper.ml" 199 5339 5368
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"editor/ed_hyper.ml" 199 5339 5368 "editor/ed_hyper.ml" 199 5339 5372
+type(
+  float
+)
+ident(
+  int_ref beta "editor/ed_hyper.ml" 194 5241 5249 "editor/ed_hyper.ml" 194 5241 5253
+)
+"editor/ed_hyper.ml" 199 5339 5352 "editor/ed_hyper.ml" 199 5339 5372
+type(
+  float
+)
+"editor/ed_hyper.ml" 200 5376 5381 "editor/ed_hyper.ml" 200 5376 5386
+type(
+  float
+)
+"editor/ed_hyper.ml" 200 5376 5389 "editor/ed_hyper.ml" 200 5376 5394
+type(
+  float
+)
+ident(
+  int_ref gamma "editor/ed_hyper.ml" 199 5339 5344 "editor/ed_hyper.ml" 199 5339 5349
+)
+"editor/ed_hyper.ml" 200 5376 5394 "editor/ed_hyper.ml" 200 5376 5396
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 200 5376 5396 "editor/ed_hyper.ml" 200 5376 5401
+type(
+  float
+)
+ident(
+  int_ref gamma "editor/ed_hyper.ml" 199 5339 5344 "editor/ed_hyper.ml" 199 5339 5349
+)
+"editor/ed_hyper.ml" 200 5376 5389 "editor/ed_hyper.ml" 200 5376 5401
+type(
+  float
+)
+"editor/ed_hyper.ml" 200 5376 5402 "editor/ed_hyper.ml" 200 5376 5404
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 200 5376 5405 "editor/ed_hyper.ml" 200 5376 5408
+type(
+  float
+)
+"editor/ed_hyper.ml" 200 5376 5389 "editor/ed_hyper.ml" 200 5376 5408
+type(
+  float
+)
+"editor/ed_hyper.ml" 201 5412 5417 "editor/ed_hyper.ml" 201 5412 5420
+type(
+  float
+)
+"editor/ed_hyper.ml" 202 5423 5436 "editor/ed_hyper.ml" 202 5423 5440
+type(
+  float
+)
+ident(
+  int_ref beta "editor/ed_hyper.ml" 194 5241 5249 "editor/ed_hyper.ml" 194 5241 5253
+)
+"editor/ed_hyper.ml" 202 5423 5441 "editor/ed_hyper.ml" 202 5423 5442
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"editor/ed_hyper.ml" 202 5423 5443 "editor/ed_hyper.ml" 202 5423 5446
+type(
+  float
+)
+"editor/ed_hyper.ml" 202 5423 5436 "editor/ed_hyper.ml" 202 5423 5446
+type(
+  bool
+)
+"editor/ed_hyper.ml" 203 5447 5462 "editor/ed_hyper.ml" 203 5447 5464
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 203 5447 5464 "editor/ed_hyper.ml" 203 5447 5469
+type(
+  float
+)
+ident(
+  int_ref gamma "editor/ed_hyper.ml" 199 5339 5344 "editor/ed_hyper.ml" 199 5339 5349
+)
+"editor/ed_hyper.ml" 203 5447 5462 "editor/ed_hyper.ml" 203 5447 5469
+type(
+  float
+)
+"editor/ed_hyper.ml" 203 5447 5470 "editor/ed_hyper.ml" 203 5447 5472
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 203 5447 5473 "editor/ed_hyper.ml" 203 5447 5477
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sqrt
+)
+"editor/ed_hyper.ml" 203 5447 5477 "editor/ed_hyper.ml" 203 5447 5484
+type(
+  float
+)
+ident(
+  int_ref delta "editor/ed_hyper.ml" 200 5376 5381 "editor/ed_hyper.ml" 200 5376 5386
+)
+"editor/ed_hyper.ml" 203 5447 5473 "editor/ed_hyper.ml" 203 5447 5484
+type(
+  float
+)
+"editor/ed_hyper.ml" 203 5447 5462 "editor/ed_hyper.ml" 203 5447 5484
+type(
+  float
+)
+"editor/ed_hyper.ml" 204 5485 5500 "editor/ed_hyper.ml" 204 5485 5502
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.~-.
+)
+"editor/ed_hyper.ml" 204 5485 5502 "editor/ed_hyper.ml" 204 5485 5507
+type(
+  float
+)
+ident(
+  int_ref gamma "editor/ed_hyper.ml" 199 5339 5344 "editor/ed_hyper.ml" 199 5339 5349
+)
+"editor/ed_hyper.ml" 204 5485 5500 "editor/ed_hyper.ml" 204 5485 5507
+type(
+  float
+)
+"editor/ed_hyper.ml" 204 5485 5508 "editor/ed_hyper.ml" 204 5485 5510
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"editor/ed_hyper.ml" 204 5485 5511 "editor/ed_hyper.ml" 204 5485 5515
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.sqrt
+)
+"editor/ed_hyper.ml" 204 5485 5515 "editor/ed_hyper.ml" 204 5485 5522
+type(
+  float
+)
+ident(
+  int_ref delta "editor/ed_hyper.ml" 200 5376 5381 "editor/ed_hyper.ml" 200 5376 5386
+)
+"editor/ed_hyper.ml" 204 5485 5511 "editor/ed_hyper.ml" 204 5485 5522
+type(
+  float
+)
+"editor/ed_hyper.ml" 204 5485 5500 "editor/ed_hyper.ml" 204 5485 5522
+type(
+  float
+)
+"editor/ed_hyper.ml" 202 5423 5433 "editor/ed_hyper.ml" 204 5485 5522
+type(
+  float
+)
+"editor/ed_hyper.ml" 205 5526 5532 "editor/ed_hyper.ml" 205 5526 5534
+type(
+  float
+)
+"editor/ed_hyper.ml" 205 5526 5536 "editor/ed_hyper.ml" 205 5526 5538
+type(
+  float
+)
+"editor/ed_hyper.ml" 205 5526 5531 "editor/ed_hyper.ml" 205 5526 5539
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 205 5526 5542 "editor/ed_hyper.ml" 205 5526 5551
+type(
+  float * float -> float * float -> float * float
+)
+ident(
+  int_ref translate "editor/ed_hyper.ml" 71 2217 2221 "editor/ed_hyper.ml" 71 2217 2230
+)
+"editor/ed_hyper.ml" 205 5526 5553 "editor/ed_hyper.ml" 205 5526 5555
+type(
+  float
+)
+ident(
+  int_ref ax "editor/ed_hyper.ml" 186 5047 5054 "editor/ed_hyper.ml" 186 5047 5056
+)
+"editor/ed_hyper.ml" 205 5526 5557 "editor/ed_hyper.ml" 205 5526 5559
+type(
+  float
+)
+ident(
+  int_ref ay "editor/ed_hyper.ml" 186 5047 5058 "editor/ed_hyper.ml" 186 5047 5060
+)
+"editor/ed_hyper.ml" 205 5526 5552 "editor/ed_hyper.ml" 205 5526 5560
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 205 5526 5562 "editor/ed_hyper.ml" 205 5526 5564
+type(
+  float
+)
+ident(
+  int_ref ux "editor/ed_hyper.ml" 192 5175 5183 "editor/ed_hyper.ml" 192 5175 5185
+)
+"editor/ed_hyper.ml" 205 5526 5564 "editor/ed_hyper.ml" 205 5526 5566
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 205 5526 5566 "editor/ed_hyper.ml" 205 5526 5569
+type(
+  float
+)
+ident(
+  int_ref sol "editor/ed_hyper.ml" 201 5412 5417 "editor/ed_hyper.ml" 201 5412 5420
+)
+"editor/ed_hyper.ml" 205 5526 5562 "editor/ed_hyper.ml" 205 5526 5569
+type(
+  float
+)
+"editor/ed_hyper.ml" 205 5526 5571 "editor/ed_hyper.ml" 205 5526 5573
+type(
+  float
+)
+ident(
+  int_ref uy "editor/ed_hyper.ml" 192 5175 5195 "editor/ed_hyper.ml" 192 5175 5197
+)
+"editor/ed_hyper.ml" 205 5526 5573 "editor/ed_hyper.ml" 205 5526 5575
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 205 5526 5575 "editor/ed_hyper.ml" 205 5526 5578
+type(
+  float
+)
+ident(
+  int_ref sol "editor/ed_hyper.ml" 201 5412 5417 "editor/ed_hyper.ml" 201 5412 5420
+)
+"editor/ed_hyper.ml" 205 5526 5571 "editor/ed_hyper.ml" 205 5526 5578
+type(
+  float
+)
+"editor/ed_hyper.ml" 205 5526 5561 "editor/ed_hyper.ml" 205 5526 5579
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 205 5526 5542 "editor/ed_hyper.ml" 205 5526 5579
+call(
+  stack
+)
+type(
+  float * float
+)
+"editor/ed_hyper.ml" 206 5583 5588 "editor/ed_hyper.ml" 206 5583 5591
+type(
+  float
+)
+"editor/ed_hyper.ml" 206 5583 5594 "editor/ed_hyper.ml" 206 5583 5596
+type(
+  float
+)
+ident(
+  int_ref zx "editor/ed_hyper.ml" 205 5526 5532 "editor/ed_hyper.ml" 205 5526 5534
+)
+"editor/ed_hyper.ml" 206 5583 5596 "editor/ed_hyper.ml" 206 5583 5598
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 206 5583 5598 "editor/ed_hyper.ml" 206 5583 5600
+type(
+  float
+)
+ident(
+  int_ref zx "editor/ed_hyper.ml" 205 5526 5532 "editor/ed_hyper.ml" 205 5526 5534
+)
+"editor/ed_hyper.ml" 206 5583 5594 "editor/ed_hyper.ml" 206 5583 5600
+type(
+  float
+)
+"editor/ed_hyper.ml" 206 5583 5601 "editor/ed_hyper.ml" 206 5583 5603
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"editor/ed_hyper.ml" 206 5583 5604 "editor/ed_hyper.ml" 206 5583 5606
+type(
+  float
+)
+ident(
+  int_ref zy "editor/ed_hyper.ml" 205 5526 5536 "editor/ed_hyper.ml" 205 5526 5538
+)
+"editor/ed_hyper.ml" 206 5583 5606 "editor/ed_hyper.ml" 206 5583 5608
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 206 5583 5608 "editor/ed_hyper.ml" 206 5583 5610
+type(
+  float
+)
+ident(
+  int_ref zy "editor/ed_hyper.ml" 205 5526 5536 "editor/ed_hyper.ml" 205 5526 5538
+)
+"editor/ed_hyper.ml" 206 5583 5604 "editor/ed_hyper.ml" 206 5583 5610
+type(
+  float
+)
+"editor/ed_hyper.ml" 206 5583 5594 "editor/ed_hyper.ml" 206 5583 5610
+type(
+  float
+)
+"editor/ed_hyper.ml" 207 5614 5615 "editor/ed_hyper.ml" 207 5614 5618
+type(
+  float
+)
+ident(
+  int_ref res "editor/ed_hyper.ml" 206 5583 5588 "editor/ed_hyper.ml" 206 5583 5591
+)
+"editor/ed_hyper.ml" 206 5583 5584 "editor/ed_hyper.ml" 207 5614 5618
+type(
+  float
+)
+"editor/ed_hyper.ml" 205 5526 5527 "editor/ed_hyper.ml" 207 5614 5618
+type(
+  float
+)
+"editor/ed_hyper.ml" 201 5412 5413 "editor/ed_hyper.ml" 207 5614 5618
+type(
+  float
+)
+"editor/ed_hyper.ml" 200 5376 5377 "editor/ed_hyper.ml" 207 5614 5618
+type(
+  float
+)
+"editor/ed_hyper.ml" 198 5327 5333 "editor/ed_hyper.ml" 208 5619 5628
+type(
+  float
+)
+"editor/ed_hyper.ml" 195 5283 5287 "editor/ed_hyper.ml" 208 5619 5628
+type(
+  float
+)
+"editor/ed_hyper.ml" 193 5208 5212 "editor/ed_hyper.ml" 208 5619 5628
+type(
+  float
+)
+"editor/ed_hyper.ml" 191 5158 5169 "editor/ed_hyper.ml" 209 5629 5634
+type(
+  float
+)
+"editor/ed_hyper.ml" 188 5106 5108 "editor/ed_hyper.ml" 209 5629 5634
+type(
+  float
+)
+"editor/ed_hyper.ml" 186 5047 5049 "editor/ed_hyper.ml" 209 5629 5634
+type(
+  float
+)
+"editor/ed_hyper.ml" 214 5674 5678 "editor/ed_hyper.ml" 214 5674 5684
+type(
+  float
+)
+ident(
+  def rlimit "editor/ed_hyper.ml" 215 5693 5693 --
+)
+"editor/ed_hyper.ml" 214 5674 5688 "editor/ed_hyper.ml" 214 5674 5692
+type(
+  float
+)
+"editor/ed_hyper.ml" 215 5693 5697 "editor/ed_hyper.ml" 215 5693 5707
+type(
+  float
+)
+ident(
+  def rlimit_sqr "editor/ed_hyper.ml" 215 5693 5726 --
+)
+"editor/ed_hyper.ml" 215 5693 5710 "editor/ed_hyper.ml" 215 5693 5716
+type(
+  float
+)
+ident(
+  int_ref rlimit "editor/ed_hyper.ml" 214 5674 5678 "editor/ed_hyper.ml" 214 5674 5684
+)
+"editor/ed_hyper.ml" 215 5693 5717 "editor/ed_hyper.ml" 215 5693 5719
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"editor/ed_hyper.ml" 215 5693 5720 "editor/ed_hyper.ml" 215 5693 5726
+type(
+  float
+)
+ident(
+  int_ref rlimit "editor/ed_hyper.ml" 214 5674 5678 "editor/ed_hyper.ml" 214 5674 5684
+)
+"editor/ed_hyper.ml" 215 5693 5710 "editor/ed_hyper.ml" 215 5693 5726
+type(
+  float
+)

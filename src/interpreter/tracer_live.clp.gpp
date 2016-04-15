@@ -1,0 +1,558 @@
+% tracer_live.clp.gpp
+
+%==============================================================================%
+% This file implements a path-sensitive live analysis.
+%==============================================================================%
+% Live variable analysis (liveness analysis) is a backward dataflow
+% analysis which calculates for each program point the variables that
+% may be potentially read before their next write. A variable is
+% "live" if it holds a value that may be needed in the future.
+%
+% We denote USE(s) as the set of variables used in block s before any
+% assignment (i.e., USE(y := f(x1,x2,...,xn)) = {x1,x2,...,xn}.
+% DEF(s) is the set of variables assigned a value in block s (i.e.,
+% DEF(y := f(x1,x2,...,xn)) = {y}). The equations are defined as
+% follows:
+%
+% LIVE_in(s)    = USE(s) U (LIVE_out(s) \ DEF(s))
+% LIVE_out(end) = emptyset
+% LIVE_out(s)   = union of all LIVE_in(p), for all p \in Succ(s)
+%
+% Example:
+% b1:
+% <0> a=3; 
+%     b=5;
+%     d=4;
+%     x=100;
+% b2:
+% <1> if (a>b){
+% <2>  c=a+b;
+%      d=2;
+%     }
+% b3:
+% <3> c=4;
+% <4> return  b*d+c;
+% <5>
+%------------------------------------------------------------------------------%
+%                path-insensitive          path-sensitive
+%------------------------------------------------------------------------------%
+% LIVE_out(b3) = emptyset                     emptyset
+% LIVE_in(b3)  = {b,d}                        {b,d}
+%
+% LIVE_out(b2) = {b,d}                       b2 is infeasible
+% LIVE_in(b2)  = {a,b}                        
+%
+% LIVE_out(b1) = {a,b} U {b,d}={a,b,d}        {b,d}
+% LIVE_in(b1)  = emptyset                     emptyset
+%
+%==============================================================================%
+% TODO/BUGS:
+%
+% * There is a couple of important issues with witnesses and
+%   loops. SEE "NOTES WITNESSES" in tracer_analysis.clp.gpp.
+%
+%------------------------------------------------------------------------------%
+% To print live information per program point
+%------------------------------------------------------------------------------%
+% We print the set of live variables for each program point and for
+% each function.
+%
+% Given a function, we can have multiple copies of the same program
+% point. We collapse them by applying set union.
+%
+% Also, we can have multiple copies of the same function due to
+% different call sites. In this case, we don't collapse the
+% information. Therefore, the same function will appear multiple times
+% for each different call site. We could collapse easily this
+% information by applying again set union.
+%------------------------------------------------------------------------------%
+output_options(nooutput).
+% output_options(stdout).
+% output_options(fileout).
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% cleanup
+%-------------------------------------------------------------------------------%
+cleanup_live:-
+	cleanup_analysis.
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% live_bound_path(+FName,+Depth,+Id,+CL,+ML,+,+,+,+)
+%-------------------------------------------------------------------------------%
+live_bound_reached(FName,Depth,Id,CL,ML,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	live_success_path(FName,Depth,Id,_,CL,ML,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_,_,_,_,_).
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% live_success_path(+FName,+Depth,+Id,+PP,+CL,+ML,+SGlobalArr,...,+GlobalArr,...)
+% Terminal node has been encountered.
+%-------------------------------------------------------------------------------%
+live_success_path(FName,Depth,Id,_,_CL,_ML, 
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_,_,_,_,_):-
+
+	live_gen_empty_solution(Id, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				GlobalArrLIVE , GlobalVarLIVE,
+				LocalArrLIVE  , LocalVarLIVE , Ws),
+	
+	record_analysis_answer(fact,FName, Depth, _CL, _ML, Ws, 
+			       GlobalArrLIVE , GlobalVarLIVE,
+			       LocalArrLIVE  , LocalVarLIVE,_Aux).
+
+%-------------------------------------------------------------------------------%
+% live_gen_empty_solution(+,+,+,+,+,-,-,-,-,-)
+% This case implements the equation LIVE_out(end) = emptyset. 
+%-------------------------------------------------------------------------------%
+live_gen_empty_solution(Id, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			EmptyGlobalArrLIVE, EmptyGlobalVarLIVE,
+			EmptyLocalArrLIVE , EmptyLocalVarLIVE , Ws):-
+	
+	copy_to_unbound_list(SGlobalArr, EmptyGlobalArrLIVE),
+	copy_to_unbound_list(SGlobalVar, EmptyGlobalVarLIVE),	
+	copy_to_unbound_list(SLocalArr , EmptyLocalArrLIVE),
+	copy_to_unbound_list(SLocalVar , EmptyLocalVarLIVE),
+	
+	append(EmptyLocalArrLIVE , EmptyLocalVarLIVE, L1),
+	append(EmptyGlobalVarLIVE, L1, L2),
+	append(EmptyGlobalArrLIVE, L2, VsLIVE),
+	
+	init_witness_paths(VsLIVE,Id,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Ws).
+			   
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% live_fail_path(+FName,+Depth,+Id,+CL,+ML,+,+,+,+)
+% Infeasible path has been encountered.
+%-------------------------------------------------------------------------------%
+live_fail_path(FName,Depth,Id,CL,ML, 
+	       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	live_success_path(FName,Depth,Id,_,CL,ML, 
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_,_,_,_,_).
+			  
+	
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% live_reuse_answer(+,+,+,+,+)
+% Reuse answer when a node is subsumed: it stores all information.
+%-------------------------------------------------------------------------------%
+live_reuse_answer(FName,Depth,CL,ML,
+		  answer(Ws,
+			 GlobalArrLIVE,GlobalVarLIVE,LocalArrLIVE,LocalVarLIVE)):-
+        record_analysis_answer(rule,FName, Depth, CL, ML, Ws,
+			       GlobalArrLIVE,GlobalVarLIVE,
+			       LocalArrLIVE,LocalVarLIVE,_Aux).
+
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% live_combine_answers(+FName, +Id, +PP, +Depth, +CL, -ML, -Answer)
+% Combine answers from each transition taken in the recursive case,
+% produce an answer, and store the result in the table.
+% The combine operator is the SET UNION of all live variables. For
+% witnesses, we do the same than in slicing: we just choose
+% arbitrarily one in case of having a choice.
+%-------------------------------------------------------------------------------%
+live_combine_answers(FName, Id, PP, Depth, CL, ML, MergedAnswer):-
+	%-----------------------------------------------------------------------%
+	% Implemented in tracer_analysis.clp.gpp
+	%-----------------------------------------------------------------------%
+	combine_analysis_answers(FName, Id, PP, Depth, CL, ML, MergedAnswer),
+	%-----------------------------------------------------------------------%
+	% Output
+	%-----------------------------------------------------------------------%	
+	print_live_pp(FName,PP,MergedAnswer).
+	
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% live_pre_operator
+%-------------------------------------------------------------------------------%
+live_pre_operator(FName,Depth,Id,PC1,GuardFlag,CallStack,XCL,CL,CL1,ML,ML1,
+		      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	%-----------------------------------------------------------------------%
+	% Implemented in tracer_analysis.clp.gpp
+	% this predicate will call:
+	% - propagate_back_live_w_witnesses/9, or
+	% - propagate_back_live_wo_witnesses/2
+	%-----------------------------------------------------------------------%	
+	analysis_pre_operator(FName,Depth,Id,PC1,GuardFlag,CallStack,
+			      XCL,CL,CL1,ML,ML1,
+			      SGlobalArr , SGlobalVar , SLocalArr , SLocalVar,
+			      SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1).
+
+%-------------------------------------------------------------------------------%
+% propagate_back_live_w_witnesses(+Id, +XCL, +AllPreVars,+PostWs,
+%				  +PostGlobalArr,+PostGlobalVar,
+%                                 +PostLocalArr ,+PostLocalVar,
+%				  +NewPostWs)
+%-------------------------------------------------------------------------------%
+% PostWs: initial post-state for witnesses
+% PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar: for producing
+% new witnesses by copying them.
+% NewPostWs:??? final post-state for witnesses after optimization ???
+%-------------------------------------------------------------------------------%
+% XCL contains the constraints from the current transition. Moreover,
+% post-state variables that belong to the set LIVE_out are already
+% marked. The purpose of this operation is to generate the set LIVE_in
+% by applying: LIVE_in(s) = GEN(s) U (LIVE_out(s) \ KILL(s))
+%-------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_propagate_back_live_w_witnesses:-
+	% Case: assign without marked variables
+	XCL = [assign(X1,plus(X0,1)),assign(X2,minus(X1,4)),assign(X3,plus(X2,2))],
+	print_message("Before live propagation: \n",[]),
+	print_message("\tXCL0:%\n",[XCL]),		     	
+	propagate_back_live_w_witnesses(_,XCL,
+					[_,X0,_,_],[_],[],[],[X3,_,_],
+					[],PostWs),
+	print_message("After live propagation: \n",[]),
+	print_message("\tXCL0:% PostWs:%\n",[XCL,PostWs]),
+	print_message("-------------------------------------------------------\n",[]),
+	% Case: assign without marked variables	
+	XCL1 = [assign(Y1,plus(Y0,1)),assign(Y2,minus(Y1,4)),assign(w(2),plus(Y2,2))],
+	print_message("Before live propagation: \n",[]),
+	print_message("\tXCL1: %\n",[XCL1]),		     	
+	propagate_back_live_w_witnesses(_,XCL1,
+					[_,Y0,_,_],[_],[],[],[_Y3,_,_],
+					[],PostWs1),
+	print_message("After live propagation: \n",[]),
+	print_message("\tXCL1:% PostWs1:%\n",[XCL1,PostWs1]),
+	print_message("-------------------------------------------------------\n",[]),
+	% Case: guard without marked variables	
+	XCL2 = [gt(A,B),gt(A,C)],
+	print_message("Before live propagation: \n",[]),
+	print_message("\tXCL2: %\n",[XCL2]),		     	
+	propagate_back_live_w_witnesses(_,XCL2,
+					[_,A,B,C],[_],[],[],[A,B,C],
+					[],PostWs2),
+	print_message("After live propagation: \n",[]),
+	print_message("\tXCL2:% PostWs2:%\n",[XCL2,PostWs2]),
+	print_message("-------------------------------------------------------\n",[]),	
+	% Case: guard with marked variables	
+	XCL3 = [gt(D,w(3)),gt(D,F)],
+	print_message("Before live propagation: \n",[]),
+	print_message("\tXCL3:%\n",[XCL3]),		     	
+	propagate_back_live_w_witnesses(_,XCL3,
+					[_,D,E,F],[_],[],[],[D,E,F],
+					[],PostWs3),
+	print_message("After live propagation: \n",[]),
+	print_message("\tXCL3:% PostWs3:%\n",[XCL3,PostWs3]).
+#endif  /*DEBUG_USE*/
+%-------------------------------------------------------------------------------%
+propagate_back_live_w_witnesses(Id, XCL, AllPreVars,
+				PostGlobalArr, PostGlobalVar,
+				PostLocalArr , PostLocalVar , PostWs, NPostWs):-
+#ifdef  PROFILE								
+        ctime(Time0),
+#endif  /*PROFILE*/
+        propagate_live_constraints_w_witnesses(Id, XCL, AllPreVars,
+					       PostGlobalArr, PostGlobalVar,
+					       PostLocalArr , PostLocalVar,
+					       PostWs, NPostWs),
+#ifdef  PROFILE								
+        ctime(Time1),
+        add_counter(mark_cons_3,Time1-Time0),
+#endif  /*PROFILE*/
+        true.
+
+propagate_live_constraints_w_witnesses(Id, _XCL, _AllPreVars,
+				       _PostGlobalArr, _PostGlobalVar,
+				       _PostLocalArr , _PostLocalVar ,
+				       PostWs, PostWs):-
+	%----------------------------------------------------------------%
+	% Special case due to our own compilation
+	% ----------------------------------------------------------------%
+	% Guards, which do not have any statement under its scope
+	% (i.e., guard which doesn't immediately post-dominate any
+	% block in the CFG), should not declare as "live" its
+	% variables.
+	%----------------------------------------------------------------%
+	get_INFL(Id,INFLSet),
+	INFLSet = [],
+	debug_message("\tThis guard doesnt immediately post-dominate others\n",
+		      [],yellow),
+	!.
+propagate_live_constraints_w_witnesses(_Id, XCL, AllPreVars,
+				       PostGlobalArr, PostGlobalVar,
+				       PostLocalArr , PostLocalVar ,
+				       PostWs, NPostWs):-
+	%---------------------------------------------------------------------%
+	% If no assumption on XCL we should perform a fixpoint to
+	% propagate all live variables until no change. However, XCL
+	% has always a particular configuration: either all assignments
+	% or all guards. In that case, it's enough to reverse the
+	% original XCL and propagate in one single pass.
+	%
+	% We impose a sanity check to make sure this assumption always
+	% holds.
+	%---------------------------------------------------------------------%
+	reverse(XCL,XCL1),
+	propagate_live_constraints_w_witnesses_aux(XCL1,_Flag,Unifier),
+	propagate_live_constraints_add_witnesses(Unifier, XCL1,
+						 AllPreVars, PostWs,
+						 PostGlobalArr,PostGlobalVar,
+						 PostLocalArr,PostLocalVar,
+						 NPostWs).
+
+propagate_live_constraints_add_witnesses(Unifier, _XCL1,
+					 AllPreVars, PostWs,
+					 PostGlobalArr,PostGlobalVar,
+					 PostLocalArr,PostLocalVar,
+					 NPostWs):-
+	%------------------------------------------------------------------
+	% Build a new witness
+	%------------------------------------------------------------------	
+	myvar(Unifier),
+	get_index_from_list(AllPreVars,Unifier,Index),
+	!,
+	assign_witness_to_live_var(PostWs,Unifier,
+				   Index,
+				   PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+				   NPostWs).
+propagate_live_constraints_add_witnesses(_,_,_,PostWs,_,_,_,_,PostWs):-!.
+
+propagate_live_constraints_w_witnesses_aux([],_,_):-!.
+propagate_live_constraints_w_witnesses_aux([C1|R1],Flag,Unifier) :-
+	propagate_live_constraint_w_witnesses(C1,Flag,Unifier),
+	propagate_live_constraints_w_witnesses_aux(R1,Flag,Unifier),
+	!.
+propagate_live_constraints_w_witnesses_aux(CL,_,_):-
+	error_message("Block with mixed assignments and guards: % \n",[CL]).
+
+
+assign_witness_to_live_var(PostWs,Unifier,_I,_,_,_,_,PostWs):-
+	% We first try to reuse an existing witness
+	member(w(Index,_,_,_,_,_,_),PostWs),
+	!,
+%	print_message("Reused witness for variable % from % \n",[I,Index]),		
+	Unifier=w(Index). 
+assign_witness_to_live_var(PostWs,Unifier,
+			   Index,PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+			   NPostWs):-
+	% Otherwise, we create a fresh witness
+	Unifier=w(Index),
+%	print_message("Created New witness for variable %  \n",[Index]),	
+        add_fresh_witnesses([w(Index)],
+			    PostWs,
+			    PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+			    NPostWs),
+	!.
+
+%------------------------------------------------------------------------------
+% propagate_live_constraint_w_witnesses(?Constraint,-Flag,-Unifier)
+%------------------------------------------------------------------------------
+% This predicate implements the equation:
+%       LIVE_in(s) = USE(s) U (LIVE_out(s) \ DEF(s))
+%
+% If Constraint is an assigment and the l.h.s. is bound to a term
+% w(N), where N is the index of the post-variable, then all variables
+% of the r.h.s. of Constraint will be bound to w(N), which would then
+% mark the variables of the pre-state. Flag= [assign | guard] to
+% perform sanity checks.
+%
+% 
+% If Constraint is a guard all variables are marked automatically with
+% true witnesses?
+%
+%------------------------------------------------------------------------------
+propagate_live_constraint_w_witnesses(assign(A,B), assign, Unifier)    :-
+	% case: lhs is not marked, then rhs is not marked 
+	var(A),
+	!,
+	propagate_live_guard_w_witnesses([B], Unifier).
+propagate_live_constraint_w_witnesses(assign(A, B), assign, _) :-
+	% case: lhs is marked, then rhs is marked
+	!,                 
+	propagate_live_rhs_w_witnesses([B], A).
+propagate_live_constraint_w_witnesses(arrassign(A,B), assign, Unifier) :-
+	% case: lhs is not marked, then rhs is not marked 
+	var(A),
+	!,
+	propagate_live_guard_w_witnesses([B], Unifier).
+propagate_live_constraint_w_witnesses(arrassign(A, B), assign, _) :-
+	% case: lhs is marked, then rhs is marked
+	!,                 
+	propagate_live_rhs_w_witnesses([B], A).	
+propagate_live_constraint_w_witnesses(Guard, guard, Unifier) :-
+	!,
+	propagate_live_guard_w_witnesses([Guard], Unifier).
+
+%-------------------------------------------------------------------------%
+% propagate_live_guard_w_witnesses(?Constraint, ?Unifier)
+%-------------------------------------------------------------------------%
+% PRECONDITION: Unifier is var.
+%
+% See cases below.
+%-------------------------------------------------------------------------%
+propagate_live_guard_w_witnesses([],_):- !.
+propagate_live_guard_w_witnesses([X|R], Unifier) :-
+	% Case 1: X is var and Unifier has been already unified.
+	%         Then, X=Unifier. 
+ 	var(X),
+	!,
+	X=Unifier, 
+ 	propagate_live_guard_w_witnesses(R, Unifier).
+propagate_live_guard_w_witnesses([X|R], Unifier) :-
+	% Case 2: X is not var. Thus, X is of the form w(_)
+	%         It attempts at unifying Unifier to X
+	X=w(_),
+	Unifier=X,	
+	!,	
+	propagate_live_guard_w_witnesses(R, Unifier).
+propagate_live_guard_w_witnesses([C|R], Unifier) :-
+	% Case 3: peel constraint and continue recursively.
+	C =.. [_|ArgsList],
+	propagate_live_guard_w_witnesses(ArgsList, Unifier),
+	propagate_live_guard_w_witnesses(R, Unifier).
+
+%-------------------------------------------------------------------------%
+% propagate_live_rhs_w_witnesses(?List, +Unifier)
+%-------------------------------------------------------------------------%
+% PRECONDITION: Unifier is not var
+%
+%-------------------------------------------------------------------------%
+propagate_live_rhs_w_witnesses([]   , _Unifier) :- !.
+propagate_live_rhs_w_witnesses([X|R],  Unifier) :-
+	var(X), 
+	X=Unifier,
+	!,
+	propagate_live_rhs_w_witnesses(R, Unifier).
+propagate_live_rhs_w_witnesses([w(_)|R], Unifier) :-
+	propagate_live_rhs_w_witnesses(R, Unifier).
+propagate_live_rhs_w_witnesses([C|R], Unifier) :-
+	C =.. [_|ArgsList],
+	propagate_live_rhs_w_witnesses(ArgsList, Unifier),
+	propagate_live_rhs_w_witnesses(R, Unifier).	
+
+
+%:-codegen_debug.
+%------------------------------------------------------------------------%
+% propagate_back_live_wo_witnesses(+Id, +XCL)
+%------------------------------------------------------------------------%
+% This predicate implements the equation
+%     IN(b) = USE(b) U (OUT(b) - DEF(b)) where b is a sequence of
+%                                        staments.
+%
+% How we do it: assume the statement X1 = X + 1 where X,Y, and Z are
+% pre-state variables an X1,Y1, and Z1 are post-state. Assume also
+% that X1 and Z1 are live variables. This predicate will add X as a
+% live variable in the pre-state since X is a used variable
+% (mark_live_all_use_variables_wo_witnesses). Implicitly, the variable
+% X1 (element of the set DEF(b)) is not considered since it is never
+% propagated. The rest of variables (e.g., Z1) are propagated also.
+%------------------------------------------------------------------------%
+propagate_back_live_wo_witnesses(Id, _XCL):-
+	%----------------------------------------------------------------%
+	% Special case due to our own compilation
+	%----------------------------------------------------------------%
+	% Guards, which do not have any statement under its scope,
+	% should not declare as "live" the variables involved in that
+	% guard.
+	%----------------------------------------------------------------%
+	get_INFL(Id,INFLSet),
+	INFLSet = [],
+	!.
+propagate_back_live_wo_witnesses(_, XCL):-
+	reverse(XCL, XCL1),
+	propagate_live_constraints_wo_witnesses(XCL1).
+
+propagate_live_constraints_wo_witnesses([]):- !.
+propagate_live_constraints_wo_witnesses([C1|R1]):-
+	propagate_live_constraint_wo_witnesses(C1),
+	propagate_live_constraints_wo_witnesses(R1).
+
+%------------------------------------------------------------------------%
+% lhs of assign/2 or arrassign/2 is not marked. This is how we
+% (implicitly) delete from IN(b) the set DEF(b).
+%------------------------------------------------------------------------%
+propagate_live_constraint_wo_witnesses(assign(_,B)):-
+	mark_live_all_use_variables_wo_witnesses([B]).
+propagate_live_constraint_wo_witnesses(arrassign(_,B)):-
+	mark_live_all_use_variables_wo_witnesses([B]).
+propagate_live_constraint_wo_witnesses(Guard):-
+	mark_live_all_use_variables_wo_witnesses([Guard]).
+
+mark_live_all_use_variables_wo_witnesses([]):-!.
+mark_live_all_use_variables_wo_witnesses([X|R]):-
+	mark_term(X),
+	mark_live_all_use_variables_wo_witnesses(R).
+mark_live_all_use_variables_wo_witnesses([C|R]):-
+	C =.. [_|ArgsList],
+	mark_live_all_use_variables_wo_witnesses(ArgsList),
+	mark_live_all_use_variables_wo_witnesses(R).
+
+%:- spy, trace.
+
+%--------------------------------------------------------------------------------%
+% Output
+%--------------------------------------------------------------------------------%
+% print_live_analysis_stats
+print_live_analysis_stats:-
+	get_num_of_marked_variables(TotalMarkVars),
+	print_message("LIVE analysis\n\tTotal number of marked variables      : %\n" ,
+		      [TotalMarkVars]).
+
+% print_live_function_info(+)
+% print_live_function_info(FName):-
+% 	print_live_info_per_pp(FName),
+% 	print_message("-------------------------------------------------------\n",[]).	
+	
+% print_live_info_per_pp(FName):-	
+% 	lookup_memo_table(FName,PP,_,_,_,_,_,_,_,
+% 			  answer(_,GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet)),
+
+% 	print_live_pp(FName,PP, GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet),
+% 	fail.
+% print_live_info_per_pp(_).
+
+% print_live_pp(+,+,+)
+print_live_pp(_,_,_):-
+	output_options(nooutput),!.
+print_live_pp(FName,PP,answer(_,GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet)):-
+	output_options(stdout),!,
+	once(print_stdout_live_pp(FName,PP,GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet)).
+print_live_pp(FName,PP,answer(_,GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet)):-
+	output_options(fileout),!,
+	telling(Old),
+	tell_append('live_variable_results.log'),
+	once(print_file_live_pp(FName,PP,GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet)),
+	told,
+	tell(Old).
+	
+
+% print_file_live_pp(+,+,+,+,+,+)
+% FIXME: problems if pipes are used
+print_file_live_pp(FName,[PP],GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet):-
+	count_marked_elements(GlobalArrSet,N1),
+ 	count_marked_elements(GlobalVarSet,N2),
+ 	count_marked_elements(LocalArrSet ,N3),
+ 	count_marked_elements(LocalVarSet ,N4),
+	print_file("%@%\n\tNum live vars:%\n\tLive set: ",[FName,PP,N1+N2+N3+N4]),
+	pretty_printer_markings_aux(FName,
+				    GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet,
+				    Markings),
+	print_file("%\n",[Markings]).
+% print_stdout_live_pp(+,+,+,+,+,+)
+print_stdout_live_pp(FName,[PP],GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet):-
+	count_marked_elements(GlobalArrSet,N1),
+ 	count_marked_elements(GlobalVarSet,N2),
+ 	count_marked_elements(LocalArrSet ,N3),
+ 	count_marked_elements(LocalVarSet ,N4),
+	print_message("%@%\n\tNum live vars:%\n\tLive set: ",[FName,PP,N1+N2+N3+N4]),
+	pretty_printer_markings_aux(FName,
+				    GlobalArrSet,GlobalVarSet,LocalArrSet,LocalVarSet,
+				    Markings),
+	print_message("%\n",[Markings]).
+
+	

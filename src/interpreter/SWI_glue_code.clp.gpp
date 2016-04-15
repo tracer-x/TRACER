@@ -1,0 +1,100 @@
+#if     (CLP_SYS == SWI)
+%%
+%% SWI
+%%
+:- op(60, fx, not).
+
+add_counter(X,Val)   :- flag(X,OldVal,OldVal+Val).
+set_counter(X,Val)   :- flag(X,_,Val).
+counter_value(X,Val) :- flag(X,Val,Val).
+
+%%length/2, copy_term/2 are builtin predicates
+
+gen_varlabels(L, L1) :-
+	gen_varlabels_aux(0, L, L1).
+gen_varlabels_aux(_, [], []).
+gen_varlabels_aux(N, [_|R], [X|S]) :-
+	N1 is N + 1,
+	number_codes(N1,C1),
+	atom_codes(A1,C1),
+	atom_concat('v',A1,X),
+        gen_varlabels_aux(N1, R, S).
+
+
+fcopy_term(X,Y):- copy_term(X,Y).
+
+robust_retract_no_call(A):- retract(A).
+robust_retract(A)        :- retract(A).
+
+:-  dynamic mem_usage/3.
+
+% zmem_usage/0
+zmem_usage:-
+	retractall(mem_usage(_,_,_)),
+	read_memory_usage(Total,P,G,L,T),
+	Details = [(program,P,P),(global_stack,G,G),
+	           (local_stack,L,L),(trail,T,T)],
+	asserta(mem_usage(Total,0,Details)).
+
+read_memory_usage(Total,P,G,L,T):-
+        statistics(program,[P,_]),
+        statistics(global_stack,[G,_]),
+        statistics(local_stack,[L,_]),
+        statistics(trail,[T,_]),
+        %statistics(choice,[C,_]),
+        %Total is P+G+L+T+C.
+	Total is P+G+L+T.
+
+update_mem_usage:-
+	read_memory_usage(Total,P,G,L,T),
+	mem_usage(Old_mem,Inc,Old_Details),
+	(Old_mem >= Total ->
+	    true
+	;
+	    retract(mem_usage(_,_,_)),
+	    Delta is Total-Old_mem+Inc,
+	    Old_Details = [(program,_P,P0),(global_stack,_G,G0),
+	             (local_stack,_L,L0),(trail,_T,T0)],
+	    Details = [(program,P,P0),(global_stack,G,G0),
+	             (local_stack,L,L0),(trail,T,T0)],
+	    asserta(mem_usage(Total,Delta,Details))
+	).
+
+% cmem_usage/1
+cmem_usage(memory(Total,Code,Stack,Heap,Trail,0,0)):-
+	update_mem_usage,
+	mem_usage(_,_,Details),
+	Details = [(program,P,P0),(global_stack,G,G0),
+	           (local_stack,L,L0),(trail,T,T0)],
+	member((program,P,P0),Details),
+	Code is P - P0,
+	member((global_stack,G,G0),Details),
+	Heap is G - G0,
+	member((local_stack,L,L0),Details),
+	Stack is L - L0,
+	member((trail,T,T0),Details),
+	Trail is T - T0,
+	Total is Code + Heap + Stack + Trail.
+
+% For compatibility with CLPR
+diagnostic(Total,Code,Stack,Heap,Trail,Solver,PTerms):-
+	zmem_usage,
+	cmem_usage(memory(Total,Code,Stack,Heap,Trail,Solver,PTerms)).
+
+
+% swi_dump(+Targets:list(var),+NewVars:list(var),-Answer)
+% dump/3 in SWI has the limitation that no elements in Targets can be
+% instantiated to a number.
+
+swi_dump(Targets,NewVars,Answer):-
+	dump(Targets,NewVars,Answer0),
+	collect_ground_variables_and_rename(Targets,NewVars,Answer1),
+	append(Answer0,Answer1,Answer).
+
+collect_ground_variables_and_rename([],[],[]):- !.
+collect_ground_variables_and_rename([X|Xs],[Y|Ys],[Y=X|Zs]):-
+	number(X),!,
+	collect_ground_variables_and_rename(Xs,Ys,Zs).
+collect_ground_variables_and_rename([_|Xs],[_|Ys],Zs):- !,
+	collect_ground_variables_and_rename(Xs,Ys,Zs).
+#endif

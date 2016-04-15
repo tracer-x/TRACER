@@ -1,0 +1,103 @@
+UNLOADED == 0;
+NP == 1;
+DC == 2;
+SKIP1 == 3;
+SKIP2 == 4;
+MPR1 == 5;
+MPR3 == 6;
+IPC == 7;
+
+s == UNLOADED;
+s == NP;
+s == DC;
+s == SKIP1;
+s == SKIP2;
+s == MPR1;
+s == MPR3;
+s == IPC;
+
+pended == 0;
+pended == 1;
+
+compFptr == 0;
+
+compRegistered == 0;
+compRegistered == 1;
+
+lowerDriverReturn == 0;
+lowerDriverReturn == 259; //semi
+
+setEventCalled == 0;
+setEventCalled == 1;
+
+customIrp == 0;
+customIrp == 1;
+
+status@main == -1; //semi
+status@main == 259; //semi
+status@main == 0; //semi
+
+myStatus == 0;
+
+
+//0<=lowerDriverReturn-returnVal@PoCallDriver  
+//lowerDriverReturn-returnVal@PoCallDriver<=0  
+//0<=lowerDriverReturn-__retres@PoCallDriver  
+//lowerDriverReturn-__retres@PoCallDriver<=0  
+//0<=lowerDriverReturn-ntStatus@FloppyPower  
+//lowerDriverReturn-ntStatus@FloppyPower<=0  
+//0<=lowerDriverReturn-__retres@FloppyPower  
+//lowerDriverReturn-__retres@FloppyPower<=0  
+0<=lowerDriverReturn-status@main  
+lowerDriverReturn-status@main<=0  
+//__retres@FloppyPower<=17  
+status@main<=17  
+//PagingReferenceCount<=0  
+//0<=PagingReferenceCount  
+//PagingReferenceCount<=1  
+//1<=PagingReferenceCount  
+//__retres@PsCreateSystemThread<=-1073741823  
+//status@FlQueueIrpToThread<=-1073741823  
+//ntStatus@FloppyPnp<=-1073741823  
+//__retres@FloppyPnp<=-1073741823  
+status@main<=-1073741823  
+//ntStatus@FloppyPnp<=0  
+//__retres@FloppyPnp<=0  
+status@main<=0  
+//PagingReferenceCount<=2  
+//2<=PagingReferenceCount  
+//status@FlQueueIrpToThread<=-1  
+//__retres@FlQueueIrpToThread<=-1  
+//ntStatus@FloppyPnp<=-1  
+//0<=lowerDriverReturn-returnVal2@IofCallDriver  
+//lowerDriverReturn-returnVal2@IofCallDriver<=0  
+//0<=lowerDriverReturn-__retres@IofCallDriver  
+//lowerDriverReturn-__retres@IofCallDriver<=0  
+//0<=lowerDriverReturn-ntStatus@FloppyPnp  
+//lowerDriverReturn-ntStatus@FloppyPnp<=0  
+//0<=lowerDriverReturn-__retres@FloppyPnp  
+//lowerDriverReturn-__retres@FloppyPnp<=0  
+//0<=__retres@FloppyPnp-lowerDriverReturn  
+//__retres@FloppyPnp-lowerDriverReturn<=0  
+status@main-lowerDriverReturn<=0  
+0<=status@main-lowerDriverReturn  
+//ntStatus@FloppyPnp-lowerDriverReturn<=0  
+//0<=ntStatus@FloppyPnp-lowerDriverReturn  
+//__retres@FloppyPnpComplete<=-1073741802  
+//-1073741802<=__retres@FloppyPnpComplete  
+//compRetStatus1@IofCallDriver<=-1073741802  
+//-1073741802<=compRetStatus1@IofCallDriver  
+//returnVal2@IofCallDriver<=259  
+//259<=returnVal2@IofCallDriver  
+//__retres@IofCallDriver<=259  
+//259<=__retres@IofCallDriver  
+//ntStatus@FloppyPnp<=259  
+//259<=ntStatus@FloppyPnp  
+0<=s-NP  
+//260<=ntStatus@FloppyPnp  
+//ntStatus@FloppyPnp<=258  
+//260<=__retres@FloppyPnp  
+//__retres@FloppyPnp<=258  
+260<=status@main  
+status@main<=258  
+

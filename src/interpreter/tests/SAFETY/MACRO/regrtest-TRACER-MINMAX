@@ -1,0 +1,530 @@
+#!/bin/bash
+
+#######################################################################
+# This script runs benchmarks for safety ***with*** minmax.
+# It runs with default options. Thus, use -Wt option to run with other
+# options
+# E.g., -Wt "-intp ndwp -convert-strict-ineq y -clean-after-dump y"
+#       -Wt "-convert-eq-to-ineq y -convert-strict-ineq y"
+#######################################################################
+
+#---------------------------------------------------------------------#
+# Optional to be  configured 
+#---------------------------------------------------------------------#
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=tracer 
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+    
+#---------------------------------------------------------------------#
+# Should not change below onwards
+#---------------------------------------------------------------------#
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+# to get the path only - not the script name - add
+TESTS_HOME=`dirname "$abspath"`
+NTDRIVERS=${TESTS_HOME}/ntdrivers
+LINUXDRIVERS=${TESTS_HOME}/linuxdrivers
+KBFILTR_DIR=${NTDRIVERS}/kbfiltr
+CDAUDIO_DIR=${NTDRIVERS}/cdaudio
+DISKPERF_DIR=${NTDRIVERS}/diskperf
+FLOPPY_DIR=${NTDRIVERS}/floppy
+SERIAL_DIR=${NTDRIVERS}/serial
+QPMOUSE_DIR=${LINUXDRIVERS}/qpmouse
+TLAN_DIR=${LINUXDRIVERS}/tlan
+TCAS_DIR=${TESTS_HOME}/tcas
+SSH_DIR=${TESTS_HOME}/ssh/simpler
+STATEMATE_DIR=${TESTS_HOME}/statemate/timed_safe
+
+currtest=""
+extra_options=" "
+block=""
+
+# counters
+counter=0
+success=0
+failure=0
+unexSuccess=0
+unexFailure=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options]
+  -help         print this message
+  -block s      run the tests in block s (default "all")
+  -Wt <options> pass string options to TRACER
+  -all          run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+    case "$1" in
+	-help)
+	    usage
+	    exit 1
+	    ;;	
+	-block)
+	    shift
+	    block="$block$1"
+	    ;;	
+	-Wt)
+	    shift 
+	    extra_options="$1"
+	    ;;	 
+	-all)
+	    block="ALL"
+	    ;;	
+	*)
+	    echo "unknown arg: $1"
+	    usage
+	    exit 0
+	    ;;
+    esac
+    shift
+done
+
+echo "Running MINMAX algorithm with extra options: ${extra_options}" >> ${log}
+echo "Running MINMAX algorithm with extra options: ${extra_options}" >> ${stat}
+
+#takes  no args -- just does a bunch of greps on the *.out file
+function getstatsSAFE() {
+if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}   
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+    echo `grep "MINMAX restarts"  test_${currtest}_${counter}.out` >> $stat
+    success=$[ $success + 1 ]
+else 
+    if grep "UNSAFE" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexFailure=$[ $unexFailure + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]	
+    fi
+fi
+}
+
+function getstatsUNSAFE() {
+if grep "UNSAFE" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}      
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program UNSAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+    echo `grep "MINMAX restarts"  test_${currtest}_${counter}.out` >> $stat
+    failure=$[ $failure + 1 ]
+else 
+    if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexSuccess=$[ $unexSuccess + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]		
+    fi
+fi
+}
+
+function cleanDirectory {
+    cd $1
+    rm -f *.clp
+    rm -f *.dot
+    rm -f *.TRACES
+    rm -f *.out
+    cd ${TESTS_HOME}    
+}
+
+
+
+#----------------------------------------------------------------------------------#
+# NTWINDOWS DRIVERS
+#----------------------------------------------------------------------------------#
+blockNTWINDOWS(){
+
+    options="-minmax y -alias y -ignore-comp-errors y $extra_options"    
+
+    currtest="kbfiltr-safe"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${KBFILTR_DIR}/kbfiltr-TRACER.c $options > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+
+    currtest="kbfiltr-unsafe-1"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${KBFILTR_DIR}/kbfiltr-TRACER-unsafe-1.c $options > test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="kbfiltr-unsafe-2"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${KBFILTR_DIR}/kbfiltr-TRACER-unsafe-2.c $options > test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="cdaudio"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${CDAUDIO_DIR}/cdaudio-TRACER-MINMAX.c $options > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+
+    currtest="diskperf"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${DISKPERF_DIR}/diskperf-TRACER.c $options > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="floppy"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${FLOPPY_DIR}/floppy-TRACER-MINMAX.c $options > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+#     currtest="serial"
+#     echo "[${counter}] ${currtest}.c" >> ${log}   
+#     echo "------------ [$curtest] $* ------------"
+#     ${TRACER_CMMD} safety ${SERIAL_DIR}/serial-TRACER.c $options > test_${currtest}_${counter}.out
+#     getstatsSAFE
+#     counter=$[ ${counter} + 1]
+
+    cleanDirectory ${KBFILTR_DIR}
+    cleanDirectory ${CDAUDIO_DIR}
+    cleanDirectory ${DISKPERF_DIR}
+    cleanDirectory ${FLOPPY_DIR}
+    cleanDirectory ${SERIAL_DIR}    
+}
+
+#----------------------------------------------------------------------------------#
+# LINUX DRIVERS
+#----------------------------------------------------------------------------------#
+blockLINUX(){
+    options="-minmax y -alias y -ignore-comp-errors y -clean-after-dump y $extra_options"    
+
+    currtest="qpmouse"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${QPMOUSE_DIR}/qpmouse-TRACER.c $options > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tlan"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TLAN_DIR}/tlan-TRACER.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+
+    cleanDirectory ${QPMOUSE_DIR}
+    cleanDirectory ${TLAN_DIR}
+
+}
+
+#----------------------------------------------------------------------------------#
+# TCAS
+#----------------------------------------------------------------------------------#
+blockTCAS() {
+    options="-minmax y -alias y -ignore-comp-errors y $extra_options"    
+
+    currtest="tcas_1a"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_1a.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_1b"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_1b.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_2a"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_2a.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_2b"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_2b.c $options >  test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_3a"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_3a.c $options >  test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_3b"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_3b.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_4a"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_4a.c $options >  test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_4b"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_4b.c $options >  test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_5a"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_5a.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+    
+    currtest="tcas_5b"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${TCAS_DIR}/tcas_5b.c $options >  test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+
+    cleanDirectory ${TCAS_DIR}
+
+}
+
+#----------------------------------------------------------------------------------#
+# SSH
+#----------------------------------------------------------------------------------#
+blockSSHCLNT(){
+    options="-minmax y -alias y -clean-after-dump y -h 1 -minmax-cs-reuse y $extra_options " 
+    currtest="s3_clnt.blast.1.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_clnt.blast.1.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE    
+
+    currtest="s3_clnt.blast.2.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_clnt.blast.2.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE    
+
+
+    currtest="s3_clnt.blast.3.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_clnt.blast.3.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE    
+
+
+    currtest="s3_clnt.blast.4.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_clnt.blast.4.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE    
+
+    cleanDirectory ${SSH_DIR}
+}
+
+blockSSHSRV(){
+    options="-minmax y -alias y -clean-after-dump y -h 1 -minmax-cs-reuse y $extra_options " 
+
+    currtest="s3_srvr.blast.1.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.1.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.2.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.2.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.3.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.3.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.4.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.4.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.6.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.6.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.7.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.7.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.8.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.8.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.9.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.9.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.10.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.10.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.11.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.11.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.12.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.12.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.13.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.13.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.14.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.14.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.15.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.15.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    currtest="s3_srvr.blast.16.c"
+    echo "[${counter}] ${currtest}.c $options" >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    ${TRACER_CMMD} safety ${SSH_DIR}/s3_srvr.blast.16.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+
+    cleanDirectory ${SSH_DIR}
+}
+
+#----------------------------------------------------------------------------------#
+# STATEMATE
+#----------------------------------------------------------------------------------#
+blockSTATEMATE() {
+    options="-minmax y -alias y $extra_options "     
+    currtest="statemate-shorter"
+    echo "[${counter}] ${currtest}.c $options " >> ${log}   
+    echo "------------ [$currtest] $* $options ------------"
+    gcc -E ${STATEMATE_DIR}/statemate-shorter-TRACER-timed-safe-2.c > ${STATEMATE_DIR}/tmp_xxx.c
+    ${TRACER_CMMD} safety ${STATEMATE_DIR}/tmp_xxx.c $options >  test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+
+    cleanDirectory ${STATEMATE_DIR}
+}    
+
+runAllTests(){
+    blockNTWINDOWS
+    blockLINUX
+    blockTCAS    
+    blockSSHCLNT
+#   blockSSHSRV
+    blockSTATEMATE
+}
+
+echo $block
+case "$block" in    
+    NTWINDOWS)
+	shift
+	blockNTWINDOWS	
+	;;    
+    LINUX)
+	shift
+	blockLINUX
+	;;    
+    TCAS)
+	shift
+	blockTCAS
+	;;
+    SSHCLNT)
+	shift
+	blockSSHCLNT
+	;;    
+    SSHSRV)
+	shift
+	blockSSHSRV
+	;;    
+    STATEMATE)
+	shift
+	blockSTATEMATE
+	;;    
+    ALL)
+	shift
+	runAllTests
+	;;
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 0
+	;;
+esac  
+shift
+   
+# Clean temporary files
+cleanDirectory "."
+
+echo ""                                     >> ${log}   
+echo ""                                     
+echo "Successful tests:      $success"      >> ${log}   
+echo "Successful tests:      $success"     
+echo "Failed as expected:    $failure"      >> ${log}      
+echo "Failed as expected:    $failure"      
+echo "Unexpected success:    $unexSuccess"  >> ${log}   
+echo "Unexpected success:    $unexSuccess"  
+echo "Unexpected failure:    $unexFailure"  >> ${log}   
+echo "Unexpected failure:    $unexFailure"  
+echo "No Answer:             $dies"         >> ${log}   
+echo "No Answer:             $dies"         
+
+exit 1

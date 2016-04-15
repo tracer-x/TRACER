@@ -1,0 +1,2178 @@
+% tracer_slicer.clp.gpp
+
+%=========================================================================%
+% This file implements a path-sensitive backward slicer.
+%=========================================================================%
+% A backward slice of a program wrt a program point p and a variable x
+% (called the slicing criterion) as all statements of the program that
+% might affect the value of x at p. We follow Weiser'84 dataflow
+% approach and adapt it for excluding non-executable paths.
+
+% Assume a CFG defined as G =(V,E,L), we define D_n as the set of
+% variables at node n in V that may affect the slicing criterion.
+%
+% - Data dependencies can be considered by handling two kinds of
+% dataflow information. Given an edge e=(n,n') in E, we denote
+% DEF(L(n,n')) and USE(L(n,n')) as the variables altered and used,
+% respectively, at e. Then, D_n = (D_n' - DEF(L(n,n'))) U USE(L(n,n'))
+% if DEF(L(n,n') /\ D_n' is not empty.
+% Implemented by propagate_depends_assignments_w_witnesses/2 and
+% propagate_depends_assignments_wo_witnesses/2
+%
+% - Control dependencies are also considered since they can affect the
+% criterion. Informally, a guard e =(n,n') in E is included if some of
+% the statements under its scope are included in the slice (using INFL
+% relation), and D_n = D_n' U USE(L(n,n')) Implemented by
+% propagate_dependencies_guard_w_witnesses/11 and
+% propagate_dependencies_guard_wo_witnesses/11.
+%
+% In presence of loops the set D_n must be inferred via a fixpoint
+% computation (unfold_loop_until_fixpoint/36).
+%
+% Finally, an edge e=(n,n') in E is included in the slice if D_n /\
+% DEF(L(n,n')) is not empty (the slice is maintained via a global
+% predicate called trans_in_slice/2).
+%=========================================================================%
+% TODO:
+%
+% * Something wrong with SLICING_SPEEDUP_TRANS_IN_SLICE.  Sometimes,
+%   it consumes too much memory and slowdown significantly the analysis.
+%
+% * Minor things:
+%   - Don't include last return.
+%-------------------------------------------------------------------------%
+% KNOWN BUGS (all these bugs are very old. We need to test current
+% implementation to see if they are still there):
+%
+% Bug#1: (11/18/09) The slicer does not termine if -DDEBUG_USE option in
+% Makefile and set_tracer_flag(path_sensitive,n) with the file
+% fcron_better.c (it might be related to nonlinear constraints)
+% Bug#2: (11/19/09) The slicer does not terminate with stunnel when in
+% main function:
+%   global_options(cmd, opt, arg);
+%   service_options(cmd, section, opt,arg);
+%   It might be some problem with function calls
+% Bug#3: (11/19/09) collate_slicing_answers_aux fails with stunnel.c
+% Bug#4: (19/12/12) Do not include call sites in the slice!
+% Vijay- Bug#4 is fixed (record_callsite_for_marking/3), need to test thoroughly
+% To enable the fix, #define SLICING_BUG4_FIX
+% int safety;
+% foo() { safety = 5; }
+% main() {
+%      int c, x, e, f, g;
+%      f = g;
+%      e = f;
+%      c = e;
+%      if(c > 0) 
+%          foo();  // foo() is not included in the slice!!!
+%      _SLICE(safety);
+% }
+%-------------------------------------------------------------------------%
+% About WITNESSES:
+%
+% * Whenever new dependencies are created due to a guard, we try to
+%   reuse an existing witness from other dependencies as much as
+%   possible (assign_witness_to_new_depend_var/9). Even so, it's
+%   possible to create new fresh (unconstrained) witnesses. In general,
+%   unnecessary fresh witnesses are not good due to two reasons:
+%   - underperformance
+%   - lower effectiveness since witnesses are at the beginning
+%     unconstrained.
+%
+% * There is a couple of important issues with witnesses and
+%   loops. SEE "NOTES WITNESSES" in tracer_analysis.clp.gpp.
+%-------------------------------------------------------------------------%
+% About POINTERS: The slicer considers ALIAS information. First, an
+% off-the-shelf points-to analysis is run before TRACER starts. Then,
+% ANTLR generates different heaps for different alias classes (to
+% improve accuracy). Moreover, expressions such as &x the variable x
+% is treated as another pointer that belongs to one of the heaps (for
+% correctness).  The nice consequence is that we can compute slices in
+% presence of aliasing without no modification on the TRACER side. Of
+% course, loop invariant generation considers also aliasing.
+%-------------------------------------------------------------------------%
+% About options:
+%   - SLICING_SPEEDUP_TRANS_IN_SLICE: performs a more efficient
+%     indexing to do queries on trans_in_slice/2 faster.
+%          BUGGY! see TODO
+%   - SLICING_CONTROL_OPT:
+%          INCORRECT. DO NOT USE IT
+%     if (*) a=1 else a=2 .... if(a>1) z=0 else z=1;
+%
+%              / \
+%         a=1 |   ------
+%             |         |a=2  
+%    (1) a>1 / \   a<=1 /\  (2)
+%           /   \    false\ 
+%         false  |         | z=0
+%                |z=1
+%  At (1) there is only one feasible child. Then, don't mark a<=1
+%  At (2) there is only one feasible child. Then, don't mark a>1
+%  Conclusion: we don't mark "a" in the guard "if(a>1)" which is wrong.
+%------------------------------------------------------------------------%
+% Notation
+%
+% PostGlobalArr     : global arrays at the child.
+% PostGlobalVar     : global variables at the child.
+% PostLocalArr      : local arrays at the child.
+% PostLocalVar      : local variables at the child.
+% PreGlobalArr      : global arrays at the father.
+% PreGlobalVar      : global variables at the father.
+% PreLocalArr       : local arrays at the father.
+% PreLocalVar       : local variables at the father.
+% XCL               : constraints corresponding to the transition.
+% Id                : transition identifier.
+% PostGlobalArrMark : marked global arrays at the child.
+% PostGlobalVarMark : marked global variables at the child.
+% PostLocalArrMark  : marked local arrays at the child.
+% PostLocalVarMark  : marked local variables at the child.
+% PostWs            : witnesses at the child.
+% PreWs             : witnesses at the father.
+% SliceXCL          : constraints in the slice corresponding to 
+%                     the transition
+% PreVarsMark       : all marked variables at the father.
+% PreGlobalArrMark  : marked global arrays at the father.
+% PreGlobalVarMark  : marked global variables at the father.
+% PreLocalArrMark   : marked local arrays at the father.
+% PreLocalVarMark   : marked local variables at the father.
+%
+% For each marked variable (variable that belongs to D_n set), there
+% exists a witness. A witness is represented by:
+%       w(I,Id,GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef)
+%       where I is the index of the variable to which the witness refers to.
+%             Id is a transition id.
+% and sometimes by w(I).
+%==========================================================================%
+
+
+%--------------------------------------------------------------------------%
+% Generic operation
+%
+% cleanup
+%--------------------------------------------------------------------------%
+cleanup_slice :-
+	% Cleanup of slicing datastructures
+        cleanup_analysis,
+	retractall(empty_guards(_)),
+	retractall(func_already_counted(_)),
+	% Cleanup of fixpoint datastructures
+	cleanup_fixpo.
+
+%-------------------------------------------------------------------------%
+% Operations for handling trans_in_slice/2. This fact is used to store
+% the program slice.
+%-------------------------------------------------------------------------%
+#ifndef SLICING_SPEEDUP_TRANS_IN_SLICE
+cleanup_trans_in_slice:-
+	retractall(trans_in_slice(_,_)).
+
+retract_trans_in_slice(Id,SliceXCL):-
+	retract(trans_in_slice(Id,SliceXCL)).
+assert_trans_in_slice(Id,SliceXCL):-
+	fassert(trans_in_slice(Id,SliceXCL)).
+#endif  /*SLICING_SPEEDUP_TRANS_IN_SLICE*/
+
+% Vijay - quick-fixing bug found on 2012/12/20
+% first clause will be executed during forward SE that sets up the callsite
+% second clause will be executed when backtracking (unfold_aux3 failing) that will 
+% check if callee was marked and if so, add the callsite Id to slice (and also mark
+% the caller for the same purpose)
+record_callsite_for_marking(_Id,_FName,CallFName):-
+    printf_to_atom(A,"callee_mark_%",[CallFName]),
+    set_counter(A,0).
+record_callsite_for_marking(Id,FName,CallFName):-
+    printf_to_atom(A,"callee_mark_%",[CallFName]),
+    counter_value(A,1),
+    assert_trans_in_slice(Id,_),
+    printf_to_atom(B,"callee_mark_%",[FName]),
+    set_counter(B,1), fail.
+
+record_trans_in_slice(FName,Id,MarkXCL):-
+	is_marked_list(MarkXCL),!,
+	record_trans_in_slice_aux(Id,MarkXCL),
+    printf_to_atom(A,"callee_mark_%",[FName]),
+    set_counter(A,1).
+record_trans_in_slice(_,_,_):-!.
+record_trans_in_slice_aux(Id,NewMarkXCL):-
+%#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE
+        retract_trans_in_slice(Id,OldMarkXCL),
+%#else
+%	retract(trans_in_slice(Id,OldMarkXCL)),
+%#endif	
+	combine_marking(OldMarkXCL, NewMarkXCL, _ChangedFlag),!,
+%#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE
+ 	assert_trans_in_slice(Id,NewMarkXCL).
+%#else
+%	fassert(trans_in_slice(Id,NewMarkXCL)).
+%#endif
+record_trans_in_slice_aux(Id,NewMarkXCL):-
+%#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE
+	assert_trans_in_slice(Id,NewMarkXCL),!.
+%#else
+%	fassert(trans_in_slice(Id,NewMarkXCL)),!.
+%#endif
+
+
+% Based on some profiling, to access to trans_in_slice/2 is
+% significantly slow. Hence, we define also trans_in_slice_id/1 where
+% id is the transition id to make sure that we do indexing by the
+% first argument.
+member_slice([Id|_Ids]) :-
+#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE
+        query_trans_in_slice(Id,_),!.
+#else
+	trans_in_slice(Id,_),!.
+#endif
+member_slice([_|Ids])   :- member_slice(Ids).
+
+#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE
+% gen_static_trans_in_slice/0: load at compile-time code to assert,
+% retract, and query faster the info needed to infer whether a
+% transition id is included in the program slice or not.
+gen_static_trans_in_slice:-
+	telling(Old),
+	tell('trans_in_slice.clp'),
+#if     (CLP_SYS==SWI)
+        format(":- style_check(-singleton).\n",[]),
+#endif
+        %-------------------------------------------------------------
+	% NOTE: precompute_block_database/0 must be called first.
+        %-------------------------------------------------------------
+	get_all_transition_identifiers(Ids),
+	declare_dynamic_trans_in_slice(Ids),
+	gen_static_assert_trans_in_slice(Ids),
+	gen_static_query_trans_in_slice(Ids),
+	gen_static_retract_trans_in_slice(Ids),
+	told,
+	tell(Old),
+	reconsult('trans_in_slice.clp').
+
+declare_dynamic_trans_in_slice([]):-!.
+declare_dynamic_trans_in_slice([call(Id)|Ids]):-
+	printf_to_atom(NId,"call_%",[Id]),
+	printf_to_atom(F,"trans_in_slice_%",[NId]),
+	dynamic(F,1),	
+	declare_dynamic_trans_in_slice(Ids).
+declare_dynamic_trans_in_slice([Id|Ids]):-
+	printf_to_atom(F,"trans_in_slice_%",[Id]),
+	dynamic(F,1),
+	declare_dynamic_trans_in_slice(Ids).
+	
+gen_static_assert_trans_in_slice([]):-!.
+gen_static_assert_trans_in_slice([call(Id)|Ids]):-
+	printf_to_atom(NId,"call_%",[Id]),
+	printf_to_atom(F,"trans_in_slice_%",[NId]),
+	T =.. [F,SliceXCL],
+	print_file("assert_trans_in_slice(%,%):- fassert(%).\n",
+		   [call(Id),SliceXCL,T]),	
+	gen_static_assert_trans_in_slice(Ids).
+gen_static_assert_trans_in_slice([Id|Ids]):-
+	printf_to_atom(F,"trans_in_slice_%",[Id]),
+	T =.. [F,SliceXCL],
+	print_file("assert_trans_in_slice(%,%):- fassert(%).\n",
+		   [Id,SliceXCL,T]),
+	gen_static_assert_trans_in_slice(Ids).
+
+gen_static_retract_trans_in_slice([]):-!.
+gen_static_retract_trans_in_slice([call(Id)|Ids]):-
+	printf_to_atom(NId,"call_%",[Id]),
+	printf_to_atom(F,"trans_in_slice_%",[NId]),
+	T =.. [F,SliceXCL],
+	print_file("retract_trans_in_slice(%,%):- retract(%).\n",
+		   [call(Id), SliceXCL,T]),
+	gen_static_retract_trans_in_slice(Ids).
+gen_static_retract_trans_in_slice([Id|Ids]):-
+	printf_to_atom(F,"trans_in_slice_%",[Id]),
+	T =.. [F,SliceXCL],
+	print_file("retract_trans_in_slice(%,%):- retract(%).\n",
+		   [Id,SliceXCL,T]),
+	gen_static_retract_trans_in_slice(Ids).
+
+gen_static_query_trans_in_slice([]):-!.
+gen_static_query_trans_in_slice([call(Id)|Ids]):-
+	printf_to_atom(NId,"call_%",[Id]),	
+	printf_to_atom(F,"trans_in_slice_%",[NId]),
+	T =.. [F,SliceXCL],
+	print_file("query_trans_in_slice(%,%):- % .\n",[call(Id),SliceXCL,T]),	
+	gen_static_query_trans_in_slice(Ids).
+gen_static_query_trans_in_slice([Id|Ids]):-
+	printf_to_atom(F,"trans_in_slice_%",[Id]),
+	T =.. [F,SliceXCL],
+	print_file("query_trans_in_slice(%,%):- % .\n",[Id,SliceXCL,T]),
+	gen_static_query_trans_in_slice(Ids).
+
+cleanup_trans_in_slice:-
+        %-------------------------------------------------------------	
+	% NOTE: precompute_program_database/0 must be called first
+        %-------------------------------------------------------------	
+	get_all_transition_identifiers(Ids),
+	cleanup_trans_in_slice_aux(Ids).
+
+cleanup_trans_in_slice_aux([]):-!.
+cleanup_trans_in_slice_aux([call(Id)|Ids]):-
+	printf_to_atom(NId,"call_%",[Id]),	
+	printf_to_atom(F,"trans_in_slice_%",[NId]),
+	functor(T,F,1),
+	retractall(T),
+	cleanup_trans_in_slice_aux(Ids).
+cleanup_trans_in_slice_aux([Id|Ids]):-
+	printf_to_atom(F,"trans_in_slice_%",[Id]),
+	functor(T,F,1),
+	retractall(T),
+	cleanup_trans_in_slice_aux(Ids).
+#endif  /*SLICING_SPEEDUP_TRANS_IN_SLICE*/
+	
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% slice_bound_reached(+FName,+Depth,+Id,+CL,+ML,+,+,+,+)
+% Search depth bound reached in case of incomplete search is desired.
+%-------------------------------------------------------------------------------%
+slice_bound_reached(FName,Depth,Id,CL,ML,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	%----------------------------------------------------------------------
+        % There is no information about important variables, so we mark all
+        % variables as slice variables conservatively.
+        %----------------------------------------------------------------------
+	copy_to_unbound_list(SGlobalArr,GlobalArrMark),
+	copy_to_unbound_list(SGlobalVar,GlobalVarMark),
+	copy_to_unbound_list(SLocalArr,LocalArrMark),
+	copy_to_unbound_list(SLocalVar,LocalVarMark),
+
+        mark_all_elements(GlobalArrMark),
+        mark_all_elements(GlobalVarMark),
+        mark_all_elements(LocalArrMark),
+        mark_all_elements(LocalVarMark),
+	
+	append(LocalArrMark, LocalVarMark, M1),
+	append(GlobalVarMark, M1, M2),
+	append(GlobalArrMark, M2, Markings),
+	init_witness_paths(Markings,Id,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Ws),
+	record_analysis_answer(fact,FName, Depth, CL,ML, Ws,
+			       GlobalArrMark,GlobalVarMark,
+			       LocalArrMark,LocalVarMark,nil).
+			    	
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% slice_success_path(+FName,+Depth,+Id,+PP,+CL,+ML,+,+,+,+,+,+,+,+,+)
+% A terminal node has been encountered.
+%-------------------------------------------------------------------------------%
+slice_success_path(FName,Depth,Id,_PP,_CL,_ML,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   _GlobalArr,_GlobalVar,_LocalArr,_LocalVar,_ArrRef):-
+
+	copy_to_unbound_list(SGlobalArr,GlobalArrMark),
+	copy_to_unbound_list(SGlobalVar,GlobalVarMark),	
+	copy_to_unbound_list(SLocalArr ,LocalArrMark),
+	copy_to_unbound_list(SLocalVar ,LocalVarMark),
+
+	get_slicing_criteria(FName,
+			     GlobalArrMark  , GlobalVarMark,
+			     LocalArrMark   , LocalVarMark),
+
+	append(LocalArrMark, LocalVarMark, M1),
+	append(GlobalVarMark, M1, M2),
+	append(GlobalArrMark, M2, Markings),
+
+	init_witness_paths(Markings,Id,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Ws),
+#ifdef  DEBUG_USE
+        print_message("Dependency set: \n",[]),
+	pretty_printer_markings(FName,
+				GlobalArrMark,GlobalVarMark,
+				LocalArrMark,LocalVarMark),		
+#endif	/*DEBUG_USE*/
+	record_analysis_answer(fact,FName, Depth, _CL, _ML, Ws,
+			       GlobalArrMark,GlobalVarMark,
+			       LocalArrMark ,LocalVarMark,nil).
+			     
+%-------------------------------------------------------------------------------%
+% get_slicing_criteria(+,?,?,?,?)
+% get slicing criteria from the user.
+%-------------------------------------------------------------------------------%
+get_slicing_criteria(FName,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark):-
+	init_slicing_goal(FName,
+			  GlobalArrMark  , GlobalVarMark,
+			  LocalArrMark   , LocalVarMark,
+			  GlobalArrTarget, GlobalVarTarget,
+			  LocalArrTarget , LocalVarTarget),
+	!,	
+	mark_slicing_criteria_variables(GlobalArrTarget, GlobalArrMark),
+	mark_slicing_criteria_variables(GlobalVarTarget, GlobalVarMark),
+	mark_slicing_criteria_variables(LocalArrTarget , LocalArrMark),
+	mark_slicing_criteria_variables(LocalVarTarget , LocalVarMark).		
+get_slicing_criteria(_,_,_,_,_):-
+	error_message("There is no _SLICE(...) assertion in the program. \n",[]).
+
+mark_slicing_criteria_variables([], _).
+mark_slicing_criteria_variables([V|Vs], Variables) :-
+	mark_slicing_criteria_variables_aux(V, Variables),
+	mark_slicing_criteria_variables(Vs, Variables).
+
+mark_slicing_criteria_variables_aux(_, []).
+mark_slicing_criteria_variables_aux(V, [W|R]) :-
+	V==W, !, W=o,
+	mark_slicing_criteria_variables_aux(V, R).
+mark_slicing_criteria_variables_aux(V, [_|R]) :-
+	mark_slicing_criteria_variables_aux(V, R).
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% slice_fail_path(+FName,+Depth,+Id,+CL,+ML,+,+,+,+)
+% An infeasible path has been encountered.
+%-------------------------------------------------------------------------------%
+slice_fail_path(FName,Depth,Id,CL,ML,
+		SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	
+	copy_to_unbound_list(SGlobalArr, FreshGlobalArr),
+	copy_to_unbound_list(SGlobalVar, FreshGlobalVar),
+	copy_to_unbound_list(SLocalArr , FreshLocalArr),
+	copy_to_unbound_list(SLocalVar , FreshLocalVar),	
+
+	append(FreshLocalArr, FreshLocalVar, M1),
+	append(FreshGlobalVar, M1, M2),
+	append(FreshGlobalArr, M2, Markings),
+	
+	init_witness_paths(Markings,Id,
+			   FreshGlobalArr,FreshGlobalVar,FreshLocalArr,FreshLocalVar,
+			   Ws),
+#ifdef  SLICING_CONTROL_OPT			
+        % To perform control-dependence optimization	
+ 	control_opt_gen_info(1 , 0, _,_,_,_,_,Aux),
+        %                    ^   ^
+        % 1 is guard transition and 0 infeasible transition
+#else
+        % To avoid warnings
+        Aux=_,
+#endif  /*SLICING_CONTROL_OPT*/
+#ifdef  SLICE_PSCFG
+    printf_to_atom(A,"fail_path_id_%",[Id]),
+    set_counter(A,1),
+#endif
+	record_analysis_answer(fact,FName, Depth, CL, ML, Ws,
+			       FreshGlobalArr,FreshGlobalVar,
+			       FreshLocalArr ,FreshLocalVar,Aux).
+                             			
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% slice_reuse_answer(+,+,+,+,+)
+% Reuse of an answer when a node is subsumed. It stores all information.
+%-------------------------------------------------------------------------------%
+slice_reuse_answer(FName,Depth,CL,ML,Answer):-
+        Answer = answer(Ws,
+			GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+        record_analysis_answer(rule,FName, Depth, CL, ML, Ws,
+			       GlobalArrMark,GlobalVarMark,
+			       LocalArrMark,LocalVarMark,nil).
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% slice_combine_answers(+FName, +Id, +PP, +Depth, +CL, -ML, -Answer)
+% Combine answers from each transition taken in the recursive case,
+% produce an answer, and store the result in the table.
+%-------------------------------------------------------------------------------%
+slice_combine_answers(FName, Id, PP, Depth, CL, ML, MergedAnswer):-
+	%------------------------------------------------------------------%	
+	% Implemented in tracer_analysis.clp.gpp
+	%------------------------------------------------------------------%	
+	combine_analysis_answers(FName, Id, PP, Depth, CL, ML, MergedAnswer).
+
+%-------------------------------------------------------------------------------%
+% Generic operation
+%
+% Together with slice_combine_answers/7, this operation is the core of
+% the slicer.
+%
+% slice_pre_operator(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+%-------------------------------------------------------------------------------%
+slice_pre_operator(FName,Depth,Id,
+		   PC1, % child's PC
+		   GuardFlag, % whether guard or not
+		   CallStack,
+		   XCL, % Constraints for this transition
+		   CL,  % Collected constraints of the parent		   
+		   CL1, % Collected constraints of the child		   
+		   ML,  % Marked constraints (intp) of the parent		   
+		   ML1,	% Marked constraints (intp) of the child
+		   % father's variables
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   % child's  variables
+		   SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	%------------------------------------------------------------------%		
+	% Implemented in tracer_analysis.clp.gpp
+	%------------------------------------------------------------------%			
+	% analysis_pre_operator/19 calls
+	% propagate_back_dependencies_w_witnesses/10 and
+	% propagate_back_dependencies_wo_witnesses/3.
+	%------------------------------------------------------------------%			
+	analysis_pre_operator(FName,Depth,Id,PC1,GuardFlag,CallStack,
+			      XCL,CL,CL1,ML,ML1,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+                              SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1).
+
+%----------------------------------------------------------------------------%
+% propagate_back_dependencies_w_witnesses(+,+,?,+,?,+,+,+,+,+,+,+,+,+,+,+,-,-,-):
+%
+% Propagate backward dependencies considering witnesses.
+%
+% We mark each variable V in XCL with w(I), where I is the index of
+% V wrt SVars. In addition, we add the new witness with the
+% standard format, i.e., w(I,GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef).
+%
+% NewRepIndexes is just a list of indexes to point out the new
+% witnesses added.
+%---------------------------------------------------------------------------%
+propagate_back_dependencies_w_witnesses(Id, XCL1, SVars, SliceXCL1,
+		       % Initial post-state for witnesses
+		       PostWs,
+		       % Here Post* for producing new witnesses
+		       % Each one makes a copy of Post*		       
+		       PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+		       % Final post-state for witnesses after optimization
+		       NewPostWs
+#ifdef  SLICING_CONTROL_OPT		      
+		       % To perform control-dependence optimization	
+		       ,1, NewRepIndexes
+#endif		      
+				       ):-
+	%-------------------------------------------%
+	% GUARD
+	%-------------------------------------------%	
+#ifdef  PROFILE					
+        ctime(StartT),
+	get_INFL_profiled(Id,INFL,StartT),!,
+#else
+	get_INFL(Id,INFL),!, 
+#endif
+        propagate_dependencies_guard_w_witnesses(
+				      Id,INFL,XCL1,SVars,SliceXCL1,
+				      PostWs,				      
+				      PostGlobalArr,PostGlobalVar,
+				      PostLocalArr,PostLocalVar,
+				      NewPostWs
+#ifdef  SLICING_CONTROL_OPT				     
+				      % To perform control-dependence
+				      % optimization	
+				      ,NewRepIndexes
+#endif				     
+						). 				      
+propagate_back_dependencies_w_witnesses(_,XCL1,_,SliceXCL1,
+					PostWs,
+					_PostGlobalArr,_PostGlobalVar,
+					_PostLocalArr,_PostLocalVar,
+					PostWs
+#ifdef  SLICING_CONTROL_OPT				       
+ 		                       % To perform control-dependence
+ 		                       % optimization N/A here				       
+				       ,0, []
+#endif		      
+				       ):-
+	%-------------------------------------------%
+	% ASSIGNMENT
+	%-------------------------------------------%	
+#ifdef  PROFILE								
+        ctime(Time0),
+#endif
+        propagate_dependencies_assignments_w_witnesses(XCL1,SliceXCL1),
+#ifdef  PROFILE								
+        ctime(Time1),
+        add_counter(mark_cons_3,Time1-Time0).
+#else
+        true.
+#endif
+
+%-------------------------------------------------------------------%
+% Wrapper 
+%-------------------------------------------------------------------%
+propagate_dependencies_assignments_w_witnesses(XCL,SliceXCL):-
+	current_tracer_flag(slicer_data_dep,y),
+	!,
+	propagate_depends_assignments_w_witnesses(XCL,SliceXCL).
+propagate_dependencies_assignments_w_witnesses(XCL,SliceXCL):-
+	!,
+	copy_to_unbound_list(XCL,SliceXCL).
+	
+%-------------------------------------------------------------------%
+% propagate_dependencies_guard_w_witnesses(+,+,?,+,?,-,-,-,-,-,-,-)
+%-------------------------------------------------------------------%
+% A guard is ONLY included in the slice iff there exists at least one
+% 'influenced' transition included already in the slice. In this case,
+% all variables appearing in the guard are marked. By 'influenced' we
+% mean any transition between the current one and the nearest
+% post-dominator (see Weiser'84 for details).
+%-------------------------------------------------------------------%
+propagate_dependencies_guard_w_witnesses(Id,INFL,XCL,SVars,SliceXCL,
+	     % Initial post-state of witnesses
+	     PostWs,
+	     % Used to create new witnesses.Each one creates a new
+	     % copy of Post*
+	     PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+	     % Final post-state of witnesses (after optimization)
+	     NewPostWs
+#ifdef  SLICING_CONTROL_OPT			     
+	     % To perform control-dependence optimization	
+	     , NewRepIndexes
+#endif  /*SLICING_CONTROL_OPT*/			     
+					):- 				    
+#ifdef  PROFILE					
+        ctime(Time4),
+#endif  /*PROFILE*/
+        current_tracer_flag(slicer_control_dep,y),
+        check_if_influenced_trans_in_slice(Id,INFL), !,
+#ifdef  SLICE_PSCFG
+        retract_trans_in_slice_pscfg(INFL),
+#endif  /*SLICE_PSCFG*/
+	
+	%---------------------------------------------------------------%
+	% Some influenced transition is in the slice. Thus, we include
+	% the guard in the slice and mark all its variables.
+	%---------------------------------------------------------------%		
+#ifdef  PROFILE						
+        ctime(Time5),
+        add_counter(member_in_slice,Time5-Time4),
+#endif	/*PROFILE*/	
+	debug_message("\t Guard: % INFL set: % \n",[Id,INFL]),	
+#ifdef  PROFILE					
+        ctime(Time0),
+#endif  /*PROFILE*/
+#ifdef  PRE_DEBUG
+        print_message("PRE operator:propagate_back_dependencies_w_witnesses 1\n",[]),
+#endif	/*PRE_DEBUG*/
+        %---------------------------------------------------------------%		        
+	% Add to D_n all variables that appear in the constraints in XCL
+        % and include all constraints in XCL into the slice.
+        %---------------------------------------------------------------%
+	propagate_depends_all_variables_w_witnesses(XCL, SVars, SliceXCL,
+						    Unifier, NewWFlag, Index),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator:propagate_back_dependencies_w_witnesses 2\n",[]),
+#endif	/*PRE_DEBUG*/	
+#ifdef  PROFILE						
+        ctime(Time1),
+        add_counter(mark_cons_1,Time1-Time0),
+	ctime(Time2),
+#endif	
+#ifdef  PRE_DEBUG
+        print_message("PRE operator:propagate_back_dependencies_w_witnesses 3\nXCL: %\n",
+		      [XCL]),
+#endif	/*PRE_DEBUG*/	
+        assign_witness_to_new_depend_var(NewWFlag,Unifier,Index,
+					 PostWs,
+					 PostGlobalArr,PostGlobalVar,
+					 PostLocalArr,PostLocalVar,
+					 NewPostWs),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator:propagate_back_dependencies_w_witnesses 5\nNewPostWs:%\n",
+		      [NewPostWs]),
+#endif	/*PRE_DEBUG*/	
+#ifdef  PROFILE							
+        ctime(Time3),
+        add_counter(mark_cons_2,Time3-Time2),
+#endif  /*PROFILE*/
+#ifdef  SLICING_CONTROL_OPT
+        %----------------------------------------------------------------------
+        % To perform control-dependence optimization	
+        %----------------------------------------------------------------------
+        % NewWs0 contains w(I,...) in NewPostWs that is not
+        % already covered by w(I,...) in PostWs
+        %----------------------------------------------------------------------
+ 	combine_fixp_witnesses_aux(NewPostWs,PostWs,NewWs0),
+        %----------------------------------------------------------------------
+        % From list of w(I,...), construct list of w(I)
+        %----------------------------------------------------------------------
+ 	map_witnesses_to_indexes(NewWs0,NewRepIndexes),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator:propagate_back_dependencies_w_witnesses 6\n",[]),
+#endif  /*PRE_DEBUG*/	
+#endif  /*SLICING_CONTROL_OPT*/
+	true. 
+propagate_dependencies_guard_w_witnesses(Id,INFL,XCL,_SVars,SliceXCL,
+					 PostWs,_,_,_,_,PostWs
+#ifdef  SLICING_CONTROL_OPT			     
+				         % To perform
+				         % control-dependence
+				         % optimization
+					,[]
+#endif			     
+					):-
+	%-----------------------------------------------------------%
+	% Here, the guard is NOT included in the slice
+	% Therefore, no new markings.
+	%-----------------------------------------------------------%	
+	copy_to_unbound_list(XCL,SliceXCL),
+#ifdef  DEBUG_USE	
+        print_message("\tINFLUENCED set of %: %\n",[Id,INFL]),	
+	print_message("\tGuard % is not included slice\n",[Id]).
+#else
+        % To avoid warnings
+        Id=_,INFL=_.
+#endif
+
+%-----------------------------------------------------------------------------%
+% assign_witness_to_new_depend_var(+,?Unifier,+Index,+PostWs,+,+,+,+,-NewPostWs)
+%-----------------------------------------------------------------------------%
+% The purpose of this predicate is to reuse existing witnesses as much
+% as possible. Otherwise, a new witness will be created. The
+% unnecessary creation of new witnesses imply two things:
+%
+% - underperformance due to an excessive number of witnesses, and
+%
+% - more importantly, the witness is fresh (unconstrained), and hence,
+%   its effectiveness may be negligible or zero.
+%-----------------------------------------------------------------------------%
+assign_witness_to_new_depend_var(NewWFlag,_,_,PostWs,_,_,_,_,PostWs):-
+	% If flag is 1 then no new marked variables. Thus, no need of
+	% witness	
+        NewWFlag == 1,
+	!.
+assign_witness_to_new_depend_var(NewWFlag, Unifier, _, PostWs,_,_,_,_,PostWs):-
+	% If flag is 0 then we try to reuse any witness from PostWs.
+	% We need to unify Unifier with Index since XCL is defined in
+	% terms of Unifier. Unifier is passed from
+	% propagate_depends_all_variables_w_witnesses/6
+        NewWFlag == 0 ,
+	member(w(Index,_,_,_,_,_,_),PostWs),
+	!,
+	Unifier = Index,
+	debug_message("\tReusing witness %\n",[Index], red).
+assign_witness_to_new_depend_var(NewWFlag, Unifier, Index, PostWs,
+				 PostGlobalArr, PostGlobalVar,
+				 PostLocalArr , PostLocalVar,
+				 NewPostWs):-
+	% Otherwise, we need to create a witness and also unify
+	% Unifier with Index. Both Unifier and Index are passed from
+	% propagate_depends_all_variables_w_witnesses/6
+	
+        NewWFlag == 0 ,
+	Unifier = Index,
+	debug_message("\tAdding witness %\n",[Index], red),
+	add_fresh_witnesses([w(Index)],
+			    PostWs,
+			    PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+			    NewPostWs).
+assign_witness_to_new_depend_var(_,_,_,_,_,_,_,_,_):-
+	error_message("assign_witness_to_new_depend_var/9 failed\n",[]).
+			     
+%------------------------------------------------------------------------%
+% check_if_influenced_trans_in_slice(+Id,+INFL)
+%------------------------------------------------------------------------%
+% Succeed if some member of INFL is included in the slice. There are
+% two special cases to deal with: return's and break's.
+%------------------------------------------------------------------------%
+% Special case for return's and break's 
+check_if_influenced_trans_in_slice(Id,INFL):-
+	% Only if we want to compute control dependencies
+	current_tracer_flag(slicer_control_dep,y),
+	exist_unstruct_statement([Id|INFL],Flag),
+	Flag == 1, !.
+% General case
+check_if_influenced_trans_in_slice(_Id,INFL):-
+	member_slice(INFL),!.
+#ifdef  SLICE_PSCFG
+check_if_influenced_trans_in_slice(Id,_INFL):-
+	printf_to_atom(A,"fail_path_id_%",[Id]),
+    counter_value(A,1),
+    set_counter(A,0).
+#endif
+
+%----------------------------------------------------------------------------%
+% propagate_depends_all_variables_w_witnesses(?XCL,+Witnesses,-XCLMark,
+%                                             -Unifier,-Flag, -Index)
+%----------------------------------------------------------------------------%
+% Mark all variables in XCL with its corresponding witness (w(I)).
+% XCLMark is a list of same length of XCL where each element is marked
+% with symbol 'o'.
+%
+% If Flag=0 then new witnesses are unified with Unifier. In case there
+% is no witness for reusing, this new witness should have the index
+% Index.
+%----------------------------------------------------------------------------%
+#ifdef DEBUG_USE		
+test_propagate_depends_all_variables_w_witnesses_1:-
+	SVars=[V,W,X,Y,Z],	
+	XCL = [eq(X,Y),gt(X,Z),gt(V,W)],
+	XCLMark = [_,_,_],
+%	collect_witness_symbols_from_constraints(XCL,[],Ws),
+%	print_message("Before XCL % XCLMark % \nWs %\n",[XCL,XCLMark,Ws]),
+	print_message("Before XCL % XCLMark % \n",[XCL,XCLMark]),	
+	propagate_depends_all_variables_w_witnesses(XCL,SVars,XCLMark,Unifier,NewWFlag,_),
+%	collect_witness_symbols_from_constraints(XCL,[],Ws1),
+%	print_message("After XCL % XCLMark % \nWs %\n",[XCL,XCLMark,Ws1]),
+	print_message("After XCL % XCLMark % \nUnifier %\nNewWFlag:%\n",
+		      [XCL,XCLMark,Unifier,NewWFlag]),	
+	print_message("SVars % \n",[SVars]).
+test_propagate_depends_all_variables_w_witnesses_2:-
+	SVars=[_V,_W,_X,_Y,_Z],	
+	XCL = [eq(2,2)],
+	XCLMark = [_],
+%	collect_witness_symbols_from_constraints(XCL,[],Ws),
+%	print_message("Before XCL % XCLMark % \nWs %\n",[XCL,XCLMark,Ws]),
+	print_message("Before XCL % XCLMark % \n",[XCL,XCLMark]),	
+	propagate_depends_all_variables_w_witnesses(XCL,SVars,XCLMark,Unifier,NewWFlag,_),
+%	collect_witness_symbols_from_constraints(XCL,[],Ws1),
+%	print_message("After XCL % XCLMark % \nWs %\n",[XCL,XCLMark,Ws1]),
+	print_message("After XCL % XCLMark % \nUnifier %\nNewWFlag:%\n",
+		      [XCL,XCLMark,Unifier,NewWFlag]),		
+	print_message("SVars % \n",[SVars]).
+% This case happens in the compiled program:
+test_propagate_depends_all_variables_w_witnesses_3:-
+	SVars=[_V,_W,_X,_Y,_Z],	
+	XCL = [gt(_,2)],
+	XCLMark = [_],
+%	collect_witness_symbols_from_constraints(XCL,[],Ws),
+%	print_message("Before XCL % XCLMark % \nWs %\n",[XCL,XCLMark,Ws]),
+	print_message("Before XCL % XCLMark % \n",[XCL,XCLMark]),		
+	propagate_depends_all_variables_w_witnesses(XCL,SVars,XCLMark,Unifier,NewWFlag,_),
+%	collect_witness_symbols_from_constraints(XCL,[],Ws1),
+%	print_message("After XCL % XCLMark % \nWs %\n",[XCL,XCLMark,Ws1]),
+	print_message("After XCL % XCLMark % \nUnifier %\nNewWFlag:%\n",
+		      [XCL,XCLMark,Unifier,NewWFlag]),			
+	print_message("SVars % \n",[SVars]).
+#endif  /*DEBUG_USE*/
+%----------------------------------------------------------------------------%
+propagate_depends_all_variables_w_witnesses([], _SVars, [], _Unifier, 1, _Index).
+propagate_depends_all_variables_w_witnesses([C|R], SVars, [X|S], Unifier,
+					    Flag1*Flag2, Index) :-
+	mark_term(X),
+	propagate_depends_all_variables_w_witnesses_aux([C], SVars, Unifier, Flag1, Index),
+	!,
+	propagate_depends_all_variables_w_witnesses(R, SVars, S, Unifier, Flag2, Index).
+propagate_depends_all_variables_w_witnesses([_|R],SVars, [_|S], Unifier, Flag, Index) :-
+	propagate_depends_all_variables_w_witnesses(R,SVars, S, Unifier, Flag, Index).
+
+propagate_depends_all_variables_w_witnesses_aux([]   , _SVars, _Unifier, 1, _Index) :- !.
+propagate_depends_all_variables_w_witnesses_aux([X|R], SVars, Unifier,  0, Index) :-
+	% Here it's a var and it's in the head of the trans
+	% pred. Hence, we produce its witnesses properly.
+	var(X), 
+	get_index_from_list(SVars,X,Index),
+	!,
+	% X = w(Index),
+	X = w(Unifier), 
+	propagate_depends_all_variables_w_witnesses_aux(R, SVars, Unifier,_,_).
+propagate_depends_all_variables_w_witnesses_aux([w(_)|R], SVars, Unifier, Flag, Index) :-
+	% Here if it's '_' or another variable which is not in the
+	% head of trans predicate
+	!,
+	propagate_depends_all_variables_w_witnesses_aux(R, SVars, Unifier, Flag, Index).
+propagate_depends_all_variables_w_witnesses_aux([C|R], SVars, Unifier, Flag1*Flag2, Index) :-
+	% To peel constraint and go on
+	C =.. [_|ArgsList],
+	propagate_depends_all_variables_w_witnesses_aux(ArgsList, SVars, Unifier, Flag1, Index),
+	propagate_depends_all_variables_w_witnesses_aux(R, SVars, Unifier, Flag2, Index).
+
+%-------------------------------------------------------------------------
+% propagate_back_dependencies_wo_witnesses(+,+,-)
+%-------------------------------------------------------------------------
+% Propagate backward dependencies but without considering
+% witnesses. We mark all variables used in each constraint in XCL, and
+% also each element of SliceXCL.
+%-------------------------------------------------------------------------
+propagate_back_dependencies_wo_witnesses(Id,XCL,SliceXCL
+#ifdef  SLICING_CONTROL_OPT			
+					,1
+#endif			
+					):-
+	%------------------------------------------%	
+	% GUARD
+	%------------------------------------------%	
+#ifdef  PROFILE					
+        ctime(StartT),
+	get_INFL_profiled(Id,INFL,StartT),!,
+#else
+	get_INFL(Id,INFL),!,
+#endif
+        propagate_dependencies_guard_wo_witnesses(Id,INFL,XCL,SliceXCL).
+propagate_back_dependencies_wo_witnesses(_Id,XCL1,SliceXCL1
+#ifdef  SLICING_CONTROL_OPT						
+					,0
+#endif			
+					):-
+	%------------------------------------------%
+	% ASSIGNMENT 
+	%------------------------------------------%	
+#ifdef  PROFILE								
+        ctime(Time0),
+#endif
+        propagate_dependencies_assignments_wo_witnesses(XCL1, SliceXCL1),
+#ifdef  PROFILE								
+        ctime(Time1),
+        add_counter(mark_cons_3,Time1-Time0).
+#else
+        true.
+#endif
+
+%------------------------------------------------------------------------%
+% Wrapper
+%------------------------------------------------------------------------%
+propagate_dependencies_assignments_wo_witnesses(XCL, SliceXCL):-
+	current_tracer_flag(slicer_data_dep,y),!,
+	propagate_depends_assignments_wo_witnesses(XCL, SliceXCL).
+propagate_dependencies_assignments_wo_witnesses(XCL,SliceXCL):-
+	!,copy_to_unbound_list(XCL,SliceXCL).
+
+%------------------------------------------------------------------------%
+% Wrapper for profiling
+%------------------------------------------------------------------------%
+get_INFL_profiled(Id,INFL,StartT):-	
+	get_INFL(Id,INFL),!,
+	ctime(FinishT),
+	add_counter(mark_cons_4,FinishT-StartT).
+get_INFL_profiled(_,_,StartT):-
+	ctime(FinishT),
+	add_counter(mark_cons_4,FinishT-StartT),
+	!, fail.
+
+%-------------------------------------------------------------------------%
+% propagate_dependencies_guard_wo_witnesses(+,+,+,?)
+%-------------------------------------------------------------------------%
+propagate_dependencies_guard_wo_witnesses(Id,INFL,XCL,SliceXCL):-
+#ifdef  PROFILE					
+	ctime(Time4),	
+#endif  /*PROFILE*/
+        %------------------------------------------------------------%
+	% If an influenced transition is included in the slice, the
+	% guard is also included and all its variables are marked.
+        %------------------------------------------------------------%
+        current_tracer_flag(slicer_control_dep,y),
+	check_if_influenced_trans_in_slice(Id,INFL),!,
+#ifdef  PROFILE						
+        ctime(Time5),
+        add_counter(member_in_slice,Time5-Time4),
+#endif	/*PROFILE*/	
+	debug_message("Control transition: % ",[Id]),	
+	debug_message("INFL set: % \n",[INFL]),
+#ifdef  PROFILE					
+        ctime(Time0),
+#endif  /*PROFILE*/
+        %---------------------------------------------------------------%		        
+	% Add to D_n all variables that appear in the constraints in XCL
+        % and include all constraints in XCL into the slice.
+        %---------------------------------------------------------------%		
+	propagate_depends_all_variables_wo_witnesses(XCL,SliceXCL),
+#ifdef  PROFILE						
+        ctime(Time1),
+        add_counter(mark_cons_1,Time1-Time0),
+#endif	/*PROFILE*/	
+	debug_message("Grounding all variables % --> % \n",[XCL,SliceXCL]).	
+propagate_dependencies_guard_wo_witnesses(Id,INFL,XCL,SliceXCL):-
+	%------------------------------------------------------------%
+	% Here, the guard is NOT included in the slice. Thus, don't
+	% include and don't mark new variables.
+	%------------------------------------------------------------%	
+	copy_to_unbound_list(XCL,SliceXCL),
+#ifdef  DEBUG_USE	
+        print_message("INFLUENCED set of %: %\n",[Id,INFL]),	
+	print_message("Branch transition % is not included slice\n",[Id]),
+#else
+        % To avoid warnings
+        Id=_,INFL=_,
+#endif  /*DEBUG_USE*/
+        true.
+
+%----------------------------------------------------------------------------%
+% propagate_depends_all_variables_wo_witnesses(?XCL,-XCLMark)
+%----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_propagate_depends_all_variables_wo_witnesses_1:-
+	XCL1= [assign(_,_),gt(_,_),eq(_,_)],
+	once(propagate_depends_all_variables_wo_witnesses(XCL1,XCL1Marked)),
+	print_message("XCL % XCLMarked % \n",[XCL1,XCL1Marked]).
+test_propagate_depends_all_variables_wo_witnesses_2:-
+	XCL1= [eq(2,2)],
+	once(propagate_depends_all_variables_wo_witnesses(XCL1,XCL1Marked)),
+	print_message("XCL % XCLMarked % \n",[XCL1,XCL1Marked]).
+test_propagate_depends_all_variables_wo_witnesses_3:-
+	XCL1= [gt(_,2)],
+	once(propagate_depends_all_variables_wo_witnesses(XCL1,XCL1Marked)),
+	print_message("XCL % XCLMarked % \n",[XCL1,XCL1Marked]).
+#endif  /*DEBUG_USE*/
+%----------------------------------------------------------------------------%
+propagate_depends_all_variables_wo_witnesses([], []).
+propagate_depends_all_variables_wo_witnesses([C|R], [X|S]) :-
+	mark_term(X),
+	propagate_depends_all_variables_wo_witnesses_aux(X, [C]), !,
+	propagate_depends_all_variables_wo_witnesses(R, S).
+propagate_depends_all_variables_wo_witnesses([_|R], [_|S]) :-	
+	propagate_depends_all_variables_wo_witnesses(R, S).
+
+propagate_depends_all_variables_wo_witnesses_aux(_Term, []) :- !.
+propagate_depends_all_variables_wo_witnesses_aux(Term, [Term|R]) :- !,
+	propagate_depends_all_variables_wo_witnesses_aux(Term, R).
+propagate_depends_all_variables_wo_witnesses_aux(Term, [C|R]) :-
+	C =.. [_|ArgsList],
+	propagate_depends_all_variables_wo_witnesses_aux(Term, ArgsList),
+	propagate_depends_all_variables_wo_witnesses_aux(Term, R).
+
+%----------------------------------------------------------------------------%
+% Flag is true if a return or break is in the list of transitions. As
+% side-effect, if return then it is also included them in the slice.
+%----------------------------------------------------------------------------%
+exist_unstruct_statement([],0):-!.
+exist_unstruct_statement([Id|Ids],1):-
+	is_return_statement(Id,MarkXCL),
+	record_trans_in_slice(_,Id,MarkXCL),!,
+	debug_message("Added return statement % \n",[Id]),
+	exist_unstruct_statement(Ids,_).
+exist_unstruct_statement([Id|Ids],1):-
+	is_break_statement(Id),!,
+	debug_message("break statement detected % \n",[Id]),
+	exist_unstruct_statement(Ids,_).
+exist_unstruct_statement([_|Ids],Flag):-
+	exist_unstruct_statement(Ids,Flag).
+
+is_return_statement(Id,MarkXCL):-
+	% Precomputed by precompute_returns/0 (tracer_preprocess.clp)
+	'$return'(Id,XCL), !,
+	gen_marked_constraints(XCL,[],MarkXCL).
+
+gen_marked_constraints([],MCL,MCL):-!.
+gen_marked_constraints([_|CL],Acc,MCL):-
+	mark_term(X),
+	gen_marked_constraints(CL,[X|Acc],MCL).
+		       
+% break/1 should be defined in the CLP program
+is_break_statement(Id):- break(Id).
+
+#ifdef  SLICE_FOOTPRINT_OPT
+record_dependencies_at_endif(FName,[PPEnd],MarkGA,MarkGV,MarkLA,MarkLV):-
+    block(_,FName,[PPStart],[PPEnd],_,nl,_,_,_,_,_),
+    atom(PPStart), atom(PPEnd), !, % an if block from PPStart to PPEnd (endif)
+    fassert(dependencies_at_endif(FName,PPStart,MarkGA,MarkGV,MarkLA,MarkLV)).
+record_dependencies_at_endif(_,_,_,_,_,_).
+
+clear_dependencies_at_endif(_,_).
+clear_dependencies_at_endif(FName,[PP]):- % while backtracking
+    retract(dependencies_at_endif(FName,PP,_,_,_,_)), fail.
+
+check_footprint_in_dependencies(FName,_,_,branch):-
+    top_context_stack([PPContext]),
+    trans_in_slice_pscfg(FName,PPContext,_), !.
+check_footprint_in_dependencies(FName,[PP],Id,branch):-
+    dependencies_at_endif(FName,PP,_,_,_,_), % make sure there's at least one
+    collate_dependencies_at_endif(FName,PP,MarkGA,MarkGV,MarkLA,MarkLV),
+    debug_message("TRYING TO PRUNE %@% WITH ID %!\n",[FName,PP,Id],magenta),
+    %print_message("dep at % : % % % %\n",[PP,MarkGA,MarkGV,MarkLA,MarkLV]),
+    check_footprint_in_dependencies_aux(FName,PP,Id,MarkGA,MarkGV,MarkLA,MarkLV),
+    debug_message("PRUNED BRANCH FROM %@% WITH ID %!\n",[FName,PP,Id],green),
+    !, fail. % to force backtracking at unfold predicate
+check_footprint_in_dependencies(_,_,_,_).
+
+collate_dependencies_at_endif(FName,PP,MarkGA,MarkGV,MarkLA,MarkLV):-
+    retract(dependencies_at_endif(FName,PP,MarkGA,MarkGV,MarkLA,MarkLV)), !,
+    collate_dependencies_at_endif(FName,PP,MarkGA,MarkGV,MarkLA,MarkLV).
+collate_dependencies_at_endif(FName,PP,MarkGA,MarkGV,MarkLA,MarkLV):-
+    fassert(dependencies_at_endif(FName,PP,MarkGA,MarkGV,MarkLA,MarkLV)).
+
+check_footprint_in_dependencies_aux(FName,PP,Id,UpdGA,UpdGV,UpdLA,UpdLV):-
+    block(BlockId,FName,[PP],_,_,nl,INFL,Upd1GA,Upd1GV,Upd1LA,Upd1LV),
+    member(Id,INFL),
+    !,
+    % technicality - convert the 'n's in footprint lists to _ so they can be
+    % unified with dependency lists in check_footprint_in_dependency
+    %print_message("footprint at % : % % % %\n",[PP,Upd1GA,Upd1GV,Upd1LA,Upd1LV]),
+    convert_n_to_underscore(Upd1GA,UpdGA),
+    convert_n_to_underscore(Upd1GV,UpdGV),
+    convert_n_to_underscore(Upd1LA,UpdLA),
+    convert_n_to_underscore(Upd1LV,UpdLV),
+    % add condition variables in choice point to the footprint
+    block_condition_vars(BlockId,UpdGA,UpdGV,UpdLA,UpdLV).
+check_footprint_in_dependencies_aux(FName,PP,Id,_UpdGA,_UpdGV,_UpdLA,_UpdLV):-
+    error_message("unable to get footprint of block %@%(%)\n",
+        [FName,PP,Id]).
+
+convert_n_to_underscore([],[]).
+convert_n_to_underscore([n|T1],[_|T2]):- convert_n_to_underscore(T1,T2).
+convert_n_to_underscore([u|T1],[u|T2]):- convert_n_to_underscore(T1,T2).
+#endif
+
+%===========================================================================%
+%===========================================================================%
+%   CORE OPERATIONS FOR PROPAGATING BACKWARD DEPENDENCIES in ASSIGNMENTS
+%===========================================================================%
+%===========================================================================%
+
+%---------------------------------------------------------------------------%
+% propagate_depends_assignments_w_witnesses(?XCL, -XCLMark)
+%---------------------------------------------------------------------------%
+% XCL is a list of assignments and XCLMark is a list of the same
+% length that XCL. XCL is used to keep track of the set Dn and XCLMark
+% to decide whether an assignment is included in the slice or not.
+%
+% This predicate marks all variables in XCL that affects the slicing
+% criteria propagating backward the dependencies. For each assignment
+% in XCL that has some marked variable its corresponding element in
+% XCLMark is also marked.
+%---------------------------------------------------------------------------%
+#ifdef DEBUG_USE
+test_propagate_depends_assignments_w_witnesses_1 :-
+	L=[assign(w(1),plus(X,_Y)), assign(X,Z), assign(_A,Z)% , gt(A,Y)
+	  ], !,
+	print_message("Before 1: L=%\n", [L]),
+	propagate_depends_assignments_w_witnesses(L,  Marks),
+	print_message("After 1:\n", []),
+	print_message("L=%\n", [L]),
+	print_message("Marks=%\n", [Marks]),
+	print_message("-----------------------------------------------------\n", []),
+	L1=[assign(w(1),plus(K,_Q)), assign(K,M), assign(_,M)% , gt(_,Q)
+	   ], !,
+	print_message("Before 2: L=%\n", [L1]),
+	propagate_depends_assignments_w_witnesses(L1, Marks1),
+	print_message("After 2:\n", []),
+	print_message("L=%\n", [L1]),
+	print_message("Marks=%\n", [Marks1]),
+	print_message("-----------------------------------------------------\n", []),
+	L2=[assign(A1,_),assign(w(1),A1)],
+	print_message("Before 3: L=%\n", [L2]),
+	propagate_depends_assignments_w_witnesses(L2, Marks2),
+	print_message("After 3:\n", []),
+	print_message("L=%\n", [L2]),
+	print_message("Marks=%\n", [Marks2]),
+	print_message("-----------------------------------------------------\n", []),
+	L3=[assign(X1,unk(_X2,X3)),assign(X3,plus(_X4,5)),assign(w(1),X1)],
+	print_message("Before 4: L=%\n", [L3]),
+	propagate_depends_assignments_w_witnesses(L3, Marks3),
+	print_message("After 4:\n", []),
+	print_message("L=%\n", [L3]),
+	print_message("Marks=%\n", [Marks3]).
+%--------------------------------------------------------------------------%
+% OBSOLETE: addref constraints are not generated anymore by compiler
+%--------------------------------------------------------------------------%
+% test_propagate_depends_assignments_w_witnesses_2 :-	
+% 	L=[assign(SZNext,666),assign(SWNext,999),
+% 	   addref(_SY,ref(SH,SAndSY)),assign(SPtr1Next,SAndSY),
+% 	   addref(SWNext,ref(SH,SAndSW1)),assign(SPtr2Next,SAndSW1),
+% 	   arrassign(SHNext,upd(SH,SPtr2Next,SZNext)),
+% 	   assign(SXNext,ref(SHNext,SPtr1Next))],
+% 	SXNext = w(1), !,
+% 	print_message("Before: L=%\n", [L]),
+% 	propagate_depends_assignments_w_witnesses(L,  Marks),
+% 	print_message("After:\n", []),
+% 	print_message("L=%\n", [L]),
+% 	print_message("Marks=%\n", [Marks]).
+% test_propagate_depends_assignments_w_witnesses_3:-
+% 	L =  [addref(ref(_h3143937, plus(_SX, 8)),
+% 		     ref(_h3143937, _h3143944))],
+% 	%SX = w(1), !,
+% 	print_message("Before: L=%\n", [L]),
+% 	propagate_depends_assignments_w_witnesses(L, Marks),
+% 	print_message("After:\n", []),
+% 	print_message("L=%\n", [L]),
+% 	print_message("Marks=%\n", [Marks]).
+#endif  /*DEBUG_USE*/
+%---------------------------------------------------------------------------%
+propagate_depends_assignments_w_witnesses(XCL1, XCL1Mark) :-	
+	copy_to_unbound_list(XCL1, XCL1Mark),
+	propagate_depends_assignments_w_witnesses1(XCL1, XCL1Mark).
+
+propagate_depends_assignments_w_witnesses1(XCL1, XCL1Mark):-
+	propagate_depends_assignments_w_witnesses_aux(XCL1, XCL1Mark, ChangedFlag),
+	propagate_depends_assignments_w_witnesses_iter(ChangedFlag, XCL1, XCL1Mark),
+	!.
+% Fixpoint computation for propagating backward dependencies to the
+% whole set of constraints
+propagate_depends_assignments_w_witnesses_iter(Flag, _XCL1, _XCL1Mark) :-
+	Flag == 1,
+	% 1 means there is no a new marked variable. Thus, fixpoint
+	% reached
+	!.
+propagate_depends_assignments_w_witnesses_iter(Flag, XCL1, XCL1Mark) :-
+	Flag == 0,
+	% 0 means there is a new marked variable. Thus, another
+	% fixpoint iteration
+	propagate_depends_assignments_w_witnesses1(XCL1, XCL1Mark).
+
+propagate_depends_assignments_w_witnesses_aux([],[],1):-!.
+propagate_depends_assignments_w_witnesses_aux([C1|R1],[X|S], Flag1*Flag2) :-
+	propagate_depends_assignment_w_witnesses(C1, Flag1),
+	!,
+	mark_term(X),
+	propagate_depends_assignments_w_witnesses_aux(R1, S, Flag2).
+propagate_depends_assignments_w_witnesses_aux([_|R1], [_|S], Flag) :-	
+	!,
+	propagate_depends_assignments_w_witnesses_aux(R1, S, Flag).
+
+%------------------------------------------------------------------------------
+% propagate_depends_assignment_w_witnesses(?Assignment,-Flag)
+%------------------------------------------------------------------------------
+% If the left-hand side of Assignment is bound to a term w(N), where
+% N is the index of the post-variable, then all variables of the rhs
+% of Assignment will be bound to w(N), which would then mark the
+% variables of the pre-state. Flag=0 iff a new variable has been bound.
+%------------------------------------------------------------------------------
+propagate_depends_assignment_w_witnesses(assign(A,_)    , _Flag)    :-
+	% case: lhs is not marked, then rhs is not marked (forcing failure)
+	var(A),
+	!,
+	fail.
+propagate_depends_assignment_w_witnesses(arrassign(A,_) , _Flag) :-
+	% case: lhs is not marked, then rhs is not marked (forcing failure)
+	var(A),
+	!,
+	fail.
+propagate_depends_assignment_w_witnesses(assign(A, B)   , Flag) :-
+	% case: lhs is marked, then rhs is marked
+	!,                 
+	propagate_depends_rhs_w_witnesses([B], A, Flag).
+propagate_depends_assignment_w_witnesses(arrassign(A, B), Flag) :-
+	% case: lhs is marked, then rhs is marked
+	!,                 
+	propagate_depends_rhs_w_witnesses([B], A, Flag).	
+propagate_depends_assignment_w_witnesses(_RestConstraint, _Flag) :-
+	% We expect the first argument to be either assign/2 or
+	% arrassign/2. If this clause is reachable either something is
+	% wrong or this assumption is wrong.
+	error_message("propagate_depends_assignment_w_witnesses/3 \n",[]).
+	%-----------------------------------------------------------------%
+	% Any constraint except assignment:	
+	%    If no marked variables, then Flag=1. Otherwise, it marks
+	%    all variables in the constraint.
+	%-----------------------------------------------------------------%
+	% propagate_depends_guard_w_witnesses([RestConstraint],_Unifier,Flag).
+
+%-------------------------------------------------------------------------%
+% propagate_depends_rhs_w_witnesses(?List, +Unifier, -Flag)
+%-------------------------------------------------------------------------%
+% PRECONDITION: Unifier is not var
+%
+% Flag=0 if a new variable has been marked with a symbol of form w(_)
+% Flag=1 otherwise
+%-------------------------------------------------------------------------%
+propagate_depends_rhs_w_witnesses([]   , _Unifier, 1) :- !.
+propagate_depends_rhs_w_witnesses([X|R],  Unifier, 0) :-
+	var(X), 
+	X=Unifier,
+	!,
+	propagate_depends_rhs_w_witnesses(R, Unifier, _Flag).
+propagate_depends_rhs_w_witnesses([w(_)|R], Unifier, Flag) :-
+	propagate_depends_rhs_w_witnesses(R, Unifier, Flag).
+propagate_depends_rhs_w_witnesses([C|R], Unifier, Flag1 * Flag2 ) :-
+	C =.. [_|ArgsList],
+	propagate_depends_rhs_w_witnesses(ArgsList, Unifier, Flag1),
+	propagate_depends_rhs_w_witnesses(R, Unifier, Flag2).	
+
+%=========================================================================%
+% NOTE: propagate_depends_assignment_w_witnesses/3 can be called only
+% for non-guard transitions. Therefore, all constraints must be either
+% assign/2 or arrassign/2.
+%=========================================================================%
+%-------------------------------------------------------------------------%
+% propagate_depends_guard_w_witnesses(?Constraint, ?Unifier, -Flag)
+%-------------------------------------------------------------------------%
+% PRECONDITION: Unifier is var.
+%
+% See cases below.
+%-------------------------------------------------------------------------%
+% propagate_depends_guard_w_witnesses([], _ , 1):- !.
+% propagate_depends_guard_w_witnesses([X|R], Unifier, Flag) :-
+% 	% Case 1: X and Unifier are var. Thus, do nothing and continue
+%  	var(X),
+% 	var(Unifier),
+% 	!,
+%  	propagate_depends_guard_w_witnesses(R, Unifier, Flag).
+% propagate_depends_guard_w_witnesses([X|R], Unifier, 0) :-
+% 	% Case 2: X is var and Unifier has been already unified.
+% 	%         Then, X=Unifier. Flag=0 because a new variable 
+% 	%         has been marked!	
+%  	var(X),
+% 	!,
+% 	X=Unifier, 
+%  	propagate_depends_guard_w_witnesses(R, Unifier, _Flag).
+% propagate_depends_guard_w_witnesses([X|R], Unifier, Flag) :-
+% 	% Case 3: X is not var. Thus, X is of the form w(_)
+% 	%         It attempts at unifying Unifier to X
+% 	X=w(_),	
+% 	Unifier=X,	
+% 	!,	
+% 	propagate_depends_guard_w_witnesses(R, Unifier, Flag).
+% propagate_depends_guard_w_witnesses([C|R], Unifier,  Flag1 * Flag2) :-
+% 	% Case 4: peel constraint and continue recursively.
+% 	C =.. [_|ArgsList],
+% 	propagate_depends_guard_w_witnesses(ArgsList, Unifier, Flag1),
+% 	propagate_depends_guard_w_witnesses(R, Unifier, Flag2).
+
+
+%-----------------------------------------------------------------------%
+% Older version: the use of fcopy_term is unnecesary and expensive
+%-----------------------------------------------------------------------%
+% % fully_ground_marked_constraints(?XCL1, -XCL1Mark)
+% fully_ground_marked_constraints( XCL1, XCL1Mark) :-	
+% 	copy_to_unbound_list(XCL1, XCL1Mark),
+% 	fcopy_term(t(XCL1Mark), t(OldXCL1Mark)),
+% 	fully_ground_marked_constraints_aux(XCL1, XCL1Mark),
+% 	fully_ground_marked_constraints_iter(XCL1, OldXCL1Mark, XCL1Mark),
+% 	!.					    					    
+% % Fixpoint computation for propagating groundness to the whole set of
+% % constraints
+% fully_ground_marked_constraints_iter(_XCL1, OldXCL1Mark,NewXCL1Mark) :-
+% 	% Fixpoint reached
+% 	identical_marking(OldXCL1Mark, NewXCL1Mark), !.
+% fully_ground_marked_constraints_iter(XCL1, _OldXCL1Mark, NewXCL1Mark) :-
+% 	% Another fixpoint iteration
+% 	fully_ground_marked_constraints(XCL1, NewXCL1Mark).
+
+% fully_ground_marked_constraints_aux([],[]):-!.
+% fully_ground_marked_constraints_aux([C1|R1],[X|S]) :-
+% 	ground_constraint_variables([C1], _Flag),
+% 	!,
+% 	% If success then some variable has been marked.
+% 	mark_term(X),	
+% 	fully_ground_marked_constraints_aux(R1, S).
+% fully_ground_marked_constraints_aux([_|R1], [_|S]) :-	
+% 	!,
+% 	fully_ground_marked_constraints_aux(R1, S).
+
+%-----------------------------------------------------------------------%
+%  Older version:
+%-----------------------------------------------------------------------%	
+% ground_constraint_variables([assign(A, _)])    :-
+% 	var(A),
+% 	!,
+% 	fail. % lhs is not marked, then rhs is not marked
+% ground_constraint_variables([arrassign(A, _)]) :-
+% 	var(A),
+% 	!,
+% 	fail. % lhs is not marked, then rhs is not marked
+% %New constraint added by Jorge (see explanation somewhere else)
+% %ground_constraint_variables([addref(A, _)]) :-
+% %	unmarked_term(A), !, fail.  % lhs is not marked, then rhs is not marked
+% ground_constraint_variables([assign(A, B)]) :-
+% 	!,    % lhs is marked, then rhs is marked
+% 	print_message("%\n",[ground_constraint_variables_aux(A, [B])]),
+% 	ground_constraint_variables_aux(A, [B]).
+% ground_constraint_variables([arrassign(A, B)]) :-
+% 	!,    % lhs is marked, then rhs is marked
+% 	ground_constraint_variables_aux(A, [B]).	
+% %New constraint added by Jorge (see explanation somewhere else)
+% %ground_constraint_variables([addref(A, B)]) :-
+% %	!,    % lhs is marked, then rhs is marked
+% %	ground_addref_variables(A, B).	
+% ground_constraint_variables(ConstraintsList) :-
+%  	set_counter(include_constraint_in_slice_flag, 0),
+%  	ground_constraint_variables_aux(_, ConstraintsList),
+%  	X > 0,
+%  	counter_value(include_constraint_in_slice_flag, X).
+%-------------------------------------------------------------------------%
+% OBSOLETE: addref constraints are not generated anymore by compiler
+%-------------------------------------------------------------------------%
+% % We specialize this version to catch potential errors
+% ground_addref_variables(A,B):-
+% 	ground_constraint_variables_aux(A, [B]),!.
+% ground_addref_variables(A,B):-
+% 	error_message("ground_addref_variables/2 addref(%,%) \n",[A,B]).
+
+% % unmarked_term(+Term)
+% unmarked_term(Term):- var(Term),!.
+% unmarked_term(Term):- Term = w(_),!,fail.
+% unmarked_term(Term):- Term =..[_|Args], unmarked_term_args(Args).
+% unmarked_term_args([])    :-!.
+% unmarked_term_args([X|Xs]):- unmarked_term(X), unmarked_term_args(Xs).
+%-------------------------------------------------------------------------%
+
+%-------------------------------------------------------------------------%
+% ground_constraint_variables_aux(+Term,+Constraint,-Flag)
+%-------------------------------------------------------------------------%
+% Flag=0 if some marking is done.
+% Flag=1 otherwise
+%-------------------------------------------------------------------------%
+% ground_constraint_variables_aux(_Term, []) :- !.
+% ground_constraint_variables_aux(Term, [X|R]) :-
+% 	var(X), !, X=Term, !,
+% 	ground_constraint_variables_aux(Term, R).
+% ground_constraint_variables_aux(Term, [w(N)|R]) :-
+% 	var(Term), !, Term = w(N), !,
+% 	add_counter(include_constraint_in_slice_flag, 1),
+% 	ground_constraint_variables_aux(Term, R).
+% ground_constraint_variables_aux(Term, [w(_)|R]) :-
+% 	ground_constraint_variables_aux(Term, R).
+% ground_constraint_variables_aux(Term, [C|R]) :-
+% 	C =.. [_|ArgsList],
+% 	ground_constraint_variables_aux(Term, ArgsList),
+% 	ground_constraint_variables_aux(Term, R).
+%-------------------------------------------------------------------------%
+
+%-------------------------------------------------------------------------%
+% propagate_depends_assignments_wo_witnesses(?XCL1,-XCL1Mark)
+%-------------------------------------------------------------------------%
+% W/o witnesses version
+%-------------------------------------------------------------------------%
+#ifdef DEBUG_USE
+test_propagate_depends_assignments_wo_witnesses_1:-
+	mark_term(X1),
+	L1 = [assign(X1,Y1),assign(Y1,Z1)],
+	print_message("L=%\n", [L1]),
+	once(propagate_depends_assignments_wo_witnesses(L1,Marks1)),
+	print_message("Marks=% Vars=[%,%,%]\n", [Marks1,X1,Y1,Z1]),
+	mark_term(X2),
+	L2 = [assign(X2,Y2),assign(Y2,Z2)% ,eq(Z2,W2)
+	     ],
+	print_message("L=%\n", [L2]),
+	once(propagate_depends_assignments_wo_witnesses(L2,Marks2)),
+	print_message("Marks=% Vars=[%,%,%,%] \n", [Marks2,X2,Y2,Z2,_W2]),
+	L3 = [assign(X3,Y3),assign(Y3,Z3)% ,eq(Z3,W3)
+	     ],
+	mark_term(Z3),
+	print_message("L=%\n", [L3]),
+	once(propagate_depends_assignments_wo_witnesses(L3,Marks3)),
+	print_message("Marks=% Vars=[%,%,%,%] \n", [Marks3,X3,Y3,Z3,_W3]).
+%------------------------------------------------------------------------%
+% OBSOLETE: addref constraints are not generated anymore by compiler
+%------------------------------------------------------------------------%
+% test_propagate_depends_assignments_wo_witnesses_2:-
+% 	mark_term(SXNext),	
+% 	L=[assign(SZNext,666),assign(SWNext,999),
+% 	   addref(_SY,ref(SH,SAndSY)),assign(SPtr1Next,SAndSY),
+% 	   addref(SWNext,ref(SH,SAndSW1)),assign(SPtr2Next,SAndSW1),
+% 	   arrassign(SHNext,upd(SH,SPtr2Next,SZNext)),
+% 	                    assign(SXNext,ref(SHNext,SPtr1Next))],	
+% 	print_message("L=%\n", [L]),
+% 	once(propagate_depends_assignments_wo_witnesses(L,Marks)),
+% 	print_message("Marks=% \n", [Marks]).
+#endif  /*DEBUG_USE*/
+%------------------------------------------------------------------------%
+propagate_depends_assignments_wo_witnesses(XCL1,  XCL1Mark) :-	
+	copy_to_unbound_list(XCL1, XCL1Mark),
+	propagate_depends_assignments_wo_witnesses1(XCL1,  XCL1Mark).
+
+propagate_depends_assignments_wo_witnesses1(XCL1,  XCL1Mark):-
+	propagate_depends_assignments_wo_witnesses_aux(XCL1, XCL1Mark, ChangedFlag),
+	propagate_depends_assignments_wo_witnesses_iter(ChangedFlag, XCL1,XCL1Mark).
+
+% Fixpoint computation for propagating backward dependencies to the
+% whole set of constraints
+propagate_depends_assignments_wo_witnesses_iter(Flag, _XCL1, _XCL1Mark) :-
+	Flag == 1,
+	% 1 means there is no a new marked variable. Thus, fixpoint
+	% reached
+	!.
+propagate_depends_assignments_wo_witnesses_iter(Flag, XCL1, XCL1Mark) :-
+	Flag == 0,
+	% 0 means there is a new marked variable. Thus, another
+	% fixpoint iteration
+	propagate_depends_assignments_wo_witnesses1(XCL1, XCL1Mark).
+
+
+propagate_depends_assignments_wo_witnesses_aux([],[],1).
+propagate_depends_assignments_wo_witnesses_aux([C1|R1],[X|S], Flag1 * Flag2) :-
+	propagate_depends_assignment_wo_witnesses(C1, Flag1),
+	!,
+	mark_term(X),	
+	propagate_depends_assignments_wo_witnesses_aux(R1,S,Flag2).
+propagate_depends_assignments_wo_witnesses_aux([_|R1],[_|S], Flag) :-
+	!,
+	propagate_depends_assignments_wo_witnesses_aux(R1,S, Flag).
+
+%-------------------------------------------------------------------------%
+% propagate_depends_assignment_wo_witnesses(?Assignment,-Flag)
+%-------------------------------------------------------------------------%
+% If lhs of Assignment is marked then we mark all variables of the lhs
+% of Assignment. Flag=0 iff a new variable has been bound.
+%-------------------------------------------------------------------------%
+propagate_depends_assignment_wo_witnesses(assign(A, _), _Flag) :-
+	var(A),
+	!,
+	fail.
+propagate_depends_assignment_wo_witnesses(arrassign(A, _), _Flag) :-
+	var(A),
+	!,
+	fail.
+propagate_depends_assignment_wo_witnesses(assign(A, B), Flag) :-
+	!,
+	propagate_depends_rhs_wo_witnesses([B], A, Flag).
+propagate_depends_assignment_wo_witnesses(arrassign(A, B), Flag) :-
+	!,
+	propagate_depends_rhs_wo_witnesses([B], A, Flag).
+propagate_depends_assignment_wo_witnesses(_RestConstraint, _Flag) :-
+	% We expect the first argument to be either assign/2 or
+	% arrassign/2. If this clause is reachable either something is
+	% wrong or this assumption is wrong.	
+	error_message("propagate_depends_assignment_wo_witnesses/2 \n",[]).
+	%propagate_depends_guard_wo_witnesses([RestConstraint], _Unifier, Flag).	
+
+%------------------------------------------------------------------------%
+% propagate_depends_rhs_wo_witnesses(?List,+Unifier,-Flag)
+%------------------------------------------------------------------------%
+% PRECONDITION: Unifier is not var
+%
+% Unify all variables in List to the symbol Unifier.
+% Flag=0 if some marking is done.
+% Flag=1 otherwise
+%------------------------------------------------------------------------%
+propagate_depends_rhs_wo_witnesses([]   , _Unifier, 1) :- !.
+propagate_depends_rhs_wo_witnesses([X|R], Unifier , 0) :-
+	var(X),
+	!,
+	X=Unifier,
+	propagate_depends_rhs_wo_witnesses(R, Unifier, _Flag).
+propagate_depends_rhs_wo_witnesses([Unifier|R], Unifier, Flag) :-
+	!,
+	propagate_depends_rhs_wo_witnesses(R, Unifier, Flag).
+propagate_depends_rhs_wo_witnesses([C|R], Unifier, Flag1 * Flag2) :-
+	C =.. [_|ArgsList],
+	propagate_depends_rhs_wo_witnesses(ArgsList, Unifier, Flag1),
+	propagate_depends_rhs_wo_witnesses(R, Unifier, Flag2).
+
+%========================================================================%
+% NOTE: propagate_depends_assignment_wo_witnesses/3 can be called only
+% for non-guard transitions. Therefore, all constraints must be either
+% assign/2 or arrassign/2.
+%========================================================================%
+%------------------------------------------------------------------------%
+% propagate_depends_guard_wo_witnesses(?List,?Unifier,-Flag)
+%------------------------------------------------------------------------%
+% PRECONDITION: Unifier is var.
+% See cases below
+%------------------------------------------------------------------------%
+% propagate_depends_guard_wo_witnesses([]   , _Unifier, 1) :- !.
+% propagate_depends_guard_wo_witnesses([X|R],  Unifier, Flag) :-
+% 	% Case 1: both are var, so do nothing and continue
+% 	var(X),
+% 	var(Unifier),
+% 	!,
+% 	propagate_depends_guard_wo_witnesses(R, Unifier, Flag).
+% propagate_depends_guard_wo_witnesses([X|R],  Unifier, Flag) :-
+% 	% Case 2: X is a marked symbol but not Unifier.
+% 	%         Then, Unifier=X
+% 	var(Unifier),
+% 	is_marked_term(X),
+% 	!,
+% 	Unifier=X,
+% 	propagate_depends_guard_wo_witnesses(R, Unifier, Flag).
+% propagate_depends_guard_wo_witnesses([X|R],  Unifier, 0) :-
+% 	% Case 3: X is var but Unifier is already a marked term.
+% 	%         Then, X is a NEW marked variable (Flag=0)
+% 	var(X),
+% 	!,
+% 	X=Unifier,
+% 	propagate_depends_guard_wo_witnesses(R, Unifier, _Flag).
+% propagate_depends_guard_wo_witnesses([X|R],  Unifier, Flag) :-
+% 	% Case 4: both are marked already, so do nothing and continue
+% 	is_marked_term(X),
+% 	!,
+% 	propagate_depends_guard_wo_witnesses(R, Unifier, Flag).
+% propagate_depends_guard_wo_witnesses([C|R], Unifier, Flag1 * Flag2) :-
+% 	% Case 5: peel constraint and continue recursively
+% 	C =.. [_|ArgsList],
+% 	propagate_depends_guard_wo_witnesses(ArgsList, Unifier, Flag1),
+% 	propagate_depends_guard_wo_witnesses(R, Unifier, Flag2).
+
+% %------------------------------------------------------------------------------
+% % slice_constraints_away(CL,CLMark,Slice)
+% % CL is a list of constraints
+% % CLMark is a list of marked symbols
+% %------------------------------------------------------------------------------
+% slice_constraints_away([], [], []).
+% slice_constraints_away([_|R], [X|S], T) :-
+% 	var(X),	!, slice_constraints_away(R, S, T).
+% slice_constraints_away([C|R], [_|S], [C|T]) :-
+% 	slice_constraints_away(R, S, T).
+
+%------------------------------------------------------------------------------
+% Old code
+% %----------------------------------------------------------------------------%
+% % fully_ground_marked_constraints_inexact(?XCL1,-XCL1Mark)
+% %----------------------------------------------------------------------------%
+% % W/o witnesses version
+% %----------------------------------------------------------------------------%
+% fully_ground_marked_constraints_inexact(XCL1,  XCL1Mark) :-
+% 	copy_to_unbound_list(XCL1, XCL1Mark),
+% 	fcopy_term(t(XCL1Mark), t(OldXCL1Mark)),
+% 	fully_ground_marked_constraints_inexact_aux(XCL1, XCL1Mark),
+% 	fully_ground_marked_constraints_inexact_iter(XCL1,OldXCL1Mark, XCL1Mark).
+						     
+% % Fixpoint computation for propagating groundness to the whole set of
+% % constraints
+% fully_ground_marked_constraints_inexact_iter(_XCL1,
+% 					     OldXCL1Mark, NewXCL1Mark) :-
+% 	% Fixpoint reached 
+% 	identical_marking(OldXCL1Mark, NewXCL1Mark), !.
+% fully_ground_marked_constraints_inexact_iter(XCL1, 
+% 					     _OldXCL1Mark, NewXCL1Mark) :-
+% 	% New iteration
+% 	fully_ground_marked_constraints_inexact(XCL1, NewXCL1Mark).
+
+% fully_ground_marked_constraints_inexact_aux([],[]).
+% fully_ground_marked_constraints_inexact_aux([C1|R1],[X|S]) :-
+% 	mark_term(X),
+% 	ground_constraint_variables_inexact(X, [C1]), !,
+% 	%add_counter(fully_ground_marked_constraints_inexact_ctr, 1),
+% 	fully_ground_marked_constraints_inexact_aux(R1,S).
+% fully_ground_marked_constraints_inexact_aux([_|R1],[_|S]) :-
+% 	!,
+% 	fully_ground_marked_constraints_inexact_aux(R1,S).
+
+% %------------------------------------------------------------------------------
+% % ground_constraint_variables_inexact(+,?)
+% %------------------------------------------------------------------------------
+% % We ground variables in a constraint with a term, which would then
+% % mark the variables of the pre-state. Here assignments require
+% % special treatment, as dependency flows from right to left, not left
+% % to right.
+% % ------------------------------------------------------------------------------
+% ground_constraint_variables_inexact(Term, [assign(A, B)]) :-
+% 	!, A==Term, !, ground_constraint_variables_inexact_aux(Term, [B]).
+% ground_constraint_variables_inexact(Term, [arrassign(A, B)]) :-
+% 	!, A==Term, !, ground_constraint_variables_inexact_aux(Term, [B]).
+% % New constraint added by Jorge (see explanation somewhere else)
+% % ground_constraint_variables_inexact(Term, [addref(A, B)]) :-
+% % 	!, A==Term, !, ground_constraint_variables_inexact_aux(Term, [B]).
+% ground_constraint_variables_inexact(Term, ConstraintsList) :-
+% 	set_counter(include_constraint_in_slice_flag, 0),
+% 	ground_constraint_variables_inexact_aux(Term, ConstraintsList),
+% 	X > 0, counter_value(include_constraint_in_slice_flag, X).
+
+% ground_constraint_variables_inexact_aux(_Term, []) :- !.
+% ground_constraint_variables_inexact_aux(Term, [X|R]) :-
+% 	X==Term, !,
+% 	add_counter(include_constraint_in_slice_flag, 1),
+% 	ground_constraint_variables_inexact_aux(Term, R).
+% ground_constraint_variables_inexact_aux(Term, [Term|R]) :- !,
+% 	ground_constraint_variables_inexact_aux(Term, R).
+% ground_constraint_variables_inexact_aux(Term, [C|R]) :-
+% 	C =.. [_|ArgsList],
+% 	ground_constraint_variables_inexact_aux(Term, ArgsList),
+% 	ground_constraint_variables_inexact_aux(Term, R).
+%------------------------------------------------------------------------------
+
+
+%================================================================================%
+% POST-PROCESSING
+%================================================================================%
+% The post-processing consists of adding some guards which were not
+% originally included in the slice but because some of its sibling are
+% in the slice we should also include them (e.g., in case of
+% loops). For instance,
+%
+%  while(i < N){ x=y;}
+%   
+% If we slice on x then the loop condition (i<N) is in the
+% slice. However, the exit condition (i>=N) is not, in principle, in
+% our slice. Therefore, we need to force it.
+%================================================================================%
+slice_post_processing:-
+#ifdef  PROFILE	
+	print_message("\nPost-processing of the slice ...\n",[]),
+	ctime(T0),
+#endif	
+	get_all_transition_identifiers(Ids),	
+	% To include transitions which are guards and not originally
+	% in the slice but some sibling is in the slice.	
+	include_sibling_guards_in_slice(Ids,Cs,XCLs),
+	% To decide if it is finally in the slice:
+	% - INFL set is empty	
+	% - INFL set is not empty but all transitions come from the
+	% negation of the condition (e.g., if (i==N) then two
+	% transitions i>N and i<N which should be in the slice).	
+	include_empty_guards_in_slice(Cs,Cs,XCLs),
+#ifdef  PROFILE	
+        ctime(T1),
+	print_message("done in % seconds\n",[T1-T0]),
+#endif
+        !.
+%--------------------------------------------------------------------------------%
+% include_sibling_guards_in_slice(+,-,-)
+%--------------------------------------------------------------------------------%
+% Include transitions which are guards and not originally in the slice
+% but some sibling is in the slice.
+%--------------------------------------------------------------------------------%
+include_sibling_guards_in_slice([],[],[]):-!.
+include_sibling_guards_in_slice([Id|Ids],Cs,XCLs):-
+        % If the transition is already in the slice then do nothing
+        member_slice([Id]),!,
+	include_sibling_guards_in_slice(Ids,Cs,XCLs).
+include_sibling_guards_in_slice([Id|Ids],[Id|Cs],[XCL|XCLs]):-
+	% The transition is a guard
+        control_transition(Id),
+	% To obtain sibling transitions 
+	get_sibling_transitions(Id,XCL,Siblings),
+	% To check if any of them is in the slice
+	member_slice(Siblings),!,	
+	include_sibling_guards_in_slice(Ids,Cs,XCLs).	
+include_sibling_guards_in_slice([_Id|Ids],Cs,XCLs):-
+	include_sibling_guards_in_slice(Ids,Cs,XCLs).
+%--------------------------------------------------------------------------------%
+% include_empty_guards_in_slice(+,+,-)
+%--------------------------------------------------------------------------------%
+include_empty_guards_in_slice([],_,[]):-!.
+include_empty_guards_in_slice([Id|Ids],AllIds,[XCL|XCLs]):-
+	% No transitions under the scope of Id
+	get_INFL(Id,INFLSet),
+	include_empty_guards_in_slice__(INFLSet,Id,XCL,AllIds),
+	include_empty_guards_in_slice(Ids,AllIds,XCLs).	
+include_empty_guards_in_slice__([],Id,XCL,_):-
+	!,
+#ifdef  PROFILE
+        print_message("\t transition % is added in the final slice\n",[Id]),
+#endif	
+	gen_marked_constraints(XCL,[],MarkXCL),
+	record_trans_in_slice(_,Id,MarkXCL).
+include_empty_guards_in_slice__(INFLSet,Id,XCL,AllIds):-
+	unord_setsubset(INFLSet,AllIds),!,
+#ifdef  PROFILE
+        print_message("\t transition % is added in the final slice\n",[Id]),
+#endif	
+	gen_marked_constraints(XCL,[],MarkXCL),
+	record_trans_in_slice(_,Id,MarkXCL).
+include_empty_guards_in_slice__(_,_,_,_):-!.
+	
+%--------------------------------------------------------------------------------
+% WARNING: this predicate is very inefficient (time and memory).  The
+% assumption is that it will be used after analysis has finalized and
+% only once. Even so, it's possible to run out of code space if the
+% program is too large.
+%--------------------------------------------------------------------------------
+get_sibling_transitions(/*in*/Id,/*out*/XCL,/*out*/Siblings):-
+	trans(FName,Id,PP,_,_,_,_,_,_,_,_,PPX,_,_,_,_,_,_,_,_,XCL,_,_,branch),
+	fassert('$sibling'([])),
+	get_sibling_transitions_aux(FName,PP,PPX),
+	retract('$sibling'(Siblings)),
+	!.
+
+get_sibling_transitions_aux(FName,ParentPP,PPX):-
+	trans(FName,Id,ParentPP,_,_,_,_,_,_,_,_,PP,_,_,_,_,_,_,_,_,_,_,_,branch),
+	not(PP==PPX),
+	update_sibling_fact(Id),
+	fail.
+get_sibling_transitions_aux(_,_,_):-!.
+	
+update_sibling_fact(Id):-
+	retract('$sibling'(Siblings)),
+	fassert('$sibling'([Id|Siblings])),
+	!.
+	
+%===========================================================================%
+% STATISTICS
+%===========================================================================%
+% Count the total number of constraints in the original CLP program
+% and also the total number of constraints in the program slice.
+%===========================================================================%
+
+%---------------------------------------------------------------------------%
+% Count the total number of constraints in the program
+%---------------------------------------------------------------------------%
+get_number_constraints(N):-
+	set_counter(total_constraints,0),
+	get_number_constraints_aux,
+	counter_value(total_constraints,N),
+	retractall(func_already_counted(_)).	
+get_number_constraints_aux:-
+	trans(FName,Id,PP,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,
+	      XCL,CallCL,RefCL,Statement),
+	once(add_total_constraints(Statement,Id,FName,PP,XCL,CallCL,RefCL)),
+	fail.
+get_number_constraints_aux.
+% Special case: if the guard's body is empty and it is not a loop
+% condition, then we don't count it because it was created
+% artificially by CLP compilation
+add_total_constraints(branch,Id,FName,PP,XCL,_CallCL,_RefCL):-
+  	get_INFL(Id,[]),
+	add_total_constraints___(Id,FName,PP,XCL).
+% In the future, we should also count RefCL
+% Special case: make sure that we count the constraints related to
+% formal/actual parameters just once.
+add_total_constraints(_,_Id,_,_,XCL,CallCL,_RefCL):-
+	CallCL = [call(FName,_,_,CCL)|_],
+	warning(warning_off),	
+	not(func_already_counted(FName)),
+	warning(warning_on),		
+	length(CCL,N2),
+	length(XCL,N1),
+        fassert(func_already_counted(FName)),
+	add_counter(total_constraints,N1+N2).
+% In the future, we should also count RefCL
+add_total_constraints(_,_Id,_,_,XCL,_CallCL,_RefCL):- !,
+	length(XCL,N),
+	add_counter(total_constraints,N).
+
+add_total_constraints___(Id,FName,PP,_):-
+	% Here it's empty guard which is not part of loop.
+	% Then we don't count it
+	not(block(_,FName,PP,_,_,l,_,_,_,_,_)),!,
+	add_empty_guard(Id).
+add_total_constraints___(_Id,_FName,_PP,XCL):-
+	% Here it's empty guard but part of a loop.
+	% Then we count it.
+	length(XCL,N),
+	add_counter(total_constraints,N),!.
+	
+add_empty_guard(Id):- retract(empty_guards(Ids)), fassert(empty_guards([Id|Ids])).
+add_empty_guard(Id):- fassert(empty_guards([Id])).
+
+get_empty_guards(Ids):- once(retract(empty_guards(Ids))),!.
+get_empty_guards([]):-!.
+
+%---------------------------------------------------------------------------%
+% Count the total number of constraints in the program slice
+%---------------------------------------------------------------------------%
+get_number_slice_constraints(SliceTrans,NumSliceStms) :-
+        set_counter(slice_constraints,0),
+	get_empty_guards(EmptyBranches),
+	%---------------------------------------------- 
+	% from tracer_preprocess
+	%---------------------------------------------- 	
+	once(get_all_transition_identifiers(Ids)),
+	get_number_slice_constraints_aux(Ids,SliceTrans,EmptyBranches),
+	counter_value(slice_constraints,NumSliceStms).
+
+get_number_slice_constraints_aux([],_,_):-!.
+get_number_slice_constraints_aux([Id|Ids],SliceTrans,EmptyBranches):-!,
+ 	get_number_slice_constraints_aux2(Id,SliceTrans,EmptyBranches),
+ 	get_number_slice_constraints_aux(Ids,SliceTrans,EmptyBranches).
+
+get_number_slice_constraints_aux2(Id,SliceTrans,EmptyBranches):-
+	get_number_slice_constraints_aux3(Id,SliceTrans,EmptyBranches).
+
+get_number_slice_constraints_aux3(Id,SliceTrans,EmptyBranches):-
+	member(slice(Id,SliceCL),SliceTrans), !,
+	count_marked_elements(SliceCL,N),
+	add_slice_constraints(Id,EmptyBranches,N).
+%% Uncomment to show if a transition is not in the slice
+% get_number_slice_constraints_aux3(Id,_SliceTrans,_EmptyBranches):-
+%   	once(trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,XCL,_CallCL,_RefCL,_)),
+%   	not(XCL = []),!,	
+%  	print_message("Check why % is not in the slice \n",[Id]).
+get_number_slice_constraints_aux3(_,_,_).
+	
+% Special case
+add_slice_constraints(Id,EmptyBranches,_N):-
+	member(Id,EmptyBranches),!.
+add_slice_constraints(_Id,_,N):-
+	add_counter(slice_constraints,N),!.
+
+% Called from tracer_profile.clp.gpp
+print_slicing_stats(ProgramSlice):-
+	get_number_constraints(TotalConstraints),
+	get_number_slice_constraints(ProgramSlice,TotalSliceConstraints),
+	get_num_of_marked_variables(TotalMarkVars),	
+#ifdef  SLICING_CONTROL_OPT	
+	counter_value(control_opt,NumOpt1),
+	counter_value(control_opt_slice,RFS),
+#endif	
+	Perc      = (TotalSliceConstraints / TotalConstraints) * 100,
+	print_separator,
+	print_message("SLICING results:  \n",[]),
+	print_message("\tSlice size            (# constraints) : % \n",
+		      [TotalSliceConstraints]),
+	print_message("\tOriginal program size (# constraints) : % \n",
+		      [TotalConstraints]),
+	Reduc     = 100 - Perc,
+	print_message("\tPercentage reduction of the slice     : %\% \n",
+		      [Reduc]),
+	print_message("\tTotal number of marked variables      : %\n" ,
+		      [TotalMarkVars]),
+#ifdef  SLICING_CONTROL_OPT		
+	print_message('\t# Control-dependencies optimizations (*)  : % \n',
+		      [NumOpt1]),
+	print_message('\t\t# trans not considered due to the above opt.(*): % \n',
+		      [RFS]),
+	print_message('\t(*) These numbers are not reliable if loops. \n',[]).
+#else
+        true.
+#endif
+
+% This predicate collects the slicing info from the slicer.  It is
+% used by tracer_graphviz.clp.gpp and for output slicing stats.
+findall_trans_in_slice([slice(Id,SliceXCL)|R]):-
+	retract_trans_in_slice(Id,SliceXCL),!,
+	findall_trans_in_slice(R).
+findall_trans_in_slice([]):-!.
+
+%==================================================================================%
+%  DEBUGGING                                   
+%==================================================================================%
+
+% To print the slice
+print_trans_in_slice:-
+#ifdef  SLICING_SPEEDUP_TRANS_IN_SLICE
+        query_trans_in_slice(X1,X2),
+#else
+	trans_in_slice(X1,X2),
+#endif	
+	print_message("trans_in_slice(%,%).\n",[X1,X2]),
+	fail.
+print_trans_in_slice.
+
+%=============================================================================%
+%=============================================================================%
+#ifdef  SLICING_CONTROL_OPT
+%=============================================================================%
+% IMPORTANT NOTE (12/08/10): THIS OPTIMIZATION IS INCORRECT!
+%==============================================================================
+% The following explains what we call the "control-dependence
+% optimization".
+%==============================================================================
+% During the COMBINE process, the parent can see if its children are
+% guard transitions (F) and also the number of feasible children
+% (N). This info can be used to replace the markings (PreMarked*) done
+% by the only one feasible child to exclude the control markings
+% (PostAuxList).
+%
+% <1> x=5;              <1> skip
+% <2> if (x>4)          <2> skip
+% <3>    y=z;           <3> y=z;
+%
+% if slice on <3> and {y} then we don't need to include in the slice
+% neither <1> nor <2>, and more importantly, x will not be marked.
+%========================================================================
+apply_combine_control_optimization(F,N, PostAuxList, Id,
+				   PreAnswer, NewPreAnswer):-
+	current_tracer_flag(slicer_control_opt,y),!,
+	slice_undo_child_answer(F,N, PostAuxList, Id,
+				PreAnswer, NewPreAnswer).
+apply_combine_control_optimization(_F,_N, _PostAuxList, _Id,
+				   PreAnswer,PreAnswer):- !.
+
+% If it is not a guard, do nothing else.
+slice_undo_child_answer(0,_N, _PostAuxList, _Id,
+			PreAnswer, PreAnswer):- !.
+% If it is a guard but totally infeasible, do nothing else.	
+slice_undo_child_answer(1,0, _PostAuxList, _Id,
+			PreAnswer, PreAnswer):- !.
+% If it is a guard but more than one feasible child, do nothing else.        
+slice_undo_child_answer(1,N, _PostAuxList, _Id,
+			PreAnswer, PreAnswer):- 
+        N > 1,!.
+% Interesting case ...
+slice_undo_child_answer(1,1, [aux(_,_,NewRepIndexes,
+				  PostMarkedGlobalArr0, PostMarkedGlobalVar0,
+				  PostMarkedLocalArr0 , PostMarkedLocalVar0)],
+			ParId,
+			ans(PreMarkedGlobalArr ,  PreMarkedGlobalVar,
+			    PreMarkedLocalArr  ,  PreMarkedLocalVar,
+			    PreWs),
+			ans(PostMarkedGlobalArr , PostMarkedGlobalVar,
+			    PostMarkedLocalArr  , PostMarkedLocalVar,
+			    PostWs)):-	
+	!,
+	%------------------------------------------------------------------------
+	% Restore post-markings of the child that exclude control markings
+	%------------------------------------------------------------------------		
+#ifdef  ENCODE_CHILD_PARENT
+        % PostMarked*0 are encoded (by control_opt_gen_info/8) if
+        % ENCODE_CHILD_PARENT
+	decode_marked_list(PostMarkedGlobalArr0 , PostMarkedGlobalArr),
+	decode_marked_list(PostMarkedGlobalVar0 , PostMarkedGlobalVar),
+	decode_marked_list(PostMarkedLocalArr0  , PostMarkedLocalArr ),
+	decode_marked_list(PostMarkedLocalVar0  , PostMarkedLocalVar ),
+#else
+	PostMarkedGlobalArr0 = PostMarkedGlobalArr,
+	PostMarkedGlobalVar0 = PostMarkedGlobalVar,
+	PostMarkedLocalArr0  = PostMarkedLocalArr,
+	PostMarkedLocalVar0  = PostMarkedLocalVar,
+#endif  /*ENCODE_CHILD_PARENT*/	
+#ifdef  PROFILE
+ 	find_diff_marking(PostMarkedGlobalArr, PreMarkedGlobalArr, N1),
+ 	find_diff_marking(PostMarkedGlobalVar, PreMarkedGlobalVar, N2),
+ 	find_diff_marking(PostMarkedLocalArr , PreMarkedLocalArr , N3),
+ 	find_diff_marking(PostMarkedLocalVar , PreMarkedLocalVar , N4),
+	add_counter_control_opt(N1+N2+N3+N4),
+#else
+        %----------------------------------------------------------------------
+        % To prevent warnings
+        %----------------------------------------------------------------------
+        PreMarkedGlobalArr=_, PreMarkedGlobalVar=_,
+	PreMarkedLocalArr =_ ,PreMarkedLocalVar =_,
+#endif
+	%------------------------------------------------------------------------
+	% Restore post-witnesses of the child
+	%------------------------------------------------------------------------	
+	restore_post_witnesses(PreWs,NewRepIndexes,PostWs),
+	%------------------------------------------------------------------------
+	% Restore the slice computed by the child
+	%------------------------------------------------------------------------
+	restore_trans_in_slice(ParId).
+
+% control_opt_gen_info/8: to generate auxiliar info to perform the
+% control-dependence optimization.
+control_opt_gen_info(BranchFlag,FeasibleFlag,NewRepIndexes,
+		     PostGlobalArrMark,PostGlobalVarMark,
+		     PostLocalArrMark,PostLocalVarMark,Aux):-
+
+#ifdef  ENCODE_CHILD_PARENT
+        encode_control_opt_info(aux(BranchFlag,FeasibleFlag,
+				    NewRepIndexes,
+				    PostGlobalArrMark,PostGlobalVarMark,
+				    PostLocalArrMark,PostLocalVarMark),
+				Aux).
+#else
+
+	Aux = aux(BranchFlag,FeasibleFlag,NewRepIndexes,
+		  PostGlobalArrMark,PostGlobalVarMark,
+		  PostLocalArrMark,PostLocalVarMark).
+#endif  /*ENCODE_CHILD_PARENT */
+
+#ifdef  ENCODE_CHILD_PARENT
+encode_control_opt_info(aux(BranchFlag,FeasibleFlag,NewRepIndex,
+			    GlobalArrMark, GlobalVarMark,
+			    LocalArrMark , LocalVarMark),
+			aux(BranchFlag,FeasibleFlag,NewRepIndex,
+			    GlobalArrMarkX, GlobalVarMarkX,
+			    LocalArrMarkX , LocalVarMarkX)):-	
+	encode_marked_list(GlobalArrMark,GlobalArrMarkX),
+	encode_marked_list(GlobalVarMark,GlobalVarMarkX),
+	encode_marked_list(LocalArrMark ,LocalArrMarkX),
+	encode_marked_list(LocalVarMark ,LocalVarMarkX).
+% decode_control_opt_info(aux(BranchFlag,FeasibleFlag,NewRepIndex,
+% 			    GlobalArrMarkX, GlobalVarMarkX,
+% 			    LocalArrMarkX , LocalVarMarkX),
+% 			aux(BranchFlag,FeasibleFlag,NewRepIndex,
+% 			    GlobalArrMark, GlobalVarMark,
+% 			    LocalArrMark , LocalVarMark)):-	
+% 	decode_marked_list(GlobalArrMarkX,GlobalArrMark),
+% 	decode_marked_list(GlobalVarMarkX,GlobalVarMark),
+% 	decode_marked_list(LocalArrMarkX ,LocalArrMark),
+% 	decode_marked_list(LocalVarMarkX ,LocalVarMark).
+#endif  /*ENCODE_CHILD_PARENT */
+	
+			
+			    
+% control_opt_get_info/3: to obtain if the child is guard/non-guard
+% and feasible/infeasible.
+control_opt_get_info(Aux,0,1):-	
+	% If aux_slicing_answer is not available, then assume that the
+	% transition is not a guard and feasible so that combine does
+	% nothing.
+	Aux == nil, !.
+control_opt_get_info(aux(F,N,_,_,_,_,_),F,N):-!.
+
+combine_aux_info(Xs,Ys,[]):- Xs==nil, Ys==nil,!.
+combine_aux_info(Xs,Ys,Ys):- Xs==nil, !.
+combine_aux_info(Xs,Ys,Xs):- Ys==nil, !.
+combine_aux_info(Xs,Ys,Zs):-
+	% we only insert if it's useful (i.e., a feasible guard)
+	Xs = aux(1,1,_A,_B,_C,_D,_E),
+	!,
+	append([Xs],Ys,Zs).
+combine_aux_info(_Xs,Ys,Ys):- !.
+
+% restore_trans_in_slice/1: to replace pre with post slice in case of
+% control-dependence optimization is done.
+restore_trans_in_slice(ParId):-
+	trans(FName,ParId,_PC,_,_,_,_,_,_,_,_,PC,_,_,_,_,_,_,_,_,_,_,_,_),
+	get_id_child(FName,PC,ChildId),
+#ifdef  SLICE_PSCFG
+    top_context_stack([PPContext]),
+    retract(trans_in_slice_pscfg(FName,PPContext,ChildId)),
+#else
+	retract_trans_in_slice(ChildId,_),	
+#endif
+        %print_message("Removing % from slice ... \n",[ChildId]),
+	add_counter(control_opt_slice,1),
+	fail.
+restore_trans_in_slice(_).
+
+get_id_child(FName,PC,Id):-
+	trans(FName,Id,PC,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_).
+
+#ifdef  PROFILE
+add_counter_control_opt(N):- N > 0, !, add_counter(control_opt,1).
+add_counter_control_opt(_):- !.
+#endif
+
+% restore_post_witnesses/3: to replace pre with post witnesses in case
+% of control-dependence optimization is done.
+restore_post_witnesses(Ws0,NewRepIndexes,Ws1):-
+	% w/ witnesses  
+	current_tracer_flag(witnesses, y), !,
+	restore_post_witnesses_aux(Ws0,NewRepIndexes,Ws1).
+restore_post_witnesses(Ws, _ ,Ws):-
+	current_tracer_flag(witnesses, n), !.
+
+restore_post_witnesses_aux([],_,[]):-!.
+restore_post_witnesses_aux([w(I,_,_,_,_,_,_)|Rs],NewRepIndexes,NewRs):-
+        member(w(I),NewRepIndexes),!,
+	restore_post_witnesses_aux(Rs,NewRepIndexes,NewRs).			
+restore_post_witnesses_aux([R|Rs],NewRepIndexes,[R|NewRs]):- !,
+	restore_post_witnesses_aux(Rs,NewRepIndexes,NewRs).
+
+%------------------------------------------------------------------------%
+% map_witnesses_to_indexes(+,-)
+% From list of w(I,...) it builds a list of w(I)
+%------------------------------------------------------------------------%
+map_witnesses_to_indexes([],[]):-!.
+map_witnesses_to_indexes([w(I,_,_,_,_,_,_)|Xs],[w(I)|Zs]):-
+	map_witnesses_to_indexes(Xs,Zs).
+
+%----------------------------------------------------------------------%
+% combine_fixp_witnesses(+OldWs,+NewWs,-Ws)
+%----------------------------------------------------------------------%
+combine_fixp_witnesses(OldWs,NewWs,NewWs1):-
+	combine_fixp_witnesses_aux(OldWs,NewWs,Ws),
+	append_witnesses(Ws,NewWs,NewWs1).
+
+#ifdef  PROFILE
+find_diff_marking(OldVars,NewVars,NewChanges):-
+	set_counter(fixpo_new_mark,0),
+	set_counter(fixpo_new_mark_index,0),
+	find_diff_marking_aux(OldVars,NewVars),	
+	counter_value(fixpo_new_mark,NewChanges).
+
+find_diff_marking_aux([],[]):- !.
+find_diff_marking_aux([Old|Olds],[_New|News]):-
+	is_marked_term(Old), !,
+	add_counter(fixpo_new_mark_index,1),			
+	find_diff_marking_aux(Olds,News).
+find_diff_marking_aux([_Old|Olds],[New|News]):-
+	is_marked_term(New), !,
+	add_counter(fixpo_new_mark_index,1),			
+	add_counter(fixpo_new_mark,1),
+	counter_value(fixpo_new_mark_index,Ind),
+	debug_message("\t New mark variable index: %\n",[Ind]),
+	find_diff_marking_aux(Olds,News).
+find_diff_marking_aux([_Old|Olds],[_New|News]):-!,
+	add_counter(fixpo_new_mark_index,1),			
+	find_diff_marking_aux(Olds,News).
+#endif  /*PROFILE*/
+
+%------------------------------------------------------------------------------
+% combine_fixp_witnesses_aux(+OldWs,+NewWs,-Ws)
+%------------------------------------------------------------------------------
+% Set difference between OldWs and NewWs. Ws constains exactly
+% the witnesses in OldWs that does not covered by another
+% witness in NewWs.  NOTE: it's work also if witnesses are encoded.
+%------------------------------------------------------------------------------
+combine_fixp_witnesses_aux([],_,[]).
+combine_fixp_witnesses_aux([w(I,Id,A,B,C,D,E)|Rs],NewWs,
+			   [w(I,Id,A,B,C,D,E)|NewWs1]):-
+	nonmember(w(I,_,_,_,_,_,_),NewWs),
+	!,
+	combine_fixp_witnesses_aux(Rs,NewWs,NewWs1).
+combine_fixp_witnesses_aux([_|Rs],NewWs,NewWs1):-
+	!,
+	combine_fixp_witnesses_aux(Rs,NewWs,NewWs1).
+
+append_witnesses([],Ys,Ys).
+append_witnesses([X|Xs],Ys,Zs):-
+	add_witnesses_sorted(Ys,X,Ws),
+	append_witnesses(Xs,Ws,Zs).
+
+/*
+% Witnesses are currently effective only intraprocedurally. Hence, it
+% does not make sense to carry them out outside of the function.
+keep_witnesses_only_intraprocedurally(FName,PP,Answer,NewAnswer):-
+	start(FName,PP),
+	Answer    = answer(Ws,M1,M2,M3,M4),
+	!,
+	clear_witnesses(Ws,NewWs),
+	NewAnswer = answer(NewWs,M1,M2,M3,M4).
+keep_witnesses_only_intraprocedurally(FName,PP,Ws,NewWs):-
+	start(FName,PP),
+	!,
+	clear_witnesses(Ws,NewWs).
+
+% cleanup of witnesses
+clear_witnesses([],[]):-!.
+clear_witnesess([w(Index,Id,A,B,C,D,_)|Ws],		
+		[w(Index,Id,A1,B1,C1,D1,[])|Zs]):-	
+	copy_to_unbound_list(A,A1),
+	copy_to_unbound_list(B,B1),
+	copy_to_unbound_list(C,C1),
+	copy_to_unbound_list(D,D1),
+	clear_witnesses(Ws,Zs).
+*/
+#endif  /*SLICING_CONTROL_OPT*/			

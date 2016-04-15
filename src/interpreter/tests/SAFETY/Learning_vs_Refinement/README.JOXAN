@@ -1,0 +1,34 @@
+Run results of joxan-??.c using Blast
+=====================================
+
+5 ifs:  2.343 s 6 preds 5 preds/loc
+Predicates:
+-(x@main)<=-1
+x@main+e@main*-2<=1
+e@main==0
+x@main<=1
+e@main*2+-(x@main)<=-1
+x@main+-1+-(e@main)==0
+
+10 ifs: 3.672 s 12 preds 11 preds/loc
+Additional Predicates:
+x@main*2<=2
+e@main*-4+x@main*2<=2
+e@main*2==0
+e@main*4+x@main*-2<=-2
+x@main*-2<=-2
+e@main+-1==0
+
+15 ifs: 9.140 s 12 preds 11 preds/loc
+
+20 ifs: 26.641 s 14 preds 13 preds/loc
+Additional predicates:
+0<=-(e@main)
+x@main+-1==0
+0<=e@main
+
+
+25 ifs: 73.843 s 14 preds 13 preds/loc
+30 ifs: 184.953 s 17 preds 16 preds/loc
+35 ifs: 399.282 s 17 preds 16 preds/loc
+40 ifs: 821.161 s 17 preds 16 preds/loc

@@ -1,0 +1,297 @@
+% tracer_preprocess.clp.gpp
+
+%================================================================================%
+% This module preprocesses (and precomputes) information from original C program.
+%
+% export
+%   precompute_program_database/0
+%   cleanup_program_database/0
+%
+%   get_INFL/2                         % IMPORTANT: precompute_program_database/0
+%                                                   must be called first
+%   get_all_transition_identifiers/1   % IMPORTANT: precompute_program_database/0
+%                                                   must be called first
+%   control_transition/1               % IMPORTANT: precompute_program_database/0
+%                                                   must be called first
+%   initial_index_local                % defined as a counter
+%
+% We assume that the CLP program that reflects the C program defines
+% block/15 which determines a block (and its set of statements) and
+% block_hierarchy/2 which allows to reconstruct the block hierarchy of
+% the original C program.
+%
+% Let b be a branch statement (if-then-else, while loop, etc), this
+% modules computes the following relationship:
+%
+%    INFL(b) : the set of statements control dependent  on b.
+%===============================================================================%
+% IMPORTANT NOTE:
+%
+%    We assume C structured code so that INFL can be computed in a
+%    syntax-directed manner.
+%===============================================================================%
+%===============================================================================%
+%   block(BlockId,FName,PC,ExitPC,NoIter,Flag,
+%         [Id0,...,IdN],
+%         UpdGlobalArr,UpdGlobalVar,UpdLocalArr,UpdLocalVar)
+%
+%   block_hierarchy(0,1).
+%   block_hierarchy(1,2).
+%   block_hierarchy(1,3).
+%   block_hierarchy(2,2).
+%   block_hierarchy(3,3).
+%===============================================================================%
+
+cleanup_program_database:-
+	retractall(infl(_,_)),
+	retractall(list_trans_id(_)),
+	retractall(list_call_trans_id(_)),
+	retractall(block_of_trans(_,_)),
+	retractall('$return'(_,_)),
+	retractall('$branch'(_)).	
+
+% Main predicate which precomputes and stores all info from the CLP
+% program which will be further needed by the analyses.
+precompute_program_database:-
+	ctime(T0),
+	print_message("Pre-computing program database ... ",[]),
+	% To compute all transition identifiers
+	once(get_all_transition_identifiers(TransIds)),
+	% To speed-up the query if a transition is a branch
+	precompute_control_transitions,
+	% To speed-up the query if a transition is a return statement
+	precompute_returns,
+	% To compute INFL relationship
+	compute_infl(TransIds),
+        % To compute the initial index of local variables
+	% GlobalArr <+> GlobalVar <+> LocalArr <+> LocalVar
+	compute_initial_index_localvars,
+	ctime(T1),	
+	!,
+	%-----------------------------------------------------------------------%
+	% TO FREE MEMORY SPACE
+	% ----------------------------------------------------------------------%
+	retractall(block_of_trans(_,_)),	
+	print_message("finished in % seconds. \n\n",[T1-T0]).
+precompute_program_database:-
+	error_message("Something wrong when precompute_program_database/0 \n",[]).
+
+% To speed-up the query if a transition is a branch or not
+precompute_control_transitions:-
+	get_all_transition_identifiers(TransIds),
+	precompute_control_transitions_aux(TransIds).
+
+precompute_control_transitions_aux([]):-!.
+precompute_control_transitions_aux([Id|Ids]):-
+	trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,branch),!,
+	fassert('$branch'(Id)),
+	precompute_control_transitions_aux(Ids).
+precompute_control_transitions_aux([_|Ids]):-
+	!,
+	precompute_control_transitions_aux(Ids).
+
+% control_transition(+Id): succeed if Id is a branch statement
+control_transition(Id):- '$branch'(Id).
+
+% get_INFL/2:
+get_INFL(Id,INFL):-
+	% computed by precompute_control_transitions/0
+	control_transition(Id),
+	% computed by compute_infl/0
+	infl(Id,INFL).               
+	
+%-------------------------------------------------------------------------------%
+% compute_infl/1
+%-------------------------------------------------------------------------------%
+% Compute INF(b) and store for each branch statement b its set of
+% influenced control-dependent transitions.
+%------------------------------------------------------------------------------%
+compute_infl(TransIds):-
+	%get_all_transition_identifiers(TransIds), !,
+        %print_message("List of transitions: %\n",[TransIds]),	
+	compute_infl_foreach(TransIds).
+
+compute_infl_foreach([]):-!.
+compute_infl_foreach([Id|Ids]):-
+	% i.e. a branch statement
+	control_transition(Id),!,  
+	%print_message("% is a branch statement \n",[Id]),
+%	compute_direct_infl(Id),
+	compute_closure_infl(Id),
+	compute_infl_foreach(Ids).
+compute_infl_foreach([_|Ids]):- !,
+	compute_infl_foreach(Ids).
+
+% For a given transition id (a branch statement), compute ONLY its
+% DIRECT influenced set of statements.
+compute_direct_infl(TransId):-
+	get_imm_block(TransId,BlockId),
+	%print_message("Transition % is defined in block %\n",[TransId,BlockId]),
+	compute_infl(TransId,BlockId).
+
+% For a given transition id, compute its DIRECT and INDIRECT
+% (transitive closure) influenced transitions ids.
+compute_closure_infl(TransId):-
+	get_imm_block(TransId,BlockId),
+	compute_infl(TransId,BlockId),
+	compute_closure_infl_aux(TransId,BlockId).
+
+compute_closure_infl_aux(TransId,BlockId):-
+	get_succ_block(BlockId,NextBlockId),
+	compute_infl(TransId,NextBlockId),
+	fail.
+compute_closure_infl_aux(TransId,BlockId):-
+	compute_infl(TransId,BlockId).
+
+% get_succ_block(Block,Succ): Succ is a successor in the block
+% hierarchy of Block. If Block is a leaf node in the hierarchy, then
+% get_successor fails
+get_succ_block(Block,ImmSucc):-
+	block_hierarchy(Block,ImmSucc),
+	not(Block = ImmSucc).
+get_succ_block(Block,Succ):-
+	block_hierarchy(Block,ImmSucc),
+	not(Block = ImmSucc),
+	get_succ_block(ImmSucc,Succ).
+				
+compute_infl(TransId,BlockId):-
+	block(BlockId,_,_,_,_,_,ListIds,_,_,_,_), !,
+	%print_message("The block % has the transitions %\n",[BlockId,ListIds]),
+	remove_member_special(TransId,ListIds,ListIds0),
+	add_influenced_transitions(TransId,ListIds0).
+
+add_influenced_transitions(TransId,NewListIds):-
+	retract(infl(TransId,OldListIds)),!,
+	append_if_not_dup(NewListIds,OldListIds,ListIds),
+	fassert(infl(TransId,ListIds)).
+add_influenced_transitions(TransId,NewListIds):-
+	fassert(infl(TransId,NewListIds)),!.
+
+% Given a transition identifier t, return the block in which t is
+% defined (block_of_trans/2).
+get_imm_block(TransId,BlockId):-
+	block_of_trans(TransId,BlockId),!.  
+get_imm_block(TransId,BlockId):-
+	get_imm_block_aux(TransId),
+	block_of_trans(TransId,BlockId),!.
+get_imm_block_aux(TransId):-
+	block(BlockId,_,_,_,_,_,ListIds,_,_,_,_),
+	member_special(TransId,ListIds), 
+	fassert(block_of_trans(TransId,BlockId)).
+get_imm_block_aux(_).
+
+remove_member_special(_,T,_)           :- var(T), !, fail.
+remove_member_special(_,[],[])         :- !.
+remove_member_special(X,[Y|Ys],Ys)     :- X == Y, !.
+remove_member_special(X,[Y|Ys],[Y|Zs]) :- remove_member_special(X,Ys,Zs).
+
+member_and_delete_list(X,[Y|Ys],Ys)     :- X == Y, !.
+member_and_delete_list(X,[Y|Ys],[Y|Zs]) :- member_and_delete_list(X,Ys,Zs).
+
+% get_all_transition_identifiers(-Ids): obtain all transition
+% identifiers from the CLP program and store them in the database
+% (list_trans_id/1).
+get_all_transition_identifiers(Ids):-
+ 	list_trans_id(Ids),!.
+get_all_transition_identifiers(Ids):- 
+	fassert(list_trans_id([])),
+	fassert(list_call_trans_id([])),
+	get_all_transition_identifiers_aux,
+	get_all_transition_call_identifiers_aux,
+	!,
+	retract(list_trans_id(Ids_s)),
+	retract(list_call_trans_id(Calls_Ids)),
+	%qsort(Ids_u,Ids_s),
+	append(Ids_s,Calls_Ids,Ids),
+	%%% for further queries
+	fassert(list_trans_id(Ids)).
+
+get_all_transition_call_identifiers_aux:-
+	trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,[call(_,_,_,_)|_],_,_),
+	update_list_call_trans_id(call(Id)),
+	fail.
+get_all_transition_call_identifiers_aux.
+
+get_all_transition_identifiers_aux:-
+	trans(_,Id,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_),
+	%----------------------------------------------------------------------
+	% The call to update_list_trans_id was previously enclosed in once/1:
+	% We replaced it with a cut in the procedure
+	%----------------------------------------------------------------------
+	update_list_trans_id(Id),
+	fail.
+get_all_transition_identifiers_aux.
+
+update_list_trans_id(Id):-
+	retract(list_trans_id(Ids)),
+	% to avoid a further call to sort/2	
+	insert_if_not_dup(Id,Ids,NewIds), 
+	fassert(list_trans_id(NewIds)), 
+	%----------------------------------------------------------------------
+	% We put a cut here s.t. update_list_trans_id need not be called with
+	% once/1.
+	%----------------------------------------------------------------------
+	!.
+
+update_list_call_trans_id(Id):-
+	retract(list_call_trans_id(Ids)),
+	% to avoid a further call to sort/2	
+	insert_if_not_dup(Id,Ids,NewIds), 
+	fassert(list_call_trans_id(NewIds)),
+	!.
+
+/*
+  It consumes too much heap.
+  
+% quicksort(+L1,+L2): L2 is as L1 but sorted.
+qsort([X|L],R) :-
+	partition(L,X,L1,L2),
+	qsort(L2,R2), qsort(L1,R1), 
+        append(R1,[X|R2],R).
+qsort([],[]).
+
+partition([],_,[],[]):- !.
+partition([E|R],C,[E|Left1],Right):-
+	lexlt(E,C), !, partition(R,C,Left1,Right).
+partition([E|R],C,Left,[E|Right1]):-
+	lexlt(C,E), !, partition(R,C,Left,Right1).
+partition([_E|R],C,Left,Right1)   :-
+	!, partition(R,C,Left,Right1).
+*/
+
+append_if_not_dup([],Ys,Ys):- !.
+append_if_not_dup([X|Xs],Ys,Zs):-
+	!,insert_if_not_dup(X,Ys,Ys0),
+	append_if_not_dup(Xs,Ys0,Zs).
+
+insert_if_not_dup(X,[],[X])       :- !.
+insert_if_not_dup(X,[Y|Ys],[Y|Ys]):- X == Y, !.
+insert_if_not_dup(X,[Y|Ys],[Y|Zs]):- insert_if_not_dup(X,Ys,Zs).
+
+%----------------------------------------------------------------------------%
+% Assert facts '$return'(Id,XCL) that means that Id is a return statement
+%----------------------------------------------------------------------------%
+precompute_returns:-
+	get_all_transition_identifiers(TransIds), 
+	precompute_returns_aux(TransIds),!.
+precompute_returns:-
+	error_message("Unexpected error in compute_returns/0 \n",[]).
+
+precompute_returns_aux([]):-!.
+precompute_returns_aux([Id|Ids]):-
+	once(trans(FName,Id,_,_,_,_,_,_,_,_,_,PC2,_,_,_,_,_,_,_,_,XCL,_,_,_)),	           
+	bottom(FName,PC2),!,
+	fassert('$return'(Id,XCL)),
+	precompute_returns_aux(Ids).
+precompute_returns_aux([_|Ids]):-!,
+	precompute_returns_aux(Ids).
+	
+% For slicing
+compute_initial_index_localvars:-
+	freshglobalarrays(GlobalArr),
+	freshglobalvars(GlobalVar),
+	length(GlobalArr,N1),
+	length(GlobalVar,N2),
+	% The index starts by 1
+	set_counter(initial_index_local,1+N1+N2).
+

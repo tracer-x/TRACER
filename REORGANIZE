@@ -1,0 +1,60 @@
+bin
+  allfigs2pdf
+  c2c
+  compi
+  decompi
+  gtrace  
+  tracer
+  tracerclp
+
+  Do we need compi, decompi, and tracerclp ?
+
+  remove: 
+    rev_prog and rev_prog.pl 
+    cilly
+    runcil
+
+external
+  invgen
+  crystal: move everything here from src/compiler/CRYSTAL
+  frama-c
+
+  clp-prover: who is using clp-prover, invgen? CLP(R) uses but it has
+              already a subdirectory for it.
+  cil
+  crest
+  CLP(R): yes, we should move CLP(R) here
+
+lib  
+  *.jar
+
+  Note that there are many executables and scripts here from external
+  tools.  For sure, we need to move them from here. Should we remove
+  them? They should be already in external directory
+
+src
+  - compiler: put here directly all the files under antlr. That is,
+    all compiler/antlr/* files move to compiler/
+  - interpreter  same
+
+dist:  same (although i will do some cleanup and make some changes)
+ 
+classes same
+
+gui: move here from src/compiler/GuiFrontEnd
+
+******
+Also, note that we need to compile cil. Otherwise, the compiler
+reports error. This a requirement and we must explain it.
+******
+
+It seems that it's more convenient to run TRACER+CREST using directly
+the crest commands:
+
+crestc    ...
+run_crest ...
+
+I think we could generate a simple script and put it in the bin
+directory.
+
+******

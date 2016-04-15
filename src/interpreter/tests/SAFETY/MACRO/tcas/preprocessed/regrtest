@@ -1,0 +1,136 @@
+#!/bin/bash
+
+source ./config_files
+
+#######################################################################
+# Optional to be  configured 
+#######################################################################
+stat=RESULTS-DECOMPILATION__$(date +%Y-%h-%d__%H-%M).stat
+TRACER_CMMD=tracer 
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+
+currtest=""
+counter=0
+
+getstatsSAFE() {
+if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK"
+    
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+else 
+    if grep "UNSAFE" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED"
+    fi
+fi
+}
+
+getstatsUNSAFE() {
+if grep "UNSAFE" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK"
+    
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "States visited" test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"  test_${currtest}_${counter}.out` >> $stat
+else 
+    if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED"
+    fi
+fi
+}
+
+save_files
+
+setup_Makefile -options "-DPROFILE"
+
+####################################################################################
+# TCAS
+####################################################################################
+
+currtest="tcas_1a"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_1a_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_1b"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_1b_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_2a"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_2a_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_2b"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_2b_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_3a"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_3a_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_3b"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_3b_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_4a"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_4a_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_4b"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_4b_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_5a"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_5a_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsSAFE
+counter=$[ ${counter} + 1]
+
+currtest="tcas_5b"
+echo "[${counter}] ${currtest}.c"
+${TRACER_CMMD} safety tcas_5b_DECOMPILED.c >  test_${currtest}_${counter}.out
+getstatsUNSAFE
+counter=$[ ${counter} + 1]
+
+restore_files
+
+# Clean temporary files
+rm -f *.dot
+rm -f *.clp
+rm -f *.TRACES
+rm -f *.out
+
+
+

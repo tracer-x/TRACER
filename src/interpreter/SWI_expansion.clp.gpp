@@ -1,0 +1,250 @@
+#if   CLP_SYS==SWI
+%%%%
+%% Here code for expansion (transformation to SWI-Prolog, if applicable)
+%%%%
+:- use_module(library(clpr)).
+:- use_module(library(lists), [append/3,member/2,select/3,reverse/2]).
+:- op(700, xfx, (<=)).
+
+%------------------------------------------------------------------------------%
+%                       For debugging purposes
+%------------------------------------------------------------------------------%
+
+format_directive(_).
+format_rule(_,_).
+format_fact(_).
+format_head(_).
+
+% format_directive(Dir):-
+% 	format(":- ~q.\n",[Dir]).
+% format_rule(Head,Body):-
+% 	format_head(Head),
+% 	format_body(Body).
+% format_fact(Head):-
+% 	format("~q. \n",[Head]).
+% format_head(Head):-
+% 	format("~q :- \n",[Head]).
+
+format_body(clpr:_):-!.
+format_body((B,Bs)):-
+	format("\t ~q , \n",[B]),
+	format_body(Bs).
+format_body((B;Bs)):-
+	format("\t ~q ; \n",[B]),
+	format_body(Bs).
+format_body((B->Bs)):-
+	format("\t ~q -> \n",[B]),
+	format_body(Bs).
+format_body(B):-
+	format("\t ~q.\n\n",[B]).
+
+tr_translate_body(clpr:Body, clpr:Body ) .
+tr_translate_body((G1 , G2), (NewG1 , NewG2) ) :-
+	tr_translate_body(G1,NewG1),
+	tr_translate_body(G2,NewG2).
+tr_translate_body((G1 ; G2), (NewG1 ; NewG2) ) :-
+	tr_translate_body(G1,NewG1),
+	tr_translate_body(G2,NewG2).
+tr_translate_body((G1 -> G2), (NewG1 -> NewG2) ) :-
+	tr_translate_body(G1,NewG1),
+	tr_translate_body(G2,NewG2).
+tr_translate_body(G,NewG):-
+	tr_translate_goal(G,NewG).
+
+tr_translate_goal('<='(A,B), '=<'(A,B)):-!.
+tr_translate_goal(lexlt(A,B),A @< B).
+tr_translate_goal(add_counter(A,B),add_counter(A,B)).
+tr_translate_goal(flag(A,B,C),flag(A,B,C)).
+tr_translate_goal(A is B, A is B):-!.
+tr_translate_goal(ztime, statistics(runtime,_)):-!.
+tr_translate_goal(ctime(T),(statistics(runtime,[_,T1]),T is T1/1000)):-!.
+tr_translate_goal(atom_list_concat(A,B),concat_atom(A,B)):-!.
+tr_translate_goal(fassert(A),assert(A)):-!.
+tr_translate_goal(dynamic(F,A),dynamic(F/A)):-!.
+tr_translate_goal(printf(Msg,Args),NewGoals):-
+	substitute_string(Msg,"%","~q",NewMsg),
+	flatten_goal(p(Args),p(NewArgs),MoreGoalsList),
+	NewGoal = format(NewMsg,NewArgs),
+	( MoreGoalsList = [] ->
+	  NewGoals = NewGoal
+	;  
+ 	  list_to_conj(MoreGoalsList,NewGoals,NewGoal)
+	). 	
+tr_translate_goal(debug_message(Msg,Args),debug_message(NewMsg,Args)):-
+	substitute_string(Msg,"%","~q",NewMsg).
+tr_translate_goal(printf_to_atom(FName,String,[PP]),atom_concat(Atom,PP,FName)):-
+        substitute_string(String,"%","",NewString),
+        atom_codes(Atom,NewString).								
+tr_translate_goal(G0,NewGoals):-
+	eliminate_quote(G0,G),
+	flatten_goal(G,NewGoal,MoreGoalsList),
+	( MoreGoalsList = [] ->
+	  NewGoals = NewGoal
+	;  
+ 	  list_to_conj(MoreGoalsList,NewGoals,NewGoal)
+	). 
+
+% Declared in tracer_solver.clpr.gpp       (compilation by hand for now)
+tr_translate_head(numconstraint_symbolic(A,B,C),Body,
+		  numconstraint_symbolic(A,B,C),Body).
+% Declared in tracer_constraints.clpr.gpp  (compilation by hand for now)
+tr_translate_head(negate_numeric(A,B),Body,
+		  negate_numeric(A,B),Body).
+tr_translate_head(negate_array(A,B),Body,
+		  negate_array(A,B),Body).
+tr_translate_head(make_symbolic_numeric_constraint(A,B),Body,
+		  make_symbolic_numeric_constraint(A,B),Body).
+tr_translate_head(make_symbolic_array_constraint(A,B),Body,
+		  make_symbolic_array_constraint(A,B),Body).
+tr_translate_head(make_symbolic_numeric_term(A,B),Body,
+		  make_symbolic_numeric_term(A,B),Body).
+% Automatic compilation
+tr_translate_head(Head,Body,NewHead,NewBody):-
+	eliminate_quote(Head,Head0),
+	flatten_goal(Head0,NewHead,MoreGoalsList),
+	( MoreGoalsList = [] ->
+	  NewBody = Body
+	;
+	  list_to_conj(MoreGoalsList,NewBody0,true),
+	  append_conj_last(Body,NewBody0,NewBody)	  
+	).
+
+eliminate_quote(Term,Term):-
+	var(Term),!.
+eliminate_quote(Term,Term):-
+	atomic(Term),!.
+eliminate_quote(Term,NewTerm):-
+	functor(Term,F,A),
+	( F == quote, A==1 ->
+	  arg(1,Term,SubTerm),
+	  eliminate_quote(SubTerm,NewTerm)
+	;
+	  Term  =..[F|Args],
+	  eliminate_quote_args(Args,NArgs),
+	  NewTerm =..[F|NArgs]
+	).
+eliminate_quote_args([],[]):-!.
+eliminate_quote_args([X|Xs],[Y|Ys]):-
+	eliminate_quote(X,Y),
+	eliminate_quote_args(Xs,Ys).
+
+flatten_goal(G,G,[]):-
+	var(G),!.
+flatten_goal(G,NewG,MoreGoalsList):-
+	functor(G,F0,A0),
+	norm_functor(F0,A0,F,A),
+	A > 0,!,
+        G  =.. [F|Args],
+	flatten_args(Args,[],MoreGoalsList,NArgs),
+	NewG =.. [F|NArgs].	
+flatten_goal(G,G,[]).
+
+norm_functor(F0,A0,F1,A0):-
+	F0 == '<=',
+	A0 == 2,!,
+	F1 =  '=<'.
+norm_functor(F,A,F,A) :- !.
+	
+flatten_args([],NewGoals,NewGoals,[]).
+flatten_args([X|Xs],Acc0,Acc1,[X|Ys]):-
+	(
+	  var(X)
+	;
+	  atomic(X)
+	),  !,
+        flatten_args(Xs,Acc0,Acc1,Ys).			     
+flatten_args([X|Xs],Acc0,Acc2,[Y|Ys]):-
+        flatten_arith_ops(X,Y,Acc0,Acc1),!,
+        flatten_args(Xs,Acc1,Acc2,Ys).			     
+flatten_args([X|Xs],Acc0,Acc2,[Y|Ys]):-
+	flatten_goal(X,Y,NewYs),
+	append(Acc0,NewYs,Acc1),
+        flatten_args(Xs,Acc1,Acc2,Ys).
+
+flatten_arith_ops(-A , NewExp, Acc, NAcc ):-
+	flatten_goal(A,NA,Acc1),
+	append(Acc,Acc1,Acc2),
+	append(Acc2,[NewV is -NA],NAcc),
+	%NAcc   = [NewV is -NA|Acc2],
+	NewExp = NewV.	  	
+flatten_arith_ops(A+B, NewExp, Acc, NAcc ):-
+	flatten_goal(A,NA,Acc1),
+	flatten_goal(B,NB,Acc2),
+	append(Acc1,Acc2,Acc3),
+	append(Acc,Acc3,Acc4),
+	append(Acc4,[NewV is NA + NB],NAcc),
+	%NAcc   = [NewV is NA + NB|Acc4],
+	NewExp = NewV.
+flatten_arith_ops(A-B, NewExp, Acc, NAcc ):-
+	flatten_goal(A,NA,Acc1),
+	flatten_goal(B,NB,Acc2),
+	append(Acc1,Acc2,Acc3),
+	append(Acc,Acc3,Acc4),
+	append(Acc4,[NewV is NA - NB],NAcc),
+	%NAcc   = [NewV is NA - NB|Acc4],
+	NewExp = NewV.	
+flatten_arith_ops(A*B, NewExp, Acc, NAcc ):-
+	flatten_goal(A,NA,Acc1),
+	flatten_goal(B,NB,Acc2),
+	append(Acc1,Acc2,Acc3),
+	append(Acc,Acc3,Acc4),
+	append(Acc4,[NewV is NA * NB],NAcc),
+	%NAcc   = [NewV is NA * NB|Acc4],
+	NewExp = NewV.	
+flatten_arith_ops(A/B, NewExp, Acc, NAcc ):-
+	flatten_goal(A,NA,Acc1),
+	flatten_goal(B,NB,Acc2),
+	append(Acc1,Acc2,Acc3),
+	append(Acc,Acc3,Acc4),
+	append(Acc4,[NewV is NA / NB],NAcc),
+	%NAcc   = [NewV is NA / NB|Acc4],
+	NewExp = NewV.
+	
+list_to_conj([X|More],(X,Next),End):-
+        list_to_conj(More,Next,End).
+list_to_conj([],End,End).
+
+append_conj_last((X,Xs),Tail,(X,Ys)):-
+        append_conj_last(Xs,Tail,Ys).
+append_conj_last(X,Tail,(X,Tail)):-!.
+
+substitute_string(Msg,_,_,Msg):-
+	var(Msg),!.
+substitute_string(Msg,Symb,Val,NewMsg):-
+	substitute(Msg,Symb,Val,NewMsg).
+
+% substitute(String,SubString,NewSubString,NewString)
+substitute([],_,_,[]).
+substitute(X, S, T, Y) :-
+	append(S, Xt, X), % i.e. S is the first part of X, the rest is Xt
+	!,
+	substitute(Xt, S, T, Yt),
+	append(T, Yt, Y).
+substitute([Xh|Xt], S, T, [Xh|Yt]) :-
+	substitute(Xt, S, T, Yt).
+
+% Expand directives
+term_expansion((:- dynamic(F,A)) , (:- dynamic F/A)).  %format(":- dynamic ~q/~q.\n",[F,A]).
+term_expansion((:- Dir)          , (:- Dir))        :- format_directive(Dir).
+% Expand clauses
+term_expansion((Head :- Body)     , (NewHead :- NewBody)):-
+        tr_translate_head(Head, Body, NewHead, Body0),
+        tr_translate_body(Body0,NewBody),
+	format_rule(NewHead,NewBody).
+% Expand facts
+term_expansion((Head)              , NewTerm):-
+	tr_translate_head(Head, true, NewHead, NewBody),
+	( NewBody \= true ->
+	  NewTerm = (NewHead :- NewBody),
+	  format_rule(NewHead,NewBody)
+	;
+	  NewTerm = NewHead,
+	  format_fact(NewHead)	  
+	).
+
+:- style_check(-singleton).
+
+:- dynamic   term_expansion/2.
+:- multifile term_expansion/2.
+#endif
+

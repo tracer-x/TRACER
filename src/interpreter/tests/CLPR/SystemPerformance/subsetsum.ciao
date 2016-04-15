@@ -1,0 +1,42 @@
+:- use_module(library(prolog_sys)).
+
+p(22,50).
+p(I,X) :-
+	I<22,
+        add_counter(goalcount,1),
+	I1 is I+1,
+	p(I1,X).
+p(I,X) :-
+	I<22,
+        add_counter(goalcount,1),
+	I1 is I+1,
+	X1 is X+1,
+	p(I1,X1).
+
+q :- 
+	ztime,
+	set_counter(goalcount,0),
+	p(0,0).
+q :-
+	ctime(Y),
+	counter_value(goalcount,X),
+	write('No. goals '), write(X), write(' Time '), write(Y), write(' seconds, '),
+	Z is X / Y,
+	write(Z), write(' goals/sec'),nl.
+
+ztime :-
+	statistics(runtime,_).
+ctime(Time) :-	
+	statistics(runtime,[_,T1]),
+	Time is T1/1000.
+
+
+
+:- data counter/1.
+add_counter(X,Val)   :-
+	retract(counter(X,OldVal)),
+	NewVal is OldVal + Val,
+	assert(counter(X,NewVal)).
+set_counter(X,Val)   :-
+	assert(counter(X,Val)).
+counter_value(X,Val) :- counter(X,Val).

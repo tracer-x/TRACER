@@ -1,0 +1,590 @@
+% tracer_tester.clp.gpp
+
+%=========================================================================%
+% This module builds the ability of testing in TRACER.
+%=========================================================================%
+% The main idea is to build in TRACER the DART (Directed Automated
+% Random Testing) key feature of using concrete inputs to decide
+% whether a guard is satisfiable or not in case the constraints are
+% not decidable (e.g. non-linear).
+%
+% The new features provided by this file to TRACER are:
+%
+% - A mechanism to decide if a list of constraints cannot be decided
+% (get_unknown_vars_list/5).
+% FIXME: For now, we don't do anything to detect non-linear
+% constraints. We need to hack into CLP(R) for that. The rudimentary
+% thing we do is to propagate which variables are unknown. The
+% compiler translates complex expressions or external variables to the
+% term 'unk'. This is our concept of unknonness.
+%
+% - An integer-solution generator from a given list of symbolic
+% constraints (intsoln_catch_error/1). This generator creates concrete
+% inputs when needed.
+%
+% - A narrowing step (abstraction) (narrowing/29)
+%
+% We assume that no special handling for loops. We just perform a
+% fixed number of loop unrolls.
+%
+% FIXME: use partition.
+% FIXME: use weaker preconditions as interpolants
+% FIXME: integration in minmax.
+%=========================================================================%
+% export
+%   cleanup_tester/0
+%   init_tester/1
+%   tester_output/0
+%   tester_bound_reached/9
+%   tester_success_path/14
+%   tester_reuse_answer/8
+%   tester_combine_answers/10
+%   tester_fail_path/9
+%   tester_pre_operator/18
+%
+%   update_unknownness/7
+%   update_unknownness_interproc/10
+%   narrowing/29
+%
+%   TODO
+%   - No narrowing on array constraints
+%
+%==========================================================================
+% Generic operation: cleanup
+%==========================================================================
+cleanup_tester :-
+	retractall(narrowing_abstraction(_,_,_)),
+	cleanup_safety.
+	
+%==========================================================================
+% Generic operation: initialization
+%==========================================================================
+init_tester(u(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)):-
+	set_counter(flag_incompleteness,0),
+	init_goal(_,_,_,_,_,SGlobalArr,SGlobalVar,_,_,SLocalArr,SLocalVar,_).
+
+tester_output:-
+	counter_value(flag_incompleteness,0),!,
+	print_message("The program is SAFE ;-)\n\n", []).
+tester_output:-
+	counter_value(flag_incompleteness,1),!,
+	print_message("Unable to prove safety but no bug found. \n\n", []).
+
+%--------------------------------------------------------------------------%
+% Generic operation: search depth bound reached
+%--------------------------------------------------------------------------%
+tester_bound_reached(FName,Depth,PP,CL,ML,
+		     _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar):-
+	debug_message("Search depth bound reached % %:% \n",[Depth,FName,PP]),
+	assert_safety_answer(Depth, FName, CL, ML).
+
+
+%--------------------------------------------------------------------------%
+% Generic operation: successful end of a path 
+%--------------------------------------------------------------------------%
+tester_success_path(FName,Depth,PP,CL,ML,			    
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    GlobalArr ,GlobalVar ,LocalArr ,LocalVar,ArrRef):-
+	safety_success_path(FName,Depth,PP,CL,ML,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,
+			    ArrRef).
+
+%----------------------------------------------------------------------%
+% Generic operation: store reused interpolant when a node is subsumed
+%----------------------------------------------------------------------%
+tester_reuse_answer(FName,Depth,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    CL,ML):-
+        safety_reuse_answer(FName,Depth,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    CL,ML,_WP).
+	
+%------------------------------------------------------------------------%
+% Generic operation: combine interpolants from each transition taken
+% in the recursive case, produce a common interpolant (conjunction),
+% and store it in the table.
+%------------------------------------------------------------------------%
+tester_combine_answers(FName, PP, Id, Depth, CL, ML, 
+		       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar):-
+	
+	safety_combine_answers(FName,PP,Id,Depth,CL,ML,_,_,
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar).
+
+%--------------------------------------------------------------------------%
+% Generic operation: generate an interpolant for the infeasible path
+%--------------------------------------------------------------------------%
+tester_fail_path(FName,Depth,CL,ML,
+		 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, XCL):-
+	
+	safety_fail_path(FName,Depth, CL, ML,
+			 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, XCL).
+
+%------------------------------------------------------------------------%
+% Generic operation: pre operator
+% Propagate back the interpolant from a child to its parent.
+%------------------------------------------------------------------------%
+% We distinguish if narrowing was applied during the forward execution
+% of the transition or not. If not, we simply apply the weakest
+% precondition (or if deletion we just propagate back the markings).
+%
+% If narrowing then we do the same as it was an abstraction point. By
+% interpolation, we keep the constraints before the transition that
+% still imply the narrowed state.
+%------------------------------------------------------------------------%
+tester_pre_operator(FName,Depth,Id, PC1,_Statement,XCL,CL, CL1,ML, ML1,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	% A narrowing was applied
+	tester_pre_operator_narrowing(FName,Depth,Id, PC1,XCL,CL, CL1,ML, ML1,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),!.
+tester_pre_operator(FName,Depth,Id, PC1,Statement,CallStack,XCL,CL, CL1,ML, ML1,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	% No narrowing: common case
+	safety_pre_operator(FName,Depth,Id, PC1,Statement,CallStack,XCL,CL, CL1,ML, ML1,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1).
+
+tester_pre_operator_narrowing(FName,Depth,_Id,PP1,_XCL,CL, CL1,ML, ML1,
+			      SGlobalArr, SGlobalVar, SLocalArr,SLocalVar,
+			      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1):-
+	retract(narrowing_abstraction(Depth,FName,PP1)),
+	!,
+#ifdef  PROFILE
+        ctime(Time0),
+#endif	/*PROFILE*/	
+	retract_safety_answer(Depth+1, FName, CL1, ML1),	
+	backward_propagation_interp_across_abstraction(FName,
+						       SGlobalArr1,SGlobalVar1,
+						       SLocalArr1,SLocalVar1,
+						       CL1,ML1,nil,
+						       SGlobalArr, SGlobalVar,
+						       SLocalArr,SLocalVar,
+						       CL,ML,_),
+	
+#ifdef  DEBUG_USE
+	print_message("---------------------------------------------------\n",[]),
+	print_message(" PRE-OP of NARROWING at %:%: \n",
+		      [FName,PP1]),	
+	pretty_printer_path(CL,
+			    FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    FName,
+			    SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1),
+	print_message("---------------------------------------------------\n",[]),	
+#endif
+	assert_safety_answer(Depth, FName, CL, ML),
+	
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(pre_safety,Time1-Time0),
+#endif
+        true.
+	
+%------------------------------------------------------------------------%
+% update_unknownness(+,+,+,+,+,+,?): First, it looks at the current
+% constraints (XCL) and searches for the term 'unk'. Then, it updates
+% the list of unknown variables. NOTE: the term 'unk' is generated by
+% the compiler when a foreign function is called.
+%------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_update_unknownness:-
+	XCL= [assign(SX$Next$,div(plus(unk(_SY),5),4)),assign(SY$Next$,SX$Next$)],
+	SGlobalArr=[_SH],
+	SGlobalVar=[],
+	SLocalArr=[],
+	SLocalVar=[SX$Next$,SY$Next$,_SZ$Next$],
+	UnknownVars= u([_],[],[],[_,_,unk]),
+	print_message("Before: \n",[]),
+	print_message("unknown variables % \n",[UnknownVars]),
+	update_unknownness(_,
+			   XCL,
+			   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   UnknownVars),
+	print_message("After: \n",[]),
+	print_message("unknown variables % \n",[UnknownVars]),!.
+test_update_unknownness_interproc:-
+	CalleeUnkVars = u([_],[],[],[_,_,_]),
+	update_unknownness_interproc([assign(SW,SX)],
+				     [_SH],[],[],[_SRetMain,SX,_SA,_SB,_SArbit],
+				     [],[_SRet,SW,_SZ],
+				     u([_],[],[],[_,unk,_,_,_]),CalleeUnkVars),
+	printf("Callee UnknownVars: % \n",[CalleeUnkVars]),!.
+
+pretty_printer_unknown_variables(FName,u(SGA,SGV,SLA,SLV)):-
+% FIXME: too expensive
+	copy_to_unbound_list(SGA,SGA1),
+	copy_to_unbound_list(SGV,SGV1),
+	copy_to_unbound_list(SLA,SLA1),
+	copy_to_unbound_list(SLV,SLV1),
+	apply_dict(global,SGA1,SGV1),
+	apply_dict(FName ,SLA1,SLV1),
+	print_message("[TESTER] unknown variables: [",[]),	
+	pretty_printer_unknown_variables_aux(SGA,SGA1),
+	pretty_printer_unknown_variables_aux(SGV,SGV1),
+	pretty_printer_unknown_variables_aux(SLA,SLA1),
+	pretty_printer_unknown_variables_aux(SLV,SLV1),
+	print_message("]\n",[]).
+
+pretty_printer_unknown_variables_aux([],[]).
+pretty_printer_unknown_variables_aux([X|Xs],[DictX|DictXs]):-
+	X == 'unk',
+	!,
+	print_message(" % ",[DictX]),
+	pretty_printer_unknown_variables_aux(Xs,DictXs).
+pretty_printer_unknown_variables_aux([_|Xs],[_|DictXs]):-
+	!,
+	pretty_printer_unknown_variables_aux(Xs,DictXs).
+#endif  /*DEBUG_USE*/
+
+%------------------------------------------------------------------------%
+% For intra-procedural transitions
+%------------------------------------------------------------------------%
+update_unknownness(FName,XCL,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   u(UnkGlobalArr,UnkGlobalVar,UnkLocalArr,UnkLocalVar)):-
+	
+	fcopy_term(t(XCL ,SGlobalArr  , SGlobalVar,SLocalArr,SLocalVar),
+		   t(XCL1,UnkGlobalArr, UnkGlobalVar, UnkLocalArr, UnkLocalVar)),
+	
+	once(propagate_unknownness(XCL1)),
+#ifdef  DEBUG_USE	
+	pretty_printer_unknown_variables(FName,
+					 u(UnkGlobalArr, UnkGlobalVar,
+					   UnkLocalArr , UnkLocalVar)).
+#else
+        FName=_.
+#endif  /*DEBUG_USE*/
+%------------------------------------------------------------------------%
+% For inter-procedural transitions
+%------------------------------------------------------------------------%
+update_unknownness_interproc(FName,XCL,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     CalleeSLocalArr,CalleeSLocalVar,
+			     u(UnkGlobalArr,UnkGlobalVar,UnkLocalArr,UnkLocalVar),
+			     u(UnkGlobalArr,UnkGlobalVar,
+			       CalleeUnkLocalArr,CalleeUnkLocalVar)):-
+			      
+	fcopy_term(t(XCL,
+		     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		     CalleeSLocalArr,CalleeSLocalVar),
+		   t(XCL1,UnkGlobalArr, UnkGlobalVar, UnkLocalArr, UnkLocalVar,
+		     CalleeUnkLocalArr,CalleeUnkLocalVar)),
+	
+	once(propagate_unknownness(XCL1)),
+#ifdef  DEBUG_USE
+	pretty_printer_unknown_variables(FName,
+					 u(UnkGlobalArr,UnkGlobalVar,
+					   CalleeUnkLocalArr,CalleeUnkLocalVar)).
+#else
+        FName=_.
+#endif  /*DEBUG_USE*/
+	
+%------------------------------------------------------------------------%
+% propagate_unknownness(?XCL)
+%------------------------------------------------------------------------%
+% For each constraint in XCL if the rhs of the assignment is unknown
+% the lhs becomes unknown.
+%
+% FIXME: Not sure if we need a fixpoint to safely propagate
+% unknownness.
+%------------------------------------------------------------------------%
+propagate_unknownness([]).
+propagate_unknownness([C|CL]):-
+	unknown_marking_constraint(C),
+	propagate_unknownness(CL).
+unknown_marking_constraint(assign(unk,B)):-
+	not(not_unk_symbol_expr(B)),!.
+unknown_marking_constraint(_):-!.
+
+%------------------------------------------------------------------------%
+% not_unk_symbol_expr(+Term): succeed iff the symbol 'unk' is not
+% found in Term.
+%------------------------------------------------------------------------%
+not_unk_symbol_expr(tt):-!.
+not_unk_symbol_expr(ff):-!.
+not_unk_symbol_expr(eq(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+not_unk_symbol_expr(addref(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+not_unk_symbol_expr(gt(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+not_unk_symbol_expr(geq(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+not_unk_symbol_expr(ref(A,I)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(I).
+not_unk_symbol_expr(arreq(A1,A2)):- !,
+	not_unk_symbol_expr(A1),
+	not_unk_symbol_expr(A2).
+not_unk_symbol_expr(arrassign(A1,A2)):- !,
+	not_unk_symbol_expr(A1),
+	not_unk_symbol_expr(A2).
+not_unk_symbol_expr(NumExpr):-
+	not_unk_num_symbol_expr(NumExpr),!.
+not_unk_num_symbol_expr(A):- var(A), !.
+not_unk_num_symbol_expr(F):-
+	functor(F,Name,_Arity),
+	uninterpreted_function(Name),!,fail.
+not_unk_num_symbol_expr(A):-  atomic(A), !.
+not_unk_num_symbol_expr(minus(A)):- !,
+	not_unk_symbol_expr(A).
+not_unk_num_symbol_expr(minus(A,B)):- !,
+	not_unk_symbol_expr(A),	
+	not_unk_symbol_expr(B).
+not_unk_num_symbol_expr(plus(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+not_unk_num_symbol_expr(mult(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+not_unk_num_symbol_expr(div(A,B)):- !,
+	not_unk_symbol_expr(A),
+	not_unk_symbol_expr(B).
+			
+#ifdef  DEBUG_USE
+test_narrowing:-
+	CL  = [gt(SX,0),gt(SY,0),gt(SZ,100)],
+	XCL = [gt(SZ,100)],
+	SGlobalArr=[_SH],
+	SGlobalVar=[],
+	SLocalArr =[],
+	SLocalVar =[_SRet,SX,SY,SZ],
+	UnknownVars=u([_],[],[],[_,_,_,unk]),
+	set_tracer_flag(path_datastructure,naive),
+	narrowing(branch,_,_,_,_,XCL,UnknownVars,
+		  SGlobalArr,SGlobalVar ,SLocalArr,SLocalVar,
+		  _GlobalArr,_GlobalVar ,_LocalArr,_LocalVar,
+		  SGlobalArr,SGlobalVar ,SLocalArr,SLocalVar,
+		  TunnelGlobalArr, TunnelGlobalVar,TunnelLocalArr , TunnelLocalVar,
+		  CL, _ML, CL1, ML1, _ArrRef, ArrRef1),
+	printf("State after abstraction: \n",[]),
+	dump([TunnelGlobalArr,TunnelGlobalVar,TunnelLocalArr,TunnelLocalVar]),
+	printf("Symbolic: % % % %\n",[SGlobalArr,SGlobalVar,SLocalArr,SLocalVar]),
+	print_message("CL1:% ML1:% ArrRef1: % \n",[CL1,ML1,ArrRef1]).
+#endif
+%---------------------------------------------------------------------------%
+% Narrowing produces an underapproximation of the current abstract
+% state. Therefore, once narrowing has been applied the system cannot
+% prove absence of errors. Instead, it can only prove existence of
+% errors. The use of narrowing anytime a nonlinear or external call is
+% encountered ensures that it will not produce false positives.
+%---------------------------------------------------------------------------%
+narrowing(branch,Depth,FName,PP,Id,
+	  XCL,  
+	  /* Info about unknown variables */
+	  UnknownessInfo,
+	  /* state before narrowing */
+	  SGlobalArr,SGlobalVar ,SLocalArr,SLocalVar,
+	  _GlobalArr ,_GlobalVar,_LocalArr,_LocalVar,
+	  /* state after narrowing */
+	  SGlobalArr,SGlobalVar ,SLocalArr,SLocalVar,
+	  NarrowGlobalArr, NarrowGlobalVar,NarrowLocalArr , NarrowLocalVar,
+	  CL /*contains XCL*/, _ML, CL1, ML1, _ArrRef, ArrRef1):-
+	%-------------------------------------------------------------------%
+	% It simply checks if the symbolic state (XCL) contains an
+	% 'unk' term.  If one variable in XCL is unknown then we
+	% assume the whole bunch of constraints is unknown.
+	% 
+	% FIXME: array constraints
+	% FIXME: doesn't check if it contains a nonlinear
+	% constraints. We need to modify CLP(R) for doing that.
+	%-------------------------------------------------------------------%
+	get_unknown_vars_list(XCL,
+			      state(SGlobalArr,SGlobalVar ,SLocalArr,SLocalVar),
+			      UnknownessInfo,[],UnknownVars),
+	not(UnknownVars == []),
+	!,
+#ifdef  DEBUG_USE	
+	print_message("---------------------------------------------------\n",[]),
+	print_message(" TESTER: NARROWING current state  ... \n",[Id]),
+#else
+        Id=_,
+#endif	
+	% Copy the current path with renamed fresh variables
+	fcopy_term(t(CL,
+		     SGlobalArr , SGlobalVar,
+		     SLocalArr  , SLocalVar,
+		     UnknownVars),
+		   t(CL0,
+		     NarrowGlobalArr, NarrowGlobalVar,
+		     NarrowLocalArr , NarrowLocalVar,
+		     UnknownVars0)),
+
+	%-------------------------------------------------------------%
+	% Evaluate symbolically the renamed path
+	%-------------------------------------------------------------%
+	constraint_symbolic(CL0,[],_),
+	%-------------------------------------------------------------%
+	% Key step: produce concrete inputs on the fly
+	% Find a solution for the unknown variables.
+	% FIXME: for now only scalar variables.
+	%-------------------------------------------------------------%	
+	intsoln_catch_error(UnknownVars0),
+	%-------------------------------------------------------------%		
+	% Reconstruct a new symbolic path from the narrowed state
+	%-------------------------------------------------------------%	
+	project_solver_context(state(NarrowGlobalArr,NarrowGlobalVar,
+				     NarrowLocalArr ,NarrowLocalVar, [] /*ArrRef*/ ),
+			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     NarrowCL)),
+	init_constraints_path(NarrowCL,CL1,ML1),
+	% We record that a narrowing abstraction was done.
+	fassert(narrowing_abstraction(Depth,FName,PP)),	
+#ifdef  DEBUG_USE
+        print_message("Before narrowing at %:% \n",[FName,PP]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					CL),
+        print_message("After narrowing at %:%  \n",[FName,PP]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					NarrowCL),
+	print_message("---------------------------------------------------\n",[]),	
+#endif  /*DEBUG_USE*/
+	% Array references are just restarted as empty for the moment
+	ArrRef1=[],
+	set_counter(flag_incompleteness,1),
+        !.
+narrowing(_,_,_,_,_,_,_,
+	  /* state before narrowing */
+	  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	  GlobalArr ,GlobalVar ,LocalArr ,LocalVar,
+	  /* state after narrowing */
+	  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	  GlobalArr ,GlobalVar ,LocalArr ,LocalVar,
+	  CL , ML, CL, ML, ArrRef, ArrRef):- !.
+
+#ifdef  DEBUG_USE
+test_get_unknown_vars_list_1:-
+	get_unknown_vars_list([gt(SZ,0)],
+			      state([],[],[],[_SX,_SY,SZ]),
+			      u(    [],[],[],[_,_,unk]),
+			      [],Res),
+	print_message("% \n",[Res]).
+test_get_unknown_vars_list_2:-
+	get_unknown_vars_list([gt(SZ,0)],
+			      state([],[],[],[_SX,_SY,SZ]),
+			      u(    [],[],[],[_,_,_]),
+			      [],Res),
+	print_message("% \n",[Res]).
+#endif  /*DEBUG_USE*/
+
+% Return all unknown variables in a list.
+get_unknown_vars_list([],_,_,Acc,Acc):-!.
+get_unknown_vars_list([C|CL],State,UnkVars,Acc,Acc2):-
+	get_unknown_vars(C,State,UnkVars,Acc,Acc1),
+	get_unknown_vars_list(CL,State,UnkVars,Acc1,Acc2).
+
+get_unknown_vars(C,State,UnkVars,Acc,C_UnkVars):-		   
+	varset_constraints([C],Vars),
+	get_unknown_vars_aux(Vars,State,UnkVars,Acc,C_UnkVars).
+
+get_unknown_vars_aux([],_,_,Unks,Unks).
+get_unknown_vars_aux([V|Vs],
+		     state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+		     u(UGlobalArr,UGlobalVar,ULocalArr,ULocalVar),		       
+		     Acc,Unks) :-
+	% We find the index of V in the list
+	findnth(SGlobalVar,V,0,I),
+	% We use that index to check if the content at the index is 'unk'
+	nthfunc(I,UGlobalVar,U),
+	U == unk,
+	!,
+	get_unknown_vars_aux(Vs,
+			     state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+			     u(UGlobalArr,UGlobalVar,ULocalArr,ULocalVar),		       
+			     [V|Acc],Unks).
+get_unknown_vars_aux([V|Vs],
+		     state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+		     u(UGlobalArr,UGlobalVar,ULocalArr,ULocalVar),		       
+		     Acc,Unks) :-
+	% We find the index of V in the list
+	findnth(SLocalVar,V,0,I),
+	nthfunc(I,ULocalVar,U),
+	U == unk,	
+	!,
+	% We use that index to check if the content at the index is 'unk'	
+	get_unknown_vars_aux(Vs,
+			     state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+			     u(UGlobalArr,UGlobalVar,ULocalArr,ULocalVar),		       
+			     [V|Acc],Unks).
+get_unknown_vars_aux([_|Vs],State,UnknownessInfo,Acc,Unks) :-
+        !, get_unknown_vars_aux(Vs,State,UnknownessInfo,Acc,Unks).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% intsoln(+Vars)
+% Generate an integer solution for each variable in Vars.
+% Assume that the constraints have been dumped into the constraint solver.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+intsoln_catch_error(Vars):-
+	intsoln(Vars).
+
+intsoln_catch_error(_Vars,_Vars0):-
+	print_message("[TRACER WARNING] no integer solution found.\n",[]),
+	!,fail.
+	
+intsoln([]).
+intsoln([X|R]) :-
+	dump([X],[n],C),
+	b(C,X),
+	intsoln(R).
+
+/*
+b([],X):- !,
+	% ADHOC
+	random_signed_short(X). % Added by Jorge 10/17
+*/
+b(C,X) :- get_integer_ub(C,U), !, c(U,X).
+b(C,X) :- get_integer_lb(C,L), !, d(L,X).
+b(_,X) :- d(0,X).
+
+c(U,X) :- floor(U,X).
+c(U,X) :- c(U,X+1).
+
+d(L,X) :- floor(-L,-X).
+d(L,X) :- d(L,X-1).
+
+get_integer_ub([quote(n<=B)|_], B) :- !.
+get_integer_ub([quote(n<B)|_], B) :- !.
+get_integer_ub([_|R], B) :- get_integer_ub(R, B).
+
+get_integer_lb([quote(-(n)<=B)|_], 0-B) :- !.
+get_integer_lb([quote(-(n)<B)|_], 0-B) :- !.
+get_integer_lb([_|R], B) :- get_integer_lb(R, B).
+
+
+/*
+% Generate a random signed short [-2^15,+2^15]
+random_signed_short(X)  :-
+	int_random(-32767,32767,X). 
+% Generate a random unsigned short [0,+2^16]
+random_unsigned_short(X):- 
+	int_random(0,65535,X).	
+% Generate a random signed long [-2^31,+2^31]
+random_signed_long(X)   :-
+	int_random(-2147483647,2147483647,X). 
+% Generate a random unsigned long [0,+2^32] 
+random_unsigned_long(X) :-
+	int_random(0,4294967295,X). 
+
+% int_random(+,+,-): generate an integer random number
+int_random(Low,Up,Number):-
+	random(Low,Up,Number0),
+	floor(Number0,Number).
+
+% random(+,+,-): generate a real random number
+random(Low,Up,Number):-
+	% Set random number seed
+	%ctime(Seed),
+	%srand(Seed),
+	% Generate random value
+	rand(Rnd),  % X is uniformly distributed between 0 and 1
+	Number = Rnd * (Up - Low + 1) + Low.
+*/

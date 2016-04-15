@@ -1,0 +1,27 @@
+Updated the WCET test programs wrt to the current version of the
+compiler which collapses multiple C assignments into the same CLP
+transition.
+
+We still keep the older versions which is denoted by old_*. For now,
+we can still test the results of the unfolder for the old version as
+well as for the current. 
+Just make sure that you switch the fact compiler_version/1 (in
+test_WCET.clpr) to the correct version, and the implementation of
+wcet_transition_cost/2 in tracer_wcet.clpr is consistent with that
+change.
+
+
+Update by Jorge (19/07/2012)
+
+Due to many changes in the compiler in the last year and half, many
+tests failed now. I've taken a look at them and they seem ok. It's just
+that we need to update them to be consistent with current compilation
+since WCET is very sensitive to those changes.
+
+Also, we have a couple of tests playing with ndwp (weakest
+preconditions). Unfortunately, the implementation of ndwp for anything
+except safety is incomplete. It's the item (4) in FIXME file. So these
+tests in the current status of our implementation do not make sense.
+
+
+

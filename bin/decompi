@@ -1,0 +1,16 @@
+#!/bin/bash
+prg=`pwd`/$1
+cd $TRACER_PATH
+ant decompi -Darg1=$prg
+#prg=`pwd`/$1
+#prg_bn=${prg%.c}
+#cil=${prg_bn}-cil.c
+#
+#cilly ${prg} --out ${cil} --noPrintLn --noWrap
+#
+#if [ -f ${cil} ]; then
+#    cd $TRACER_PATH
+#    ant decompi -Darg1=${cil}
+#else
+#    echo "CIL failed"
+#fi

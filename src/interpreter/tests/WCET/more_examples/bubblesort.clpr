@@ -1,0 +1,263 @@
+% Bubble sort reference compilation
+% Coded by Andrew Santosa, 11 December 2008
+
+trans(func_main,
+	[0],
+	[H],                % Global array - H is always there
+	[],                 % Global variables
+	[SH],               % Symbolic global array
+	[],                 % Symbolic global variables
+	[A],                            % Local array
+	[ReturnValue,I,J,Tmp],          % Local variables
+	[SA],                           % Symbolic local array
+	[SReturnValue,SI,SJ,STmp],      % Symbolic local variables
+	[1],
+	[H],                            % Global next state array
+	[],                             % Global next state variables
+	[SH],                           % Symbolic global next state array
+	[],                             % Symbolic global next state variables
+	[A],                            % Local next state array
+	[ReturnValue,INext,J,Tmp],      % Local next state variables
+	[SA],                           % Symbolic local next state array
+	[SReturnValue,SINext,SJ,STmp],  % Symbolic local next state variables
+	[],                             % Symbolic constraints
+	[],                             % Forgot what ...
+	[]).                            % Array references
+trans(func_main,
+	[1],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[2],[H],[],[SH],[],
+	    [A],[ReturnValue,I,JNext,Tmp],
+	    [SA],[SReturnValue,SI,SJNext,STmp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[2],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[3],[H],[],[SH],[],
+	    [ANext],[ReturnValue,I,J,Tmp],
+	    [SANext],[SReturnValue,SI,SJ,STmp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[3],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[4],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,TmpNext],
+	    [SA],[SReturnValue,SI,SJ,STmpNext],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[4],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[5],[H],[],[SH],[],
+	    [A],[ReturnValue,INext,J,Tmp],
+	    [SA],[SReturnValue,SINext,SJ,STmp],
+	[eq(SINext,0)],
+	[],
+	[]) :-
+	INext=0.
+trans(func_main,
+	[5],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[7],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[gt(minus(10,1),SI)],
+	[],
+	[]) :-
+	I<10-1.
+trans(func_main,
+	[7],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[8],[H],[],[SH],[],
+	    [A],[ReturnValue,I,JNext,Tmp],
+	    [SA],[SReturnValue,SI,SJNext,STmp],
+	[eq(SJNext,0)],
+	[],
+	[]) :-
+	JNext=0.
+trans(func_main,
+	[8],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[10],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[gt(minus(minus(10,1),SI),SJ)],
+	[],
+	[]) :-
+	J<10-1-I.
+trans(func_main,
+	[11],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[12],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,TmpNext],
+	     [SA],[SReturnValue,SI,SJ,STmpNext],
+	[eq(STmpNext,ref(SA,plus(SJ,1)))],
+	[],
+	[ref(A,J+1,Tmp0)]) :-
+	TmpNext=Tmp0.
+trans(func_main,
+	[12],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[13],[H],[],[SH],[],
+	     [ANext],[ReturnValue,I,J,Tmp],
+	     [SANext],[SReturnValue,SI,SJ,STmp],
+	%----------------------------------------------------------------------
+	% Note that here we use array equality to denote array equality.
+	%----------------------------------------------------------------------
+	[arreq(SANext,upd(SA,plus(SJ,1),ref(SA,SJ)))],
+	[],
+	[ref(A,J,Tmp0)]) :-
+	ANext=upd(A,J+1,Tmp0).
+trans(func_main,
+	[13],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[14],[H],[],[SH],[],
+	     [ANext],[ReturnValue,I,J,Tmp],
+	     [SANext],[SReturnValue,SI,SJ,STmp],
+	%----------------------------------------------------------------------
+	% Note that here we use array equality to denote array equality.
+	%----------------------------------------------------------------------
+	[arreq(SANext,upd(SA,SJ,STmp))],
+	[],
+	[]) :-
+	ANext=upd(A,J,Tmp).
+trans(func_main,
+	[10],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[11],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[gt(ref(SA,SJ),ref(SA,plus(SJ,1)))],
+	[],
+	[ref(A,J,Tmp0),ref(A,J+1,Tmp1)]) :-
+	Tmp0>Tmp1.
+trans(func_main,
+	[10],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[14],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[geq(ref(SA,plus(SJ,1)),ref(SA,SJ))],
+	[],
+	[ref(A,J,Tmp0), ref(A,J+1,Tmp1)]) :-
+	Tmp0<=Tmp1.
+trans(func_main,
+	[14],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[15],[H],[],[SH],[],
+	     [A],[ReturnValue,I,JNext,Tmp],
+	     [SA],[SReturnValue,SI,SJNext,STmp],
+	[eq(SJNext,plus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J+1.
+trans(func_main,
+	[8],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[9],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[geq(SJ,minus(minus(10,1),SI))],
+	[],
+	[]) :-
+	J>=10-1-I.
+trans(func_main,
+	[15],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[8],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[9],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[16],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[16],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[17],[H],[],[SH],[],
+	     [A],[ReturnValue,INext,J,Tmp],
+	     [SA],[SReturnValue,SINext,SJ,STmp],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[]) :-
+	INext=I+1.
+trans(func_main,
+	[5],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[6],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[geq(SI,minus(10,1))],
+	[],
+	[]) :-
+	I>=10-1.
+trans(func_main,
+	[17],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[5],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[6],[H],[],[SH],[],
+	    [A],[ReturnValue,I,J,Tmp],
+	    [SA],[SReturnValue,SI,SJ,STmp],
+	[18],[H],[],[SH],[],
+	     [A],[ReturnValue,I,J,Tmp],
+	     [SA],[SReturnValue,SI,SJ,STmp],
+	[],
+	[],
+	[]).
+%--------------------------------------------------
+loop(func_main, [5], [6], 10, [n], [], [u], [n,u,u,u]).
+loop(func_main, [8], [9], 10, [n], [], [u], [n,n,u,u]).
+%--------------------------------------------------
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_main, [18]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[_]).
+%--------------------------------------------------
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A),
+	freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA),
+	freshlocalvars(func_main, SL).
+
+:- consult('../src/clpr/wcetmulti.clpr').

@@ -1,0 +1,4009 @@
+"dgraph/dGraphView.ml" 28 1870 1874 "dgraph/dGraphView.ml" 28 1870 1877
+type(
+  ('a -> 'b) -> 'a -> 'b
+)
+ident(
+  def $ "dgraph/dGraphView.ml" 30 1889 1889 --
+)
+"dgraph/dGraphView.ml" 28 1870 1878 "dgraph/dGraphView.ml" 28 1870 1879
+type(
+  'a -> 'b
+)
+ident(
+  def f "dgraph/dGraphView.ml" 28 1870 1880 "dgraph/dGraphView.ml" 28 1870 1887
+)
+"dgraph/dGraphView.ml" 28 1870 1880 "dgraph/dGraphView.ml" 28 1870 1881
+type(
+  'a
+)
+ident(
+  def x "dgraph/dGraphView.ml" 28 1870 1884 "dgraph/dGraphView.ml" 28 1870 1887
+)
+"dgraph/dGraphView.ml" 28 1870 1884 "dgraph/dGraphView.ml" 28 1870 1885
+type(
+  'a -> 'b
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 28 1870 1878 "dgraph/dGraphView.ml" 28 1870 1879
+)
+"dgraph/dGraphView.ml" 28 1870 1886 "dgraph/dGraphView.ml" 28 1870 1887
+type(
+  'a
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 28 1870 1880 "dgraph/dGraphView.ml" 28 1870 1881
+)
+"dgraph/dGraphView.ml" 28 1870 1884 "dgraph/dGraphView.ml" 28 1870 1887
+call(
+  tail
+)
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 30 1889 1893 "dgraph/dGraphView.ml" 30 1889 1901
+type(
+  int -> int -> int
+)
+ident(
+  def distance "dgraph/dGraphView.ml" 32 1940 1940 --
+)
+"dgraph/dGraphView.ml" 30 1889 1902 "dgraph/dGraphView.ml" 30 1889 1903
+type(
+  int
+)
+ident(
+  def x "dgraph/dGraphView.ml" 30 1889 1904 "dgraph/dGraphView.ml" 30 1889 1938
+)
+"dgraph/dGraphView.ml" 30 1889 1904 "dgraph/dGraphView.ml" 30 1889 1905
+type(
+  int
+)
+ident(
+  def y "dgraph/dGraphView.ml" 30 1889 1908 "dgraph/dGraphView.ml" 30 1889 1938
+)
+"dgraph/dGraphView.ml" 30 1889 1911 "dgraph/dGraphView.ml" 30 1889 1912
+type(
+  int
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 30 1889 1902 "dgraph/dGraphView.ml" 30 1889 1903
+)
+"dgraph/dGraphView.ml" 30 1889 1913 "dgraph/dGraphView.ml" 30 1889 1914
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"dgraph/dGraphView.ml" 30 1889 1915 "dgraph/dGraphView.ml" 30 1889 1916
+type(
+  int
+)
+ident(
+  int_ref y "dgraph/dGraphView.ml" 30 1889 1904 "dgraph/dGraphView.ml" 30 1889 1905
+)
+"dgraph/dGraphView.ml" 30 1889 1911 "dgraph/dGraphView.ml" 30 1889 1916
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 30 1889 1922 "dgraph/dGraphView.ml" 30 1889 1923
+type(
+  int
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 30 1889 1902 "dgraph/dGraphView.ml" 30 1889 1903
+)
+"dgraph/dGraphView.ml" 30 1889 1924 "dgraph/dGraphView.ml" 30 1889 1925
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/dGraphView.ml" 30 1889 1926 "dgraph/dGraphView.ml" 30 1889 1927
+type(
+  int
+)
+ident(
+  int_ref y "dgraph/dGraphView.ml" 30 1889 1904 "dgraph/dGraphView.ml" 30 1889 1905
+)
+"dgraph/dGraphView.ml" 30 1889 1922 "dgraph/dGraphView.ml" 30 1889 1927
+type(
+  int
+)
+"dgraph/dGraphView.ml" 30 1889 1933 "dgraph/dGraphView.ml" 30 1889 1934
+type(
+  int
+)
+ident(
+  int_ref y "dgraph/dGraphView.ml" 30 1889 1904 "dgraph/dGraphView.ml" 30 1889 1905
+)
+"dgraph/dGraphView.ml" 30 1889 1935 "dgraph/dGraphView.ml" 30 1889 1936
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/dGraphView.ml" 30 1889 1937 "dgraph/dGraphView.ml" 30 1889 1938
+type(
+  int
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 30 1889 1902 "dgraph/dGraphView.ml" 30 1889 1903
+)
+"dgraph/dGraphView.ml" 30 1889 1933 "dgraph/dGraphView.ml" 30 1889 1938
+type(
+  int
+)
+"dgraph/dGraphView.ml" 30 1889 1908 "dgraph/dGraphView.ml" 30 1889 1938
+type(
+  int
+)
+"dgraph/dGraphView.ml" 97 4388 4402 "dgraph/dGraphView.ml" 97 4388 4417
+call(
+  stack
+)
+"dgraph/dGraphView.ml" 98 4418 4432 "dgraph/dGraphView.ml" 98 4418 4447
+call(
+  stack
+)
+"dgraph/dGraphView.ml" 99 4448 4462 "dgraph/dGraphView.ml" 99 4448 4477
+call(
+  stack
+)
+"dgraph/dGraphView.ml" 104 4570 4575 "dgraph/dGraphView.ml" 104 4570 4585
+type(
+  (HV.key -> bool) option
+)
+"dgraph/dGraphView.ml" 104 4570 4587 "dgraph/dGraphView.ml" 104 4570 4597
+type(
+  (HE.key -> bool) option
+)
+"dgraph/dGraphView.ml" 104 4570 4599 "dgraph/dGraphView.ml" 104 4570 4612
+type(
+  (HC.key -> bool) option
+)
+"dgraph/dGraphView.ml" 105 4613 4617 "dgraph/dGraphView.ml" 105 4613 4620
+type(
+  GnomeCanvas.canvas Gtk.obj
+)
+"dgraph/dGraphView.ml" 106 4621 4626 "dgraph/dGraphView.ml" 106 4621 4631
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 108 4684 4692 "dgraph/dGraphView.ml" 108 4684 4697
+type(
+  ('a -> bool) option -> 'a -> bool
+)
+"dgraph/dGraphView.ml" 108 4684 4698 "dgraph/dGraphView.ml" 108 4684 4699
+type(
+  ('a -> bool) option
+)
+ident(
+  def f "dgraph/dGraphView.ml" 108 4684 4700 "dgraph/dGraphView.ml" 108 4684 4746
+)
+"dgraph/dGraphView.ml" 108 4684 4700 "dgraph/dGraphView.ml" 108 4684 4701
+type(
+  'a
+)
+ident(
+  def v "dgraph/dGraphView.ml" 108 4684 4704 "dgraph/dGraphView.ml" 108 4684 4746
+)
+"dgraph/dGraphView.ml" 108 4684 4710 "dgraph/dGraphView.ml" 108 4684 4711
+type(
+  ('a -> bool) option
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 108 4684 4698 "dgraph/dGraphView.ml" 108 4684 4699
+)
+"dgraph/dGraphView.ml" 108 4684 4717 "dgraph/dGraphView.ml" 108 4684 4721
+type(
+  ('a -> bool) option
+)
+"dgraph/dGraphView.ml" 108 4684 4725 "dgraph/dGraphView.ml" 108 4684 4730
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 108 4684 4738 "dgraph/dGraphView.ml" 108 4684 4739
+type(
+  'a -> bool
+)
+ident(
+  def f "dgraph/dGraphView.ml" 108 4684 4743 "dgraph/dGraphView.ml" 108 4684 4746
+)
+"dgraph/dGraphView.ml" 108 4684 4733 "dgraph/dGraphView.ml" 108 4684 4739
+type(
+  ('a -> bool) option
+)
+"dgraph/dGraphView.ml" 108 4684 4743 "dgraph/dGraphView.ml" 108 4684 4744
+type(
+  'a -> bool
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 108 4684 4738 "dgraph/dGraphView.ml" 108 4684 4739
+)
+"dgraph/dGraphView.ml" 108 4684 4745 "dgraph/dGraphView.ml" 108 4684 4746
+type(
+  'a
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 108 4684 4700 "dgraph/dGraphView.ml" 108 4684 4701
+)
+"dgraph/dGraphView.ml" 108 4684 4743 "dgraph/dGraphView.ml" 108 4684 4746
+call(
+  tail
+)
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 108 4684 4704 "dgraph/dGraphView.ml" 108 4684 4746
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 109 4750 4759 "dgraph/dGraphView.ml" 109 4750 4761
+type(
+  float
+)
+"dgraph/dGraphView.ml" 109 4750 4763 "dgraph/dGraphView.ml" 109 4750 4765
+type(
+  float
+)
+"dgraph/dGraphView.ml" 109 4750 4758 "dgraph/dGraphView.ml" 109 4750 4766
+type(
+  XDot.pos
+)
+"dgraph/dGraphView.ml" 109 4750 4769 "dgraph/dGraphView.ml" 109 4750 4771
+type(
+  float
+)
+"dgraph/dGraphView.ml" 109 4750 4773 "dgraph/dGraphView.ml" 109 4750 4775
+type(
+  float
+)
+"dgraph/dGraphView.ml" 109 4750 4768 "dgraph/dGraphView.ml" 109 4750 4776
+type(
+  XDot.pos
+)
+"dgraph/dGraphView.ml" 109 4750 4758 "dgraph/dGraphView.ml" 109 4750 4776
+type(
+  XDot.bounding_box
+)
+"dgraph/dGraphView.ml" 109 4750 4779 "dgraph/dGraphView.ml" 109 4750 4784
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+ident(
+  int_ref model "dgraph/dGraphView.ml" 106 4621 4626 "dgraph/dGraphView.ml" 106 4621 4631
+)
+"dgraph/dGraphView.ml" 109 4750 4779 "dgraph/dGraphView.ml" 109 4750 4797
+type(
+  XDot.bounding_box
+)
+"dgraph/dGraphView.ml" 110 4801 4809 "dgraph/dGraphView.ml" 110 4801 4815
+type(
+  < aa : bool; adapt_zoom : unit -> unit; add : GObj.widget -> unit;
+    all_children : GObj.widget list; as_widget : Gtk.widget Gtk.obj;
+    bin_window : Gdk.window; border_width : int;
+    c2w : cx:float -> cy:float -> float * float;
+    center_node : V.t DGraphViewItem.view_item -> unit;
+    children : GObj.widget list; coerce : GObj.widget;
+    connect : GContainer.container_signals;
+    connect_highlighting_event : unit -> unit;
+    dehighlight : HV.key DGraphViewItem.view_item -> unit;
+    destroy : unit -> unit; drag : GObj.drag_ops;
+    dst : HE.key DGraphViewItem.view_item -> HV.key DGraphViewItem.view_item;
+    event : GObj.event_ops;
+    find_edge : HV.key DGraphViewItem.view_item ->
+                HV.key DGraphViewItem.view_item ->
+                HE.key DGraphViewItem.view_item;
+    focus : GContainer.focus; freeze : unit -> unit;
+    get_center_scroll_region : bool;
+    get_cluster : HC.key -> HC.key DGraphViewItem.view_item;
+    get_edge : HE.key -> HE.key DGraphViewItem.view_item;
+    get_item_at : x:float -> y:float -> GnoCanvas.base_item;
+    get_node : HV.key -> HV.key DGraphViewItem.view_item; get_oid : int;
+    get_scroll_offsets : int * int; get_scroll_region : float array;
+    hadjustment : GData.adjustment; height : int;
+    highlight : ?color:int32 * int32 ->
+                HV.key DGraphViewItem.view_item -> unit;
+    iter_associated_vertex : (HV.key DGraphViewItem.view_item -> unit) ->
+                             HV.key DGraphViewItem.view_item -> unit;
+    iter_clusters : (HC.key DGraphViewItem.view_item -> unit) -> unit;
+    iter_edges : (HV.key DGraphViewItem.view_item ->
+                  HV.key DGraphViewItem.view_item -> unit) ->
+                 unit;
+    iter_edges_e : (HE.key DGraphViewItem.view_item -> unit) -> unit;
+    iter_nodes : (HV.key DGraphViewItem.view_item -> unit) -> unit;
+    iter_pred : (HV.key DGraphViewItem.view_item -> unit) ->
+                HV.key DGraphViewItem.view_item -> unit;
+    iter_pred_e : (HE.key DGraphViewItem.view_item -> unit) ->
+                  HV.key DGraphViewItem.view_item -> unit;
+    iter_succ : (HV.key DGraphViewItem.view_item -> unit) ->
+                HV.key DGraphViewItem.view_item -> unit;
+    iter_succ_e : (HE.key DGraphViewItem.view_item -> unit) ->
+                  HV.key DGraphViewItem.view_item -> unit;
+    mem_edge : HV.key DGraphViewItem.view_item ->
+               HV.key DGraphViewItem.view_item -> bool;
+    misc : GObj.misc_ops;
+    model : (HV.key, HE.key, HC.key) DGraphModel.abstract_model;
+    move : GObj.widget -> x:int -> y:int -> unit;
+    put : GObj.widget -> x:int -> y:int -> unit;
+    remove : GObj.widget -> unit; resize_mode : Gtk.Tags.resize_mode;
+    root : GnoCanvas.group; scroll_to : x:int -> y:int -> unit;
+    set_border_width : int -> unit; set_center_scroll_region : bool -> unit;
+    set_hadjustment : GData.adjustment -> unit; set_height : int -> unit;
+    set_pixels_per_unit : float -> unit;
+    set_resize_mode : Gtk.Tags.resize_mode -> unit;
+    set_scroll_region : x1:float -> y1:float -> x2:float -> y2:float -> unit;
+    set_vadjustment : GData.adjustment -> unit; set_width : int -> unit;
+    set_zoom_padding : float -> unit;
+    src : HE.key DGraphViewItem.view_item -> HV.key DGraphViewItem.view_item;
+    thaw : unit -> unit; update_now : unit -> unit;
+    vadjustment : GData.adjustment; w2c : wx:float -> wy:float -> int * int;
+    w2c_affine : float array; w2c_d : wx:float -> wy:float -> float * float;
+    width : int; window_to_world : winx:float -> winy:float -> float * float;
+    world_to_window : wox:float -> woy:float -> float * float;
+    zoom_factor : float; zoom_in : unit -> unit; zoom_out : unit -> unit;
+    zoom_to : float -> unit; .. >
+)
+"dgraph/dGraphView.ml" 112 4817 4846 "dgraph/dGraphView.ml" 112 4817 4849
+type(
+  GnomeCanvas.canvas Gtk.obj
+)
+ident(
+  int_ref obj "dgraph/dGraphView.ml" 105 4613 4617 "dgraph/dGraphView.ml" 105 4613 4620
+)
+"dgraph/dGraphView.ml" 114 4851 4870 "dgraph/dGraphView.ml" 114 4851 4875
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 117 4931 4972 "dgraph/dGraphView.ml" 117 4931 4981
+type(
+  int -> HV.key DGraphViewItem.view_item HV.t
+)
+ident(
+  ext_ref HV.create
+)
+"dgraph/dGraphView.ml" 117 4931 4982 "dgraph/dGraphView.ml" 117 4931 4984
+type(
+  int
+)
+"dgraph/dGraphView.ml" 117 4931 4972 "dgraph/dGraphView.ml" 117 4931 4984
+call(
+  stack
+)
+type(
+  HV.key DGraphViewItem.view_item HV.t
+)
+type(
+  HV.key DGraphViewItem.view_item HV.t
+)
+"dgraph/dGraphView.ml" 118 4985 5026 "dgraph/dGraphView.ml" 118 4985 5035
+type(
+  int -> HE.key DGraphViewItem.view_item HE.t
+)
+ident(
+  ext_ref HE.create
+)
+"dgraph/dGraphView.ml" 118 4985 5036 "dgraph/dGraphView.ml" 118 4985 5038
+type(
+  int
+)
+"dgraph/dGraphView.ml" 118 4985 5026 "dgraph/dGraphView.ml" 118 4985 5038
+call(
+  stack
+)
+type(
+  HE.key DGraphViewItem.view_item HE.t
+)
+type(
+  HE.key DGraphViewItem.view_item HE.t
+)
+"dgraph/dGraphView.ml" 119 5039 5083 "dgraph/dGraphView.ml" 119 5039 5092
+type(
+  int -> HC.key DGraphViewItem.view_item HC.t
+)
+ident(
+  ext_ref HC.create
+)
+"dgraph/dGraphView.ml" 119 5039 5093 "dgraph/dGraphView.ml" 119 5039 5094
+type(
+  int
+)
+"dgraph/dGraphView.ml" 119 5039 5083 "dgraph/dGraphView.ml" 119 5039 5094
+call(
+  stack
+)
+type(
+  HC.key DGraphViewItem.view_item HC.t
+)
+type(
+  HC.key DGraphViewItem.view_item HC.t
+)
+"dgraph/dGraphView.ml" 123 5129 5159 "dgraph/dGraphView.ml" 123 5129 5165
+type(
+  HV.key
+)
+ident(
+  def vertex "dgraph/dGraphView.ml" 124 5168 5174 "dgraph/dGraphView.ml" 133 5399 5412
+)
+"dgraph/dGraphView.ml" 125 5178 5183 "dgraph/dGraphView.ml" 125 5178 5189
+type(
+  XDot.node_layout
+)
+ident(
+  def layout "dgraph/dGraphView.ml" 126 5226 5227 "dgraph/dGraphView.ml" 131 5345 5374
+)
+"dgraph/dGraphView.ml" 125 5178 5192 "dgraph/dGraphView.ml" 125 5178 5197
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 125 5178 5192 "dgraph/dGraphView.ml" 125 5178 5215
+type(
+  HV.key -> XDot.node_layout
+)
+"dgraph/dGraphView.ml" 125 5178 5216 "dgraph/dGraphView.ml" 125 5178 5222
+type(
+  HV.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphView.ml" 123 5129 5159 "dgraph/dGraphView.ml" 123 5129 5165
+)
+"dgraph/dGraphView.ml" 125 5178 5192 "dgraph/dGraphView.ml" 125 5178 5222
+type(
+  XDot.node_layout
+)
+"dgraph/dGraphView.ml" 126 5226 5231 "dgraph/dGraphView.ml" 126 5226 5235
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def item "dgraph/dGraphView.ml" 131 5345 5346 "dgraph/dGraphView.ml" 131 5345 5374
+)
+"dgraph/dGraphView.ml" 127 5238 5241 "dgraph/dGraphView.ml" 127 5238 5250
+type(
+  delay:bool ->
+  view:DGraphViewItem.common_view ->
+  vertex:HV.key ->
+  layout:XDot.node_layout -> unit -> HV.key DGraphViewItem.view_item
+)
+ident(
+  ext_ref DGraphViewItem.view_node
+)
+"dgraph/dGraphView.ml" 128 5251 5264 "dgraph/dGraphView.ml" 128 5251 5269
+type(
+  (HV.key -> bool) option -> HV.key -> bool
+)
+"dgraph/dGraphView.ml" 128 5251 5270 "dgraph/dGraphView.ml" 128 5251 5280
+type(
+  (HV.key -> bool) option
+)
+"dgraph/dGraphView.ml" 128 5251 5281 "dgraph/dGraphView.ml" 128 5251 5287
+type(
+  HV.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphView.ml" 123 5129 5159 "dgraph/dGraphView.ml" 123 5129 5165
+)
+"dgraph/dGraphView.ml" 128 5251 5263 "dgraph/dGraphView.ml" 128 5251 5288
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 129 5289 5301 "dgraph/dGraphView.ml" 129 5289 5305
+type(
+  DGraphViewItem.common_view
+)
+type(
+  < aa : bool; adapt_zoom : unit -> unit; add : GObj.widget -> unit;
+    all_children : GObj.widget list; as_widget : Gtk.widget Gtk.obj;
+    bin_window : Gdk.window; border_width : int;
+    c2w : cx:float -> cy:float -> float * float;
+    center_node : V.t DGraphViewItem.view_item -> unit;
+    children : GObj.widget list; coerce : GObj.widget;
+    connect : GContainer.container_signals;
+    connect_highlighting_event : unit -> unit;
+    dehighlight : HV.key DGraphViewItem.view_item -> unit;
+    destroy : unit -> unit; drag : GObj.drag_ops;
+    dst : HE.key DGraphViewItem.view_item -> HV.key DGraphViewItem.view_item;
+    event : GObj.event_ops;
+    find_edge : HV.key DGraphViewItem.view_item ->
+                HV.key DGraphViewItem.view_item ->
+                HE.key DGraphViewItem.view_item;
+    focus : GContainer.focus; freeze : unit -> unit;
+    get_center_scroll_region : bool;
+    get_cluster : HC.key -> HC.key DGraphViewItem.view_item;
+    get_edge : HE.key -> HE.key DGraphViewItem.view_item;
+    get_item_at : x:float -> y:float -> GnoCanvas.base_item;
+    get_node : HV.key -> HV.key DGraphViewItem.view_item; get_oid : int;
+    get_scroll_offsets : int * int; get_scroll_region : float array;
+    hadjustment : GData.adjustment; height : int;
+    highlight : ?color:int32 * int32 ->
+                HV.key DGraphViewItem.view_item -> unit;
+    iter_associated_vertex : (HV.key DGraphViewItem.view_item -> unit) ->
+                             HV.key DGraphViewItem.view_item -> unit;
+    iter_clusters : (HC.key DGraphViewItem.view_item -> unit) -> unit;
+    iter_edges : (HV.key DGraphViewItem.view_item ->
+                  HV.key DGraphViewItem.view_item -> unit) ->
+                 unit;
+    iter_edges_e : (HE.key DGraphViewItem.view_item -> unit) -> unit;
+    iter_nodes : (HV.key DGraphViewItem.view_item -> unit) -> unit;
+    iter_pred : (HV.key DGraphViewItem.view_item -> unit) ->
+                HV.key DGraphViewItem.view_item -> unit;
+    iter_pred_e : (HE.key DGraphViewItem.view_item -> unit) ->
+                  HV.key DGraphViewItem.view_item -> unit;
+    iter_succ : (HV.key DGraphViewItem.view_item -> unit) ->
+                HV.key DGraphViewItem.view_item -> unit;
+    iter_succ_e : (HE.key DGraphViewItem.view_item -> unit) ->
+                  HV.key DGraphViewItem.view_item -> unit;
+    mem_edge : HV.key DGraphViewItem.view_item ->
+               HV.key DGraphViewItem.view_item -> bool;
+    misc : GObj.misc_ops;
+    model : (HV.key, HE.key, HC.key) DGraphModel.abstract_model;
+    move : GObj.widget -> x:int -> y:int -> unit;
+    put : GObj.widget -> x:int -> y:int -> unit;
+    remove : GObj.widget -> unit; resize_mode : Gtk.Tags.resize_mode;
+    root : GnoCanvas.group; scroll_to : x:int -> y:int -> unit;
+    set_border_width : int -> unit; set_center_scroll_region : bool -> unit;
+    set_hadjustment : GData.adjustment -> unit; set_height : int -> unit;
+    set_pixels_per_unit : float -> unit;
+    set_resize_mode : Gtk.Tags.resize_mode -> unit;
+    set_scroll_region : x1:float -> y1:float -> x2:float -> y2:float -> unit;
+    set_vadjustment : GData.adjustment -> unit; set_width : int -> unit;
+    set_zoom_padding : float -> unit;
+    src : HE.key DGraphViewItem.view_item -> HV.key DGraphViewItem.view_item;
+    thaw : unit -> unit; update_now : unit -> unit;
+    vadjustment : GData.adjustment; w2c : wx:float -> wy:float -> int * int;
+    w2c_affine : float array; w2c_d : wx:float -> wy:float -> float * float;
+    width : int; window_to_world : winx:float -> winy:float -> float * float;
+    world_to_window : wox:float -> woy:float -> float * float;
+    zoom_factor : float; zoom_in : unit -> unit; zoom_out : unit -> unit;
+    zoom_to : float -> unit; .. >
+  as 'b
+)
+"dgraph/dGraphView.ml" 129 5289 5323 "dgraph/dGraphView.ml" 129 5289 5329
+type(
+  HV.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphView.ml" 123 5129 5159 "dgraph/dGraphView.ml" 123 5129 5165
+)
+"dgraph/dGraphView.ml" 129 5289 5331 "dgraph/dGraphView.ml" 129 5289 5337
+type(
+  XDot.node_layout
+)
+ident(
+  int_ref layout "dgraph/dGraphView.ml" 125 5178 5183 "dgraph/dGraphView.ml" 125 5178 5189
+)
+"dgraph/dGraphView.ml" 129 5289 5338 "dgraph/dGraphView.ml" 129 5289 5340
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 127 5238 5241 "dgraph/dGraphView.ml" 129 5289 5340
+call(
+  stack
+)
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 131 5345 5346 "dgraph/dGraphView.ml" 131 5345 5352
+type(
+  HV.key DGraphViewItem.view_item HV.t ->
+  HV.key -> HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  ext_ref HV.add
+)
+"dgraph/dGraphView.ml" 131 5345 5353 "dgraph/dGraphView.ml" 131 5345 5362
+type(
+  HV.key DGraphViewItem.view_item HV.t
+)
+"dgraph/dGraphView.ml" 131 5345 5363 "dgraph/dGraphView.ml" 131 5345 5369
+type(
+  HV.key
+)
+ident(
+  int_ref vertex "dgraph/dGraphView.ml" 123 5129 5159 "dgraph/dGraphView.ml" 123 5129 5165
+)
+"dgraph/dGraphView.ml" 131 5345 5370 "dgraph/dGraphView.ml" 131 5345 5374
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref item "dgraph/dGraphView.ml" 126 5226 5231 "dgraph/dGraphView.ml" 126 5226 5235
+)
+"dgraph/dGraphView.ml" 131 5345 5346 "dgraph/dGraphView.ml" 131 5345 5374
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 126 5226 5227 "dgraph/dGraphView.ml" 131 5345 5374
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 125 5178 5179 "dgraph/dGraphView.ml" 131 5345 5374
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 132 5375 5386 "dgraph/dGraphView.ml" 132 5375 5395
+type(
+  exn
+)
+"dgraph/dGraphView.ml" 133 5399 5400 "dgraph/dGraphView.ml" 133 5399 5412
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 124 5168 5174 "dgraph/dGraphView.ml" 133 5399 5412
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 135 5414 5442 "dgraph/dGraphView.ml" 135 5414 5446
+type(
+  HE.key
+)
+ident(
+  def edge "dgraph/dGraphView.ml" 136 5449 5455 "dgraph/dGraphView.ml" 145 5668 5681
+)
+"dgraph/dGraphView.ml" 137 5459 5464 "dgraph/dGraphView.ml" 137 5459 5470
+type(
+  XDot.edge_layout
+)
+ident(
+  def layout "dgraph/dGraphView.ml" 138 5503 5504 "dgraph/dGraphView.ml" 143 5616 5643
+)
+"dgraph/dGraphView.ml" 137 5459 5473 "dgraph/dGraphView.ml" 137 5459 5478
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 137 5459 5473 "dgraph/dGraphView.ml" 137 5459 5494
+type(
+  HE.key -> XDot.edge_layout
+)
+"dgraph/dGraphView.ml" 137 5459 5495 "dgraph/dGraphView.ml" 137 5459 5499
+type(
+  HE.key
+)
+ident(
+  int_ref edge "dgraph/dGraphView.ml" 135 5414 5442 "dgraph/dGraphView.ml" 135 5414 5446
+)
+"dgraph/dGraphView.ml" 137 5459 5473 "dgraph/dGraphView.ml" 137 5459 5499
+type(
+  XDot.edge_layout
+)
+"dgraph/dGraphView.ml" 138 5503 5508 "dgraph/dGraphView.ml" 138 5503 5512
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  def item "dgraph/dGraphView.ml" 143 5616 5617 "dgraph/dGraphView.ml" 143 5616 5643
+)
+"dgraph/dGraphView.ml" 139 5515 5518 "dgraph/dGraphView.ml" 139 5515 5527
+type(
+  delay:bool ->
+  view:DGraphViewItem.common_view ->
+  edge:HE.key ->
+  layout:XDot.edge_layout -> unit -> HE.key DGraphViewItem.view_item
+)
+ident(
+  ext_ref DGraphViewItem.view_edge
+)
+"dgraph/dGraphView.ml" 140 5528 5541 "dgraph/dGraphView.ml" 140 5528 5546
+type(
+  (HE.key -> bool) option -> HE.key -> bool
+)
+"dgraph/dGraphView.ml" 140 5528 5547 "dgraph/dGraphView.ml" 140 5528 5557
+type(
+  (HE.key -> bool) option
+)
+"dgraph/dGraphView.ml" 140 5528 5558 "dgraph/dGraphView.ml" 140 5528 5562
+type(
+  HE.key
+)
+ident(
+  int_ref edge "dgraph/dGraphView.ml" 135 5414 5442 "dgraph/dGraphView.ml" 135 5414 5446
+)
+"dgraph/dGraphView.ml" 140 5528 5540 "dgraph/dGraphView.ml" 140 5528 5563
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 141 5564 5576 "dgraph/dGraphView.ml" 141 5564 5580
+type(
+  DGraphViewItem.common_view
+)
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 141 5564 5596 "dgraph/dGraphView.ml" 141 5564 5600
+type(
+  HE.key
+)
+ident(
+  int_ref edge "dgraph/dGraphView.ml" 135 5414 5442 "dgraph/dGraphView.ml" 135 5414 5446
+)
+"dgraph/dGraphView.ml" 141 5564 5602 "dgraph/dGraphView.ml" 141 5564 5608
+type(
+  XDot.edge_layout
+)
+ident(
+  int_ref layout "dgraph/dGraphView.ml" 137 5459 5464 "dgraph/dGraphView.ml" 137 5459 5470
+)
+"dgraph/dGraphView.ml" 141 5564 5609 "dgraph/dGraphView.ml" 141 5564 5611
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 139 5515 5518 "dgraph/dGraphView.ml" 141 5564 5611
+call(
+  stack
+)
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 143 5616 5617 "dgraph/dGraphView.ml" 143 5616 5623
+type(
+  HE.key DGraphViewItem.view_item HE.t ->
+  HE.key -> HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  ext_ref HE.add
+)
+"dgraph/dGraphView.ml" 143 5616 5624 "dgraph/dGraphView.ml" 143 5616 5633
+type(
+  HE.key DGraphViewItem.view_item HE.t
+)
+"dgraph/dGraphView.ml" 143 5616 5634 "dgraph/dGraphView.ml" 143 5616 5638
+type(
+  HE.key
+)
+ident(
+  int_ref edge "dgraph/dGraphView.ml" 135 5414 5442 "dgraph/dGraphView.ml" 135 5414 5446
+)
+"dgraph/dGraphView.ml" 143 5616 5639 "dgraph/dGraphView.ml" 143 5616 5643
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  int_ref item "dgraph/dGraphView.ml" 138 5503 5508 "dgraph/dGraphView.ml" 138 5503 5512
+)
+"dgraph/dGraphView.ml" 143 5616 5617 "dgraph/dGraphView.ml" 143 5616 5643
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 138 5503 5504 "dgraph/dGraphView.ml" 143 5616 5643
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 137 5459 5460 "dgraph/dGraphView.ml" 143 5616 5643
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 144 5644 5655 "dgraph/dGraphView.ml" 144 5644 5664
+type(
+  exn
+)
+"dgraph/dGraphView.ml" 145 5668 5669 "dgraph/dGraphView.ml" 145 5668 5681
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 136 5449 5455 "dgraph/dGraphView.ml" 145 5668 5681
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 147 5683 5714 "dgraph/dGraphView.ml" 147 5683 5721
+type(
+  HC.key
+)
+ident(
+  def cluster "dgraph/dGraphView.ml" 148 5724 5730 "dgraph/dGraphView.ml" 154 5910 5948
+)
+"dgraph/dGraphView.ml" 148 5724 5734 "dgraph/dGraphView.ml" 148 5724 5740
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphView.ml" 148 5724 5743 "dgraph/dGraphView.ml" 148 5724 5748
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 148 5724 5743 "dgraph/dGraphView.ml" 148 5724 5767
+type(
+  HC.key -> XDot.cluster_layout
+)
+"dgraph/dGraphView.ml" 148 5724 5768 "dgraph/dGraphView.ml" 148 5724 5775
+type(
+  HC.key
+)
+ident(
+  int_ref cluster "dgraph/dGraphView.ml" 147 5683 5714 "dgraph/dGraphView.ml" 147 5683 5721
+)
+"dgraph/dGraphView.ml" 148 5724 5743 "dgraph/dGraphView.ml" 148 5724 5775
+type(
+  XDot.cluster_layout
+)
+"dgraph/dGraphView.ml" 149 5779 5789 "dgraph/dGraphView.ml" 149 5779 5793
+type(
+  HC.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 150 5796 5797 "dgraph/dGraphView.ml" 150 5796 5809
+type(
+  delay:bool ->
+  view:DGraphViewItem.common_view ->
+  cluster:HC.key ->
+  layout:XDot.cluster_layout -> unit -> HC.key DGraphViewItem.view_item
+)
+ident(
+  ext_ref DGraphViewItem.view_cluster
+)
+"dgraph/dGraphView.ml" 151 5810 5821 "dgraph/dGraphView.ml" 151 5810 5826
+type(
+  (HC.key -> bool) option -> HC.key -> bool
+)
+"dgraph/dGraphView.ml" 151 5810 5827 "dgraph/dGraphView.ml" 151 5810 5840
+type(
+  (HC.key -> bool) option
+)
+"dgraph/dGraphView.ml" 151 5810 5841 "dgraph/dGraphView.ml" 151 5810 5848
+type(
+  HC.key
+)
+ident(
+  int_ref cluster "dgraph/dGraphView.ml" 147 5683 5714 "dgraph/dGraphView.ml" 147 5683 5721
+)
+"dgraph/dGraphView.ml" 151 5810 5820 "dgraph/dGraphView.ml" 151 5810 5849
+call(
+  stack
+)
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 152 5850 5860 "dgraph/dGraphView.ml" 152 5850 5864
+type(
+  DGraphViewItem.common_view
+)
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 152 5850 5882 "dgraph/dGraphView.ml" 152 5850 5889
+type(
+  HC.key
+)
+ident(
+  int_ref cluster "dgraph/dGraphView.ml" 147 5683 5714 "dgraph/dGraphView.ml" 147 5683 5721
+)
+"dgraph/dGraphView.ml" 152 5850 5891 "dgraph/dGraphView.ml" 152 5850 5897
+type(
+  XDot.cluster_layout
+)
+ident(
+  int_ref layout "dgraph/dGraphView.ml" 148 5724 5734 "dgraph/dGraphView.ml" 148 5724 5740
+)
+"dgraph/dGraphView.ml" 152 5850 5898 "dgraph/dGraphView.ml" 152 5850 5900
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 150 5796 5797 "dgraph/dGraphView.ml" 152 5850 5900
+call(
+  stack
+)
+type(
+  HC.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 154 5910 5916 "dgraph/dGraphView.ml" 154 5910 5922
+type(
+  HC.key DGraphViewItem.view_item HC.t ->
+  HC.key -> HC.key DGraphViewItem.view_item -> unit
+)
+ident(
+  ext_ref HC.add
+)
+"dgraph/dGraphView.ml" 154 5910 5923 "dgraph/dGraphView.ml" 154 5910 5935
+type(
+  HC.key DGraphViewItem.view_item HC.t
+)
+"dgraph/dGraphView.ml" 154 5910 5936 "dgraph/dGraphView.ml" 154 5910 5943
+type(
+  HC.key
+)
+ident(
+  int_ref cluster "dgraph/dGraphView.ml" 147 5683 5714 "dgraph/dGraphView.ml" 147 5683 5721
+)
+"dgraph/dGraphView.ml" 154 5910 5944 "dgraph/dGraphView.ml" 154 5910 5948
+type(
+  HC.key DGraphViewItem.view_item
+)
+ident(
+  int_ref item "dgraph/dGraphView.ml" 149 5779 5789 "dgraph/dGraphView.ml" 149 5779 5793
+)
+"dgraph/dGraphView.ml" 154 5910 5916 "dgraph/dGraphView.ml" 154 5910 5948
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 149 5779 5785 "dgraph/dGraphView.ml" 154 5910 5948
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 148 5724 5730 "dgraph/dGraphView.ml" 154 5910 5948
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 158 5986 6006 "dgraph/dGraphView.ml" 158 5986 6007
+type(
+  HV.key
+)
+ident(
+  def n "dgraph/dGraphView.ml" 159 6010 6016 "dgraph/dGraphView.ml" 159 6010 6070
+)
+"dgraph/dGraphView.ml" 159 6010 6020 "dgraph/dGraphView.ml" 159 6010 6027
+type(
+  HV.key DGraphViewItem.view_item HV.t ->
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+ident(
+  ext_ref HV.find
+)
+"dgraph/dGraphView.ml" 159 6010 6028 "dgraph/dGraphView.ml" 159 6010 6037
+type(
+  HV.key DGraphViewItem.view_item HV.t
+)
+"dgraph/dGraphView.ml" 159 6010 6038 "dgraph/dGraphView.ml" 159 6010 6039
+type(
+  HV.key
+)
+ident(
+  int_ref n "dgraph/dGraphView.ml" 158 5986 6006 "dgraph/dGraphView.ml" 158 5986 6007
+)
+"dgraph/dGraphView.ml" 159 6010 6020 "dgraph/dGraphView.ml" 159 6010 6039
+call(
+  stack
+)
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 159 6010 6045 "dgraph/dGraphView.ml" 159 6010 6054
+type(
+  exn
+)
+"dgraph/dGraphView.ml" 159 6010 6058 "dgraph/dGraphView.ml" 159 6010 6070
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 159 6010 6016 "dgraph/dGraphView.ml" 159 6010 6070
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 161 6072 6092 "dgraph/dGraphView.ml" 161 6072 6093
+type(
+  HE.key
+)
+ident(
+  def e "dgraph/dGraphView.ml" 162 6096 6102 "dgraph/dGraphView.ml" 162 6096 6156
+)
+"dgraph/dGraphView.ml" 162 6096 6106 "dgraph/dGraphView.ml" 162 6096 6113
+type(
+  HE.key DGraphViewItem.view_item HE.t ->
+  HE.key -> HE.key DGraphViewItem.view_item
+)
+ident(
+  ext_ref HE.find
+)
+"dgraph/dGraphView.ml" 162 6096 6114 "dgraph/dGraphView.ml" 162 6096 6123
+type(
+  HE.key DGraphViewItem.view_item HE.t
+)
+"dgraph/dGraphView.ml" 162 6096 6124 "dgraph/dGraphView.ml" 162 6096 6125
+type(
+  HE.key
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 161 6072 6092 "dgraph/dGraphView.ml" 161 6072 6093
+)
+"dgraph/dGraphView.ml" 162 6096 6106 "dgraph/dGraphView.ml" 162 6096 6125
+call(
+  stack
+)
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 162 6096 6131 "dgraph/dGraphView.ml" 162 6096 6140
+type(
+  exn
+)
+"dgraph/dGraphView.ml" 162 6096 6144 "dgraph/dGraphView.ml" 162 6096 6156
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 162 6096 6102 "dgraph/dGraphView.ml" 162 6096 6156
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 164 6158 6181 "dgraph/dGraphView.ml" 164 6158 6182
+type(
+  HC.key
+)
+ident(
+  def c "dgraph/dGraphView.ml" 165 6185 6191 "dgraph/dGraphView.ml" 165 6185 6248
+)
+"dgraph/dGraphView.ml" 165 6185 6195 "dgraph/dGraphView.ml" 165 6185 6202
+type(
+  HC.key DGraphViewItem.view_item HC.t ->
+  HC.key -> HC.key DGraphViewItem.view_item
+)
+ident(
+  ext_ref HC.find
+)
+"dgraph/dGraphView.ml" 165 6185 6203 "dgraph/dGraphView.ml" 165 6185 6215
+type(
+  HC.key DGraphViewItem.view_item HC.t
+)
+"dgraph/dGraphView.ml" 165 6185 6216 "dgraph/dGraphView.ml" 165 6185 6217
+type(
+  HC.key
+)
+ident(
+  int_ref c "dgraph/dGraphView.ml" 164 6158 6181 "dgraph/dGraphView.ml" 164 6158 6182
+)
+"dgraph/dGraphView.ml" 165 6185 6195 "dgraph/dGraphView.ml" 165 6185 6217
+call(
+  stack
+)
+type(
+  HC.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 165 6185 6223 "dgraph/dGraphView.ml" 165 6185 6232
+type(
+  exn
+)
+"dgraph/dGraphView.ml" 165 6185 6236 "dgraph/dGraphView.ml" 165 6185 6248
+type(
+  HC.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 165 6185 6191 "dgraph/dGraphView.ml" 165 6185 6248
+type(
+  HC.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 168 6287 6309 "dgraph/dGraphView.ml" 168 6287 6310
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 168 6287 6313 "dgraph/dGraphView.ml" 168 6287 6347
+)
+"dgraph/dGraphView.ml" 168 6287 6313 "dgraph/dGraphView.ml" 168 6287 6320
+type(
+  (HV.key -> HV.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item HV.t -> unit
+)
+ident(
+  ext_ref HV.iter
+)
+"dgraph/dGraphView.ml" 168 6287 6326 "dgraph/dGraphView.ml" 168 6287 6327
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 168 6287 6328 "dgraph/dGraphView.ml" 168 6287 6329
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def v "dgraph/dGraphView.ml" 168 6287 6333 "dgraph/dGraphView.ml" 168 6287 6336
+)
+"dgraph/dGraphView.ml" 168 6287 6333 "dgraph/dGraphView.ml" 168 6287 6334
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 168 6287 6309 "dgraph/dGraphView.ml" 168 6287 6310
+)
+"dgraph/dGraphView.ml" 168 6287 6335 "dgraph/dGraphView.ml" 168 6287 6336
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 168 6287 6328 "dgraph/dGraphView.ml" 168 6287 6329
+)
+"dgraph/dGraphView.ml" 168 6287 6333 "dgraph/dGraphView.ml" 168 6287 6336
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 168 6287 6321 "dgraph/dGraphView.ml" 168 6287 6337
+type(
+  HV.key -> HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 168 6287 6338 "dgraph/dGraphView.ml" 168 6287 6347
+type(
+  HV.key DGraphViewItem.view_item HV.t
+)
+"dgraph/dGraphView.ml" 168 6287 6313 "dgraph/dGraphView.ml" 168 6287 6347
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 169 6348 6372 "dgraph/dGraphView.ml" 169 6348 6373
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 169 6348 6376 "dgraph/dGraphView.ml" 169 6348 6410
+)
+"dgraph/dGraphView.ml" 169 6348 6376 "dgraph/dGraphView.ml" 169 6348 6383
+type(
+  (HE.key -> HE.key DGraphViewItem.view_item -> unit) ->
+  HE.key DGraphViewItem.view_item HE.t -> unit
+)
+ident(
+  ext_ref HE.iter
+)
+"dgraph/dGraphView.ml" 169 6348 6389 "dgraph/dGraphView.ml" 169 6348 6390
+type(
+  HE.key
+)
+"dgraph/dGraphView.ml" 169 6348 6391 "dgraph/dGraphView.ml" 169 6348 6392
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  def e "dgraph/dGraphView.ml" 169 6348 6396 "dgraph/dGraphView.ml" 169 6348 6399
+)
+"dgraph/dGraphView.ml" 169 6348 6396 "dgraph/dGraphView.ml" 169 6348 6397
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 169 6348 6372 "dgraph/dGraphView.ml" 169 6348 6373
+)
+"dgraph/dGraphView.ml" 169 6348 6398 "dgraph/dGraphView.ml" 169 6348 6399
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 169 6348 6391 "dgraph/dGraphView.ml" 169 6348 6392
+)
+"dgraph/dGraphView.ml" 169 6348 6396 "dgraph/dGraphView.ml" 169 6348 6399
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 169 6348 6384 "dgraph/dGraphView.ml" 169 6348 6400
+type(
+  HE.key -> HE.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 169 6348 6401 "dgraph/dGraphView.ml" 169 6348 6410
+type(
+  HE.key DGraphViewItem.view_item HE.t
+)
+"dgraph/dGraphView.ml" 169 6348 6376 "dgraph/dGraphView.ml" 169 6348 6410
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 170 6411 6436 "dgraph/dGraphView.ml" 170 6411 6437
+type(
+  HC.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 170 6411 6440 "dgraph/dGraphView.ml" 170 6411 6477
+)
+"dgraph/dGraphView.ml" 170 6411 6440 "dgraph/dGraphView.ml" 170 6411 6447
+type(
+  (HC.key -> HC.key DGraphViewItem.view_item -> unit) ->
+  HC.key DGraphViewItem.view_item HC.t -> unit
+)
+ident(
+  ext_ref HC.iter
+)
+"dgraph/dGraphView.ml" 170 6411 6453 "dgraph/dGraphView.ml" 170 6411 6454
+type(
+  HC.key
+)
+"dgraph/dGraphView.ml" 170 6411 6455 "dgraph/dGraphView.ml" 170 6411 6456
+type(
+  HC.key DGraphViewItem.view_item
+)
+ident(
+  def c "dgraph/dGraphView.ml" 170 6411 6460 "dgraph/dGraphView.ml" 170 6411 6463
+)
+"dgraph/dGraphView.ml" 170 6411 6460 "dgraph/dGraphView.ml" 170 6411 6461
+type(
+  HC.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 170 6411 6436 "dgraph/dGraphView.ml" 170 6411 6437
+)
+"dgraph/dGraphView.ml" 170 6411 6462 "dgraph/dGraphView.ml" 170 6411 6463
+type(
+  HC.key DGraphViewItem.view_item
+)
+ident(
+  int_ref c "dgraph/dGraphView.ml" 170 6411 6455 "dgraph/dGraphView.ml" 170 6411 6456
+)
+"dgraph/dGraphView.ml" 170 6411 6460 "dgraph/dGraphView.ml" 170 6411 6463
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 170 6411 6448 "dgraph/dGraphView.ml" 170 6411 6464
+type(
+  HC.key -> HC.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 170 6411 6465 "dgraph/dGraphView.ml" 170 6411 6477
+type(
+  HC.key DGraphViewItem.view_item HC.t
+)
+"dgraph/dGraphView.ml" 170 6411 6440 "dgraph/dGraphView.ml" 170 6411 6477
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 172 6479 6501 "dgraph/dGraphView.ml" 172 6479 6502
+type(
+  HV.key DGraphViewItem.view_item -> HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 173 6505 6511 "dgraph/dGraphView.ml" 173 6505 6582
+)
+"dgraph/dGraphView.ml" 173 6505 6511 "dgraph/dGraphView.ml" 173 6505 6516
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 173 6505 6511 "dgraph/dGraphView.ml" 173 6505 6527
+type(
+  (HV.key -> HV.key -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 173 6505 6533 "dgraph/dGraphView.ml" 173 6505 6535
+type(
+  HV.key
+)
+ident(
+  def v1 "dgraph/dGraphView.ml" 173 6505 6536 "dgraph/dGraphView.ml" 173 6505 6581
+)
+"dgraph/dGraphView.ml" 173 6505 6536 "dgraph/dGraphView.ml" 173 6505 6538
+type(
+  HV.key
+)
+ident(
+  def v2 "dgraph/dGraphView.ml" 173 6505 6542 "dgraph/dGraphView.ml" 173 6505 6581
+)
+"dgraph/dGraphView.ml" 173 6505 6542 "dgraph/dGraphView.ml" 173 6505 6543
+type(
+  HV.key DGraphViewItem.view_item -> HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 172 6479 6501 "dgraph/dGraphView.ml" 172 6479 6502
+)
+"dgraph/dGraphView.ml" 173 6505 6545 "dgraph/dGraphView.ml" 173 6505 6549
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 173 6505 6545 "dgraph/dGraphView.ml" 173 6505 6558
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 173 6505 6559 "dgraph/dGraphView.ml" 173 6505 6561
+type(
+  HV.key
+)
+ident(
+  int_ref v1 "dgraph/dGraphView.ml" 173 6505 6533 "dgraph/dGraphView.ml" 173 6505 6535
+)
+"dgraph/dGraphView.ml" 173 6505 6544 "dgraph/dGraphView.ml" 173 6505 6562
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 173 6505 6564 "dgraph/dGraphView.ml" 173 6505 6568
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 173 6505 6564 "dgraph/dGraphView.ml" 173 6505 6577
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 173 6505 6578 "dgraph/dGraphView.ml" 173 6505 6580
+type(
+  HV.key
+)
+ident(
+  int_ref v2 "dgraph/dGraphView.ml" 173 6505 6536 "dgraph/dGraphView.ml" 173 6505 6538
+)
+"dgraph/dGraphView.ml" 173 6505 6563 "dgraph/dGraphView.ml" 173 6505 6581
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 173 6505 6542 "dgraph/dGraphView.ml" 173 6505 6581
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 173 6505 6528 "dgraph/dGraphView.ml" 173 6505 6582
+type(
+  HV.key -> HV.key -> unit
+)
+"dgraph/dGraphView.ml" 173 6505 6511 "dgraph/dGraphView.ml" 173 6505 6582
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 176 6626 6647 "dgraph/dGraphView.ml" 176 6626 6648
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 176 6626 6649 "dgraph/dGraphView.ml" 178 6712 6746
+)
+"dgraph/dGraphView.ml" 176 6626 6650 "dgraph/dGraphView.ml" 176 6626 6654
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 177 6672 6678 "dgraph/dGraphView.ml" 178 6712 6746
+)
+"dgraph/dGraphView.ml" 177 6672 6682 "dgraph/dGraphView.ml" 177 6672 6684
+type(
+  HV.key -> unit
+)
+"dgraph/dGraphView.ml" 177 6672 6685 "dgraph/dGraphView.ml" 177 6672 6686
+type(
+  HV.key
+)
+ident(
+  def v "dgraph/dGraphView.ml" 177 6672 6689 "dgraph/dGraphView.ml" 177 6672 6708
+)
+"dgraph/dGraphView.ml" 177 6672 6689 "dgraph/dGraphView.ml" 177 6672 6690
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 176 6626 6647 "dgraph/dGraphView.ml" 176 6626 6648
+)
+"dgraph/dGraphView.ml" 177 6672 6692 "dgraph/dGraphView.ml" 177 6672 6696
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 177 6672 6692 "dgraph/dGraphView.ml" 177 6672 6705
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 177 6672 6706 "dgraph/dGraphView.ml" 177 6672 6707
+type(
+  HV.key
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 177 6672 6685 "dgraph/dGraphView.ml" 177 6672 6686
+)
+"dgraph/dGraphView.ml" 177 6672 6691 "dgraph/dGraphView.ml" 177 6672 6708
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 177 6672 6689 "dgraph/dGraphView.ml" 177 6672 6708
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 178 6712 6718 "dgraph/dGraphView.ml" 178 6712 6723
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 178 6712 6718 "dgraph/dGraphView.ml" 178 6712 6733
+type(
+  (HV.key -> unit) -> HV.key -> unit
+)
+"dgraph/dGraphView.ml" 178 6712 6734 "dgraph/dGraphView.ml" 178 6712 6736
+type(
+  HV.key -> unit
+)
+ident(
+  int_ref f' "dgraph/dGraphView.ml" 177 6672 6682 "dgraph/dGraphView.ml" 177 6672 6684
+)
+"dgraph/dGraphView.ml" 178 6712 6737 "dgraph/dGraphView.ml" 178 6712 6741
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 176 6626 6650 "dgraph/dGraphView.ml" 176 6626 6654
+)
+"dgraph/dGraphView.ml" 178 6712 6737 "dgraph/dGraphView.ml" 178 6712 6746
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 178 6712 6718 "dgraph/dGraphView.ml" 178 6712 6746
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 177 6672 6678 "dgraph/dGraphView.ml" 178 6712 6746
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 181 6792 6813 "dgraph/dGraphView.ml" 181 6792 6814
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 181 6792 6815 "dgraph/dGraphView.ml" 183 6878 6912
+)
+"dgraph/dGraphView.ml" 181 6792 6816 "dgraph/dGraphView.ml" 181 6792 6820
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 182 6838 6844 "dgraph/dGraphView.ml" 183 6878 6912
+)
+"dgraph/dGraphView.ml" 182 6838 6848 "dgraph/dGraphView.ml" 182 6838 6850
+type(
+  HV.key -> unit
+)
+"dgraph/dGraphView.ml" 182 6838 6851 "dgraph/dGraphView.ml" 182 6838 6852
+type(
+  HV.key
+)
+ident(
+  def v "dgraph/dGraphView.ml" 182 6838 6855 "dgraph/dGraphView.ml" 182 6838 6874
+)
+"dgraph/dGraphView.ml" 182 6838 6855 "dgraph/dGraphView.ml" 182 6838 6856
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 181 6792 6813 "dgraph/dGraphView.ml" 181 6792 6814
+)
+"dgraph/dGraphView.ml" 182 6838 6858 "dgraph/dGraphView.ml" 182 6838 6862
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 182 6838 6858 "dgraph/dGraphView.ml" 182 6838 6871
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 182 6838 6872 "dgraph/dGraphView.ml" 182 6838 6873
+type(
+  HV.key
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 182 6838 6851 "dgraph/dGraphView.ml" 182 6838 6852
+)
+"dgraph/dGraphView.ml" 182 6838 6857 "dgraph/dGraphView.ml" 182 6838 6874
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 182 6838 6855 "dgraph/dGraphView.ml" 182 6838 6874
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 183 6878 6884 "dgraph/dGraphView.ml" 183 6878 6889
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 183 6878 6884 "dgraph/dGraphView.ml" 183 6878 6899
+type(
+  (HV.key -> unit) -> HV.key -> unit
+)
+"dgraph/dGraphView.ml" 183 6878 6900 "dgraph/dGraphView.ml" 183 6878 6902
+type(
+  HV.key -> unit
+)
+ident(
+  int_ref f' "dgraph/dGraphView.ml" 182 6838 6848 "dgraph/dGraphView.ml" 182 6838 6850
+)
+"dgraph/dGraphView.ml" 183 6878 6903 "dgraph/dGraphView.ml" 183 6878 6907
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 181 6792 6816 "dgraph/dGraphView.ml" 181 6792 6820
+)
+"dgraph/dGraphView.ml" 183 6878 6903 "dgraph/dGraphView.ml" 183 6878 6912
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 183 6878 6884 "dgraph/dGraphView.ml" 183 6878 6912
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 182 6838 6844 "dgraph/dGraphView.ml" 183 6878 6912
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 185 6914 6937 "dgraph/dGraphView.ml" 185 6914 6938
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 185 6914 6939 "dgraph/dGraphView.ml" 187 7002 7038
+)
+"dgraph/dGraphView.ml" 185 6914 6940 "dgraph/dGraphView.ml" 185 6914 6944
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 186 6962 6968 "dgraph/dGraphView.ml" 187 7002 7038
+)
+"dgraph/dGraphView.ml" 186 6962 6972 "dgraph/dGraphView.ml" 186 6962 6974
+type(
+  HE.key -> unit
+)
+"dgraph/dGraphView.ml" 186 6962 6975 "dgraph/dGraphView.ml" 186 6962 6976
+type(
+  HE.key
+)
+ident(
+  def e "dgraph/dGraphView.ml" 186 6962 6979 "dgraph/dGraphView.ml" 186 6962 6998
+)
+"dgraph/dGraphView.ml" 186 6962 6979 "dgraph/dGraphView.ml" 186 6962 6980
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 185 6914 6937 "dgraph/dGraphView.ml" 185 6914 6938
+)
+"dgraph/dGraphView.ml" 186 6962 6982 "dgraph/dGraphView.ml" 186 6962 6986
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 186 6962 6982 "dgraph/dGraphView.ml" 186 6962 6995
+type(
+  HE.key -> HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 186 6962 6996 "dgraph/dGraphView.ml" 186 6962 6997
+type(
+  HE.key
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 186 6962 6975 "dgraph/dGraphView.ml" 186 6962 6976
+)
+"dgraph/dGraphView.ml" 186 6962 6981 "dgraph/dGraphView.ml" 186 6962 6998
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 186 6962 6979 "dgraph/dGraphView.ml" 186 6962 6998
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 187 7002 7008 "dgraph/dGraphView.ml" 187 7002 7013
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 187 7002 7008 "dgraph/dGraphView.ml" 187 7002 7025
+type(
+  (HE.key -> unit) -> HV.key -> unit
+)
+"dgraph/dGraphView.ml" 187 7002 7026 "dgraph/dGraphView.ml" 187 7002 7028
+type(
+  HE.key -> unit
+)
+ident(
+  int_ref f' "dgraph/dGraphView.ml" 186 6962 6972 "dgraph/dGraphView.ml" 186 6962 6974
+)
+"dgraph/dGraphView.ml" 187 7002 7029 "dgraph/dGraphView.ml" 187 7002 7033
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 185 6914 6940 "dgraph/dGraphView.ml" 185 6914 6944
+)
+"dgraph/dGraphView.ml" 187 7002 7029 "dgraph/dGraphView.ml" 187 7002 7038
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 187 7002 7008 "dgraph/dGraphView.ml" 187 7002 7038
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 186 6962 6968 "dgraph/dGraphView.ml" 187 7002 7038
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 189 7040 7063 "dgraph/dGraphView.ml" 189 7040 7064
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 189 7040 7065 "dgraph/dGraphView.ml" 191 7128 7164
+)
+"dgraph/dGraphView.ml" 189 7040 7066 "dgraph/dGraphView.ml" 189 7040 7070
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 190 7088 7094 "dgraph/dGraphView.ml" 191 7128 7164
+)
+"dgraph/dGraphView.ml" 190 7088 7098 "dgraph/dGraphView.ml" 190 7088 7100
+type(
+  HE.key -> unit
+)
+"dgraph/dGraphView.ml" 190 7088 7101 "dgraph/dGraphView.ml" 190 7088 7102
+type(
+  HE.key
+)
+ident(
+  def e "dgraph/dGraphView.ml" 190 7088 7105 "dgraph/dGraphView.ml" 190 7088 7124
+)
+"dgraph/dGraphView.ml" 190 7088 7105 "dgraph/dGraphView.ml" 190 7088 7106
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 189 7040 7063 "dgraph/dGraphView.ml" 189 7040 7064
+)
+"dgraph/dGraphView.ml" 190 7088 7108 "dgraph/dGraphView.ml" 190 7088 7112
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 190 7088 7108 "dgraph/dGraphView.ml" 190 7088 7121
+type(
+  HE.key -> HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 190 7088 7122 "dgraph/dGraphView.ml" 190 7088 7123
+type(
+  HE.key
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 190 7088 7101 "dgraph/dGraphView.ml" 190 7088 7102
+)
+"dgraph/dGraphView.ml" 190 7088 7107 "dgraph/dGraphView.ml" 190 7088 7124
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 190 7088 7105 "dgraph/dGraphView.ml" 190 7088 7124
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 191 7128 7134 "dgraph/dGraphView.ml" 191 7128 7139
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 191 7128 7134 "dgraph/dGraphView.ml" 191 7128 7151
+type(
+  (HE.key -> unit) -> HV.key -> unit
+)
+"dgraph/dGraphView.ml" 191 7128 7152 "dgraph/dGraphView.ml" 191 7128 7154
+type(
+  HE.key -> unit
+)
+ident(
+  int_ref f' "dgraph/dGraphView.ml" 190 7088 7098 "dgraph/dGraphView.ml" 190 7088 7100
+)
+"dgraph/dGraphView.ml" 191 7128 7155 "dgraph/dGraphView.ml" 191 7128 7159
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 189 7040 7066 "dgraph/dGraphView.ml" 189 7040 7070
+)
+"dgraph/dGraphView.ml" 191 7128 7155 "dgraph/dGraphView.ml" 191 7128 7164
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 191 7128 7134 "dgraph/dGraphView.ml" 191 7128 7164
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 190 7088 7094 "dgraph/dGraphView.ml" 191 7128 7164
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 194 7204 7238 "dgraph/dGraphView.ml" 194 7204 7239
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  def f "dgraph/dGraphView.ml" 194 7204 7240 "dgraph/dGraphView.ml" 196 7303 7350
+)
+"dgraph/dGraphView.ml" 194 7204 7241 "dgraph/dGraphView.ml" 194 7204 7245
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 195 7263 7269 "dgraph/dGraphView.ml" 196 7303 7350
+)
+"dgraph/dGraphView.ml" 195 7263 7273 "dgraph/dGraphView.ml" 195 7263 7275
+type(
+  HV.key -> unit
+)
+"dgraph/dGraphView.ml" 195 7263 7276 "dgraph/dGraphView.ml" 195 7263 7277
+type(
+  HV.key
+)
+ident(
+  def v "dgraph/dGraphView.ml" 195 7263 7280 "dgraph/dGraphView.ml" 195 7263 7299
+)
+"dgraph/dGraphView.ml" 195 7263 7280 "dgraph/dGraphView.ml" 195 7263 7281
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref f "dgraph/dGraphView.ml" 194 7204 7238 "dgraph/dGraphView.ml" 194 7204 7239
+)
+"dgraph/dGraphView.ml" 195 7263 7283 "dgraph/dGraphView.ml" 195 7263 7287
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 195 7263 7283 "dgraph/dGraphView.ml" 195 7263 7296
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 195 7263 7297 "dgraph/dGraphView.ml" 195 7263 7298
+type(
+  HV.key
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 195 7263 7276 "dgraph/dGraphView.ml" 195 7263 7277
+)
+"dgraph/dGraphView.ml" 195 7263 7282 "dgraph/dGraphView.ml" 195 7263 7299
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 195 7263 7280 "dgraph/dGraphView.ml" 195 7263 7299
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 196 7303 7309 "dgraph/dGraphView.ml" 196 7303 7314
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 196 7303 7309 "dgraph/dGraphView.ml" 196 7303 7337
+type(
+  (HV.key -> unit) -> HV.key -> unit
+)
+"dgraph/dGraphView.ml" 196 7303 7338 "dgraph/dGraphView.ml" 196 7303 7340
+type(
+  HV.key -> unit
+)
+ident(
+  int_ref f' "dgraph/dGraphView.ml" 195 7263 7273 "dgraph/dGraphView.ml" 195 7263 7275
+)
+"dgraph/dGraphView.ml" 196 7303 7341 "dgraph/dGraphView.ml" 196 7303 7345
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 194 7204 7241 "dgraph/dGraphView.ml" 194 7204 7245
+)
+"dgraph/dGraphView.ml" 196 7303 7341 "dgraph/dGraphView.ml" 196 7303 7350
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 196 7303 7309 "dgraph/dGraphView.ml" 196 7303 7350
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 195 7263 7269 "dgraph/dGraphView.ml" 196 7303 7350
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 200 7384 7405 "dgraph/dGraphView.ml" 200 7384 7407
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def n1 "dgraph/dGraphView.ml" 200 7384 7422 "dgraph/dGraphView.ml" 201 7442 7478
+)
+"dgraph/dGraphView.ml" 200 7384 7423 "dgraph/dGraphView.ml" 200 7384 7425
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def n2 "dgraph/dGraphView.ml" 201 7442 7448 "dgraph/dGraphView.ml" 201 7442 7478
+)
+"dgraph/dGraphView.ml" 201 7442 7448 "dgraph/dGraphView.ml" 201 7442 7453
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 201 7442 7448 "dgraph/dGraphView.ml" 201 7442 7462
+type(
+  HV.key -> HV.key -> bool
+)
+"dgraph/dGraphView.ml" 201 7442 7463 "dgraph/dGraphView.ml" 201 7442 7465
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref n1 "dgraph/dGraphView.ml" 200 7384 7405 "dgraph/dGraphView.ml" 200 7384 7407
+)
+"dgraph/dGraphView.ml" 201 7442 7463 "dgraph/dGraphView.ml" 201 7442 7470
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 201 7442 7471 "dgraph/dGraphView.ml" 201 7442 7473
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref n2 "dgraph/dGraphView.ml" 200 7384 7423 "dgraph/dGraphView.ml" 200 7384 7425
+)
+"dgraph/dGraphView.ml" 201 7442 7471 "dgraph/dGraphView.ml" 201 7442 7478
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 201 7442 7448 "dgraph/dGraphView.ml" 201 7442 7478
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 203 7480 7502 "dgraph/dGraphView.ml" 203 7480 7504
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def n1 "dgraph/dGraphView.ml" 203 7480 7519 "dgraph/dGraphView.ml" 204 7539 7592
+)
+"dgraph/dGraphView.ml" 203 7480 7520 "dgraph/dGraphView.ml" 203 7480 7522
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def n2 "dgraph/dGraphView.ml" 204 7539 7545 "dgraph/dGraphView.ml" 204 7539 7592
+)
+"dgraph/dGraphView.ml" 204 7539 7545 "dgraph/dGraphView.ml" 204 7539 7549
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 204 7539 7545 "dgraph/dGraphView.ml" 204 7539 7558
+type(
+  HE.key -> HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 204 7539 7560 "dgraph/dGraphView.ml" 204 7539 7565
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 204 7539 7560 "dgraph/dGraphView.ml" 204 7539 7575
+type(
+  HV.key -> HV.key -> HE.key
+)
+"dgraph/dGraphView.ml" 204 7539 7576 "dgraph/dGraphView.ml" 204 7539 7578
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref n1 "dgraph/dGraphView.ml" 203 7480 7502 "dgraph/dGraphView.ml" 203 7480 7504
+)
+"dgraph/dGraphView.ml" 204 7539 7576 "dgraph/dGraphView.ml" 204 7539 7583
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 204 7539 7584 "dgraph/dGraphView.ml" 204 7539 7586
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref n2 "dgraph/dGraphView.ml" 203 7480 7520 "dgraph/dGraphView.ml" 203 7480 7522
+)
+"dgraph/dGraphView.ml" 204 7539 7584 "dgraph/dGraphView.ml" 204 7539 7591
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 204 7539 7559 "dgraph/dGraphView.ml" 204 7539 7592
+type(
+  HE.key
+)
+"dgraph/dGraphView.ml" 204 7539 7545 "dgraph/dGraphView.ml" 204 7539 7592
+type(
+  HE.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 206 7594 7610 "dgraph/dGraphView.ml" 206 7594 7611
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  def e "dgraph/dGraphView.ml" 206 7594 7629 "dgraph/dGraphView.ml" 206 7594 7661
+)
+"dgraph/dGraphView.ml" 206 7594 7629 "dgraph/dGraphView.ml" 206 7594 7633
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 206 7594 7629 "dgraph/dGraphView.ml" 206 7594 7642
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 206 7594 7644 "dgraph/dGraphView.ml" 206 7594 7649
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 206 7594 7644 "dgraph/dGraphView.ml" 206 7594 7653
+type(
+  HE.key -> HV.key
+)
+"dgraph/dGraphView.ml" 206 7594 7654 "dgraph/dGraphView.ml" 206 7594 7655
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 206 7594 7610 "dgraph/dGraphView.ml" 206 7594 7611
+)
+"dgraph/dGraphView.ml" 206 7594 7654 "dgraph/dGraphView.ml" 206 7594 7660
+type(
+  HE.key
+)
+"dgraph/dGraphView.ml" 206 7594 7643 "dgraph/dGraphView.ml" 206 7594 7661
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 206 7594 7629 "dgraph/dGraphView.ml" 206 7594 7661
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 207 7662 7678 "dgraph/dGraphView.ml" 207 7662 7679
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  def e "dgraph/dGraphView.ml" 207 7662 7697 "dgraph/dGraphView.ml" 207 7662 7729
+)
+"dgraph/dGraphView.ml" 207 7662 7697 "dgraph/dGraphView.ml" 207 7662 7701
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 207 7662 7697 "dgraph/dGraphView.ml" 207 7662 7710
+type(
+  HV.key -> HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 207 7662 7712 "dgraph/dGraphView.ml" 207 7662 7717
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 207 7662 7712 "dgraph/dGraphView.ml" 207 7662 7721
+type(
+  HE.key -> HV.key
+)
+"dgraph/dGraphView.ml" 207 7662 7722 "dgraph/dGraphView.ml" 207 7662 7723
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 207 7662 7678 "dgraph/dGraphView.ml" 207 7662 7679
+)
+"dgraph/dGraphView.ml" 207 7662 7722 "dgraph/dGraphView.ml" 207 7662 7728
+type(
+  HE.key
+)
+"dgraph/dGraphView.ml" 207 7662 7711 "dgraph/dGraphView.ml" 207 7662 7729
+type(
+  HV.key
+)
+"dgraph/dGraphView.ml" 207 7662 7697 "dgraph/dGraphView.ml" 207 7662 7729
+type(
+  HV.key DGraphViewItem.view_item
+)
+"dgraph/dGraphView.ml" 210 7753 7778 "dgraph/dGraphView.ml" 210 7753 7780
+type(
+  float
+)
+"dgraph/dGraphView.ml" 211 7781 7806 "dgraph/dGraphView.ml" 211 7781 7812
+type(
+  float
+)
+type(
+  float
+)
+"dgraph/dGraphView.ml" 213 7814 7845 "dgraph/dGraphView.ml" 213 7814 7848
+type(
+  float
+)
+"dgraph/dGraphView.ml" 214 7849 7877 "dgraph/dGraphView.ml" 214 7849 7878
+type(
+  float
+)
+ident(
+  def n "dgraph/dGraphView.ml" 214 7849 7881 "dgraph/dGraphView.ml" 214 7849 7898
+)
+"dgraph/dGraphView.ml" 214 7849 7897 "dgraph/dGraphView.ml" 214 7849 7898
+type(
+  float
+)
+ident(
+  int_ref n "dgraph/dGraphView.ml" 214 7849 7877 "dgraph/dGraphView.ml" 214 7849 7878
+)
+"dgraph/dGraphView.ml" 214 7849 7881 "dgraph/dGraphView.ml" 214 7849 7898
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 216 7900 7930 "dgraph/dGraphView.ml" 216 7900 7931
+type(
+  float
+)
+ident(
+  def x "dgraph/dGraphView.ml" 216 7900 7934 "dgraph/dGraphView.ml" 216 7900 7963
+)
+"dgraph/dGraphView.ml" 216 7900 7937 "dgraph/dGraphView.ml" 216 7900 7938
+type(
+  float
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 216 7900 7930 "dgraph/dGraphView.ml" 216 7900 7931
+)
+"dgraph/dGraphView.ml" 216 7900 7939 "dgraph/dGraphView.ml" 216 7900 7940
+type(
+  float -> float -> bool
+)
+ident(
+  ext_ref Pervasives.>
+)
+"dgraph/dGraphView.ml" 216 7900 7941 "dgraph/dGraphView.ml" 216 7900 7946
+type(
+  float
+)
+"dgraph/dGraphView.ml" 216 7900 7937 "dgraph/dGraphView.ml" 216 7900 7946
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 216 7900 7962 "dgraph/dGraphView.ml" 216 7900 7963
+type(
+  float
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 216 7900 7930 "dgraph/dGraphView.ml" 216 7900 7931
+)
+"dgraph/dGraphView.ml" 216 7900 7952 "dgraph/dGraphView.ml" 216 7900 7963
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 216 7900 7934 "dgraph/dGraphView.ml" 216 7900 7963
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 219 8003 8022 "dgraph/dGraphView.ml" 219 8003 8023
+type(
+  float
+)
+ident(
+  def x "dgraph/dGraphView.ml" 220 8026 8032 "dgraph/dGraphView.ml" 224 8199 8252
+)
+"dgraph/dGraphView.ml" 220 8026 8032 "dgraph/dGraphView.ml" 220 8026 8036
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 220 8026 8032 "dgraph/dGraphView.ml" 220 8026 8047
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 220 8026 8048 "dgraph/dGraphView.ml" 220 8026 8049
+type(
+  float
+)
+ident(
+  int_ref x "dgraph/dGraphView.ml" 219 8003 8022 "dgraph/dGraphView.ml" 219 8003 8023
+)
+"dgraph/dGraphView.ml" 220 8026 8032 "dgraph/dGraphView.ml" 220 8026 8049
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 221 8051 8057 "dgraph/dGraphView.ml" 221 8051 8061
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 221 8051 8057 "dgraph/dGraphView.ml" 221 8051 8081
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 221 8051 8082 "dgraph/dGraphView.ml" 221 8051 8088
+type(
+  float
+)
+"dgraph/dGraphView.ml" 221 8051 8057 "dgraph/dGraphView.ml" 221 8051 8088
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 222 8090 8096 "dgraph/dGraphView.ml" 222 8090 8100
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 222 8090 8096 "dgraph/dGraphView.ml" 222 8090 8114
+type(
+  (HC.key DGraphViewItem.view_item -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 222 8090 8120 "dgraph/dGraphView.ml" 222 8090 8121
+type(
+  HC.key DGraphViewItem.view_item
+)
+ident(
+  def c "dgraph/dGraphView.ml" 222 8090 8125 "dgraph/dGraphView.ml" 222 8090 8143
+)
+"dgraph/dGraphView.ml" 222 8090 8125 "dgraph/dGraphView.ml" 222 8090 8126
+type(
+  HC.key DGraphViewItem.view_item
+)
+ident(
+  int_ref c "dgraph/dGraphView.ml" 222 8090 8120 "dgraph/dGraphView.ml" 222 8090 8121
+)
+"dgraph/dGraphView.ml" 222 8090 8125 "dgraph/dGraphView.ml" 222 8090 8136
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 222 8090 8137 "dgraph/dGraphView.ml" 222 8090 8143
+type(
+  float
+)
+"dgraph/dGraphView.ml" 222 8090 8125 "dgraph/dGraphView.ml" 222 8090 8143
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 222 8090 8115 "dgraph/dGraphView.ml" 222 8090 8144
+type(
+  HC.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 222 8090 8096 "dgraph/dGraphView.ml" 222 8090 8144
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 223 8146 8152 "dgraph/dGraphView.ml" 223 8146 8156
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 223 8146 8152 "dgraph/dGraphView.ml" 223 8146 8167
+type(
+  (HV.key DGraphViewItem.view_item -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 223 8146 8173 "dgraph/dGraphView.ml" 223 8146 8174
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def n "dgraph/dGraphView.ml" 223 8146 8178 "dgraph/dGraphView.ml" 223 8146 8196
+)
+"dgraph/dGraphView.ml" 223 8146 8178 "dgraph/dGraphView.ml" 223 8146 8179
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref n "dgraph/dGraphView.ml" 223 8146 8173 "dgraph/dGraphView.ml" 223 8146 8174
+)
+"dgraph/dGraphView.ml" 223 8146 8178 "dgraph/dGraphView.ml" 223 8146 8189
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 223 8146 8190 "dgraph/dGraphView.ml" 223 8146 8196
+type(
+  float
+)
+"dgraph/dGraphView.ml" 223 8146 8178 "dgraph/dGraphView.ml" 223 8146 8196
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 223 8146 8168 "dgraph/dGraphView.ml" 223 8146 8197
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 223 8146 8152 "dgraph/dGraphView.ml" 223 8146 8197
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 224 8199 8205 "dgraph/dGraphView.ml" 224 8199 8209
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 224 8199 8205 "dgraph/dGraphView.ml" 224 8199 8222
+type(
+  (HE.key DGraphViewItem.view_item -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 224 8199 8228 "dgraph/dGraphView.ml" 224 8199 8229
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  def e "dgraph/dGraphView.ml" 224 8199 8233 "dgraph/dGraphView.ml" 224 8199 8251
+)
+"dgraph/dGraphView.ml" 224 8199 8233 "dgraph/dGraphView.ml" 224 8199 8234
+type(
+  HE.key DGraphViewItem.view_item
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 224 8199 8228 "dgraph/dGraphView.ml" 224 8199 8229
+)
+"dgraph/dGraphView.ml" 224 8199 8233 "dgraph/dGraphView.ml" 224 8199 8244
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 224 8199 8245 "dgraph/dGraphView.ml" 224 8199 8251
+type(
+  float
+)
+"dgraph/dGraphView.ml" 224 8199 8233 "dgraph/dGraphView.ml" 224 8199 8251
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 224 8199 8223 "dgraph/dGraphView.ml" 224 8199 8252
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 224 8199 8205 "dgraph/dGraphView.ml" 224 8199 8252
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 223 8146 8152 "dgraph/dGraphView.ml" 224 8199 8252
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 222 8090 8096 "dgraph/dGraphView.ml" 224 8199 8252
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 221 8051 8057 "dgraph/dGraphView.ml" 224 8199 8252
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 220 8026 8032 "dgraph/dGraphView.ml" 224 8199 8252
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 226 8254 8273 "dgraph/dGraphView.ml" 226 8254 8275
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 226 8254 8278 "dgraph/dGraphView.ml" 226 8254 8282
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 226 8254 8278 "dgraph/dGraphView.ml" 226 8254 8290
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 226 8254 8292 "dgraph/dGraphView.ml" 226 8254 8298
+type(
+  float
+)
+"dgraph/dGraphView.ml" 226 8254 8299 "dgraph/dGraphView.ml" 226 8254 8301
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"dgraph/dGraphView.ml" 226 8254 8302 "dgraph/dGraphView.ml" 226 8254 8314
+type(
+  float
+)
+"dgraph/dGraphView.ml" 226 8254 8315 "dgraph/dGraphView.ml" 226 8254 8317
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"dgraph/dGraphView.ml" 226 8254 8318 "dgraph/dGraphView.ml" 226 8254 8324
+type(
+  float
+)
+"dgraph/dGraphView.ml" 226 8254 8302 "dgraph/dGraphView.ml" 226 8254 8324
+type(
+  float
+)
+"dgraph/dGraphView.ml" 226 8254 8291 "dgraph/dGraphView.ml" 226 8254 8325
+type(
+  float
+)
+"dgraph/dGraphView.ml" 226 8254 8278 "dgraph/dGraphView.ml" 226 8254 8325
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 227 8326 8346 "dgraph/dGraphView.ml" 227 8326 8348
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 227 8326 8351 "dgraph/dGraphView.ml" 227 8326 8355
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 227 8326 8351 "dgraph/dGraphView.ml" 227 8326 8363
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 227 8326 8365 "dgraph/dGraphView.ml" 227 8326 8371
+type(
+  float
+)
+"dgraph/dGraphView.ml" 227 8326 8372 "dgraph/dGraphView.ml" 227 8326 8374
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"dgraph/dGraphView.ml" 227 8326 8375 "dgraph/dGraphView.ml" 227 8326 8387
+type(
+  float
+)
+"dgraph/dGraphView.ml" 227 8326 8388 "dgraph/dGraphView.ml" 227 8326 8390
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.*.
+)
+"dgraph/dGraphView.ml" 227 8326 8391 "dgraph/dGraphView.ml" 227 8326 8397
+type(
+  float
+)
+"dgraph/dGraphView.ml" 227 8326 8375 "dgraph/dGraphView.ml" 227 8326 8397
+type(
+  float
+)
+"dgraph/dGraphView.ml" 227 8326 8364 "dgraph/dGraphView.ml" 227 8326 8398
+type(
+  float
+)
+"dgraph/dGraphView.ml" 227 8326 8351 "dgraph/dGraphView.ml" 227 8326 8398
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 228 8399 8423 "dgraph/dGraphView.ml" 228 8399 8427
+type(
+  V.t DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 229 8446 8452 "dgraph/dGraphView.ml" 229 8446 8466
+)
+"dgraph/dGraphView.ml" 229 8446 8452 "dgraph/dGraphView.ml" 229 8446 8456
+type(
+  V.t DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 228 8399 8423 "dgraph/dGraphView.ml" 228 8399 8427
+)
+"dgraph/dGraphView.ml" 229 8446 8452 "dgraph/dGraphView.ml" 229 8446 8463
+type(
+  unit -> unit
+)
+"dgraph/dGraphView.ml" 229 8446 8464 "dgraph/dGraphView.ml" 229 8446 8466
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 229 8446 8452 "dgraph/dGraphView.ml" 229 8446 8466
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 233 8496 8518 "dgraph/dGraphView.ml" 233 8496 8520
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 234 8523 8533 "dgraph/dGraphView.ml" 234 8523 8538
+type(
+  float
+)
+"dgraph/dGraphView.ml" 234 8523 8541 "dgraph/dGraphView.ml" 234 8523 8545
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 234 8523 8541 "dgraph/dGraphView.ml" 234 8523 8557
+type(
+  GData.adjustment
+)
+"dgraph/dGraphView.ml" 234 8523 8541 "dgraph/dGraphView.ml" 234 8523 8567
+type(
+  float
+)
+"dgraph/dGraphView.ml" 235 8571 8581 "dgraph/dGraphView.ml" 235 8571 8587
+type(
+  float
+)
+"dgraph/dGraphView.ml" 235 8571 8590 "dgraph/dGraphView.ml" 235 8571 8594
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 235 8571 8590 "dgraph/dGraphView.ml" 235 8571 8606
+type(
+  GData.adjustment
+)
+"dgraph/dGraphView.ml" 235 8571 8590 "dgraph/dGraphView.ml" 235 8571 8616
+type(
+  float
+)
+"dgraph/dGraphView.ml" 236 8620 8630 "dgraph/dGraphView.ml" 236 8620 8636
+type(
+  float
+)
+"dgraph/dGraphView.ml" 236 8620 8639 "dgraph/dGraphView.ml" 236 8620 8644
+type(
+  float
+)
+ident(
+  int_ref width "dgraph/dGraphView.ml" 234 8523 8533 "dgraph/dGraphView.ml" 234 8523 8538
+)
+"dgraph/dGraphView.ml" 236 8620 8645 "dgraph/dGraphView.ml" 236 8620 8647
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"dgraph/dGraphView.ml" 236 8620 8648 "dgraph/dGraphView.ml" 236 8620 8657
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.abs_float
+)
+"dgraph/dGraphView.ml" 236 8620 8659 "dgraph/dGraphView.ml" 236 8620 8661
+type(
+  float
+)
+"dgraph/dGraphView.ml" 236 8620 8661 "dgraph/dGraphView.ml" 236 8620 8663
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"dgraph/dGraphView.ml" 236 8620 8663 "dgraph/dGraphView.ml" 236 8620 8665
+type(
+  float
+)
+"dgraph/dGraphView.ml" 236 8620 8658 "dgraph/dGraphView.ml" 236 8620 8666
+type(
+  float
+)
+"dgraph/dGraphView.ml" 236 8620 8648 "dgraph/dGraphView.ml" 236 8620 8666
+type(
+  float
+)
+"dgraph/dGraphView.ml" 236 8620 8639 "dgraph/dGraphView.ml" 236 8620 8666
+type(
+  float
+)
+"dgraph/dGraphView.ml" 237 8670 8680 "dgraph/dGraphView.ml" 237 8670 8686
+type(
+  float
+)
+"dgraph/dGraphView.ml" 237 8670 8689 "dgraph/dGraphView.ml" 237 8670 8695
+type(
+  float
+)
+ident(
+  int_ref height "dgraph/dGraphView.ml" 235 8571 8581 "dgraph/dGraphView.ml" 235 8571 8587
+)
+"dgraph/dGraphView.ml" 237 8670 8696 "dgraph/dGraphView.ml" 237 8670 8698
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"dgraph/dGraphView.ml" 237 8670 8699 "dgraph/dGraphView.ml" 237 8670 8708
+type(
+  float -> float
+)
+ident(
+  ext_ref Pervasives.abs_float
+)
+"dgraph/dGraphView.ml" 237 8670 8710 "dgraph/dGraphView.ml" 237 8670 8712
+type(
+  float
+)
+"dgraph/dGraphView.ml" 237 8670 8712 "dgraph/dGraphView.ml" 237 8670 8714
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"dgraph/dGraphView.ml" 237 8670 8714 "dgraph/dGraphView.ml" 237 8670 8716
+type(
+  float
+)
+"dgraph/dGraphView.ml" 237 8670 8709 "dgraph/dGraphView.ml" 237 8670 8717
+type(
+  float
+)
+"dgraph/dGraphView.ml" 237 8670 8699 "dgraph/dGraphView.ml" 237 8670 8717
+type(
+  float
+)
+"dgraph/dGraphView.ml" 237 8670 8689 "dgraph/dGraphView.ml" 237 8670 8717
+type(
+  float
+)
+"dgraph/dGraphView.ml" 238 8721 8727 "dgraph/dGraphView.ml" 238 8721 8731
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 238 8721 8727 "dgraph/dGraphView.ml" 238 8721 8739
+type(
+  float -> unit
+)
+"dgraph/dGraphView.ml" 238 8721 8741 "dgraph/dGraphView.ml" 238 8721 8744
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.min
+)
+"dgraph/dGraphView.ml" 238 8721 8745 "dgraph/dGraphView.ml" 238 8721 8747
+type(
+  float
+)
+"dgraph/dGraphView.ml" 238 8721 8749 "dgraph/dGraphView.ml" 238 8721 8752
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.min
+)
+"dgraph/dGraphView.ml" 238 8721 8753 "dgraph/dGraphView.ml" 238 8721 8759
+type(
+  float
+)
+ident(
+  int_ref w_zoom "dgraph/dGraphView.ml" 236 8620 8630 "dgraph/dGraphView.ml" 236 8620 8636
+)
+"dgraph/dGraphView.ml" 238 8721 8760 "dgraph/dGraphView.ml" 238 8721 8766
+type(
+  float
+)
+ident(
+  int_ref h_zoom "dgraph/dGraphView.ml" 237 8670 8680 "dgraph/dGraphView.ml" 237 8670 8686
+)
+"dgraph/dGraphView.ml" 238 8721 8748 "dgraph/dGraphView.ml" 238 8721 8767
+call(
+  stack
+)
+type(
+  float
+)
+"dgraph/dGraphView.ml" 238 8721 8740 "dgraph/dGraphView.ml" 238 8721 8768
+call(
+  stack
+)
+type(
+  float
+)
+"dgraph/dGraphView.ml" 238 8721 8727 "dgraph/dGraphView.ml" 238 8721 8768
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 237 8670 8676 "dgraph/dGraphView.ml" 238 8721 8768
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 236 8620 8626 "dgraph/dGraphView.ml" 238 8721 8768
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 235 8571 8577 "dgraph/dGraphView.ml" 238 8721 8768
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 234 8523 8529 "dgraph/dGraphView.ml" 238 8721 8768
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 243 8817 8849 "dgraph/dGraphView.ml" 243 8817 8851
+type(
+  GdkEvent.Key.t
+)
+ident(
+  def ev "dgraph/dGraphView.ml" 244 8854 8860 "dgraph/dGraphView.ml" 247 9026 9044
+)
+"dgraph/dGraphView.ml" 244 8854 8866 "dgraph/dGraphView.ml" 244 8854 8885
+type(
+  GdkEvent.Key.t -> Gdk.keysym
+)
+ident(
+  ext_ref GdkEvent.Key.keyval
+)
+"dgraph/dGraphView.ml" 244 8854 8886 "dgraph/dGraphView.ml" 244 8854 8888
+type(
+  GdkEvent.Key.t
+)
+ident(
+  int_ref ev "dgraph/dGraphView.ml" 243 8817 8849 "dgraph/dGraphView.ml" 243 8817 8851
+)
+"dgraph/dGraphView.ml" 244 8854 8866 "dgraph/dGraphView.ml" 244 8854 8888
+type(
+  Gdk.keysym
+)
+"dgraph/dGraphView.ml" 245 8894 8902 "dgraph/dGraphView.ml" 245 8894 8903
+type(
+  Gdk.keysym
+)
+ident(
+  def k "dgraph/dGraphView.ml" 245 8894 8904 "dgraph/dGraphView.ml" 245 8894 8962
+)
+"dgraph/dGraphView.ml" 245 8894 8909 "dgraph/dGraphView.ml" 245 8894 8910
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "dgraph/dGraphView.ml" 245 8894 8902 "dgraph/dGraphView.ml" 245 8894 8903
+)
+"dgraph/dGraphView.ml" 245 8894 8911 "dgraph/dGraphView.ml" 245 8894 8912
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/dGraphView.ml" 245 8894 8913 "dgraph/dGraphView.ml" 245 8894 8936
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._KP_Subtract
+)
+"dgraph/dGraphView.ml" 245 8894 8909 "dgraph/dGraphView.ml" 245 8894 8936
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 245 8894 8940 "dgraph/dGraphView.ml" 245 8894 8944
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 245 8894 8940 "dgraph/dGraphView.ml" 245 8894 8953
+type(
+  unit -> unit
+)
+"dgraph/dGraphView.ml" 245 8894 8954 "dgraph/dGraphView.ml" 245 8894 8956
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 245 8894 8940 "dgraph/dGraphView.ml" 245 8894 8956
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 245 8894 8958 "dgraph/dGraphView.ml" 245 8894 8962
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 245 8894 8940 "dgraph/dGraphView.ml" 245 8894 8962
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 245 8894 8904 "dgraph/dGraphView.ml" 245 8894 8962
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 246 8963 8971 "dgraph/dGraphView.ml" 246 8963 8972
+type(
+  Gdk.keysym
+)
+ident(
+  def k "dgraph/dGraphView.ml" 246 8963 8973 "dgraph/dGraphView.ml" 246 8963 9025
+)
+"dgraph/dGraphView.ml" 246 8963 8978 "dgraph/dGraphView.ml" 246 8963 8979
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "dgraph/dGraphView.ml" 246 8963 8971 "dgraph/dGraphView.ml" 246 8963 8972
+)
+"dgraph/dGraphView.ml" 246 8963 8980 "dgraph/dGraphView.ml" 246 8963 8981
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"dgraph/dGraphView.ml" 246 8963 8982 "dgraph/dGraphView.ml" 246 8963 9000
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._KP_Add
+)
+"dgraph/dGraphView.ml" 246 8963 8978 "dgraph/dGraphView.ml" 246 8963 9000
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 246 8963 9004 "dgraph/dGraphView.ml" 246 8963 9008
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 246 8963 9004 "dgraph/dGraphView.ml" 246 8963 9016
+type(
+  unit -> unit
+)
+"dgraph/dGraphView.ml" 246 8963 9017 "dgraph/dGraphView.ml" 246 8963 9019
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 246 8963 9004 "dgraph/dGraphView.ml" 246 8963 9019
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 246 8963 9021 "dgraph/dGraphView.ml" 246 8963 9025
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 246 8963 9004 "dgraph/dGraphView.ml" 246 8963 9025
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 246 8963 8973 "dgraph/dGraphView.ml" 246 8963 9025
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 247 9026 9034 "dgraph/dGraphView.ml" 247 9026 9035
+type(
+  Gdk.keysym
+)
+"dgraph/dGraphView.ml" 247 9026 9039 "dgraph/dGraphView.ml" 247 9026 9044
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 244 8854 8860 "dgraph/dGraphView.ml" 247 9026 9044
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 250 9076 9109 "dgraph/dGraphView.ml" 250 9076 9111
+type(
+  GdkEvent.Scroll.t
+)
+ident(
+  def ev "dgraph/dGraphView.ml" 251 9114 9120 "dgraph/dGraphView.ml" 254 9237 9255
+)
+"dgraph/dGraphView.ml" 251 9114 9126 "dgraph/dGraphView.ml" 251 9114 9151
+type(
+  GdkEvent.Scroll.t -> Gdk.Tags.scroll_direction
+)
+ident(
+  ext_ref GdkEvent.Scroll.direction
+)
+"dgraph/dGraphView.ml" 251 9114 9152 "dgraph/dGraphView.ml" 251 9114 9154
+type(
+  GdkEvent.Scroll.t
+)
+ident(
+  int_ref ev "dgraph/dGraphView.ml" 250 9076 9109 "dgraph/dGraphView.ml" 250 9076 9111
+)
+"dgraph/dGraphView.ml" 251 9114 9126 "dgraph/dGraphView.ml" 251 9114 9154
+type(
+  Gdk.Tags.scroll_direction
+)
+"dgraph/dGraphView.ml" 252 9160 9168 "dgraph/dGraphView.ml" 252 9160 9171
+type(
+  Gdk.Tags.scroll_direction
+)
+"dgraph/dGraphView.ml" 252 9160 9175 "dgraph/dGraphView.ml" 252 9160 9179
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 252 9160 9175 "dgraph/dGraphView.ml" 252 9160 9187
+type(
+  unit -> unit
+)
+"dgraph/dGraphView.ml" 252 9160 9188 "dgraph/dGraphView.ml" 252 9160 9190
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 252 9160 9175 "dgraph/dGraphView.ml" 252 9160 9190
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 252 9160 9192 "dgraph/dGraphView.ml" 252 9160 9196
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 252 9160 9175 "dgraph/dGraphView.ml" 252 9160 9196
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 253 9197 9205 "dgraph/dGraphView.ml" 253 9197 9210
+type(
+  Gdk.Tags.scroll_direction
+)
+"dgraph/dGraphView.ml" 253 9197 9214 "dgraph/dGraphView.ml" 253 9197 9218
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 253 9197 9214 "dgraph/dGraphView.ml" 253 9197 9227
+type(
+  unit -> unit
+)
+"dgraph/dGraphView.ml" 253 9197 9228 "dgraph/dGraphView.ml" 253 9197 9230
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 253 9197 9214 "dgraph/dGraphView.ml" 253 9197 9230
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 253 9197 9232 "dgraph/dGraphView.ml" 253 9197 9236
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 253 9197 9214 "dgraph/dGraphView.ml" 253 9197 9236
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 254 9237 9245 "dgraph/dGraphView.ml" 254 9237 9246
+type(
+  Gdk.Tags.scroll_direction
+)
+"dgraph/dGraphView.ml" 254 9237 9250 "dgraph/dGraphView.ml" 254 9237 9255
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 251 9114 9120 "dgraph/dGraphView.ml" 254 9237 9255
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 256 9257 9279 "dgraph/dGraphView.ml" 256 9257 9284
+type(
+  (int32 * int32) option
+)
+ident(
+  def color "dgraph/dGraphView.ml" 256 9257 9285 "dgraph/dGraphView.ml" 263 9443 9448
+)
+"dgraph/dGraphView.ml" 256 9257 9285 "dgraph/dGraphView.ml" 256 9257 9289
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 257 9292 9298 "dgraph/dGraphView.ml" 263 9443 9448
+)
+"dgraph/dGraphView.ml" 257 9292 9302 "dgraph/dGraphView.ml" 257 9292 9303
+type(
+  < highlight : ?color:int32 * int32 -> unit -> 'c; .. > -> 'c
+)
+"dgraph/dGraphView.ml" 257 9292 9304 "dgraph/dGraphView.ml" 257 9292 9305
+type(
+  < highlight : ?color:int32 * int32 -> unit -> 'c; .. > as 'd
+)
+ident(
+  def e "dgraph/dGraphView.ml" 257 9292 9308 "dgraph/dGraphView.ml" 257 9292 9329
+)
+"dgraph/dGraphView.ml" 257 9292 9308 "dgraph/dGraphView.ml" 257 9292 9309
+type(
+  'd
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 257 9292 9304 "dgraph/dGraphView.ml" 257 9292 9305
+)
+"dgraph/dGraphView.ml" 257 9292 9308 "dgraph/dGraphView.ml" 257 9292 9319
+type(
+  ?color:int32 * int32 -> unit -> 'c
+)
+"dgraph/dGraphView.ml" 257 9292 9321 "dgraph/dGraphView.ml" 257 9292 9326
+type(
+  (int32 * int32) option
+)
+ident(
+  int_ref color "dgraph/dGraphView.ml" 256 9257 9279 "dgraph/dGraphView.ml" 256 9257 9284
+)
+"dgraph/dGraphView.ml" 257 9292 9327 "dgraph/dGraphView.ml" 257 9292 9329
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 257 9292 9308 "dgraph/dGraphView.ml" 257 9292 9329
+type(
+  'c
+)
+"dgraph/dGraphView.ml" 258 9333 9339 "dgraph/dGraphView.ml" 258 9333 9340
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 257 9292 9302 "dgraph/dGraphView.ml" 257 9292 9303
+)
+"dgraph/dGraphView.ml" 258 9333 9341 "dgraph/dGraphView.ml" 258 9333 9345
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 256 9257 9285 "dgraph/dGraphView.ml" 256 9257 9289
+)
+"dgraph/dGraphView.ml" 258 9333 9339 "dgraph/dGraphView.ml" 258 9333 9345
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 259 9347 9353 "dgraph/dGraphView.ml" 259 9347 9357
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 259 9347 9353 "dgraph/dGraphView.ml" 259 9347 9380
+type(
+  (HV.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 259 9347 9386 "dgraph/dGraphView.ml" 259 9347 9387
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def v "dgraph/dGraphView.ml" 260 9391 9392 "dgraph/dGraphView.ml" 262 9420 9441
+)
+"dgraph/dGraphView.ml" 260 9391 9392 "dgraph/dGraphView.ml" 260 9391 9393
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 257 9292 9302 "dgraph/dGraphView.ml" 257 9292 9303
+)
+"dgraph/dGraphView.ml" 260 9391 9394 "dgraph/dGraphView.ml" 260 9391 9395
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 259 9347 9386 "dgraph/dGraphView.ml" 259 9347 9387
+)
+"dgraph/dGraphView.ml" 260 9391 9392 "dgraph/dGraphView.ml" 260 9391 9395
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 261 9397 9398 "dgraph/dGraphView.ml" 261 9397 9402
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 261 9397 9398 "dgraph/dGraphView.ml" 261 9397 9414
+type(
+  (HE.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 261 9397 9415 "dgraph/dGraphView.ml" 261 9397 9416
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 257 9292 9302 "dgraph/dGraphView.ml" 257 9292 9303
+)
+"dgraph/dGraphView.ml" 261 9397 9417 "dgraph/dGraphView.ml" 261 9397 9418
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 259 9347 9386 "dgraph/dGraphView.ml" 259 9347 9387
+)
+"dgraph/dGraphView.ml" 261 9397 9398 "dgraph/dGraphView.ml" 261 9397 9418
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 262 9420 9421 "dgraph/dGraphView.ml" 262 9420 9425
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 262 9420 9421 "dgraph/dGraphView.ml" 262 9420 9437
+type(
+  (HE.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 262 9420 9438 "dgraph/dGraphView.ml" 262 9420 9439
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 257 9292 9302 "dgraph/dGraphView.ml" 257 9292 9303
+)
+"dgraph/dGraphView.ml" 262 9420 9440 "dgraph/dGraphView.ml" 262 9420 9441
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 259 9347 9386 "dgraph/dGraphView.ml" 259 9347 9387
+)
+"dgraph/dGraphView.ml" 262 9420 9421 "dgraph/dGraphView.ml" 262 9420 9441
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 261 9397 9398 "dgraph/dGraphView.ml" 262 9420 9441
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 260 9391 9392 "dgraph/dGraphView.ml" 262 9420 9441
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 259 9347 9381 "dgraph/dGraphView.ml" 262 9420 9442
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 263 9443 9444 "dgraph/dGraphView.ml" 263 9443 9448
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 256 9257 9285 "dgraph/dGraphView.ml" 256 9257 9289
+)
+"dgraph/dGraphView.ml" 259 9347 9353 "dgraph/dGraphView.ml" 263 9443 9448
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 258 9333 9339 "dgraph/dGraphView.ml" 263 9443 9448
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 257 9292 9298 "dgraph/dGraphView.ml" 263 9443 9448
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 265 9450 9473 "dgraph/dGraphView.ml" 265 9450 9477
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 266 9480 9486 "dgraph/dGraphView.ml" 272 9626 9631
+)
+"dgraph/dGraphView.ml" 266 9480 9490 "dgraph/dGraphView.ml" 266 9480 9491
+type(
+  < dehighlight : unit -> 'e; .. > -> 'e
+)
+"dgraph/dGraphView.ml" 266 9480 9492 "dgraph/dGraphView.ml" 266 9480 9493
+type(
+  < dehighlight : unit -> 'e; .. > as 'f
+)
+ident(
+  def e "dgraph/dGraphView.ml" 266 9480 9496 "dgraph/dGraphView.ml" 266 9480 9512
+)
+"dgraph/dGraphView.ml" 266 9480 9496 "dgraph/dGraphView.ml" 266 9480 9497
+type(
+  'f
+)
+ident(
+  int_ref e "dgraph/dGraphView.ml" 266 9480 9492 "dgraph/dGraphView.ml" 266 9480 9493
+)
+"dgraph/dGraphView.ml" 266 9480 9496 "dgraph/dGraphView.ml" 266 9480 9509
+type(
+  unit -> 'e
+)
+"dgraph/dGraphView.ml" 266 9480 9510 "dgraph/dGraphView.ml" 266 9480 9512
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 266 9480 9496 "dgraph/dGraphView.ml" 266 9480 9512
+type(
+  'e
+)
+"dgraph/dGraphView.ml" 267 9516 9522 "dgraph/dGraphView.ml" 267 9516 9523
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 266 9480 9490 "dgraph/dGraphView.ml" 266 9480 9491
+)
+"dgraph/dGraphView.ml" 267 9516 9524 "dgraph/dGraphView.ml" 267 9516 9528
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 265 9450 9473 "dgraph/dGraphView.ml" 265 9450 9477
+)
+"dgraph/dGraphView.ml" 267 9516 9522 "dgraph/dGraphView.ml" 267 9516 9528
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 268 9530 9536 "dgraph/dGraphView.ml" 268 9530 9540
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 268 9530 9536 "dgraph/dGraphView.ml" 268 9530 9563
+type(
+  (HV.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 268 9530 9569 "dgraph/dGraphView.ml" 268 9530 9570
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def v "dgraph/dGraphView.ml" 269 9574 9575 "dgraph/dGraphView.ml" 271 9603 9624
+)
+"dgraph/dGraphView.ml" 269 9574 9575 "dgraph/dGraphView.ml" 269 9574 9576
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 266 9480 9490 "dgraph/dGraphView.ml" 266 9480 9491
+)
+"dgraph/dGraphView.ml" 269 9574 9577 "dgraph/dGraphView.ml" 269 9574 9578
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 268 9530 9569 "dgraph/dGraphView.ml" 268 9530 9570
+)
+"dgraph/dGraphView.ml" 269 9574 9575 "dgraph/dGraphView.ml" 269 9574 9578
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 270 9580 9581 "dgraph/dGraphView.ml" 270 9580 9585
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 270 9580 9581 "dgraph/dGraphView.ml" 270 9580 9597
+type(
+  (HE.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 270 9580 9598 "dgraph/dGraphView.ml" 270 9580 9599
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 266 9480 9490 "dgraph/dGraphView.ml" 266 9480 9491
+)
+"dgraph/dGraphView.ml" 270 9580 9600 "dgraph/dGraphView.ml" 270 9580 9601
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 268 9530 9569 "dgraph/dGraphView.ml" 268 9530 9570
+)
+"dgraph/dGraphView.ml" 270 9580 9581 "dgraph/dGraphView.ml" 270 9580 9601
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 271 9603 9604 "dgraph/dGraphView.ml" 271 9603 9608
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 271 9603 9604 "dgraph/dGraphView.ml" 271 9603 9620
+type(
+  (HE.key DGraphViewItem.view_item -> unit) ->
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 271 9603 9621 "dgraph/dGraphView.ml" 271 9603 9622
+type(
+  HE.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref h "dgraph/dGraphView.ml" 266 9480 9490 "dgraph/dGraphView.ml" 266 9480 9491
+)
+"dgraph/dGraphView.ml" 271 9603 9623 "dgraph/dGraphView.ml" 271 9603 9624
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref v "dgraph/dGraphView.ml" 268 9530 9569 "dgraph/dGraphView.ml" 268 9530 9570
+)
+"dgraph/dGraphView.ml" 271 9603 9604 "dgraph/dGraphView.ml" 271 9603 9624
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 270 9580 9581 "dgraph/dGraphView.ml" 271 9603 9624
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 269 9574 9575 "dgraph/dGraphView.ml" 271 9603 9624
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 268 9530 9564 "dgraph/dGraphView.ml" 271 9603 9625
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 272 9626 9627 "dgraph/dGraphView.ml" 272 9626 9631
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 265 9450 9473 "dgraph/dGraphView.ml" 265 9450 9477
+)
+"dgraph/dGraphView.ml" 268 9530 9536 "dgraph/dGraphView.ml" 272 9626 9631
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 267 9516 9522 "dgraph/dGraphView.ml" 272 9626 9631
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 266 9480 9486 "dgraph/dGraphView.ml" 272 9626 9631
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 274 9633 9671 "dgraph/dGraphView.ml" 274 9633 9673
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 275 9676 9686 "dgraph/dGraphView.ml" 275 9676 9693
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 275 9676 9694 "dgraph/dGraphView.ml" 275 9676 9698
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  def node "dgraph/dGraphView.ml" 276 9701 9702 "dgraph/dGraphView.ml" 281 9851 9880
+)
+"dgraph/dGraphView.ml" 276 9701 9706 "dgraph/dGraphView.ml" 276 9701 9714
+type(
+  [> `LEAVE_NOTIFY of 'g | `MOTION_NOTIFY of 'h ] -> bool
+)
+"dgraph/dGraphView.ml" 277 9726 9746 "dgraph/dGraphView.ml" 277 9726 9747
+type(
+  'h
+)
+"dgraph/dGraphView.ml" 277 9726 9731 "dgraph/dGraphView.ml" 277 9726 9747
+type(
+  [> `LEAVE_NOTIFY of 'g | `MOTION_NOTIFY of 'h ] as 'i
+)
+"dgraph/dGraphView.ml" 277 9726 9751 "dgraph/dGraphView.ml" 277 9726 9755
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 277 9726 9751 "dgraph/dGraphView.ml" 277 9726 9765
+type(
+  ?color:int32 * int32 -> HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 277 9726 9766 "dgraph/dGraphView.ml" 277 9726 9770
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 275 9676 9694 "dgraph/dGraphView.ml" 275 9676 9698
+)
+"dgraph/dGraphView.ml" 277 9726 9751 "dgraph/dGraphView.ml" 277 9726 9770
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 277 9726 9772 "dgraph/dGraphView.ml" 277 9726 9777
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 277 9726 9751 "dgraph/dGraphView.ml" 277 9726 9777
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 278 9778 9797 "dgraph/dGraphView.ml" 278 9778 9798
+type(
+  'g
+)
+"dgraph/dGraphView.ml" 278 9778 9783 "dgraph/dGraphView.ml" 278 9778 9798
+type(
+  'i
+)
+"dgraph/dGraphView.ml" 278 9778 9802 "dgraph/dGraphView.ml" 278 9778 9806
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 278 9778 9802 "dgraph/dGraphView.ml" 278 9778 9818
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+"dgraph/dGraphView.ml" 278 9778 9819 "dgraph/dGraphView.ml" 278 9778 9823
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 275 9676 9694 "dgraph/dGraphView.ml" 275 9676 9698
+)
+"dgraph/dGraphView.ml" 278 9778 9802 "dgraph/dGraphView.ml" 278 9778 9823
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 278 9778 9825 "dgraph/dGraphView.ml" 278 9778 9830
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 278 9778 9802 "dgraph/dGraphView.ml" 278 9778 9830
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 279 9831 9836 "dgraph/dGraphView.ml" 279 9831 9837
+type(
+  'i
+)
+"dgraph/dGraphView.ml" 279 9831 9841 "dgraph/dGraphView.ml" 279 9831 9846
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 276 9701 9717 "dgraph/dGraphView.ml" 279 9831 9846
+type(
+  'i -> bool
+)
+"dgraph/dGraphView.ml" 281 9851 9852 "dgraph/dGraphView.ml" 281 9851 9856
+type(
+  HV.key DGraphViewItem.view_item
+)
+ident(
+  int_ref node "dgraph/dGraphView.ml" 275 9676 9694 "dgraph/dGraphView.ml" 275 9676 9698
+)
+"dgraph/dGraphView.ml" 281 9851 9852 "dgraph/dGraphView.ml" 281 9851 9870
+type(
+  callback:(GnoCanvas.item_event -> bool) -> unit
+)
+"dgraph/dGraphView.ml" 281 9851 9872 "dgraph/dGraphView.ml" 281 9851 9880
+type(
+  GnoCanvas.item_event -> bool
+)
+ident(
+  int_ref callback "dgraph/dGraphView.ml" 276 9701 9706 "dgraph/dGraphView.ml" 276 9701 9714
+)
+"dgraph/dGraphView.ml" 281 9851 9852 "dgraph/dGraphView.ml" 281 9851 9880
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 276 9701 9702 "dgraph/dGraphView.ml" 281 9851 9880
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 283 9890 9896 "dgraph/dGraphView.ml" 283 9890 9900
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 283 9890 9896 "dgraph/dGraphView.ml" 283 9890 9911
+type(
+  (HV.key DGraphViewItem.view_item -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 283 9890 9912 "dgraph/dGraphView.ml" 283 9890 9919
+type(
+  HV.key DGraphViewItem.view_item -> unit
+)
+ident(
+  int_ref connect "dgraph/dGraphView.ml" 275 9676 9686 "dgraph/dGraphView.ml" 275 9676 9693
+)
+"dgraph/dGraphView.ml" 283 9890 9896 "dgraph/dGraphView.ml" 283 9890 9919
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 275 9676 9682 "dgraph/dGraphView.ml" 283 9890 9919
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 287 10014 10020 "dgraph/dGraphView.ml" 287 10014 10025
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 287 10014 10020 "dgraph/dGraphView.ml" 287 10014 10039
+type(
+  (HC.key -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 287 10014 10040 "dgraph/dGraphView.ml" 287 10014 10044
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 287 10014 10040 "dgraph/dGraphView.ml" 287 10014 10056
+type(
+  HC.key -> unit
+)
+"dgraph/dGraphView.ml" 287 10014 10020 "dgraph/dGraphView.ml" 287 10014 10056
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 288 10058 10064 "dgraph/dGraphView.ml" 288 10058 10069
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 288 10058 10064 "dgraph/dGraphView.ml" 288 10058 10081
+type(
+  (HV.key -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 288 10058 10082 "dgraph/dGraphView.ml" 288 10058 10086
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 288 10058 10082 "dgraph/dGraphView.ml" 288 10058 10097
+type(
+  HV.key -> unit
+)
+"dgraph/dGraphView.ml" 288 10058 10064 "dgraph/dGraphView.ml" 288 10058 10097
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 289 10099 10105 "dgraph/dGraphView.ml" 289 10099 10110
+type(
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model
+)
+"dgraph/dGraphView.ml" 289 10099 10105 "dgraph/dGraphView.ml" 289 10099 10123
+type(
+  (HE.key -> unit) -> unit
+)
+"dgraph/dGraphView.ml" 289 10099 10124 "dgraph/dGraphView.ml" 289 10099 10128
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 289 10099 10124 "dgraph/dGraphView.ml" 289 10099 10137
+type(
+  HE.key -> unit
+)
+"dgraph/dGraphView.ml" 289 10099 10105 "dgraph/dGraphView.ml" 289 10099 10137
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 291 10176 10182 "dgraph/dGraphView.ml" 291 10176 10188
+type(
+  unit -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphView.ml" 291 10176 10189 "dgraph/dGraphView.ml" 291 10176 10190
+type(
+  (unit -> unit) -> unit -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphView.ml" 28 1870 1874 "dgraph/dGraphView.ml" 28 1870 1877
+)
+"dgraph/dGraphView.ml" 291 10176 10191 "dgraph/dGraphView.ml" 291 10176 10195
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 291 10176 10191 "dgraph/dGraphView.ml" 291 10176 10220
+type(
+  bool -> unit
+)
+"dgraph/dGraphView.ml" 291 10176 10221 "dgraph/dGraphView.ml" 291 10176 10225
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 291 10176 10191 "dgraph/dGraphView.ml" 291 10176 10225
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 291 10176 10182 "dgraph/dGraphView.ml" 291 10176 10225
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 292 10227 10233 "dgraph/dGraphView.ml" 292 10227 10239
+type(
+  unit -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphView.ml" 292 10227 10240 "dgraph/dGraphView.ml" 292 10227 10241
+type(
+  (unit -> unit) -> unit -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphView.ml" 28 1870 1874 "dgraph/dGraphView.ml" 28 1870 1877
+)
+"dgraph/dGraphView.ml" 292 10227 10242 "dgraph/dGraphView.ml" 292 10227 10246
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 292 10227 10242 "dgraph/dGraphView.ml" 292 10227 10264
+type(
+  x1:float -> y1:float -> x2:float -> y2:float -> unit
+)
+"dgraph/dGraphView.ml" 292 10227 10266 "dgraph/dGraphView.ml" 292 10227 10268
+type(
+  float
+)
+"dgraph/dGraphView.ml" 292 10227 10270 "dgraph/dGraphView.ml" 292 10227 10272
+type(
+  float
+)
+"dgraph/dGraphView.ml" 292 10227 10274 "dgraph/dGraphView.ml" 292 10227 10276
+type(
+  float
+)
+"dgraph/dGraphView.ml" 292 10227 10278 "dgraph/dGraphView.ml" 292 10227 10280
+type(
+  float
+)
+"dgraph/dGraphView.ml" 292 10227 10242 "dgraph/dGraphView.ml" 292 10227 10280
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 292 10227 10233 "dgraph/dGraphView.ml" 292 10227 10280
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 294 10314 10320 "dgraph/dGraphView.ml" 294 10314 10326
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphView.ml" 294 10314 10327 "dgraph/dGraphView.ml" 294 10314 10328
+type(
+  (GtkSignal.id -> unit) -> GtkSignal.id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphView.ml" 28 1870 1874 "dgraph/dGraphView.ml" 28 1870 1877
+)
+"dgraph/dGraphView.ml" 294 10314 10329 "dgraph/dGraphView.ml" 294 10314 10333
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 294 10314 10329 "dgraph/dGraphView.ml" 294 10314 10339
+type(
+  GObj.event_ops
+)
+"dgraph/dGraphView.ml" 294 10314 10329 "dgraph/dGraphView.ml" 294 10314 10347
+type(
+  GObj.event_signals
+)
+"dgraph/dGraphView.ml" 294 10314 10329 "dgraph/dGraphView.ml" 294 10314 10357
+type(
+  callback:(GdkEvent.Key.t -> bool) -> GtkSignal.id
+)
+"dgraph/dGraphView.ml" 294 10314 10358 "dgraph/dGraphView.ml" 294 10314 10362
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 294 10314 10358 "dgraph/dGraphView.ml" 294 10314 10375
+type(
+  GdkEvent.Key.t -> bool
+)
+"dgraph/dGraphView.ml" 294 10314 10329 "dgraph/dGraphView.ml" 294 10314 10375
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphView.ml" 294 10314 10320 "dgraph/dGraphView.ml" 294 10314 10375
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 295 10377 10383 "dgraph/dGraphView.ml" 295 10377 10389
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphView.ml" 295 10377 10390 "dgraph/dGraphView.ml" 295 10377 10391
+type(
+  (GtkSignal.id -> unit) -> GtkSignal.id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphView.ml" 28 1870 1874 "dgraph/dGraphView.ml" 28 1870 1877
+)
+"dgraph/dGraphView.ml" 295 10377 10392 "dgraph/dGraphView.ml" 295 10377 10396
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 295 10377 10392 "dgraph/dGraphView.ml" 295 10377 10402
+type(
+  GObj.event_ops
+)
+"dgraph/dGraphView.ml" 295 10377 10392 "dgraph/dGraphView.ml" 295 10377 10410
+type(
+  GObj.event_signals
+)
+"dgraph/dGraphView.ml" 295 10377 10392 "dgraph/dGraphView.ml" 295 10377 10417
+type(
+  callback:(GdkEvent.Scroll.t -> bool) -> GtkSignal.id
+)
+"dgraph/dGraphView.ml" 295 10377 10418 "dgraph/dGraphView.ml" 295 10377 10422
+type(
+  'b
+)
+"dgraph/dGraphView.ml" 295 10377 10418 "dgraph/dGraphView.ml" 295 10377 10436
+type(
+  GdkEvent.Scroll.t -> bool
+)
+"dgraph/dGraphView.ml" 295 10377 10392 "dgraph/dGraphView.ml" 295 10377 10436
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphView.ml" 295 10377 10383 "dgraph/dGraphView.ml" 295 10377 10437
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 294 10314 10320 "dgraph/dGraphView.ml" 295 10377 10437
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 292 10227 10233 "dgraph/dGraphView.ml" 295 10377 10437
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 291 10176 10182 "dgraph/dGraphView.ml" 295 10377 10437
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 289 10099 10105 "dgraph/dGraphView.ml" 295 10377 10437
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 288 10058 10064 "dgraph/dGraphView.ml" 295 10377 10437
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 287 10014 10020 "dgraph/dGraphView.ml" 295 10377 10437
+type(
+  'b -> unit
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 299 10446 10452 "dgraph/dGraphView.ml" 299 10446 10456
+type(
+  ?aa:bool ->
+  ?delay_node:(HV.key -> bool) ->
+  ?delay_edge:(HE.key -> bool) ->
+  ?delay_cluster:(HC.key -> bool) ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) ->
+  ?show:bool -> (vertex, edge, cluster) DGraphModel.abstract_model -> view
+)
+ident(
+  def view "dgraph/dGraphView.ml" 314 11020 11028 "dgraph/dGraphView.ml" 316 11031 11034
+)
+"dgraph/dGraphView.ml" 300 10457 10465 "dgraph/dGraphView.ml" 300 10457 10467
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 300 10457 10468 "dgraph/dGraphView.ml" 300 10457 10473
+type(
+  bool
+)
+type(
+  bool
+)
+type(
+  bool
+)
+ident(
+  int_ref *sth* "dgraph/dGraphView.ml" 300 10457 10468 "dgraph/dGraphView.ml" 300 10457 10473
+)
+type(
+  bool option
+)
+type(
+  bool option
+)
+type(
+  bool
+)
+ident(
+  def *sth* "dgraph/dGraphView.ml" 300 10457 10468 "dgraph/dGraphView.ml" 300 10457 10473
+)
+type(
+  bool option
+)
+ident(
+  int_ref *opt* "dgraph/dGraphView.ml" 300 10457 10468 "dgraph/dGraphView.ml" 300 10457 10473
+)
+type(
+  bool option
+)
+ident(
+  def *opt* "dgraph/dGraphView.ml" 300 10457 10463 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 300 10457 10476 "dgraph/dGraphView.ml" 300 10457 10486
+type(
+  (HV.key -> bool) option
+)
+ident(
+  def delay_node "dgraph/dGraphView.ml" 300 10457 10487 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 300 10457 10488 "dgraph/dGraphView.ml" 300 10457 10498
+type(
+  (HE.key -> bool) option
+)
+ident(
+  def delay_edge "dgraph/dGraphView.ml" 300 10457 10499 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 300 10457 10500 "dgraph/dGraphView.ml" 300 10457 10513
+type(
+  (HC.key -> bool) option
+)
+ident(
+  def delay_cluster "dgraph/dGraphView.ml" 301 10514 10520 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 301 10514 10521 "dgraph/dGraphView.ml" 301 10514 10533
+type(
+  int option
+)
+ident(
+  def border_width "dgraph/dGraphView.ml" 301 10514 10534 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 301 10514 10535 "dgraph/dGraphView.ml" 301 10514 10540
+type(
+  int option
+)
+ident(
+  def width "dgraph/dGraphView.ml" 301 10514 10541 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 301 10514 10542 "dgraph/dGraphView.ml" 301 10514 10548
+type(
+  int option
+)
+ident(
+  def height "dgraph/dGraphView.ml" 301 10514 10549 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 301 10514 10550 "dgraph/dGraphView.ml" 301 10514 10557
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  def packing "dgraph/dGraphView.ml" 301 10514 10558 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 301 10514 10559 "dgraph/dGraphView.ml" 301 10514 10563
+type(
+  bool option
+)
+ident(
+  def show "dgraph/dGraphView.ml" 302 10564 10570 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 302 10564 10571 "dgraph/dGraphView.ml" 302 10564 10576
+type(
+  (vertex, edge, cluster) DGraphModel.abstract_model
+)
+ident(
+  def model "dgraph/dGraphView.ml" 303 10631 10635 "dgraph/dGraphView.ml" 314 11020 11028
+)
+"dgraph/dGraphView.ml" 303 10631 10639 "dgraph/dGraphView.ml" 303 10631 10645
+type(
+  GnoCanvas.canvas
+)
+"dgraph/dGraphView.ml" 304 10649 10655 "dgraph/dGraphView.ml" 304 10649 10671
+type(
+  ?aa:bool ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GnoCanvas.canvas
+)
+ident(
+  ext_ref GnoCanvas.canvas
+)
+"dgraph/dGraphView.ml" 304 10649 10673 "dgraph/dGraphView.ml" 304 10649 10675
+type(
+  bool
+)
+ident(
+  int_ref aa "dgraph/dGraphView.ml" 300 10457 10465 "dgraph/dGraphView.ml" 300 10457 10467
+)
+"dgraph/dGraphView.ml" 304 10649 10677 "dgraph/dGraphView.ml" 304 10649 10689
+type(
+  int option
+)
+ident(
+  int_ref border_width "dgraph/dGraphView.ml" 301 10514 10521 "dgraph/dGraphView.ml" 301 10514 10533
+)
+"dgraph/dGraphView.ml" 304 10649 10691 "dgraph/dGraphView.ml" 304 10649 10696
+type(
+  int option
+)
+ident(
+  int_ref width "dgraph/dGraphView.ml" 301 10514 10535 "dgraph/dGraphView.ml" 301 10514 10540
+)
+"dgraph/dGraphView.ml" 304 10649 10698 "dgraph/dGraphView.ml" 304 10649 10704
+type(
+  int option
+)
+ident(
+  int_ref height "dgraph/dGraphView.ml" 301 10514 10542 "dgraph/dGraphView.ml" 301 10514 10548
+)
+"dgraph/dGraphView.ml" 304 10649 10706 "dgraph/dGraphView.ml" 304 10649 10710
+type(
+  bool option
+)
+ident(
+  int_ref show "dgraph/dGraphView.ml" 301 10514 10559 "dgraph/dGraphView.ml" 301 10514 10563
+)
+"dgraph/dGraphView.ml" 304 10649 10712 "dgraph/dGraphView.ml" 304 10649 10719
+type(
+  (GObj.widget -> unit) option
+)
+ident(
+  int_ref packing "dgraph/dGraphView.ml" 301 10514 10550 "dgraph/dGraphView.ml" 301 10514 10557
+)
+"dgraph/dGraphView.ml" 304 10649 10720 "dgraph/dGraphView.ml" 304 10649 10722
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 304 10649 10655 "dgraph/dGraphView.ml" 304 10649 10722
+call(
+  stack
+)
+type(
+  GnoCanvas.canvas
+)
+"dgraph/dGraphView.ml" 307 10778 10782 "dgraph/dGraphView.ml" 307 10778 10788
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphView.ml" 307 10778 10789 "dgraph/dGraphView.ml" 307 10778 10790
+type(
+  (GtkSignal.id -> unit) -> GtkSignal.id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphView.ml" 28 1870 1874 "dgraph/dGraphView.ml" 28 1870 1877
+)
+"dgraph/dGraphView.ml" 307 10778 10791 "dgraph/dGraphView.ml" 307 10778 10797
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "dgraph/dGraphView.ml" 303 10631 10639 "dgraph/dGraphView.ml" 303 10631 10645
+)
+"dgraph/dGraphView.ml" 307 10778 10791 "dgraph/dGraphView.ml" 307 10778 10803
+type(
+  GObj.event_ops
+)
+"dgraph/dGraphView.ml" 307 10778 10791 "dgraph/dGraphView.ml" 307 10778 10811
+type(
+  GObj.event_signals
+)
+"dgraph/dGraphView.ml" 307 10778 10791 "dgraph/dGraphView.ml" 307 10778 10824
+type(
+  callback:(GdkEvent.Crossing.t -> bool) -> GtkSignal.id
+)
+"dgraph/dGraphView.ml" 308 10826 10837 "dgraph/dGraphView.ml" 308 10826 10838
+type(
+  GdkEvent.Crossing.t
+)
+"dgraph/dGraphView.ml" 308 10826 10842 "dgraph/dGraphView.ml" 308 10826 10848
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "dgraph/dGraphView.ml" 303 10631 10639 "dgraph/dGraphView.ml" 303 10631 10645
+)
+"dgraph/dGraphView.ml" 308 10826 10842 "dgraph/dGraphView.ml" 308 10826 10853
+type(
+  GObj.misc_ops
+)
+"dgraph/dGraphView.ml" 308 10826 10842 "dgraph/dGraphView.ml" 308 10826 10864
+type(
+  unit -> unit
+)
+"dgraph/dGraphView.ml" 308 10826 10865 "dgraph/dGraphView.ml" 308 10826 10867
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 308 10826 10842 "dgraph/dGraphView.ml" 308 10826 10867
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 308 10826 10870 "dgraph/dGraphView.ml" 308 10826 10875
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 308 10826 10842 "dgraph/dGraphView.ml" 308 10826 10875
+type(
+  bool
+)
+"dgraph/dGraphView.ml" 308 10826 10832 "dgraph/dGraphView.ml" 308 10826 10876
+type(
+  GdkEvent.Crossing.t -> bool
+)
+"dgraph/dGraphView.ml" 307 10778 10791 "dgraph/dGraphView.ml" 308 10826 10876
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphView.ml" 307 10778 10782 "dgraph/dGraphView.ml" 308 10826 10876
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphView.ml" 309 10879 10887 "dgraph/dGraphView.ml" 309 10879 10891
+type(
+  view
+)
+"dgraph/dGraphView.ml" 310 10895 10901 "dgraph/dGraphView.ml" 310 10895 10909
+type(
+  ?delay_node:(HV.key -> bool) ->
+  ?delay_edge:(HE.key -> bool) ->
+  ?delay_cluster:(HC.key -> bool) ->
+  GnomeCanvas.canvas Gtk.obj ->
+  (HV.key, HE.key, HC.key) DGraphModel.abstract_model -> view
+)
+"dgraph/dGraphView.ml" 310 10895 10911 "dgraph/dGraphView.ml" 310 10895 10921
+type(
+  (HV.key -> bool) option
+)
+ident(
+  int_ref delay_node "dgraph/dGraphView.ml" 300 10457 10476 "dgraph/dGraphView.ml" 300 10457 10486
+)
+"dgraph/dGraphView.ml" 310 10895 10923 "dgraph/dGraphView.ml" 310 10895 10933
+type(
+  (HE.key -> bool) option
+)
+ident(
+  int_ref delay_edge "dgraph/dGraphView.ml" 300 10457 10488 "dgraph/dGraphView.ml" 300 10457 10498
+)
+"dgraph/dGraphView.ml" 310 10895 10935 "dgraph/dGraphView.ml" 310 10895 10948
+type(
+  (HC.key -> bool) option
+)
+ident(
+  int_ref delay_cluster "dgraph/dGraphView.ml" 300 10457 10500 "dgraph/dGraphView.ml" 300 10457 10513
+)
+"dgraph/dGraphView.ml" 311 10949 10958 "dgraph/dGraphView.ml" 311 10949 10977
+type(
+  Gtk.widget Gtk.obj -> GnomeCanvas.canvas Gtk.obj
+)
+ident(
+  ext_ref Gobject.unsafe_cast
+)
+"dgraph/dGraphView.ml" 311 10949 10978 "dgraph/dGraphView.ml" 311 10949 10984
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "dgraph/dGraphView.ml" 303 10631 10639 "dgraph/dGraphView.ml" 303 10631 10645
+)
+"dgraph/dGraphView.ml" 311 10949 10978 "dgraph/dGraphView.ml" 311 10949 10994
+type(
+  Gtk.widget Gtk.obj
+)
+"dgraph/dGraphView.ml" 311 10949 10957 "dgraph/dGraphView.ml" 311 10949 10995
+type(
+  GnomeCanvas.canvas Gtk.obj
+)
+"dgraph/dGraphView.ml" 312 10997 11005 "dgraph/dGraphView.ml" 312 10997 11010
+type(
+  (vertex, edge, cluster) DGraphModel.abstract_model
+)
+ident(
+  int_ref model "dgraph/dGraphView.ml" 302 10564 10571 "dgraph/dGraphView.ml" 302 10564 10576
+)
+"dgraph/dGraphView.ml" 310 10895 10901 "dgraph/dGraphView.ml" 312 10997 11010
+call(
+  stack
+)
+type(
+  view
+)
+"dgraph/dGraphView.ml" 314 11020 11024 "dgraph/dGraphView.ml" 314 11020 11028
+type(
+  view
+)
+ident(
+  int_ref view "dgraph/dGraphView.ml" 309 10879 10887 "dgraph/dGraphView.ml" 309 10879 10891
+)
+"dgraph/dGraphView.ml" 309 10879 10883 "dgraph/dGraphView.ml" 314 11020 11028
+type(
+  view
+)
+"dgraph/dGraphView.ml" 307 10778 10782 "dgraph/dGraphView.ml" 314 11020 11028
+type(
+  view
+)
+"dgraph/dGraphView.ml" 303 10631 10635 "dgraph/dGraphView.ml" 314 11020 11028
+type(
+  view
+)

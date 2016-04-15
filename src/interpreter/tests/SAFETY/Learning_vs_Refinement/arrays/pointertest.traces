@@ -1,0 +1,52 @@
+Start trace 
+       XXX
+0 :: 0: 	 FunctionCall(__BLAST_initialize_pointertest.i()) :: -1 
+      XXX
+0 :: 0: 	 Block(Return(0);) :: -1 
+      XXX
+-1 :: -1: 	 Skip :: 10 
+      XXX
+10 :: 10: 	 Block(f@main = &(q@main);g@main = &(r@main);) :: 12 
+      XXX
+12 :: 12: 	 FunctionCall(bar()) :: -1 
+      XXX
+2 :: 2: 	 Block(__retres@bar = 0;) :: 1 
+      XXX
+1 :: 1: 	 Block(Return(__retres@bar);) :: -1 
+      XXX
+-1 :: -1: 	 Skip :: 13 
+      XXX
+13 :: 13: 	 Block(x@main = &(f@main);y@main = &(g@main);) :: 15 
+      XXX
+15 :: 15: 	 FunctionCall(bar()) :: -1 
+      XXX
+2 :: 2: 	 Block(__retres@bar = 0;) :: 1 
+      XXX
+1 :: 1: 	 Block(Return(__retres@bar);) :: -1 
+      XXX
+-1 :: -1: 	 Skip :: 16 
+      XXX
+16 :: 16: 	 Block(m2@main = * (y@main );* (m2@main ) = 3;) :: 18 
+      XXX
+18 :: 18: 	 FunctionCall(bar()) :: -1 
+      XXX
+2 :: 2: 	 Block(__retres@bar = 0;) :: 1 
+      XXX
+1 :: 1: 	 Block(Return(__retres@bar);) :: -1 
+      XXX
+-1 :: -1: 	 Skip :: 19 
+      XXX
+19 :: 19: 	 Block(* (x@main ) = * (y@main );mem_temp10@main = * (x@main );c@main =
+* (mem_temp10@main );) :: 21 
+      XXX
+21 :: 21: 	 FunctionCall(bar()) :: -1 
+      XXX
+2 :: 2: 	 Block(__retres@bar = 0;) :: 1 
+      XXX
+1 :: 1: 	 Block(Return(__retres@bar);) :: -1 
+      XXX
+-1 :: -1: 	 Skip :: 22 
+      XXX
+22 :: 22: 	 Pred(c@main  !=  3) :: -1 
+      XXX
+End trace

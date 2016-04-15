@@ -1,0 +1,242 @@
+#!/bin/bash
+
+stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
+log=log.txt
+
+TRACER_CMMD=$TRACER_PATH"/tracer.0.1"
+
+# is $1 installed?
+_have() { which "$1" &>/dev/null; }
+
+
+if ! _have $TRACER_CMMD;  
+then
+    echo "TRACER: command \"$1\" is not found."
+    echo "TRACER: add the directory where \"$1\" is located to \$PATH."
+    exit 0
+fi
+
+#######################################################################
+# Should not change below onwards
+#######################################################################
+abspath=$(cd ${0%/*} && echo $PWD/${0##*/})
+# to get the path only - not the script name - add
+TESTS_HOME=`dirname "$abspath"`
+
+currtest=""
+extra_options=" "
+block=""
+
+# counters
+counter=0
+success=0
+failure=0
+unexSuccess=0
+unexFailure=0
+dies=0
+
+usage() {
+cat <<EOF
+usage: $0 [options] 
+  -help         print this message
+  -block s      run the tests in block s (default "all")
+  -Wt <options> pass string options to TRACER
+  -all          run all the tests
+EOF
+}
+
+# process args
+while [ "$1" != "" ]; do
+  case "$1" in
+    -help)
+      usage
+      exit 0
+      ;;
+    -block)
+      shift
+      block="$block$1"
+     ;;     
+    -Wt)
+      shift 
+      extra_options="$1"
+      ;;	       
+    -all)
+     block="ALL"
+     ;;
+    *)
+      echo "unknown arg: $1"
+      usage
+      exit 2
+      ;;
+
+  esac
+  shift
+done
+
+
+#takes  no args -- just does a bunch of greps on the *.out file
+function getstatsSAFE() {
+if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}   
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program SAFE" >> $stat
+    echo `grep "States visited"  test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"   test_${currtest}_${counter}.out` >> $stat
+    echo `grep "MINMAX restarts" test_${currtest}_${counter}.out` >> $stat
+    success=$[ $success + 1 ]
+else 
+    if grep "UNSAFE" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexFailure=$[ $unexFailure + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]	
+    fi
+fi
+}
+
+function getstatsUNSAFE() {
+if grep "UNSAFE" test_${currtest}_${counter}.out; then
+    echo "Regression test on ${currtest}_${counter} OK" >> ${log}      
+    echo "[${counter}]: ${currtest}" >> $stat
+    echo "Program UNSAFE" >> $stat
+    echo `grep "States visited"  test_${currtest}_${counter}.out` >> $stat
+    echo `grep "Analysis time"   test_${currtest}_${counter}.out` >> $stat
+    echo `grep "MINMAX restarts" test_${currtest}_${counter}.out` >> $stat
+    failure=$[ $failure + 1 ]
+else 
+    if grep "SAFE ;-)" test_${currtest}_${counter}.out; then
+	echo "Regresion test on ${currtest}_${counter} FAILED" >> ${log}   
+        unexSuccess=$[ $unexSuccess + 1 ]
+    else
+	echo "Unexpected error ${currtest}" >> ${log}   
+	dies=$[ $dies + 1]	
+    fi
+fi
+}
+
+function cleanDirectory {
+    rm -f $1/*.clp
+    rm -f $1/*.dot
+    rm -f $1/*.out
+}
+
+function runSAFE {
+    currtest=$2
+    echo "[${counter}] ${currtest}.c $3" >> ${log}    
+    echo "------------ [$currtest] $*  ------------"
+    ${TRACER_CMMD} $1.c $3 > test_${currtest}_${counter}.out
+    getstatsSAFE
+    counter=$[ ${counter} + 1]
+}
+
+function runUNSAFE {
+    currtest=$2
+    echo "[${counter}] ${currtest}.c $3" >> ${log}   
+    echo "------------ [$currtest] $*  ------------"
+    ${TRACER_CMMD} $1.c $3 > test_${currtest}_${counter}.out
+    getstatsUNSAFE
+    counter=$[ ${counter} + 1]
+}
+
+
+blockNTWINDOWSDRIVERS(){
+    OPTIONS="-optimized-version y -intp wp $extra_options"
+    runSAFE   "kbfiltr"          "kbfiltr"           "$OPTIONS"
+    runUNSAFE "kbfiltr-unsafe1"  "kbfiltr-unsafe1"   "$OPTIONS"
+    runUNSAFE "kbfiltr-unsafe2"  "kbfiltr-unsafe2"   "$OPTIONS"
+    runSAFE   "diskperf" "diskperf"  "$OPTIONS"
+    runSAFE   "floppy"   "floppy"    "$OPTIONS"
+    runSAFE   "cdaudio"  "cdaudio"   "$OPTIONS"
+}
+
+blockLINUXDRIVERS(){
+    OPTIONS="-optimized-version y -intp wp $extra_options"
+    runSAFE   "qpmouse"     "qpmouse"   "$OPTIONS"
+    runSAFE   "tlan"        "tlan"      "$OPTIONS"
+}
+
+blockTCAS(){
+    OPTIONS="-optimized-version y -intp wp $extra_options"
+    runSAFE   "tcas1a"    "tcas1a" "$OPTIONS"
+    runSAFE   "tcas1b"    "tcas1b" "$OPTIONS"
+    runSAFE   "tcas2a"    "tcas2a" "$OPTIONS"
+    runUNSAFE "tcas2b"    "tcas2b" "$OPTIONS"
+    runUNSAFE "tcas3a"    "tcas3a" "$OPTIONS"
+    runSAFE   "tcas3b"    "tcas3b" "$OPTIONS"
+    runUNSAFE "tcas4a"    "tcas4a" "$OPTIONS"
+    runUNSAFE "tcas4b"    "tcas4b" "$OPTIONS"
+    runSAFE   "tcas5a"    "tcas5a" "$OPTIONS"
+    runUNSAFE "tcas5b"    "tcas5b" "$OPTIONS"
+
+}
+
+blockSSH(){
+    OPTIONS="-optimized-version y -h 1 -intp wp $extra_options"
+    runSAFE "s3_clnt.blast.1"  "s3_clnt.blast.1"   "$OPTIONS"
+    runSAFE "s3_clnt.blast.2"  "s3_clnt.blast.2"   "$OPTIONS"
+    runSAFE "s3_clnt.blast.3"  "s3_clnt.blast.3"   "$OPTIONS"
+    runSAFE "s3_clnt.blast.4"  "s3_clnt.blast.4"   "$OPTIONS"
+
+    runSAFE "s3_srvr.blast.2"  "s3_srvr.blast.2"   "$OPTIONS"
+    runSAFE "s3_srvr.blast.3"  "s3_srvr.blast.3"   "$OPTIONS"
+    runSAFE "s3_srvr.blast.4"  "s3_srvr.blast.4"   "$OPTIONS"
+    runSAFE "s3_srvr.blast.13"  "s3_srvr.blast.13"   "$OPTIONS"
+}
+    
+runAllTests(){
+    blockNTWINDOWSDRIVERS
+    blockLINUXDRIVERS
+    blockTCAS
+    blockSSH
+}
+
+# process args
+echo $block
+case "$block" in
+    
+    NTWINDOWSDRIVERS)
+	shift
+	blockNTWINDOWSDRIVERS
+	;;    
+    LINUXDRIVERS)
+	shift
+	blockLINUXDRIVERS
+	;;   
+    TCAS)
+	shift
+	blockTCAS
+	;;   
+    SSH)
+	shift
+	blockSSH
+	;;
+    ALL)
+	runAllTests
+	;;
+    *)
+	echo "unknown block!: $block"
+	usage
+	exit 2
+	;;
+esac  
+shift
+   
+# Clean temporary files
+cleanDirectory "."
+
+echo ""                                     >> ${log}   
+echo ""                                     
+echo "Successful tests:      $success"      >> ${log}   
+echo "Successful tests:      $success"     
+echo "Failed as expected:    $failure"      >> ${log}      
+echo "Failed as expected:    $failure"      
+echo "Unexpected success:    $unexSuccess"  >> ${log}   
+echo "Unexpected success:    $unexSuccess"  
+echo "Unexpected failure:    $unexFailure"  >> ${log}   
+echo "Unexpected failure:    $unexFailure"  
+echo "No Answer:             $dies"         >> ${log}   
+echo "No Answer:             $dies"         
+
+
+

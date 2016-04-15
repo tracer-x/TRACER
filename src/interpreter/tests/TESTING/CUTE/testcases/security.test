@@ -1,0 +1,11 @@
+rm -f output
+
+echo "crashes in 1444 runs"
+sleep 2
+#crashes in 1444 runs
+../cutec tmn run7
+../cute tmn -i 2000 -q
+../cuteStat.exe
+
+cat output
+../clean

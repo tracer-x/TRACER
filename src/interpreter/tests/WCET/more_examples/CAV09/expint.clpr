@@ -1,0 +1,67 @@
+
+
+loop1([I,II,NM1,I,II,NM1], 0) :- I>100, !.
+loop1([I,II,NM1,If,IIf,NM1f], T+U) :-
+	straightline11(0, [I,II,NM1,If1,IIf1,NM1f1], U),
+	loop1([If1,IIf1,NM1f1,If,IIf,NM1f], T).
+
+loop2([I,II,NM1,I,II,NM1], 0) :- II>NM1, !.
+loop2([I,II,NM1,If,IIf,NM1f], T+1) :-
+	loop2([I,II+1,NM1,If,IIf,NM1f], T).
+
+loop3([N,X,I,II,NM1,N,X,I,II,NM1], 0) :- I>100, !.
+loop3([N,X,I,II,NM1,N,X,I,II,NM1], 0) :-
+	A=(-I)*(NM1+I), B=X+N+2, D=10*(A*3e7+B),
+	C=B+(A/2e6), Del=C*D, Del<10000, !.
+loop3([N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T+1) :-
+	loop3([N,X,I+1,II,NM1,Nf,Xf,If,IIf,NM1f], T).
+	
+
+straightline0(0, [N,X,I,II,_NM1,Nf,Xf,If,IIf,NM1f], T+1) :-
+	NM1=N-1,
+	straightline0(1, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T).
+straightline0(1, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T+1) :-
+	X>1,
+	straightline0(2, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T).
+straightline0(1, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T+1) :-
+	X<=1,
+	straightline0(5, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T).
+straightline0(2, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T+1) :-
+	straightline0(3, [N,X,I,II,NM1,Nf,Xf,If,IIf,NM1f], T).
+straightline0(3, [N,X,_I,II,NM1,Nf,Xf,If,IIf,NM1f], T+U) :-
+	loop3([N,X,1,II,NM1,Nf1,Xf1,If1,IIf1,NM1f1], U),
+	straightline0(100, [Nf1,Xf1,If1,IIf1,NM1f1,Nf,Xf,If,IIf,NM1f], T).
+straightline0(5, [N,X,_I,II,NM1,Nf,Xf,If,IIf,NM1f], T+U) :-
+	loop1([1,II,NM1,If1,IIf1,NM1f1], U),
+	straightline0(100, [N,X,If1,IIf1,NM1f1,Nf,Xf,If,IIf,NM1f], T).
+straightline0(100, [N,X,I,II,NM1,N,X,I,II,NM1], 0).
+
+
+straightline11(0, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	I < NM1,
+	straightline11(1, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(0, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	I > NM1,
+	straightline11(1, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(1, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	straightline11(6, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(0, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	I = NM1,
+	straightline11(2, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(2, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	straightline11(3, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(3, [I,_II,NM1,If,IIf,NM1f], T+U) :-
+	loop2([I,1,NM1,If1,IIf1,NM1f1], U),
+	straightline11(4, [If1,IIf1,NM1f1,If,IIf,NM1f], T).
+straightline11(4, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	straightline11(5, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(5, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	straightline11(6, [I,II,NM1,If,IIf,NM1f], T).
+straightline11(6, [I,II,NM1,If,IIf,NM1f], T+1) :-
+	straightline11(7, [I+1,II,NM1,If,IIf,NM1f], T).
+straightline11(7, [I,II,NM1,I,II,NM1], 0).
+
+execute(_Simulation,T,[80,1,I,II,NM1]) :-
+	straightline0(0, [80,1,I,II,NM1,_Nf,_Xf,_If,_IIf,_NM1f], T).
+
+:- consult('test_engine.clpr').

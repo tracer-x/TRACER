@@ -1,0 +1,26 @@
+#!/bin/sed -f
+# Simple Sed Program to remove all comments from a CLPR program
+
+# Delete empty lines
+/^$/d 
+/./!d
+
+# Delete % ...
+/^\(\s*%\).*$/d
+
+#/ *% */d
+
+# if no /* get next
+/\/\*/!b
+# here we've got an /*, append lines until get the corresponding
+# */
+:x
+/\*\//!{
+N
+bx
+}
+# delete /*...*/
+s/\/\*.*\*\///
+
+
+

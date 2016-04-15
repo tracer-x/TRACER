@@ -1,0 +1,5945 @@
+"view_graph/viewGraph_select.ml" 21 1347 1351 "view_graph/viewGraph_select.ml" 21 1347 1356
+type(
+  ('a, Format.formatter, unit) format -> 'a
+)
+ident(
+  def debug "view_graph/viewGraph_select.ml" 35 1975 1975 --
+)
+"view_graph/viewGraph_select.ml" 21 1347 1357 "view_graph/viewGraph_select.ml" 21 1347 1363
+type(
+  ('a, Format.formatter, unit) format
+)
+ident(
+  def format "view_graph/viewGraph_select.ml" 22 1366 1368 "view_graph/viewGraph_select.ml" 24 1404 1454
+)
+"view_graph/viewGraph_select.ml" 22 1366 1371 "view_graph/viewGraph_select.ml" 22 1366 1375
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 23 1376 1383 "view_graph/viewGraph_select.ml" 23 1376 1396
+type(
+  ('a, Format.formatter, unit) format -> 'a
+)
+ident(
+  ext_ref Format.printf
+)
+"view_graph/viewGraph_select.ml" 23 1376 1397 "view_graph/viewGraph_select.ml" 23 1376 1403
+type(
+  ('a, Format.formatter, unit) format
+)
+ident(
+  int_ref format "view_graph/viewGraph_select.ml" 21 1347 1357 "view_graph/viewGraph_select.ml" 21 1347 1363
+)
+"view_graph/viewGraph_select.ml" 23 1376 1383 "view_graph/viewGraph_select.ml" 23 1376 1403
+call(
+  tail
+)
+type(
+  'a
+)
+"view_graph/viewGraph_select.ml" 24 1404 1411 "view_graph/viewGraph_select.ml" 24 1404 1426
+type(
+  Format.formatter -> ('a, Format.formatter, unit) format -> 'a
+)
+ident(
+  ext_ref Format.ifprintf
+)
+"view_graph/viewGraph_select.ml" 24 1404 1427 "view_graph/viewGraph_select.ml" 24 1404 1447
+type(
+  Format.formatter
+)
+ident(
+  ext_ref Format.std_formatter
+)
+"view_graph/viewGraph_select.ml" 24 1404 1448 "view_graph/viewGraph_select.ml" 24 1404 1454
+type(
+  ('a, Format.formatter, unit) format
+)
+ident(
+  int_ref format "view_graph/viewGraph_select.ml" 21 1347 1357 "view_graph/viewGraph_select.ml" 21 1347 1363
+)
+"view_graph/viewGraph_select.ml" 24 1404 1411 "view_graph/viewGraph_select.ml" 24 1404 1454
+call(
+  tail
+)
+type(
+  'a
+)
+"view_graph/viewGraph_select.ml" 22 1366 1368 "view_graph/viewGraph_select.ml" 24 1404 1454
+type(
+  'a
+)
+"view_graph/viewGraph_select.ml" 40 2124 2130 "view_graph/viewGraph_select.ml" 40 2124 2132
+type(
+  'a list * 'a list -> bool * ('a list * 'a list * 'b list)
+)
+ident(
+  def mk "view_graph/viewGraph_select.ml" 45 2269 2271 "view_graph/viewGraph_select.ml" 71 3159 3162
+)
+"view_graph/viewGraph_select.ml" 40 2124 2134 "view_graph/viewGraph_select.ml" 40 2124 2136
+type(
+  'a list
+)
+ident(
+  def l1 "view_graph/viewGraph_select.ml" 40 2124 2144 "view_graph/viewGraph_select.ml" 43 2233 2267
+)
+"view_graph/viewGraph_select.ml" 40 2124 2138 "view_graph/viewGraph_select.ml" 40 2124 2140
+type(
+  'a list
+)
+ident(
+  def l2 "view_graph/viewGraph_select.ml" 40 2124 2144 "view_graph/viewGraph_select.ml" 43 2233 2267
+)
+"view_graph/viewGraph_select.ml" 40 2124 2133 "view_graph/viewGraph_select.ml" 40 2124 2141
+type(
+  'a list * 'a list
+)
+"view_graph/viewGraph_select.ml" 40 2124 2150 "view_graph/viewGraph_select.ml" 40 2124 2152
+type(
+  'a list
+)
+ident(
+  int_ref l1 "view_graph/viewGraph_select.ml" 40 2124 2134 "view_graph/viewGraph_select.ml" 40 2124 2136
+)
+"view_graph/viewGraph_select.ml" 40 2124 2154 "view_graph/viewGraph_select.ml" 40 2124 2156
+type(
+  'a list
+)
+ident(
+  int_ref l2 "view_graph/viewGraph_select.ml" 40 2124 2138 "view_graph/viewGraph_select.ml" 40 2124 2140
+)
+"view_graph/viewGraph_select.ml" 40 2124 2150 "view_graph/viewGraph_select.ml" 40 2124 2156
+type(
+  'a list * 'a list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2168 "view_graph/viewGraph_select.ml" 41 2162 2170
+type(
+  'a list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2172 "view_graph/viewGraph_select.ml" 41 2162 2174
+type(
+  'a list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2168 "view_graph/viewGraph_select.ml" 41 2162 2174
+type(
+  'a list * 'a list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2178 "view_graph/viewGraph_select.ml" 41 2162 2182
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 41 2162 2185 "view_graph/viewGraph_select.ml" 41 2162 2187
+type(
+  'a list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2189 "view_graph/viewGraph_select.ml" 41 2162 2191
+type(
+  'a list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2193 "view_graph/viewGraph_select.ml" 41 2162 2195
+type(
+  'b list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2184 "view_graph/viewGraph_select.ml" 41 2162 2196
+type(
+  'a list * 'a list * 'b list
+)
+"view_graph/viewGraph_select.ml" 41 2162 2178 "view_graph/viewGraph_select.ml" 41 2162 2196
+type(
+  bool * ('a list * 'a list * 'b list)
+)
+"view_graph/viewGraph_select.ml" 42 2197 2203 "view_graph/viewGraph_select.ml" 42 2197 2205
+type(
+  'a list
+)
+"view_graph/viewGraph_select.ml" 42 2197 2207 "view_graph/viewGraph_select.ml" 42 2197 2209
+type(
+  'a list
+)
+ident(
+  def l2 "view_graph/viewGraph_select.ml" 42 2197 2213 "view_graph/viewGraph_select.ml" 42 2197 2232
+)
+"view_graph/viewGraph_select.ml" 42 2197 2203 "view_graph/viewGraph_select.ml" 42 2197 2209
+type(
+  'a list * 'a list
+)
+"view_graph/viewGraph_select.ml" 42 2197 2213 "view_graph/viewGraph_select.ml" 42 2197 2218
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 42 2197 2221 "view_graph/viewGraph_select.ml" 42 2197 2223
+type(
+  'a list
+)
+ident(
+  int_ref l2 "view_graph/viewGraph_select.ml" 42 2197 2207 "view_graph/viewGraph_select.ml" 42 2197 2209
+)
+"view_graph/viewGraph_select.ml" 42 2197 2225 "view_graph/viewGraph_select.ml" 42 2197 2227
+type(
+  'a list
+)
+"view_graph/viewGraph_select.ml" 42 2197 2229 "view_graph/viewGraph_select.ml" 42 2197 2231
+type(
+  'b list
+)
+"view_graph/viewGraph_select.ml" 42 2197 2220 "view_graph/viewGraph_select.ml" 42 2197 2232
+type(
+  'a list * 'a list * 'b list
+)
+"view_graph/viewGraph_select.ml" 42 2197 2213 "view_graph/viewGraph_select.ml" 42 2197 2232
+type(
+  bool * ('a list * 'a list * 'b list)
+)
+"view_graph/viewGraph_select.ml" 43 2233 2239 "view_graph/viewGraph_select.ml" 43 2233 2241
+type(
+  'a list
+)
+ident(
+  def l1 "view_graph/viewGraph_select.ml" 43 2233 2249 "view_graph/viewGraph_select.ml" 43 2233 2267
+)
+"view_graph/viewGraph_select.ml" 43 2233 2243 "view_graph/viewGraph_select.ml" 43 2233 2245
+type(
+  'a list
+)
+ident(
+  def l2 "view_graph/viewGraph_select.ml" 43 2233 2249 "view_graph/viewGraph_select.ml" 43 2233 2267
+)
+"view_graph/viewGraph_select.ml" 43 2233 2239 "view_graph/viewGraph_select.ml" 43 2233 2245
+type(
+  'a list * 'a list
+)
+"view_graph/viewGraph_select.ml" 43 2233 2249 "view_graph/viewGraph_select.ml" 43 2233 2253
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 43 2233 2256 "view_graph/viewGraph_select.ml" 43 2233 2258
+type(
+  'a list
+)
+ident(
+  int_ref l1 "view_graph/viewGraph_select.ml" 43 2233 2239 "view_graph/viewGraph_select.ml" 43 2233 2241
+)
+"view_graph/viewGraph_select.ml" 43 2233 2260 "view_graph/viewGraph_select.ml" 43 2233 2262
+type(
+  'a list
+)
+ident(
+  int_ref l2 "view_graph/viewGraph_select.ml" 43 2233 2243 "view_graph/viewGraph_select.ml" 43 2233 2245
+)
+"view_graph/viewGraph_select.ml" 43 2233 2264 "view_graph/viewGraph_select.ml" 43 2233 2266
+type(
+  'b list
+)
+"view_graph/viewGraph_select.ml" 43 2233 2255 "view_graph/viewGraph_select.ml" 43 2233 2267
+type(
+  'a list * 'a list * 'b list
+)
+"view_graph/viewGraph_select.ml" 43 2233 2249 "view_graph/viewGraph_select.ml" 43 2233 2267
+type(
+  bool * ('a list * 'a list * 'b list)
+)
+"view_graph/viewGraph_select.ml" 40 2124 2144 "view_graph/viewGraph_select.ml" 43 2233 2267
+type(
+  bool * ('a list * 'a list * 'b list)
+)
+"view_graph/viewGraph_select.ml" 45 2269 2275 "view_graph/viewGraph_select.ml" 45 2269 2287
+type(
+  'c * ('d list * 'e * 'f) -> ('c * 'd) option
+)
+ident(
+  def current_node "view_graph/viewGraph_select.ml" 49 2382 2384 "view_graph/viewGraph_select.ml" 71 3159 3162
+)
+"view_graph/viewGraph_select.ml" 45 2269 2288 "view_graph/viewGraph_select.ml" 45 2269 2293
+type(
+  'c * ('d list * 'e * 'f)
+)
+ident(
+  def lists "view_graph/viewGraph_select.ml" 45 2269 2296 "view_graph/viewGraph_select.ml" 47 2344 2380
+)
+"view_graph/viewGraph_select.ml" 45 2269 2302 "view_graph/viewGraph_select.ml" 45 2269 2307
+type(
+  'c * ('d list * 'e * 'f)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 45 2269 2288 "view_graph/viewGraph_select.ml" 45 2269 2293
+)
+"view_graph/viewGraph_select.ml" 46 2313 2319 "view_graph/viewGraph_select.ml" 46 2313 2320
+type(
+  'c
+)
+"view_graph/viewGraph_select.ml" 46 2313 2324 "view_graph/viewGraph_select.ml" 46 2313 2326
+type(
+  'd list
+)
+"view_graph/viewGraph_select.ml" 46 2313 2329 "view_graph/viewGraph_select.ml" 46 2313 2330
+type(
+  'e
+)
+"view_graph/viewGraph_select.ml" 46 2313 2332 "view_graph/viewGraph_select.ml" 46 2313 2333
+type(
+  'f
+)
+"view_graph/viewGraph_select.ml" 46 2313 2322 "view_graph/viewGraph_select.ml" 46 2313 2334
+type(
+  'd list * 'e * 'f
+)
+"view_graph/viewGraph_select.ml" 46 2313 2319 "view_graph/viewGraph_select.ml" 46 2313 2334
+type(
+  'c * ('d list * 'e * 'f)
+)
+"view_graph/viewGraph_select.ml" 46 2313 2339 "view_graph/viewGraph_select.ml" 46 2313 2343
+type(
+  ('c * 'd) option
+)
+"view_graph/viewGraph_select.ml" 47 2344 2350 "view_graph/viewGraph_select.ml" 47 2344 2351
+type(
+  'c
+)
+ident(
+  def b "view_graph/viewGraph_select.ml" 47 2344 2369 "view_graph/viewGraph_select.ml" 47 2344 2380
+)
+"view_graph/viewGraph_select.ml" 47 2344 2354 "view_graph/viewGraph_select.ml" 47 2344 2355
+type(
+  'd
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 47 2344 2369 "view_graph/viewGraph_select.ml" 47 2344 2380
+)
+"view_graph/viewGraph_select.ml" 47 2344 2357 "view_graph/viewGraph_select.ml" 47 2344 2358
+type(
+  'd list
+)
+"view_graph/viewGraph_select.ml" 47 2344 2354 "view_graph/viewGraph_select.ml" 47 2344 2358
+type(
+  'd list
+)
+"view_graph/viewGraph_select.ml" 47 2344 2360 "view_graph/viewGraph_select.ml" 47 2344 2361
+type(
+  'e
+)
+"view_graph/viewGraph_select.ml" 47 2344 2363 "view_graph/viewGraph_select.ml" 47 2344 2364
+type(
+  'f
+)
+"view_graph/viewGraph_select.ml" 47 2344 2353 "view_graph/viewGraph_select.ml" 47 2344 2365
+type(
+  'd list * 'e * 'f
+)
+"view_graph/viewGraph_select.ml" 47 2344 2350 "view_graph/viewGraph_select.ml" 47 2344 2365
+type(
+  'c * ('d list * 'e * 'f)
+)
+"view_graph/viewGraph_select.ml" 47 2344 2375 "view_graph/viewGraph_select.ml" 47 2344 2376
+type(
+  'c
+)
+ident(
+  int_ref b "view_graph/viewGraph_select.ml" 47 2344 2350 "view_graph/viewGraph_select.ml" 47 2344 2351
+)
+"view_graph/viewGraph_select.ml" 47 2344 2378 "view_graph/viewGraph_select.ml" 47 2344 2379
+type(
+  'd
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 47 2344 2354 "view_graph/viewGraph_select.ml" 47 2344 2355
+)
+"view_graph/viewGraph_select.ml" 47 2344 2374 "view_graph/viewGraph_select.ml" 47 2344 2380
+type(
+  'c * 'd
+)
+"view_graph/viewGraph_select.ml" 47 2344 2369 "view_graph/viewGraph_select.ml" 47 2344 2380
+type(
+  ('c * 'd) option
+)
+"view_graph/viewGraph_select.ml" 45 2269 2296 "view_graph/viewGraph_select.ml" 47 2344 2380
+type(
+  ('c * 'd) option
+)
+"view_graph/viewGraph_select.ml" 49 2382 2388 "view_graph/viewGraph_select.ml" 49 2382 2395
+type(
+  bool * ('g list * 'g list * 'g list) ->
+  bool * ('g list * 'g list * 'g list)
+)
+ident(
+  def go_next "view_graph/viewGraph_select.ml" 59 2735 2737 "view_graph/viewGraph_select.ml" 71 3159 3162
+)
+"view_graph/viewGraph_select.ml" 49 2382 2396 "view_graph/viewGraph_select.ml" 49 2382 2401
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+ident(
+  def lists "view_graph/viewGraph_select.ml" 50 2405 2409 "view_graph/viewGraph_select.ml" 57 2721 2733
+)
+"view_graph/viewGraph_select.ml" 50 2405 2413 "view_graph/viewGraph_select.ml" 50 2405 2418
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 50 2405 2427 "view_graph/viewGraph_select.ml" 50 2405 2432
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 49 2382 2396 "view_graph/viewGraph_select.ml" 49 2382 2401
+)
+"view_graph/viewGraph_select.ml" 51 2439 2445 "view_graph/viewGraph_select.ml" 51 2439 2446
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 51 2439 2449 "view_graph/viewGraph_select.ml" 51 2439 2451
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 51 2439 2453 "view_graph/viewGraph_select.ml" 51 2439 2455
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 51 2439 2457 "view_graph/viewGraph_select.ml" 51 2439 2459
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 51 2439 2448 "view_graph/viewGraph_select.ml" 51 2439 2460
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 51 2439 2445 "view_graph/viewGraph_select.ml" 51 2439 2460
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 51 2439 2464 "view_graph/viewGraph_select.ml" 51 2439 2469
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 49 2382 2396 "view_graph/viewGraph_select.ml" 49 2382 2401
+)
+"view_graph/viewGraph_select.ml" 52 2470 2476 "view_graph/viewGraph_select.ml" 52 2470 2477
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 52 2470 2480 "view_graph/viewGraph_select.ml" 52 2470 2482
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 52 2470 2484 "view_graph/viewGraph_select.ml" 52 2470 2485
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 52 2470 2487 "view_graph/viewGraph_select.ml" 52 2470 2488
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 52 2470 2479 "view_graph/viewGraph_select.ml" 52 2470 2489
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 52 2470 2476 "view_graph/viewGraph_select.ml" 52 2470 2489
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 53 2494 2502 "view_graph/viewGraph_select.ml" 53 2494 2514
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 54 2567 2573 "view_graph/viewGraph_select.ml" 54 2567 2574
+type(
+  bool
+)
+ident(
+  def b "view_graph/viewGraph_select.ml" 54 2567 2595 "view_graph/viewGraph_select.ml" 54 2567 2616
+)
+"view_graph/viewGraph_select.ml" 54 2567 2577 "view_graph/viewGraph_select.ml" 54 2567 2578
+type(
+  'g
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 54 2567 2595 "view_graph/viewGraph_select.ml" 54 2567 2616
+)
+"view_graph/viewGraph_select.ml" 54 2567 2580 "view_graph/viewGraph_select.ml" 54 2567 2582
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2577 "view_graph/viewGraph_select.ml" 54 2567 2582
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2584 "view_graph/viewGraph_select.ml" 54 2567 2586
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2588 "view_graph/viewGraph_select.ml" 54 2567 2590
+type(
+  'g list
+)
+ident(
+  def l3 "view_graph/viewGraph_select.ml" 54 2567 2595 "view_graph/viewGraph_select.ml" 54 2567 2616
+)
+"view_graph/viewGraph_select.ml" 54 2567 2576 "view_graph/viewGraph_select.ml" 54 2567 2591
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2573 "view_graph/viewGraph_select.ml" 54 2567 2591
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 54 2567 2595 "view_graph/viewGraph_select.ml" 54 2567 2596
+type(
+  bool
+)
+ident(
+  int_ref b "view_graph/viewGraph_select.ml" 54 2567 2573 "view_graph/viewGraph_select.ml" 54 2567 2574
+)
+"view_graph/viewGraph_select.ml" 54 2567 2599 "view_graph/viewGraph_select.ml" 54 2567 2601
+type(
+  'g list
+)
+ident(
+  int_ref l3 "view_graph/viewGraph_select.ml" 54 2567 2588 "view_graph/viewGraph_select.ml" 54 2567 2590
+)
+"view_graph/viewGraph_select.ml" 54 2567 2602 "view_graph/viewGraph_select.ml" 54 2567 2603
+type(
+  'g list -> 'g list -> 'g list
+)
+ident(
+  ext_ref Pervasives.@
+)
+"view_graph/viewGraph_select.ml" 54 2567 2605 "view_graph/viewGraph_select.ml" 54 2567 2606
+type(
+  'g
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 54 2567 2577 "view_graph/viewGraph_select.ml" 54 2567 2578
+)
+"view_graph/viewGraph_select.ml" 54 2567 2604 "view_graph/viewGraph_select.ml" 54 2567 2607
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2599 "view_graph/viewGraph_select.ml" 54 2567 2607
+call(
+  stack
+)
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2609 "view_graph/viewGraph_select.ml" 54 2567 2611
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2613 "view_graph/viewGraph_select.ml" 54 2567 2615
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2598 "view_graph/viewGraph_select.ml" 54 2567 2616
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 54 2567 2595 "view_graph/viewGraph_select.ml" 54 2567 2616
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 55 2617 2623 "view_graph/viewGraph_select.ml" 55 2617 2624
+type(
+  bool
+)
+ident(
+  def b "view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2670
+)
+"view_graph/viewGraph_select.ml" 55 2617 2627 "view_graph/viewGraph_select.ml" 55 2617 2628
+type(
+  'g
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2670
+)
+"view_graph/viewGraph_select.ml" 55 2617 2630 "view_graph/viewGraph_select.ml" 55 2617 2632
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2627 "view_graph/viewGraph_select.ml" 55 2617 2632
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2634 "view_graph/viewGraph_select.ml" 55 2617 2636
+type(
+  'g list
+)
+ident(
+  def l2 "view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2670
+)
+"view_graph/viewGraph_select.ml" 55 2617 2638 "view_graph/viewGraph_select.ml" 55 2617 2640
+type(
+  'g list
+)
+ident(
+  def l3 "view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2670
+)
+"view_graph/viewGraph_select.ml" 55 2617 2626 "view_graph/viewGraph_select.ml" 55 2617 2641
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2623 "view_graph/viewGraph_select.ml" 55 2617 2641
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2648
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"view_graph/viewGraph_select.ml" 55 2617 2649 "view_graph/viewGraph_select.ml" 55 2617 2650
+type(
+  bool
+)
+ident(
+  int_ref b "view_graph/viewGraph_select.ml" 55 2617 2623 "view_graph/viewGraph_select.ml" 55 2617 2624
+)
+"view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2650
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 55 2617 2653 "view_graph/viewGraph_select.ml" 55 2617 2655
+type(
+  'g list
+)
+ident(
+  int_ref l2 "view_graph/viewGraph_select.ml" 55 2617 2634 "view_graph/viewGraph_select.ml" 55 2617 2636
+)
+"view_graph/viewGraph_select.ml" 55 2617 2657 "view_graph/viewGraph_select.ml" 55 2617 2659
+type(
+  'g list
+)
+ident(
+  int_ref l3 "view_graph/viewGraph_select.ml" 55 2617 2638 "view_graph/viewGraph_select.ml" 55 2617 2640
+)
+"view_graph/viewGraph_select.ml" 55 2617 2660 "view_graph/viewGraph_select.ml" 55 2617 2661
+type(
+  'g list -> 'g list -> 'g list
+)
+ident(
+  ext_ref Pervasives.@
+)
+"view_graph/viewGraph_select.ml" 55 2617 2663 "view_graph/viewGraph_select.ml" 55 2617 2664
+type(
+  'g
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 55 2617 2627 "view_graph/viewGraph_select.ml" 55 2617 2628
+)
+"view_graph/viewGraph_select.ml" 55 2617 2662 "view_graph/viewGraph_select.ml" 55 2617 2665
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2657 "view_graph/viewGraph_select.ml" 55 2617 2665
+call(
+  stack
+)
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2667 "view_graph/viewGraph_select.ml" 55 2617 2669
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2652 "view_graph/viewGraph_select.ml" 55 2617 2670
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 55 2617 2645 "view_graph/viewGraph_select.ml" 55 2617 2670
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 56 2671 2677 "view_graph/viewGraph_select.ml" 56 2671 2678
+type(
+  bool
+)
+ident(
+  def b "view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2720
+)
+"view_graph/viewGraph_select.ml" 56 2671 2681 "view_graph/viewGraph_select.ml" 56 2671 2682
+type(
+  'g
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2720
+)
+"view_graph/viewGraph_select.ml" 56 2671 2684 "view_graph/viewGraph_select.ml" 56 2671 2686
+type(
+  'g list
+)
+ident(
+  def l1 "view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2720
+)
+"view_graph/viewGraph_select.ml" 56 2671 2681 "view_graph/viewGraph_select.ml" 56 2671 2686
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 56 2671 2688 "view_graph/viewGraph_select.ml" 56 2671 2690
+type(
+  'g list
+)
+ident(
+  def l2 "view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2720
+)
+"view_graph/viewGraph_select.ml" 56 2671 2692 "view_graph/viewGraph_select.ml" 56 2671 2694
+type(
+  'g list
+)
+ident(
+  def l3 "view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2720
+)
+"view_graph/viewGraph_select.ml" 56 2671 2680 "view_graph/viewGraph_select.ml" 56 2671 2695
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 56 2671 2677 "view_graph/viewGraph_select.ml" 56 2671 2695
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2700
+type(
+  bool
+)
+ident(
+  int_ref b "view_graph/viewGraph_select.ml" 56 2671 2677 "view_graph/viewGraph_select.ml" 56 2671 2678
+)
+"view_graph/viewGraph_select.ml" 56 2671 2703 "view_graph/viewGraph_select.ml" 56 2671 2705
+type(
+  'g list
+)
+ident(
+  int_ref l1 "view_graph/viewGraph_select.ml" 56 2671 2684 "view_graph/viewGraph_select.ml" 56 2671 2686
+)
+"view_graph/viewGraph_select.ml" 56 2671 2707 "view_graph/viewGraph_select.ml" 56 2671 2709
+type(
+  'g list
+)
+ident(
+  int_ref l2 "view_graph/viewGraph_select.ml" 56 2671 2688 "view_graph/viewGraph_select.ml" 56 2671 2690
+)
+"view_graph/viewGraph_select.ml" 56 2671 2711 "view_graph/viewGraph_select.ml" 56 2671 2713
+type(
+  'g list
+)
+ident(
+  int_ref l3 "view_graph/viewGraph_select.ml" 56 2671 2692 "view_graph/viewGraph_select.ml" 56 2671 2694
+)
+"view_graph/viewGraph_select.ml" 56 2671 2714 "view_graph/viewGraph_select.ml" 56 2671 2715
+type(
+  'g list -> 'g list -> 'g list
+)
+ident(
+  ext_ref Pervasives.@
+)
+"view_graph/viewGraph_select.ml" 56 2671 2717 "view_graph/viewGraph_select.ml" 56 2671 2718
+type(
+  'g
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 56 2671 2681 "view_graph/viewGraph_select.ml" 56 2671 2682
+)
+"view_graph/viewGraph_select.ml" 56 2671 2716 "view_graph/viewGraph_select.ml" 56 2671 2719
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 56 2671 2711 "view_graph/viewGraph_select.ml" 56 2671 2719
+call(
+  stack
+)
+type(
+  'g list
+)
+"view_graph/viewGraph_select.ml" 56 2671 2702 "view_graph/viewGraph_select.ml" 56 2671 2720
+type(
+  'g list * 'g list * 'g list
+)
+"view_graph/viewGraph_select.ml" 56 2671 2699 "view_graph/viewGraph_select.ml" 56 2671 2720
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 50 2405 2421 "view_graph/viewGraph_select.ml" 56 2671 2720
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 57 2721 2728 "view_graph/viewGraph_select.ml" 57 2721 2733
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 50 2405 2413 "view_graph/viewGraph_select.ml" 50 2405 2418
+)
+"view_graph/viewGraph_select.ml" 50 2405 2409 "view_graph/viewGraph_select.ml" 57 2721 2733
+type(
+  bool * ('g list * 'g list * 'g list)
+)
+"view_graph/viewGraph_select.ml" 59 2735 2741 "view_graph/viewGraph_select.ml" 59 2735 2747
+type(
+  bool * ('h list * 'h list * 'h list) ->
+  'h -> bool * ('h list * 'h list * 'h list)
+)
+ident(
+  def goto_n "view_graph/viewGraph_select.ml" 69 3136 3157 "view_graph/viewGraph_select.ml" 71 3159 3162
+)
+"view_graph/viewGraph_select.ml" 59 2735 2750 "view_graph/viewGraph_select.ml" 59 2735 2751
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 59 2735 2754 "view_graph/viewGraph_select.ml" 59 2735 2756
+type(
+  'h list
+)
+ident(
+  def l1 "view_graph/viewGraph_select.ml" 59 2735 2777 "view_graph/viewGraph_select.ml" 69 3136 3157
+)
+"view_graph/viewGraph_select.ml" 59 2735 2758 "view_graph/viewGraph_select.ml" 59 2735 2760
+type(
+  'h list
+)
+ident(
+  def l2 "view_graph/viewGraph_select.ml" 59 2735 2777 "view_graph/viewGraph_select.ml" 69 3136 3157
+)
+"view_graph/viewGraph_select.ml" 59 2735 2762 "view_graph/viewGraph_select.ml" 59 2735 2764
+type(
+  'h list
+)
+ident(
+  def l3 "view_graph/viewGraph_select.ml" 59 2735 2777 "view_graph/viewGraph_select.ml" 69 3136 3157
+)
+"view_graph/viewGraph_select.ml" 59 2735 2753 "view_graph/viewGraph_select.ml" 59 2735 2765
+type(
+  'h list * 'h list * 'h list
+)
+"view_graph/viewGraph_select.ml" 59 2735 2749 "view_graph/viewGraph_select.ml" 59 2735 2766
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 59 2735 2748 "view_graph/viewGraph_select.ml" 59 2735 2776
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  def lists "view_graph/viewGraph_select.ml" 59 2735 2777 "view_graph/viewGraph_select.ml" 69 3136 3157
+)
+"view_graph/viewGraph_select.ml" 59 2735 2777 "view_graph/viewGraph_select.ml" 59 2735 2778
+type(
+  'h
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 60 2781 2785 "view_graph/viewGraph_select.ml" 69 3136 3157
+)
+"view_graph/viewGraph_select.ml" 60 2781 2789 "view_graph/viewGraph_select.ml" 60 2781 2792
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 60 2781 2795 "view_graph/viewGraph_select.ml" 60 2781 2806
+type(
+  'h list -> int
+)
+ident(
+  ext_ref List.length
+)
+"view_graph/viewGraph_select.ml" 60 2781 2807 "view_graph/viewGraph_select.ml" 60 2781 2809
+type(
+  'h list
+)
+ident(
+  int_ref l1 "view_graph/viewGraph_select.ml" 59 2735 2754 "view_graph/viewGraph_select.ml" 59 2735 2756
+)
+"view_graph/viewGraph_select.ml" 60 2781 2795 "view_graph/viewGraph_select.ml" 60 2781 2809
+call(
+  stack
+)
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 60 2781 2810 "view_graph/viewGraph_select.ml" 60 2781 2811
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"view_graph/viewGraph_select.ml" 60 2781 2812 "view_graph/viewGraph_select.ml" 60 2781 2823
+type(
+  'h list -> int
+)
+ident(
+  ext_ref List.length
+)
+"view_graph/viewGraph_select.ml" 60 2781 2824 "view_graph/viewGraph_select.ml" 60 2781 2826
+type(
+  'h list
+)
+ident(
+  int_ref l2 "view_graph/viewGraph_select.ml" 59 2735 2758 "view_graph/viewGraph_select.ml" 59 2735 2760
+)
+"view_graph/viewGraph_select.ml" 60 2781 2812 "view_graph/viewGraph_select.ml" 60 2781 2826
+call(
+  stack
+)
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 60 2781 2795 "view_graph/viewGraph_select.ml" 60 2781 2826
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 60 2781 2827 "view_graph/viewGraph_select.ml" 60 2781 2828
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"view_graph/viewGraph_select.ml" 60 2781 2829 "view_graph/viewGraph_select.ml" 60 2781 2840
+type(
+  'h list -> int
+)
+ident(
+  ext_ref List.length
+)
+"view_graph/viewGraph_select.ml" 60 2781 2841 "view_graph/viewGraph_select.ml" 60 2781 2843
+type(
+  'h list
+)
+ident(
+  int_ref l3 "view_graph/viewGraph_select.ml" 59 2735 2762 "view_graph/viewGraph_select.ml" 59 2735 2764
+)
+"view_graph/viewGraph_select.ml" 60 2781 2829 "view_graph/viewGraph_select.ml" 60 2781 2843
+call(
+  stack
+)
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 60 2781 2795 "view_graph/viewGraph_select.ml" 60 2781 2843
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 61 2847 2859 "view_graph/viewGraph_select.ml" 61 2847 2863
+type(
+  int ->
+  bool * ('h list * 'h list * 'h list) ->
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 61 2847 2864 "view_graph/viewGraph_select.ml" 61 2847 2871
+type(
+  int
+)
+ident(
+  def nb_iter "view_graph/viewGraph_select.ml" 61 2847 2872 "view_graph/viewGraph_select.ml" 68 3103 3135
+)
+"view_graph/viewGraph_select.ml" 61 2847 2872 "view_graph/viewGraph_select.ml" 61 2847 2877
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  def lists "view_graph/viewGraph_select.ml" 62 2880 2886 "view_graph/viewGraph_select.ml" 68 3103 3135
+)
+"view_graph/viewGraph_select.ml" 62 2880 2892 "view_graph/viewGraph_select.ml" 62 2880 2904
+type(
+  bool * ('h list * 'h list * 'h list) -> (bool * 'h) option
+)
+ident(
+  int_ref current_node "view_graph/viewGraph_select.ml" 45 2269 2275 "view_graph/viewGraph_select.ml" 45 2269 2287
+)
+"view_graph/viewGraph_select.ml" 62 2880 2905 "view_graph/viewGraph_select.ml" 62 2880 2910
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 61 2847 2872 "view_graph/viewGraph_select.ml" 61 2847 2877
+)
+"view_graph/viewGraph_select.ml" 62 2880 2892 "view_graph/viewGraph_select.ml" 62 2880 2910
+call(
+  stack
+)
+type(
+  (bool * 'h) option
+)
+"view_graph/viewGraph_select.ml" 63 2916 2926 "view_graph/viewGraph_select.ml" 63 2916 2930
+type(
+  (bool * 'h) option
+)
+"view_graph/viewGraph_select.ml" 63 2916 2934 "view_graph/viewGraph_select.ml" 63 2916 2939
+type(
+  exn -> bool * ('h list * 'h list * 'h list)
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"view_graph/viewGraph_select.ml" 63 2916 2940 "view_graph/viewGraph_select.ml" 63 2916 2949
+type(
+  exn
+)
+"view_graph/viewGraph_select.ml" 63 2916 2934 "view_graph/viewGraph_select.ml" 63 2916 2949
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 64 2950 2966 "view_graph/viewGraph_select.ml" 64 2950 2967
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 64 2950 2969 "view_graph/viewGraph_select.ml" 64 2950 2974
+type(
+  'h
+)
+ident(
+  def cur_n "view_graph/viewGraph_select.ml" 65 2979 2991 "view_graph/viewGraph_select.ml" 68 3103 3135
+)
+"view_graph/viewGraph_select.ml" 64 2950 2965 "view_graph/viewGraph_select.ml" 64 2950 2975
+type(
+  bool * 'h
+)
+"view_graph/viewGraph_select.ml" 64 2950 2960 "view_graph/viewGraph_select.ml" 64 2950 2975
+type(
+  (bool * 'h) option
+)
+"view_graph/viewGraph_select.ml" 65 2979 2995 "view_graph/viewGraph_select.ml" 65 2979 3000
+type(
+  'h
+)
+ident(
+  int_ref cur_n "view_graph/viewGraph_select.ml" 64 2950 2969 "view_graph/viewGraph_select.ml" 64 2950 2974
+)
+"view_graph/viewGraph_select.ml" 65 2979 3001 "view_graph/viewGraph_select.ml" 65 2979 3002
+type(
+  'h -> 'h -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 65 2979 3003 "view_graph/viewGraph_select.ml" 65 2979 3004
+type(
+  'h
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 59 2735 2777 "view_graph/viewGraph_select.ml" 59 2735 2778
+)
+"view_graph/viewGraph_select.ml" 65 2979 2995 "view_graph/viewGraph_select.ml" 65 2979 3004
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 65 2979 3010 "view_graph/viewGraph_select.ml" 65 2979 3015
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 61 2847 2872 "view_graph/viewGraph_select.ml" 61 2847 2877
+)
+"view_graph/viewGraph_select.ml" 66 3016 3036 "view_graph/viewGraph_select.ml" 66 3016 3043
+type(
+  int
+)
+ident(
+  int_ref nb_iter "view_graph/viewGraph_select.ml" 61 2847 2864 "view_graph/viewGraph_select.ml" 61 2847 2871
+)
+"view_graph/viewGraph_select.ml" 66 3016 3044 "view_graph/viewGraph_select.ml" 66 3016 3046
+type(
+  int -> int -> bool
+)
+ident(
+  ext_ref Pervasives.>=
+)
+"view_graph/viewGraph_select.ml" 66 3016 3047 "view_graph/viewGraph_select.ml" 66 3016 3048
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 66 3016 3036 "view_graph/viewGraph_select.ml" 66 3016 3048
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 67 3054 3068 "view_graph/viewGraph_select.ml" 67 3054 3072
+type(
+  int ->
+  bool * ('h list * 'h list * 'h list) ->
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref find "view_graph/viewGraph_select.ml" 61 2847 2859 "view_graph/viewGraph_select.ml" 61 2847 2863
+)
+"view_graph/viewGraph_select.ml" 67 3054 3074 "view_graph/viewGraph_select.ml" 67 3054 3081
+type(
+  int
+)
+ident(
+  int_ref nb_iter "view_graph/viewGraph_select.ml" 61 2847 2864 "view_graph/viewGraph_select.ml" 61 2847 2871
+)
+"view_graph/viewGraph_select.ml" 67 3054 3082 "view_graph/viewGraph_select.ml" 67 3054 3083
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"view_graph/viewGraph_select.ml" 67 3054 3084 "view_graph/viewGraph_select.ml" 67 3054 3085
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 67 3054 3073 "view_graph/viewGraph_select.ml" 67 3054 3086
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 67 3054 3088 "view_graph/viewGraph_select.ml" 67 3054 3095
+type(
+  bool * ('h list * 'h list * 'h list) ->
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref go_next "view_graph/viewGraph_select.ml" 49 2382 2388 "view_graph/viewGraph_select.ml" 49 2382 2395
+)
+"view_graph/viewGraph_select.ml" 67 3054 3096 "view_graph/viewGraph_select.ml" 67 3054 3101
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 61 2847 2872 "view_graph/viewGraph_select.ml" 61 2847 2877
+)
+"view_graph/viewGraph_select.ml" 67 3054 3087 "view_graph/viewGraph_select.ml" 67 3054 3102
+call(
+  stack
+)
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 67 3054 3068 "view_graph/viewGraph_select.ml" 67 3054 3102
+call(
+  tail
+)
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 68 3103 3120 "view_graph/viewGraph_select.ml" 68 3103 3125
+type(
+  exn -> bool * ('h list * 'h list * 'h list)
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"view_graph/viewGraph_select.ml" 68 3103 3126 "view_graph/viewGraph_select.ml" 68 3103 3135
+type(
+  exn
+)
+"view_graph/viewGraph_select.ml" 68 3103 3120 "view_graph/viewGraph_select.ml" 68 3103 3135
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 66 3016 3033 "view_graph/viewGraph_select.ml" 68 3103 3135
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 65 2979 2991 "view_graph/viewGraph_select.ml" 68 3103 3135
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 62 2880 2886 "view_graph/viewGraph_select.ml" 68 3103 3135
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 69 3136 3143 "view_graph/viewGraph_select.ml" 69 3136 3147
+type(
+  int ->
+  bool * ('h list * 'h list * 'h list) ->
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref find "view_graph/viewGraph_select.ml" 61 2847 2859 "view_graph/viewGraph_select.ml" 61 2847 2863
+)
+"view_graph/viewGraph_select.ml" 69 3136 3148 "view_graph/viewGraph_select.ml" 69 3136 3151
+type(
+  int
+)
+ident(
+  int_ref max "view_graph/viewGraph_select.ml" 60 2781 2789 "view_graph/viewGraph_select.ml" 60 2781 2792
+)
+"view_graph/viewGraph_select.ml" 69 3136 3152 "view_graph/viewGraph_select.ml" 69 3136 3157
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+ident(
+  int_ref lists "view_graph/viewGraph_select.ml" 59 2735 2748 "view_graph/viewGraph_select.ml" 59 2735 2776
+)
+"view_graph/viewGraph_select.ml" 69 3136 3143 "view_graph/viewGraph_select.ml" 69 3136 3157
+call(
+  tail
+)
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 61 2847 2851 "view_graph/viewGraph_select.ml" 69 3136 3157
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 60 2781 2785 "view_graph/viewGraph_select.ml" 69 3136 3157
+type(
+  bool * ('h list * 'h list * 'h list)
+)
+"view_graph/viewGraph_select.ml" 79 3269 3273 "view_graph/viewGraph_select.ml" 79 3269 3288
+type(
+  t_options
+)
+ident(
+  def default_options "view_graph/viewGraph_select.ml" 86 3427 3427 --
+)
+"view_graph/viewGraph_select.ml" 80 3293 3309 "view_graph/viewGraph_select.ml" 80 3293 3314
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 81 3316 3332 "view_graph/viewGraph_select.ml" 81 3316 3339
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 82 3341 3371 "view_graph/viewGraph_select.ml" 82 3341 3375
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 79 3269 3291 "view_graph/viewGraph_select.ml" 83 3377 3378
+type(
+  t_options
+)
+"view_graph/viewGraph_select.ml" 106 3919 3923 "view_graph/viewGraph_select.ml" 106 3919 3934
+type(
+  t_state -> float -> unit
+)
+ident(
+  def change_zoom "view_graph/viewGraph_select.ml" 110 4032 4032 --
+)
+"view_graph/viewGraph_select.ml" 106 3919 3935 "view_graph/viewGraph_select.ml" 106 3919 3940
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 106 3919 3941 "view_graph/viewGraph_select.ml" 108 3984 4030
+)
+"view_graph/viewGraph_select.ml" 106 3919 3941 "view_graph/viewGraph_select.ml" 106 3919 3946
+type(
+  float
+)
+ident(
+  def delta "view_graph/viewGraph_select.ml" 107 3949 3951 "view_graph/viewGraph_select.ml" 108 3984 4030
+)
+"view_graph/viewGraph_select.ml" 107 3949 3951 "view_graph/viewGraph_select.ml" 107 3949 3956
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 106 3919 3935 "view_graph/viewGraph_select.ml" 106 3919 3940
+)
+"view_graph/viewGraph_select.ml" 107 3949 3964 "view_graph/viewGraph_select.ml" 107 3949 3969
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 106 3919 3935 "view_graph/viewGraph_select.ml" 106 3919 3940
+)
+"view_graph/viewGraph_select.ml" 107 3949 3964 "view_graph/viewGraph_select.ml" 107 3949 3973
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 107 3949 3974 "view_graph/viewGraph_select.ml" 107 3949 3976
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"view_graph/viewGraph_select.ml" 107 3949 3977 "view_graph/viewGraph_select.ml" 107 3949 3982
+type(
+  float
+)
+ident(
+  int_ref delta "view_graph/viewGraph_select.ml" 106 3919 3941 "view_graph/viewGraph_select.ml" 106 3919 3946
+)
+"view_graph/viewGraph_select.ml" 107 3949 3964 "view_graph/viewGraph_select.ml" 107 3949 3982
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 107 3949 3951 "view_graph/viewGraph_select.ml" 107 3949 3982
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 108 3984 3986 "view_graph/viewGraph_select.ml" 108 3984 3991
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 106 3919 3935 "view_graph/viewGraph_select.ml" 106 3919 3940
+)
+"view_graph/viewGraph_select.ml" 108 3984 3986 "view_graph/viewGraph_select.ml" 108 3984 3993
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 108 3984 3986 "view_graph/viewGraph_select.ml" 108 3984 4000
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 108 3984 3986 "view_graph/viewGraph_select.ml" 108 3984 4020
+type(
+  float -> unit
+)
+"view_graph/viewGraph_select.ml" 108 3984 4021 "view_graph/viewGraph_select.ml" 108 3984 4026
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 106 3919 3935 "view_graph/viewGraph_select.ml" 106 3919 3940
+)
+"view_graph/viewGraph_select.ml" 108 3984 4021 "view_graph/viewGraph_select.ml" 108 3984 4030
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 108 3984 3986 "view_graph/viewGraph_select.ml" 108 3984 4030
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 107 3949 3951 "view_graph/viewGraph_select.ml" 108 3984 4030
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 110 4032 4036 "view_graph/viewGraph_select.ml" 110 4032 4056
+type(
+  t_state -> unit
+)
+ident(
+  def center_selected_node "view_graph/viewGraph_select.ml" 131 4950 4950 --
+)
+"view_graph/viewGraph_select.ml" 110 4032 4057 "view_graph/viewGraph_select.ml" 110 4032 4062
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 111 4065 4067 "view_graph/viewGraph_select.ml" 129 4914 4948
+)
+"view_graph/viewGraph_select.ml" 111 4065 4073 "view_graph/viewGraph_select.ml" 111 4065 4078
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 110 4032 4057 "view_graph/viewGraph_select.ml" 110 4032 4062
+)
+"view_graph/viewGraph_select.ml" 111 4065 4073 "view_graph/viewGraph_select.ml" 111 4065 4087
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 112 4093 4099 "view_graph/viewGraph_select.ml" 112 4093 4103
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 112 4093 4107 "view_graph/viewGraph_select.ml" 112 4093 4109
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 113 4110 4121 "view_graph/viewGraph_select.ml" 113 4110 4122
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 113 4110 4126 "view_graph/viewGraph_select.ml" 129 4914 4948
+)
+"view_graph/viewGraph_select.ml" 113 4110 4116 "view_graph/viewGraph_select.ml" 113 4110 4122
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 113 4110 4132 "view_graph/viewGraph_select.ml" 113 4110 4156
+type(
+  ViewGraph_core.t_node -> ViewGraph_core.t_coord option
+)
+ident(
+  ext_ref ViewGraph_core.get_coord
+)
+"view_graph/viewGraph_select.ml" 113 4110 4157 "view_graph/viewGraph_select.ml" 113 4110 4158
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 113 4110 4121 "view_graph/viewGraph_select.ml" 113 4110 4122
+)
+"view_graph/viewGraph_select.ml" 113 4110 4132 "view_graph/viewGraph_select.ml" 113 4110 4158
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_coord option
+)
+"view_graph/viewGraph_select.ml" 114 4164 4174 "view_graph/viewGraph_select.ml" 114 4164 4178
+type(
+  ViewGraph_core.t_coord option
+)
+"view_graph/viewGraph_select.ml" 114 4164 4182 "view_graph/viewGraph_select.ml" 114 4164 4184
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 115 4185 4202 "view_graph/viewGraph_select.ml" 115 4185 4204
+type(
+  float
+)
+ident(
+  def x1 "view_graph/viewGraph_select.ml" 116 4225 4237 "view_graph/viewGraph_select.ml" 129 4914 4948
+)
+"view_graph/viewGraph_select.ml" 115 4185 4206 "view_graph/viewGraph_select.ml" 115 4185 4208
+type(
+  float
+)
+ident(
+  def y1 "view_graph/viewGraph_select.ml" 116 4225 4237 "view_graph/viewGraph_select.ml" 129 4914 4948
+)
+"view_graph/viewGraph_select.ml" 115 4185 4201 "view_graph/viewGraph_select.ml" 115 4185 4209
+type(
+  ViewGraph_core.t_point
+)
+"view_graph/viewGraph_select.ml" 115 4185 4212 "view_graph/viewGraph_select.ml" 115 4185 4214
+type(
+  float
+)
+ident(
+  def x2 "view_graph/viewGraph_select.ml" 116 4225 4237 "view_graph/viewGraph_select.ml" 129 4914 4948
+)
+"view_graph/viewGraph_select.ml" 115 4185 4216 "view_graph/viewGraph_select.ml" 115 4185 4218
+type(
+  float
+)
+ident(
+  def y2 "view_graph/viewGraph_select.ml" 116 4225 4237 "view_graph/viewGraph_select.ml" 129 4914 4948
+)
+"view_graph/viewGraph_select.ml" 115 4185 4211 "view_graph/viewGraph_select.ml" 115 4185 4219
+type(
+  ViewGraph_core.t_point
+)
+"view_graph/viewGraph_select.ml" 115 4185 4200 "view_graph/viewGraph_select.ml" 115 4185 4220
+type(
+  ViewGraph_core.t_coord
+)
+"view_graph/viewGraph_select.ml" 115 4185 4195 "view_graph/viewGraph_select.ml" 115 4185 4220
+type(
+  ViewGraph_core.t_coord option
+)
+"view_graph/viewGraph_select.ml" 116 4225 4241 "view_graph/viewGraph_select.ml" 116 4225 4247
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 116 4225 4250 "view_graph/viewGraph_select.ml" 116 4225 4255
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 110 4032 4057 "view_graph/viewGraph_select.ml" 110 4032 4062
+)
+"view_graph/viewGraph_select.ml" 116 4225 4250 "view_graph/viewGraph_select.ml" 116 4225 4257
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 116 4225 4250 "view_graph/viewGraph_select.ml" 116 4225 4264
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 117 4268 4284 "view_graph/viewGraph_select.ml" 117 4268 4285
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 117 4268 4288 "view_graph/viewGraph_select.ml" 117 4268 4290
+type(
+  float
+)
+ident(
+  int_ref x1 "view_graph/viewGraph_select.ml" 115 4185 4202 "view_graph/viewGraph_select.ml" 115 4185 4204
+)
+"view_graph/viewGraph_select.ml" 117 4268 4291 "view_graph/viewGraph_select.ml" 117 4268 4293
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"view_graph/viewGraph_select.ml" 117 4268 4295 "view_graph/viewGraph_select.ml" 117 4268 4297
+type(
+  float
+)
+ident(
+  int_ref x2 "view_graph/viewGraph_select.ml" 115 4185 4212 "view_graph/viewGraph_select.ml" 115 4185 4214
+)
+"view_graph/viewGraph_select.ml" 117 4268 4298 "view_graph/viewGraph_select.ml" 117 4268 4300
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"view_graph/viewGraph_select.ml" 117 4268 4301 "view_graph/viewGraph_select.ml" 117 4268 4303
+type(
+  float
+)
+ident(
+  int_ref x1 "view_graph/viewGraph_select.ml" 115 4185 4202 "view_graph/viewGraph_select.ml" 115 4185 4204
+)
+"view_graph/viewGraph_select.ml" 117 4268 4294 "view_graph/viewGraph_select.ml" 117 4268 4304
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 117 4268 4305 "view_graph/viewGraph_select.ml" 117 4268 4307
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"view_graph/viewGraph_select.ml" 117 4268 4308 "view_graph/viewGraph_select.ml" 117 4268 4310
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 117 4268 4294 "view_graph/viewGraph_select.ml" 117 4268 4310
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 117 4268 4288 "view_graph/viewGraph_select.ml" 117 4268 4310
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 118 4314 4330 "view_graph/viewGraph_select.ml" 118 4314 4331
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 118 4314 4334 "view_graph/viewGraph_select.ml" 118 4314 4336
+type(
+  float
+)
+ident(
+  int_ref y1 "view_graph/viewGraph_select.ml" 115 4185 4206 "view_graph/viewGraph_select.ml" 115 4185 4208
+)
+"view_graph/viewGraph_select.ml" 118 4314 4337 "view_graph/viewGraph_select.ml" 118 4314 4339
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.+.
+)
+"view_graph/viewGraph_select.ml" 118 4314 4341 "view_graph/viewGraph_select.ml" 118 4314 4343
+type(
+  float
+)
+ident(
+  int_ref y2 "view_graph/viewGraph_select.ml" 115 4185 4216 "view_graph/viewGraph_select.ml" 115 4185 4218
+)
+"view_graph/viewGraph_select.ml" 118 4314 4344 "view_graph/viewGraph_select.ml" 118 4314 4346
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"view_graph/viewGraph_select.ml" 118 4314 4347 "view_graph/viewGraph_select.ml" 118 4314 4349
+type(
+  float
+)
+ident(
+  int_ref y1 "view_graph/viewGraph_select.ml" 115 4185 4206 "view_graph/viewGraph_select.ml" 115 4185 4208
+)
+"view_graph/viewGraph_select.ml" 118 4314 4340 "view_graph/viewGraph_select.ml" 118 4314 4350
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 118 4314 4351 "view_graph/viewGraph_select.ml" 118 4314 4353
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"view_graph/viewGraph_select.ml" 118 4314 4354 "view_graph/viewGraph_select.ml" 118 4314 4356
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 118 4314 4340 "view_graph/viewGraph_select.ml" 118 4314 4356
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 118 4314 4334 "view_graph/viewGraph_select.ml" 118 4314 4356
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 120 4425 4441 "view_graph/viewGraph_select.ml" 120 4425 4442
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 120 4425 4445 "view_graph/viewGraph_select.ml" 120 4425 4451
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 116 4225 4241 "view_graph/viewGraph_select.ml" 116 4225 4247
+)
+"view_graph/viewGraph_select.ml" 120 4425 4445 "view_graph/viewGraph_select.ml" 120 4425 4463
+type(
+  GData.adjustment
+)
+"view_graph/viewGraph_select.ml" 120 4425 4445 "view_graph/viewGraph_select.ml" 120 4425 4473
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 121 4477 4493 "view_graph/viewGraph_select.ml" 121 4477 4494
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 121 4477 4497 "view_graph/viewGraph_select.ml" 121 4477 4503
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 116 4225 4241 "view_graph/viewGraph_select.ml" 116 4225 4247
+)
+"view_graph/viewGraph_select.ml" 121 4477 4497 "view_graph/viewGraph_select.ml" 121 4477 4515
+type(
+  GData.adjustment
+)
+"view_graph/viewGraph_select.ml" 121 4477 4497 "view_graph/viewGraph_select.ml" 121 4477 4525
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 123 4592 4608 "view_graph/viewGraph_select.ml" 123 4592 4610
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 123 4592 4613 "view_graph/viewGraph_select.ml" 123 4592 4614
+type(
+  float
+)
+ident(
+  int_ref x "view_graph/viewGraph_select.ml" 117 4268 4284 "view_graph/viewGraph_select.ml" 117 4268 4285
+)
+"view_graph/viewGraph_select.ml" 123 4592 4615 "view_graph/viewGraph_select.ml" 123 4592 4617
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"view_graph/viewGraph_select.ml" 123 4592 4619 "view_graph/viewGraph_select.ml" 123 4592 4620
+type(
+  float
+)
+ident(
+  int_ref w "view_graph/viewGraph_select.ml" 120 4425 4441 "view_graph/viewGraph_select.ml" 120 4425 4442
+)
+"view_graph/viewGraph_select.ml" 123 4592 4621 "view_graph/viewGraph_select.ml" 123 4592 4623
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"view_graph/viewGraph_select.ml" 123 4592 4624 "view_graph/viewGraph_select.ml" 123 4592 4626
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 123 4592 4618 "view_graph/viewGraph_select.ml" 123 4592 4627
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 123 4592 4613 "view_graph/viewGraph_select.ml" 123 4592 4627
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 124 4631 4647 "view_graph/viewGraph_select.ml" 124 4631 4649
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 124 4631 4652 "view_graph/viewGraph_select.ml" 124 4631 4653
+type(
+  float
+)
+ident(
+  int_ref y "view_graph/viewGraph_select.ml" 118 4314 4330 "view_graph/viewGraph_select.ml" 118 4314 4331
+)
+"view_graph/viewGraph_select.ml" 124 4631 4654 "view_graph/viewGraph_select.ml" 124 4631 4656
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives.-.
+)
+"view_graph/viewGraph_select.ml" 124 4631 4658 "view_graph/viewGraph_select.ml" 124 4631 4659
+type(
+  float
+)
+ident(
+  int_ref h "view_graph/viewGraph_select.ml" 121 4477 4493 "view_graph/viewGraph_select.ml" 121 4477 4494
+)
+"view_graph/viewGraph_select.ml" 124 4631 4660 "view_graph/viewGraph_select.ml" 124 4631 4662
+type(
+  float -> float -> float
+)
+ident(
+  ext_ref Pervasives./.
+)
+"view_graph/viewGraph_select.ml" 124 4631 4663 "view_graph/viewGraph_select.ml" 124 4631 4665
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 124 4631 4657 "view_graph/viewGraph_select.ml" 124 4631 4666
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 124 4631 4652 "view_graph/viewGraph_select.ml" 124 4631 4666
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 126 4744 4760 "view_graph/viewGraph_select.ml" 126 4744 4762
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 126 4744 4764 "view_graph/viewGraph_select.ml" 126 4744 4766
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 126 4744 4760 "view_graph/viewGraph_select.ml" 126 4744 4766
+type(
+  int * int
+)
+"view_graph/viewGraph_select.ml" 126 4744 4769 "view_graph/viewGraph_select.ml" 126 4744 4775
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 116 4225 4241 "view_graph/viewGraph_select.ml" 116 4225 4247
+)
+"view_graph/viewGraph_select.ml" 126 4744 4769 "view_graph/viewGraph_select.ml" 126 4744 4779
+type(
+  wx:float -> wy:float -> int * int
+)
+"view_graph/viewGraph_select.ml" 126 4744 4780 "view_graph/viewGraph_select.ml" 126 4744 4782
+type(
+  float
+)
+ident(
+  int_ref sx "view_graph/viewGraph_select.ml" 123 4592 4608 "view_graph/viewGraph_select.ml" 123 4592 4610
+)
+"view_graph/viewGraph_select.ml" 126 4744 4783 "view_graph/viewGraph_select.ml" 126 4744 4785
+type(
+  float
+)
+ident(
+  int_ref sy "view_graph/viewGraph_select.ml" 124 4631 4647 "view_graph/viewGraph_select.ml" 124 4631 4649
+)
+"view_graph/viewGraph_select.ml" 126 4744 4769 "view_graph/viewGraph_select.ml" 126 4744 4785
+type(
+  int * int
+)
+"view_graph/viewGraph_select.ml" 129 4914 4926 "view_graph/viewGraph_select.ml" 129 4914 4932
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 116 4225 4241 "view_graph/viewGraph_select.ml" 116 4225 4247
+)
+"view_graph/viewGraph_select.ml" 129 4914 4926 "view_graph/viewGraph_select.ml" 129 4914 4942
+type(
+  x:int -> y:int -> unit
+)
+"view_graph/viewGraph_select.ml" 129 4914 4943 "view_graph/viewGraph_select.ml" 129 4914 4945
+type(
+  int
+)
+ident(
+  int_ref sx "view_graph/viewGraph_select.ml" 126 4744 4760 "view_graph/viewGraph_select.ml" 126 4744 4762
+)
+"view_graph/viewGraph_select.ml" 129 4914 4946 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  int
+)
+ident(
+  int_ref sy "view_graph/viewGraph_select.ml" 126 4744 4764 "view_graph/viewGraph_select.ml" 126 4744 4766
+)
+"view_graph/viewGraph_select.ml" 129 4914 4926 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 126 4744 4756 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 124 4631 4643 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 123 4592 4604 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 121 4477 4489 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 120 4425 4437 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 118 4314 4326 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 117 4268 4280 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 116 4225 4237 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 113 4110 4126 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 111 4065 4067 "view_graph/viewGraph_select.ml" 129 4914 4948
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 131 4950 4954 "view_graph/viewGraph_select.ml" 131 4950 4963
+type(
+  t_state -> GdkEvent.Key.t -> bool
+)
+ident(
+  def key_press "view_graph/viewGraph_select.ml" 144 5580 5580 --
+)
+"view_graph/viewGraph_select.ml" 131 4950 4964 "view_graph/viewGraph_select.ml" 131 4950 4969
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 131 4950 4970 "view_graph/viewGraph_select.ml" 142 5564 5578
+)
+"view_graph/viewGraph_select.ml" 131 4950 4970 "view_graph/viewGraph_select.ml" 131 4950 4972
+type(
+  GdkEvent.Key.t
+)
+ident(
+  def ev "view_graph/viewGraph_select.ml" 132 4975 4977 "view_graph/viewGraph_select.ml" 142 5564 5578
+)
+"view_graph/viewGraph_select.ml" 132 4975 4981 "view_graph/viewGraph_select.ml" 132 4975 4987
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 132 4975 4990 "view_graph/viewGraph_select.ml" 132 4975 4995
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 131 4950 4964 "view_graph/viewGraph_select.ml" 131 4950 4969
+)
+"view_graph/viewGraph_select.ml" 132 4975 4990 "view_graph/viewGraph_select.ml" 132 4975 4997
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 132 4975 4990 "view_graph/viewGraph_select.ml" 132 4975 5004
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 133 5008 5015 "view_graph/viewGraph_select.ml" 133 5008 5016
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 133 5008 5018 "view_graph/viewGraph_select.ml" 133 5008 5019
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 133 5008 5014 "view_graph/viewGraph_select.ml" 133 5008 5020
+type(
+  int * int
+)
+"view_graph/viewGraph_select.ml" 133 5008 5023 "view_graph/viewGraph_select.ml" 133 5008 5029
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 132 4975 4981 "view_graph/viewGraph_select.ml" 132 4975 4987
+)
+"view_graph/viewGraph_select.ml" 133 5008 5023 "view_graph/viewGraph_select.ml" 133 5008 5048
+type(
+  int * int
+)
+"view_graph/viewGraph_select.ml" 134 5052 5060 "view_graph/viewGraph_select.ml" 134 5052 5079
+type(
+  GdkEvent.Key.t -> Gdk.keysym
+)
+ident(
+  ext_ref GdkEvent.Key.keyval
+)
+"view_graph/viewGraph_select.ml" 134 5052 5080 "view_graph/viewGraph_select.ml" 134 5052 5082
+type(
+  GdkEvent.Key.t
+)
+ident(
+  int_ref ev "view_graph/viewGraph_select.ml" 131 4950 4970 "view_graph/viewGraph_select.ml" 131 4950 4972
+)
+"view_graph/viewGraph_select.ml" 134 5052 5060 "view_graph/viewGraph_select.ml" 134 5052 5082
+type(
+  Gdk.keysym
+)
+"view_graph/viewGraph_select.ml" 135 5088 5092 "view_graph/viewGraph_select.ml" 135 5088 5093
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 135 5088 5094 "view_graph/viewGraph_select.ml" 135 5088 5153
+)
+"view_graph/viewGraph_select.ml" 135 5088 5099 "view_graph/viewGraph_select.ml" 135 5088 5100
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 135 5088 5092 "view_graph/viewGraph_select.ml" 135 5088 5093
+)
+"view_graph/viewGraph_select.ml" 135 5088 5101 "view_graph/viewGraph_select.ml" 135 5088 5102
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 135 5088 5103 "view_graph/viewGraph_select.ml" 135 5088 5117
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Up
+)
+"view_graph/viewGraph_select.ml" 135 5088 5099 "view_graph/viewGraph_select.ml" 135 5088 5117
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 135 5088 5121 "view_graph/viewGraph_select.ml" 135 5088 5127
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 132 4975 4981 "view_graph/viewGraph_select.ml" 132 4975 4987
+)
+"view_graph/viewGraph_select.ml" 135 5088 5121 "view_graph/viewGraph_select.ml" 135 5088 5137
+type(
+  x:int -> y:int -> unit
+)
+"view_graph/viewGraph_select.ml" 135 5088 5138 "view_graph/viewGraph_select.ml" 135 5088 5139
+type(
+  int
+)
+ident(
+  int_ref x "view_graph/viewGraph_select.ml" 133 5008 5015 "view_graph/viewGraph_select.ml" 133 5008 5016
+)
+"view_graph/viewGraph_select.ml" 135 5088 5141 "view_graph/viewGraph_select.ml" 135 5088 5142
+type(
+  int
+)
+ident(
+  int_ref y "view_graph/viewGraph_select.ml" 133 5008 5018 "view_graph/viewGraph_select.ml" 133 5008 5019
+)
+"view_graph/viewGraph_select.ml" 135 5088 5142 "view_graph/viewGraph_select.ml" 135 5088 5143
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"view_graph/viewGraph_select.ml" 135 5088 5143 "view_graph/viewGraph_select.ml" 135 5088 5145
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 135 5088 5140 "view_graph/viewGraph_select.ml" 135 5088 5146
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 135 5088 5121 "view_graph/viewGraph_select.ml" 135 5088 5146
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 135 5088 5149 "view_graph/viewGraph_select.ml" 135 5088 5153
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 135 5088 5121 "view_graph/viewGraph_select.ml" 135 5088 5153
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 135 5088 5094 "view_graph/viewGraph_select.ml" 135 5088 5153
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 136 5154 5158 "view_graph/viewGraph_select.ml" 136 5154 5159
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 136 5154 5160 "view_graph/viewGraph_select.ml" 136 5154 5221
+)
+"view_graph/viewGraph_select.ml" 136 5154 5165 "view_graph/viewGraph_select.ml" 136 5154 5166
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 136 5154 5158 "view_graph/viewGraph_select.ml" 136 5154 5159
+)
+"view_graph/viewGraph_select.ml" 136 5154 5167 "view_graph/viewGraph_select.ml" 136 5154 5168
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 136 5154 5169 "view_graph/viewGraph_select.ml" 136 5154 5185
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Down
+)
+"view_graph/viewGraph_select.ml" 136 5154 5165 "view_graph/viewGraph_select.ml" 136 5154 5185
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 136 5154 5189 "view_graph/viewGraph_select.ml" 136 5154 5195
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 132 4975 4981 "view_graph/viewGraph_select.ml" 132 4975 4987
+)
+"view_graph/viewGraph_select.ml" 136 5154 5189 "view_graph/viewGraph_select.ml" 136 5154 5205
+type(
+  x:int -> y:int -> unit
+)
+"view_graph/viewGraph_select.ml" 136 5154 5206 "view_graph/viewGraph_select.ml" 136 5154 5207
+type(
+  int
+)
+ident(
+  int_ref x "view_graph/viewGraph_select.ml" 133 5008 5015 "view_graph/viewGraph_select.ml" 133 5008 5016
+)
+"view_graph/viewGraph_select.ml" 136 5154 5209 "view_graph/viewGraph_select.ml" 136 5154 5210
+type(
+  int
+)
+ident(
+  int_ref y "view_graph/viewGraph_select.ml" 133 5008 5018 "view_graph/viewGraph_select.ml" 133 5008 5019
+)
+"view_graph/viewGraph_select.ml" 136 5154 5210 "view_graph/viewGraph_select.ml" 136 5154 5211
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"view_graph/viewGraph_select.ml" 136 5154 5211 "view_graph/viewGraph_select.ml" 136 5154 5213
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 136 5154 5208 "view_graph/viewGraph_select.ml" 136 5154 5214
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 136 5154 5189 "view_graph/viewGraph_select.ml" 136 5154 5214
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 136 5154 5217 "view_graph/viewGraph_select.ml" 136 5154 5221
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 136 5154 5189 "view_graph/viewGraph_select.ml" 136 5154 5221
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 136 5154 5160 "view_graph/viewGraph_select.ml" 136 5154 5221
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 137 5222 5226 "view_graph/viewGraph_select.ml" 137 5222 5227
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 137 5222 5228 "view_graph/viewGraph_select.ml" 137 5222 5289
+)
+"view_graph/viewGraph_select.ml" 137 5222 5233 "view_graph/viewGraph_select.ml" 137 5222 5234
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 137 5222 5226 "view_graph/viewGraph_select.ml" 137 5222 5227
+)
+"view_graph/viewGraph_select.ml" 137 5222 5235 "view_graph/viewGraph_select.ml" 137 5222 5236
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 137 5222 5237 "view_graph/viewGraph_select.ml" 137 5222 5253
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Left
+)
+"view_graph/viewGraph_select.ml" 137 5222 5233 "view_graph/viewGraph_select.ml" 137 5222 5253
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 137 5222 5257 "view_graph/viewGraph_select.ml" 137 5222 5263
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 132 4975 4981 "view_graph/viewGraph_select.ml" 132 4975 4987
+)
+"view_graph/viewGraph_select.ml" 137 5222 5257 "view_graph/viewGraph_select.ml" 137 5222 5273
+type(
+  x:int -> y:int -> unit
+)
+"view_graph/viewGraph_select.ml" 137 5222 5275 "view_graph/viewGraph_select.ml" 137 5222 5276
+type(
+  int
+)
+ident(
+  int_ref x "view_graph/viewGraph_select.ml" 133 5008 5015 "view_graph/viewGraph_select.ml" 133 5008 5016
+)
+"view_graph/viewGraph_select.ml" 137 5222 5276 "view_graph/viewGraph_select.ml" 137 5222 5277
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"view_graph/viewGraph_select.ml" 137 5222 5277 "view_graph/viewGraph_select.ml" 137 5222 5279
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 137 5222 5274 "view_graph/viewGraph_select.ml" 137 5222 5280
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 137 5222 5281 "view_graph/viewGraph_select.ml" 137 5222 5282
+type(
+  int
+)
+ident(
+  int_ref y "view_graph/viewGraph_select.ml" 133 5008 5018 "view_graph/viewGraph_select.ml" 133 5008 5019
+)
+"view_graph/viewGraph_select.ml" 137 5222 5257 "view_graph/viewGraph_select.ml" 137 5222 5282
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 137 5222 5285 "view_graph/viewGraph_select.ml" 137 5222 5289
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 137 5222 5257 "view_graph/viewGraph_select.ml" 137 5222 5289
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 137 5222 5228 "view_graph/viewGraph_select.ml" 137 5222 5289
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 138 5290 5294 "view_graph/viewGraph_select.ml" 138 5290 5295
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 138 5290 5296 "view_graph/viewGraph_select.ml" 138 5290 5358
+)
+"view_graph/viewGraph_select.ml" 138 5290 5301 "view_graph/viewGraph_select.ml" 138 5290 5302
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 138 5290 5294 "view_graph/viewGraph_select.ml" 138 5290 5295
+)
+"view_graph/viewGraph_select.ml" 138 5290 5303 "view_graph/viewGraph_select.ml" 138 5290 5304
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 138 5290 5305 "view_graph/viewGraph_select.ml" 138 5290 5322
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Right
+)
+"view_graph/viewGraph_select.ml" 138 5290 5301 "view_graph/viewGraph_select.ml" 138 5290 5322
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 138 5290 5326 "view_graph/viewGraph_select.ml" 138 5290 5332
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 132 4975 4981 "view_graph/viewGraph_select.ml" 132 4975 4987
+)
+"view_graph/viewGraph_select.ml" 138 5290 5326 "view_graph/viewGraph_select.ml" 138 5290 5342
+type(
+  x:int -> y:int -> unit
+)
+"view_graph/viewGraph_select.ml" 138 5290 5344 "view_graph/viewGraph_select.ml" 138 5290 5345
+type(
+  int
+)
+ident(
+  int_ref x "view_graph/viewGraph_select.ml" 133 5008 5015 "view_graph/viewGraph_select.ml" 133 5008 5016
+)
+"view_graph/viewGraph_select.ml" 138 5290 5345 "view_graph/viewGraph_select.ml" 138 5290 5346
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"view_graph/viewGraph_select.ml" 138 5290 5346 "view_graph/viewGraph_select.ml" 138 5290 5348
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 138 5290 5343 "view_graph/viewGraph_select.ml" 138 5290 5349
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 138 5290 5350 "view_graph/viewGraph_select.ml" 138 5290 5351
+type(
+  int
+)
+ident(
+  int_ref y "view_graph/viewGraph_select.ml" 133 5008 5018 "view_graph/viewGraph_select.ml" 133 5008 5019
+)
+"view_graph/viewGraph_select.ml" 138 5290 5326 "view_graph/viewGraph_select.ml" 138 5290 5351
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 138 5290 5354 "view_graph/viewGraph_select.ml" 138 5290 5358
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 138 5290 5326 "view_graph/viewGraph_select.ml" 138 5290 5358
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 138 5290 5296 "view_graph/viewGraph_select.ml" 138 5290 5358
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 139 5359 5363 "view_graph/viewGraph_select.ml" 139 5359 5364
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 139 5359 5365 "view_graph/viewGraph_select.ml" 139 5359 5426
+)
+"view_graph/viewGraph_select.ml" 139 5359 5370 "view_graph/viewGraph_select.ml" 139 5359 5371
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 139 5359 5363 "view_graph/viewGraph_select.ml" 139 5359 5364
+)
+"view_graph/viewGraph_select.ml" 139 5359 5372 "view_graph/viewGraph_select.ml" 139 5359 5373
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 139 5359 5374 "view_graph/viewGraph_select.ml" 139 5359 5395
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Page_Down
+)
+"view_graph/viewGraph_select.ml" 139 5359 5370 "view_graph/viewGraph_select.ml" 139 5359 5395
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 139 5359 5399 "view_graph/viewGraph_select.ml" 139 5359 5410
+type(
+  t_state -> float -> unit
+)
+ident(
+  int_ref change_zoom "view_graph/viewGraph_select.ml" 106 3919 3923 "view_graph/viewGraph_select.ml" 106 3919 3934
+)
+"view_graph/viewGraph_select.ml" 139 5359 5411 "view_graph/viewGraph_select.ml" 139 5359 5416
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 131 4950 4964 "view_graph/viewGraph_select.ml" 131 4950 4969
+)
+"view_graph/viewGraph_select.ml" 139 5359 5417 "view_graph/viewGraph_select.ml" 139 5359 5420
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 139 5359 5399 "view_graph/viewGraph_select.ml" 139 5359 5420
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 139 5359 5422 "view_graph/viewGraph_select.ml" 139 5359 5426
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 139 5359 5399 "view_graph/viewGraph_select.ml" 139 5359 5426
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 139 5359 5365 "view_graph/viewGraph_select.ml" 139 5359 5426
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 140 5427 5431 "view_graph/viewGraph_select.ml" 140 5427 5432
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 140 5427 5433 "view_graph/viewGraph_select.ml" 140 5427 5495
+)
+"view_graph/viewGraph_select.ml" 140 5427 5438 "view_graph/viewGraph_select.ml" 140 5427 5439
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 140 5427 5431 "view_graph/viewGraph_select.ml" 140 5427 5432
+)
+"view_graph/viewGraph_select.ml" 140 5427 5440 "view_graph/viewGraph_select.ml" 140 5427 5441
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 140 5427 5442 "view_graph/viewGraph_select.ml" 140 5427 5461
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Page_Up
+)
+"view_graph/viewGraph_select.ml" 140 5427 5438 "view_graph/viewGraph_select.ml" 140 5427 5461
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 140 5427 5465 "view_graph/viewGraph_select.ml" 140 5427 5476
+type(
+  t_state -> float -> unit
+)
+ident(
+  int_ref change_zoom "view_graph/viewGraph_select.ml" 106 3919 3923 "view_graph/viewGraph_select.ml" 106 3919 3934
+)
+"view_graph/viewGraph_select.ml" 140 5427 5477 "view_graph/viewGraph_select.ml" 140 5427 5482
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 131 4950 4964 "view_graph/viewGraph_select.ml" 131 4950 4969
+)
+"view_graph/viewGraph_select.ml" 140 5427 5483 "view_graph/viewGraph_select.ml" 140 5427 5489
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 140 5427 5465 "view_graph/viewGraph_select.ml" 140 5427 5489
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 140 5427 5491 "view_graph/viewGraph_select.ml" 140 5427 5495
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 140 5427 5465 "view_graph/viewGraph_select.ml" 140 5427 5495
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 140 5427 5433 "view_graph/viewGraph_select.ml" 140 5427 5495
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 141 5496 5500 "view_graph/viewGraph_select.ml" 141 5496 5501
+type(
+  Gdk.keysym
+)
+ident(
+  def k "view_graph/viewGraph_select.ml" 141 5496 5502 "view_graph/viewGraph_select.ml" 141 5496 5563
+)
+"view_graph/viewGraph_select.ml" 141 5496 5507 "view_graph/viewGraph_select.ml" 141 5496 5508
+type(
+  Gdk.keysym
+)
+ident(
+  int_ref k "view_graph/viewGraph_select.ml" 141 5496 5500 "view_graph/viewGraph_select.ml" 141 5496 5501
+)
+"view_graph/viewGraph_select.ml" 141 5496 5509 "view_graph/viewGraph_select.ml" 141 5496 5510
+type(
+  Gdk.keysym -> Gdk.keysym -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"view_graph/viewGraph_select.ml" 141 5496 5511 "view_graph/viewGraph_select.ml" 141 5496 5527
+type(
+  Gdk.keysym
+)
+ident(
+  ext_ref GdkKeysyms._Home
+)
+"view_graph/viewGraph_select.ml" 141 5496 5507 "view_graph/viewGraph_select.ml" 141 5496 5527
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 141 5496 5531 "view_graph/viewGraph_select.ml" 141 5496 5551
+type(
+  t_state -> unit
+)
+ident(
+  int_ref center_selected_node "view_graph/viewGraph_select.ml" 110 4032 4036 "view_graph/viewGraph_select.ml" 110 4032 4056
+)
+"view_graph/viewGraph_select.ml" 141 5496 5552 "view_graph/viewGraph_select.ml" 141 5496 5557
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 131 4950 4964 "view_graph/viewGraph_select.ml" 131 4950 4969
+)
+"view_graph/viewGraph_select.ml" 141 5496 5531 "view_graph/viewGraph_select.ml" 141 5496 5557
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 141 5496 5559 "view_graph/viewGraph_select.ml" 141 5496 5563
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 141 5496 5531 "view_graph/viewGraph_select.ml" 141 5496 5563
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 141 5496 5502 "view_graph/viewGraph_select.ml" 141 5496 5563
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 142 5564 5568 "view_graph/viewGraph_select.ml" 142 5564 5569
+type(
+  Gdk.keysym
+)
+"view_graph/viewGraph_select.ml" 142 5564 5573 "view_graph/viewGraph_select.ml" 142 5564 5578
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 134 5052 5054 "view_graph/viewGraph_select.ml" 142 5564 5578
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 133 5008 5010 "view_graph/viewGraph_select.ml" 142 5564 5578
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 132 4975 4977 "view_graph/viewGraph_select.ml" 142 5564 5578
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 144 5580 5584 "view_graph/viewGraph_select.ml" 144 5580 5588
+type(
+  t_options -> GnoCanvas.canvas -> (GObj.widget -> unit) -> t_state
+)
+ident(
+  def init "view_graph/viewGraph_select.ml" 158 6210 6210 --
+)
+"view_graph/viewGraph_select.ml" 144 5580 5589 "view_graph/viewGraph_select.ml" 144 5580 5596
+type(
+  t_options
+)
+ident(
+  def options "view_graph/viewGraph_select.ml" 144 5580 5597 "view_graph/viewGraph_select.ml" 156 6199 6208
+)
+"view_graph/viewGraph_select.ml" 144 5580 5598 "view_graph/viewGraph_select.ml" 144 5580 5604
+type(
+  GnoCanvas.canvas
+)
+ident(
+  def canvas "view_graph/viewGraph_select.ml" 144 5580 5625 "view_graph/viewGraph_select.ml" 156 6199 6208
+)
+"view_graph/viewGraph_select.ml" 144 5580 5625 "view_graph/viewGraph_select.ml" 144 5580 5633
+type(
+  GObj.widget -> unit
+)
+ident(
+  def pack_txt "view_graph/viewGraph_select.ml" 145 5637 5639 "view_graph/viewGraph_select.ml" 156 6199 6208
+)
+"view_graph/viewGraph_select.ml" 145 5637 5643 "view_graph/viewGraph_select.ml" 145 5637 5644
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 145 5637 5647 "view_graph/viewGraph_select.ml" 145 5637 5658
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"view_graph/viewGraph_select.ml" 145 5637 5665 "view_graph/viewGraph_select.ml" 145 5637 5678
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 145 5637 5688 "view_graph/viewGraph_select.ml" 145 5637 5696
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref pack_txt "view_graph/viewGraph_select.ml" 144 5580 5625 "view_graph/viewGraph_select.ml" 144 5580 5633
+)
+"view_graph/viewGraph_select.ml" 145 5637 5697 "view_graph/viewGraph_select.ml" 145 5637 5699
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 145 5637 5647 "view_graph/viewGraph_select.ml" 145 5637 5699
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 146 5703 5709 "view_graph/viewGraph_select.ml" 146 5703 5718
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 146 5703 5721 "view_graph/viewGraph_select.ml" 146 5703 5732
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"view_graph/viewGraph_select.ml" 146 5703 5742 "view_graph/viewGraph_select.ml" 146 5703 5750
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref pack_txt "view_graph/viewGraph_select.ml" 144 5580 5625 "view_graph/viewGraph_select.ml" 144 5580 5633
+)
+"view_graph/viewGraph_select.ml" 146 5703 5751 "view_graph/viewGraph_select.ml" 146 5703 5753
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 146 5703 5721 "view_graph/viewGraph_select.ml" 146 5703 5753
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 147 5757 5763 "view_graph/viewGraph_select.ml" 147 5757 5775
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 147 5757 5778 "view_graph/viewGraph_select.ml" 147 5757 5789
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"view_graph/viewGraph_select.ml" 147 5757 5799 "view_graph/viewGraph_select.ml" 147 5757 5807
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref pack_txt "view_graph/viewGraph_select.ml" 144 5580 5625 "view_graph/viewGraph_select.ml" 144 5580 5633
+)
+"view_graph/viewGraph_select.ml" 147 5757 5808 "view_graph/viewGraph_select.ml" 147 5757 5810
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 147 5757 5778 "view_graph/viewGraph_select.ml" 147 5757 5810
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 148 5814 5820 "view_graph/viewGraph_select.ml" 148 5814 5829
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 148 5814 5832 "view_graph/viewGraph_select.ml" 148 5814 5843
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"view_graph/viewGraph_select.ml" 148 5814 5853 "view_graph/viewGraph_select.ml" 148 5814 5861
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref pack_txt "view_graph/viewGraph_select.ml" 144 5580 5625 "view_graph/viewGraph_select.ml" 144 5580 5633
+)
+"view_graph/viewGraph_select.ml" 148 5814 5862 "view_graph/viewGraph_select.ml" 148 5814 5864
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 148 5814 5832 "view_graph/viewGraph_select.ml" 148 5814 5864
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 149 5868 5874 "view_graph/viewGraph_select.ml" 149 5868 5875
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 149 5868 5889 "view_graph/viewGraph_select.ml" 149 5868 5895
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 144 5580 5598 "view_graph/viewGraph_select.ml" 144 5580 5604
+)
+"view_graph/viewGraph_select.ml" 150 5897 5915 "view_graph/viewGraph_select.ml" 150 5897 5924
+type(
+  GMisc.label
+)
+ident(
+  int_ref sel_1_txt "view_graph/viewGraph_select.ml" 146 5703 5709 "view_graph/viewGraph_select.ml" 146 5703 5718
+)
+"view_graph/viewGraph_select.ml" 150 5897 5941 "view_graph/viewGraph_select.ml" 150 5897 5953
+type(
+  GMisc.label
+)
+ident(
+  int_ref sel_edge_txt "view_graph/viewGraph_select.ml" 147 5757 5763 "view_graph/viewGraph_select.ml" 147 5757 5775
+)
+"view_graph/viewGraph_select.ml" 151 5955 5973 "view_graph/viewGraph_select.ml" 151 5955 5982
+type(
+  GMisc.label
+)
+ident(
+  int_ref sel_2_txt "view_graph/viewGraph_select.ml" 148 5814 5820 "view_graph/viewGraph_select.ml" 148 5814 5829
+)
+"view_graph/viewGraph_select.ml" 149 5868 5878 "view_graph/viewGraph_select.ml" 151 5955 5984
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 152 5988 5994 "view_graph/viewGraph_select.ml" 152 5988 5999
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 153 6003 6013 "view_graph/viewGraph_select.ml" 153 6003 6014
+type(
+  t_widgets
+)
+ident(
+  int_ref w "view_graph/viewGraph_select.ml" 149 5868 5874 "view_graph/viewGraph_select.ml" 149 5868 5875
+)
+"view_graph/viewGraph_select.ml" 153 6003 6022 "view_graph/viewGraph_select.ml" 153 6003 6029
+type(
+  t_options
+)
+ident(
+  int_ref options "view_graph/viewGraph_select.ml" 144 5580 5589 "view_graph/viewGraph_select.ml" 144 5580 5596
+)
+"view_graph/viewGraph_select.ml" 153 6003 6044 "view_graph/viewGraph_select.ml" 153 6003 6048
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 153 6003 6050 "view_graph/viewGraph_select.ml" 153 6003 6054
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 153 6003 6041 "view_graph/viewGraph_select.ml" 153 6003 6057
+type(
+  ViewGraph_core.t_gtk_obj option array
+)
+"view_graph/viewGraph_select.ml" 154 6060 6074 "view_graph/viewGraph_select.ml" 154 6060 6078
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 154 6060 6087 "view_graph/viewGraph_select.ml" 154 6060 6089
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 154 6060 6102 "view_graph/viewGraph_select.ml" 154 6060 6106
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 154 6060 6121 "view_graph/viewGraph_select.ml" 154 6060 6125
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 153 6003 6007 "view_graph/viewGraph_select.ml" 154 6060 6127
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 155 6131 6137 "view_graph/viewGraph_select.ml" 155 6131 6138
+type(
+  GtkSignal.id
+)
+"view_graph/viewGraph_select.ml" 155 6131 6141 "view_graph/viewGraph_select.ml" 155 6131 6147
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 144 5580 5598 "view_graph/viewGraph_select.ml" 144 5580 5604
+)
+"view_graph/viewGraph_select.ml" 155 6131 6141 "view_graph/viewGraph_select.ml" 155 6131 6153
+type(
+  GObj.event_ops
+)
+"view_graph/viewGraph_select.ml" 155 6131 6141 "view_graph/viewGraph_select.ml" 155 6131 6161
+type(
+  GObj.event_signals
+)
+"view_graph/viewGraph_select.ml" 155 6131 6141 "view_graph/viewGraph_select.ml" 155 6131 6167
+type(
+  GObj.event_signals
+)
+"view_graph/viewGraph_select.ml" 155 6131 6141 "view_graph/viewGraph_select.ml" 155 6131 6177
+type(
+  callback:(GdkEvent.Key.t -> bool) -> GtkSignal.id
+)
+"view_graph/viewGraph_select.ml" 155 6131 6179 "view_graph/viewGraph_select.ml" 155 6131 6188
+type(
+  t_state -> GdkEvent.Key.t -> bool
+)
+ident(
+  int_ref key_press "view_graph/viewGraph_select.ml" 131 4950 4954 "view_graph/viewGraph_select.ml" 131 4950 4963
+)
+"view_graph/viewGraph_select.ml" 155 6131 6189 "view_graph/viewGraph_select.ml" 155 6131 6194
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 152 5988 5994 "view_graph/viewGraph_select.ml" 152 5988 5999
+)
+"view_graph/viewGraph_select.ml" 155 6131 6178 "view_graph/viewGraph_select.ml" 155 6131 6195
+call(
+  stack
+)
+type(
+  GdkEvent.Key.t -> bool
+)
+"view_graph/viewGraph_select.ml" 155 6131 6141 "view_graph/viewGraph_select.ml" 155 6131 6195
+type(
+  GtkSignal.id
+)
+"view_graph/viewGraph_select.ml" 156 6199 6203 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 152 5988 5994 "view_graph/viewGraph_select.ml" 152 5988 5999
+)
+"view_graph/viewGraph_select.ml" 155 6131 6133 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 152 5988 5990 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 149 5868 5870 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 148 5814 5816 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 147 5757 5759 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 146 5703 5705 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 145 5637 5639 "view_graph/viewGraph_select.ml" 156 6199 6208
+type(
+  t_state
+)
+"view_graph/viewGraph_select.ml" 158 6210 6214 "view_graph/viewGraph_select.ml" 158 6210 6226
+type(
+  unit -> Gdk.bitmap
+)
+ident(
+  def sel_1_bitmap "view_graph/viewGraph_select.ml" 159 6290 6290 --
+)
+"view_graph/viewGraph_select.ml" 158 6210 6227 "view_graph/viewGraph_select.ml" 158 6210 6229
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 158 6210 6232 "view_graph/viewGraph_select.ml" 158 6210 6259
+type(
+  ?window:Gdk.window -> width:int -> height:int -> string -> Gdk.bitmap
+)
+ident(
+  ext_ref Gdk.Bitmap.create_from_data
+)
+"view_graph/viewGraph_select.ml" 158 6210 6267 "view_graph/viewGraph_select.ml" 158 6210 6268
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 158 6210 6277 "view_graph/viewGraph_select.ml" 158 6210 6278
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 158 6210 6279 "view_graph/viewGraph_select.ml" 158 6210 6289
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 158 6210 6232 "view_graph/viewGraph_select.ml" 158 6210 6289
+call(
+  tail
+)
+type(
+  Gdk.bitmap
+)
+"view_graph/viewGraph_select.ml" 159 6290 6294 "view_graph/viewGraph_select.ml" 159 6290 6306
+type(
+  unit -> Gdk.bitmap
+)
+ident(
+  def sel_2_bitmap "view_graph/viewGraph_select.ml" 163 6508 6508 --
+)
+"view_graph/viewGraph_select.ml" 159 6290 6307 "view_graph/viewGraph_select.ml" 159 6290 6309
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 159 6290 6312 "view_graph/viewGraph_select.ml" 159 6290 6339
+type(
+  ?window:Gdk.window -> width:int -> height:int -> string -> Gdk.bitmap
+)
+ident(
+  ext_ref Gdk.Bitmap.create_from_data
+)
+"view_graph/viewGraph_select.ml" 159 6290 6347 "view_graph/viewGraph_select.ml" 159 6290 6348
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 159 6290 6357 "view_graph/viewGraph_select.ml" 159 6290 6358
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 159 6290 6359 "view_graph/viewGraph_select.ml" 159 6290 6369
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 159 6290 6312 "view_graph/viewGraph_select.ml" 159 6290 6369
+call(
+  tail
+)
+type(
+  Gdk.bitmap
+)
+"view_graph/viewGraph_select.ml" 163 6508 6512 "view_graph/viewGraph_select.ml" 163 6508 6521
+type(
+  unit -> Gdk.bitmap
+)
+ident(
+  def no_bitmap "view_graph/viewGraph_select.ml" 166 6583 6583 --
+)
+"view_graph/viewGraph_select.ml" 163 6508 6522 "view_graph/viewGraph_select.ml" 163 6508 6524
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 163 6508 6527 "view_graph/viewGraph_select.ml" 163 6508 6554
+type(
+  ?window:Gdk.window -> width:int -> height:int -> string -> Gdk.bitmap
+)
+ident(
+  ext_ref Gdk.Bitmap.create_from_data
+)
+"view_graph/viewGraph_select.ml" 163 6508 6562 "view_graph/viewGraph_select.ml" 163 6508 6563
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 163 6508 6572 "view_graph/viewGraph_select.ml" 163 6508 6573
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 163 6508 6574 "view_graph/viewGraph_select.ml" 163 6508 6580
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 163 6508 6527 "view_graph/viewGraph_select.ml" 163 6508 6580
+call(
+  tail
+)
+type(
+  Gdk.bitmap
+)
+"view_graph/viewGraph_select.ml" 166 6583 6587 "view_graph/viewGraph_select.ml" 166 6583 6601
+type(
+  t_state ->
+  ViewGraph_core.t_node option -> ViewGraph_core.t_node option -> unit
+)
+ident(
+  def move_selection "view_graph/viewGraph_select.ml" 182 7187 7187 --
+)
+"view_graph/viewGraph_select.ml" 166 6583 6602 "view_graph/viewGraph_select.ml" 166 6583 6607
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 166 6583 6608 "view_graph/viewGraph_select.ml" 180 7129 7185
+)
+"view_graph/viewGraph_select.ml" 166 6583 6608 "view_graph/viewGraph_select.ml" 166 6583 6614
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  def n_opt1 "view_graph/viewGraph_select.ml" 166 6583 6615 "view_graph/viewGraph_select.ml" 180 7129 7185
+)
+"view_graph/viewGraph_select.ml" 166 6583 6615 "view_graph/viewGraph_select.ml" 166 6583 6621
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  def n_opt2 "view_graph/viewGraph_select.ml" 167 6624 6626 "view_graph/viewGraph_select.ml" 180 7129 7185
+)
+"view_graph/viewGraph_select.ml" 167 6624 6630 "view_graph/viewGraph_select.ml" 167 6624 6639
+type(
+  < set : [> `FILL_COLOR of 'a | `FILL_STIPPLE of 'b ] list -> unit; .. >
+  option -> 'a -> 'b -> unit
+)
+"view_graph/viewGraph_select.ml" 167 6624 6640 "view_graph/viewGraph_select.ml" 167 6624 6641
+type(
+  (< set : [> `FILL_COLOR of 'a | `FILL_STIPPLE of 'b ] list -> unit; .. >
+   as 'c)
+  option
+)
+ident(
+  def o "view_graph/viewGraph_select.ml" 167 6624 6642 "view_graph/viewGraph_select.ml" 168 6679 6742
+)
+"view_graph/viewGraph_select.ml" 167 6624 6642 "view_graph/viewGraph_select.ml" 167 6624 6645
+type(
+  'a
+)
+ident(
+  def col "view_graph/viewGraph_select.ml" 167 6624 6646 "view_graph/viewGraph_select.ml" 168 6679 6742
+)
+"view_graph/viewGraph_select.ml" 167 6624 6646 "view_graph/viewGraph_select.ml" 167 6624 6652
+type(
+  'b
+)
+ident(
+  def bitmap "view_graph/viewGraph_select.ml" 167 6624 6655 "view_graph/viewGraph_select.ml" 168 6679 6742
+)
+"view_graph/viewGraph_select.ml" 167 6624 6661 "view_graph/viewGraph_select.ml" 167 6624 6662
+type(
+  'c option
+)
+ident(
+  int_ref o "view_graph/viewGraph_select.ml" 167 6624 6640 "view_graph/viewGraph_select.ml" 167 6624 6641
+)
+"view_graph/viewGraph_select.ml" 167 6624 6668 "view_graph/viewGraph_select.ml" 167 6624 6672
+type(
+  'c option
+)
+"view_graph/viewGraph_select.ml" 167 6624 6676 "view_graph/viewGraph_select.ml" 167 6624 6678
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 168 6679 6690 "view_graph/viewGraph_select.ml" 168 6679 6691
+type(
+  'c
+)
+ident(
+  def o "view_graph/viewGraph_select.ml" 168 6679 6695 "view_graph/viewGraph_select.ml" 168 6679 6742
+)
+"view_graph/viewGraph_select.ml" 168 6679 6685 "view_graph/viewGraph_select.ml" 168 6679 6691
+type(
+  'c option
+)
+"view_graph/viewGraph_select.ml" 168 6679 6695 "view_graph/viewGraph_select.ml" 168 6679 6696
+type(
+  'c
+)
+ident(
+  int_ref o "view_graph/viewGraph_select.ml" 168 6679 6690 "view_graph/viewGraph_select.ml" 168 6679 6691
+)
+"view_graph/viewGraph_select.ml" 168 6679 6695 "view_graph/viewGraph_select.ml" 168 6679 6700
+type(
+  ([> `FILL_COLOR of 'a | `FILL_STIPPLE of 'b ] as 'd) list -> unit
+)
+"view_graph/viewGraph_select.ml" 168 6679 6715 "view_graph/viewGraph_select.ml" 168 6679 6718
+type(
+  'a
+)
+ident(
+  int_ref col "view_graph/viewGraph_select.ml" 167 6624 6642 "view_graph/viewGraph_select.ml" 167 6624 6645
+)
+"view_graph/viewGraph_select.ml" 168 6679 6703 "view_graph/viewGraph_select.ml" 168 6679 6718
+type(
+  'd
+)
+"view_graph/viewGraph_select.ml" 168 6679 6735 "view_graph/viewGraph_select.ml" 168 6679 6741
+type(
+  'b
+)
+ident(
+  int_ref bitmap "view_graph/viewGraph_select.ml" 167 6624 6646 "view_graph/viewGraph_select.ml" 167 6624 6652
+)
+"view_graph/viewGraph_select.ml" 168 6679 6721 "view_graph/viewGraph_select.ml" 168 6679 6741
+type(
+  'd
+)
+"view_graph/viewGraph_select.ml" 168 6679 6701 "view_graph/viewGraph_select.ml" 168 6679 6742
+type(
+  'd list
+)
+"view_graph/viewGraph_select.ml" 168 6679 6695 "view_graph/viewGraph_select.ml" 168 6679 6742
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 167 6624 6655 "view_graph/viewGraph_select.ml" 168 6679 6742
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 170 6748 6754 "view_graph/viewGraph_select.ml" 170 6748 6759
+type(
+  ViewGraph_core.t_node option -> ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 170 6748 6760 "view_graph/viewGraph_select.ml" 170 6748 6765
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  def n_opt "view_graph/viewGraph_select.ml" 170 6748 6769 "view_graph/viewGraph_select.ml" 172 6805 6846
+)
+"view_graph/viewGraph_select.ml" 170 6748 6775 "view_graph/viewGraph_select.ml" 170 6748 6780
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  int_ref n_opt "view_graph/viewGraph_select.ml" 170 6748 6760 "view_graph/viewGraph_select.ml" 170 6748 6765
+)
+"view_graph/viewGraph_select.ml" 171 6786 6792 "view_graph/viewGraph_select.ml" 171 6786 6796
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 171 6786 6800 "view_graph/viewGraph_select.ml" 171 6786 6804
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 172 6805 6816 "view_graph/viewGraph_select.ml" 172 6805 6817
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 172 6805 6822 "view_graph/viewGraph_select.ml" 172 6805 6846
+)
+"view_graph/viewGraph_select.ml" 172 6805 6811 "view_graph/viewGraph_select.ml" 172 6805 6817
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 172 6805 6822 "view_graph/viewGraph_select.ml" 172 6805 6844
+type(
+  ViewGraph_core.t_node -> ViewGraph_core.t_gtk_obj option
+)
+ident(
+  ext_ref ViewGraph_core.get_obj
+)
+"view_graph/viewGraph_select.ml" 172 6805 6845 "view_graph/viewGraph_select.ml" 172 6805 6846
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 172 6805 6816 "view_graph/viewGraph_select.ml" 172 6805 6817
+)
+"view_graph/viewGraph_select.ml" 172 6805 6822 "view_graph/viewGraph_select.ml" 172 6805 6846
+call(
+  tail
+)
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 170 6748 6769 "view_graph/viewGraph_select.ml" 172 6805 6846
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 174 6853 6859 "view_graph/viewGraph_select.ml" 174 6853 6863
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 174 6853 6866 "view_graph/viewGraph_select.ml" 174 6853 6871
+type(
+  ViewGraph_core.t_node option -> ViewGraph_core.t_gtk_obj option
+)
+ident(
+  int_ref n_obj "view_graph/viewGraph_select.ml" 170 6748 6754 "view_graph/viewGraph_select.ml" 170 6748 6759
+)
+"view_graph/viewGraph_select.ml" 174 6853 6872 "view_graph/viewGraph_select.ml" 174 6853 6878
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  int_ref n_opt1 "view_graph/viewGraph_select.ml" 166 6583 6608 "view_graph/viewGraph_select.ml" 166 6583 6614
+)
+"view_graph/viewGraph_select.ml" 174 6853 6866 "view_graph/viewGraph_select.ml" 174 6853 6878
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 175 6882 6888 "view_graph/viewGraph_select.ml" 175 6882 6892
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 175 6882 6895 "view_graph/viewGraph_select.ml" 175 6882 6900
+type(
+  ViewGraph_core.t_node option -> ViewGraph_core.t_gtk_obj option
+)
+ident(
+  int_ref n_obj "view_graph/viewGraph_select.ml" 170 6748 6754 "view_graph/viewGraph_select.ml" 170 6748 6759
+)
+"view_graph/viewGraph_select.ml" 175 6882 6901 "view_graph/viewGraph_select.ml" 175 6882 6907
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  int_ref n_opt2 "view_graph/viewGraph_select.ml" 166 6583 6615 "view_graph/viewGraph_select.ml" 166 6583 6621
+)
+"view_graph/viewGraph_select.ml" 175 6882 6895 "view_graph/viewGraph_select.ml" 175 6882 6907
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 176 6911 6917 "view_graph/viewGraph_select.ml" 176 6911 6926
+type(
+  int -> unit
+)
+"view_graph/viewGraph_select.ml" 176 6911 6927 "view_graph/viewGraph_select.ml" 176 6911 6928
+type(
+  int
+)
+ident(
+  def i "view_graph/viewGraph_select.ml" 176 6911 6931 "view_graph/viewGraph_select.ml" 176 6911 6980
+)
+"view_graph/viewGraph_select.ml" 176 6911 6931 "view_graph/viewGraph_select.ml" 176 6911 6940
+type(
+  ViewGraph_core.t_gtk_obj option -> string -> Gdk.bitmap -> unit
+)
+ident(
+  int_ref set_props "view_graph/viewGraph_select.ml" 167 6624 6630 "view_graph/viewGraph_select.ml" 167 6624 6639
+)
+"view_graph/viewGraph_select.ml" 176 6911 6941 "view_graph/viewGraph_select.ml" 176 6911 6946
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 166 6583 6602 "view_graph/viewGraph_select.ml" 166 6583 6607
+)
+"view_graph/viewGraph_select.ml" 176 6911 6941 "view_graph/viewGraph_select.ml" 176 6911 6954
+type(
+  ViewGraph_core.t_gtk_obj option array
+)
+"view_graph/viewGraph_select.ml" 176 6911 6956 "view_graph/viewGraph_select.ml" 176 6911 6957
+type(
+  int
+)
+ident(
+  int_ref i "view_graph/viewGraph_select.ml" 176 6911 6927 "view_graph/viewGraph_select.ml" 176 6911 6928
+)
+"view_graph/viewGraph_select.ml" 176 6911 6941 "view_graph/viewGraph_select.ml" 176 6911 6958
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 176 6911 6959 "view_graph/viewGraph_select.ml" 176 6911 6966
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 176 6911 6968 "view_graph/viewGraph_select.ml" 176 6911 6977
+type(
+  unit -> Gdk.bitmap
+)
+ident(
+  int_ref no_bitmap "view_graph/viewGraph_select.ml" 163 6508 6512 "view_graph/viewGraph_select.ml" 163 6508 6521
+)
+"view_graph/viewGraph_select.ml" 176 6911 6977 "view_graph/viewGraph_select.ml" 176 6911 6979
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 176 6911 6967 "view_graph/viewGraph_select.ml" 176 6911 6980
+call(
+  stack
+)
+type(
+  Gdk.bitmap
+)
+"view_graph/viewGraph_select.ml" 176 6911 6931 "view_graph/viewGraph_select.ml" 176 6911 6980
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 177 6984 6987 "view_graph/viewGraph_select.ml" 177 6984 6996
+type(
+  int -> unit
+)
+ident(
+  int_ref reset_old "view_graph/viewGraph_select.ml" 176 6911 6917 "view_graph/viewGraph_select.ml" 176 6911 6926
+)
+"view_graph/viewGraph_select.ml" 177 6984 6997 "view_graph/viewGraph_select.ml" 177 6984 6998
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 177 6984 6987 "view_graph/viewGraph_select.ml" 177 6984 6998
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 177 6984 7000 "view_graph/viewGraph_select.ml" 177 6984 7009
+type(
+  int -> unit
+)
+ident(
+  int_ref reset_old "view_graph/viewGraph_select.ml" 176 6911 6917 "view_graph/viewGraph_select.ml" 176 6911 6926
+)
+"view_graph/viewGraph_select.ml" 177 6984 7010 "view_graph/viewGraph_select.ml" 177 6984 7011
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 177 6984 7000 "view_graph/viewGraph_select.ml" 177 6984 7011
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 178 7013 7016 "view_graph/viewGraph_select.ml" 178 7013 7021
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 166 6583 6602 "view_graph/viewGraph_select.ml" 166 6583 6607
+)
+"view_graph/viewGraph_select.ml" 178 7013 7016 "view_graph/viewGraph_select.ml" 178 7013 7029
+type(
+  ViewGraph_core.t_gtk_obj option array
+)
+"view_graph/viewGraph_select.ml" 178 7013 7031 "view_graph/viewGraph_select.ml" 178 7013 7032
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 178 7013 7037 "view_graph/viewGraph_select.ml" 178 7013 7041
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+ident(
+  int_ref obj1 "view_graph/viewGraph_select.ml" 174 6853 6859 "view_graph/viewGraph_select.ml" 174 6853 6863
+)
+"view_graph/viewGraph_select.ml" 178 7013 7016 "view_graph/viewGraph_select.ml" 178 7013 7041
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 178 7013 7043 "view_graph/viewGraph_select.ml" 178 7013 7048
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 166 6583 6602 "view_graph/viewGraph_select.ml" 166 6583 6607
+)
+"view_graph/viewGraph_select.ml" 178 7013 7043 "view_graph/viewGraph_select.ml" 178 7013 7056
+type(
+  ViewGraph_core.t_gtk_obj option array
+)
+"view_graph/viewGraph_select.ml" 178 7013 7058 "view_graph/viewGraph_select.ml" 178 7013 7059
+type(
+  int
+)
+"view_graph/viewGraph_select.ml" 178 7013 7064 "view_graph/viewGraph_select.ml" 178 7013 7068
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+ident(
+  int_ref obj2 "view_graph/viewGraph_select.ml" 175 6882 6888 "view_graph/viewGraph_select.ml" 175 6882 6892
+)
+"view_graph/viewGraph_select.ml" 178 7013 7043 "view_graph/viewGraph_select.ml" 178 7013 7068
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 179 7070 7073 "view_graph/viewGraph_select.ml" 179 7070 7082
+type(
+  ViewGraph_core.t_gtk_obj option -> string -> Gdk.bitmap -> unit
+)
+ident(
+  int_ref set_props "view_graph/viewGraph_select.ml" 167 6624 6630 "view_graph/viewGraph_select.ml" 167 6624 6639
+)
+"view_graph/viewGraph_select.ml" 179 7070 7083 "view_graph/viewGraph_select.ml" 179 7070 7087
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+ident(
+  int_ref obj1 "view_graph/viewGraph_select.ml" 174 6853 6859 "view_graph/viewGraph_select.ml" 174 6853 6863
+)
+"view_graph/viewGraph_select.ml" 179 7070 7088 "view_graph/viewGraph_select.ml" 179 7070 7093
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 166 6583 6602 "view_graph/viewGraph_select.ml" 166 6583 6607
+)
+"view_graph/viewGraph_select.ml" 179 7070 7088 "view_graph/viewGraph_select.ml" 179 7070 7097
+type(
+  t_options
+)
+"view_graph/viewGraph_select.ml" 179 7070 7088 "view_graph/viewGraph_select.ml" 179 7070 7109
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 179 7070 7111 "view_graph/viewGraph_select.ml" 179 7070 7123
+type(
+  unit -> Gdk.bitmap
+)
+ident(
+  int_ref sel_1_bitmap "view_graph/viewGraph_select.ml" 158 6210 6214 "view_graph/viewGraph_select.ml" 158 6210 6226
+)
+"view_graph/viewGraph_select.ml" 179 7070 7123 "view_graph/viewGraph_select.ml" 179 7070 7125
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 179 7070 7110 "view_graph/viewGraph_select.ml" 179 7070 7126
+call(
+  stack
+)
+type(
+  Gdk.bitmap
+)
+"view_graph/viewGraph_select.ml" 179 7070 7073 "view_graph/viewGraph_select.ml" 179 7070 7126
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 180 7129 7132 "view_graph/viewGraph_select.ml" 180 7129 7141
+type(
+  ViewGraph_core.t_gtk_obj option -> string -> Gdk.bitmap -> unit
+)
+ident(
+  int_ref set_props "view_graph/viewGraph_select.ml" 167 6624 6630 "view_graph/viewGraph_select.ml" 167 6624 6639
+)
+"view_graph/viewGraph_select.ml" 180 7129 7142 "view_graph/viewGraph_select.ml" 180 7129 7146
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+ident(
+  int_ref obj2 "view_graph/viewGraph_select.ml" 175 6882 6888 "view_graph/viewGraph_select.ml" 175 6882 6892
+)
+"view_graph/viewGraph_select.ml" 180 7129 7147 "view_graph/viewGraph_select.ml" 180 7129 7152
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 166 6583 6602 "view_graph/viewGraph_select.ml" 166 6583 6607
+)
+"view_graph/viewGraph_select.ml" 180 7129 7147 "view_graph/viewGraph_select.ml" 180 7129 7156
+type(
+  t_options
+)
+"view_graph/viewGraph_select.ml" 180 7129 7147 "view_graph/viewGraph_select.ml" 180 7129 7168
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 180 7129 7170 "view_graph/viewGraph_select.ml" 180 7129 7182
+type(
+  unit -> Gdk.bitmap
+)
+ident(
+  int_ref sel_2_bitmap "view_graph/viewGraph_select.ml" 159 6290 6294 "view_graph/viewGraph_select.ml" 159 6290 6306
+)
+"view_graph/viewGraph_select.ml" 180 7129 7182 "view_graph/viewGraph_select.ml" 180 7129 7184
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 180 7129 7169 "view_graph/viewGraph_select.ml" 180 7129 7185
+call(
+  stack
+)
+type(
+  Gdk.bitmap
+)
+"view_graph/viewGraph_select.ml" 180 7129 7132 "view_graph/viewGraph_select.ml" 180 7129 7185
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 179 7070 7073 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 178 7013 7043 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 178 7013 7016 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 177 6984 7000 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 177 6984 6987 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 176 6911 6913 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 175 6882 6884 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 174 6853 6855 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 170 6748 6750 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 167 6624 6626 "view_graph/viewGraph_select.ml" 180 7129 7185
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 182 7187 7191 "view_graph/viewGraph_select.ml" 182 7187 7205
+type(
+  t_state -> unit
+)
+ident(
+  def show_selection "view_graph/viewGraph_select.ml" 204 8057 8057 --
+)
+"view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 183 7214 7216 "view_graph/viewGraph_select.ml" 202 8023 8055
+)
+"view_graph/viewGraph_select.ml" 183 7214 7220 "view_graph/viewGraph_select.ml" 183 7214 7225
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 183 7214 7227 "view_graph/viewGraph_select.ml" 183 7214 7231
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 183 7214 7233 "view_graph/viewGraph_select.ml" 183 7214 7237
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 183 7214 7239 "view_graph/viewGraph_select.ml" 183 7214 7243
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 183 7214 7220 "view_graph/viewGraph_select.ml" 183 7214 7243
+type(
+  CircLists.t_elem option * string * string * string
+)
+"view_graph/viewGraph_select.ml" 183 7214 7252 "view_graph/viewGraph_select.ml" 183 7214 7257
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 183 7214 7252 "view_graph/viewGraph_select.ml" 183 7214 7266
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 184 7272 7278 "view_graph/viewGraph_select.ml" 184 7272 7282
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 184 7272 7286 "view_graph/viewGraph_select.ml" 184 7272 7290
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 184 7272 7292 "view_graph/viewGraph_select.ml" 184 7272 7300
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 184 7272 7302 "view_graph/viewGraph_select.ml" 184 7272 7304
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 184 7272 7306 "view_graph/viewGraph_select.ml" 184 7272 7308
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 184 7272 7286 "view_graph/viewGraph_select.ml" 184 7272 7308
+type(
+  CircLists.t_elem option * string * string * string
+)
+"view_graph/viewGraph_select.ml" 185 7309 7320 "view_graph/viewGraph_select.ml" 185 7309 7321
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 186 7326 7334 "view_graph/viewGraph_select.ml" 195 7774 7808
+)
+"view_graph/viewGraph_select.ml" 185 7309 7315 "view_graph/viewGraph_select.ml" 185 7309 7321
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 186 7326 7338 "view_graph/viewGraph_select.ml" 186 7326 7342
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 186 7326 7345 "view_graph/viewGraph_select.ml" 186 7326 7366
+type(
+  ViewGraph_core.t_node -> string
+)
+ident(
+  ext_ref ViewGraph_core.get_id
+)
+"view_graph/viewGraph_select.ml" 186 7326 7367 "view_graph/viewGraph_select.ml" 186 7326 7368
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 185 7309 7320 "view_graph/viewGraph_select.ml" 185 7309 7321
+)
+"view_graph/viewGraph_select.ml" 186 7326 7345 "view_graph/viewGraph_select.ml" 186 7326 7368
+call(
+  stack
+)
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 187 7372 7384 "view_graph/viewGraph_select.ml" 187 7372 7389
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 187 7372 7391 "view_graph/viewGraph_select.ml" 187 7372 7395
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 187 7372 7397 "view_graph/viewGraph_select.ml" 187 7372 7401
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 187 7372 7384 "view_graph/viewGraph_select.ml" 187 7372 7401
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 187 7372 7410 "view_graph/viewGraph_select.ml" 187 7372 7415
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 187 7372 7410 "view_graph/viewGraph_select.ml" 187 7372 7426
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 188 7433 7445 "view_graph/viewGraph_select.ml" 188 7433 7449
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 188 7433 7453 "view_graph/viewGraph_select.ml" 188 7433 7457
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 188 7433 7459 "view_graph/viewGraph_select.ml" 188 7433 7461
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 188 7433 7463 "view_graph/viewGraph_select.ml" 188 7433 7465
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 188 7433 7453 "view_graph/viewGraph_select.ml" 188 7433 7465
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 189 7466 7483 "view_graph/viewGraph_select.ml" 189 7466 7487
+type(
+  CircLists.t
+)
+ident(
+  def info "view_graph/viewGraph_select.ml" 190 7491 7505 "view_graph/viewGraph_select.ml" 194 7714 7773
+)
+"view_graph/viewGraph_select.ml" 189 7466 7478 "view_graph/viewGraph_select.ml" 189 7466 7487
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 190 7491 7511 "view_graph/viewGraph_select.ml" 190 7491 7533
+type(
+  CircLists.t -> (bool * CircLists.t_elem) option
+)
+ident(
+  ext_ref CircLists.current_node
+)
+"view_graph/viewGraph_select.ml" 190 7491 7534 "view_graph/viewGraph_select.ml" 190 7491 7538
+type(
+  CircLists.t
+)
+ident(
+  int_ref info "view_graph/viewGraph_select.ml" 189 7466 7483 "view_graph/viewGraph_select.ml" 189 7466 7487
+)
+"view_graph/viewGraph_select.ml" 190 7491 7511 "view_graph/viewGraph_select.ml" 190 7491 7538
+call(
+  stack
+)
+type(
+  (bool * CircLists.t_elem) option
+)
+"view_graph/viewGraph_select.ml" 191 7544 7562 "view_graph/viewGraph_select.ml" 191 7544 7566
+type(
+  (bool * CircLists.t_elem) option
+)
+"view_graph/viewGraph_select.ml" 191 7544 7570 "view_graph/viewGraph_select.ml" 191 7544 7574
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 191 7544 7576 "view_graph/viewGraph_select.ml" 191 7544 7583
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 191 7544 7585 "view_graph/viewGraph_select.ml" 191 7544 7593
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 191 7544 7570 "view_graph/viewGraph_select.ml" 191 7544 7593
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 192 7594 7618 "view_graph/viewGraph_select.ml" 192 7594 7628
+type(
+  bool
+)
+ident(
+  def pred_first "view_graph/viewGraph_select.ml" 193 7636 7656 "view_graph/viewGraph_select.ml" 194 7714 7773
+)
+"view_graph/viewGraph_select.ml" 192 7594 7630 "view_graph/viewGraph_select.ml" 192 7594 7631
+type(
+  CircLists.t_elem
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 193 7636 7656 "view_graph/viewGraph_select.ml" 194 7714 7773
+)
+"view_graph/viewGraph_select.ml" 192 7594 7617 "view_graph/viewGraph_select.ml" 192 7594 7632
+type(
+  bool * CircLists.t_elem
+)
+"view_graph/viewGraph_select.ml" 192 7594 7612 "view_graph/viewGraph_select.ml" 192 7594 7632
+type(
+  (bool * CircLists.t_elem) option
+)
+"view_graph/viewGraph_select.ml" 193 7636 7660 "view_graph/viewGraph_select.ml" 193 7636 7664
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 193 7636 7670 "view_graph/viewGraph_select.ml" 193 7636 7680
+type(
+  bool
+)
+ident(
+  int_ref pred_first "view_graph/viewGraph_select.ml" 192 7594 7618 "view_graph/viewGraph_select.ml" 192 7594 7628
+)
+"view_graph/viewGraph_select.ml" 193 7636 7686 "view_graph/viewGraph_select.ml" 193 7636 7695
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 193 7636 7701 "view_graph/viewGraph_select.ml" 193 7636 7710
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 193 7636 7667 "view_graph/viewGraph_select.ml" 193 7636 7710
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 194 7714 7741 "view_graph/viewGraph_select.ml" 194 7714 7742
+type(
+  CircLists.t_elem
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 192 7594 7630 "view_graph/viewGraph_select.ml" 192 7594 7631
+)
+"view_graph/viewGraph_select.ml" 194 7714 7736 "view_graph/viewGraph_select.ml" 194 7714 7742
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 194 7714 7744 "view_graph/viewGraph_select.ml" 194 7714 7748
+type(
+  string
+)
+ident(
+  int_ref txt2 "view_graph/viewGraph_select.ml" 193 7636 7660 "view_graph/viewGraph_select.ml" 193 7636 7664
+)
+"view_graph/viewGraph_select.ml" 194 7714 7750 "view_graph/viewGraph_select.ml" 194 7714 7771
+type(
+  CircLists.t_elem -> string
+)
+ident(
+  ext_ref ViewGraph_core.get_id
+)
+"view_graph/viewGraph_select.ml" 194 7714 7772 "view_graph/viewGraph_select.ml" 194 7714 7773
+type(
+  CircLists.t_elem
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 192 7594 7630 "view_graph/viewGraph_select.ml" 192 7594 7631
+)
+"view_graph/viewGraph_select.ml" 194 7714 7750 "view_graph/viewGraph_select.ml" 194 7714 7773
+call(
+  stack
+)
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 194 7714 7736 "view_graph/viewGraph_select.ml" 194 7714 7773
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 193 7636 7656 "view_graph/viewGraph_select.ml" 194 7714 7773
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 190 7491 7505 "view_graph/viewGraph_select.ml" 194 7714 7773
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 187 7372 7404 "view_graph/viewGraph_select.ml" 194 7714 7773
+type(
+  CircLists.t_elem option * string * string
+)
+"view_graph/viewGraph_select.ml" 195 7774 7785 "view_graph/viewGraph_select.ml" 195 7774 7790
+type(
+  CircLists.t_elem option
+)
+ident(
+  int_ref n_opt "view_graph/viewGraph_select.ml" 187 7372 7384 "view_graph/viewGraph_select.ml" 187 7372 7389
+)
+"view_graph/viewGraph_select.ml" 195 7774 7792 "view_graph/viewGraph_select.ml" 195 7774 7796
+type(
+  string
+)
+ident(
+  int_ref txt1 "view_graph/viewGraph_select.ml" 186 7326 7338 "view_graph/viewGraph_select.ml" 186 7326 7342
+)
+"view_graph/viewGraph_select.ml" 195 7774 7798 "view_graph/viewGraph_select.ml" 195 7774 7802
+type(
+  string
+)
+ident(
+  int_ref txt2 "view_graph/viewGraph_select.ml" 187 7372 7391 "view_graph/viewGraph_select.ml" 187 7372 7395
+)
+"view_graph/viewGraph_select.ml" 195 7774 7804 "view_graph/viewGraph_select.ml" 195 7774 7808
+type(
+  string
+)
+ident(
+  int_ref txt3 "view_graph/viewGraph_select.ml" 187 7372 7397 "view_graph/viewGraph_select.ml" 187 7372 7401
+)
+"view_graph/viewGraph_select.ml" 195 7774 7785 "view_graph/viewGraph_select.ml" 195 7774 7808
+type(
+  CircLists.t_elem option * string * string * string
+)
+"view_graph/viewGraph_select.ml" 187 7372 7380 "view_graph/viewGraph_select.ml" 195 7774 7808
+type(
+  CircLists.t_elem option * string * string * string
+)
+"view_graph/viewGraph_select.ml" 186 7326 7334 "view_graph/viewGraph_select.ml" 195 7774 7808
+type(
+  CircLists.t_elem option * string * string * string
+)
+"view_graph/viewGraph_select.ml" 183 7214 7246 "view_graph/viewGraph_select.ml" 195 7774 7808
+type(
+  CircLists.t_elem option * string * string * string
+)
+"view_graph/viewGraph_select.ml" 197 7814 7818 "view_graph/viewGraph_select.ml" 197 7814 7823
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 197 7814 7818 "view_graph/viewGraph_select.ml" 197 7814 7825
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 197 7814 7818 "view_graph/viewGraph_select.ml" 197 7814 7835
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 197 7814 7818 "view_graph/viewGraph_select.ml" 197 7814 7844
+type(
+  string -> unit
+)
+"view_graph/viewGraph_select.ml" 197 7814 7845 "view_graph/viewGraph_select.ml" 197 7814 7849
+type(
+  string
+)
+ident(
+  int_ref txt1 "view_graph/viewGraph_select.ml" 183 7214 7227 "view_graph/viewGraph_select.ml" 183 7214 7231
+)
+"view_graph/viewGraph_select.ml" 197 7814 7818 "view_graph/viewGraph_select.ml" 197 7814 7849
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 198 7851 7855 "view_graph/viewGraph_select.ml" 198 7851 7860
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 198 7851 7855 "view_graph/viewGraph_select.ml" 198 7851 7862
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 198 7851 7855 "view_graph/viewGraph_select.ml" 198 7851 7875
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 198 7851 7855 "view_graph/viewGraph_select.ml" 198 7851 7884
+type(
+  string -> unit
+)
+"view_graph/viewGraph_select.ml" 198 7851 7885 "view_graph/viewGraph_select.ml" 198 7851 7889
+type(
+  string
+)
+ident(
+  int_ref txt2 "view_graph/viewGraph_select.ml" 183 7214 7233 "view_graph/viewGraph_select.ml" 183 7214 7237
+)
+"view_graph/viewGraph_select.ml" 198 7851 7855 "view_graph/viewGraph_select.ml" 198 7851 7889
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 199 7891 7895 "view_graph/viewGraph_select.ml" 199 7891 7900
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 199 7891 7895 "view_graph/viewGraph_select.ml" 199 7891 7902
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 199 7891 7895 "view_graph/viewGraph_select.ml" 199 7891 7912
+type(
+  GMisc.label
+)
+"view_graph/viewGraph_select.ml" 199 7891 7895 "view_graph/viewGraph_select.ml" 199 7891 7921
+type(
+  string -> unit
+)
+"view_graph/viewGraph_select.ml" 199 7891 7922 "view_graph/viewGraph_select.ml" 199 7891 7926
+type(
+  string
+)
+ident(
+  int_ref txt3 "view_graph/viewGraph_select.ml" 183 7214 7239 "view_graph/viewGraph_select.ml" 183 7214 7243
+)
+"view_graph/viewGraph_select.ml" 199 7891 7895 "view_graph/viewGraph_select.ml" 199 7891 7926
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 200 7928 7932 "view_graph/viewGraph_select.ml" 200 7928 7946
+type(
+  t_state -> ViewGraph_core.t_node option -> CircLists.t_elem option -> unit
+)
+ident(
+  int_ref move_selection "view_graph/viewGraph_select.ml" 166 6583 6587 "view_graph/viewGraph_select.ml" 166 6583 6601
+)
+"view_graph/viewGraph_select.ml" 200 7928 7947 "view_graph/viewGraph_select.ml" 200 7928 7952
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 200 7928 7953 "view_graph/viewGraph_select.ml" 200 7928 7958
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 200 7928 7953 "view_graph/viewGraph_select.ml" 200 7928 7967
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 200 7928 7968 "view_graph/viewGraph_select.ml" 200 7928 7973
+type(
+  CircLists.t_elem option
+)
+ident(
+  int_ref n_opt "view_graph/viewGraph_select.ml" 183 7214 7220 "view_graph/viewGraph_select.ml" 183 7214 7225
+)
+"view_graph/viewGraph_select.ml" 200 7928 7932 "view_graph/viewGraph_select.ml" 200 7928 7973
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 201 7975 7982 "view_graph/viewGraph_select.ml" 201 7975 7987
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 201 7975 7982 "view_graph/viewGraph_select.ml" 201 7975 7991
+type(
+  t_options
+)
+"view_graph/viewGraph_select.ml" 201 7975 7982 "view_graph/viewGraph_select.ml" 201 7975 8017
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 202 8023 8029 "view_graph/viewGraph_select.ml" 202 8023 8049
+type(
+  t_state -> unit
+)
+ident(
+  int_ref center_selected_node "view_graph/viewGraph_select.ml" 110 4032 4036 "view_graph/viewGraph_select.ml" 110 4032 4056
+)
+"view_graph/viewGraph_select.ml" 202 8023 8050 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 182 7187 7206 "view_graph/viewGraph_select.ml" 182 7187 7211
+)
+"view_graph/viewGraph_select.ml" 202 8023 8029 "view_graph/viewGraph_select.ml" 202 8023 8055
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 201 7975 7979 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 200 7928 7932 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 199 7891 7895 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 198 7851 7855 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 197 7814 7818 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 183 7214 7216 "view_graph/viewGraph_select.ml" 202 8023 8055
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 204 8057 8061 "view_graph/viewGraph_select.ml" 204 8057 8072
+type(
+  t_state -> ViewGraph_core.t_node option -> unit
+)
+ident(
+  def select_node "view_graph/viewGraph_select.ml" 209 8166 8166 --
+)
+"view_graph/viewGraph_select.ml" 204 8057 8073 "view_graph/viewGraph_select.ml" 204 8057 8078
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 204 8057 8079 "view_graph/viewGraph_select.ml" 207 8142 8164
+)
+"view_graph/viewGraph_select.ml" 204 8057 8079 "view_graph/viewGraph_select.ml" 204 8057 8084
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  def n_opt "view_graph/viewGraph_select.ml" 205 8087 8089 "view_graph/viewGraph_select.ml" 207 8142 8164
+)
+"view_graph/viewGraph_select.ml" 205 8087 8089 "view_graph/viewGraph_select.ml" 205 8087 8094
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 204 8057 8073 "view_graph/viewGraph_select.ml" 204 8057 8078
+)
+"view_graph/viewGraph_select.ml" 205 8087 8107 "view_graph/viewGraph_select.ml" 205 8087 8112
+type(
+  ViewGraph_core.t_node option
+)
+ident(
+  int_ref n_opt "view_graph/viewGraph_select.ml" 204 8057 8079 "view_graph/viewGraph_select.ml" 204 8057 8084
+)
+"view_graph/viewGraph_select.ml" 205 8087 8089 "view_graph/viewGraph_select.ml" 205 8087 8112
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 206 8114 8116 "view_graph/viewGraph_select.ml" 206 8114 8121
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 204 8057 8073 "view_graph/viewGraph_select.ml" 204 8057 8078
+)
+"view_graph/viewGraph_select.ml" 206 8114 8136 "view_graph/viewGraph_select.ml" 206 8114 8140
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 206 8114 8116 "view_graph/viewGraph_select.ml" 206 8114 8140
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 207 8142 8144 "view_graph/viewGraph_select.ml" 207 8142 8158
+type(
+  t_state -> unit
+)
+ident(
+  int_ref show_selection "view_graph/viewGraph_select.ml" 182 7187 7191 "view_graph/viewGraph_select.ml" 182 7187 7205
+)
+"view_graph/viewGraph_select.ml" 207 8142 8159 "view_graph/viewGraph_select.ml" 207 8142 8164
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 204 8057 8073 "view_graph/viewGraph_select.ml" 204 8057 8078
+)
+"view_graph/viewGraph_select.ml" 207 8142 8144 "view_graph/viewGraph_select.ml" 207 8142 8164
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 206 8114 8116 "view_graph/viewGraph_select.ml" 207 8142 8164
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 205 8087 8089 "view_graph/viewGraph_select.ml" 207 8142 8164
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 209 8166 8170 "view_graph/viewGraph_select.ml" 209 8166 8186
+type(
+  t_state -> unit
+)
+ident(
+  def select_neighbour "view_graph/viewGraph_select.ml" 224 8674 8674 --
+)
+"view_graph/viewGraph_select.ml" 209 8166 8187 "view_graph/viewGraph_select.ml" 209 8166 8192
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 210 8195 8197 "view_graph/viewGraph_select.ml" 222 8640 8672
+)
+"view_graph/viewGraph_select.ml" 210 8195 8203 "view_graph/viewGraph_select.ml" 210 8195 8208
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 209 8166 8187 "view_graph/viewGraph_select.ml" 209 8166 8192
+)
+"view_graph/viewGraph_select.ml" 210 8195 8203 "view_graph/viewGraph_select.ml" 210 8195 8214
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 210 8195 8220 "view_graph/viewGraph_select.ml" 210 8195 8224
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 210 8195 8228 "view_graph/viewGraph_select.ml" 210 8195 8230
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 211 8232 8243 "view_graph/viewGraph_select.ml" 211 8232 8248
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  def graph "view_graph/viewGraph_select.ml" 212 8253 8259 "view_graph/viewGraph_select.ml" 222 8640 8672
+)
+"view_graph/viewGraph_select.ml" 211 8232 8238 "view_graph/viewGraph_select.ml" 211 8232 8248
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 212 8253 8265 "view_graph/viewGraph_select.ml" 212 8253 8270
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 209 8166 8187 "view_graph/viewGraph_select.ml" 209 8166 8192
+)
+"view_graph/viewGraph_select.ml" 212 8253 8265 "view_graph/viewGraph_select.ml" 212 8253 8279
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 212 8253 8285 "view_graph/viewGraph_select.ml" 212 8253 8289
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 212 8253 8293 "view_graph/viewGraph_select.ml" 212 8253 8295
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 213 8296 8309 "view_graph/viewGraph_select.ml" 213 8296 8310
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 214 8314 8324 "view_graph/viewGraph_select.ml" 222 8640 8672
+)
+"view_graph/viewGraph_select.ml" 213 8296 8304 "view_graph/viewGraph_select.ml" 213 8296 8310
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 214 8314 8328 "view_graph/viewGraph_select.ml" 214 8314 8336
+type(
+  CircLists.t
+)
+"view_graph/viewGraph_select.ml" 215 8340 8358 "view_graph/viewGraph_select.ml" 215 8340 8363
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 209 8166 8187 "view_graph/viewGraph_select.ml" 209 8166 8192
+)
+"view_graph/viewGraph_select.ml" 215 8340 8358 "view_graph/viewGraph_select.ml" 215 8340 8374
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 216 8381 8397 "view_graph/viewGraph_select.ml" 216 8381 8401
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 217 8406 8428 "view_graph/viewGraph_select.ml" 217 8406 8438
+type(
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+"view_graph/viewGraph_select.ml" 217 8406 8441 "view_graph/viewGraph_select.ml" 217 8406 8470
+type(
+  ViewGraph_core.t_graph ->
+  ViewGraph_core.t_node ->
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+ident(
+  ext_ref ViewGraph_core.get_neighbours
+)
+"view_graph/viewGraph_select.ml" 217 8406 8471 "view_graph/viewGraph_select.ml" 217 8406 8476
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  int_ref graph "view_graph/viewGraph_select.ml" 211 8232 8243 "view_graph/viewGraph_select.ml" 211 8232 8248
+)
+"view_graph/viewGraph_select.ml" 217 8406 8477 "view_graph/viewGraph_select.ml" 217 8406 8478
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 213 8296 8309 "view_graph/viewGraph_select.ml" 213 8296 8310
+)
+"view_graph/viewGraph_select.ml" 217 8406 8441 "view_graph/viewGraph_select.ml" 217 8406 8478
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+"view_graph/viewGraph_select.ml" 218 8482 8502 "view_graph/viewGraph_select.ml" 218 8482 8514
+type(
+  CircLists.t_elem list * CircLists.t_elem list -> CircLists.t
+)
+ident(
+  ext_ref CircLists.mk
+)
+"view_graph/viewGraph_select.ml" 218 8482 8515 "view_graph/viewGraph_select.ml" 218 8482 8525
+type(
+  CircLists.t_elem list * CircLists.t_elem list
+)
+ident(
+  int_ref neighbours "view_graph/viewGraph_select.ml" 217 8406 8428 "view_graph/viewGraph_select.ml" 217 8406 8438
+)
+"view_graph/viewGraph_select.ml" 218 8482 8502 "view_graph/viewGraph_select.ml" 218 8482 8525
+call(
+  stack
+)
+type(
+  CircLists.t
+)
+"view_graph/viewGraph_select.ml" 217 8406 8424 "view_graph/viewGraph_select.ml" 218 8482 8525
+type(
+  CircLists.t
+)
+"view_graph/viewGraph_select.ml" 219 8526 8547 "view_graph/viewGraph_select.ml" 219 8526 8551
+type(
+  CircLists.t
+)
+ident(
+  def info "view_graph/viewGraph_select.ml" 219 8526 8555 "view_graph/viewGraph_select.ml" 219 8526 8577
+)
+"view_graph/viewGraph_select.ml" 219 8526 8542 "view_graph/viewGraph_select.ml" 219 8526 8551
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 219 8526 8555 "view_graph/viewGraph_select.ml" 219 8526 8572
+type(
+  CircLists.t -> CircLists.t
+)
+ident(
+  ext_ref CircLists.go_next
+)
+"view_graph/viewGraph_select.ml" 219 8526 8573 "view_graph/viewGraph_select.ml" 219 8526 8577
+type(
+  CircLists.t
+)
+ident(
+  int_ref info "view_graph/viewGraph_select.ml" 219 8526 8547 "view_graph/viewGraph_select.ml" 219 8526 8551
+)
+"view_graph/viewGraph_select.ml" 219 8526 8555 "view_graph/viewGraph_select.ml" 219 8526 8577
+call(
+  stack
+)
+type(
+  CircLists.t
+)
+"view_graph/viewGraph_select.ml" 215 8340 8352 "view_graph/viewGraph_select.ml" 219 8526 8577
+type(
+  CircLists.t
+)
+"view_graph/viewGraph_select.ml" 221 8591 8603 "view_graph/viewGraph_select.ml" 221 8591 8608
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 209 8166 8187 "view_graph/viewGraph_select.ml" 209 8166 8192
+)
+"view_graph/viewGraph_select.ml" 221 8591 8628 "view_graph/viewGraph_select.ml" 221 8591 8638
+type(
+  CircLists.t
+)
+ident(
+  int_ref new_info "view_graph/viewGraph_select.ml" 214 8314 8328 "view_graph/viewGraph_select.ml" 214 8314 8336
+)
+"view_graph/viewGraph_select.ml" 221 8591 8623 "view_graph/viewGraph_select.ml" 221 8591 8638
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 221 8591 8603 "view_graph/viewGraph_select.ml" 221 8591 8638
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 222 8640 8652 "view_graph/viewGraph_select.ml" 222 8640 8666
+type(
+  t_state -> unit
+)
+ident(
+  int_ref show_selection "view_graph/viewGraph_select.ml" 182 7187 7191 "view_graph/viewGraph_select.ml" 182 7187 7205
+)
+"view_graph/viewGraph_select.ml" 222 8640 8667 "view_graph/viewGraph_select.ml" 222 8640 8672
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 209 8166 8187 "view_graph/viewGraph_select.ml" 209 8166 8192
+)
+"view_graph/viewGraph_select.ml" 222 8640 8652 "view_graph/viewGraph_select.ml" 222 8640 8672
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 221 8591 8603 "view_graph/viewGraph_select.ml" 222 8640 8672
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 214 8314 8324 "view_graph/viewGraph_select.ml" 222 8640 8672
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 212 8253 8259 "view_graph/viewGraph_select.ml" 222 8640 8672
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 210 8195 8197 "view_graph/viewGraph_select.ml" 222 8640 8672
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 224 8674 8678 "view_graph/viewGraph_select.ml" 224 8674 8692
+type(
+  t_state -> unit
+)
+ident(
+  def goto_neighbour "view_graph/viewGraph_select.ml" 244 9560 9560 --
+)
+"view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 225 8702 8704 "view_graph/viewGraph_select.ml" 242 9512 9558
+)
+"view_graph/viewGraph_select.ml" 225 8702 8710 "view_graph/viewGraph_select.ml" 225 8702 8715
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+)
+"view_graph/viewGraph_select.ml" 225 8702 8710 "view_graph/viewGraph_select.ml" 225 8702 8721
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 225 8702 8727 "view_graph/viewGraph_select.ml" 225 8702 8731
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 225 8702 8735 "view_graph/viewGraph_select.ml" 225 8702 8737
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 226 8739 8750 "view_graph/viewGraph_select.ml" 226 8739 8755
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  def graph "view_graph/viewGraph_select.ml" 227 8760 8768 "view_graph/viewGraph_select.ml" 242 9512 9558
+)
+"view_graph/viewGraph_select.ml" 226 8739 8745 "view_graph/viewGraph_select.ml" 226 8739 8755
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 227 8760 8774 "view_graph/viewGraph_select.ml" 227 8760 8779
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+)
+"view_graph/viewGraph_select.ml" 227 8760 8774 "view_graph/viewGraph_select.ml" 227 8760 8790
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 228 8796 8808 "view_graph/viewGraph_select.ml" 228 8796 8812
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 228 8796 8816 "view_graph/viewGraph_select.ml" 228 8796 8818
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 229 8819 8836 "view_graph/viewGraph_select.ml" 229 8819 8840
+type(
+  CircLists.t
+)
+ident(
+  def info "view_graph/viewGraph_select.ml" 229 8819 8844 "view_graph/viewGraph_select.ml" 242 9512 9558
+)
+"view_graph/viewGraph_select.ml" 229 8819 8831 "view_graph/viewGraph_select.ml" 229 8819 8840
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 229 8819 8850 "view_graph/viewGraph_select.ml" 229 8819 8872
+type(
+  CircLists.t -> (bool * CircLists.t_elem) option
+)
+ident(
+  ext_ref CircLists.current_node
+)
+"view_graph/viewGraph_select.ml" 229 8819 8873 "view_graph/viewGraph_select.ml" 229 8819 8877
+type(
+  CircLists.t
+)
+ident(
+  int_ref info "view_graph/viewGraph_select.ml" 229 8819 8836 "view_graph/viewGraph_select.ml" 229 8819 8840
+)
+"view_graph/viewGraph_select.ml" 229 8819 8850 "view_graph/viewGraph_select.ml" 229 8819 8877
+call(
+  stack
+)
+type(
+  (bool * CircLists.t_elem) option
+)
+"view_graph/viewGraph_select.ml" 230 8884 8900 "view_graph/viewGraph_select.ml" 230 8884 8904
+type(
+  (bool * CircLists.t_elem) option
+)
+"view_graph/viewGraph_select.ml" 230 8884 8908 "view_graph/viewGraph_select.ml" 230 8884 8910
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 231 8911 8933 "view_graph/viewGraph_select.ml" 231 8911 8934
+type(
+  bool
+)
+"view_graph/viewGraph_select.ml" 231 8911 8936 "view_graph/viewGraph_select.ml" 231 8911 8937
+type(
+  CircLists.t_elem
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 232 8943 8961 "view_graph/viewGraph_select.ml" 242 9512 9558
+)
+"view_graph/viewGraph_select.ml" 231 8911 8932 "view_graph/viewGraph_select.ml" 231 8911 8938
+type(
+  bool * CircLists.t_elem
+)
+"view_graph/viewGraph_select.ml" 231 8911 8927 "view_graph/viewGraph_select.ml" 231 8911 8938
+type(
+  (bool * CircLists.t_elem) option
+)
+"view_graph/viewGraph_select.ml" 232 8943 8967 "view_graph/viewGraph_select.ml" 232 8943 8972
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+)
+"view_graph/viewGraph_select.ml" 232 8943 8967 "view_graph/viewGraph_select.ml" 232 8943 8981
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 233 8988 9010 "view_graph/viewGraph_select.ml" 233 8988 9014
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 235 9098 9122 "view_graph/viewGraph_select.ml" 235 9098 9134
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 236 9135 9162 "view_graph/viewGraph_select.ml" 236 9135 9167
+type(
+  CircLists.t_elem
+)
+ident(
+  def old_n "view_graph/viewGraph_select.ml" 237 9171 9195 "view_graph/viewGraph_select.ml" 242 9512 9558
+)
+"view_graph/viewGraph_select.ml" 236 9135 9157 "view_graph/viewGraph_select.ml" 236 9135 9167
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 237 9171 9195 "view_graph/viewGraph_select.ml" 237 9171 9200
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+)
+"view_graph/viewGraph_select.ml" 237 9171 9218 "view_graph/viewGraph_select.ml" 237 9171 9219
+type(
+  CircLists.t_elem
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 231 8911 8936 "view_graph/viewGraph_select.ml" 231 8911 8937
+)
+"view_graph/viewGraph_select.ml" 237 9171 9213 "view_graph/viewGraph_select.ml" 237 9171 9219
+type(
+  CircLists.t_elem option
+)
+"view_graph/viewGraph_select.ml" 237 9171 9195 "view_graph/viewGraph_select.ml" 237 9171 9219
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 238 9221 9249 "view_graph/viewGraph_select.ml" 238 9221 9259
+type(
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+"view_graph/viewGraph_select.ml" 238 9221 9262 "view_graph/viewGraph_select.ml" 238 9221 9291
+type(
+  ViewGraph_core.t_graph ->
+  CircLists.t_elem -> ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+ident(
+  ext_ref ViewGraph_core.get_neighbours
+)
+"view_graph/viewGraph_select.ml" 238 9221 9292 "view_graph/viewGraph_select.ml" 238 9221 9297
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  int_ref graph "view_graph/viewGraph_select.ml" 226 8739 8750 "view_graph/viewGraph_select.ml" 226 8739 8755
+)
+"view_graph/viewGraph_select.ml" 238 9221 9298 "view_graph/viewGraph_select.ml" 238 9221 9299
+type(
+  CircLists.t_elem
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 231 8911 8936 "view_graph/viewGraph_select.ml" 231 8911 8937
+)
+"view_graph/viewGraph_select.ml" 238 9221 9262 "view_graph/viewGraph_select.ml" 238 9221 9299
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+"view_graph/viewGraph_select.ml" 239 9303 9331 "view_graph/viewGraph_select.ml" 239 9303 9341
+type(
+  bool * (ViewGraph_core.t_node list * ViewGraph_core.t_node list * 'a list)
+)
+"view_graph/viewGraph_select.ml" 239 9303 9344 "view_graph/viewGraph_select.ml" 239 9303 9356
+type(
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list ->
+  bool * (ViewGraph_core.t_node list * ViewGraph_core.t_node list * 'a list)
+)
+ident(
+  ext_ref CircLists.mk
+)
+"view_graph/viewGraph_select.ml" 239 9303 9357 "view_graph/viewGraph_select.ml" 239 9303 9367
+type(
+  ViewGraph_core.t_node list * ViewGraph_core.t_node list
+)
+ident(
+  int_ref neighbours "view_graph/viewGraph_select.ml" 238 9221 9249 "view_graph/viewGraph_select.ml" 238 9221 9259
+)
+"view_graph/viewGraph_select.ml" 239 9303 9344 "view_graph/viewGraph_select.ml" 239 9303 9367
+call(
+  stack
+)
+type(
+  bool * (ViewGraph_core.t_node list * ViewGraph_core.t_node list * 'a list)
+)
+"view_graph/viewGraph_select.ml" 240 9371 9399 "view_graph/viewGraph_select.ml" 240 9371 9409
+type(
+  bool *
+  (CircLists.t_elem list * CircLists.t_elem list * CircLists.t_elem list)
+)
+"view_graph/viewGraph_select.ml" 240 9371 9412 "view_graph/viewGraph_select.ml" 240 9371 9428
+type(
+  bool *
+  (CircLists.t_elem list * CircLists.t_elem list * CircLists.t_elem list) ->
+  CircLists.t_elem ->
+  bool *
+  (CircLists.t_elem list * CircLists.t_elem list * CircLists.t_elem list)
+)
+ident(
+  ext_ref CircLists.goto_n
+)
+"view_graph/viewGraph_select.ml" 240 9371 9429 "view_graph/viewGraph_select.ml" 240 9371 9439
+type(
+  bool *
+  (CircLists.t_elem list * CircLists.t_elem list * CircLists.t_elem list)
+)
+ident(
+  int_ref neighbours "view_graph/viewGraph_select.ml" 239 9303 9331 "view_graph/viewGraph_select.ml" 239 9303 9341
+)
+"view_graph/viewGraph_select.ml" 240 9371 9440 "view_graph/viewGraph_select.ml" 240 9371 9445
+type(
+  CircLists.t_elem
+)
+ident(
+  int_ref old_n "view_graph/viewGraph_select.ml" 236 9135 9162 "view_graph/viewGraph_select.ml" 236 9135 9167
+)
+"view_graph/viewGraph_select.ml" 240 9371 9412 "view_graph/viewGraph_select.ml" 240 9371 9445
+call(
+  stack
+)
+type(
+  bool *
+  (CircLists.t_elem list * CircLists.t_elem list * CircLists.t_elem list)
+)
+"view_graph/viewGraph_select.ml" 241 9449 9475 "view_graph/viewGraph_select.ml" 241 9449 9480
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+)
+"view_graph/viewGraph_select.ml" 241 9449 9500 "view_graph/viewGraph_select.ml" 241 9449 9510
+type(
+  CircLists.t
+)
+ident(
+  int_ref neighbours "view_graph/viewGraph_select.ml" 240 9371 9399 "view_graph/viewGraph_select.ml" 240 9371 9409
+)
+"view_graph/viewGraph_select.ml" 241 9449 9495 "view_graph/viewGraph_select.ml" 241 9449 9510
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 241 9449 9475 "view_graph/viewGraph_select.ml" 241 9449 9510
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 242 9512 9538 "view_graph/viewGraph_select.ml" 242 9512 9552
+type(
+  t_state -> unit
+)
+ident(
+  int_ref show_selection "view_graph/viewGraph_select.ml" 182 7187 7191 "view_graph/viewGraph_select.ml" 182 7187 7205
+)
+"view_graph/viewGraph_select.ml" 242 9512 9553 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 224 8674 8693 "view_graph/viewGraph_select.ml" 224 8674 8698
+)
+"view_graph/viewGraph_select.ml" 242 9512 9538 "view_graph/viewGraph_select.ml" 242 9512 9558
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 241 9449 9475 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 240 9371 9395 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 239 9303 9327 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 238 9221 9245 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 237 9171 9195 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 232 8943 8961 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 229 8819 8844 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 227 8760 8768 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 225 8702 8704 "view_graph/viewGraph_select.ml" 242 9512 9558
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 244 9560 9564 "view_graph/viewGraph_select.ml" 244 9560 9575
+type(
+  t_state -> unit
+)
+ident(
+  def clear_state "view_graph/viewGraph_select.ml" 252 9743 9743 --
+)
+"view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 245 9584 9586 "view_graph/viewGraph_select.ml" 250 9719 9741
+)
+"view_graph/viewGraph_select.ml" 245 9584 9586 "view_graph/viewGraph_select.ml" 245 9584 9591
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+)
+"view_graph/viewGraph_select.ml" 245 9584 9601 "view_graph/viewGraph_select.ml" 245 9584 9605
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 245 9584 9586 "view_graph/viewGraph_select.ml" 245 9584 9605
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 246 9607 9609 "view_graph/viewGraph_select.ml" 246 9607 9614
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+)
+"view_graph/viewGraph_select.ml" 246 9607 9622 "view_graph/viewGraph_select.ml" 246 9607 9624
+type(
+  float
+)
+"view_graph/viewGraph_select.ml" 246 9607 9609 "view_graph/viewGraph_select.ml" 246 9607 9624
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 247 9627 9629 "view_graph/viewGraph_select.ml" 247 9627 9634
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+)
+"view_graph/viewGraph_select.ml" 247 9627 9647 "view_graph/viewGraph_select.ml" 247 9627 9651
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 247 9627 9629 "view_graph/viewGraph_select.ml" 247 9627 9651
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 248 9654 9656 "view_graph/viewGraph_select.ml" 248 9654 9661
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+)
+"view_graph/viewGraph_select.ml" 248 9654 9676 "view_graph/viewGraph_select.ml" 248 9654 9680
+type(
+  CircLists.t option
+)
+"view_graph/viewGraph_select.ml" 248 9654 9656 "view_graph/viewGraph_select.ml" 248 9654 9680
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 249 9682 9684 "view_graph/viewGraph_select.ml" 249 9682 9689
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+)
+"view_graph/viewGraph_select.ml" 249 9682 9704 "view_graph/viewGraph_select.ml" 249 9682 9708
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 249 9682 9710 "view_graph/viewGraph_select.ml" 249 9682 9714
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 249 9682 9701 "view_graph/viewGraph_select.ml" 249 9682 9717
+type(
+  ViewGraph_core.t_gtk_obj option array
+)
+"view_graph/viewGraph_select.ml" 249 9682 9684 "view_graph/viewGraph_select.ml" 249 9682 9717
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 250 9719 9721 "view_graph/viewGraph_select.ml" 250 9719 9735
+type(
+  t_state -> unit
+)
+ident(
+  int_ref show_selection "view_graph/viewGraph_select.ml" 182 7187 7191 "view_graph/viewGraph_select.ml" 182 7187 7205
+)
+"view_graph/viewGraph_select.ml" 250 9719 9736 "view_graph/viewGraph_select.ml" 250 9719 9741
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 244 9560 9576 "view_graph/viewGraph_select.ml" 244 9560 9581
+)
+"view_graph/viewGraph_select.ml" 250 9719 9721 "view_graph/viewGraph_select.ml" 250 9719 9741
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 249 9682 9684 "view_graph/viewGraph_select.ml" 250 9719 9741
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 248 9654 9656 "view_graph/viewGraph_select.ml" 250 9719 9741
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 247 9627 9629 "view_graph/viewGraph_select.ml" 250 9719 9741
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 246 9607 9609 "view_graph/viewGraph_select.ml" 250 9719 9741
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 245 9584 9586 "view_graph/viewGraph_select.ml" 250 9719 9741
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 255 9839 9845 "view_graph/viewGraph_select.ml" 255 9839 9870
+type(
+  UserCb.t_env * t_state -> unit
+)
+ident(
+  def button_one_press_on_graph "view_graph/viewGraph_select.ml" 259 9963 9965 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 255 9839 9872 "view_graph/viewGraph_select.ml" 255 9839 9877
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 256 9889 9893 "view_graph/viewGraph_select.ml" 257 9917 9961
+)
+"view_graph/viewGraph_select.ml" 255 9839 9879 "view_graph/viewGraph_select.ml" 255 9839 9884
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 256 9889 9893 "view_graph/viewGraph_select.ml" 257 9917 9961
+)
+"view_graph/viewGraph_select.ml" 255 9839 9871 "view_graph/viewGraph_select.ml" 255 9839 9885
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 256 9889 9893 "view_graph/viewGraph_select.ml" 256 9889 9904
+type(
+  t_state -> ViewGraph_core.t_node option -> unit
+)
+ident(
+  int_ref select_node "view_graph/viewGraph_select.ml" 204 8057 8061 "view_graph/viewGraph_select.ml" 204 8057 8072
+)
+"view_graph/viewGraph_select.ml" 256 9889 9905 "view_graph/viewGraph_select.ml" 256 9889 9910
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 255 9839 9879 "view_graph/viewGraph_select.ml" 255 9839 9884
+)
+"view_graph/viewGraph_select.ml" 256 9889 9911 "view_graph/viewGraph_select.ml" 256 9889 9915
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 256 9889 9893 "view_graph/viewGraph_select.ml" 256 9889 9915
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 257 9917 9921 "view_graph/viewGraph_select.ml" 257 9917 9953
+type(
+  UserCb.t_env -> unit
+)
+ident(
+  ext_ref UserCb.button_one_press_on_graph
+)
+"view_graph/viewGraph_select.ml" 257 9917 9954 "view_graph/viewGraph_select.ml" 257 9917 9961
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 255 9839 9872 "view_graph/viewGraph_select.ml" 255 9839 9877
+)
+"view_graph/viewGraph_select.ml" 257 9917 9921 "view_graph/viewGraph_select.ml" 257 9917 9961
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 256 9889 9893 "view_graph/viewGraph_select.ml" 257 9917 9961
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 259 9963 9969 "view_graph/viewGraph_select.ml" 259 9963 9994
+type(
+  UserCb.t_env * t_state -> unit
+)
+ident(
+  def button_two_press_on_graph "view_graph/viewGraph_select.ml" 263 10087 10089 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 259 9963 9996 "view_graph/viewGraph_select.ml" 259 9963 10001
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 260 10013 10017 "view_graph/viewGraph_select.ml" 261 10041 10085
+)
+"view_graph/viewGraph_select.ml" 259 9963 10003 "view_graph/viewGraph_select.ml" 259 9963 10008
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 260 10013 10017 "view_graph/viewGraph_select.ml" 261 10041 10085
+)
+"view_graph/viewGraph_select.ml" 259 9963 9995 "view_graph/viewGraph_select.ml" 259 9963 10009
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 260 10013 10017 "view_graph/viewGraph_select.ml" 260 10013 10033
+type(
+  t_state -> unit
+)
+ident(
+  int_ref select_neighbour "view_graph/viewGraph_select.ml" 209 8166 8170 "view_graph/viewGraph_select.ml" 209 8166 8186
+)
+"view_graph/viewGraph_select.ml" 260 10013 10034 "view_graph/viewGraph_select.ml" 260 10013 10039
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 259 9963 10003 "view_graph/viewGraph_select.ml" 259 9963 10008
+)
+"view_graph/viewGraph_select.ml" 260 10013 10017 "view_graph/viewGraph_select.ml" 260 10013 10039
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 261 10041 10045 "view_graph/viewGraph_select.ml" 261 10041 10077
+type(
+  UserCb.t_env -> unit
+)
+ident(
+  ext_ref UserCb.button_two_press_on_graph
+)
+"view_graph/viewGraph_select.ml" 261 10041 10078 "view_graph/viewGraph_select.ml" 261 10041 10085
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 259 9963 9996 "view_graph/viewGraph_select.ml" 259 9963 10001
+)
+"view_graph/viewGraph_select.ml" 261 10041 10045 "view_graph/viewGraph_select.ml" 261 10041 10085
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 260 10013 10017 "view_graph/viewGraph_select.ml" 261 10041 10085
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 263 10087 10093 "view_graph/viewGraph_select.ml" 263 10087 10120
+type(
+  UserCb.t_env * t_state -> unit
+)
+ident(
+  def button_three_press_on_graph "view_graph/viewGraph_select.ml" 267 10213 10215 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 263 10087 10122 "view_graph/viewGraph_select.ml" 263 10087 10127
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 264 10139 10143 "view_graph/viewGraph_select.ml" 265 10165 10211
+)
+"view_graph/viewGraph_select.ml" 263 10087 10129 "view_graph/viewGraph_select.ml" 263 10087 10134
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 264 10139 10143 "view_graph/viewGraph_select.ml" 265 10165 10211
+)
+"view_graph/viewGraph_select.ml" 263 10087 10121 "view_graph/viewGraph_select.ml" 263 10087 10135
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 264 10139 10143 "view_graph/viewGraph_select.ml" 264 10139 10157
+type(
+  t_state -> unit
+)
+ident(
+  int_ref goto_neighbour "view_graph/viewGraph_select.ml" 224 8674 8678 "view_graph/viewGraph_select.ml" 224 8674 8692
+)
+"view_graph/viewGraph_select.ml" 264 10139 10158 "view_graph/viewGraph_select.ml" 264 10139 10163
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 263 10087 10129 "view_graph/viewGraph_select.ml" 263 10087 10134
+)
+"view_graph/viewGraph_select.ml" 264 10139 10143 "view_graph/viewGraph_select.ml" 264 10139 10163
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 265 10165 10169 "view_graph/viewGraph_select.ml" 265 10165 10203
+type(
+  UserCb.t_env -> unit
+)
+ident(
+  ext_ref UserCb.button_three_press_on_graph
+)
+"view_graph/viewGraph_select.ml" 265 10165 10204 "view_graph/viewGraph_select.ml" 265 10165 10211
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 263 10087 10122 "view_graph/viewGraph_select.ml" 263 10087 10127
+)
+"view_graph/viewGraph_select.ml" 265 10165 10169 "view_graph/viewGraph_select.ml" 265 10165 10211
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 264 10139 10143 "view_graph/viewGraph_select.ml" 265 10165 10211
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 267 10213 10219 "view_graph/viewGraph_select.ml" 267 10213 10243
+type(
+  UserCb.t_env * t_state -> ViewGraph_core.t_node -> unit
+)
+ident(
+  def button_one_press_on_node "view_graph/viewGraph_select.ml" 271 10343 10345 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 267 10213 10245 "view_graph/viewGraph_select.ml" 267 10213 10250
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 267 10213 10259 "view_graph/viewGraph_select.ml" 269 10296 10341
+)
+"view_graph/viewGraph_select.ml" 267 10213 10252 "view_graph/viewGraph_select.ml" 267 10213 10257
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 267 10213 10259 "view_graph/viewGraph_select.ml" 269 10296 10341
+)
+"view_graph/viewGraph_select.ml" 267 10213 10244 "view_graph/viewGraph_select.ml" 267 10213 10258
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 267 10213 10259 "view_graph/viewGraph_select.ml" 267 10213 10260
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 268 10264 10268 "view_graph/viewGraph_select.ml" 269 10296 10341
+)
+"view_graph/viewGraph_select.ml" 268 10264 10268 "view_graph/viewGraph_select.ml" 268 10264 10279
+type(
+  t_state -> ViewGraph_core.t_node option -> unit
+)
+ident(
+  int_ref select_node "view_graph/viewGraph_select.ml" 204 8057 8061 "view_graph/viewGraph_select.ml" 204 8057 8072
+)
+"view_graph/viewGraph_select.ml" 268 10264 10280 "view_graph/viewGraph_select.ml" 268 10264 10285
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 267 10213 10252 "view_graph/viewGraph_select.ml" 267 10213 10257
+)
+"view_graph/viewGraph_select.ml" 268 10264 10292 "view_graph/viewGraph_select.ml" 268 10264 10293
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 267 10213 10259 "view_graph/viewGraph_select.ml" 267 10213 10260
+)
+"view_graph/viewGraph_select.ml" 268 10264 10286 "view_graph/viewGraph_select.ml" 268 10264 10294
+type(
+  ViewGraph_core.t_node option
+)
+"view_graph/viewGraph_select.ml" 268 10264 10268 "view_graph/viewGraph_select.ml" 268 10264 10294
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 269 10296 10300 "view_graph/viewGraph_select.ml" 269 10296 10331
+type(
+  UserCb.t_env -> ViewGraph_core.t_node -> unit
+)
+ident(
+  ext_ref UserCb.button_one_press_on_node
+)
+"view_graph/viewGraph_select.ml" 269 10296 10332 "view_graph/viewGraph_select.ml" 269 10296 10339
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 267 10213 10245 "view_graph/viewGraph_select.ml" 267 10213 10250
+)
+"view_graph/viewGraph_select.ml" 269 10296 10340 "view_graph/viewGraph_select.ml" 269 10296 10341
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 267 10213 10259 "view_graph/viewGraph_select.ml" 267 10213 10260
+)
+"view_graph/viewGraph_select.ml" 269 10296 10300 "view_graph/viewGraph_select.ml" 269 10296 10341
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 268 10264 10268 "view_graph/viewGraph_select.ml" 269 10296 10341
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 271 10343 10349 "view_graph/viewGraph_select.ml" 271 10343 10373
+type(
+  UserCb.t_env * t_state -> ViewGraph_core.t_node -> unit
+)
+ident(
+  def button_two_press_on_node "view_graph/viewGraph_select.ml" 275 10485 10487 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 271 10343 10376 "view_graph/viewGraph_select.ml" 271 10343 10381
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 271 10343 10398 "view_graph/viewGraph_select.ml" 273 10438 10483
+)
+"view_graph/viewGraph_select.ml" 271 10343 10383 "view_graph/viewGraph_select.ml" 271 10343 10388
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 271 10343 10398 "view_graph/viewGraph_select.ml" 273 10438 10483
+)
+"view_graph/viewGraph_select.ml" 271 10343 10375 "view_graph/viewGraph_select.ml" 271 10343 10389
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 271 10343 10374 "view_graph/viewGraph_select.ml" 271 10343 10397
+type(
+  UserCb.t_env * t_state
+)
+ident(
+  def env "view_graph/viewGraph_select.ml" 271 10343 10398 "view_graph/viewGraph_select.ml" 273 10438 10483
+)
+"view_graph/viewGraph_select.ml" 271 10343 10398 "view_graph/viewGraph_select.ml" 271 10343 10399
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 272 10403 10407 "view_graph/viewGraph_select.ml" 273 10438 10483
+)
+"view_graph/viewGraph_select.ml" 272 10403 10407 "view_graph/viewGraph_select.ml" 272 10403 10432
+type(
+  UserCb.t_env * t_state -> unit
+)
+ident(
+  int_ref button_two_press_on_graph "view_graph/viewGraph_select.ml" 259 9963 9969 "view_graph/viewGraph_select.ml" 259 9963 9994
+)
+"view_graph/viewGraph_select.ml" 272 10403 10433 "view_graph/viewGraph_select.ml" 272 10403 10436
+type(
+  UserCb.t_env * t_state
+)
+ident(
+  int_ref env "view_graph/viewGraph_select.ml" 271 10343 10374 "view_graph/viewGraph_select.ml" 271 10343 10397
+)
+"view_graph/viewGraph_select.ml" 272 10403 10407 "view_graph/viewGraph_select.ml" 272 10403 10436
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 273 10438 10442 "view_graph/viewGraph_select.ml" 273 10438 10473
+type(
+  UserCb.t_env -> ViewGraph_core.t_node -> unit
+)
+ident(
+  ext_ref UserCb.button_two_press_on_node
+)
+"view_graph/viewGraph_select.ml" 273 10438 10474 "view_graph/viewGraph_select.ml" 273 10438 10481
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 271 10343 10376 "view_graph/viewGraph_select.ml" 271 10343 10381
+)
+"view_graph/viewGraph_select.ml" 273 10438 10482 "view_graph/viewGraph_select.ml" 273 10438 10483
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 271 10343 10398 "view_graph/viewGraph_select.ml" 271 10343 10399
+)
+"view_graph/viewGraph_select.ml" 273 10438 10442 "view_graph/viewGraph_select.ml" 273 10438 10483
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 272 10403 10407 "view_graph/viewGraph_select.ml" 273 10438 10483
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 275 10485 10491 "view_graph/viewGraph_select.ml" 275 10485 10517
+type(
+  UserCb.t_env * t_state -> ViewGraph_core.t_node -> unit
+)
+ident(
+  def button_three_press_on_node "view_graph/viewGraph_select.ml" 279 10633 10635 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 275 10485 10520 "view_graph/viewGraph_select.ml" 275 10485 10525
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 275 10485 10542 "view_graph/viewGraph_select.ml" 277 10584 10631
+)
+"view_graph/viewGraph_select.ml" 275 10485 10527 "view_graph/viewGraph_select.ml" 275 10485 10532
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 275 10485 10542 "view_graph/viewGraph_select.ml" 277 10584 10631
+)
+"view_graph/viewGraph_select.ml" 275 10485 10519 "view_graph/viewGraph_select.ml" 275 10485 10533
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 275 10485 10518 "view_graph/viewGraph_select.ml" 275 10485 10541
+type(
+  UserCb.t_env * t_state
+)
+ident(
+  def env "view_graph/viewGraph_select.ml" 275 10485 10542 "view_graph/viewGraph_select.ml" 277 10584 10631
+)
+"view_graph/viewGraph_select.ml" 275 10485 10542 "view_graph/viewGraph_select.ml" 275 10485 10543
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 276 10547 10551 "view_graph/viewGraph_select.ml" 277 10584 10631
+)
+"view_graph/viewGraph_select.ml" 276 10547 10551 "view_graph/viewGraph_select.ml" 276 10547 10578
+type(
+  UserCb.t_env * t_state -> unit
+)
+ident(
+  int_ref button_three_press_on_graph "view_graph/viewGraph_select.ml" 263 10087 10093 "view_graph/viewGraph_select.ml" 263 10087 10120
+)
+"view_graph/viewGraph_select.ml" 276 10547 10579 "view_graph/viewGraph_select.ml" 276 10547 10582
+type(
+  UserCb.t_env * t_state
+)
+ident(
+  int_ref env "view_graph/viewGraph_select.ml" 275 10485 10518 "view_graph/viewGraph_select.ml" 275 10485 10541
+)
+"view_graph/viewGraph_select.ml" 276 10547 10551 "view_graph/viewGraph_select.ml" 276 10547 10582
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 277 10584 10588 "view_graph/viewGraph_select.ml" 277 10584 10621
+type(
+  UserCb.t_env -> ViewGraph_core.t_node -> unit
+)
+ident(
+  ext_ref UserCb.button_three_press_on_node
+)
+"view_graph/viewGraph_select.ml" 277 10584 10622 "view_graph/viewGraph_select.ml" 277 10584 10629
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 275 10485 10520 "view_graph/viewGraph_select.ml" 275 10485 10525
+)
+"view_graph/viewGraph_select.ml" 277 10584 10630 "view_graph/viewGraph_select.ml" 277 10584 10631
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 275 10485 10542 "view_graph/viewGraph_select.ml" 275 10485 10543
+)
+"view_graph/viewGraph_select.ml" 277 10584 10588 "view_graph/viewGraph_select.ml" 277 10584 10631
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 276 10547 10551 "view_graph/viewGraph_select.ml" 277 10584 10631
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 279 10633 10639 "view_graph/viewGraph_select.ml" 279 10633 10649
+type(
+  UserCb.t_env * 'a -> ViewGraph_core.t_node -> unit
+)
+ident(
+  def enter_node "view_graph/viewGraph_select.ml" 285 10835 10837 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 279 10633 10651 "view_graph/viewGraph_select.ml" 279 10633 10656
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 279 10633 10665 "view_graph/viewGraph_select.ml" 283 10802 10833
+)
+"view_graph/viewGraph_select.ml" 279 10633 10658 "view_graph/viewGraph_select.ml" 279 10633 10663
+type(
+  'a
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 279 10633 10665 "view_graph/viewGraph_select.ml" 283 10802 10833
+)
+"view_graph/viewGraph_select.ml" 279 10633 10650 "view_graph/viewGraph_select.ml" 279 10633 10664
+type(
+  UserCb.t_env * 'a
+)
+"view_graph/viewGraph_select.ml" 279 10633 10665 "view_graph/viewGraph_select.ml" 279 10633 10666
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 280 10669 10673 "view_graph/viewGraph_select.ml" 283 10802 10833
+)
+"view_graph/viewGraph_select.ml" 280 10669 10685 "view_graph/viewGraph_select.ml" 280 10669 10707
+type(
+  ViewGraph_core.t_node -> ViewGraph_core.t_gtk_obj option
+)
+ident(
+  ext_ref ViewGraph_core.get_obj
+)
+"view_graph/viewGraph_select.ml" 280 10669 10708 "view_graph/viewGraph_select.ml" 280 10669 10709
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 279 10633 10665 "view_graph/viewGraph_select.ml" 279 10633 10666
+)
+"view_graph/viewGraph_select.ml" 280 10669 10685 "view_graph/viewGraph_select.ml" 280 10669 10709
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 280 10669 10715 "view_graph/viewGraph_select.ml" 280 10669 10719
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 280 10669 10723 "view_graph/viewGraph_select.ml" 280 10669 10735
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 281 10736 10749 "view_graph/viewGraph_select.ml" 281 10736 10755
+type(
+  ViewGraph_core.t_gtk_obj
+)
+ident(
+  def n_item "view_graph/viewGraph_select.ml" 281 10736 10759 "view_graph/viewGraph_select.ml" 281 10736 10792
+)
+"view_graph/viewGraph_select.ml" 281 10736 10744 "view_graph/viewGraph_select.ml" 281 10736 10755
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 281 10736 10759 "view_graph/viewGraph_select.ml" 281 10736 10765
+type(
+  ViewGraph_core.t_gtk_obj
+)
+ident(
+  int_ref n_item "view_graph/viewGraph_select.ml" 281 10736 10749 "view_graph/viewGraph_select.ml" 281 10736 10755
+)
+"view_graph/viewGraph_select.ml" 281 10736 10759 "view_graph/viewGraph_select.ml" 281 10736 10769
+type(
+  GnomeCanvas.re_p list -> unit
+)
+"view_graph/viewGraph_select.ml" 281 10736 10786 "view_graph/viewGraph_select.ml" 281 10736 10791
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 281 10736 10771 "view_graph/viewGraph_select.ml" 281 10736 10791
+type(
+  GnomeCanvas.re_p
+)
+"view_graph/viewGraph_select.ml" 281 10736 10770 "view_graph/viewGraph_select.ml" 281 10736 10792
+type(
+  GnomeCanvas.re_p list
+)
+"view_graph/viewGraph_select.ml" 281 10736 10759 "view_graph/viewGraph_select.ml" 281 10736 10792
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 280 10669 10673 "view_graph/viewGraph_select.ml" 282 10793 10800
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 283 10802 10806 "view_graph/viewGraph_select.ml" 283 10802 10823
+type(
+  UserCb.t_env -> ViewGraph_core.t_node -> unit
+)
+ident(
+  ext_ref UserCb.enter_node
+)
+"view_graph/viewGraph_select.ml" 283 10802 10824 "view_graph/viewGraph_select.ml" 283 10802 10831
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 279 10633 10651 "view_graph/viewGraph_select.ml" 279 10633 10656
+)
+"view_graph/viewGraph_select.ml" 283 10802 10832 "view_graph/viewGraph_select.ml" 283 10802 10833
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 279 10633 10665 "view_graph/viewGraph_select.ml" 279 10633 10666
+)
+"view_graph/viewGraph_select.ml" 283 10802 10806 "view_graph/viewGraph_select.ml" 283 10802 10833
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 280 10669 10673 "view_graph/viewGraph_select.ml" 283 10802 10833
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 285 10835 10841 "view_graph/viewGraph_select.ml" 285 10835 10851
+type(
+  UserCb.t_env * 'b -> ViewGraph_core.t_node -> unit
+)
+ident(
+  def leave_node "view_graph/viewGraph_select.ml" 289 11001 11032 "view_graph/viewGraph_select.ml" 290 11033 11036
+)
+"view_graph/viewGraph_select.ml" 285 10835 10853 "view_graph/viewGraph_select.ml" 285 10835 10858
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 285 10835 10867 "view_graph/viewGraph_select.ml" 289 11001 11032
+)
+"view_graph/viewGraph_select.ml" 285 10835 10860 "view_graph/viewGraph_select.ml" 285 10835 10865
+type(
+  'b
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 285 10835 10867 "view_graph/viewGraph_select.ml" 289 11001 11032
+)
+"view_graph/viewGraph_select.ml" 285 10835 10852 "view_graph/viewGraph_select.ml" 285 10835 10866
+type(
+  UserCb.t_env * 'b
+)
+"view_graph/viewGraph_select.ml" 285 10835 10867 "view_graph/viewGraph_select.ml" 285 10835 10868
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  def n "view_graph/viewGraph_select.ml" 286 10871 10875 "view_graph/viewGraph_select.ml" 289 11001 11032
+)
+"view_graph/viewGraph_select.ml" 286 10871 10887 "view_graph/viewGraph_select.ml" 286 10871 10909
+type(
+  ViewGraph_core.t_node -> ViewGraph_core.t_gtk_obj option
+)
+ident(
+  ext_ref ViewGraph_core.get_obj
+)
+"view_graph/viewGraph_select.ml" 286 10871 10910 "view_graph/viewGraph_select.ml" 286 10871 10911
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 285 10835 10867 "view_graph/viewGraph_select.ml" 285 10835 10868
+)
+"view_graph/viewGraph_select.ml" 286 10871 10887 "view_graph/viewGraph_select.ml" 286 10871 10911
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 286 10871 10917 "view_graph/viewGraph_select.ml" 286 10871 10921
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 286 10871 10925 "view_graph/viewGraph_select.ml" 286 10871 10937
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 287 10938 10951 "view_graph/viewGraph_select.ml" 287 10938 10957
+type(
+  ViewGraph_core.t_gtk_obj
+)
+ident(
+  def n_item "view_graph/viewGraph_select.ml" 287 10938 10961 "view_graph/viewGraph_select.ml" 287 10938 10991
+)
+"view_graph/viewGraph_select.ml" 287 10938 10946 "view_graph/viewGraph_select.ml" 287 10938 10957
+type(
+  ViewGraph_core.t_gtk_obj option
+)
+"view_graph/viewGraph_select.ml" 287 10938 10961 "view_graph/viewGraph_select.ml" 287 10938 10967
+type(
+  ViewGraph_core.t_gtk_obj
+)
+ident(
+  int_ref n_item "view_graph/viewGraph_select.ml" 287 10938 10951 "view_graph/viewGraph_select.ml" 287 10938 10957
+)
+"view_graph/viewGraph_select.ml" 287 10938 10961 "view_graph/viewGraph_select.ml" 287 10938 10971
+type(
+  GnomeCanvas.re_p list -> unit
+)
+"view_graph/viewGraph_select.ml" 287 10938 10973 "view_graph/viewGraph_select.ml" 287 10938 10990
+type(
+  GnomeCanvas.re_p
+)
+"view_graph/viewGraph_select.ml" 287 10938 10972 "view_graph/viewGraph_select.ml" 287 10938 10991
+type(
+  GnomeCanvas.re_p list
+)
+"view_graph/viewGraph_select.ml" 287 10938 10961 "view_graph/viewGraph_select.ml" 287 10938 10991
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 286 10871 10875 "view_graph/viewGraph_select.ml" 288 10992 10999
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 289 11001 11005 "view_graph/viewGraph_select.ml" 289 11001 11022
+type(
+  UserCb.t_env -> ViewGraph_core.t_node -> unit
+)
+ident(
+  ext_ref UserCb.leave_node
+)
+"view_graph/viewGraph_select.ml" 289 11001 11023 "view_graph/viewGraph_select.ml" 289 11001 11030
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 285 10835 10853 "view_graph/viewGraph_select.ml" 285 10835 10858
+)
+"view_graph/viewGraph_select.ml" 289 11001 11031 "view_graph/viewGraph_select.ml" 289 11001 11032
+type(
+  ViewGraph_core.t_node
+)
+ident(
+  int_ref n "view_graph/viewGraph_select.ml" 285 10835 10867 "view_graph/viewGraph_select.ml" 285 10835 10868
+)
+"view_graph/viewGraph_select.ml" 289 11001 11005 "view_graph/viewGraph_select.ml" 289 11001 11032
+call(
+  tail
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 286 10871 10875 "view_graph/viewGraph_select.ml" 289 11001 11032
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 293 11089 11103 "view_graph/viewGraph_select.ml" 293 11089 11120
+call(
+  stack
+)
+"view_graph/viewGraph_select.ml" 294 11121 11134 "view_graph/viewGraph_select.ml" 294 11121 11155
+call(
+  stack
+)
+"view_graph/viewGraph_select.ml" 296 11157 11163 "view_graph/viewGraph_select.ml" 296 11157 11176
+type(
+  UserCb.t_env ->
+  t_state -> ?dot_cmd:string -> string -> ViewGraph_core.t_graph
+)
+ident(
+  def open_dot_file "view_graph/viewGraph_select.ml" 303 11476 11487 "view_graph/viewGraph_select.ml" 305 11489 11492
+)
+"view_graph/viewGraph_select.ml" 296 11157 11177 "view_graph/viewGraph_select.ml" 296 11157 11182
+type(
+  UserCb.t_env
+)
+ident(
+  def u_env "view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 303 11476 11487
+)
+"view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 296 11157 11188
+type(
+  t_state
+)
+ident(
+  def state "view_graph/viewGraph_select.ml" 296 11157 11189 "view_graph/viewGraph_select.ml" 303 11476 11487
+)
+"view_graph/viewGraph_select.ml" 296 11157 11191 "view_graph/viewGraph_select.ml" 296 11157 11198
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 296 11157 11199 "view_graph/viewGraph_select.ml" 296 11157 11204
+type(
+  string
+)
+type(
+  string
+)
+type(
+  string
+)
+ident(
+  int_ref *sth* "view_graph/viewGraph_select.ml" 296 11157 11199 "view_graph/viewGraph_select.ml" 296 11157 11204
+)
+type(
+  string option
+)
+type(
+  string option
+)
+type(
+  string
+)
+ident(
+  def *sth* "view_graph/viewGraph_select.ml" 296 11157 11199 "view_graph/viewGraph_select.ml" 296 11157 11204
+)
+type(
+  string option
+)
+ident(
+  int_ref *opt* "view_graph/viewGraph_select.ml" 296 11157 11199 "view_graph/viewGraph_select.ml" 296 11157 11204
+)
+type(
+  string option
+)
+ident(
+  def *opt* "view_graph/viewGraph_select.ml" 296 11157 11189 "view_graph/viewGraph_select.ml" 303 11476 11487
+)
+"view_graph/viewGraph_select.ml" 296 11157 11206 "view_graph/viewGraph_select.ml" 296 11157 11210
+type(
+  string
+)
+ident(
+  def file "view_graph/viewGraph_select.ml" 297 11213 11217 "view_graph/viewGraph_select.ml" 303 11476 11487
+)
+"view_graph/viewGraph_select.ml" 297 11213 11221 "view_graph/viewGraph_select.ml" 297 11213 11227
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 297 11213 11230 "view_graph/viewGraph_select.ml" 297 11213 11235
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 296 11157 11188
+)
+"view_graph/viewGraph_select.ml" 297 11213 11230 "view_graph/viewGraph_select.ml" 297 11213 11237
+type(
+  t_widgets
+)
+"view_graph/viewGraph_select.ml" 297 11213 11230 "view_graph/viewGraph_select.ml" 297 11213 11244
+type(
+  GnoCanvas.canvas
+)
+"view_graph/viewGraph_select.ml" 298 11248 11259 "view_graph/viewGraph_select.ml" 298 11248 11264
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 296 11157 11188
+)
+"view_graph/viewGraph_select.ml" 298 11248 11259 "view_graph/viewGraph_select.ml" 298 11248 11270
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 298 11248 11276 "view_graph/viewGraph_select.ml" 298 11248 11280
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 298 11248 11284 "view_graph/viewGraph_select.ml" 298 11248 11286
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 298 11248 11294 "view_graph/viewGraph_select.ml" 298 11248 11295
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  def g "view_graph/viewGraph_select.ml" 298 11248 11299 "view_graph/viewGraph_select.ml" 298 11248 11315
+)
+"view_graph/viewGraph_select.ml" 298 11248 11289 "view_graph/viewGraph_select.ml" 298 11248 11295
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 298 11248 11299 "view_graph/viewGraph_select.ml" 298 11248 11306
+type(
+  GnoCanvas.canvas -> ViewGraph_core.t_graph -> unit
+)
+ident(
+  ext_ref V.clear
+)
+"view_graph/viewGraph_select.ml" 298 11248 11307 "view_graph/viewGraph_select.ml" 298 11248 11313
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 297 11213 11221 "view_graph/viewGraph_select.ml" 297 11213 11227
+)
+"view_graph/viewGraph_select.ml" 298 11248 11314 "view_graph/viewGraph_select.ml" 298 11248 11315
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  int_ref g "view_graph/viewGraph_select.ml" 298 11248 11294 "view_graph/viewGraph_select.ml" 298 11248 11295
+)
+"view_graph/viewGraph_select.ml" 298 11248 11299 "view_graph/viewGraph_select.ml" 298 11248 11315
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 298 11248 11252 "view_graph/viewGraph_select.ml" 298 11248 11316
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 299 11318 11326 "view_graph/viewGraph_select.ml" 299 11318 11327
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 299 11318 11330 "view_graph/viewGraph_select.ml" 299 11318 11341
+type(
+  t_state -> unit
+)
+ident(
+  int_ref clear_state "view_graph/viewGraph_select.ml" 244 9560 9564 "view_graph/viewGraph_select.ml" 244 9560 9575
+)
+"view_graph/viewGraph_select.ml" 299 11318 11342 "view_graph/viewGraph_select.ml" 299 11318 11347
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 296 11157 11188
+)
+"view_graph/viewGraph_select.ml" 299 11318 11330 "view_graph/viewGraph_select.ml" 299 11318 11347
+call(
+  stack
+)
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 300 11351 11359 "view_graph/viewGraph_select.ml" 300 11351 11362
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 300 11351 11366 "view_graph/viewGraph_select.ml" 300 11351 11371
+type(
+  UserCb.t_env
+)
+ident(
+  int_ref u_env "view_graph/viewGraph_select.ml" 296 11157 11177 "view_graph/viewGraph_select.ml" 296 11157 11182
+)
+"view_graph/viewGraph_select.ml" 300 11351 11373 "view_graph/viewGraph_select.ml" 300 11351 11378
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 296 11157 11188
+)
+"view_graph/viewGraph_select.ml" 300 11351 11365 "view_graph/viewGraph_select.ml" 300 11351 11379
+type(
+  UserCb.t_env * t_state
+)
+"view_graph/viewGraph_select.ml" 301 11383 11391 "view_graph/viewGraph_select.ml" 301 11383 11396
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 301 11383 11399 "view_graph/viewGraph_select.ml" 301 11383 11414
+type(
+  Cb.t_env ->
+  GnoCanvas.canvas -> ?dot_cmd:string -> string -> ViewGraph_core.t_graph
+)
+ident(
+  ext_ref V.open_dot_file
+)
+"view_graph/viewGraph_select.ml" 301 11383 11415 "view_graph/viewGraph_select.ml" 301 11383 11418
+type(
+  Cb.t_env
+)
+ident(
+  int_ref env "view_graph/viewGraph_select.ml" 300 11351 11359 "view_graph/viewGraph_select.ml" 300 11351 11362
+)
+"view_graph/viewGraph_select.ml" 301 11383 11419 "view_graph/viewGraph_select.ml" 301 11383 11425
+type(
+  GnoCanvas.canvas
+)
+ident(
+  int_ref canvas "view_graph/viewGraph_select.ml" 297 11213 11221 "view_graph/viewGraph_select.ml" 297 11213 11227
+)
+"view_graph/viewGraph_select.ml" 301 11383 11427 "view_graph/viewGraph_select.ml" 301 11383 11434
+type(
+  string
+)
+ident(
+  int_ref dot_cmd "view_graph/viewGraph_select.ml" 296 11157 11191 "view_graph/viewGraph_select.ml" 296 11157 11198
+)
+"view_graph/viewGraph_select.ml" 301 11383 11435 "view_graph/viewGraph_select.ml" 301 11383 11439
+type(
+  string
+)
+ident(
+  int_ref file "view_graph/viewGraph_select.ml" 296 11157 11206 "view_graph/viewGraph_select.ml" 296 11157 11210
+)
+"view_graph/viewGraph_select.ml" 301 11383 11399 "view_graph/viewGraph_select.ml" 301 11383 11439
+call(
+  stack
+)
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 302 11443 11449 "view_graph/viewGraph_select.ml" 302 11443 11454
+type(
+  t_state
+)
+ident(
+  int_ref state "view_graph/viewGraph_select.ml" 296 11157 11183 "view_graph/viewGraph_select.ml" 296 11157 11188
+)
+"view_graph/viewGraph_select.ml" 302 11443 11469 "view_graph/viewGraph_select.ml" 302 11443 11474
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  int_ref graph "view_graph/viewGraph_select.ml" 301 11383 11391 "view_graph/viewGraph_select.ml" 301 11383 11396
+)
+"view_graph/viewGraph_select.ml" 302 11443 11464 "view_graph/viewGraph_select.ml" 302 11443 11474
+type(
+  ViewGraph_core.t_graph option
+)
+"view_graph/viewGraph_select.ml" 302 11443 11449 "view_graph/viewGraph_select.ml" 302 11443 11474
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 303 11476 11482 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+ident(
+  int_ref graph "view_graph/viewGraph_select.ml" 301 11383 11391 "view_graph/viewGraph_select.ml" 301 11383 11396
+)
+"view_graph/viewGraph_select.ml" 302 11443 11449 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 301 11383 11387 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 300 11351 11355 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 299 11318 11322 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 298 11248 11252 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 297 11213 11217 "view_graph/viewGraph_select.ml" 303 11476 11487
+type(
+  ViewGraph_core.t_graph
+)
+"view_graph/viewGraph_select.ml" 307 11494 11498 "view_graph/viewGraph_select.ml" 307 11494 11507
+type(
+  unit -> unit
+)
+ident(
+  def show_help "view_graph/viewGraph_select.ml" 326 12459 12462 --
+)
+"view_graph/viewGraph_select.ml" 307 11494 11508 "view_graph/viewGraph_select.ml" 307 11494 11510
+type(
+  unit
+)
+"view_graph/viewGraph_select.ml" 308 11514 11516 "view_graph/viewGraph_select.ml" 308 11514 11536
+type(
+  title:string -> ?icon:_#GObj.widget -> ?ok:string -> string -> unit
+)
+ident(
+  ext_ref GToolbox.message_box
+)
+"view_graph/viewGraph_select.ml" 308 11514 11544 "view_graph/viewGraph_select.ml" 308 11514 11550
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 309 11551 11553 "view_graph/viewGraph_select.ml" 326 12459 12462
+type(
+  string
+)
+"view_graph/viewGraph_select.ml" 308 11514 11516 "view_graph/viewGraph_select.ml" 326 12459 12462
+call(
+  tail
+)
+type(
+  unit
+)

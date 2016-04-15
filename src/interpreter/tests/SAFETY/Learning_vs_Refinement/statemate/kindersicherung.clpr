@@ -1,0 +1,1570 @@
+summarization(1).
+verified_depthbound(200).
+
+query(PC, [ST,STf|SV], [T,_Tf|V], [eq(ST,0)|CL], [gt(STf,B)]) :-
+	init_goal(_, PC, _, V, _, SV, _, _, _, _, CL),
+	verified_depthbound(B), T=0.
+
+
+trans(PC1, [ST1,STf|SV1], [T1,Tf|V1],
+      PC2, [ST2,STf|SV2], [T2,Tf|V2], [eq(ST2,plus(ST1,1))|CL], []) :-
+	trans1(_, PC1, _, V1, _, SV1, _, _, _, _,
+                  PC2, _, V2, _, SV2, _, _, _, _, 
+	       CL, _, _), T2=T1+1.
+
+
+stop([129], [ST,STf|_], [T,T|_], [eq(ST,STf)]).
+
+
+freshlocalarrays(func_main,[]).
+freshlocalvars(func_main,[_,_]).
+
+init_goal(func_main, [0], [_],[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],[_],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+% init_goal(func_main, [0], [_],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[_],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],A,L,SA,SL,[eq(SB10,0),eq(SX30,0),eq(SX31,0),eq(SX32,0),eq(SX33,0),eq(SX34,0),eq(SX35,0),eq(SX36,0),eq(SX37,0),eq(SX38,0),eq(SX44,0),eq(SX47,0),eq(SX90,0),eq(SX88,0),eq(SX89,0),eq(STime,0),eq(SStable,0),eq(SStep,0)]) :-
+% 	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+% 	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+
+trans1(func_main,
+	[0],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[1],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,0)],
+	[],
+	[]) :-
+	TNext=0.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[4],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90,1)],
+	[],
+	[]) :-
+	X90=1.
+trans1(func_main,
+	[5],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[6],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[6],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[7],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,0)],
+	[],
+	[]) :-
+	X44Next=0.
+trans1(func_main,
+	[7],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[8],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,0)],
+	[],
+	[]) :-
+	X47Next=0.
+trans1(func_main,
+	[8],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[9],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,3)],
+	[],
+	[]) :-
+	X90Next=3.
+trans1(func_main,
+	[9],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[10],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88Next,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88Next,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX88Next,0)],
+	[],
+	[]) :-
+	X88Next=0.
+trans1(func_main,
+	[10],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[11],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[11],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[4],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[5],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX34,0),eq(SX30,0)],
+	[],
+	[]) :-
+	X34=0,X30=0.
+trans1(func_main,
+	[4],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[12],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0)],
+	[],
+	[]) :-
+	X34>0.
+trans1(func_main,
+	[4],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[12],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34)],
+	[],
+	[]) :-
+	X34<0.
+trans1(func_main,
+	[4],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[12],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX30,0)],
+	[],
+	[]) :-
+	X30>0.
+trans1(func_main,
+	[4],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[12],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX30)],
+	[],
+	[]) :-
+	X30<0.
+trans1(func_main,
+	[12],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[14],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX88,1)],
+	[],
+	[]) :-
+	X88=1.
+trans1(func_main,
+	[15],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[16],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[16],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[17],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,1)],
+	[],
+	[]) :-
+	X47Next=1.
+trans1(func_main,
+	[17],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[18],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88Next,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88Next,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX88Next,1)],
+	[],
+	[]) :-
+	X88Next=1.
+trans1(func_main,
+	[18],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[19],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[19],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[14],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[15],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0),eq(SX35,0)],
+	[],
+	[]) :-
+	X34>0,(X35)=0.
+trans1(func_main,
+	[14],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[15],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34),eq(SX35,0)],
+	[],
+	[]) :-
+	X34<0,(X35)=0.
+trans1(func_main,
+	[14],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX34,0)],
+	[],
+	[]) :-
+	X34=0.
+trans1(func_main,
+	[14],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX35,0)],
+	[],
+	[]) :-
+	(X35)>0.
+trans1(func_main,
+	[14],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX35)],
+	[],
+	[]) :-
+	(X35)<0.
+trans1(func_main,
+	[21],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[22],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[22],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[23],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,1)],
+	[],
+	[]) :-
+	X44Next=1.
+trans1(func_main,
+	[23],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[24],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88Next,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88Next,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX88Next,1)],
+	[],
+	[]) :-
+	X88Next=1.
+trans1(func_main,
+	[24],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[25],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[25],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[21],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX30,0),eq(SX31,0)],
+	[],
+	[]) :-
+	X30>0,(X31)=0.
+trans1(func_main,
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[21],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX30),eq(SX31,0)],
+	[],
+	[]) :-
+	X30<0,(X31)=0.
+trans1(func_main,
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX30,0)],
+	[],
+	[]) :-
+	X30=0.
+trans1(func_main,
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX31,0)],
+	[],
+	[]) :-
+	(X31)>0.
+trans1(func_main,
+	[20],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX31)],
+	[],
+	[]) :-
+	(X31)<0.
+trans1(func_main,
+	[27],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[28],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[28],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[29],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,0)],
+	[],
+	[]) :-
+	X47Next=0.
+trans1(func_main,
+	[29],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[30],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88Next,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88Next,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX88Next,1)],
+	[],
+	[]) :-
+	X88Next=1.
+trans1(func_main,
+	[30],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[31],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[31],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[27],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX35,0),eq(SX34,0)],
+	[],
+	[]) :-
+	X35>0,(X34)=0.
+trans1(func_main,
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[27],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX35),eq(SX34,0)],
+	[],
+	[]) :-
+	X35<0,(X34)=0.
+trans1(func_main,
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0)],
+	[],
+	[]) :-
+	(X34)>0.
+trans1(func_main,
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34)],
+	[],
+	[]) :-
+	(X34)<0.
+trans1(func_main,
+	[26],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX35,0)],
+	[],
+	[]) :-
+	X35=0.
+trans1(func_main,
+	[33],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[34],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[34],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[35],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,0)],
+	[],
+	[]) :-
+	X44Next=0.
+trans1(func_main,
+	[35],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[36],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88Next,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88Next,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX88Next,1)],
+	[],
+	[]) :-
+	X88Next=1.
+trans1(func_main,
+	[36],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[37],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[37],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[33],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX31,0),eq(SX30,0)],
+	[],
+	[]) :-
+	X31>0,(X30)=0.
+trans1(func_main,
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[33],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX31),eq(SX30,0)],
+	[],
+	[]) :-
+	X31<0,(X30)=0.
+trans1(func_main,
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[38],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX30,0)],
+	[],
+	[]) :-
+	(X30)>0.
+trans1(func_main,
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[38],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX30)],
+	[],
+	[]) :-
+	(X30)<0.
+trans1(func_main,
+	[32],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[38],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX31,0)],
+	[],
+	[]) :-
+	X31=0.
+trans1(func_main,
+	[38],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[12],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[39],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(1,SX88)],
+	[],
+	[]) :-
+	X88<1.
+trans1(func_main,
+	[39],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[40],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[40],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[41],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[41],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[42],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[13],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[43],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[43],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(1,SX90),eq(SX90,2)],
+	[],
+	[]) :-
+	X90<1,X90=2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,1),eq(SX90,2)],
+	[],
+	[]) :-
+	X90>1,X90=2.
+trans1(func_main,
+	[45],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[46],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[46],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[47],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,0)],
+	[],
+	[]) :-
+	X44Next=0.
+trans1(func_main,
+	[47],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[48],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,0)],
+	[],
+	[]) :-
+	X47Next=0.
+trans1(func_main,
+	[48],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[49],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,3)],
+	[],
+	[]) :-
+	X90Next=3.
+trans1(func_main,
+	[49],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[50],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89Next,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89Next,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX89Next,0)],
+	[],
+	[]) :-
+	X89Next=0.
+trans1(func_main,
+	[50],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[51],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[51],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[45],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX36,0),eq(SX32,0)],
+	[],
+	[]) :-
+	X36=0,X32=0.
+trans1(func_main,
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[52],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0)],
+	[],
+	[]) :-
+	X36>0.
+trans1(func_main,
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[52],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36)],
+	[],
+	[]) :-
+	X36<0.
+trans1(func_main,
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[52],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX32,0)],
+	[],
+	[]) :-
+	X32>0.
+trans1(func_main,
+	[44],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[52],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX32)],
+	[],
+	[]) :-
+	X32<0.
+trans1(func_main,
+	[52],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[54],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX89,1)],
+	[],
+	[]) :-
+	X89=1.
+trans1(func_main,
+	[55],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[56],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[56],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[57],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,1)],
+	[],
+	[]) :-
+	X47Next=1.
+trans1(func_main,
+	[57],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[58],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89Next,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89Next,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX89Next,1)],
+	[],
+	[]) :-
+	X89Next=1.
+trans1(func_main,
+	[58],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[59],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[59],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[54],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[55],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0),eq(SX37,0)],
+	[],
+	[]) :-
+	X36>0,(X37)=0.
+trans1(func_main,
+	[54],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[55],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36),eq(SX37,0)],
+	[],
+	[]) :-
+	X36<0,(X37)=0.
+trans1(func_main,
+	[54],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX36,0)],
+	[],
+	[]) :-
+	X36=0.
+trans1(func_main,
+	[54],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX37,0)],
+	[],
+	[]) :-
+	(X37)>0.
+trans1(func_main,
+	[54],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX37)],
+	[],
+	[]) :-
+	(X37)<0.
+trans1(func_main,
+	[61],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[62],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[62],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[63],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,1)],
+	[],
+	[]) :-
+	X44Next=1.
+trans1(func_main,
+	[63],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[64],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89Next,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89Next,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX89Next,1)],
+	[],
+	[]) :-
+	X89Next=1.
+trans1(func_main,
+	[64],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[65],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[65],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[61],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX32,0),eq(SX33,0)],
+	[],
+	[]) :-
+	X32>0,(X33)=0.
+trans1(func_main,
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[61],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX32),eq(SX33,0)],
+	[],
+	[]) :-
+	X32<0,(X33)=0.
+trans1(func_main,
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX32,0)],
+	[],
+	[]) :-
+	X32=0.
+trans1(func_main,
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX33,0)],
+	[],
+	[]) :-
+	(X33)>0.
+trans1(func_main,
+	[60],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX33)],
+	[],
+	[]) :-
+	(X33)<0.
+trans1(func_main,
+	[67],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[68],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[68],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[69],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,0)],
+	[],
+	[]) :-
+	X47Next=0.
+trans1(func_main,
+	[69],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[70],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89Next,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89Next,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX89Next,1)],
+	[],
+	[]) :-
+	X89Next=1.
+trans1(func_main,
+	[70],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[71],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[71],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[67],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX37,0),eq(SX36,0)],
+	[],
+	[]) :-
+	X37>0,(X36)=0.
+trans1(func_main,
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[67],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX37),eq(SX36,0)],
+	[],
+	[]) :-
+	X37<0,(X36)=0.
+trans1(func_main,
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0)],
+	[],
+	[]) :-
+	(X36)>0.
+trans1(func_main,
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36)],
+	[],
+	[]) :-
+	(X36)<0.
+trans1(func_main,
+	[66],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX37,0)],
+	[],
+	[]) :-
+	X37=0.
+trans1(func_main,
+	[73],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[74],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[74],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[75],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,0)],
+	[],
+	[]) :-
+	X44Next=0.
+trans1(func_main,
+	[75],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[76],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89Next,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89Next,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX89Next,1)],
+	[],
+	[]) :-
+	X89Next=1.
+trans1(func_main,
+	[76],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[77],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[77],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[73],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX33,0),eq(SX32,0)],
+	[],
+	[]) :-
+	X33>0,(X32)=0.
+trans1(func_main,
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[73],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX33),eq(SX32,0)],
+	[],
+	[]) :-
+	X33<0,(X32)=0.
+trans1(func_main,
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[78],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX32,0)],
+	[],
+	[]) :-
+	(X32)>0.
+trans1(func_main,
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[78],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX32)],
+	[],
+	[]) :-
+	(X32)<0.
+trans1(func_main,
+	[72],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[78],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX33,0)],
+	[],
+	[]) :-
+	X33=0.
+trans1(func_main,
+	[78],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[52],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[79],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(1,SX89)],
+	[],
+	[]) :-
+	X89<1.
+trans1(func_main,
+	[79],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[80],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[80],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[81],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[81],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[82],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[53],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[83],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[83],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(1,SX90),gt(SX90,2),eq(SX90,3)],
+	[],
+	[]) :-
+	X90<1,X90>2,X90=3.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,1),gt(SX90,2),eq(SX90,3)],
+	[],
+	[]) :-
+	X90>1,X90>2,X90=3.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(1,SX90),gt(2,SX90),eq(SX90,3)],
+	[],
+	[]) :-
+	X90<1,X90<2,X90=3.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,1),gt(2,SX90),eq(SX90,3)],
+	[],
+	[]) :-
+	X90>1,X90<2,X90=3.
+trans1(func_main,
+	[85],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[86],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[86],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[87],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,1)],
+	[],
+	[]) :-
+	X44Next=1.
+trans1(func_main,
+	[87],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[88],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,1)],
+	[],
+	[]) :-
+	X47Next=1.
+trans1(func_main,
+	[88],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[89],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,2)],
+	[],
+	[]) :-
+	X90Next=2.
+trans1(func_main,
+	[89],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[90],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[90],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[85],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0),gt(0,SX32),eq(SX38,0)],
+	[],
+	[]) :-
+	X36>0,X32<0,X38=0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[85],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36),gt(0,SX32),eq(SX38,0)],
+	[],
+	[]) :-
+	X36<0,X32<0,X38=0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[85],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0),gt(SX32,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X36>0,X32>0,X38=0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[85],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36),gt(SX32,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X36<0,X32>0,X38=0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX38,0)],
+	[],
+	[]) :-
+	X38>0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX38)],
+	[],
+	[]) :-
+	X38<0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX32,0)],
+	[],
+	[]) :-
+	X32=0.
+trans1(func_main,
+	[84],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX36,0)],
+	[],
+	[]) :-
+	X36=0.
+trans1(func_main,
+	[92],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[93],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[93],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[94],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,1)],
+	[],
+	[]) :-
+	X44Next=1.
+trans1(func_main,
+	[94],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[95],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,2)],
+	[],
+	[]) :-
+	X90Next=2.
+trans1(func_main,
+	[95],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[96],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[96],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[92],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX32,0),eq(SX36,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X32>0,X36=0,X38=0.
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[92],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX32),eq(SX36,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X32<0,X36=0,X38=0.
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX38,0)],
+	[],
+	[]) :-
+	X38>0.
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX38)],
+	[],
+	[]) :-
+	X38<0.
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX32,0)],
+	[],
+	[]) :-
+	X32=0.
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0)],
+	[],
+	[]) :-
+	X36>0.
+trans1(func_main,
+	[91],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36)],
+	[],
+	[]) :-
+	X36<0.
+trans1(func_main,
+	[98],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[99],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[99],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[100],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,1)],
+	[],
+	[]) :-
+	X47Next=1.
+trans1(func_main,
+	[100],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[101],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,2)],
+	[],
+	[]) :-
+	X90Next=2.
+trans1(func_main,
+	[101],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[102],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[102],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[98],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX36,0),eq(SX32,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X36>0,X32=0,X38=0.
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[98],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX36),eq(SX32,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X36<0,X32=0,X38=0.
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX38,0)],
+	[],
+	[]) :-
+	X38>0.
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX38)],
+	[],
+	[]) :-
+	X38<0.
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX32,0)],
+	[],
+	[]) :-
+	X32>0.
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX32)],
+	[],
+	[]) :-
+	X32<0.
+trans1(func_main,
+	[97],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX36,0)],
+	[],
+	[]) :-
+	X36=0.
+trans1(func_main,
+	[104],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[105],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[105],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[106],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,1)],
+	[],
+	[]) :-
+	X47Next=1.
+trans1(func_main,
+	[106],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[107],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,1)],
+	[],
+	[]) :-
+	X90Next=1.
+trans1(func_main,
+	[107],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[108],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[108],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[104],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0),eq(SX30,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X34>0,X30=0,X38=0.
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[104],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34),eq(SX30,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X34<0,X30=0,X38=0.
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX30,0)],
+	[],
+	[]) :-
+	X30>0.
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX30)],
+	[],
+	[]) :-
+	X30<0.
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX34,0)],
+	[],
+	[]) :-
+	X34=0.
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX38,0)],
+	[],
+	[]) :-
+	X38>0.
+trans1(func_main,
+	[103],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX38)],
+	[],
+	[]) :-
+	X38<0.
+trans1(func_main,
+	[110],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[111],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[111],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[112],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47Next,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47Next,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX47Next,1)],
+	[],
+	[]) :-
+	X47Next=1.
+trans1(func_main,
+	[112],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[113],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,1)],
+	[],
+	[]) :-
+	X44Next=1.
+trans1(func_main,
+	[113],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[114],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,1)],
+	[],
+	[]) :-
+	X90Next=1.
+trans1(func_main,
+	[114],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[115],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[115],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[110],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0),gt(0,SX30)],
+	[],
+	[]) :-
+	X34>0,X30<0.
+trans1(func_main,
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[110],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34),gt(0,SX30)],
+	[],
+	[]) :-
+	X34<0,X30<0.
+trans1(func_main,
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[110],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0),gt(SX30,0)],
+	[],
+	[]) :-
+	X34>0,X30>0.
+trans1(func_main,
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[110],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34),gt(SX30,0)],
+	[],
+	[]) :-
+	X34<0,X30>0.
+trans1(func_main,
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX30,0)],
+	[],
+	[]) :-
+	X30=0.
+trans1(func_main,
+	[109],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX34,0)],
+	[],
+	[]) :-
+	X34=0.
+trans1(func_main,
+	[117],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[118],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[118],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[119],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44Next,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44Next,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX44Next,1)],
+	[],
+	[]) :-
+	X44Next=1.
+trans1(func_main,
+	[119],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[120],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,1)],
+	[],
+	[]) :-
+	X90Next=1.
+trans1(func_main,
+	[120],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[121],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[121],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[117],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX30,0),eq(SX34,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X30>0,X34=0,X38=0.
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[117],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX30),eq(SX34,0),eq(SX38,0)],
+	[],
+	[]) :-
+	X30<0,X34=0,X38=0.
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[122],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX30,0)],
+	[],
+	[]) :-
+	X30=0.
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[122],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX34,0)],
+	[],
+	[]) :-
+	X34>0.
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[122],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX34)],
+	[],
+	[]) :-
+	X34<0.
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[122],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX38,0)],
+	[],
+	[]) :-
+	X38>0.
+trans1(func_main,
+	[116],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[122],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SX38)],
+	[],
+	[]) :-
+	X38<0.
+trans1(func_main,
+	[122],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(3,SX90),gt(SX90,1),gt(2,SX90)],
+	[],
+	[]) :-
+	X90<3,X90>1,X90<2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,3),gt(SX90,1),gt(2,SX90)],
+	[],
+	[]) :-
+	X90>3,X90>1,X90<2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(3,SX90),gt(1,SX90),gt(2,SX90)],
+	[],
+	[]) :-
+	X90<3,X90<1,X90<2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,3),gt(1,SX90),gt(2,SX90)],
+	[],
+	[]) :-
+	X90>3,X90<1,X90<2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(3,SX90),gt(SX90,1),gt(SX90,2)],
+	[],
+	[]) :-
+	X90<3,X90>1,X90>2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,3),gt(SX90,1),gt(SX90,2)],
+	[],
+	[]) :-
+	X90>3,X90>1,X90>2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(3,SX90),gt(1,SX90),gt(SX90,2)],
+	[],
+	[]) :-
+	X90<3,X90<1,X90>2.
+trans1(func_main,
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SX90,3),gt(1,SX90),gt(SX90,2)],
+	[],
+	[]) :-
+	X90>3,X90<1,X90>2.
+trans1(func_main,
+	[123],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[124],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,StableNext,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStableNext,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SStableNext,0)],
+	[],
+	[]) :-
+	StableNext=0.
+trans1(func_main,
+	[124],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[125],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90Next,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90Next,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SX90Next,3)],
+	[],
+	[]) :-
+	X90Next=3.
+trans1(func_main,
+	[125],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[126],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,TNext],[],[SReturnValue,STNext],
+	[eq(STNext,plus(ST,1))],
+	[],
+	[]) :-
+	TNext=T+1.
+trans1(func_main,
+	[126],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[127],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[3],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[128],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[],
+	[],
+	[]).
+trans1(func_main,
+	[1],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(SB10,0)],
+	[],
+	[]) :-
+	B10>0.
+trans1(func_main,
+	[1],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[2],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(0,SB10)],
+	[],
+	[]) :-
+	B10<0.
+trans1(func_main,
+	[1],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[128],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[eq(SB10,0)],
+	[],
+	[]) :-
+	B10=0.
+trans1(func_main,
+	[128],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[129],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[gt(ST,200)],
+	[],
+	[]) :-
+	T>200.
+trans1(func_main,
+	[128],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[129],[H],[B10,X30,X31,X32,X33,X34,X35,X36,X37,X38,X44,X47,X90,X88,X89,Time,Stable,Step],[SH],[SB10,SX30,SX31,SX32,SX33,SX34,SX35,SX36,SX37,SX38,SX44,SX47,SX90,SX88,SX89,STime,SStable,SStep],[],[ReturnValue,T],[],[SReturnValue,ST],
+	[geq(200,ST)],
+	[],
+	[]) :-
+	T<=200.
+
+:- consult('summ-slackening.clpr').

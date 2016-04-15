@@ -1,0 +1,457 @@
+% union_find.clp.gpp
+
+:- set_counter(key_mapping,0).
+	      
+%-----------------------------------------------------------------------%
+% The module implements an union-find structure on the top of balanced
+% trees. Here, it is used to represent the constraints collected along
+% paths
+%-----------------------------------------------------------------------%
+% This module is part of type inference system designed by
+% M. Bruynooghe and J. Gallagher. Version 1.3 created by jpg on
+% 08/08/2006. (c) Roskilde University.
+%-----------------------------------------------------------------------%
+% export
+%       // Standard union-find operations
+%       new/2
+% 	make/4
+%       findSimple/4
+%       merge/5
+%       union_find_size/2
+%       // Specialized operations to deal with constraint paths
+%       multiple_make/3
+%       conjoin_new_constraint/4
+%       merge_list/3
+%
+%-----------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------%
+% HERE SENSITIVE CODE to the representation of a constraint
+%-----------------------------------------------------------------------%
+% By default a constraint is a tuple c(C,M) where C is a symbolic
+% constraint and M is a marked term ('o' or free var). If
+% NEWPARTITION2 then a constraint is a tuple c(C,M,K,F) where K is a
+% key for the constraint and F is a special atom to classify the
+% constraint used during abstraction.
+%-----------------------------------------------------------------------%
+
+compareTerms([],T2,[T2]):- !.
+compareTerms([c(C1,M1
+#ifdef  NEWPARTITION2
+	       ,K1,F1
+#endif		   	       
+	       )|T1s],
+	     c(C2,M2
+#ifdef  NEWPARTITION2
+	      ,_K2,_F2
+#endif		   
+		       
+	      ),[c(C1,M1
+#ifdef  NEWPARTITION2
+		  ,K1,F1
+#endif		   	       		  
+		  )|T1s]):-
+#ifdef  NEWPARTITION
+	C1 == C2, M1 == M2, !.
+#else 
+	C1 == C2, !, M1 = M2.
+#endif 
+compareTerms([T1|T1s],c(C2,M2
+#ifdef  NEWPARTITION2
+		       ,K2,F2
+#endif		   	       		       
+		       ),[T1|T3s]):- !,
+	compareTerms(T1s,c(C2,M2
+#ifdef  NEWPARTITION2
+			  ,K2,F2
+#endif		   	       			  
+			  ),T3s).
+
+%========================================================================%
+%          Standard operations for handling keys
+%========================================================================%
+% NOTE CLP(R): CLP(R) does not allow to compare arbitrary terms since
+% operators @<, @>, @>=, etc are not implemented. Hence, we must map
+% each key (i.e., variable) into a number and do some wrapping each
+% time an operation is called.  The operations key_lookup/3,
+% key_insert/4, and key_delete/3 manipulate the list of keys. The list
+% of keys is a list of pairs k(N,V) where V is a variable and N is an
+% unique number for V. The invariant for the above operations is that
+% the list of keys is always sorted in reverse order and it does not
+% contain duplicates.
+
+% key_lookup(+M,+X,-N)
+% Succeed if there exists a pair k(X,N) in M.
+key_lookup([k(N,Y)|_],X,N):- X == Y, !.
+key_lookup([_|Ks],X,N)    :- key_lookup(Ks,X,N).
+
+% key_inv_lookup(+M,+N,-X)
+% Succeed if there exists a pair k(X,N) in M.
+key_inv_lookup([k(M,Y)|_],N,Y):- M == N, !.
+key_inv_lookup([_|Ks],N,X)    :- key_inv_lookup(Ks,N,X).
+
+% key_insert(+M0,+X,+N,-M1)
+% Insert pair k(N,X) in M0 and return M1
+key_insert([],X,N,[k(N,X)]):-!.
+key_insert([k(M,Y)|Ks],X,N,[k(N,X),k(M,Y)|Ks]):- M < N, !.
+key_insert([k(M,Y)|Ks],X,N,[k(M,Y)|M1]):- M > N, !, key_insert(Ks,X,N,M1).
+key_insert([k(M,Y)|Ks],_X,N,[k(M,Y)|Ks]):- M == N, !.
+	    
+% key_delete(+M0,+X,-M1)
+% Delete pair k(_,X) from M0 and return M1.
+key_delete([],_,[]):-!.
+key_delete([k(_,Y)|Ks],X,Ks):- X == Y,!.
+key_delete([k(M,Y)|Ks],X,[k(M,Y)|M1]):- !, key_delete(Ks,X,M1).
+
+% key_filter(-Vars,+M0,-M1)
+% M1 is M0 without the variables Vars.
+key_filter(Vs,M,M1):- key_filter_aux(Vs,M,[],M1).
+key_filter_aux([],_,M2,M2):- !.
+key_filter_aux([X|Xs],M0,M1,M2):- !,
+	key_lookup(M0,X,N),
+	key_filter_aux(Xs,M0,[k(N,X)|M1],M2).
+
+% map_key2number(+Keys,+M,-Numbers)
+% Map Keys to corresponding numbers
+map_key2number([],_,[]).
+map_key2number([K|Ks],M,[N|Ns]):-
+	key_lookup(M,K,N),!,
+	map_key2number(Ks,M,Ns).
+map_key2number([_|Ks],M,Ns):-!,map_key2number(Ks,M,Ns).
+
+%======================================================================%
+%          Standard operations for union-find structures
+%======================================================================%
+
+%----------------------------------------------------------------------%
+% new(+Counter,-S)
+% Create an union-find data structure
+%----------------------------------------------------------------------%
+new(_Counter,S):-
+	
+% IMPORTANT bug fixed (14/01/10). This predicate assumed that it was
+% going to be called only ONCE during the execution of the
+% unfolder. However, it's called twice through
+% init_constraints_path/3. Therefore, we need to make sure that the
+% counter associated with key_mapping is initialized only once to
+% avoid duplicates. This is why is initialized during the loading of
+% the file (see first line of this file). 
+	
+	% set_counter(key_mapping,Counter), % wrapper	
+	%--------------------------------------------------------------%
+	% Union-find is a term s(S,M) where S is a balanced tree and M
+	% is a list that maps variables to numbers.
+	%--------------------------------------------------------------%	
+	S = s(root,[]).
+
+%----------------------------------------------------------------------%
+% make(+Key,+Val,+S0,-S1)
+% ----------------------------------------------------------------------%
+% Insert a new equivalence class that consists of a new record whose
+% key is Key and value is data(X,Val) in S0 and return S1. Val must be
+% a list.
+%----------------------------------------------------------------------%
+make(X,Val,Es0,Es1) :-
+	% wrapper
+	counter_value(key_mapping,N),
+	% wrapper
+	add_counter(key_mapping,1),
+	% wrapper
+	Es0 = s(Es0X,M0),                   
+	insert_tree(Es0X,N,data(N,Val),Es1X),
+	% wrapper
+	key_insert(M0,X,N,M1),
+	% wrapper
+	Es1 = s(Es1X,M1).                   
+
+%----------------------------------------------------------------------%
+% union_find_size(+Es,-N)
+%----------------------------------------------------------------------%
+% Return the number of elements of the union-find structure.
+% Currently, it's very inefficient since it's linear in the number of
+% keys. We should add a third argument which keeps track of the size
+% to make this operation constant.
+%----------------------------------------------------------------------%
+union_find_size(s(_,M),N):-
+	length(M,N).
+union_find_size(_):-
+	error_message(" unexpected format in union_find_size/1\n",[]).
+%----------------------------------------------------------------------%
+% findSimple(+N,+Key,+S,-Val).
+%----------------------------------------------------------------------%
+findSimple(N,T,Es0,R) :-
+	% wrapper 
+	Es0 = s(Es0X,M0),
+	% wrapper
+	key_lookup(M0,T,TX),	            
+	findSimple_internal(N,TX,Es0X,R).
+
+findSimple_internal(N,T,Es0,R) :-
+	search_tree(Es0,T,PT),
+	checkRootSimple(N+1,PT,T,R,Es0).
+		
+checkRootSimple(_N,data(T,Fs),T,data(T,Fs),_) :-
+	% print_message("% steps for simple find\n",[N]),
+	!.
+checkRootSimple(N,data(PT,_),_,R,Es0) :-
+	findSimple_internal(N+1,PT,Es0,R).
+
+%----------------------------------------------------------------------%
+% merge(+X,+Y,+S0,-S1,-Val).	
+%----------------------------------------------------------------------%
+merge(X,Y,Es0,Es4,data(RX,Ts)) :-
+	% wrapper
+        Es0 = s(Es0X,M0),
+	% wrapper
+	key_lookup(M0,X,XN),
+	% wrapper	
+	key_lookup(M0,Y,YN),                
+	find(0,XN,Es0X,Es1X,data(RX,TsX)),
+	find(0,YN,Es1X,Es2X,data(RY,TsY)),
+	!,
+	mergeData(TsX,TsY,Ts),
+	search_replace_tree(Es2X,RY,_,Es3X,data(RX,[])),
+	search_replace_tree(Es3X,RX,_,Es4X,data(RX,Ts)),
+	% wrapper
+	Es4 = s(Es4X,M0).                   
+
+%-------------------------------------------------------------------%
+% mergeData(+NewVal,+OldVal,-Val): merge two lists by removing
+% duplicates but without sorting.
+% -------------------------------------------------------------------%	
+mergeData([],Ts,Ts):-!.
+mergeData(Ts,[],Ts):-!.
+mergeData([T1|Ts1],T2s,Ts3) :-
+	compareTerms(T2s,T1,T3s),
+	mergeData(Ts1,T3s,Ts3).
+
+%----------------------------------------------------------------------%
+% find(+N,+Key,+S,-S1,-Val).
+%----------------------------------------------------------------------%
+find(N,T,Es0,Es2,R) :-
+	search_replace_tree(Es0,T,PT,Es1,R1),
+	checkRoot(N+1,PT,T,R,R1,Es1,Es2).
+
+checkRoot(_N,data(T,Fs),T,data(T,Fs),data(T,Fs),Es,Es) :-
+	% print_message("% steps for find \n",[N]), 
+	!.
+checkRoot(N,data(PT,_),_,data(R,Fs),data(R,[]),Es0,Es1) :-
+	find(N+1,PT,Es0,Es1,data(R,Fs)).
+
+%======================================================================%
+%            Specialized operations for constraints paths
+%======================================================================%
+
+% multiple_make(L,Es0,Es1)
+% Add the list of variables in L in Es0 and return Es1
+multiple_make([],Es0,Es0):-!.
+multiple_make([X|Xs],Es0,Es1):-
+	findSimple(0,X,Es0,_),!,
+	multiple_make(Xs,Es0,Es1).
+multiple_make([X|Xs],Es0,Es2):-
+	!,
+	make(X,[],Es0,Es1),
+	multiple_make(Xs,Es1,Es2).
+
+%------------------------------------------------------------------------%
+% conjoin_new_constraint(L,C,Es0,Es1)
+%------------------------------------------------------------------------%
+% For each element in L find its old value in Es0 and replace it with
+% a new value C conjoined with old value and return Es1. "conjoin"
+% here is just insert.
+%------------------------------------------------------------------------%
+conjoin_new_constraint([],_,Es,Es).
+conjoin_new_constraint([X|Xs],C,Es0,Es2):-
+	% Find representative of X
+	findSimple(0,X,Es0,data(RX,_)),
+	% Replace old value of X
+	Es0 = s(Es0X,M0),
+	search_replace_tree(Es0X,RX,data(RX,OldVal),Es1X,data(RX,NewVal)),
+	% Adding new value for X (conjoin new constraint)
+	NewVal = [C|OldVal],
+	Es1 = s(Es1X,M0),
+	conjoin_new_constraint(Xs,C,Es1,Es2).
+
+% merge_list(L,S0,S1)
+% Merge all elements in L in S0 and return S1
+merge_list([],Es0,Es0)    :- !.
+merge_list([_],Es0,Es0)   :- !.
+merge_list([X|Xs],Es0,Es1):- merge_list_aux(Xs,X,Es0,Es1).
+
+merge_list_aux([],_,Es0,Es0)    :-!.
+merge_list_aux([X|Xs],Y,Es0,Es2):-!,
+	merge(Y,X,Es0,Es1,_),
+	merge_list_aux(Xs,Y,Es1,Es2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Not used:
+%% It may reduce the length of the constraints eliminating constraints
+%% that belong to redefined variables.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% filter_live_variables(S0,Vs,S1)
+% Delete variables Vs from S0 and return S1
+filter_live_variables(Es0,Vs,Es1):-
+	% wrapper
+	Es0 = s(Es0X,M0),                        
+	traverse_tree(Es0X,L0),
+	% wrapper
+	map_key2number(Vs,M0,Ns),                
+	filter_live_variables_aux(L0,Ns,L1),
+	list2union_find(L1,root,Es1X),
+	% wrapper
+	key_filter(Vs,M0,M1),
+	% wrapper
+	Es1 = s(Es1X,M1).                        
+
+filter_live_variables_aux([],_Vs,[]).
+filter_live_variables_aux([rec(Key,data(Rep,Val))|Xs],Vs,
+			  [rec(Key,data(Rep,Val))|Ys]):-
+	ground_member3(Key,Vs),!,
+	filter_live_variables_aux(Xs,Vs,Ys).
+filter_live_variables_aux([_|Xs],Vs,Ys):- !,
+	filter_live_variables_aux(Xs,Vs,Ys).
+
+list2union_find([],Es,Es).
+list2union_find([rec(Key,Val)|Xs],Es0,Es2):-
+	insert_tree(Es0,Key,Val,Es1),
+	list2union_find(Xs,Es1,Es2).
+		       
+ground_member3(X,[Y|_]):- X == Y. 
+ground_member3(X,[_|T]):- ground_member3(X,T).
+
+#ifdef  DEBUG_USE
+%================================================================%
+%                           Tests
+%================================================================%
+test_key_list:-
+	key_insert([],_X1,2,L0), key_insert(L0,X2,5,L1),
+	key_insert(L1,X3,3,L2), key_insert(L2,_X4,1,L3),
+	key_insert(L3,_X5,3,L4),
+	print_message("After insert % \n",[L4]),
+	key_lookup(L4,X2,N2), print_message("Delete k(%,X2): \n",[N2]), 
+	key_delete(L4,X2,L5), print_message("% \n",[L5]),
+	key_lookup(L5,X3,N3), print_message("Delete k(%,X3): \n",[N3]), 
+	print_message("Delete X3: \n",[]), key_delete(L5,X3,L6),
+	print_message("% \n",[L6]).
+
+test_mergeData:-
+#ifdef  NEWPARTITION2
+	L1 = [c(eq(X,plus(Y,1)),_M1,k1,_F1),c(eq(A,plus(B,C)),_M4,k2,_F4)],
+	L2 = [c(eq(X,plus(Y,1)),_M2,k3,_F1),c(eq(A,B),_M3,k4,_F3)],
+#else
+	L1 = [c(eq(X,plus(Y,1)),_M1),c(eq(A,plus(B,C)),_M4)],
+	L2 = [c(eq(X,plus(Y,1)),_M2),c(eq(A,B),_M3)],
+#endif	
+	mergeData(L2,L1,L3),
+	print_message("Merging % and \n        % = \n\n % \n",[L1,L2,L3]),
+#ifdef  NEWPARTITION2
+	L4 = [c(eq(X,plus(Y,1)),_M5,k5,_F5),c(eq(A,plus(B,C)),_M6,k6,_F6)],
+	L5 = [c(eq(X,plus(Y,2)),o,k7,_F7),c(eq(A,B),_M8,k8,_F8)],
+#else
+	L4 = [c(eq(X,plus(Y,1)),_M5),c(eq(A,plus(B,C)),_M6)],
+	L5 = [c(eq(X,plus(Y,2)),o),c(eq(A,B),_M8)],
+#endif	
+	mergeData(L5,L4,L6),
+	print_message("Merging % and \n        % = \n\n % \n",[L4,L5,L6]).
+#endif  /*DEBUG_USE*/
+
+#ifdef  UNUSED_CODE
+% %====================================================================%
+% % print_union_find/1: print the union-find to the standard output.
+% % For debugging purposes.
+% %===================================================================%
+% %-------------------------------------------------------------------%
+% % TODO: we should be able to use the dictionary to use variable names
+% %-------------------------------------------------------------------%
+
+% print_union_find(Es0):-
+% 	Es0 = s(Es0X,M0),
+% 	traverse_tree(Es0X,L),
+% 	print_unionfind_collect(L,Es0X,M0),
+% 	print_unionfind_output.
+
+% print_unionfind_collect([],_Es,_):-!.
+% print_unionfind_collect([rec(Key,data(KeyRep,Val))|Rs],Es,M0):-
+% 	Key == KeyRep, !,
+% 	'$equiv_class_add_rep'(Key,Val,M0),
+% 	print_unionfind_collect(Rs,Es,M0).
+% print_unionfind_collect([rec(Key,_)|Rs],Es,M0):-
+% 	!,
+% 	findSimple_internal(0,Key,Es,data(Rep,_)), 	
+% 	'$equiv_class_add_member'(Key,Rep,M0),
+% 	print_unionfind_collect(Rs,Es,M0).
+
+% '$equiv_class_add_member'(X,Rep,M0):-
+% 	retract('$equiv_class'(Rep,Members,Val,M0)),!,
+% 	fassert('$equiv_class'(Rep,[X|Members],Val,M0)).
+% '$equiv_class_add_member'(X,Rep,M0):- !,
+% 	fassert('$equiv_class'(Rep,[X],_,M0)).
+
+% '$equiv_class_add_rep'(Rep,Val,M0):-
+% 	retract('$equiv_class'(Rep,Members,_,M0)),!,
+% 	fassert('$equiv_class'(Rep,Members,Val,M0)).
+% '$equiv_class_add_rep'(Rep,Val,M0):-!,
+% 	fassert('$equiv_class'(Rep,_,Val,M0)).
+
+% print_unionfind_output:-
+% 	% We only print non-empty nodes.
+% 	'$equiv_class'(R,Members,Val,M0),
+% 	Val = [],
+% 	retract('$equiv_class'(R,Members,Val,M0)),
+% 	fail.
+% print_unionfind_output:-
+% 	retract('$equiv_class'(R,Members,Val,M0)),
+% 	print_message("REP[v_%] MEMBERS[",[R]),
+% 	once(print_unionfind_output_members(Members,M0)),
+% 	print_message("] --> CL=[",[]),
+%         once(print_unionfind_output_constraints(Val,M0)),
+% 	print_message("]\n",[]),
+% 	fail.
+% print_unionfind_output.
+
+% % Print members 
+% print_unionfind_output_members(L,_)  :- var(L),!.
+% print_unionfind_output_members([],_M):-!.
+% print_unionfind_output_members([X],_M):-!, print_message("v_%",[X]).
+% print_unionfind_output_members([X|Xs],M):-!,
+% 	print_message("v_%,",[X]), print_unionfind_output_members(Xs,M).
+
+% % Print constraints
+% print_unionfind_output_constraints([],_M):-!.
+% print_unionfind_output_constraints([c(C,Mark
+% #ifdef  NEWPARTITION2
+%                                      ,Flag 
+% #endif				     
+% 				     )|Cs],M):-
+% 	print_message("c(",[]),
+% 	print_unionfind_output_constraint(C,M),
+% #ifdef  NEWPARTITION2
+% 	print_message(",%,%) ",[Mark,Flag]),
+% #else	
+% 	print_message(",%) ",[Mark]),
+% #endif	
+% 	print_unionfind_output_constraints(Cs,M).
+% print_unionfind_output_constraint(C,M):-
+% 	var(C),!,
+% 	key_lookup(M,C,N),
+% 	print_message("v_%",[N]).
+% print_unionfind_output_constraint(C,_):-
+% #if     (CLP_SYS==CLPR)	
+% 	arithmetic(C),!,
+% #elif   (CLP_SYS==SWI)
+%         number(C),!,
+% #endif
+% 	print_message("%",[C]).
+% print_unionfind_output_constraint(C,M):-
+% 	C =.. [F|Args],!,
+% 	print_message("%(",[F]),
+% 	print_unionfind_output_args(Args,M),
+% 	print_message(")",[]).
+% print_unionfind_output_args([],_M):-!.
+% print_unionfind_output_args([A],M):-!,
+% 	print_unionfind_output_constraint(A,M).
+% print_unionfind_output_args([A|As],M):-!,
+% 	print_unionfind_output_constraint(A,M),
+% 	print_message(",",[]),
+%         print_unionfind_output_args(As,M).
+#endif /*UNUSED_CODE*/

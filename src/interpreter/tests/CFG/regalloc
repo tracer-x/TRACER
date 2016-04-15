@@ -1,0 +1,100 @@
+#!/bin/bash
+if [ $# = 0 ]
+then
+	echo "Usage:"
+	echo "regalloc prog.c   - run register allocation on prog.c and dump output (IMPORTANT: Run from prog.c's directory ONLY)"
+	echo "regalloc compare  - compare outputs of previous step and print to file"
+	echo "regalloc clean    - clean folder of above mentioned files"
+else
+if [ $1 = "clean" ]
+then
+	rm *.o
+	rm REGALLOC*
+	rm *cilly*
+	rm *.dec.c
+	rm compare.out
+else
+if [ $1 = "compare" ]
+then
+	reg=REGALLOC.out
+	reg2=REGALLOC-DEC.out
+	out=compare.out
+	if [ -f ${reg} ] && [ -f ${reg2} ]
+	then
+		echo "===========================================================" >> ${out}
+		echo "${reg} only registers" >> ${out}
+		grep "DW_AT_location" ${reg} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|breg\)" >> ${out}
+		grep "DW_AT_location" ${reg} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|breg\)" | wc >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "" >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "${reg2} only registers" >> ${out}
+		grep "DW_AT_location" ${reg2} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|breg\)" >> ${out}
+		grep "DW_AT_location" ${reg2} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|breg\)" | wc >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "" >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "${reg} only spills" >> ${out}
+		grep "DW_AT_location" ${reg} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|DW_OP_reg\)" >> ${out}
+		grep "DW_AT_location" ${reg} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|DW_OP_reg\)" | wc >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "" >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "${reg2} only spills" >> ${out}
+		grep "DW_AT_location" ${reg2} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|DW_OP_reg\)" >> ${out}
+		grep "DW_AT_location" ${reg2} | grep -v "\(DW_OP_addr\|DW_FORM_block1\|DW_OP_reg\)" | wc >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "" >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "${reg} everything" >> ${out}
+		grep "DW_AT_location" ${reg} >> ${out}
+		grep "DW_AT_location" ${reg} | wc >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "" >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "${reg2} everything" >> ${out}
+		grep "DW_AT_location" ${reg2} >> ${out}
+		grep "DW_AT_location" ${reg2} | wc >> ${out}
+		echo "===========================================================" >> ${out}
+		echo "" >> ${out}
+	else
+		echo "Cannot find ${reg} or ${reg2}"
+	fi
+else
+if  [ -f $1 ] 
+then
+	prog=${1%.c}
+	prog_cilly=${1}_cilly
+	prog_dec=${1}.dec
+
+	echo "Decompiling..."
+	decompi ${prog}.c
+
+	echo "Running gcc..."
+	if [ -f ${prog_cilly}.c ] && [ -f ${prog_dec}.c ]
+	then
+		gcc -c -g ${prog_cilly}.c
+		gcc -c -g ${prog_dec}.c
+
+		if [ -f ${prog_cilly}.o ] && [ -f ${prog_dec}.o ]
+		then
+			echo "Objdumping..."
+			objdump --dwarf ${prog_cilly}.o > REGALLOC.out
+			objdump --dwarf ${prog_dec}.o > REGALLOC-DEC.out
+
+			rm *.o
+
+			echo "REGALLOCs created!"
+		else
+			echo "Cannot find ${prog_cilly}.o or ${prog_dec}.o"
+		fi
+	else
+		echo "Cannot find ${prog_cilly}.c or ${prog_dec}.c"
+	fi
+else
+	echo "${prog} does not exist"
+	exit 2
+fi
+fi
+fi
+fi

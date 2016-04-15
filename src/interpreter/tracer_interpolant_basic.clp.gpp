@@ -1,0 +1,1384 @@
+% tracer_interpolant_basic.clp.gpp
+
+%=============================================================================%
+%                      Basic Interpolation Algorithm
+%=============================================================================%
+% This file implements the most basic interpolation algorithm used in
+% TRACER.
+%
+% An interpolant can be computed as follows. Given two set of
+% constraints A and B such that A and B is unsat. We can first compute
+% a subset of A (called I) such that A implies I and I and B is still
+% unsat. Then, we project from I all A-local variables.
+% It is recommendable to compile with the option -convert-eq-to-ineq
+% which translates equality constraints of the form x=y into x>=y and
+% x<=y. This will give us, in general, more general interpolants.
+%=============================================================================%
+%
+% export
+%
+%%%  Compute unsatisfiable core
+%  compute_unsat_core/4
+%%%  Compute unsatisfiable core but before delete syntactically
+%%%  unrelated constraints (done by compute_related_constraints/6)
+%  compute_unsat_core/5
+%%%  Syntactic dependency analysis
+%  compute_related_constraints/6
+%%%  Syntactic relevant/irrelevant constraints
+%  irrel_rel_constraints/4       
+%%%  Project a set of constraints and produce negated form.
+%  make_negated_projected_interpolant/7
+%  make_negated_projected_interpolant_catch_errors/7
+%  make_negated_projected_interpolant/11
+%
+%%% Stats
+%
+%  init_compute_unsat_core_profile_counters/0
+%  print_compute_unsat_core_profile_stats/0
+%
+%=============================================================================%
+
+%-----------------------------------------------------------------------------%
+% compute_unsat_core(+NegConstraints,+CL,-ML,+Flag,+DepFlag)
+%-----------------------------------------------------------------------------%
+% CL is a list of constraints C1,...,CN and ML is a list of free
+% variables with same length than CL. Moreover, C1 and ... and CN and
+% NegImplied is unsat. Then, it computes a subset S of {C1,...,CN}
+% such that S and NegImplied is still unsat but any strict subset S'
+% of S, S' and NegImplied is sat. ML represents the subset S and it
+% should be interpreted as follows.  If the ith element of ML is the
+% term 'o' then the ith constraint of CL belongs to S.
+%
+% NegConstraints can be either a list of constraints or a list of list
+% of constraints. The former means a conjunction of constraints. The
+% latter a disjunction of conjuncts.
+%
+% If Flag=check then it tests that C1 and ... and CN and NegImplied is
+% unsat.
+%
+% DepFlag is a flag used for compute_related_constraints/6 which may
+% be called to speedup the process.
+%-----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_compute_unsat_core_1 :-
+	compute_unsat_core([tt],[gt(0, ref(H, X)),
+				 gt(0, ref(H, X)), gt(ref(H, X), 0), gt(0, ref(H, X)),
+				 gt(0, ref(H, X)), gt(ref(H, X), 0)],
+			   [M0,M1,M2,M3,M4,M5],no_check),
+	print_message("%\n",[int(M0,M1,M2,M3,M4,M5)]).	
+test_compute_unsat_core_2 :-
+	compute_unsat_core([geq(minus(0, ref(A2, 0)), 0)],
+			   [arrassign(A1, upd(_A0, 0, 1)),
+			    arrassign(A2, upd(A1, 1, plus(ref(A1, 0), 666))),
+			    gt(_P, 0), assign(_Ret, _)],
+			   [M1,M2,M3,M4], no_check),
+	print_message("%\n",[int(M1,M2,M3,M4)]).
+test_compute_unsat_core_3 :-
+	ML = [_h51159, _h2515, _h3276, _h5621, _h6871, _h6867, _h8727,
+	      _h10414, _h13245, _h13477, _h17482, _h17478, _h23551,
+	      _h29457, _h36476, _h50959],
+	compute_unsat_core([tt], [eq(0, _h1542),geq(_h1542, 100),
+				  arrassign(_h3608,upd(_h274,plus(ref(_h274,plus(_h278,_h280)),0),0)),
+				  gt(_h276, 0),arrassign(_h5807,
+							  upd(_h3608,plus(ref(_h3608,plus(_h278,_h5825)),0),1)),
+				  assign(_h5825,unk(0,choose)),eq(_h5825,_h280),
+				  arrassign(_h8904,upd(_h5807,plus(ref(_h5807,plus(_h278,_h280)),0),1)),
+				  arrassign(_h10603,
+					    upd(_h8904,plus(ref(_h8904,plus(ref(_h8904,plus(_h278, _h5825)),1)),0),1)),
+				  assign(_h13422,_h5825),
+				  arrassign(_h13757,upd(_h13776,plus(ref(_h13776, plus(_h278, _h13422)),0),0)),
+				  arrassign(_h13776,
+					    upd(_h10603,plus(ref(_h10603,plus(ref(_h10603, plus(_h278, _h13422)),1)),0),0)),
+				  eq(_h13422, _h280),
+				  arrassign(_h23704, upd(_h13757, plus(ref(_h13757,plus(_h278,_h280)),0),0)),
+				  assign(_h29594, _h29602),
+				  gt(0, ref(_h23704, plus(ref(_h23704, plus(_h278,_h5825)), 0)))],
+			   ML, no_check),
+	print_message("ML=%\n", [ML]).
+test_compute_unsat_core_4:-
+	NegCond = [gt(0, _h4336), gt(_h4336, 0)],
+	CL = [eq(0, _h4389),
+	      assign(_h3248, plus(_h1145, 1.000000)),
+	      assign(_h4336, minus(_h4374, 1.000000)),
+	      gt(_h166, 0),
+	      assign(_h4374,plus(_h4389, 1.000000)),
+	      gt(1.000000, _h1145)],		     
+	ML = [_,_,_,_,_,_],
+	compute_unsat_core(NegCond, CL , ML , no_check),
+	print_message("% \n",[ML]).
+#endif  /*DEBUG_USE*/
+%-----------------------------------------------------------------------------%
+#ifdef  PROFILE
+% compute_unsat_core/4: for backward compatibility
+compute_unsat_core(NegImplied, CL, ML, CheckNeeded) :-
+	% Only if TRACER flag path_slicing to 'y'
+	% and partition is not used.
+	compute_related_constraints(NegImplied, CL, ML, CL1, ML1,fixpo),
+	compute_unsat_core_aux0(NegImplied, CL1, ML1, CheckNeeded), !,
+	compute_unsat_core_profile(CL1,ML1).
+
+% compute_unsat_core/5:
+compute_unsat_core(NegImplied, CL, ML, CheckNeeded, FixpoFlag) :-
+	compute_related_constraints(NegImplied, CL, ML, CL1, ML1,FixpoFlag),
+	compute_unsat_core_aux0(NegImplied, CL1, ML1, CheckNeeded), !,
+	compute_unsat_core_profile(CL1,ML1).
+#else
+% compute_unsat_core/4: for backward compatibility
+compute_unsat_core(NegImplied, CL, ML, CheckNeeded) :-
+	% Only if TRACER flag path_slicing to 'y'
+	% and partition is not used.
+	compute_related_constraints(NegImplied, CL, ML, CL1, ML1,fixpo),
+	compute_unsat_core_aux0(NegImplied, CL1, ML1, CheckNeeded),!.
+
+% compute_unsat_core/5
+compute_unsat_core(NegImplied, CL, ML, CheckNeeded,FixpoFlag) :-
+	compute_related_constraints(NegImplied, CL, ML, CL1, ML1,FixpoFlag),
+	compute_unsat_core_aux0(NegImplied, CL1, ML1, CheckNeeded),!.
+#endif  /*PROFILE*/
+
+
+%-----------------------------------------------------------------------------%
+% compute_unsat_core_aux0-2: Interpolate differently based on flags
+%-----------------------------------------------------------------------------%
+compute_unsat_core_aux0(NegImplied, CL, ML, CheckFlag) :-
+#ifdef  PROFILE
+	ctime(T0),
+#endif
+#ifndef EXTERNAL_SOLVER
+	%----------------------------------------------------------------------
+	% We substitute each arrassign with 'tt' s.t. the solver
+	% doesn't choke, being ignorant of arrassign or arreq
+	%----------------------------------------------------------------------
+        substitute_arrays(CL, CL1),
+        substitute_arrays_disjunct(NegImplied, NegImplied1),
+	!,
+#else
+        CL1=CL, NegImplied1=NegImplied, 
+#endif  /*EXTERNAL_SOLVER*/
+	compute_unsat_core_aux1(NegImplied1, CL1, ML, CheckFlag),
+#ifdef  PROFILE	
+	ctime(T1),
+	add_counter(compute_unsat_core_timing,T1-T0),
+#endif	
+	true.
+
+compute_unsat_core_aux1(NegImplied, CL, ML, check) :- !,
+#ifndef EXTERNAL_SOLVER	
+	% Check that CL and NegImplied is indeed unsat
+	compute_unsat_core__check_is_unsat(NegImplied, CL, []),
+#endif  /*EXTERNAL_SOLVER*/
+	!,
+	compute_unsat_core_aux2(NegImplied, CL, ML).
+compute_unsat_core_aux1(NegImplied, CL, ML, no_check) :-
+	compute_unsat_core_aux2(NegImplied, CL, ML).
+
+%-------------------------------------------------------------%
+#ifdef  EXTERNAL_SOLVER
+%-------------------------------------------------------------%
+compute_unsat_core_aux2(NegImplied,CL,ML):-
+	current_tracer_flag(interpolant, deletion),
+	!,
+	extern_solver_unsat_core(NegImplied, CL,ML).
+%-------------------------------------------------------------%
+#else
+%-------------------------------------------------------------%
+compute_unsat_core_aux2(NegImplied,CL,ML):-
+	current_tracer_flag(interpolant, deletion),
+	!,
+	set_cs_mark,	
+%	eliminate_fully_ground_constraints(CL,ML,CL0,ML0),
+	compute_unsat_core_deletion(CL, ML, NegImplied, []),
+	% Reuse code space used by compute_unsat_core_deletion_t/1
+	pop_cs_mark.	
+#endif  /*EXTERNAL_SOLVER*/
+compute_unsat_core_aux2(_NegImplied,CL,ML):-
+	current_tracer_flag(interpolant, partition),
+	!,
+	compute_unsat_core_partition(_, _, CL,ML).
+
+
+%=============================================================================%
+% compute_unsat_core_deletion(+CL,?,NegCond+,+)
+%=============================================================================%
+% Compute a unsatisfiable core (not necessarily minimal) with 1/2 N^2
+% complexity, where N is the number of elements in CL.
+%
+% This is achieved by maintaining constraints in the CLP(R) constraint
+% store that resulted form partial evaluation of CL. As a consequence,
+% here we need to use assert/retract to preserve marking list ML when
+% clearing the constraint store through failure.
+%=============================================================================%
+compute_unsat_core_deletion(CL, ML, NegImplied, ArrRef) :-
+	% This should always fail, therefore we fetch the output ML
+	% in the second clause
+	compute_unsat_core_deletion_aux1(CL, ML, NegImplied, ArrRef).
+compute_unsat_core_deletion(_, ML, _, _) :-
+	retract(compute_unsat_core_deletion_t(ML)).
+
+compute_unsat_core_deletion_aux1(CL, ML, NegImplied, ArrRef) :-
+	% This should always succeed
+	compute_unsat_core_deletion_aux2(CL, ML, NegImplied, ArrRef),
+	fassert(compute_unsat_core_deletion_t(ML)),
+	!,
+	fail.
+
+compute_unsat_core_deletion_aux2([], [], _NegImplied, _ArrRef).
+compute_unsat_core_deletion_aux2([C|RestCL], [o|RestML], NegImplied, ArrRef) :-
+	%----------------------------------------------------------------------	
+	% FIXME: assume all tt's are converted from arrassign, which,
+	% are conservatively important constraints. This is not
+	% practical since it will, in general, produce to strong
+	% interpolants for arrays.	
+	%----------------------------------------------------------------------
+	C==tt,
+	!,
+	compute_unsat_core_deletion_aux2(RestCL, RestML, NegImplied, ArrRef).
+compute_unsat_core_deletion_aux2([_|RestCL], [_|RestML], NegImplied, ArrRef) :-
+	compute_unsat_core__check_is_unsat(NegImplied, RestCL, ArrRef), !,
+	compute_unsat_core_deletion_aux2(RestCL, RestML, NegImplied, ArrRef).
+compute_unsat_core_deletion_aux2([C|RestCL], [o|RestML], NegImplied, ArrRef) :-
+	compute_unsat_core_deletion_aux3(C, RestCL, RestML, NegImplied, ArrRef).
+
+compute_unsat_core_deletion_aux3(C, RestCL, RestML, NegImplied, ArrRef) :-
+	constraint_symbolic(C, ArrRef, ArrRef1),
+	!,
+	compute_unsat_core_deletion_aux2(RestCL, RestML, NegImplied, ArrRef1).
+compute_unsat_core_deletion_aux3(_C, _RestCL, _RestML, _NegImplied, _ArrRef).
+
+%------------------------------------------------------------------------------
+% compute_unsat_core__check_is_unsat(+NegCond,+CL,+ArrRef)
+%------------------------------------------------------------------------------
+% Succeed if forall C \in NegCond the conjunction C and CL and ArrRef
+% is UNSAT.
+%------------------------------------------------------------------------------
+compute_unsat_core__check_is_unsat([], _, _).
+compute_unsat_core__check_is_unsat([C|_], L1, ArrRef) :-
+	compute_unsat_core__check_is_sat(C, L1, ArrRef),
+	!,
+	fail.
+compute_unsat_core__check_is_unsat([_|R], L1, ArrRef) :-
+	compute_unsat_core__check_is_unsat(R, L1, ArrRef).
+
+compute_unsat_core__check_is_sat(C, L1, ArrRef) :-
+	constraint_symbolic(C, ArrRef, ArrRef1),
+	constraint_symbolic(L1, ArrRef1, ArrRef2),
+	satisfiable_array_references(ArrRef2),
+	%----------------------------------------------------------------------
+        % NOTE: this is an upper bound of the # of calls to solver
+        % because if some constraint of L1 is not satisfiable
+        % then constraint_symbolic fails without evaluating the
+        % rest of constraints.
+	%----------------------------------------------------------------------
+	length(L1,N1),
+	add_counter(calls_to_solver_interpolation,1+N1).
+
+%-----------------------------------------------------------------------------
+% If flag interpolant = partition then we assume that the whole
+% block of constraints is needed. Very fast but poor subsumption.
+%-----------------------------------------------------------------------------
+compute_unsat_core_partition(_NegImplied,_Essential,CL,ML):-
+	compute_unsat_core_partition_aux(CL,ML).
+compute_unsat_core_partition_aux([],[]):-!.
+compute_unsat_core_partition_aux([_C|CL],[o|RestML]):-
+	compute_unsat_core_partition_aux(CL,RestML).
+
+%-----------------------------------------------------------------------------%
+% compute_related_constraints(+Cond,+CL,+ML,-RelevantCL,-RelevantML,+Flag)
+%-----------------------------------------------------------------------------%
+% RelevantCL is like CL but only with those constraints whose
+% variables intersect with the variables of Cond. This predicate is
+% vital if partition is not used for two reasons: speed-up
+% significantly the computation of interpolants by eliminating
+% irrelevant constraints and for array constraints it computes
+% directly the interpolant.
+%
+% If Flag=fixpo    then RelevantCL is computed via a fixpoint
+% If Flag=no_fixpo then RelevantCL is computed in a single pass
+% (it may be unsound, hence the caller is responsible.)
+%-----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_compute_related_constraints_1:-
+	set_tracer_flag(path_datastructure,naive),
+	set_tracer_flag(path_slicing,y),
+	Cond = [gt(0, _h4330), gt(_h4330, 0)],
+	CL   = [eq(0,_h4383), assign(_h3248, plus(_h1145, 1.000000)),
+		assign(_h4330, minus(_h4368, 1.000000)), gt(_h166, 0),
+		assign(_h4368, plus(_h4383, 1.000000)), gt(1.000000, _h1145)],
+	ML=[_,_,_,_,_,_],
+	compute_related_constraints(Cond,CL,ML,CL1,_,fixpo),
+	print_message("CL: % => CL1: %\n",[CL,CL1]).
+#endif  /*DEBUG_USE*/
+
+% If partition is used then we don't need to call to this predicate
+compute_related_constraints(_, CL, ML, CL, ML,_FixpoFlag):-
+	current_tracer_flag(path_datastructure,partition),
+	!.
+compute_related_constraints(Neg, CL, ML, RelCL, RelML, FixpoFlag):-
+	compute_related_constraints1(Neg, CL, ML, RelCL, RelML, FixpoFlag).
+
+compute_related_constraints1([tt], CL, ML, CL, ML, _FixpoFlag):-!.
+compute_related_constraints1(Cond, CL, ML, RelCL, RelML, FixpoFlag):-
+	current_tracer_flag(path_slicing,y),
+#ifdef  PROFILE
+        ctime(T0),
+#endif
+	varset_formula(Cond, RelVs),
+#ifdef  PROFILE	
+	add_counter(calls_to_compute_related_constraints1,1),
+#endif 	/*PROFILE*/
+	compute_related_constraints2(FixpoFlag, CL, ML, RelVs, RelCL, RelML),
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(path_slicing_timing,T1-T0),
+#endif	
+        !.
+compute_related_constraints1(_,_,_,_,_,_):-
+	current_tracer_flag(path_slicing,y),
+	error_message("Unexpected problem compute_related_constraints1/6\n",[]).
+compute_related_constraints1(_,_,_,_,_,_):-
+	current_tracer_flag(path_slicing,n),!.
+
+compute_related_constraints2(fixpo, CL,ML,RelVs,RelCL,RelML):-
+	% General case: if no order is assumed in CL, a fixpoint is
+	% needed to be sound
+	fixpo_compute_related_constraints(CL, ML, RelVs, RelCL, RelML),
+	!.
+compute_related_constraints2(no_fixpo,CL,ML,RelVs,RelCL,RelML):-
+	% If we know that the newest constraints are on the head of CL
+	% then we don't need to compute a fixpoint bu the caller must
+	% ensure that the precondition holds!
+	compute_related_constraints_aux(CL, ML, RelVs, _,RelCL, RelML,_,_,_),
+	!.
+compute_related_constraints2(Flag,_,_,_,_,_):-
+	error_message("Unknown flag % in compute_related_constraints2/6 \n",
+		      [Flag]).
+
+% fixpo_compute_related_constraints(+,+,+,-,-)
+% Computation of fixpoint: at each iteration it adds constraints
+% related to relevant variables.
+fixpo_compute_related_constraints(CL,ML,RelVs,RelCL1,RelML1):-
+#ifdef  PROFILE	
+	add_counter(call_to_fixpo_compute_related_constraints,1),
+#endif 	/*PROFILE*/		
+	compute_related_constraints_aux(CL, ML, RelVs, NewRelVs,
+					RelCL0, RelML0, IrrelCL, IrrelML, ChangedFlag),
+	fixpo_compute_related_constraints_aux(ChangedFlag, NewRelVs, IrrelCL, IrrelML,
+					      RelCL0,RelML0, RelCL1,RelML1).
+
+fixpo_compute_related_constraints_aux(0,_,_,_,RelCL,RelML,RelCL,RelML):-!.  
+fixpo_compute_related_constraints_aux(_,RelVs,IrrelCL,IrrelML,
+				      RelCL0,RelML0,RelCL2,RelML2):-
+	fixpo_compute_related_constraints(IrrelCL,IrrelML,RelVs,RelCL1,RelML1),
+	append(RelCL0,RelCL1,RelCL2),
+	append(RelML0,RelML1,RelML2).
+
+% compute_related_constraints_aux(+,+,+,-,-,-,-,-,-)
+compute_related_constraints_aux([],[],Vs,Vs,[],[],[],[],0):-!.
+% compute_related_constraints_aux([C|Cs],[_|Ms],Visited, RelCs,RelML):-
+% 	is_ground_constraint(C),
+% 	!,
+% 	% For stats: we record that the constraint was fully ground so
+% 	% sliced away	
+% 	add_counter(ground_constraints_filtered,1),
+% 	compute_related_constraints_aux(Cs, Ms, Visited, RelCs, RelML).
+compute_related_constraints_aux([C|Cs],[M|Ms],Visited,AllVisited,
+				[C|RelCs],[M|RelML],IrrelCs,IrrelML,1):-
+	varset_constraints([C],Vs),
+	unord_setintersect(Vs,Visited),
+	!,
+        unord_setunion(Vs,Visited,NewVisited),
+	compute_related_constraints_aux(Cs, Ms, NewVisited, AllVisited,
+					RelCs, RelML, IrrelCs, IrrelML, _).
+compute_related_constraints_aux([C|Cs],[M|Ms], Visited, AllVisited,
+				RelCs, RelML, [C|IrrelCs], [M|IrrelML], ChangedFlag):-
+	!,
+#ifdef  PROFILE
+	% For stats: we record the constraint was unrelated so sliced
+	% away
+	add_counter(sliced_constraints,1),
+#endif  /*PROFILE*/	
+	compute_related_constraints_aux(Cs, Ms, Visited, AllVisited,
+					RelCs, RelML, IrrelCs, IrrelML, ChangedFlag).
+
+
+varset_formula([[A|B]|R],Vs):-
+	varset_dnf_formula([[A|B]|R],[],Vs),!.
+varset_formula(CLs,Vs):-
+	varset_constraints_aux(CLs,[],Vs),!.
+
+varset_dnf_formula([],Acc,Acc):-!.
+varset_dnf_formula([Xs|Xss],Acc0,Acc2):-
+	varset_constraints_aux(Xs,Acc0,Acc1),
+	varset_dnf_formula(Xss,Acc1,Acc2).
+
+
+%------------------------------------------------------------------------------%
+% irrel_rel_constraints(+CL,+Vs,-IrrelCL,-RelCL)
+%------------------------------------------------------------------------------%
+% IrrelCL is like CL but without any constraint that intersect with
+% the set of variables Vs. RelCL is the complement of IrrelCL.
+%------------------------------------------------------------------------------%
+irrel_rel_constraints(CL,Vs,IrrelCL,RelCL):-
+	compute_related_constraints2(fixpo,CL,_,Vs,RelCL,_),
+	unord_setdiff(CL,RelCL,IrrelCL).
+
+%------------------------------------------------------------------------------%
+% make_negated_projected_interpolant(+SGlobalArr,...+CL,+ML,+SGlobalArr1,...
+%                                    -NegIntp) 
+%------------------------------------------------------------------------------%
+% Project the evaluation of the symbolic marked constraints of CL
+% (using bitvector ML).  Finally, it creates a new list of symbolic
+% constraints NegIntp which is the negation of the projected
+% interpolant.
+%
+% NegIntp is defined in terms of the set of variables
+% SGlobalArr1, SGlobalVar1, SLocalArr1, and SLocalVar1.
+%
+% IMPORTANT: SGlobalArr,SGlobalVar,SLocalArr, and SLocalVar are left
+% evaluated. Thus, they are not symbolic anymore.
+%------------------------------------------------------------------------------%
+make_negated_projected_interpolant(_, _, _, _, _, _, _, _, _, _, []) :-
+	%----------------------------------------------------------------------%
+	% A shortcut in case the analysis is path-insensitive.  We
+	% generate directly the interpolant true (maximal subsumption)
+	%----------------------------------------------------------------------%	
+	current_tracer_flag(path_sensitive,n),!.
+make_negated_projected_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				   CL, ML,
+				   SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				   NegIntp) :-
+#if     (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS))
+        %%% Here, the master process makes a request to the slave for
+        %%% producing NegIntp (i.e., the negated interpolant to be
+        %%% stored in the memo table.)
+        pipe_master_negate_projected_interpolant(SGlobalArr, SGlobalVar,
+						 SLocalArr, SLocalVar, CL, ML,
+						 SGlobalArr1, SGlobalVar1,
+						 SLocalArr1, SLocalVar1,NegIntp
+%#ifdef  PROFILE
+						, _TimeA, _TimeB
+%#endif  /*PROFILE*/
+						),
+%----------------------------------------------------------------------------%
+#else   /* defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+%----------------------------------------------------------------------------%
+%#ifdef  PROFILE
+%        ctime(Time0),
+%#endif  /*PROFILE*/
+        %--------------------------------------------------------------------%
+        % Note: from the evaluation of the list of symbolic
+        % constraints we will obtain in SArrRef the array references
+        %--------------------------------------------------------------------%
+	evaluate_selectively_constraints_path(CL, ML, SArrRef, o),
+%#ifdef  PROFILE
+%        ctime(Time1), TimeA = Time1-Time0, ctime(Time2),
+%#endif	/*PROFILE*/
+%#ifdef  STORE_DEBUG
+%        debug_message("Storing in memo table 2\n",[]),
+%#endif  /*STORE_DEBUG*/
+        project_and_negate(state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 SArrRef),
+			   state(SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1 ,
+				 NegIntp)),
+%#ifdef  PROFILE
+%	ctime(Time3), TimeB = Time3-Time2,
+%#endif  /*PROFILE*/
+%-----------------------------------------------------------------------------
+#endif  /*PIPEDUMP || PIPEDUMP_AND_ANSWERS */
+%-----------------------------------------------------------------------------
+%#ifdef  PROFILE
+%	add_counter(store_timing_1, TimeA),
+%	add_counter(store_timing_2, TimeB).
+%#else
+        true.
+%#endif  /*PROFILE*/
+
+%-----------------------------------------------------------------------------
+% make_negated_projected_interpolant(+SGLobalArr,...,+CL,+ML,-NegIntp)
+%-----------------------------------------------------------------------------
+% Project the marked symbolic constraints of CL (using bitvector ML).
+% Finally, it creates a new list of symbolic constraints NegIntp which
+% is the negation of that projection.
+%
+% NegIntp is still defined in terms of the set of input variables
+% SGlobalArr, SGlobalVar, SLocalArr, and SLocalVar. Thus, the
+% difference with predicate make_negated_projected_interpolant/11 is
+% that SGlobalArr,SGlobalVar,SLocalArr, and SLocalVar are still
+% symbolic.
+%-----------------------------------------------------------------------------
+make_negated_projected_interpolant_catch_errors(SGA, SGV, SLA, SLV,
+						CL, ML, NegIntp) :-
+	make_negated_projected_interpolant(SGA, SGV, SLA, SLV,CL, ML, NegIntp),
+	!.					   
+make_negated_projected_interpolant_catch_errors(_,_,_,_,_,_,_):-
+	error_message("make_negated_projected_interpolant/7 failed\n",[]).
+
+make_negated_projected_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				   CL, ML, NegIntp) :-
+%#ifdef  PROFILE
+%        ctime(Time0),
+%#endif
+        %--------------------------------------------------------------------
+        % Copy to keep SGlobalArr, SGlobalVar, SLocalArr, and
+        % SLocalVar as symbolic
+        %--------------------------------------------------------------------
+	fcopy_term(t(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL),
+		   t(SGlobalArrCopy,SGlobalVarCopy,
+		     SLocalArrCopy,SLocalVarCopy, CLCopy)),
+#if     (defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS))
+       /*	 
+        Here, the master process makes a request to the slave for
+        producing NegIntp (i.e., the interpolant to be stored in the
+        memo table.)	 
+       */	 
+        pipe_master_negate_projected_interpolant(SGlobalArrCopy,SGlobalVarCopy,
+						 SLocalArrCopy ,SLocalVarCopy,
+						 CLCopy, ML,
+						 SGlobalArr,SGlobalVar,
+						 SLocalArr ,SLocalVar ,NegIntp
+#ifdef  PROFILE
+						,_,_
+#endif  /*PROFILE*/
+						),
+#else   
+        evaluate_selectively_constraints_path(CLCopy, ML, ArrRef, o),	
+        project_and_negate(state(SGlobalArrCopy, SGlobalVarCopy,
+				 SLocalArrCopy, SLocalVarCopy, ArrRef),
+			   state(SGlobalArr, SGlobalVar,
+				 SLocalArr, SLocalVar, NegIntp)),
+#endif  /*PIPEDUMP || PIPEDUMP_AND_ANSWERS*/
+%#ifdef  PROFILE
+%        ctime(Time1),
+%	 add_counter(store_timing_2, Time1-Time0),
+%#endif  /*PROFILE*/
+        true.
+
+%-----------------------------------------------------------------------------%
+% project_and_negate(+state(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+%                    -state(GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,NegProj))
+%-----------------------------------------------------------------------------%
+% Project the constraints associated to GlobalArr,... and negate the
+% result given in NegProj. NegProj is renamed in terms of
+% GlobalArr1,... variables.  Note: it will be called from wrappers
+% make_negated_projected_interpolant/11 and make_negated_projected_interpolant/7
+%-----------------------------------------------------------------------------%
+#ifdef DEBUG_USE
+test_project_and_negate_1 :-
+	N>=1,
+	project_and_negate(state([_H], [], [A], [_R, X, _Y], [ref(A,X,N)]),
+			   NegProj),
+	print_message("% \n", [NegProj]).
+test_project_and_negate_2 :-
+	X>=0,
+	project_and_negate(state([_H], [], [], [_R, X], []),NegProj),			   
+	print_message("% \n", [NegProj]).
+#endif  /*DEBUG_USE*/
+%-----------------------------------------------------------------------------%
+project_and_negate(State,
+		   state(GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,NegProj)) :-
+	%----------------------------------------------------------------------
+	% We first project the solver store and compute a list of
+	% symbolic constraints
+	%----------------------------------------------------------------------
+	project_solver_context(State,
+			       state(GlobalArr1, GlobalVar1, 
+				     LocalArr1, LocalVar1, Proj)),
+%--------- Debugging ----------------------------------------------------------%	
+%	print_message("Before negate the interpolant: \n\t",[],yellow),
+%	pretty_printer_constraints_list(func_main,
+%					GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,Proj),
+	%----------------------------------------------------------------------
+	% We then negate the constraints list
+	%----------------------------------------------------------------------
+	negate_numerical_list(Proj, NegProj).
+
+%=============================================================================%
+% To perform project_and_negate/2 in another process
+%=============================================================================%
+%-----------------------------------------------------------------------------
+#if     defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)
+%%%---------------------------------------------------------------------------
+% This is executed by the master process to make a request to the
+% slave
+%%%---------------------------------------------------------------------------
+pipe_master_negate_projected_interpolant(SGlobalArr, SGlobalVar,
+					 SLocalArr, SLocalVar, CL, ML,
+					 SGlobalArr1, SGlobalVar1,
+					 SLocalArr1, SLocalVar1,
+					 NegIntp
+#ifdef  PROFILE
+					,Time1, Time2
+#endif  /*PROFILE*/
+					) :-
+	% Pre-select symbolic constraints to speed up transfer
+	select_marked_constraints_path(CL, ML, ShortCL, o),
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),
+	write_dump_slave("in_state1(%,%,%,%,%,%) .\n",
+			 [SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, ShortCL,
+			  MsgTimeStamp1]),
+#else   
+	write_dump_slave("in_state1(%,%,%,%,%) .\n",
+			 [SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, ShortCL]),
+#endif  /*PROFILE*/
+	read_from_dump_slave(X),
+	process_slave_output(X,
+			     reply_args(SGlobalArr1, SGlobalVar1,                
+					SLocalArr1, SLocalVar1, NegIntp
+#ifdef  PROFILE
+				       ,Time1,Time2
+				       ,MsgTime1,MsgTimeStamp3
+#endif  /*PROFILE*/
+				       )
+			     ),
+#ifdef  PROFILE
+	ctime(MsgTimeStamp4),
+	add_counter(pipe_timing,(MsgTimeStamp4-MsgTimeStamp3)+MsgTime1),
+#endif  /*PROFILE*/
+	true.
+%%%---------------------------------------------------------------------------
+%    This is executed by the slave process
+%%%---------------------------------------------------------------------------
+pipe_slave_project_and_negate(SGlobalArr ,SGlobalVar ,SLocalArr ,SLocalVar ,ShortCL,
+			      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,NegProj
+#ifdef  PROFILE
+			     ,TimeA,TimeB
+#endif  /*PROFILE*/
+			     ) :-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+        % constraint_symbolic_arrays_SAT_check_form(ShortCL, [], SArrRef),
+        % FIXME: check this ....
+        constraint_symbolic_with_array_update_subst(ShortCL, [], SArrRef),
+#ifdef  PROFILE
+        ctime(Time1),
+	TimeA = Time1-Time0,
+	ctime(Time2),
+#endif	/*PROFILE*/
+#ifdef  STORE_DEBUG
+        print_message("Storing in memo table 2\n",[]),
+#endif	
+        project_and_negate(state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 SArrRef),
+			   state(SGlobalArr1,SGlobalVar1,SLocalArr1 ,SLocalVar1,
+				 NegProj)),
+#ifdef  PROFILE
+	ctime(Time3),
+	TimeB = Time3-Time2.
+#else
+        true.
+#endif  /*PROFILE*/
+#endif /*defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+
+
+%------------------------------------------------------------------------------%
+% eliminate_fully_ground_constraints(+CL0,+ML0,-CL1,-ML1).
+% During interpolation, some constraints may be ground already. Thus,
+% they don't need to be considered.
+%------------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_eliminate_fully_ground_constraints:-
+	CL= [assign(X0,0),assign(X1,plus(X0,1)), assign(X2,plus(X1,2)),
+	     gt(5,6), gt(23,56), gt(X2,Y0),assign(Y0,0),gt(4,2)],
+% 	CL= [assign(X0,0),assign(X1,plus(X0,1)), assign(X2,plus(X1,2)),
+% 	     gt(X2,Y0),assign(Y0,0),gt(4,2)],
+% 	CL= [assign(X0,0),assign(X1,plus(X0,1)), assign(X2,plus(X1,2)),
+% 	     gt(X2,Y0),assign(Y0,0)],	
+	eliminate_fully_ground_constraints(CL,ML,CL1,ML1),
+	print_message("%\n",[eliminate_fully_ground_constraints(CL,ML,CL1,ML1)]),
+	counter_value(ground_constraints_filtered,X),
+	print_message("Num of filtered ground constraints: % \n",[X]).
+#endif  /*DEBUG_USE*/
+
+%--------------------------------------------------------------------------%
+% This predicate is linear on the number of constraints in the
+% path. Therefore, it is not quite cheap. If path_datastructure=naive
+% then this predicate is not called since it's built-in in
+% compute_related_constraints/5. Otherwise, this predicate may be
+% called only if path_filter_ground=y
+%--------------------------------------------------------------------------%
+eliminate_fully_ground_constraints(CL0,ML0,CL1,ML1):-
+	current_tracer_flag(path_slicing,n),
+%	current_tracer_flag(path_filter_ground,y),!,
+#ifdef  PROFILE	
+	ctime(T0),
+#endif 	/*PROFILE*/
+	eliminate_fully_ground_constraints_aux(CL0,ML0,CL1,ML1),
+#ifdef  PROFILE	
+	ctime(T1),
+	add_counter(eliminate_ground_constraints_timing,T1-T0),
+#endif  /*PROFILE*/
+        true.
+eliminate_fully_ground_constraints(CL,ML,CL,ML):- !.
+
+eliminate_fully_ground_constraints_aux([],[],[],[]):-!.
+eliminate_fully_ground_constraints_aux([C|Cs],[_|Ms],NCs,NMs):-
+	is_ground_constraint(C),!,
+	add_counter(ground_constraints_filtered,1),
+	eliminate_fully_ground_constraints_aux(Cs,Ms,NCs,NMs).
+eliminate_fully_ground_constraints_aux([C|Cs],[M|Ms],[C|NCs],[M|NMs]):-
+	!, eliminate_fully_ground_constraints_aux(Cs,Ms,NCs,NMs).
+	
+% Succeed if all arguments are nonvar.
+is_ground_constraint(C):- var(C),!, fail.
+is_ground_constraint(C):- atomic(C),!.
+is_ground_constraint(C):-
+	functor(C,F,_A),!,
+	C =.. [F|Args],
+	is_ground_constraint_args(Args).
+is_ground_constraint_args([]):-!.
+is_ground_constraint_args([A|As]):-
+	is_ground_constraint(A),
+	is_ground_constraint_args(As).
+
+#ifdef  PROFILE
+print_filter_ground_stats:-
+%	current_tracer_flag(path_filter_ground,y),!,
+	counter_value(ground_constraints_filtered,FGC),
+	print_message("\t\tTotal number of ground constraints eliminated : % \n",
+		      [FGC]).	
+print_filter_ground_stats.
+#endif /*PROFILE*/
+
+%===============================================================================%
+#ifdef  PROFILE
+%===============================================================================%
+init_compute_unsat_core_profile_counters:-
+	set_counter(calls_to_compute_unsat_core_profile,0),
+	set_counter(compute_unsat_core_profile_total_constraints,0),
+	set_counter(compute_unsat_core_profile_total_marked,0),
+	set_counter(compute_unsat_core_profile_total_guard_marked,0),
+	set_counter(compute_unsat_core_profile_total_assign_marked,0),
+        set_counter(calls_to_compute_related_constraints1,0),
+	set_counter(call_to_fixpo_compute_related_constraints,0).
+		
+% compute_unsat_core_profile(+,+): gather some profiling information.
+compute_unsat_core_profile(CL,ML):-
+% N: length of ML or CL
+% M: length of marked elements of ML
+% S: number of assignments in CL
+	compute_unsat_core_profile__gather_info(CL,ML,0,N,0,M,0,S),
+	add_counter(calls_to_compute_unsat_core_profile,1),	
+	add_counter(compute_unsat_core_profile_total_constraints,N),
+	add_counter(compute_unsat_core_profile_total_marked,M),
+	add_counter(compute_unsat_core_profile_total_assign_marked,S),	
+	add_counter(compute_unsat_core_profile_total_guard_marked,M-S).
+			
+compute_unsat_core_profile__gather_info([],[],N,N,M,M,S,S):-!.
+compute_unsat_core_profile__gather_info([Y|Ys],[X|Xs],A,N,B,M,C,S):-
+	X == o, !,
+	incr_counter_if_assign(Y,C,C1),
+	compute_unsat_core_profile__gather_info(Ys,Xs,A+1,N,B+1,M,C1,S).
+compute_unsat_core_profile__gather_info([_|Ys],[_|Xs],A,N,B,M,C,S):-
+        !, compute_unsat_core_profile__gather_info(Ys,Xs,A+1,N,B,M,C,S).
+
+incr_counter_if_assign(assign(_,_)   ,N,N+1) :-!.
+incr_counter_if_assign(arrassign(_,_),N,N+1) :-!.
+incr_counter_if_assign(_             ,N,N  ) :-!.
+
+print_partition_stats(N1,N2):-
+	% N1: total constraints after partition
+	% N2: total marked constraints (by compute_unsat_core) 
+	current_tracer_flag(path_datastructure,partition),!,
+	counter_value(total_constraints_before_partition,N3),
+	% N3: total constraints before partition
+	print_message("\tTotal number of constraints                : %\n",
+		      [N3]),
+	print_message("\tTotal number of constraints after (1)      : %\n",
+		      [N1]),
+	check_div_by_zero(N2,N3,M0),
+	print_message("\tTotal number of constraints after (2)      : % (% \% over %) \n",
+		      [N2,M0*100,N3]).
+print_partition_stats(N1,N2):-
+	% N1: total constraints after path-slicing
+	% N2: total marked constraints (by compute_unsat_core)
+	current_tracer_flag(path_datastructure,naive),!,
+	print_partition_stats_path_slicing(N1,N2).
+
+print_partition_stats_path_slicing(N1,N2):-	
+	current_tracer_flag(path_slicing,y),
+	!,
+	counter_value(sliced_constraints,NumOfSC),
+        counter_value(calls_to_compute_related_constraints1,NumOfCalls),
+	counter_value(call_to_fixpo_compute_related_constraints,NumOfFixp),	
+	N3 = NumOfSC+N1,
+	print_message("\tTotal number of constraints                : % \n",
+		      [N3]),
+%	print_filter_ground_stats,
+	print_message("\tTotal number of constraints after (1)      : % \n",
+		      [N1]),
+	print_message("\t\tTotal number of calls to (1)        : % \n",
+		      [NumOfCalls]),
+	print_message("\t\tTotal number of fixpoints during (1): % \n",
+		      [NumOfFixp]),	
+	check_div_by_zero(N2,N3,M0),	
+	print_message("\tTotal number of constraints after (2)      : % (% \% over %) \n",
+		      [N2,M0*100,N3]).
+print_partition_stats_path_slicing(N1,N2):-
+	% no path-slicing
+	print_message("\t\tTotal number of constraints                 : % \n",
+		      [N1]),	
+	check_div_by_zero(N2,N1,M0),	
+	print_message("\tTotal number of marked constraints         : % (% \% over %) \n",
+		      [N2,M0*100,N1]).
+	
+print_compute_unsat_core_profile_stats:-
+	counter_value(calls_to_compute_unsat_core_profile,N0),
+	% N1: num of constraints before calling compute_unsat_core
+	counter_value(compute_unsat_core_profile_total_constraints,N1),
+	counter_value(compute_unsat_core_profile_total_marked,N2),
+	counter_value(compute_unsat_core_profile_total_guard_marked,N3),
+	counter_value(compute_unsat_core_profile_total_assign_marked,N4),
+	check_div_by_zero(N1,N0,M1),
+	check_div_by_zero(N2,N0,M2),
+	check_div_by_zero(N3,N0,M3),
+	check_div_by_zero(N4,N0,M4),	
+	print_message("\tTotal number an interpolant is computed    : %\n",[N0]),
+	print_partition_stats(N1,N2),
+	print_message("\t\tTotal number of guard constraints           : % \n",[N3]),
+	print_message("\t\tTotal number of assign constraints          : % \n",[N4]),
+	print_message("\tNumber of constraints/interpolant          : %\n",[M1]),			      
+	print_message("\tNumber of constraints/interpolant after (2): %\n",[M2]),		      
+	print_message("\t\tNumber of guard constraints/interpolant : %\n",[M3]),
+	print_message("\t\tNumber of assign constraints/interpolant: %\n",[M4]).
+
+%=============================================================================%
+#endif
+%=============================================================================%
+
+%=============================================================================%
+%=============================================================================%
+#ifdef  UNUSED_CODE  /* i.e., to be removed */
+%=============================================================================%
+%=============================================================================%
+
+% % filter_profile_dependency/3:
+% % Jorge: this predicate is very expensive. In fact, if the lenght of a
+% % path is too long we may get "Fatal Error: Run out of registers
+% % during compilation". So for now, we don't use it.
+% filter_profile_dependency(CL, ML, N) :-
+% 	fcopy_term(t(CL, ML), t(CL1, ML1)),
+% 	filter_profile_init_markings(CL1, ML1),
+% 	filter_profile_spread_markings(CL1, ML1),
+% 	filter_profile_count_marked_elements(ML1, N),!.
+
+% filter_profile_count_marked_elements([], 0):- !.
+% filter_profile_count_marked_elements([X|R], N) :-
+% 	var(X), !,
+% 	filter_profile_count_marked_elements(R, N).
+% filter_profile_count_marked_elements([_|R], N+1) :- !,
+% 	filter_profile_count_marked_elements(R, N).
+
+% filter_profile_init_markings([], []):- !.
+% filter_profile_init_markings([_|R], [Y|S]) :-
+% 	var(Y),
+% 	!,
+% 	filter_profile_init_markings(R, S).
+% filter_profile_init_markings([C|R], [_|S]) :- !,
+% 	filter_profile_mark_constraint([C]),
+% 	filter_profile_init_markings(R, S).
+
+% filter_profile_spread_markings(CL, ML) :-
+% 	set_counter(spread_markings_counter, 0),
+% 	filter_profile_spread_markings_aux(CL, ML),
+% 	filter_profile_spread_markings_aux3(CL, ML).
+
+% filter_profile_spread_markings_aux3(_, _) :-
+% 	counter_value(spread_markings_counter, 0), !.
+% filter_profile_spread_markings_aux3(CL, ML) :-
+% 	filter_profile_spread_markings(CL, ML).
+
+% filter_profile_spread_markings_aux([], []) :- !.
+% filter_profile_spread_markings_aux([C|CL], [Y|ML]) :-
+% 	var(Y), !,
+% 	filter_profile_spread_markings_aux1([C|CL], [Y|ML]).
+% filter_profile_spread_markings_aux([C|CL], [_|ML]) :-
+% 	filter_profile_find_unmarked([C]), !,
+% 	add_counter(spread_markings_counter, 1),
+% 	filter_profile_spread_markings_aux(CL, ML).
+% filter_profile_spread_markings_aux([_|CL], [_|ML]) :-
+% 	filter_profile_spread_markings_aux(CL, ML).
+
+% filter_profile_spread_markings_aux1([C|CL], [Y|ML]) :-
+% 	filter_profile_find_marking([C]), !,
+% 	Y=o,
+% 	filter_profile_mark_constraint([C]),
+% 	add_counter(spread_markings_counter, 1),
+% 	filter_profile_spread_markings_aux(CL, ML).
+% filter_profile_spread_markings_aux1([_|CL], [_|ML]) :-
+% 	filter_profile_spread_markings_aux(CL, ML).
+
+% filter_profile_find_marking(CL) :-
+% 	set_counter(find_marking_counter, 0),
+% 	filter_profile_find_marking_aux(CL), !,
+% 	X>0, counter_value(find_marking_counter, X).
+% filter_profile_find_marking_aux([]).
+% filter_profile_find_marking_aux([X|R]) :-
+% 	var(X), !,
+% 	filter_profile_find_marking_aux(R).
+% filter_profile_find_marking_aux([X|_]) :-
+% 	X==o, !, add_counter(find_marking_counter, 1).
+% filter_profile_find_marking_aux([C|R]) :-
+% 	C=..[_|Args],
+% 	filter_profile_find_marking_aux(Args),
+% 	filter_profile_find_marking_aux(R).
+
+% filter_profile_find_unmarked(CL) :-
+% 	set_counter(find_unmarked_counter, 0),
+% 	filter_profile_find_unmarked_aux(CL), !,
+% 	X>0, counter_value(find_unmarked_counter, X).
+% filter_profile_find_unmarked_aux([]).
+% filter_profile_find_unmarked_aux([X|_]) :-
+% 	var(X), !, add_counter(find_unmarked_counter, 1).
+% filter_profile_find_unmarked_aux([C|R]) :-
+% 	C=..[_|Args],
+% 	filter_profile_find_unmarked_aux(Args),
+% 	filter_profile_find_unmarked_aux(R).
+
+% filter_profile_mark_constraint([]).
+% filter_profile_mark_constraint([X|R]) :- var(X), !, X=o,
+% 	filter_profile_mark_constraint(R).
+% filter_profile_mark_constraint([C|R]) :-
+% 	C =.. [_|Args],
+% 	filter_profile_mark_constraint(Args),
+% 	filter_profile_mark_constraint(R).
+
+
+% This predicate is also very expensive!!! 
+%----------------------------------------------------------------------------%
+% path_slicing(+NegImplied,+CL,-SliceCL)
+% ----------------------------------------------------------------------------%
+% This predicate is a replacement of partition (it does not make sense
+% to use it if partition is on). If partition is not used we can apply
+% a simple dependency analysis to discard those constraints which
+% syntactically are completely unrelated from NegImplied.
+%----------------------------------------------------------------------------%
+% The term "path_slicing" comes from the original application of
+% backward slicing (nothing to do with BLAST path slicing meaning) on
+% the variables appearing in NegImplied in the list of constraints
+% CL. Unfortunately, we realized that it is unsound since the use of
+% backward slicing may slice away some constraints that partition
+% cannot. Suppose the following CL:
+%
+%   [A=B, C=D, E+F<0, E+G<0, E=D, H==D, H+I==J, G=B, B==0, F=K, K==0]
+%
+% and NegImplied=[C+A >=0]. Then, backward slicing (right to left or
+% left to right, it doesn't matter) on {A,C} is
+% [A=B,C=D,H==D,H+I==J,B==0]. However the correct interpolant is
+% [A=B,C=D,E+G<0,E=D,G=B] but we cannot infer it from the slice.
+%
+% Therefore, here we simply collect all constraints related
+% syntactically to the variables of interest considering both
+% directions. For instance, in the above example we would return the
+% original CL.
+%----------------------------------------------------------------------------%
+#ifdef DEBUG_USE
+test_path_slicing(1):-
+%%
+% Test to compare: partition, backward slicing, and theorem prover
+%%
+	NegImplied = [[gt(X3,1)]],
+	CL= [
+	      gt(X0,plus(Y0,Z0)),	     
+	      assign(Y0,0), assign(Y1,plus(Y0,1)),
+	      assign(Y2,plus(Y1,1)),assign(_Y3,plus(Y2,1)),
+	      assign(X0,0), assign(X1,plus(X0,1)),
+	      assign(X2,plus(X1,1)),assign(X3,plus(X2,1)),
+	      assign(Z0,0), assign(Z1,plus(Z0,1)),
+	      assign(Z2,plus(Z1,1)),assign(_Z3,plus(Z2,1))
+	    ],
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+	init_constraints_path([],Es0,_),
+	add_constraints_path(CL,Es0,_,Es1,_),
+	varset_constraints(NegImplied,InterestVars),
+	relevant_constraints(InterestVars,Es1,PartitionCL,_),
+	length(PartitionCL,N2),
+	print_message("[PARTITION] length of CL: %\n",[N2]),	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	set_tracer_flag(path_slicing,y),
+	path_slicing(NegImplied,CL,_,SliceCL,_),
+	length(SliceCL,N1),
+	print_message("[SLICING] length of CL: %\n",[N1]),
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	set_tracer_flag(path_slicing,n),	
+	compute_unsat_core(NegImplied, CL, ML, check),
+	numOfMarkings(ML,N3),
+	print_message("[THEOREM PROVER] length of CL: % \n",[N3]).
+test_path_slicing(2):-
+	NegImplied = [[gt(X3,1)]],
+	CL= [
+	      assign(Y0,0), assign(Y1,plus(Y0,1)),
+	      assign(Y2,plus(Y1,1)),assign(_Y3,plus(Y2,1)),
+	      gt(X0,Y0),
+	      assign(X0,0), assign(X1,plus(X0,1)),
+	      assign(X2,plus(X1,1)),assign(X3,plus(X2,1))
+	    ],
+	ML = [M1,M2,M3,M4,M5,M6,M7,M8,M9],
+	compute_unsat_core(NegImplied, CL, ML, no_check),
+	print_message("ML: [%,%,%,%,%,%,%,%,%] \n",[M1,M2,M3,M4,M5,M6,M7,M8,M9]).
+test_path_slicing(3):-
+	%%%%
+	%%% This example shows that standard backward slicing is not
+	%%% correct in this context.
+	%%%%
+	NegImplied = [[geq(plus(C,A),0)]],
+	CL = [assign(A, B), assign(C, D),gt(0, plus(E, F)), gt(0, plus(E, G)),      
+	     assign(E, D), eq(H, D), eq(plus(H, _I), _J), assign(G, B),      
+	     eq(0, B), assign(F, K), eq(0, K)],
+	ML = [M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11],
+	fcopy_term(t(NegImplied,CL,ML),t(NegImplied1,CL1,ML1)),
+	set_tracer_flag(path_slicing,y),
+	% Comment replace_assign_with_eq/2 for this test.
+	compute_unsat_core(NegImplied, CL, ML, no_check),
+	print_message("        ML: [%,%,%,%,%,%,%,%,%,%,%] \n",
+		      [M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11]),
+	set_tracer_flag(path_slicing,n),
+	compute_unsat_core(NegImplied1, CL1, ML1, no_check),
+	print_message("CORRECT ML: % \n",[ML1]).
+test_path_slicing(4):-
+	set_tracer_flag(path_slicing,y),	
+	NegImplied = [[geq(plus(C,A),0)]],
+	CL = [assign(A, B), assign(C, D),gt(0, plus(E, F)), gt(0, plus(E, G)),      
+	     assign(E, D), eq(H, D), eq(plus(H, _I), _J), assign(G, B),      
+	     eq(0, B), assign(F, K), eq(0, K)],
+	ML = [_M1,_M2,_M3,_M4,_M5,_M6,_M7,_M8,_M9,_M10,_M11],
+	path_slicing(NegImplied,CL,ML,NewCL,_NewML),
+	print_message("CL   :%\n",[CL]),	
+	print_message("NewCL:%\n",[NewCL]).
+test_path_slicing(5):-
+	set_tracer_flag(path_slicing,y),		
+	NegImplied = [[geq(plus(C,A),0)]],
+	CL = [assign(A, C), assign(_B, D),gt(0, plus(E, F)), gt(0, plus(E, _)),      
+	     assign(E, D), eq(H, D), eq(plus(H, _I), _J),assign(F, K), eq(0, K)], 
+	ML = [_M1,_M2,_M3,_M4,_M5,_M6,_M7,_M8,_M9],
+	path_slicing(NegImplied,CL,ML,NewCL,_NewML),
+	print_message("CL   :%\n",[CL]),	
+	print_message("NewCL:%\n",[NewCL]).
+		
+numOfMarkings([],0)      :- !.
+numOfMarkings([X|Xs],1+N):- is_marked_term(X),!,numOfMarkings(Xs,N).
+numOfMarkings([_|Xs],N)  :- !,numOfMarkings(Xs,N).
+#endif  /*DEBUG_USE*/
+
+%--------------------------------------------------------------------%
+% Special case: if negated condition is [tt] then partition is not
+% performed.
+%--------------------------------------------------------------------%
+path_slicing([tt],CL,ML,CL,ML):-!.
+path_slicing(NegImplied,CL,ML,SliceCL,SliceML):-	
+%%
+% NOTE: any mark in SliceML will be reflected in ML via unification.
+%%	
+	current_tracer_flag(path_slicing,y),
+#ifdef  PROFILE
+        ctime(T0),
+#endif
+	fcopy_term(t(NegImplied,CL),
+		   t(NegImplied0,CL0)),
+	%-------------------------------------------------------------%
+	% We mark variables of interest in CL wrt NegImplied
+	%-------------------------------------------------------------%
+	varset_formula(NegImplied0,RelevantVs),
+	mark_all_elements(RelevantVs),
+	%-------------------------------------------------------------%	
+	% Here we apply dependency analysis on CL.
+	%-------------------------------------------------------------%	
+	path_slicing_compute_dependencies(CL0,CL0Mark),
+	!,
+#ifdef  PROFILE	
+	gen_sliced_CL_ML_profile(CL0Mark,CL,ML,SliceCL,SliceML,NumOfSliceCL),
+	add_counter(sliced_constraints,NumOfSliceCL),
+#else
+        gen_sliced_CL_ML(CL0Mark,CL,ML,SliceCL,SliceML),
+#endif	
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(path_slicing_timing,T1-T0),
+#endif	
+	true.
+path_slicing(_NegImplied,_CL,_ML,_CL,_ML):-
+	% Special clause to catch errors
+	current_tracer_flag(path_slicing,y),
+	error_message("Something wrong in path_slicing/5\n",[]).
+path_slicing(_NegImplied,CL,ML,CL,ML):-
+	current_tracer_flag(path_slicing,n),!.
+	
+% path_slicing_compute_dependencies(+XCL1,-XCL1Mark)
+path_slicing_compute_dependencies(XCL1,  XCL1Mark) :-
+	copy_to_unbound_list(XCL1, XCL1Mark),
+	path_slicing_compute_dependencies1(XCL1,  XCL1Mark).
+
+path_slicing_compute_dependencies1(XCL1,  XCL1Mark):-
+	path_slicing_compute_dependencies_aux(XCL1, XCL1Mark, ChangedFlag),
+	path_slicing_compute_dependencies_iter(ChangedFlag, XCL1,XCL1Mark).
+						     
+% Fixpoint computation for propagating markings to the whole set of
+% constraints
+path_slicing_compute_dependencies_iter(Flag, _XCL1, _XCL1Mark) :-
+	Flag == 1,
+	% 1 means there is no a new marked variable. Thus, fixpoint
+	% reached
+	!.
+path_slicing_compute_dependencies_iter(Flag, XCL1, XCL1Mark) :-
+	Flag == 0,
+	% 0 means there is a new marked variable. Thus, another
+	% fixpoint iteration
+	path_slicing_compute_dependencies1(XCL1, XCL1Mark).
+
+path_slicing_compute_dependencies_aux([],[],1).
+path_slicing_compute_dependencies_aux([C1|R1],[X|S], 0) :-
+	mark_term(X),
+	path_slicing_mark_constraint_variables(X, [C1]),
+	!,
+	path_slicing_compute_dependencies_aux(R1,S,_Flag).
+path_slicing_compute_dependencies_aux([_|R1],[_|S], Flag) :-
+	!,
+	path_slicing_compute_dependencies_aux(R1,S, Flag).
+
+path_slicing_mark_constraint_variables(Term, ConstraintsList) :-
+	set_counter(include_constraint_in_slice_flag, 0),
+	path_slicing_mark_constraint_variables_aux(Term, ConstraintsList),
+	X > 0,
+	counter_value(include_constraint_in_slice_flag, X).
+
+path_slicing_mark_constraint_variables_aux(_Term, []) :- !.
+path_slicing_mark_constraint_variables_aux(Term, [X|R]) :-
+	X==Term, !,
+	add_counter(include_constraint_in_slice_flag, 1),
+	path_slicing_mark_constraint_variables_aux(Term, R).
+path_slicing_mark_constraint_variables_aux(Term, [Term|R]) :- !,
+	path_slicing_mark_constraint_variables_aux(Term, R).
+path_slicing_mark_constraint_variables_aux(Term, [C|R]) :-
+	C =.. [_|ArgsList],
+	path_slicing_mark_constraint_variables_aux(Term, ArgsList),
+	path_slicing_mark_constraint_variables_aux(Term, R).
+
+%--------------------------------------------------------------------------%
+% Old code
+%--------------------------------------------------------------------------%
+% % path_slicing_compute_dependencies(+XCL1,-XCL1Mark)
+% path_slicing_compute_dependencies(XCL1,  XCL1Mark) :-
+% 	copy_to_unbound_list(XCL1, XCL1Mark),
+% 	fcopy_term(t(XCL1Mark), t(OldXCL1Mark)),
+% 	path_slicing_compute_dependencies_aux(XCL1, XCL1Mark),
+% 	path_slicing_compute_dependencies_iter(XCL1,OldXCL1Mark, XCL1Mark).
+						     
+% % Fixpoint computation for propagating markings to the whole set of
+% % constraints
+% path_slicing_compute_dependencies_iter(_XCL1,OldXCL1Mark, NewXCL1Mark) :-
+% 	% Fixpoint reached 
+% 	identical_marking(OldXCL1Mark, NewXCL1Mark), !.
+% path_slicing_compute_dependencies_iter(XCL1, _OldXCL1Mark, NewXCL1Mark) :-
+% 	% New iteration
+% 	path_slicing_compute_dependencies(XCL1, NewXCL1Mark).
+
+% path_slicing_compute_dependencies_aux([],[]).
+% path_slicing_compute_dependencies_aux([C1|R1],[X|S]) :-
+% 	mark_term(X),
+% 	path_slicing_mark_constraint_variables(X, [C1]),
+% 	!,
+% 	path_slicing_compute_dependencies_aux(R1,S).
+% path_slicing_compute_dependencies_aux([_|R1],[_|S]) :-
+% 	!,
+% 	path_slicing_compute_dependencies_aux(R1,S).
+
+% path_slicing_mark_constraint_variables(Term, ConstraintsList) :-
+% 	set_counter(include_constraint_in_slice_flag, 0),
+% 	path_slicing_mark_constraint_variables_aux(Term, ConstraintsList),
+% 	X > 0,
+% 	counter_value(include_constraint_in_slice_flag, X).
+
+% path_slicing_mark_constraint_variables_aux(_Term, []) :- !.
+% path_slicing_mark_constraint_variables_aux(Term, [X|R]) :-
+% 	X==Term, !,
+% 	add_counter(include_constraint_in_slice_flag, 1),
+% 	path_slicing_mark_constraint_variables_aux(Term, R).
+% path_slicing_mark_constraint_variables_aux(Term, [Term|R]) :- !,
+% 	path_slicing_mark_constraint_variables_aux(Term, R).
+% path_slicing_mark_constraint_variables_aux(Term, [C|R]) :-
+% 	C =.. [_|ArgsList],
+% 	path_slicing_mark_constraint_variables_aux(Term, ArgsList),
+% 	path_slicing_mark_constraint_variables_aux(Term, R).
+
+
+#ifdef  PROFILE
+gen_sliced_CL_ML_profile([],[],[],[],[],0):-!.
+gen_sliced_CL_ML_profile([X|Xs],[C|CL],[M|ML],[C|NewCL],[M|NewML],N):-
+	is_marked_term(X),!,
+	gen_sliced_CL_ML_profile(Xs,CL,ML,NewCL,NewML,N).
+gen_sliced_CL_ML_profile([_X|Xs],[_C|CL],[_M|ML],NewCL,NewML,1+N):-	
+	!,gen_sliced_CL_ML_profile(Xs,CL,ML,NewCL,NewML,N).
+#else
+gen_sliced_CL_ML([],[],[],[],[]):-!.
+gen_sliced_CL_ML([X|Xs],[C|CL],[M|ML],[C|NewCL],[M|NewML]):-
+	is_marked_term(X),!,
+	gen_sliced_CL_ML(Xs,CL,ML,NewCL,NewML).
+gen_sliced_CL_ML([_X|Xs],[_C|CL],[_M|ML],NewCL,NewML):-	
+	!,gen_sliced_CL_ML(Xs,CL,ML,NewCL,NewML).
+#endif
+
+%=============================================================================%
+% Jorge's note: tried offline_partition/5 to replace path_slicing/5 but
+% path_slicing/5 is faster.
+%=============================================================================%
+%-----------------------------------------------------------------------------%
+%-----------------------------------------------------------------------------%
+% offline_partition(+NegImplied,+CL,+ML,-PartitionCL,-PartitionML)
+%-----------------------------------------------------------------------------%
+% This predicate has the same intention than path_slicing but by
+% different means. We iterate on the lists CL and ML and we produce a
+% find-union structure (i.e., partition) from them. Then, we get
+% relevant partition to NegImplied and convert to naive lists again.
+%-----------------------------------------------------------------------------%
+offline_partition([tt],CL,ML,CL,ML):-!.
+offline_partition(NegImplied,CL,ML,PartitionCL,PartitionML):-	
+#ifdef  PROFILE
+        ctime(T0),
+#endif 	
+	Es0 = s(root,[]),		      
+	add_constraints_and_markings_path(CL,ML,Es0,Es1),
+ 	varset_constraints(NegImplied,InterestVars),
+	relevant_constraints(InterestVars,Es1,PartitionCL,PartitionML),	
+#ifdef  PROFILE
+        ctime(T1),
+	add_counter(path_slicing_timing,T1-T0),
+#endif	
+        !.
+offline_partition(_,_,_,_,_):-
+	error_message("Problems in offline_partition/5\n",[]).
+
+%==============================================================================
+% Code to extract array equalities instead of performing substitution
+%==============================================================================
+
+newfilter_aux0(NegImplied, CL, ML, CheckFlag) :-
+	new_extract_aa_equalities(CL, ArrEqL, CL1),
+	append(CL1, ArrEqL, NewCL),
+	copy_to_unbound_list(ArrEqL, ArrEqML),
+	append(ML, ArrEqML, NewML),
+	filter_aux1(NegImplied, NewCL, NewML, CheckFlag).
+
+%-----------------------------------------------------------------------------%
+% new_extract_aa_equalities(CL,-OutCL): replace array assignments with
+% array references
+%-----------------------------------------------------------------------------%
+new_extract_aa_equalities(CL, ArrEqL, NewCL) :-
+	new_extract_aa(CL, AAL, NewCL), !,
+        % print_message("new_subst_aa(%, [], AAL1)\n", [AAL]),
+	new_subst_aa(AAL, [], AAL1),
+        % print_message("AAL1=%\n", [AAL1]),
+	convert_prep_aa_to_arrref(AAL1, [], ArrEqL),
+        % print_message("OutCL: % \n",[OutCL]),
+	!.
+
+new_extract_aa([], [], []).
+new_extract_aa([arrassign(A, B)|R], [arrassign(A, B)|S], [tt|T]) :-
+	!,
+	new_extract_aa(R, S, T).
+new_extract_aa([C|R], S, [C|T]) :-
+	new_extract_aa(R, S, T).
+
+%-----------------------------------------------------------------------------%
+% new_subst_aa(+L1,+Acc,-L2):
+%-----------------------------------------------------------------------------%
+% L1 and L2 are lists of 'arrassign' terms.
+% L2 is like L1 but the following rewriting rule has been applied
+% exhaustively:
+%
+% forall C1:arrassign(X,upd(Y...)) in L1 do
+%     if exists another C2:arrassign(Y,RhsY) in L1 then
+%        replace Y with RhsY in C1
+%
+% No ordering is assumed about L1.
+%-----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_new_subst_aa:-
+	ArrAssign = [arrassign(A,upd(B,_,_)),
+		     arrassign(B,upd(D,_,_)),
+		     arrassign(C,upd(Z,_,_)),
+		     arrassign(E,upd(C,_,_))		     
+		     ],
+	
+        % Dictionary to make debugging easier
+        % Don't need to use it if you don't want to.
+	
+	A='a',B='b',C='c',D='d',E='e',Z='z',	
+	new_subst_aa(ArrAssign,[],AAL),
+	print_message("Array assignments: % \n",[ArrAssign]),
+	print_message("% \n",[AAL]).
+#endif  /*DEBUG_USE*/
+
+
+new_subst_aa([], ToBeDefinedL, OutToBeDefinedL) :-
+	%% Case: the list has been scanned from left to right
+	%%       still more work to do ... 
+#ifdef  NEW_SUBST_AA_DEBUG			
+        print_message("ToBeDefinedL=%\n", [ToBeDefinedL]),
+#endif	
+	new_subst_aa_final([], ToBeDefinedL, ToBeDefinedL1),
+#ifdef  NEW_SUBST_AA_DEBUG			
+        print_message("ToBeDefinedL1=%\n", [ToBeDefinedL1]),
+#endif		
+	unpack_aa_term(ToBeDefinedL1, OutToBeDefinedL), !.
+new_subst_aa([AA|R], ToBeDefinedL, OutToBeDefinedL) :-
+	%% Case: apply the rewriting 
+	new_define_aa(AA, ToBeDefinedL, ToBeDefinedL1), !,
+#ifdef  NEW_SUBST_AA_DEBUG		
+        print_message("new_define_aa(%, %, %)\n", [AA, ToBeDefinedL, ToBeDefinedL1]),
+#endif 
+        AA = arrassign(A, upd(B, IExp, VExp)),
+        ToBeDefinedL2 =
+            [t(arrassign(A, upd(X, IExp, VExp)), B, X)|ToBeDefinedL1],
+	new_subst_aa(R, ToBeDefinedL2, OutToBeDefinedL).
+
+new_subst_aa([AA|R], ToBeDefinedL, OutToBeDefinedL) :-
+	%% Case: add in the ToBeDefined list
+	AA = arrassign(A, upd(B, IExp, VExp)),
+#ifdef  NEW_SUBST_AA_DEBUG	
+        print_message("AA=% A=%\n", [AA, A]),
+#endif	
+	ToBeDefinedL1 =
+            [t(arrassign(A, upd(X, IExp, VExp)), B, X)|ToBeDefinedL],
+#ifdef  NEW_SUBST_AA_DEBUG		    
+        print_message("AA=% ToBeDefinedL1=%\n", [AA, ToBeDefinedL1]),
+#endif	
+	new_subst_aa(R, ToBeDefinedL1, OutToBeDefinedL).
+
+
+new_subst_aa_final(Prefix, [], Prefix).
+new_subst_aa_final(Prefix, [t(AA, ArrV, Unifier)|Suffix], L) :-
+	new_define_aa(AA, Prefix, Prefix1), !,
+	ArrV = Unifier, 
+	new_subst_aa_final_aux([t(AA, ArrV, Unifier)|Prefix1], AA, Suffix, L).
+new_subst_aa_final(Prefix, [t(AA, ArrV, Unifier)|Suffix], L) :-
+	new_define_aa(AA, Suffix, Suffix1), !,
+	ArrV = Unifier,
+	new_subst_aa_final([t(AA, ArrV, Unifier)|Prefix], Suffix1, L).
+new_subst_aa_final(Prefix, [E|Suffix], L) :-
+	new_subst_aa_final([E|Prefix], Suffix, L).
+
+new_subst_aa_final_aux(Prefix, AA, Suffix, L) :-
+	new_define_aa(AA, Suffix, Suffix1), !,
+	new_subst_aa_final(Prefix, Suffix1, L).
+new_subst_aa_final_aux(Prefix, _, Suffix, L) :-
+	new_subst_aa_final(Prefix, Suffix, L).
+
+
+new_define_aa(AA, ToBeDefinedL, ToBeDefinedL1) :-
+	new_define_aa_aux(_, AA, ToBeDefinedL, ToBeDefinedL1).
+
+new_define_aa_aux(X, AA, [t(BB, C, Y)|R], [t(BB, E, X)|S]) :-
+	AA = arrassign(D, Upd), D==C, !, Y=Upd, Upd=upd(E, _, _),
+	new_define_aa_aux2(X, AA, R, S).
+new_define_aa_aux(X, AA, [E|R], [E|S]) :-
+	new_define_aa_aux(X, AA, R, S).
+
+new_define_aa_aux2(_, _, [], []).
+new_define_aa_aux2(X, AA, [t(BB, C, Y)|R], [t(BB, E, X)|S]) :-
+	AA = arrassign(D, Upd), D==C, !, Y=Upd, Upd=upd(E, _, _),
+	new_define_aa_aux2(X, AA, R, S).
+new_define_aa_aux2(X, AA, [E|R], [E|S]) :-
+	new_define_aa_aux2(X, AA, R, S).
+
+#endif  /*UNUSED_CODE*/

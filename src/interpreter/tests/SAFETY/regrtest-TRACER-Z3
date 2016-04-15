@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+./regrtest-TRACER-NONMINMAX  -Wt "-z3 y" -all

@@ -1,0 +1,22 @@
+%------------------------------------------------------------------------------
+% At the moment this is just a stub that asks whether the implication
+% actually holds.
+% Here we need to be able to eliminate existentially-quantified variables,
+% defined to be variables appearing in the rhs but not in the lhs.
+%------------------------------------------------------------------------------
+
+constraintproof_aux(GConstraints, HConstraints, Unifier, _EV) :- !,
+%	printf("% |= % %\n", [GConstraints, HConstraints, Unifier]),
+	counter_value(unification_variant, N),
+	add_counter(unification_variant, 1),
+	set_counter(variable_number, 1),
+	printf("For argument unification # %, proving\n", [N]),
+	prettyprintlist(" , ", GConstraints),
+	printf(" |= ", []),
+	prettyprintlist(" , ", HConstraints),
+	printf(" , ", []),
+	prettyprintlist(" , ", Unifier),
+	printf("\n", []),
+        printf("Does it hold? (y/n)\n", []),
+	read(X), X=y.
+

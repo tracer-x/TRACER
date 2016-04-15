@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!-- saved from url=(0041)http://www.comp.nus.edu.sg/~navas/tracer/ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+    <meta name="description" content="TRACER is a tool for
+    verification of C programs developed at National University of
+    Singapore. The input C program is annotated with target
+    properties.  The purpose of symbolic execution, which is presented
+    as a tree of symbolic paths (i.e., traces), is to demonstrate that
+    the target properties hold.">
+
+    <meta name="keywords" content="TRACER software C verification
+    symbolic execution interpolation loop invariant safety
+    property formal methods.">
+
+  <title>TRACER: Symbolic Execution for Verification</title>
+  
+  <link rel="stylesheet" href="./tracer_files/style.css" type="text/css"> 
+
+</head>
+
+<body>
+  <div id="main">
+    <div id="logo"><h1>TRACER:  Symbolic Execution for Verification</h1>  </div>
+    <hr>
+
+<b>Description</b>: TRACER is a tool for symbolic execution of C
+programs developed at <a href="http://www.comp.nus.edu.sg/"> National
+University of Singapore </a>.  The input C program is annotated
+with <em> target properties </em>.  The purpose of symbolic execution,
+which is presented as a tree of symbolic paths (i.e., traces), is to
+demonstrate that the target properties hold.  In addition to target
+properties, the C program may also be annotated with <em>localized
+abstractions</em> which abstract symbolic states during symbolic
+execution.  The main purpose here is to reduce the total size of the
+symbolic execution tree.  If and when the symbolic execution process
+determines that the trace tree is <em> closed </em>, i.e., that all
+concrete traces are represented by the trace tree, and the target
+properties have not been violated thus far, then we have a
+<em>proof </em> of the target properties.
+
+    <hr>
+
+
+  <table width="80%" cellspacing="3px">
+    <tr>
+<td width="20%">  </td>
+      <td width="40%" align="left">
+<pre>
+    main() {
+       int x,y,z;
+       int NONDET1,NONDET2;
+
+   0:  x=0; z=0;
+   1:  if (z>0){  
+   2:   // ... 
+       }
+   3:  else if (NONDET1>0)
+   4:    y=1;   
+   5:  else
+   6:     y=2;
+   8:  if(NONDET2>0)
+   9:    x=x+1;   
+  10:  else  
+  11:   x=x+2;
+  12: y=y+1; 
+  13: _TRACER_abort(x>3);
+  14:
+}
+</pre>
+      </td> 
+      <td align="center" height="432px" width="60%"> 
+	<img src="example.png" height="430px" width="250px"/> 
+      </td> 
+    </tr> 
+</table>
+
+  <table width="100%" cellspacing="3px">
+    <tr>
+      <td> 
+	
+TRACER performs <em>symbolic execution</em> of the program while
+attempting to find an execution path that reaches the node labelled
+with <tt>unsafe</tt>. If such path cannot be found, then it concludes
+that the program is safe.
+Consider the program above on the left-hand side. Safety conditions
+are annotated in TRACER using <tt> _TRACER_abort(Cond)</tt>, where
+<tt>Cond</tt> is the negated safety condition. 
+
+</br> 
+
+One feature of TRACER is the output of the interpolated symbolic
+execution tree (above, right-hand side) generated during the proof
+process.  Nodes are labeled as <tt>P#C</tt> where <tt>P</tt> is the
+corresponding program point, and
+<tt>C</tt> enumerates different visits of the same program point. Edges
+between two locations are labeled by the (possibly empty) instruction
+that executes when control moves from the source to the
+destination. Conditional statements are represented with
+<em>diamond </em> nodes, basic block of statements with <em>box</em>
+nodes, and entry and terminal nodes are filled with grey color.  
+
+</br>
+
+One distinction of TRACER is the ability of detecting <em>eagerly</em>
+<em>infeasible paths</em>. Those paths always end up into red
+nodes. <em>Subsumption </em> allows TRACER stopping the traversal of a
+path (avoiding full path enumeration) whenever the state associated
+with the current node implies the
+<em> interpolated </em> state stored for the node during a previous traversal. Green dotted
+edges reflect subsumption (sibling-to-sibling or parent-child) between
+two nodes.
+
+      </td>
+    </tr>
+  </table>   
+
+    <hr>
+
+    	
+    <h3> Documentation </h3>     
+    <ul>
+      <li>
+	<a href="http://www.comp.nus.edu.sg/~joxan">J.&nbsp;Jaffar</a>,
+	<a href="http://www.comp.nus.edu.sg/~andrews">A.&nbsp;E.&nbsp;Santosa</a>
+	  <a href="http://www.comp.nus.edu.sg/~razvan">R.&nbsp;Voicu</a>.
+	  <a href="http://www.comp.nus.edu.sg/~navas/tracer/docs/CP09.pdf">An Interpolation Method for CLP traversal </a>
+	  <a href="http://centria.di.fct.unl.pt/conferences/cp2009/"> (CP'09) </a>	    
+	  <br>
+      </li>
+      
+      <li>
+	<a href="http://www.comp.nus.edu.sg/~joxan">J.&nbsp;Jaffar</a>,
+	<a href="http://www.comp.nus.edu.sg/~navas">J.&nbsp;A.&nbsp;Navas</a>,
+	<a href="http://www.comp.nus.edu.sg/~andrews">A.&nbsp;E.&nbsp;Santosa</a>.
+	<a href="http://www.comp.nus.edu.sg/~navas/tracer/docs/CAV11.pdf">TRACER: Symbolic Execution For Verification</a> (tool paper<sup>1</sup> with appendix).
+      </li>
+      
+      
+    </ul>
+    
+    <hr>
+    
+    <h3> Download and Usage</h3>     
+	<ul>
+	  <li> You can download TRACER from
+	     <a href="http://www.comp.nus.edu.sg/~navas/tracer/download/tracer.0.1.tar.gzip"> here </a> along with
+	    some benchmarks. 
+           <br>
+           The current version works only for
+	    Linux. The other requirements are JDK &gt;= 1.5 and bash
+	    shell.</li>
+	  <li> tar -zxvf tracer.0.1.tar.gzip </li>
+          <li> export TRACERPATH=_here_path_to_tracer.0.1_dir </li>  
+	  <li> cd tracer.0.1 </li>
+	  <li> usage: minmax -help </li>
+          <li> To run regression tests &nbsp;&nbsp;&nbsp;&nbsp;: cd tests ; regrtest -all </li> 
+          <li> To run benchmarks from <sup>1</sup>: cd benchmarks ; regrtest -all </li> 
+	</ul>
+	<hr>
+	
+	
+	<h3> People </h3>     
+	<ul>
+	  <li> <a href="http://www.comp.nus.edu.sg/~joxan"> Joxan Jaffar </a> </li>
+
+	  <li> <a href="http://www.comp.nus.edu.sg/~mvijayar"> Vijayaraghavan Murali </a></li>
+	  <li> <a href="http://www.comp.nus.edu.sg/~navas"> Jorge A. Navas </a>  </li>
+	  <li> <a href="http://www.comp.nus.edu.sg/~andrews"> Andrew E. Santosa </a> </li>
+
+
+	</ul>
+	<hr> For technical problems contact
+	to <a href="mailto:navas@comp.nus.edu.sg"> Jorge Navas </a>
+	and <a href="mailto:andrews@comp.nus.edu.sg"> Andrew
+	Santosa </a>
+	
+        <hr>
+  </div>
+
+<!-- Site Meter -->
+<a href="http://s48.sitemeter.com/stats.asp?site=s48tracer123" target="_top">
+<img src="./tracer_files/meter.asp" width="0" height="0" style="display:none" border="0"></a>
+<!-- Copyright (c)2009 Site Meter -->
+
+</body></html>

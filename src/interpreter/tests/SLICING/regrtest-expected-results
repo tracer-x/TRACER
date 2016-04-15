@@ -1,0 +1,285 @@
+function showAllVars(){
+    echo "Slice size            : $slice_size" >> $log
+    echo "Total size            : $total_size" >> $log       
+    echo "Reduction             : $reduc"      >> $log
+    echo "Total states          : $states"     >> $log
+    echo "Analysis time         : $time"       >> $log
+    echo "Num of subsumptions   : $subsumed"   >> $log
+    echo "Num of unsat witnesses: $unsat"      >> $log
+}
+
+function myeval {
+# if [ $s_size -eq $2 ] && [ $t_size -eq $3 ] && [ $states -eq $4 ] && [ $unsat -eq $5 ]; then 
+
+ s_size_int="${s_size%\.*}"
+ t_size_int="${t_size%\.*}"
+ unsat_int="${unsat%\.*}"
+
+ if [ $s_size_int -eq $2 ] && [ $t_size_int -eq $3 ] && [ $unsat_int -eq $5 ]; then 
+    echo "$1 OK" >> $log
+ else
+    echo "$1 FAILED" >> $log
+    showAllVars
+ fi	  
+}
+
+function checkstats {
+ case "$1"   in
+   "test-1")
+      myeval "$1" 4  9 11 0 
+      ;;
+    "test-2")
+      myeval "$1" 4 9 10 0 
+      ;;
+    "test-3")
+      myeval "$1" 1 7 14 0 
+      ;;
+    "test_function-1")
+      myeval "$1" 8 10 12 0 
+      ;;
+    "test_function-2")
+      myeval "$1" 2 10 12 0 
+      ;;
+    "test_function-3")
+      myeval "$1" 8 11 12 0 
+      ;;
+    "test_function-4")
+      myeval "$1" 5 9 18 0 
+      ;;
+    "test_function-5")
+      myeval "$1" 5 11 16 0 
+      ;;
+    "test_function-6")
+      myeval "$1" 5 9 12 0 
+      ;;
+    "test_function-7")
+      myeval "$1" 4 11 12 0 
+      ;;
+    "test_function-8")
+      myeval "$1" 8 12 22 0 
+      ;;
+    "test_function-9")
+      myeval "$1" 5 11 16 0 
+      ;;
+    "test_function-10")
+      myeval "$1" 13 19 48 0 
+      ;;
+    "test_function-11")
+      myeval "$1" 1 8 16 0 
+      ;;
+    "test_function-12")
+      myeval "$1" 3 6 11 0 
+      ;;
+    "test_function-13")
+      myeval "$1" 10 12 12 0 
+      ;;
+    "test_function-14")
+      myeval "$1" 15 24 28 0 
+      ;;
+    "test-loop-1")
+      myeval "$1" 6 10 16 0 
+      ;;
+    "test-loop-2")
+      myeval "$1" 7 12 16 0 
+      ;;
+    "test-loop-3")
+      myeval "$1" 7 11 17 0 
+      ;;
+    "test-loop-4")
+      myeval "$1" 9 10 26 0 
+      ;;
+    "test-loop-5")
+      myeval "$1" 10 14 31 0 
+      ;;
+    "test-loop-6")
+      myeval "$1" 10 13 34 0 
+      ;;
+    "test-loop-7")
+      myeval "$1" 4 11 21 0 
+      ;;
+    "test-loop-8")
+      myeval "$1" 7 9 24 0 
+      ;;
+    "test-loop-9")
+      myeval "$1" 0 8 13 0 
+      ;;
+    "test-loop-10")
+      myeval "$1" 13 15 30 0 
+      ;;
+    "test-loop-function-6")
+      myeval "$1" 17 19 48 0 
+      ;;
+    "test-loop-function-7")
+      myeval "$1" 8 10 22 0 
+      ;;
+    "test-loop-invariant-1")
+      myeval "$1" 9 14 27 0 
+      ;;
+    "test-loop-invariant-2")
+      myeval "$1" 8 15 23 0 
+      ;;
+    "test-loop-invariant-3")
+      myeval "$1" 8 14 23 0 
+      ;;
+    "test-loop-invariant-4")
+      myeval "$1" 8 14 23 0 
+#     myeval "$1" 10 14 27 0 
+      ;;
+    "test-loop-invariant-5")
+      myeval "$1" 12 14 27 0 
+      ;;
+    "test-loop-unstr-1")
+      myeval "$1" 10 12 26 0 
+      ;;
+    "test-loop-unstr-2")
+      myeval "$1" 9 11 29 0 
+      ;;
+    "test-loop-unstr-3")
+      myeval "$1" 15 17 58 0 
+      ;;
+    "test-if-then-else-1")
+      myeval "$1" 7 10 17 0 
+      ;;
+    "test-if-then-else-2")
+      myeval "$1" 0 5 11 0 
+      ;;
+    "test-if-then-else-3")
+      myeval "$1" 6 8 10 0 
+#     myeval "$1" 1 8 10 0 
+      ;;
+    "test-if-then-else-4")
+      myeval "$1" 6 8 11 0 
+      ;;
+    "test-if-then-else-5")
+      myeval "$1" 4 14 24 0 
+      ;;
+    "test-witnesses-1-1")
+      myeval "$1" 6 9 17 2 
+#     myeval "$1" 5 9 17 2 
+      ;;
+    "test-witnesses-1-2")
+      myeval "$1" 7 9 16 0
+      ;;
+    "test-witnesses-3-1")
+      myeval "$1" 13 16 27 2 
+      ;;
+    "test-witnesses-3-2")
+      myeval "$1" 14 16 26 0
+      ;;
+    "test-witnesses-4-1")
+      myeval "$1" 17 20 54 6
+      ;;
+    "test-witnesses-4-2")
+      myeval "$1" 18 20 52 0
+      ;;
+    "test-switch-1")
+      myeval "$1" 14 22 24 0
+      ;;
+    "test-switch-2")
+      myeval "$1" 8 17 18 0
+      ;;
+    "test-switch-3")
+      myeval "$1" 5 9 21 0
+      ;;
+    "test-switch-4")
+      myeval "$1" 10 12 22 0
+      ;;
+    "test-return-1")
+      myeval "$1" 19 20 31 0
+      ;;
+    "test-return-2")
+      myeval "$1" 19 20 31 0
+      ;;
+    "test-return-3")
+      myeval "$1" 0 5 8 0
+      ;;
+    "test-return-4")
+      myeval "$1" 10 12 25 0
+      ;;
+    "test-return-5")
+      myeval "$1" 2 10 18 0
+      ;;
+    "test-alias-1")
+      myeval "$1" 5 8 8 0
+      ;;
+    "test-alias-2")
+      myeval "$1" 2 8 8 0
+      ;;
+    "test-alias-3")
+      myeval "$1" 5 7 8 0
+      ;;
+    "test-alias-4")
+      myeval "$1" 4 11 11 0
+      ;;
+    "test-alias-5")
+      myeval "$1" 11 13 19 0
+      ;;
+    "test-alias-6")
+      myeval "$1" 0 4 8 0
+      ;;
+    "test-alias-7")
+      myeval "$1" 10 14 17 0
+      ;;
+    "test-alias-8")
+      myeval "$1" 6 11 11 0
+      ;;
+    "test-alias-9")
+      myeval "$1" 4 6 8 0
+      ;;
+    "test-alias-10")
+      myeval "$1" 7 15 37 0
+      ;;
+    "test-alias-11")
+      myeval "$1" 8 13 27 0
+      ;;
+    "test-alias-12")
+      myeval "$1" 8 12 27 0
+      ;;
+    "test-alias-13")
+      myeval "$1" 2 4 8 0
+      ;;
+    "Tip-1")
+      myeval "$1" 4 15 17 0
+      ;;
+    "Tip-2")
+      myeval "$1" 5 7 12 0
+      ;;
+    "Tip-3")
+      myeval "$1" 9 11 17 0
+      ;;
+    "Weiser-1")
+      myeval "$1" 3 9 13 0
+      ;;
+    "Weiser-2")
+      myeval "$1" 11 13 43 0
+      ;;
+    "test-arrays-1")
+      myeval "$1" 3 7 11 0
+      ;;
+    "test-arrays-2")
+      myeval "$1" 3 11 16 0
+      ;;
+    "test-arrays-3")
+      myeval "$1" 1 11 20 0
+      ;;
+    "test-arrays-4")
+      myeval "$1" 8 10 22 0
+      ;;
+    "test-arrays-5")
+      myeval "$1" 6 13 15 0
+      ;;
+    "test-arrays-6")
+      myeval "$1" 4 10 18 0
+      ;;
+    "test-arrays-7")
+      myeval "$1" 1 11 19 0
+      ;;
+    "test-arrays-8")
+      myeval "$1" 4 10 19 1
+      ;;
+     *)
+      ;;
+ esac	     
+}
+
+

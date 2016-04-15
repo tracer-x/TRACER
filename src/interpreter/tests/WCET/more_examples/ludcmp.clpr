@@ -1,0 +1,694 @@
+trans(func_fabs,
+	[0],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,FNext],[],[SReturnValue,SN,SFNext],
+	[],
+	[],
+	[]).
+trans(func_fabs,
+	[2],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[3],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,FNext],[],[SReturnValue,SN,SFNext],
+	[eq(SFNext,SN)],
+	[],
+	[]) :-
+	FNext=N.
+trans(func_fabs,
+	[4],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,FNext],[],[SReturnValue,SN,SFNext],
+	[eq(SFNext,minus(0,SN))],
+	[],
+	[]) :-
+	FNext=0-(N).
+trans(func_fabs,
+	[3],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[],
+	[],
+	[]).
+trans(func_fabs,
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[2],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[geq(SN,0)],
+	[],
+	[]) :-
+	N>=0.
+trans(func_fabs,
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[4],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[gt(0,SN)],
+	[],
+	[]) :-
+	N<0.
+trans(func_fabs,
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,N,F],[],[SReturnValue,SN,SF],
+	[6],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValueNext,N,F],[],[SReturnValueNext,SN,SF],
+	[eq(SReturnValueNext,SF)],
+	[],
+	[]) :-
+	ReturnValueNext=F.
+trans(func_main,
+	[0],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,INext,J,N,Chkerr,Eps,W],[],[SReturnValue,SINext,SJ,SN,SChkerr,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[2],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,JNext,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJNext,SN,SChkerr,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[2],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[3],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,NNext,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SNNext,SChkerr,SEps,SW],
+	[eq(SNNext,5)],
+	[],
+	[]) :-
+	NNext=5.
+trans(func_main,
+	[3],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[4],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,ChkerrNext,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerrNext,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[4],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,EpsNext,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEpsNext,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[6],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,WNext],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SWNext],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[6],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[7],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,INext,J,N,Chkerr,EpsNext,W],[],[SReturnValue,SINext,SJ,SN,SChkerr,SEpsNext,SW],
+	[eq(SEpsNext,1.0e-6),eq(SINext,0)],
+	[],
+	[]) :-
+	EpsNext=1.0e-6,INext=0.
+trans(func_main,
+	[7],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[9],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[geq(SN,SI)],
+	[],
+	[]) :-
+	I<=N.
+trans(func_main,
+	[9],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,JNext,N,Chkerr,Eps,WNext],[],[SReturnValue,SI,SJNext,SN,SChkerr,SEps,SWNext],
+	[eq(SWNext,0.0),eq(SJNext,0)],
+	[],
+	[]) :-
+	WNext=0.0,JNext=0.
+trans(func_main,
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[12],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[geq(SN,SJ)],
+	[],
+	[]) :-
+	J<=N.
+trans(func_main,
+	[12],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[13],[H,ANext,B,X],[Ludcmp],[SH,SANext,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[arreq(SANext,upd(SA,SJ,plus(plus(SI,1),plus(SJ,1))))],
+	[],
+	[]) :-
+	ANext=upd(A,J,(I+1)+(J+1)).
+trans(func_main,
+	[14],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[15],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[14],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[eq(SI,SJ)],
+	[],
+	[]) :-
+	I=J.
+trans(func_main,
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[15],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[gt(SJ,SI)],
+	[],
+	[]) :-
+	I<J.
+trans(func_main,
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[15],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[gt(SI,SJ)],
+	[],
+	[]) :-
+	I>J.
+trans(func_main,
+	[15],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[16],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[11],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[gt(SJ,SN)],
+	[],
+	[]) :-
+	J>N.
+trans(func_main,
+	[16],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,JNext,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJNext,SN,SChkerr,SEps,SW],
+	[eq(SJNext,plus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J+1.
+trans(func_main,
+	[11],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[18],[H,A,BNext,X],[Ludcmp],[SH,SA,SBNext,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[arreq(SBNext,upd(SB,SI,SW))],
+	[],
+	[]) :-
+	BNext=upd(B,I,W).
+trans(func_main,
+	[7],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[8],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[gt(SI,SN)],
+	[],
+	[]) :-
+	I>N.
+trans(func_main,
+	[18],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[7],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,INext,J,N,Chkerr,Eps,W],[],[SReturnValue,SINext,SJ,SN,SChkerr,SEps,SW],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[]) :-
+	INext=I+1.
+trans(func_main,
+	[8],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[19],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[],
+	[],
+	[]).
+trans(func_main,
+	[19],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[20],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,ChkerrNext,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerrNext,SEps,SW],
+	[eq(SChkerrNext,SRV0)],
+	[call(func_ludcmp,[RV0,N,Eps|_],[SRV0,_V1,_V2|_],[eq(_V1,SN),eq(_V2,SEps)])],
+	[]) :-
+	ChkerrNext=RV0.
+trans(func_main,
+	[20],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValue,I,J,N,Chkerr,Eps,W],[],[SReturnValue,SI,SJ,SN,SChkerr,SEps,SW],
+	[21],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[],[ReturnValueNext,I,J,N,Chkerr,Eps,W],[],[SReturnValueNext,SI,SJ,SN,SChkerr,SEps,SW],
+	[eq(SReturnValueNext,0)],
+	[],
+	[]) :-
+	ReturnValueNext=0.
+trans(func_ludcmp,
+	[0],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,INext,J,K,W],[SY],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[1],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[2],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[2],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[3],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,KNext,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SKNext,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[3],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[4],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,WNext],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SWNext],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[4],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[YNext],[ReturnValue,N,Eps,I,J,K,W],[SYNext],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[6],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[7],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValueNext,N,Eps,I,J,K,W],[SY],[SReturnValueNext,SN,SEps,SI,SJ,SK,SW],
+	[eq(SReturnValueNext,999)],
+	[],
+	[]) :-
+	ReturnValueNext=(999).
+trans(func_ludcmp,
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[6],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SN,99)],
+	[],
+	[]) :-
+	N>99.
+trans(func_ludcmp,
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[6],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(0.0,SEps)],
+	[],
+	[]) :-
+	Eps<=0.0.
+trans(func_ludcmp,
+	[5],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[8],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,INext,J,K,W],[SY],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[geq(99,SN),gt(SEps,0.0),eq(SINext,0)],
+	[],
+	[]) :-
+	N<=99,Eps>0.0,INext=0.
+trans(func_ludcmp,
+	[8],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SN,SI)],
+	[call(func_fabs,[RV0,ARef0Ref0|_],[SRV0,_V1|_],[eq(_V1,ref(ref(SA,SI),SI))])],
+	[]) :-
+	I<N.
+trans(func_ludcmp,
+	[11],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[12],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValueNext,N,Eps,I,J,K,W],[SY],[SReturnValueNext,SN,SEps,SI,SJ,SK,SW],
+	[eq(SReturnValueNext,1)],
+	[],
+	[]) :-
+	ReturnValueNext=(1).
+trans(func_ludcmp,
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[11],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SEps,SRV0)],
+	[],
+	[]) :-
+	RV0<=Eps.
+trans(func_ludcmp,
+	[10],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[gt(SRV0,SEps),eq(SJNext,plus(SI,1))],
+	[],
+	[]) :-
+	RV0>Eps,JNext=I+1.
+trans(func_ludcmp,
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[15],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SN,SJ)],
+	[],
+	[]) :-
+	J<=N.
+trans(func_ludcmp,
+	[15],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[16],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,KNext,WNext],[SY],[SReturnValue,SN,SEps,SI,SJ,SKNext,SWNext],
+	[eq(SWNext,ref(ref(SA,SJ),SI)),eq(SKNext,0)],
+	[],
+	[ref(A,J,ARef0),ref(ARef0,I,ARef0Ref0)]) :-
+	WNext=ARef0Ref0,KNext=0.
+trans(func_ludcmp,
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[19],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SI,SK)],
+	[],
+	[]) :-
+	K<I.
+trans(func_ludcmp,
+	[19],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[20],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[18],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SK,SI)],
+	[],
+	[]) :-
+	K>=I.
+trans(func_ludcmp,
+	[20],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,KNext,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SKNext,SW],
+	[eq(SKNext,plus(SK,1))],
+	[],
+	[]) :-
+	KNext=K+1.
+trans(func_ludcmp,
+	[18],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[21],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[16],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(0,SI)],
+	[],
+	[]) :-
+	I<0.
+trans(func_ludcmp,
+	[16],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[17],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SI,0)],
+	[],
+	[]) :-
+	I>0.
+trans(func_ludcmp,
+	[16],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[21],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[eq(SI,0)],
+	[],
+	[]) :-
+	I=0.
+trans(func_ludcmp,
+	[21],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[22],[H,ANext,B,X],[Ludcmp],[SH,SANext,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[arreq(SANext,upd(SA,SI,mult(SW,ref(ref(SA,SI),SI))))],
+	[],
+	[ref(A,I,ARef0),ref(ARef0,I,ARef0Ref0)]) :-
+	ANext=upd(A,I,W-ARef0Ref0).
+trans(func_ludcmp,
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[14],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SJ,SN)],
+	[],
+	[]) :-
+	J>N.
+trans(func_ludcmp,
+	[22],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[13],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[eq(SJNext,plus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J+1.
+trans(func_ludcmp,
+	[14],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[23],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[eq(SJNext,plus(SI,1))],
+	[],
+	[]) :-
+	JNext=I+1.
+trans(func_ludcmp,
+	[23],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[25],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SN,SJ)],
+	[],
+	[]) :-
+	J<=N.
+trans(func_ludcmp,
+	[25],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[26],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,KNext,WNext],[SY],[SReturnValue,SN,SEps,SI,SJ,SKNext,SWNext],
+	[eq(SWNext,ref(ref(SA,plus(SI,1)),SJ)),eq(SKNext,0)],
+	[],
+	[ref(ARef0,J,ARef0Ref0),ref(A,I+1,ARef0)]) :-
+	WNext=ARef0Ref0,KNext=0.
+trans(func_ludcmp,
+	[26],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[28],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SI,SK)],
+	[],
+	[]) :-
+	K<=I.
+trans(func_ludcmp,
+	[28],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[29],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[26],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[27],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SK,SI)],
+	[],
+	[]) :-
+	K>I.
+trans(func_ludcmp,
+	[29],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[26],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,KNext,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SKNext,SW],
+	[eq(SKNext,plus(SK,1))],
+	[],
+	[]) :-
+	KNext=K+1.
+trans(func_ludcmp,
+	[27],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[30],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[30],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[31],[H,ANext,B,X],[Ludcmp],[SH,SANext,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[arreq(SANext,upd(SA,SJ,SW))],
+	[],
+	[]) :-
+	ANext=upd(A,J,W).
+trans(func_ludcmp,
+	[23],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[24],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SJ,SN)],
+	[],
+	[]) :-
+	J>N.
+trans(func_ludcmp,
+	[31],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[23],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[eq(SJNext,plus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J+1.
+trans(func_ludcmp,
+	[24],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[32],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[8],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[9],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SI,SN)],
+	[],
+	[]) :-
+	I>=N.
+trans(func_ludcmp,
+	[32],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[8],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,INext,J,K,W],[SY],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[]) :-
+	INext=I+1.
+trans(func_ludcmp,
+	[9],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[33],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[33],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[34],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[YNext],[ReturnValue,N,Eps,INext,J,K,W],[SYNext],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[arreq(SYNext,upd(SY,0,ref(SB,0))),eq(SINext,1)],
+	[],
+	[ref(B,0,BRef0)]) :-
+	YNext=upd(Y,0,BRef0),INext=1.
+trans(func_ludcmp,
+	[34],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[36],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SN,SI)],
+	[],
+	[]) :-
+	I<=N.
+trans(func_ludcmp,
+	[36],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[37],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,WNext],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SWNext],
+	[eq(SWNext,ref(SB,SI)),eq(SJNext,0)],
+	[],
+	[ref(B,I,BRef0)]) :-
+	WNext=BRef0,JNext=0.
+trans(func_ludcmp,
+	[37],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[39],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SI,SJ)],
+	[],
+	[]) :-
+	J<I.
+trans(func_ludcmp,
+	[39],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[40],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[37],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[38],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SJ,SI)],
+	[],
+	[]) :-
+	J>=I.
+trans(func_ludcmp,
+	[40],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[37],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[eq(SJNext,plus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J+1.
+trans(func_ludcmp,
+	[38],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[41],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[41],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[42],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[YNext],[ReturnValue,N,Eps,I,J,K,W],[SYNext],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[arreq(SYNext,upd(SY,SI,SW))],
+	[],
+	[]) :-
+	YNext=upd(Y,I,W).
+trans(func_ludcmp,
+	[34],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[35],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SI,SN)],
+	[],
+	[]) :-
+	I>N.
+trans(func_ludcmp,
+	[42],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[34],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,INext,J,K,W],[SY],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[]) :-
+	INext=I+1.
+trans(func_ludcmp,
+	[35],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[43],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[43],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[44],[H,A,B,XNext],[Ludcmp],[SH,SA,SB,SXNext],[SLudcmp],[Y],[ReturnValue,N,Eps,INext,J,K,W],[SY],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[arreq(SXNext,upd(SX,SN,mult(ref(SY,SN),ref(ref(SA,SN),SN)))),eq(SINext,minus(SN,1))],
+	[],
+	[ref(A,N,ARef0),ref(Y,N,YRef0),ref(ARef0,N,ARef0Ref0)]) :-
+	XNext=upd(X,N,YRef0-ARef0Ref0),INext=N-1.
+trans(func_ludcmp,
+	[44],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[46],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SI,0)],
+	[],
+	[]) :-
+	I>=0.
+trans(func_ludcmp,
+	[46],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[47],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,WNext],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SWNext],
+	[eq(SWNext,ref(SY,SI)),eq(SJNext,plus(SI,1))],
+	[],
+	[ref(Y,I,YRef0)]) :-
+	WNext=YRef0,JNext=I+1.
+trans(func_ludcmp,
+	[47],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[49],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[geq(SN,SJ)],
+	[],
+	[]) :-
+	J<=N.
+trans(func_ludcmp,
+	[49],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[50],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[47],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[48],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(SJ,SN)],
+	[],
+	[]) :-
+	J>N.
+trans(func_ludcmp,
+	[50],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[47],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,JNext,K,W],[SY],[SReturnValue,SN,SEps,SI,SJNext,SK,SW],
+	[eq(SJNext,plus(SJ,1))],
+	[],
+	[]) :-
+	JNext=J+1.
+trans(func_ludcmp,
+	[48],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[51],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[51],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[52],[H,A,B,XNext],[Ludcmp],[SH,SA,SB,SXNext],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[arreq(SXNext,upd(SX,SI,mult(SW,ref(ref(SA,SI),SI))))],
+	[],
+	[ref(A,I,ARef0),ref(ARef0,I,ARef0Ref0)]) :-
+	XNext=upd(X,I,W-ARef0Ref0).
+trans(func_ludcmp,
+	[44],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[45],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[gt(0,SI)],
+	[],
+	[]) :-
+	I<0.
+trans(func_ludcmp,
+	[52],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[44],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,INext,J,K,W],[SY],[SReturnValue,SN,SEps,SINext,SJ,SK,SW],
+	[eq(SINext,minus(SI,1))],
+	[],
+	[]) :-
+	INext=I-1.
+trans(func_ludcmp,
+	[45],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[53],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[],
+	[],
+	[]).
+trans(func_ludcmp,
+	[53],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValue,N,Eps,I,J,K,W],[SY],[SReturnValue,SN,SEps,SI,SJ,SK,SW],
+	[54],[H,A,B,X],[Ludcmp],[SH,SA,SB,SX],[SLudcmp],[Y],[ReturnValueNext,N,Eps,I,J,K,W],[SY],[SReturnValueNext,SN,SEps,SI,SJ,SK,SW],
+	[eq(SReturnValueNext,0)],
+	[],
+	[]) :-
+	ReturnValueNext=(0).
+%--------------------------------------------------
+loop(func_main, [10],[11], 5, [n,u,n,n],[n],[],[n,n,u,n,n,n,n]).
+loop(func_main, [7],[8], 5, [n,u,u,n],[n],[],[n,u,u,n,n,n,u]).
+loop(func_ludcmp, [17],[18], _, [n,n,n,n],[n],[n],[n,n,n,n,n,u,n]).
+loop(func_ludcmp, [13],[14], _, [n,u,n,n],[n],[n],[n,n,n,n,u,u,u]).
+loop(func_ludcmp, [26],[27], _, [n,n,n,n],[n],[n],[n,n,n,n,n,u,n]).
+loop(func_ludcmp, [23],[24], _, [n,u,n,n],[n],[n],[n,n,n,n,u,u,u]).
+loop(func_ludcmp, [8],[9], _, [n,u,n,n],[n],[n],[u,n,n,u,u,u,u]).
+loop(func_ludcmp, [37],[38], _, [n,n,n,n],[n],[n],[n,n,n,n,u,n,n]).
+loop(func_ludcmp, [34],[35], _, [n,n,n,n],[n],[u],[n,n,n,u,u,n,u]).
+loop(func_ludcmp, [47],[48], _, [n,n,n,n],[n],[n],[n,n,n,n,u,n,n]).
+loop(func_ludcmp, [44],[45], _, [n,n,n,u],[n],[n],[n,n,n,u,u,n,u]).
+%--------------------------------------------------
+start(func_fabs, [0]).
+start(func_main, [0]).
+start(func_ludcmp, [0]).
+%--------------------------------------------------
+bottom(func_fabs, [6]).
+bottom(func_main, [21]).
+bottom(func_ludcmp, [7]).
+bottom(func_ludcmp, [12]).
+bottom(func_ludcmp, [54]).
+%--------------------------------------------------
+freshlocalarrays(func_fabs,[]).
+freshlocalarrays(func_main,[]).
+freshlocalarrays(func_ludcmp,[_]).
+%--------------------------------------------------
+freshlocalvars(func_fabs,[_,_,_]).
+freshlocalvars(func_main,[_,_,_,_,_,_,_]).
+freshlocalvars(func_ludcmp,[_,_,_,_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], [_,_,_,_],[0],[_,_,_,_],[SLudcmp],A,L,SA,SL,[eq(SLudcmp,0)]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).
+
+:- consult('../src/clpr/wcetmulti.clpr').

@@ -1,0 +1,573 @@
+% tracer_abstraction.clp.gpp
+
+%--------------------------------------------------------------------%
+% This module contains code needed to support user/loop abstractions
+%--------------------------------------------------------------------%
+% export
+%
+% To read user abstractions:
+% get_user_abstraction/15
+% is_user_abstraction_pp/2
+%
+% Different versions to read loop invariants from external tools:
+% read_external_invariants/6
+% read_external_symbolic_invariants/7
+% fail_if_not_external_invariants/6
+%
+% Abstract symbolic state (abstract means existential quantified
+% elimination of certain variables): 
+% check_and_abstract_away_variables/25
+% abstract_away_variables/17
+%
+#ifndef MINMAX
+%   Used in tracer_loops.clp.gpp
+%   backward_propagation_interp_across_abstraction/15  
+%   Used in tracer.clp.gpp
+%   generate_abstract_state/30              
+%   Used in tracer.clp.gpp
+%   unfold_abstraction/23                   
+#endif  /*!MINMAX*/
+%
+% FIXME: abstraction on arrays and pointers is limited to the whole
+% structure. Thus, it is not possible to abstract a particular element
+% of an array without abstracting the whole array. Similary with
+% pointers (separation mitigates that problem). For instance, "a[1] =
+% 5; abstract(a[0],a[0]>0);" the information about a[1] is lost. Of
+% course, it is always possible to do the following: "abstract(a[0],
+% a[0]>0 && a[1]==5);"
+%
+% FIXME: without minmax the abstractions cannot be used as loop
+% invariants. Even if the annotation is written at a loop entry, we
+% will apply the abstraction and then compute as usual our static loop
+% invariant phase which will likely ruin the user abstraction due to
+% the high imprecision.
+/*
+An abstraction is recorded in the CLP program like a fact:
+  
+abstract(FName, Id, PP, 
+	 GlobalArr , GlobalVar , LocalArr  , LocalVar ,
+	 SGlobalArr, SGlobalVar, SLocalArr , SLocalVar,
+	 MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+	 XCL) 
+
+XCL contains eq, gt, or geq constraints.
+
+For instance, given the next snippet:
+
+void main(){
+ int x,y,z;
+ int a[5];	     
+
+<1>  x=0;
+<2>  y=4;	    
+<3>  z=5;	    
+<4>  abstract(x, y, a[0], a[1], x>0 && y>0 && a[0] >2 && a[0] == a[1])  
+}
+
+the CLP would contain something like:
+
+abstract(func_main,i666,[p4],
+	 [H],[],[A],[Ret,X,Y,Z],
+	 [SH],[],[SA],[SRet,SX,SY,SZ],
+	 [_],[],[o],[_,o,o,_],
+	 [gt(SX,0),gt(SY,0),gt(ref(SA,0),2),eq(ref(SA,0),ref(SA,1))]).
+*/
+
+%------------------------------------------------------------------------------
+% get_user_abstraction
+%------------------------------------------------------------------------------
+% Succeed if user abstraction is defined for current program point
+% returning info about abstraction
+%------------------------------------------------------------------------------
+get_user_abstraction(FName, PP, 
+		     GlobalArr , GlobalVar , LocalArr  , LocalVar ,
+		     SGlobalArr, SGlobalVar, SLocalArr , SLocalVar, 
+		     MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+		     XCL):-
+        warning(warning_off),		
+	abstract(FName, PP, 
+	         GlobalArr , GlobalVar , LocalArr  , LocalVar ,
+		 SGlobalArr, SGlobalVar, SLocalArr , SLocalVar, 
+		 MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+		 XCL),
+	warning(warning_on).
+
+%------------------------------------------------------------------------------
+% is_user_abstraction_pp(+FName,+PP): succeed if pp is an user
+% abstraction point
+%------------------------------------------------------------------------------
+is_user_abstraction_pp(FName,PP):-
+	% This is an user abstration point
+	warning(warning_off),		
+	abstract(FName,PP,_,_,_,_,_,_,_,_,_,_,_,_,_),
+	warning(warning_on),
+	!.
+
+
+%-----------------------------------------------------------------------%
+% read_external_invariants(+,+,-,-,-,-)
+%-----------------------------------------------------------------------%
+% Reads facts loopinv/6 from the CLP program. Those facts are safe
+% over-approximation assertions inferred by an external loop invariant
+% generator. The constraints are kept in the store solver.
+%-----------------------------------------------------------------------%
+read_external_invariants(FName, PP,
+			 GlobalArr,GlobalVar,LocalArr,LocalVar):-
+	% we assume at most one assertion per program point
+	warning(warning_off),			
+	loopinv(FName,PP,GlobalArr,GlobalVar,LocalArr,LocalVar),
+	warning(warning_on),
+	!.
+read_external_invariants(FName,PP,GA,GV,LA,LV):-
+	% There is an assertion for current program point but the
+	% attached constraints are inconsistent with the current
+	% solver store.
+	% This shouldn't happen.
+	warning(warning_off),			
+	loopinv(FName,PP,AGA,AGV,ALA,ALV),
+	warning(warning_on),
+	print_message("Current solver store: \n",[]),
+	pretty_printer_solver_state(FName,GA,GV,LA,LV,[]),
+	print_message("Inductive invariants: \n",[]),	
+	pretty_printer_solver_state(FName,AGA,AGV,ALA,ALV,[]),	
+	error_message("read_external_invariants/6 is inconsistent with solver store\n",
+		      []).
+read_external_invariants(_,_,_,_,_,_):-
+	% there is no assertion: do nothing.
+	!.
+
+%-----------------------------------------------------------------------%
+% read_external_symbolic_invariants(+,+,-,-,-,-,-CL)
+%-----------------------------------------------------------------------%
+% As read_external_invariants/6 but return CL a list of symbolic
+% constraints rather than keeping constraints in the store solver
+%-----------------------------------------------------------------------%
+read_external_symbolic_invariants(FName, PP,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				  CL):-
+	
+	read_external_invariants(FName, PP,
+				 GlobalArr,GlobalVar,LocalArr,LocalVar),
+	% FIXME: array constraints			
+ 	project_solver_context(state(GlobalArr , GlobalVar,
+				     LocalArr  , LocalVar , []),
+ 			       state(SGlobalArr, SGlobalVar,
+				     SLocalArr , SLocalVar,
+				     CL)).
+
+%-----------------------------------------------------------------------%
+% As read_external_invariants/6 but fail if no external variables are
+% available
+%-----------------------------------------------------------------------%
+fail_if_not_external_invariants(FName, PP,
+				GlobalArr,GlobalVar,LocalArr,LocalVar):-
+	% we assume at most one assertion per program point
+	warning(warning_off),			
+	loopinv(FName,PP,GlobalArr,GlobalVar,LocalArr,LocalVar),
+	warning(warning_on),
+	!.
+
+%--------------------------------------------------------------------------
+% check_and_abstract_away_variables
+% --------------------------------------------------------------------------
+% Check first if we can abstract. If not, report error. If yes, we
+% existentially quantifier eliminate those variables that we want to
+% forget about.
+% FIXME: array constraints are always abstracted even if user does not
+% want to.
+%--------------------------------------------------------------------------
+check_and_abstract_away_variables(FName, PP, Depth,
+				  % Initial state before abstraction
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				  CL, _ML,
+				  GlobalArr,GlobalVar,LocalArr,LocalVar,
+				  ArrRef,
+				  % Bitvector representing which variables will
+				  % be abstracted
+				  MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+				  % Desired user-abstraction
+				  XCL, 
+				  % Symbolic abstracted state
+				  AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar,
+				  AbsCL, AbsArrRef):-
+	%------------------------------------------------------------------%
+	% Check if the current state implies the desired abstraction
+	%------------------------------------------------------------------%	
+	% We negate first the constraints that correspond to the
+	% abstraction and then, the implication test
+	% ------------------------------------------------------------------%
+	negate_numerical_list(XCL, NegXCL),
+	%-------------------------------------------------------------------%
+	% Don't use wrapper_subsumed_profiled since we must use the
+	% version that uses the bitvector ML.
+	%-------------------------------------------------------------------%
+	subsumed_profiled(FName,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  NegXCL),
+	!,
+	abstract_away_variables(FName, PP, Depth,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				CL, 
+				MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+				AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar,
+				AbsCL, AbsArrRef).
+check_and_abstract_away_variables(FName,PP,_,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				  CL,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	report_user_abstraction_error(FName,PP,
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      CL).	
+
+%-----------------------------------------------------------------------------%
+% abstract_away_variables
+% -----------------------------------------------------------------------------%
+% We abstract the current symbolic state by deleting any constraint
+% that involves a variable marked in
+% MarkGlobalArr,MarkGlobalVar,MarkLocalArr, or MarkLocalVar.
+%-----------------------------------------------------------------------------%
+abstract_away_variables(_FName, _PP, _Depth,
+			% Initial state before abstraction
+			SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			CL, 
+		        % Bitvector representing which variables will
+			% be abstracted
+			MarkGlobalArr, MarkGlobalVar, MarkLocalArr, MarkLocalVar,
+ 		        % Symbolic abstracted state
+			AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,
+			AbsCL, AbsArrRef):-
+	%------------------------------------------------------------------%	
+	% Marked variables in Mark* are replaced w/ fresh variables:	
+	%------------------------------------------------------------------%	
+	filter_state_for_abstraction(% Bitvector recording which variable must 
+				     % be reset
+				     MarkGlobalArr,MarkGlobalVar,
+				     MarkLocalArr ,MarkLocalVar ,
+				     % Initial state
+				     state(SGlobalArr, SGlobalVar,
+					   SLocalArr , SLocalVar),
+				     % Abstracted state
+				     state(AbsSGlobalArr, AbsSGlobalVar,
+					   AbsSLocalArr , AbsSLocalVar)),	
+	%------------------------------------------------------------------%	
+	% Projecting the list of symbolic constraints
+	% (Existential quantifier elimination)
+	%------------------------------------------------------------------%
+	project_sym_constraints_path(AbsSGlobalArr,AbsSGlobalVar,
+				     AbsSLocalArr ,AbsSLocalVar,
+				     CL, AbsCL),
+        % FIXME: for the moment we forget all array constraints
+        AbsArrRef = [],	
+% #ifdef  DEBUG_USE
+% 	print_message("State after projected away abstracted variables: \n",[]),
+% 	pretty_printer_constraints_list(FName,
+% 					AbsSGlobalArr,AbsSGlobalVar,
+% 					AbsSLocalArr,AbsSLocalVar,AbsCL),
+% #endif
+        % To avoid backtracking to anything before.	
+        !.
+
+%--------------------------------------------------------------------------%
+% Report error to user and halt.
+%--------------------------------------------------------------------------%
+report_user_abstraction_error(FName,PP,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL):-
+	print_message("TRACER ERROR: user abstraction is unsound! \n",[],red),
+	project_sym_constraints_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     CL, ProjCL),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					ProjCL),
+	print_message("does not imply ",[]),
+	abstract(FName,PP,_,_,_,_,
+		 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,_,_,_,_,AbsXCL),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					AbsXCL),
+	halt.
+
+
+#ifndef   MINMAX
+%--------------------------------------------------------------------------%
+% generate_abstract_state: If an abstract/15 fact has been found
+% during the traversal then this means that user wants to apply some
+% abstraction:
+% - Project away all user-defined variables from the current
+%   symbolic state, and
+% - Conjoin the abstracted state with new constraints given also by
+%   user.
+%--------------------------------------------------------------------------%
+% FIXME:Cannot be used as loop invariants. To do this, we would need
+% to check at the looping points that the user abstraction is indeed
+% invariant.
+%--------------------------------------------------------------------------%
+generate_abstract_state(FName, PP, Depth,
+			% Initial state before abstraction
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar, 
+			GlobalArr ,GlobalVar ,LocalArr ,LocalVar,
+			% Bitvector representing which variables will be abstracted
+			MarkGlobalArr,MarkGlobalVar,MarkLocalArr,MarkLocalVar,
+			% New constraints that are part of the abstraction
+			XCL, 
+			% Abstracted state
+			AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar,
+			AbsGlobalArr ,AbsGlobalVar ,AbsLocalArr ,AbsLocalVar,
+			CL, ML, CL1, ML1, ArrRef, AbsArrRef1):-
+
+	check_and_abstract_away_variables(FName, PP, Depth,
+					  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					  CL, ML,
+					  GlobalArr,GlobalVar,LocalArr,LocalVar,
+					  ArrRef,
+					  MarkGlobalArr,MarkGlobalVar,MarkLocalArr, MarkLocalVar,
+					  XCL, 
+					  AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar,
+					  AbsCL0, AbsArrRef0),
+		
+	% The following line is possible and it will make filter fail
+	% AbsCL = [eq(upd(upd(_h2806, _h2779, 0), _h2779, 5.000000), _h2777)]
+	
+	% Needed to connect XCL to AbsS* variables
+	AbsSGlobalArr=SGlobalArr,AbsSGlobalVar=SGlobalVar,
+	AbsSLocalArr =SLocalArr ,AbsSLocalVar =SLocalVar,
+	%------------------------------------------------------------------%				   
+	% Conjoin w/ abstracted constraints (XCL)
+	%------------------------------------------------------------------%	
+	append(AbsCL0,XCL,AbsCL),
+	fcopy_term(t(AbsCL,
+		     AbsSGlobalArr,AbsSGlobalVar,AbsSLocalArr,AbsSLocalVar),
+		   t(AbsCLX,
+		     AbsGlobalArr,AbsGlobalVar,AbsLocalArr,AbsLocalVar)),
+	%------------------------------------------------------------------%	
+	% Evaluate the resulting abstract state after conjoining
+	%------------------------------------------------------------------%	
+	constraint_symbolic(AbsCLX,AbsArrRef0,AbsArrRef1),
+#ifdef  DEBUG_USE
+	print_message("State after USER abstraction: \n",[]),
+	pretty_printer_constraints_list(FName,
+					AbsSGlobalArr,AbsSGlobalVar,
+					AbsSLocalArr ,AbsSLocalVar,AbsCL),
+#endif  /*DEBUG_USE*/
+	%------------------------------------------------------------------%
+	% Build a well-formed path <CL,ML>
+	%------------------------------------------------------------------%
+	init_constraints_path(AbsCL,CL1,ML1),
+        % To avoid backtracking to anything before.	
+	!. 
+
+%---------------------------------------------------------------------------%
+% This code is called from the unfolder. Once the current state has
+% been generalized we call, as usual, to the unfold predicate for the
+% symbolic execution of the next transition.
+%---------------------------------------------------------------------------%
+unfold_abstraction(Depth, Id, FName, PP,
+		   _SGlobalArr  , _SGlobalVar  , _SLocalArr  , _SLocalVar, 		   
+		   AbsGlobalArr , AbsGlobalVar , AbsLocalArr , AbsLocalVar,
+		   AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,		   
+		   _CL, _ML, CL1, ML1, CallStack, ArrRef1,
+		   Loops,UnknownVars, AbsPtFlag, TableSpace):-			  
+	unfold(Depth, Id, FName, PP,
+	       AbsGlobalArr , AbsGlobalVar , AbsLocalArr , AbsLocalVar,
+	       AbsSGlobalArr, AbsSGlobalVar, AbsSLocalArr, AbsSLocalVar,
+	       CL1, ML1, CallStack, ArrRef1,
+	       Loops, UnknownVars, AbsPtFlag,TableSpace).
+	      
+%----------------------------------------------------------------------------%
+% During the backtracking process, an abstraction point is a bit
+% special. A father needs to collate the interpolants from its
+% children, as usual. However, the collected interpolant is about the
+% abstracted state and not about the state before the abstraction. We
+% use filter to generate the interpolant of the state before
+% abstraction using the interpolant of the state after
+% abstraction. This special step is done by
+% backward_propagation_interp_across_abstraction/15
+%----------------------------------------------------------------------------%
+unfold_abstraction(Depth, Id, FName, PP,
+		   SGlobalArr    , SGlobalVar    , SLocalArr    , SLocalVar, 		   		   
+		   _AbsGlobalArr , _AbsGlobalVar , _AbsLocalArr , _AbsLocalVar,
+		   AbsSGlobalArr , AbsSGlobalVar , AbsSLocalArr , AbsSLocalVar,		   
+		   CL, ML, CL1, ML1, _CallStack, _ArrRef1,
+		   _Loops,_UnknownVars, _AbsPtFlag, _TableSpace):-
+#ifdef  DEBUG_USE	
+	print_message("Begin computing PRE-STATE ABSTRACTED program point %:% \n",
+		      [FName,PP]),
+#else
+        % To avoid warnings
+        PP=_,
+#endif  /*DEBUG_USE*/
+#if     (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==TESTING) || (UNFOLD_OPT==SLICING) || (UNFOLD_OPT==LIVE)
+        % To prevent warnings
+        Id=_,
+#endif 	
+#if     (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==TESTING)	
+	retract_safety_answer(Depth, FName, CL1, ML1, WP1),
+#elif	(UNFOLD_OPT==WCET)
+        retract_wcet_answer(Depth,FName,_Id,			    
+			    CL1,ML1,WP1,WCET,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)),
+
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        retract_analysis_answer(FName,Depth,CL1,ML1,Reps,
+				GlobalArrMark,GlobalVarMark,
+				LocalArrMark ,LocalVarMark,Aux),
+	WP1=nil,WP=_,
+#endif  /*UNFOLD_OPT==SAFETY || UNFOLD_OPT==TESTING */	     
+	backward_propagation_interp_across_abstraction(FName,
+						       AbsSGlobalArr,AbsSGlobalVar,
+						       AbsSLocalArr ,AbsSLocalVar,
+						       CL1, ML1, WP1,
+						       SGlobalArr,SGlobalVar,
+						       SLocalArr ,SLocalVar,
+						       CL, ML, WP),
+	%------------------------------------------------------------------%
+	% Finally, the new state is stored.
+	%------------------------------------------------------------------%
+#if     (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==TESTING)
+	assert_safety_answer(Depth, FName,CL,ML,WP),
+#elif   (UNFOLD_OPT==WCET)
+        assert_wcet_answer(Depth,FName, Id, CL, ML,WP,WCET,
+			   w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)),
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+	record_analysis_answer(rule,FName,Depth, CL, ML, Reps,
+			      GlobalArrMark, GlobalVarMark,
+			      LocalArrMark , LocalVarMark,Aux),
+#endif  /*UNFOLD_OPT==SAFETY	*/
+#ifdef  DEBUG_USE
+	print_message("End computing PRE-STATE\n",[]),
+#endif 			      
+	% To avoid backtracking
+	!,
+	fail.
+
+%-----------------------------------------------------------------------------%
+% backward_propagation_interp_across_abstraction(+FName,
+%                                                +AbsSGlobalArr,...
+%			                         +CL1, +ML1, +WP1
+%			                         -SGlobalArr,...
+%                                                -CL, -ML, -WP)
+%-----------------------------------------------------------------------------%
+% Propagate backwards the interpolant across an abstraction point.
+%-----------------------------------------------------------------------------%
+% SGlobalArr,... : variables before the abstraction point
+% CL : list of symbolic constraints before the abstraction point
+% ML : interpolant before abstraction point
+% AbsSGlobalArr,... : variables after the abstraction point
+% CL1: list of symbolic constraints after the abstraction point
+% ML1: interpolant after abstraction point
+%-----------------------------------------------------------------------------%
+backward_propagation_interp_across_abstraction(FName,
+					       AbsSGlobalArr,AbsSGlobalVar,
+					       AbsSLocalArr, AbsSLocalVar,
+					       CL1, ML1, nil,				    
+					       SGlobalArr   ,SGlobalVar,
+					       SLocalArr,SLocalVar,
+					       CL, ML, nil) :-
+	!,
+#ifdef  DEBUG_USE
+	print_message("\tState before abstraction\n\t",[],blue),
+	pretty_printer_path(CL, FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	print_message("\tInterpolant after abstraction\n\t",[],blue),
+	pretty_printer_marked_constraints(FName,
+					  CL1,ML1,
+					  AbsSGlobalArr,AbsSGlobalVar,
+					  AbsSLocalArr ,AbsSLocalVar),	
+#else
+        % To avoid warnings
+        FName=_,
+#endif	/*DEBUG_USE*/	
+        make_negated_projected_interpolant(AbsSGlobalArr, AbsSGlobalVar,
+					   AbsSLocalArr, AbsSLocalVar,
+					   CL1, ML1,NegCond),
+	AbsSGlobalArr=SGlobalArr,AbsSGlobalVar=SGlobalVar,
+	AbsSLocalArr =SLocalArr ,AbsSLocalVar =SLocalVar,
+	%------------------------------------------------------------------%
+	% We keep all constraints from the original symbolic state
+	% collected before the abstraction was done as long as the
+	% interpolant holds.
+	%------------------------------------------------------------------%
+        make_dnf(NegCond,NegCond1),
+	%------------------------------------------------------------------%
+	% Note NegCond1 will be interpreted as a disjunction of
+	% negated literals. Then, for each negated literal d_i the
+	% final interpolant will be those constraints from CL that in
+	% conjunction with d_i are unsatisfiable.
+	%------------------------------------------------------------------%
+	interpolate_constraints_path(NegCond1, CL, ML, no_check),
+        %==================================================================%
+        % Key adhoc step: any constraints from CL which is a local
+        % variable from another function and it's needed to keep an
+        % infeasibility (marked in ML) MUST be propagated back from
+        % the loop.
+        %==================================================================%
+        select_marked_constraints_path(CL1,ML1,Intp,o),
+        get_constraints_from_other_functions2(SGlobalArr,SGlobalVar,
+					      SLocalArr,SLocalVar,
+					      Intp,IrrelIntp),
+	find_constraints_path_and_mark(CL,ML,IrrelIntp,o).
+backward_propagation_interp_across_abstraction(_,
+					       AbsSGlobalArr,AbsSGlobalVar,
+					       AbsSLocalArr ,AbsSLocalVar,
+					       CL1, ML1, WP1,
+					       SGlobalArr,SGlobalVar,
+					       SLocalArr ,SLocalVar,				    
+					       CL, ML, WP) :-
+	current_tracer_flag(other_interp,y),
+	WP1 = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, WPCond,_),
+	interp_create_abstraction_interpolant(AbsSGlobalArr,AbsSGlobalVar,
+					      AbsSLocalArr, AbsSLocalVar,
+					      CL, ML,
+					      SGlobalArr,SGlobalVar,
+					      SLocalArr, SLocalVar,
+					      WPCond, WP),
+        %==================================================================%
+	% Key adhoc step: any constraints from CL which is a local
+	% variable from another function and it's needed to keep an
+	% infeasibility (marked in ML) MUST be propagated back from
+	% the loop.
+	%==================================================================%
+	% FIXME: WP is not updated for this special case.
+	% This is very important that affects -intp= dwp | ndwp | clp	
+	% It's a similar problem to function calls: caller's local
+	% variables are projected away by callees but after returning
+	% some interpolants about those caller's variables may be
+	% needed for correct subsumption.
+	%==================================================================%
+        select_marked_constraints_path(CL1,ML1,Intp,o),
+        get_constraints_from_other_functions2(SGlobalArr,SGlobalVar,
+					      SLocalArr,SLocalVar,
+					      Intp,IrrelIntp),
+	find_constraints_path_and_mark(CL,ML,IrrelIntp,o),
+	
+	!.
+backward_propagation_interp_across_abstraction(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("backward_propagation_interp_across_abstraction/15 failed\n",[]).
+
+#endif  /*!MINMAX*/
+
+%-------------------------------------------------------------------%
+% Auxiliary functions
+%-------------------------------------------------------------------%	
+filter_state_for_abstraction(MarkGlobalArr,MarkGlobalVar,
+			     MarkLocalArr,MarkLocalVar,
+			     state(GlobalArr, GlobalVar,
+				   LocalArr, LocalVar),
+			     state(GlobalArrX, GlobalVarX,
+				   LocalArrX, LocalVarX)):-
+
+	set_unknown_val(MarkGlobalArr,GlobalArr,GlobalArrX),
+	set_unknown_val(MarkGlobalVar,GlobalVar,GlobalVarX),
+	set_unknown_val(MarkLocalArr ,LocalArr ,LocalArrX),
+	set_unknown_val(MarkLocalVar ,LocalVar ,LocalVarX).
+
+set_unknown_val([],[],[]):-!.
+set_unknown_val([M|Ms],[_|Xs],[_|Ys]):-
+	% marked here means replace with fresh var	
+	is_marked_term(M),
+	!, 
+	set_unknown_val(Ms,Xs,Ys).
+set_unknown_val([_|Ms],[X|Xs],[X|Ys]):-
+	!,
+	set_unknown_val(Ms,Xs,Ys).
+

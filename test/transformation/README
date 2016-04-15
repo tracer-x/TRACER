@@ -1,0 +1,17 @@
+This folder contains all the CAV'13 paper benchmarks and results.
+
+To generate SPS-CFG for a program and compare with another verifier:
+
+1) Covert all unsigned/long/UL/LL to just "int"
+2) Run with cilly --dooneRet
+3) ABSOLUTELY NO goto/switch (might be painful to convert)
+4) NO == or != constraints. Use the following vim commands:
+   :%s/if (! \(\w*))/if (\1 == 0)/g
+   :%s/if (\(\w*))/if (\1 != 0)/g
+   /if (!      <---- search just to make sure
+   :%s/if (\([^=]*\) == \([^=]*\)) {/if ((\1 >= \2) \&\& (\1 <= \2)) {
+   :%s/if (\([^=]*\) != \([^=]*\)) {/if ((\1 >= \2) \|\| (\1 <= \2)) {
+
+   4.1) To convert back to == or !=
+   :%s/if ((\(.*\) > \(.*\)) || (\(.*\) < \(.*\)))/if (\1 != \2)/g
+   :%s/if ((\(.*\) >= \(.*\)) && (\(.*\) <= \(.*\)))/if (\1 == \2)/g

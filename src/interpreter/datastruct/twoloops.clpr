@@ -1,0 +1,42 @@
+% This is a simple example that demonstrates how to prove a sequential
+% program's sequence of loops.
+
+coinductionlimit(4).   % Limit coinduction to depth 2.
+unfolddepthbound(5).
+solver(arith).
+
+% The sequential program's loop
+
+unfold(p(I,N,X,Xf),
+       [
+        body([], [geq(I,N), eq(X,Xf)]),
+	body([p(I1,N1,X1,Xf1)],
+	     [gt(N,I), eq(I1,plus(I,1)), eq(N1,N), eq(X1,plus(X,1)),
+              eq(Xf1,Xf)])
+       ]).
+
+unfold(q(I,N,X,Xf),
+       [
+        body([], [geq(I,N), eq(X,Xf)]),
+	body([q(I1,N1,X1,Xf1)],
+	     [gt(N,I), eq(I1,plus(I,1)), eq(N1,N), eq(X1,plus(X,2)),
+              eq(Xf1,Xf)])
+       ]).
+
+% To Prove:
+%
+% p(I,N,X,X1), q(I,N,X1,Xf), I<=N |= Xf=X+(3*N)-(3*I)
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [p(I,N,X,X1), q(I,N,X1,Xf)], UnfoldableGAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [geq(N,I)],
+		     [], [], [eq(Xf,plus(X,minus(mult(3,N),mult(3,I))))], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

@@ -1,0 +1,46 @@
+/* For copyright information, see olden_v1.0/COPYRIGHT */
+
+#include <cm/cmmd.h>
+#include <fcntl.h>
+extern int __NumNodes,__NDim;
+int flag;
+
+void filestuff()
+{
+  CMMD_fset_io_mode(stdout, CMMD_independent);
+  fcntl(fileno(stdout), F_SETFL, O_APPEND);
+  if (CMMD_self_address()) exit(0);
+  __InitRegs(0);
+}
+
+int mylog(int num)
+{
+  int j=0,k=1;
+  
+  while(k<num) { k*=2; j++; }
+  return j;
+} 
+
+int dealwithargs(int argc, char *argv[])
+{
+  int num;
+
+  if (argc > 3)
+    flag = atoi(argv[3]);
+  else 
+    flag = 0;
+
+  if (argc > 2) 
+    __NumNodes = atoi(argv[2]);
+  else 
+    __NumNodes = 4;
+
+  __NDim = mylog(__NumNodes);
+
+  if (argc > 1)
+    num = atoi(argv[1]);
+  else
+    num = 15;
+
+  return num;
+}

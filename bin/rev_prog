@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Bash shell script to reverse text file contain i.e. concatenate
+# files and print on the standard output in reverse. 
+
+FILE="$1"
+
+if [ $# -eq 0 ]; then
+  echo "$(basename $0) - filename"
+  exit 1
+fi
+ 
+textArray[0]="" # hold text
+c=0 # counter
+# read whole file in loop
+while read line
+do
+  textArray[$c]=$line # store line
+  c=$(expr $c + 1) # increase counter by 1
+done < $FILE
+# get length of array
+len=$(expr $c - 1 )
+ 
+# use for loop to reverse the array
+for (( i=$len; i>=0; i-- ));
+do
+  echo ${textArray[$i]}
+done

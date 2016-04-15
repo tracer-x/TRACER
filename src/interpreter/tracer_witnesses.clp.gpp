@@ -1,0 +1,1656 @@
+% tracer_witnesses.clp.gpp
+
+%============================================================================%
+% This file contains general predicates to handle witnesses for the
+% different TRACER analyses. The format of a witness must be as
+% follows:
+%
+%    w(I,Id, WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef), or
+%    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+%
+%    where I is the index of the variable to which the witness refers to
+%          Id is an id transition
+%          WGlobalArr,WGlobalVar,WLocalArr,WLocalVar, and WArrRef
+%          represents the witness formula.
+%
+% We differentiate between two kind of analyses from the viewpoint of
+% witnesses:
+% - Analyses which need to keep track of multiple witnesses, each one
+%   associate with a program variable (e.g., slicing or liveness)
+% - Analyses which keep track of a single witness (e.g., WCET)
+%
+%============================================================================%
+% export
+%----------------------------------------------------------------------------
+% For multiple witnesses associated to variables ('a la' slicing)
+%----------------------------------------------------------------------------
+% generate multiple "true" witnesses
+% init_witness_paths/8
+% check satisfiability of multiple witnesses
+% satisfiable_all_witnesses/6             
+% combine multiple witnesses                                           
+% combine_witness_paths_without_update/3
+% update witnesses
+% combine_update_witness_paths/3
+% (lazy) pre-operation with multiple witnesses 
+% construct_pre_witnesses/15
+% wrapper to test satisfiability of witnesses after subsumption test
+% held.
+% subsumption_check_witnesses/8           
+% keep only the invariant part for each witness.                                         
+% backward_propagation_witnesses_across_abstraction/7 
+%----------------------------------------------------------------------------
+% For a single witness NOT associated to any variable ('a la' WCET)
+%----------------------------------------------------------------------------
+% check satisfiability of a single witness
+% satisfiable_witness_profiled/10      
+% satisfiable_witness/10
+% init_encoded_witness/5
+% lazy pre-operation
+% lazy_pre_update_single_witness/11
+% combine
+% combine_update_single_witness/3
+% keep only invariant part of the witness.
+% backward_propagation_witness_across_abstraction/7 
+%----------------------------------------------------------------------------
+% Auxiliary predicates to manipulate witnesses
+%----------------------------------------------------------------------------
+% delete_nth_witness_list/4
+% delete_global_witnesses/2
+% add_fresh_witnesses/3
+% add_witnesses_sorted/3
+% lazy_combine_gather_transition/12
+%---------------------------------------------------------------------------%
+% Comments about options:
+% - ONLY_LINEAR_WITNESSES: keep only linear witnesses
+%============================================================================%
+
+%=============================================================================%
+%=============================================================================%
+% Operations with multiple witnesses associated to variables
+%=============================================================================%
+%=============================================================================%
+
+%----------------------------------------------------------------------------%
+% init_witness_paths(+,+,+,+,+,+,-)
+% Initialize witness formula paths for the set of marking variables.
+%----------------------------------------------------------------------------%
+init_witness_paths(Markings,Id,
+		   WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,Ws):-
+	current_tracer_flag(witnesses, y),
+	!,
+	init_witness_paths_aux(Markings, 1,Id,
+			       WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,Ws).
+init_witness_paths(_,_,_,_,_,_,[]).
+		   
+
+init_witness_paths_aux([],_,_,_,_,_,_,[]):-!.
+init_witness_paths_aux([M|Ms],I,Id,WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+#ifdef  ENCODE_CHILD_PARENT
+	% Here we add directly the encoded form of the witnesses.	  
+		   [w(I,Id,[],[],[],[],FreshArrRef)|Rs]):-
+#else		  
+		   [w(I,Id,
+		      FreshGlobalArr,FreshGlobalVar,
+		      FreshLocalArr,FreshLocalVar,FreshArrRef)|Rs]):-
+#endif	/*ENCODE_CHILD_PARENT*/
+	mark_term(Y), M==Y, !,
+#ifdef  ENCODE_CHILD_PARENT
+        
+#else   /*ENCODE_CHILD_PARENT*/
+	copy_to_unbound_list(WGlobalArr,FreshGlobalArr),
+	copy_to_unbound_list(WGlobalVar,FreshGlobalVar),
+	copy_to_unbound_list(WLocalArr ,FreshLocalArr),
+	copy_to_unbound_list(WLocalVar ,FreshLocalVar),
+#endif	/*ENCODE_CHILD_PARENT*/
+	FreshArrRef = [],
+	init_witness_paths_aux(Ms,I+1,Id,
+                               WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,Rs).
+init_witness_paths_aux([_|Ms],I,Id,
+		       WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,Rs):-
+	init_witness_paths_aux(Ms,I+1,Id,
+			       WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,Rs).
+
+%------------------------------------------------------------------------------
+% satisfiable_all_witnesses(+Witnesses,
+%                           +GlobalArr,+GlobalVar,+LocalArr,+LocalVar,+ArrRef)
+% ------------------------------------------------------------------------------
+% Succeed if all witnesses are satisfiable wrt formula associated
+% with GlobalArr,GlobalVar,LocalArr, and ArrRef. Otherwise, fail.
+% ------------------------------------------------------------------------------
+satisfiable_all_witnesses([],_,_,_,_,_).
+satisfiable_all_witnesses([w(_I,_Id,
+			     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)|Rs],
+			  GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef) :-
+			  
+#ifdef  PROFILE
+        satisfiable_witness_profiled(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+				     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+				     
+#else   /*PROFILE*/
+	satisfiable_witness(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+			    WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+#endif  /*PROFILE*/
+        satisfiable_all_witnesses(Rs,
+				  GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef).
+
+
+combine_update_witness_paths(MarkedGlobalArr, MarkedGlobalVar,
+			     MarkedLocalArr , MarkedLocalVar,
+			     Witnesses      , UpdWitnesses):-
+        %------------------------------------------------------------
+	% w/ witnesses:
+        %------------------------------------------------------------	
+	current_tracer_flag(witnesses,y),!,
+	
+	% Obtain the pre-markings from the child
+	append(MarkedLocalArr, MarkedLocalVar, M1),
+	append(MarkedGlobalVar, M1, M2),
+	append(MarkedGlobalArr, M2, PreMarkings),
+
+	gen_witnesses_from_markings(PreMarkings,1,PreRepMarkings),
+	%------------------------------------------------------------
+	% Update the witnesses only for the selected witnesses
+	%------------------------------------------------------------	
+	lazy_update_witnesses0(PreRepMarkings,1,Witnesses,UpdWitnesses).
+				    
+combine_update_witness_paths(_,_,_,_,Witnesses,Witnesses):- !.
+        %------------------------------------------------------------
+	% w/o witnesses: do nothing
+        %------------------------------------------------------------
+	 
+#ifdef  ENCODE_CHILD_PARENT
+%------------------------------------------------------------------------------%
+% Heuristics: if num of witnesses too high then we throw away some.
+%------------------------------------------------------------------------------%
+lazy_update_witnesses0(PreRepMarkings,PreIndex,Witnesses,UpdWitnesses):-
+	current_tracer_flag(witnesses,y),
+	current_tracer_flag(witnesses_threshold,Threshold),
+	Threshold > -1,
+	!,	
+	lazy_update_witnesses_with_threshold(PreRepMarkings,PreIndex,Witnesses,
+					     0,Threshold, UpdWitnesses).
+#endif  /*ENCODE_CHILD_PARENT*/
+lazy_update_witnesses0(PreRepMarkings,PreIndex,Witnesses,UpdWitnesses):-!,
+	lazy_update_witnesses(PreRepMarkings,PreIndex,Witnesses,UpdWitnesses).
+
+lazy_update_witnesses([],_,_,[]).
+lazy_update_witnesses([M|Ms],PreVarIndex,PostWits,PreWits):-	
+	var(M),!,
+	lazy_update_witnesses(Ms,PreVarIndex+1,PostWits,PreWits).	
+lazy_update_witnesses([w(PostVarIndex)|Ms], PreVarIndex,PostWits,
+		      [PreWitness|PreWits]):-
+	lazy_update_witness_aux(PostVarIndex,PreVarIndex,PostWits, PreWitness),
+	lazy_update_witnesses(Ms,PreVarIndex+1,PostWits, PreWits).
+
+lazy_update_witness_aux(PostVarIndex, PreVarIndex,PostWits, PreWitness):-
+	get_witness(PostVarIndex, PostWits, PostWitness),
+	get_witness_id(PostWitness,Id),
+	%----------------------------------------------
+	% This sanity check is temporary
+        %----------------------------------------------
+        sanityCheck_id_not_var(Id),
+	% Obtain information about transition id
+        lazy_combine_gather_transition(Id,			      
+				       FName0,FName1,
+				       % parent variables
+				       PreGlobalArr ,PreGlobalVar,
+				       PreLocalArr ,PreLocalVar,
+				       % child variables
+				       PostGlobalArr,PostGlobalVar,
+				       PostLocalArr,PostLocalVar,
+				       XCL),
+	
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+	pipe_master_backward_propagate_witness(PostVarIndex, PreVarIndex,
+					       FName0,FName1,	
+					       PostGlobalArr, PostGlobalVar,
+					       PostLocalArr, PostLocalVar,
+					       PreGlobalArr, PreGlobalVar,
+					       PreLocalArr, PreLocalVar,
+					       XCL,
+					       PostWitness,
+					       PreWitness).
+
+#elif   defined(ENCODE_CHILD_PARENT)
+	backward_propagate_witness2(PostVarIndex , PreVarIndex,
+				    FName0       , FName1,
+				    PostGlobalArr, PostGlobalVar,
+				    PostLocalArr , PostLocalVar,
+				    PreGlobalArr , PreGlobalVar,
+				    PreLocalArr  , PreLocalVar,
+				    XCL,
+				    PostWitness  , PreWitness).
+#else
+	backward_propagate_witness(FName0        , FName1,
+				   PostVarIndex  , PreVarIndex,
+				   PostGlobalArr , PostGlobalVar,
+				   PostLocalArr  , PostLocalVar,
+				   PreGlobalArr  , PreGlobalVar,
+				   PreLocalArr   , PreLocalVar,
+				   XCL,
+				   PostWitness   , PreWitness).	
+#endif	/* defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) */        
+
+#ifdef  ENCODE_CHILD_PARENT
+lazy_update_witnesses_with_threshold([],_,_,_,_,[]):- !.
+lazy_update_witnesses_with_threshold(Ms,PreVarIndex,PostWits,I,N,PreWits) :-
+	I >= N, !,
+	lazy_update_witnesses_with_threshold_padding(Ms,PreVarIndex,PostWits,PreWits).
+lazy_update_witnesses_with_threshold([M|Ms],PreVarIndex,PostWits,I,N,PreWits):-	
+	var(M),!,
+	lazy_update_witnesses_with_threshold(Ms,PreVarIndex+1,PostWits,I,N,PreWits).	
+lazy_update_witnesses_with_threshold([w(PostVarIndex)|Ms],
+					   PreVarIndex,PostWits, I, N,
+					   [PreWitness|PreWits]):-					   
+	lazy_update_witness_aux(PostVarIndex, PreVarIndex, PostWits, PreWitness),
+	lazy_update_witnesses_with_threshold(Ms,PreVarIndex+1,PostWits,I+1,N, PreWits).
+
+lazy_update_witnesses_with_threshold_padding([],_,_,[]):-!.
+lazy_update_witnesses_with_threshold_padding([M|Ms],PreVarIndex,PostWits,PreWits) :-
+	var(M),!,
+	lazy_update_witnesses_with_threshold_padding(Ms,PreVarIndex+1,PostWits,PreWits).
+lazy_update_witnesses_with_threshold_padding([w(PostVarIndex)|Ms],PreVarIndex,PostWits,
+						   [PreWitness|PreWits]) :-
+	get_witness(PostVarIndex, PostWits, PostWitness),
+	PostWitness = w(PostVarIndex,Id,_, _, _ , _, _ ),
+	PreWitness  = w(PreVarIndex,Id,f, f, f, f, [] ),
+	lazy_update_witnesses_with_threshold_padding(Ms,PreVarIndex+1,PostWits,PreWits).
+#endif  /*#ifdef  ENCODE_CHILD_PARENT*/
+
+%------------------------------------------------------------------------------
+% combine_witness_paths_without_update(+Ws1,+Ws2,-CombinedWs)
+% pick one arbitrarily.
+%------------------------------------------------------------------------------
+combine_witness_paths_without_update([],L,L) :- !.
+combine_witness_paths_without_update(L,[],L) :- !.
+combine_witness_paths_without_update([w(I,_Id1,
+			 _WGlobalArr1,_WGlobalVar1,_WLocalArr1,_WLocalVar1,_WArrRef1)|Rs1],
+		      [w(I,Id2,
+			 WGlobalArr2,WGlobalVar2,WLocalArr2,WLocalVar2,WArrRef2)|Rs2],
+		      [w(I,Id2,
+			 WGlobalArr2,WGlobalVar2,WLocalArr2,WLocalVar2,WArrRef2)|Rs3]):-
+	!,
+	combine_witness_paths_without_update(Rs1,Rs2,Rs3).
+combine_witness_paths_without_update([w(I, Id1,
+			 WGlobalArr1,WGlobalVar1,WLocalArr1,WLocalVar1,WArrRef1)|Rs1],
+		      [w(J, Id2,
+			 WGlobalArr2,WGlobalVar2,WLocalArr2,WLocalVar2,WArrRef2)|Rs2],
+		      [w(I, Id1,
+			 WGlobalArr1,WGlobalVar1,WLocalArr1,WLocalVar1,WArrRef1)|Rs3]):-
+	I<J, !,
+	combine_witness_paths_without_update(Rs1,
+					     [w(J,Id2,
+						WGlobalArr2,WGlobalVar2,
+						WLocalArr2,WLocalVar2,WArrRef2)|Rs2],
+					     Rs3).
+				 
+combine_witness_paths_without_update([w(I,Id1,
+			 WGlobalArr1,WGlobalVar1,WLocalArr1,WLocalVar1,WArrRef1)|Rs1],
+		      [w(J,Id2,
+			 WGlobalArr2,WGlobalVar2,WLocalArr2,WLocalVar2,WArrRef2)|Rs2],
+		      [w(J,Id2,
+			 WGlobalArr2,WGlobalVar2,WLocalArr2,WLocalVar2,WArrRef2)|Rs3]):-
+	I>J, !,
+	combine_witness_paths_without_update([w(I,Id1,
+						WGlobalArr1,WGlobalVar1,
+						WLocalArr1,WLocalVar1,WArrRef1)|Rs1],
+					     Rs2,Rs3).	
+				 
+throw_away_witnesses_if_limit(Ws,NewWs):-
+	current_tracer_flag(witnesses,y),
+	current_tracer_flag(witnesses_threshold,Threshold),
+	Threshold > -1,
+	!,	
+	delete_if_threshold_reached(Ws,0,Threshold,NewWs).
+throw_away_witnesses_if_limit(Ws,Ws):-!.
+
+delete_if_threshold_reached(_,I,N,[]):- I >= N,!.	         
+delete_if_threshold_reached([],_,_,[]):- !.
+delete_if_threshold_reached([w(X)|Ws],I,N,[w(X)|Zs]):-
+	delete_if_threshold_reached(Ws,I+1,N,Zs).
+
+%-------------------------------------------------------------------------------%
+%#ifdef  ENCODE_CHILD_PARENT
+%-------------------------------------------------------------------------------%	
+% OPTIONAL HEURISTICS: If we pass a certain threshold we start
+% throwing witnesses from left to right (no intelligence used).
+% throw_away_witnesses_if_limit(Ws,NewWs):-
+% 	current_tracer_flag(witnesses,y),
+% 	current_tracer_flag(witnesses_threshold,LimitOfWits),
+% 	LimitOfWits > -1,
+% 	!,
+% 	% there is a threshold
+% 	length(Ws,NumOfWits),
+% 	throw_away_witnesses_if_limit_aux(Ws,NumOfWits,LimitOfWits,NewWs).
+% throw_away_witnesses_if_limit(Ws,Ws):-!.
+
+% throw_away_witnesses_if_limit_aux(Ws,I,N,Ws):- I <= N,!.	         
+% throw_away_witnesses_if_limit_aux([],_,_,[]):- !.
+% throw_away_witnesses_if_limit_aux([w(Index,
+%                                      Id,
+%                                      A,B,C,D,E)|Ws],
+%                                   I,N,
+%                                   [w(Index,
+%                                      Id,
+%                                      A,B,C,D,E)|Zs]):-
+% 	%--------------------------------------------------
+%         % Don't decrement counter and keep going
+% 	%--------------------------------------------------	
+%         is_empty_encoded_witness(A,B,C,D,E), !,
+%         throw_away_witnesses_if_limit_aux(Ws,I,N,Zs).
+% throw_away_witnesses_if_limit_aux([w(Index,
+% 				       Id,
+% 				       A,B,C,D,E)|Ws],
+% 				  I,N,
+% 				  [w(Index,
+% 				     Id,
+% 				     A1,B1,C1,D1,E1)|Zs]):-
+%         %---------------------------------------------------
+% 	% We make it empty and decrement counter
+%         %---------------------------------------------------	
+%         reset_encoded_witness(A,B,C,D,E,
+% 			      A1,B1,C1,D1,E1),                           
+% 	add_counter(num_of_threw_witnesses,1),
+% 	throw_away_witnesses_if_limit_aux(Ws,I-1,N,Zs).
+
+% % Remember witnesses are in encoded form!
+% is_empty_encoded_witness(A,B,C,D,E):-
+% 	is_empty_encoded_witness_aux(A),
+% 	is_empty_encoded_witness_aux(B),
+% 	is_empty_encoded_witness_aux(C),
+% 	is_empty_encoded_witness_aux(D),
+% 	is_empty_encoded_witness_aux(E).
+% is_empty_encoded_witness_aux(f) :- !. % f means free
+% is_empty_encoded_witness_aux([]):- !.
+
+% % Remember witnesses are in encoded form!
+% reset_encoded_witness(OldA,OldB,OldC,OldD,OldE,
+% 		      NewA,NewB,NewC,NewD,NewE):-
+% 	reset_encoded_witness_aux(OldA,NewA),
+% 	reset_encoded_witness_aux(OldB,NewB),
+% 	reset_encoded_witness_aux(OldC,NewC),
+% 	reset_encoded_witness_aux(OldD,NewD),
+% 	reset_encoded_witness_aux(OldE,NewE).
+
+% reset_encoded_witness_aux(_,[]).
+%-------------------------------------------------------------------------------%
+%#endif /*ENCODE_CHILD_PARENT*/
+%-------------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------------
+% construct_pre_witnesses(+,+,+,+,+,+,+,+,+,+,+,+,-,+,-)
+%------------------------------------------------------------------------------
+% Update pre-state witnesses from post-state witnesses
+%------------------------------------------------------------------------------
+construct_pre_witnesses(Id,FNameOfChild,FNameOfParent,
+			PostGlobalArr, PostGlobalVar,
+			PostLocalArr , PostLocalVar,
+			PreGlobalArr , PreGlobalVar,
+			PreLocalArr  , PreLocalVar,
+			XCL, PreVarsMark, PostWs, PreWs) :-
+	construct_pre_witnesses_aux(PreVarsMark,1, Id,
+				    FNameOfChild,FNameOfParent,
+				    PostGlobalArr, PostGlobalVar,
+				    PostLocalArr, PostLocalVar,
+				    PreGlobalArr, PreGlobalVar,
+				    PreLocalArr, PreLocalVar,
+				    XCL, PostWs, PreWs).
+
+construct_pre_witnesses_aux([],_,_,_,_,_,_,_,_,_,_,_,_,_,_,[]).			    
+construct_pre_witnesses_aux([Mark|PreVarsMark],PreVarIndex, Id,
+			    FNameOfChild,FNameOfParent,
+			    PostGlobalArr, PostGlobalVar,
+			    PostLocalArr, PostLocalVar,
+			    PreGlobalArr, PreGlobalVar,
+			    PreLocalArr, PreLocalVar,
+			    XCL, PostWs, PreWs) :-
+	var(Mark), !,
+	construct_pre_witnesses_aux(PreVarsMark,PreVarIndex+1, Id,
+				    FNameOfChild,FNameOfParent,
+				    PostGlobalArr, PostGlobalVar,
+				    PostLocalArr, PostLocalVar,
+				    PreGlobalArr, PreGlobalVar,
+				    PreLocalArr, PreLocalVar,
+				    XCL, PostWs, PreWs).				    
+construct_pre_witnesses_aux([Mark|PreVarsMark],PreVarIndex, Id,
+			    FNameOfChild , FNameOfParent,
+			    PostGlobalArr, PostGlobalVar,
+			    PostLocalArr , PostLocalVar,
+			    PreGlobalArr , PreGlobalVar,
+			    PreLocalArr  , PreLocalVar,
+			    XCL, PostWs, [PreW|PreWs]) :-			    
+	Mark = w(PostVarIndex),
+        %----------------------------------------------------------------------
+        % Get witness PostW = w(PostVarIndex, ...) from PostWs
+        %----------------------------------------------------------------------
+	get_witness(PostVarIndex, PostWs, PostW),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 1\n",[]),
+        print_message("%\n",[get_witness(PostVarIndex, PostWs, PostW)]),	
+#endif
+        %----------------------------------------------------------------------
+        % For a single (post-state) witness PostW construct another
+        % (pre-state) witness PreW
+        %----------------------------------------------------------------------
+	lazy_backward_propagate(Id,				
+				PostVarIndex , PreVarIndex,
+				% symbolic post-state (children) variables
+				PostGlobalArr, PostGlobalVar,
+				PostLocalArr , PostLocalVar,
+				% symbolic pre-state (parent) variables
+				PreGlobalArr , PreGlobalVar,
+				PreLocalArr  , PreLocalVar,
+				XCL, PostW, PreW),
+	construct_pre_witnesses_aux(PreVarsMark  , PreVarIndex+1,Id,
+				    FNameOfChild , FNameOfParent,
+				    PostGlobalArr, PostGlobalVar,
+				    PostLocalArr , PostLocalVar,
+				    PreGlobalArr , PreGlobalVar,
+				    PreLocalArr  , PreLocalVar,
+				    XCL, PostWs, PreWs).
+
+%----------------------------------------------------------------------------
+% The witnesses are not updated yet. It will be done by the parent.
+%----------------------------------------------------------------------------
+lazy_backward_propagate(Id, PostVarIndex , PreVarIndex,_,_,_,_,_,_,_,_,_XCL,
+			/* child's witness (post-state) */
+			w(PostVarIndex,_,WGA,WGV,WLA,WLV,WAR),
+			/* child's witness (pre-state) */
+			w(PreVarIndex,Id,WGA,WGV,WLA,WLV,WAR)):-
+        debug_message("\tLAZY: witness not updated yet %.\n",[Id]),
+        !.	
+
+%------------------------------------------------------------------------------
+% backward_propagate_witness: Generate a pre-state witness from a
+% post-state witness
+%------------------------------------------------------------------------------
+backward_propagate_witness(FNameOfChild , FNameOfParent,
+			   PostVarIndex, PreVarIndex,
+			   PostGlobalArr, PostGlobalVar,
+			   PostLocalArr, PostLocalVar,
+			   PreGlobalArr, PreGlobalVar,
+			   PreLocalArr, PreLocalVar,
+			   XCL,
+			   /* child's witness (post-state) */
+			   w(PostVarIndex,Id,
+			     PostWGlobalArr, PostWGlobalVar,
+			     PostWLocalArr , PostWLocalVar,PostArrRef),
+			   /* parent's witness (pre-state) */ 
+			   w(PreVarIndex,Id,
+			     PreWGlobalArr, PreWGlobalVar,
+			     PreWLocalArr , PreWLocalVar,PreArrRef)) :-
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 2\n",[]),
+#endif	/*PRE_DEBUG*/
+	fcopy_term(t(PostGlobalArr , PostGlobalVar,
+		     PostLocalArr  , PostLocalVar,
+		     XCL,
+		     PreGlobalArr  , PreGlobalVar,
+		     PreLocalArr   , PreLocalVar  ),
+		   t(PostGlobalArr1, PostGlobalVar1,
+		     PostLocalArr1 , PostLocalVar1,
+		     XCL1,
+		     PreGlobalArr1 , PreGlobalVar1,
+		     PreLocalArr1  , PreLocalVar1)),	
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 3\n",[]),
+#endif  /*PRE_DEBUG*/
+        %----------------------------------------------------------------------
+        % Relate between child witness and parent witness
+        % ----------------------------------------------------------------------
+        % FIXME: check if we need constraint_symbolic_arrays_SAT_check_form/3
+        constraint_symbolic_with_array_update_subst(XCL1,[],ArrRef),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 4\n",[]),
+#endif  /*PRE_DEBUG*/
+	%----------------------------------------------------------------------
+	% Array references are used to generate pre-state, by being
+	% appended with the array references of the post-state
+	%----------------------------------------------------------------------
+	make_empty_list_if_freevar(PostArrRef),
+
+	append(ArrRef, PostArrRef, PreArrRef),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 5\n",[]),
+#endif  /*PRE_DEBUG*/
+%	dump([PostWGlobalArr, PostWGlobalVar, PostWLocalArr , PostWLocalVar]),
+%	dump([PostGlobalArr1, PostGlobalVar1, PostLocalArr1 , PostLocalVar1]),
+%	dump([PreGlobalArr1 , PreGlobalVar1 , PreLocalArr1  , PreLocalVar1]),	
+
+        %----------------------------------------------------------------------
+        % Relate between child variables and child witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfChild,
+				     PostWGlobalArr , PostWGlobalVar,
+	                             PostWLocalArr  , PostWLocalVar,
+                                     PostGlobalArr1 , PostGlobalVar1,
+				     PostLocalArr1  , PostLocalVar1),
+        %----------------------------------------------------------------------
+        % Relate between parent variables and parent witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfParent,
+				     PreWGlobalArr,  PreWGlobalVar,
+				     PreWLocalArr ,  PreWLocalVar ,
+				     PreGlobalArr1,  PreGlobalVar1,
+				     PreLocalArr1 ,  PreLocalVar1 ),
+%	dump([PreWGlobalArr , PreWGlobalVar , PreWLocalArr  , PreWLocalVar]),
+	
+	!.  
+backward_propagate_witness(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("backward_propagate_witness/15\n",[]).
+
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+%%%-------------------------------------------------------------------------
+% Here, the master process makes a request to the slave
+%%%-------------------------------------------------------------------------
+pipe_master_backward_propagate_witness(/*in*/PostVarIndex , /*in*/PreVarIndex,
+				       /*in*/FNameOfChild , /*in*/FNameOfParent, 
+				       /*in*/PostGlobalArr, /*in*/PostGlobalVar,
+				       /*in*/PostLocalArr , /*in*/PostLocalVar,
+				       /*in*/PreGlobalArr , /*in*/PreGlobalVar,
+				       /*in*/PreLocalArr  , /*in*/PreLocalVar,
+				       /*in*/XCL,
+				       /*in*/PostWitnesses, /*out*/PreWitnesses):-
+#ifdef   PROFILE
+         ctime(MsgTimeStamp1),
+         write_dump_slave("in_state2(%,%,%,%,%,%,%,%,%,%,%,%,%,%,%) . \n",
+		    [PostVarIndex,PreVarIndex,FNameOfChild, FNameOfParent, 
+		     PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+		     PreGlobalArr ,PreGlobalVar ,PreLocalArr ,PreLocalVar,
+		     XCL, PostWitnesses,
+		     MsgTimeStamp1]),
+#else
+         write_dump_slave("in_state2(%,%,%,%,%,%,%,%,%,%,%,%,%,%) . \n",
+		    [PostVarIndex,PreVarIndex,FNameOfChild, FNameOfParent, 
+		     PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+		     PreGlobalArr ,PreGlobalVar ,PreLocalArr ,PreLocalVar,
+		     XCL, PostWitnesses]),
+#endif   /*PROFILE*/	 		    	 
+	 read_from_dump_slave(X),
+	 process_slave_output(X,reply_args(PreWitnesses)).
+#endif /*defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)*/
+
+#ifdef   ENCODE_CHILD_PARENT
+%------------------------------------------------------------------------------
+% backward_propagate_witness: Generate a (ENCODED) pre-state witness
+% from a (ENCODED) post-state witness. 
+% ------------------------------------------------------------------------------
+backward_propagate_witness2(PostVarIndex , PreVarIndex,
+			    FNameOfChild , FNameOfParent,
+			    PostGlobalArr, PostGlobalVar,
+			    PostLocalArr , PostLocalVar,
+			    PreGlobalArr , PreGlobalVar,
+			    PreLocalArr  , PreLocalVar,
+			    XCL,
+			    /* child's witness (post-state) */
+			    /*in*/w(PostVarIndex,Id,
+				    PostWGlobalArrX, PostWGlobalVarX,
+				    PostWLocalArrX , PostWLocalVarX,PostWArrRefX),
+			    /* parent's witness (pre-state) */ 
+			    /*out*/w(PreVarIndex,Id,
+				     PreWGlobalArrX , PreWGlobalVarX,
+				     PreWLocalArrX  , PreWLocalVarX, PreWArrRefX)) :-
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 1 \n", []),
+#endif	
+	decode_witnesses(FNameOfChild,
+			 /* encoded post-state witness */
+			 PostWGlobalArrX, PostWGlobalVarX,
+			 PostWLocalArrX , PostWLocalVarX,
+			 PostWArrRefX,
+			 /* decoded post-state witness */
+			 PostWGlobalArr, PostWGlobalVar,
+			 PostWLocalArr , PostWLocalVar,
+			 PostWArrRef),	
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 2 \n", []),
+#endif	
+	fcopy_term(t(PostGlobalArr , PostGlobalVar ,
+		     PostLocalArr  , PostLocalVar  ,
+                     XCL,
+		     PreGlobalArr  , PreGlobalVar  ,
+		     PreLocalArr   , PreLocalVar   ),
+		   t(PostGlobalArr1, PostGlobalVar1,
+		     PostLocalArr1 , PostLocalVar1 ,
+                     XCL1,
+		     PreGlobalArr1 , PreGlobalVar1 ,
+		     PreLocalArr1  , PreLocalVar1  )),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 3 \n", []),
+#endif
+        %----------------------------------------------------------------------
+        % Relate between child witness and parent witness
+        %----------------------------------------------------------------------
+        % FIXME: check if we need constraint_symbolic_arrays_SAT_check_form/3
+        constraint_symbolic_with_array_update_subst(XCL1,[],ArrRef),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 4\n",[]),
+#endif	
+	%----------------------------------------------------------------------
+	% Array references are used to generate pre-state, by being
+	% appended with the array references of the post-state
+	%----------------------------------------------------------------------
+	make_empty_list_if_freevar(PostWArrRef),
+	
+	append(ArrRef, PostWArrRef, PreWArrRef),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 5\n",[]),
+#endif
+        %----------------------------------------------------------------------
+        % Relate between child variables and child witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfChild,
+				     PostWGlobalArr , PostWGlobalVar,
+	                             PostWLocalArr  , PostWLocalVar,
+                                     PostGlobalArr1 , PostGlobalVar1,
+				     PostLocalArr1  , PostLocalVar1),
+        %----------------------------------------------------------------------
+        % Relate between parent variables and parent witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfParent,
+				     PreWGlobalArr,  PreWGlobalVar,
+				     PreWLocalArr ,  PreWLocalVar ,
+				     PreGlobalArr1,  PreGlobalVar1,
+				     PreLocalArr1 ,  PreLocalVar1 ),
+#ifdef  PRE_DEBUG
+        print_message("PRE operator (construct_witnesses) 6\n",[]),
+#endif
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% Here it's done dump for grabbing the witnesses' constraints
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+        encode_witnesses(FNameOfParent,
+			 /* decoded pre-state witness */
+			 PreWGlobalArr  , PreWGlobalVar,
+			 PreWLocalArr   , PreWLocalVar,
+			 PreWArrRef     ,			 
+			 /* encoded pre-state witness */
+			 PreWGlobalArrX , PreWGlobalVarX,
+			 PreWLocalArrX  , PreWLocalVarX,
+			 PreWArrRefX).
+backward_propagate_witness2(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("backward_propagate_witness2/15\n",[]).
+%------------------------------------------------------------------------
+#endif  /*ENCODE_CHILD_PARENT*/
+%------------------------------------------------------------------------
+
+%------------------------------------------------------------------------------------
+% backward_propagation_witnesses_across_abstraction(+,+UpdGlobalArr,...,+Ws,-AbsWs)
+%------------------------------------------------------------------------------------
+% After the backward traversal of the loop has finished, we need to abstract 
+% any witness which is not invariant. For instance,
+%
+% // during the update of the witness i>0 and i<n with context i=0 we get error!
+% i=0; n=10;
+% // witness here is something like i>0 and i<n
+% while (i<n){... if(i>0) ...}
+%------------------------------------------------------------------------------------
+backward_propagation_witnesses_across_abstraction(FName,
+						  UpdGA,UpdGV,UpdLA ,UpdLV,
+						  Witnesses, AbsWitnesses):-
+	apply_loop_abstraction_to_witnesses(Witnesses,
+					    FName,
+					    UpdGA, UpdGV, UpdLA ,UpdLV,
+					    AbsWitnesses).
+
+#ifdef  ENCODE_CHILD_PARENT
+%===================================================================================%
+% Version with encoded witnesses
+%===================================================================================%
+apply_loop_abstraction_to_witnesses([],_,_,_,_,_,[]).
+apply_loop_abstraction_to_witnesses([w(Index,Id,WGAX,WGVX,WLAX,WLVX,WArrRefX)|Ws],
+				    FName, UpdGA, UpdGV, UpdLA, UpdLV,
+				    [w(Index,Id,
+				       AbsWGAX,AbsWGVX,AbsWLAX,AbsWLVX,AbsArrRefX)|NewWs]):-
+        decode_witnesses(FName,
+			 WGAX ,WGVX,WLAX ,WLVX,WArrRefX,
+			 WGA  ,WGV ,WLA  ,WLV ,_WArrRef),
+	%---------------------------------------------------------------------
+	% FIXME: we lose all array witnesses !!
+	%---------------------------------------------------------------------	
+	keep_invariant_state(WGA,UpdGA,AbsWGA,_,_),
+	keep_invariant_state(WGV,UpdGV,AbsWGV,_,_),
+	keep_invariant_state(WLA,UpdLA,AbsWLA,_,_),
+	keep_invariant_state(WLV,UpdLV,AbsWLV,_,_),
+
+        encode_witnesses(FName,
+			 AbsWGA ,AbsWGV ,AbsWLA ,AbsWLV , [] /*AbsArrRef*/, 
+			 AbsWGAX,AbsWGVX,AbsWLAX,AbsWLVX, AbsArrRefX),
+	
+	apply_loop_abstraction_to_witnesses(Ws,FName,UpdGA ,UpdGV,UpdLA ,UpdLV,NewWs).
+%===================================================================================%
+#else
+%===================================================================================%
+apply_loop_abstraction_to_witnesses([],_,_,_,_,_,[]).
+apply_loop_abstraction_to_witnesses([w(Index,Id,WGA,WGV,WLA,WLV,_WArrRef)|Ws],
+				    FName, UpdGA, UpdGV, UpdLA, UpdLV,
+				    [w(Index,Id,AbsWGA,AbsWGV,AbsWLA,AbsWLV,[])|NewWs]):-
+	%---------------------------------------------------------------------
+	% FIXME: we lose all array witnesses !!
+	%---------------------------------------------------------------------	
+	keep_invariant_state(WGA,UpdGA,AbsWGA,_,_),
+	keep_invariant_state(WGV,UpdGV,AbsWGV,_,_),
+	keep_invariant_state(WLA,UpdLA,AbsWLA,_,_),
+	keep_invariant_state(WLV,UpdLV,AbsWLV,_,_),
+	apply_loop_abstraction_to_witnesses(Ws,
+					    FName, UpdGA ,UpdGV,UpdLA ,UpdLV,
+					    NewWs).
+#endif  /*ENCODE_CHILD_PARENT*/	
+
+%=============================================================================%
+%=============================================================================%
+% Operations with single witness without association with a variable
+%=============================================================================%
+%=============================================================================%
+
+#ifdef  PROFILE
+%------------------------------------------------------------------------------
+% satisfiable_witness_profiled 
+%------------------------------------------------------------------------------
+satisfiable_witness_profiled(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+			     WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef):-
+	ctime(T0),
+	% Counter to track the number of witnesses checked.
+	add_counter(num_checked_reps, 1),
+	satisfiable_witness_profiled_aux(GlobalArr, GlobalVar, LocalArr, LocalVar,
+					 ArrRef,
+					 WGlobalArr, WGlobalVar, WLocalArr,
+					 WLocalVar, WArrRef, T0).
+satisfiable_witness_profiled_aux(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+				 WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+				 WArrRef, T0) :-	
+	satisfiable_witness(GlobalArr , GlobalVar , LocalArr , LocalVar , ArrRef,
+			    WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef),
+	ctime(T1),
+	add_counter(check_reps_timing_ok,T1-T0),
+	add_counter(check_reps_ok,1).
+satisfiable_witness_profiled_aux(_GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+				 _ArrRef,
+				 _WGlobalArr, _WGlobalVar, _WLocalArr, _WLocalVar,
+				 _WArrRef, T0):-
+	
+	ctime(T1),
+	add_counter(check_reps_timing_failed,T1-T0),
+	add_counter(check_reps_failed,1),
+	!,
+	fail.
+#endif /*PROFILE*/
+
+%------------------------------------------------------------------------------
+% satisfiable_witness: Check if witness is satisfiable.
+%------------------------------------------------------------------------------
+satisfiable_witness(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+		    WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef) :-
+	current_tracer_flag(witnesses, y),
+	unsatisfiable_witness(GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef,
+			      WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef),
+	!,
+	fail.
+satisfiable_witness(_GlobalArr, _GlobalVar, _LocalArr, _LocalVar, _ArrRef,
+		    _WGlobalArr, _WGlobalVar, _WLocalArr, _WLocalVar, _WArrRef).
+unsatisfiable_witness(GlobalArr, GlobalVar, LocalArr, LocalVar,
+		      ArrRef,
+		      WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+		      WArrRef) :-
+	unsatisfiable_witness_aux(GlobalArr, GlobalVar, LocalArr, LocalVar,
+				  ArrRef,
+				  WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+				  WArrRef),
+#ifdef  PROFILE
+	add_counter(sub_reps_failed,1),
+#endif
+        true.
+unsatisfiable_witness_aux(GlobalArr, GlobalVar, LocalArr, LocalVar,
+			  ArrRef,
+			  WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+			  WArrRef) :-
+	GlobalArr = WGlobalArr,
+	GlobalVar = WGlobalVar,
+	LocalArr  = WLocalArr,
+	LocalVar  = WLocalVar,	
+	append(ArrRef, WArrRef, ArrRef1),
+	satisfiable_array_references(ArrRef1),
+	!, fail.
+unsatisfiable_witness_aux(_,_,_,_,_,_,_,_,_,_).
+			  
+
+%------------------------------------------------------------------------------
+% unify_witness_path_variables
+%------------------------------------------------------------------------------
+unify_witness_path_variables(_FName,
+			     WGlobalArr ,WGlobalVar ,WLocalArr ,WLocalVar,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	current_tracer_flag(witnesses,y),
+	WGlobalArr = SGlobalArr,
+	WGlobalVar = SGlobalVar,
+	WLocalArr  = SLocalArr,
+	WLocalVar  = SLocalVar,
+	!.
+unify_witness_path_variables(FName,
+			     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar):-
+	current_tracer_flag(witnesses,y),
+	report_error_unify_optimal_path(FName,
+					WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+ 					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),	
+	error_message("unify_witness_path_variables/9. \n",[]).
+unify_witness_path_variables(_,_,_,_,_,_,_,_,_):-
+	current_tracer_flag(witnesses,n),!.
+
+report_error_unify_optimal_path(_FName,WGlobalArr,_,_,_,SGlobalArr,_,_,_):-
+	not(WGlobalArr = SGlobalArr),!,
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        print_message("WGlobalArr;% \nSGlobalArr:%\n",[WGlobalArr, SGlobalArr]).
+#else
+	dump([WGlobalArr, SGlobalArr]).
+#endif
+report_error_unify_optimal_path(_FName,_,WGlobalVar,_,_,_,SGlobalVar,_,_):-
+	not(WGlobalVar = SGlobalVar),!,
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        print_message("WGlobalVar:% \nSGlobalVar:%\n",[WGlobalVar, SGlobalVar]).
+#else	
+	dump([WGlobalVar, SGlobalVar]).
+#endif
+report_error_unify_optimal_path(_FName,_,_,WLocalArr,_,_,_,SLocalArr,_):-
+	not(WLocalArr = SLocalArr),!,	
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        print_message("WLocalArr;% \nSLocalArr:%\n",[WLocalArr, SLocalArr]).
+#else	
+	dump([WLocalArr, SLocalArr]).
+#endif
+report_error_unify_optimal_path(_FName,_,_,_,WLocalVar,_,_,_,SLocalVar):-
+	not(WLocalVar = SLocalVar),!,
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        print_message("WLocalVar;% \nSLocalVar:%\n",[WLocalVar, SLocalVar]).
+#else	
+	dump([WLocalVar, SLocalVar]).
+#endif
+
+#ifdef  ENCODE_CHILD_PARENT
+init_encoded_witness([],[],[],[],[]).
+#endif /*ENCODE_CHILD_PARENT*/
+
+
+%----------------------------------------------------------------------------%
+% Once the witness is selected, then we update it by calling
+% construct_pre_single_witness
+%----------------------------------------------------------------------------%
+combine_update_single_witness(Id,ChildWitness,ParentWitness):-	
+	current_tracer_flag(witnesses,y), !, 
+	%----------------------------------------------
+	% This sanity check is temporary
+        %----------------------------------------------
+        sanityCheck_id_not_var(Id),
+	
+        % Here we can update the witness path once the combine
+        % operation has been performed, so we know which child (Id)
+        % was selected.
+
+	lazy_combine_gather_transition(Id,			      
+				       FNameOfChild,FNameOfParent,
+				       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				       SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+				       XCL),
+	
+	debug_message("\t---Updating witness using % ... \n",[Id]),	
+        construct_pre_single_witness(FNameOfChild, FNameOfParent, XCL,
+ 	                             % child variables 
+				     SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,			     
+				     % witness path at the child
+				     ChildWitness,		     
+			             % parent variables 
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,			     
+			             % witness path at the parent
+			             ParentWitness),
+	debug_message("\t   DONE. \n",[]).
+combine_update_single_witness(_,_,_):-
+	current_tracer_flag(witnesses,n), !.
+
+%----------------------------------------------------------------------------%
+% pre operation for witness: we update witness lazily.
+%----------------------------------------------------------------------------%
+lazy_pre_update_single_witness(Id,		 
+			       _,_,_,_ ,
+			       w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+			       _,_,_,_,
+			       w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef)):-
+	debug_message("\tLAZY: witness not updated yet for % \n",[Id]),
+	!.		     
+%----------------------------------------------------------------------------%
+% update witness: core operation
+%----------------------------------------------------------------------------%
+construct_pre_single_witness(FNameOfChild, FNameOfParent,
+			     XCL,
+		             % child variables 
+			     SGlobalArr1, SGlobalVar1,SLocalArr1,SLocalVar1,		     
+	                     % witness path at the child
+			     Witness1,		     
+	                     % parent variables
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,		     
+	                     % witness path at the parent
+			     Witness):-
+
+#if     defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+        %%%--------------------------------------------------------------------
+        %%% Here, the master process makes a request to the slave for updating
+        %%% witnesses
+        %%%--------------------------------------------------------------------
+        pipe_master_update_single_witness(FNameOfChild, FNameOfParent,
+					XCL,
+			                % child variables 
+					SGlobalArr1, SGlobalVar1,
+					SLocalArr1 , SLocalVar1,
+				        % (encoded) witness path at the child
+					Witness1,
+				        % parent variables
+					SGlobalArr, SGlobalVar,
+					SLocalArr , SLocalVar,
+				        % (encoded) witness path at the parent
+					Witness).	
+#elif   defined(ENCODE_CHILD_PARENT)
+        update_encoded_single_witness(FNameOfChild, FNameOfParent,
+				      XCL,
+			              % child variables 
+				      SGlobalArr1, SGlobalVar1,
+				      SLocalArr1 , SLocalVar1,
+			              % (encoded) witness path at the child
+				      Witness1,
+			              % parent variables
+				      SGlobalArr, SGlobalVar,
+				      SLocalArr , SLocalVar,
+			              % (encoded) witness path at the parent
+				      Witness).
+#else
+        update_single_witness(FNameOfChild,FNameOfParent,
+			      XCL,
+                              % child variables
+			      SGlobalArr1,SGlobalVar1,
+			      SLocalArr1 ,SLocalVar1,
+			      % witnesses at the child
+			      Witness1,
+ 		              % parent variables
+			      SGlobalArr ,SGlobalVar,
+			      SLocalArr  ,SLocalVar,
+		              % witnesses at the parent
+			      Witness).
+#endif  /*PIPEDUMP || PIPEDUMP_AND_ANSWERS*/
+
+#if    defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS)
+%%%--------------------------------------------------------------------
+%%% Here, the master process makes a request to the slave 
+%%%--------------------------------------------------------------------
+pipe_master_update_single_witness(/*+*/FNameOfChild, /*+*/FNameOfParent,
+				  /*+*/XCL,
+			          % child variables
+				  /*+*/SGlobalArr1,/*+*/SGlobalVar1,
+				  /*+*/SLocalArr1,/*+*/SLocalVar1,
+				  % (encoded) witnesses at the child
+				  /*+*/w(WGlobalArrX,WGlobalVarX,
+				         WLocalArrX,WLocalVarX,WArrRefX),
+				  % parent variables
+				  /*+*/SGlobalArr,/*+*/SGlobalVar,
+				  /*+*/SLocalArr ,/*+*/SLocalVar,				 
+				  % (encoded) witnesses at the parent
+				  /*-*/w(WGlobalArrY,WGlobalVarY,
+				         WLocalArrY,WLocalVarY,WArrRefY)				 
+				):-							
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),	
+	write_dump_slave("in_state2(%,%,%,%,%,%,%,%,%,%,%,%,%,%,%,%,%) .\n",
+                   [FNameOfChild,FNameOfParent, XCL,
+		    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,		    
+		    WGlobalArrX, WGlobalVarX, WLocalArrX, WLocalVarX,WArrRefX,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    MsgTimeStamp1]),
+#else
+	write_dump_slave("in_state2(%,%,%,%,%,%,%,%,%,%,%,%,%,%,%,%) .\n",
+                   [FNameOfChild,FNameOfParent, XCL,
+		    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,		    
+		    WGlobalArrX, WGlobalVarX, WLocalArrX, WLocalVarX,WArrRefX,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar]),
+#endif /*PROFILE*/			    
+	read_from_dump_slave(X),
+	process_slave_output(X,
+			     reply_args(WGlobalArrY, WGlobalVarY,
+					WLocalArrY , WLocalVarY , WArrRefY)).
+#endif  /*PIPEDUMP || PIPEDUMP_AND_ANSWERS*/
+
+
+#ifdef  ENCODE_CHILD_PARENT
+update_encoded_single_witness(/*+*/FNameOfChild,/*+*/FNameOfParent,
+			      /*+*/XCL,
+		              % child variables
+ 		              /*+*/SGlobalArr1,/*+*/SGlobalVar1,
+		              /*+*/SLocalArr1,/*+*/SLocalVar1,
+		              % (encoded) witnesses at the child
+		              /*+*/w(PostWGlobalArrX,PostWGlobalVarX,
+				     PostWLocalArrX,PostWLocalVarX,
+				     PostWArrRefX),
+  		              % parent variables
+		              /*+*/SGlobalArr,/*+*/SGlobalVar,
+		              /*+*/SLocalArr ,/*+*/SLocalVar,				 
+		              % (encoded) witnesses at the parent
+		              /*-*/w(PreWGlobalArrX, PreWGlobalVarX,
+				     PreWLocalArrX, PreWLocalVarX,
+				     PreWArrRefX)) :-				 
+
+        decode_witnesses(FNameOfChild,
+			 PostWGlobalArrX,PostWGlobalVarX,
+			 PostWLocalArrX ,PostWLocalVarX,
+			 PostWArrRefX,
+			 PostWGlobalArr,PostWGlobalVar,
+			 PostWLocalArr ,PostWLocalVar,
+			 PostWArrRef),
+#ifdef  PROFILE
+        ctime(Time0),	
+#endif		
+        %----------------------------------------------------------------------
+        % Relate between child witness and parent witness
+        %----------------------------------------------------------------------
+        constraint_symbolic_with_array_update_subst(XCL,[],ArrRef),
+	
+	% Generate new array references list by simple append
+	make_empty_list_if_freevar(PostWArrRef),
+	append(ArrRef, PostWArrRef, PreArrRef),
+
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(pre_phase_3,Time1-Time0),
+	ctime(Time2),	
+#endif		
+        %----------------------------------------------------------------------
+        % Relate between child variables and child witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfChild,
+				     PostWGlobalArr, PostWGlobalVar,
+				     PostWLocalArr , PostWLocalVar,
+				     SGlobalArr1   , SGlobalVar1,
+				     SLocalArr1    , SLocalVar1),
+
+        %----------------------------------------------------------------------
+        % Relate between parent variables and parent witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfParent,
+				     PreWGlobalArr, PreWGlobalVar,
+				     PreWLocalArr , PreWLocalVar,
+				     SGlobalArr   , SGlobalVar,
+				     SLocalArr    , SLocalVar),
+#ifdef  PROFILE
+        ctime(Time3),
+	add_counter(pre_phase_4,Time3-Time2),
+#endif	
+	% Here it's done dump for grabbing the witnesses' constraints
+        encode_witnesses(FNameOfParent,
+			 PreWGlobalArr,PreWGlobalVar,
+			 PreWLocalArr,PreWLocalVar,
+			 PreArrRef,
+			 PreWGlobalArrX,PreWGlobalVarX,
+			 PreWLocalArrX,PreWLocalVarX,
+			 PreWArrRefX).
+#else
+update_single_witness(/*+*/FNameOfChild,/*+*/FNameOfParent,
+		      /*+*/XCL,
+		      % child variables
+		      /*+*/SGlobalArr1,/*+*/SGlobalVar1,
+		      /*+*/SLocalArr1 ,/*+*/SLocalVar1,
+		      % witnesses at the child
+		      /*+*/w(WGlobalArr1,WGlobalVar1,
+		   	     WLocalArr1 ,WLocalVar1,WArrRef1),
+		      % parent variables
+		      /*+*/SGlobalArr,/*+*/SGlobalVar,
+		      /*+*/SLocalArr ,/*+*/SLocalVar,
+		      % witnesses at the parent
+		      /*-*/w(WGlobalArr,WGlobalVar,
+			     WLocalArr ,WLocalVar ,WArrRef)):-
+#ifdef  PROFILE
+        ctime(Time0),	
+#endif  /*PROFILE*/
+        %----------------------------------------------------------------------
+        % Relate between child witness and parent witness 
+        %----------------------------------------------------------------------
+        constraint_symbolic_with_array_update_subst(XCL,[],ArrRef),
+
+	% Generate new array references list by simple append
+	make_empty_list_if_freevar(WArrRef1),
+	append(ArrRef, WArrRef1, WArrRef),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(pre_phase_3,Time1-Time0),
+#ifdef  PRE_DEBUG		
+	print_message("PRE operator 3 \n",[]),
+#endif
+	ctime(Time2),	
+#endif
+        %----------------------------------------------------------------------
+        % Relate between child variables and child witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfChild,
+				     /* child's witness */
+				     WGlobalArr1,  WGlobalVar1,
+				     WLocalArr1,   WLocalVar1,
+				     /* child's variables */ 
+				     SGlobalArr1, SGlobalVar1,
+				     SLocalArr1,  SLocalVar1),
+        %----------------------------------------------------------------------
+        % Relate between parent variable and parent witness
+        %----------------------------------------------------------------------
+        unify_witness_path_variables(FNameOfParent,
+				     /* parent's witness */
+				     WGlobalArr,  WGlobalVar,
+				     WLocalArr,   WLocalVar,
+				     /* parent's variables */ 
+				     SGlobalArr, SGlobalVar,
+				     SLocalArr,  SLocalVar),
+#ifdef  PROFILE
+        ctime(Time3),
+	add_counter(pre_phase_4,Time3-Time2),
+#endif  /*PROFILE  */
+#ifdef  PRE_DEBUG		
+	print_message("PRE operator 4\n",[]),
+#endif         
+        true.
+#endif  /* ENCODE_CHILD_PARENT*/
+
+%------------------------------------------------------------------------------------
+% backward_propagation_witness_across_abstraction(+,+UpdGlobalArr,...,+Ws,-AbsWs)
+%------------------------------------------------------------------------------------
+% Same that backward_propagation_witnesses_across_abstraction/7 but
+% for WCET witness.
+%------------------------------------------------------------------------------------
+% NOTE: For WCET the witness is already decoded at this point.
+%------------------------------------------------------------------------------------
+% #ifdef  ENCODE_CHILD_PARENT
+% %===================================================================================%
+% % Version with encoded witnesses
+% %===================================================================================%
+% backward_propagation_witness_across_abstraction(FName,
+% 						UpdGA,UpdGV,UpdLA ,UpdLV,
+% 						w(WGAX,WGVX,WLAX,WLVX,WArrRefX),
+% 						w(AbsWGAX,AbsWGVX,AbsWLAX,AbsWLVX,AbsWArrRefX)):-
+%         decode_witnesses(FName,
+% 			 WGAX ,WGVX,WLAX ,WLVX,WArrRefX,
+% 			 WGA  ,WGV ,WLA  ,WLV ,_WArrRef),	
+% 	%---------------------------------------------------------------------
+% 	% FIXME: we lose all array witnesses !!
+% 	%---------------------------------------------------------------------	
+% 	keep_invariant_state(WGA,UpdGA,AbsWGA,_,_),
+% 	keep_invariant_state(WGV,UpdGV,AbsWGV,_,_),
+% 	keep_invariant_state(WLA,UpdLA,AbsWLA,_,_),
+% 	keep_invariant_state(WLV,UpdLV,AbsWLV,_,_),
+%         encode_witnesses(FName,
+% 			 AbsWGA ,AbsWGV ,AbsWLA ,AbsWLV , [] /*AbsArrRef*/, 
+% 			 AbsWGAX,AbsWGVX,AbsWLAX,AbsWLVX, AbsWArrRefX).
+% #else
+backward_propagation_witness_across_abstraction(_,
+						UpdGA,UpdGV,UpdLA ,UpdLV,
+						w(WGA,WGV,WLA,WLV,_WArrRef),
+						w(AbsWGA,AbsWGV,AbsWLA,AbsWLV,[])):-
+	%---------------------------------------------------------------------
+	% FIXME: we lose all array witnesses !!
+	%---------------------------------------------------------------------	
+	keep_invariant_state(WGA,UpdGA,AbsWGA,_,_),
+	keep_invariant_state(WGV,UpdGV,AbsWGV,_,_),
+	keep_invariant_state(WLA,UpdLA,AbsWLA,_,_),
+	keep_invariant_state(WLV,UpdLV,AbsWLV,_,_).
+%#endif  /*ENCODE_CHILD_PARENT*/
+	
+
+%=============================================================================%
+%=============================================================================%
+% Auxiliary predicates
+%=============================================================================%
+%=============================================================================%
+get_witness_id(w(_I,Id,_W1,_W2,_W3,_W4,_W5),Id).
+
+%-----------------------------------------------------------------------------%
+% delete_nth_witness_list(Ws,I,FName,NewWs)
+% NewWs is like Ws but all witnesses with index I are deleted.
+%-----------------------------------------------------------------------------%
+delete_nth_witness_list(Ws,I,_FName,Ws):-
+	I < 0,
+	!.
+delete_nth_witness_list([],_,_,[]):- !.
+delete_nth_witness_list([w(J,_,_,_,_,_,_)|Rs],I,_,Rs):-
+	I=J,
+	!.
+delete_nth_witness_list([w(J,Id,A,B,C,D,E)|Rs],I,FName,
+			[w(J,Id,A,B,NewC,NewD,E)|Zs]):-
+	!,
+        % only care about local variables (C and D)
+        % global and arrref are deleted by delete_global_witnesses/2	
+#ifdef  ENCODE_CHILD_PARENT
+% FIXME: We should be able to delete any constraint belonging to a
+% local witness that uses the return value without decode and encode
+% (too expensive)
+	decode_witnesses_aux(C,FName,array,C0),	
+	decode_witnesses_aux(D,FName,var  ,D0),
+	delete_nth_witness_list_aux(C0,D0,I,NewC0,NewD0),
+	encode_witnesses_aux(NewC0,FName,array,NewC),	
+	encode_witnesses_aux(NewD0,FName,var  ,NewD),
+%       filter_encoded_constraint(C,v(I),NewC),
+%       filter_encoded_constraint(D,v(I),NewD),
+#else
+	delete_nth_witness_list_aux(C,D,I,NewC,NewD),
+#endif  /*ENCODE_CHILD_PARENT*/
+	delete_nth_witness_list(Rs,I,FName,Zs).
+
+%-------------------------------------------------------------------------%
+% delete_nth_witness_list_aux(+Xs,+Ys,+I,-NXs,-Ys)
+%-------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_delete_nth_witness_list_aux(I):-
+	set_counter(initial_index_local,18),	
+	delete_nth_witness_list_aux([X1,X2,X3,X4],[Y1,Y2,Y3,Y4,Y5],
+				    I,NewXs,NewYs),
+	print_message("% % -> % % \n",[[X1,X2,X3,X4],[Y1,Y2,Y3,Y4,Y5],
+				       NewXs,NewYs]).
+#endif  /*DEBUG_USE*/
+%-------------------------------------------------------------------------%
+delete_nth_witness_list_aux(Xs,Ys,I,NXs,Ys):-
+	counter_value(initial_index_local,LocalIndex),
+	RelI = I - (LocalIndex -1),
+        unmark_nth(1,RelI,Xs,NXs),
+	!.
+delete_nth_witness_list_aux(Xs,Ys,I,Xs,NYs):-
+	counter_value(initial_index_local,LocalIndex),
+	length(Xs,N),	
+	RelI = I - (LocalIndex-1)  - N ,
+	unmark_nth(1,RelI,Ys,NYs),
+	!.
+delete_nth_witness_list_aux(Xs,Ys,_I,Xs,Ys):-!.
+
+% #ifdef  ENCODE_CHILD_PARENT
+% %-------------------------------------------------------------------------%
+% % filter_encoded_constraint(+,+,-)
+% % Filter any constraint that contains the return value
+% %-------------------------------------------------------------------------%
+% #ifdef  DEBUG_USE
+% test_filter_encoded_constraint(I):-
+% 	Cs = [assign(v(18),plus(v(12),1)),
+% 	      gt(v(13),v(2)),
+% 	      assign(v(21),v(18))],
+% 	filter_encoded_constraint(Cs,v(I),NewCs),
+% 	print_message("% ->\n%\n",[Cs,NewCs]).
+% #endif  /*DEBUG_USE*/
+% %-------------------------------------------------------------------------%
+% filter_encoded_constraint([],_,[]):-!.
+% filter_encoded_constraint([C|Cs],X,[C|NCs]):-
+% 	search_term_constraint(C,X),
+% 	!,
+% 	filter_encoded_constraint(Cs,X,NCs).
+% filter_encoded_constraint([_|Cs],X,NCs):-
+% 	!,
+% 	filter_encoded_constraint(Cs,X,NCs).
+% %-------------------------------------------------------------------------%
+% % search_term_constraint(+C,+X)
+% %-------------------------------------------------------------------------%
+% % Fail if the term X is in constraint C
+% %-------------------------------------------------------------------------%
+% search_term_constraint(C,_):-
+% 	myvar(C),
+% 	!.
+% search_term_constraint(C,X):-
+% 	C = X,
+% 	!,
+% 	fail.
+% search_term_constraint(C,_):-
+% 	atomic(C),
+% 	!.
+% search_term_constraint(C,X):-
+% 	functor(C,F,_),
+% 	!,
+% 	C =.. [F|Args],
+% 	search_term_constraint_args(Args,X).
+
+% search_term_constraint_args([],_):-!.
+% search_term_constraint_args([A|As],X):-
+% 	search_term_constraint(A,X),
+% 	search_term_constraint_args(As,X).
+% #endif  /*ENCODE_CHILD_PARENT*/
+			    			 
+%-------------------------------------------------------------------------%
+% delete_global_witnesses(Ws,NewWs)
+%-------------------------------------------------------------------------%
+% NewWs is as Ws but all witnesses associated with global variables
+% are deleted.
+%-------------------------------------------------------------------------%
+% Assume that global variables range from 1 to K and local
+% from K+1 to N where N is the total number of variables. Don't assume
+% that witnesses are sorted.
+%-------------------------------------------------------------------------%
+delete_global_witnesses([], []) :-!.
+delete_global_witnesses([w(J,Id,A,B,C,D,E)|Rs], 
+			[w(J,Id,FreshA,FreshB,C,D,FreshE)|Zs]):-
+	%----------------------------------------------------------%
+	% counter value precomputed for fast access
+	% IMPORTANT: we only include witnesses associated with local
+	%            variables!
+	%----------------------------------------------------------%	
+	counter_value(initial_index_local,LocalIndex),
+	J >= LocalIndex, !,	
+	%----------------------------------------------------------%
+	% ALSO VERY IMPORTANT: Moreover, we need to forget about the
+	% global components of the local witness
+	%----------------------------------------------------------%
+#ifdef  ENCODE_CHILD_PARENT 
+        FreshA=[],FreshB=[],FreshE=[],
+	% To avoid warnings
+	A=_,B=_,E=_,
+#else
+	copy_to_unbound_list(A ,FreshA),
+	copy_to_unbound_list(B ,FreshB),
+	copy_to_unbound_list(E ,FreshE),
+#endif  /*ENCODE_CHILD_PARENT*/	
+	delete_global_witnesses(Rs, Zs).
+delete_global_witnesses([_|Rs], Zs):-
+	delete_global_witnesses(Rs, Zs), !.
+
+%----------------------------------------------------------------------------%
+% add_fresh_witnesses(+Rs,+Ws,-NewWs)
+%----------------------------------------------------------------------------%
+% add Rs (a list of w(I)) in Ws
+% (a list of w(I,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,SArrRef)),
+% producing NewWs with same format than Ws.
+%----------------------------------------------------------------------------%
+#ifdef DEBUG_USE		
+test_add_fresh_witnesses:-
+	Rs= [w(3),w(5)],
+	PostWs = [w(1,_,[],[],[],[_,_,_],[]),w(2,_,[],[],[],[_,_,_],[])],
+	add_fresh_witnesses(Rs,PostWs,[],[],[],[_,_,_],NewPostWs),
+	print_message("Adding % in %, the result is \n % \n",
+		      [Rs,PostWs,NewPostWs]).
+#endif /*DEBUG_USE*/
+%----------------------------------------------------------------------------%
+add_fresh_witnesses([],PostWs,_,_,_,_,PostWs).
+add_fresh_witnesses([w(I)|Ws],PostWs,GlobalArr,GlobalVar,LocalArr,LocalVar,Post2Ws):-
+#ifdef  ENCODE_CHILD_PARENT
+        % We avoid calling encode_witnesses/11 since the witnesses are
+        % unconstrained at this moment.
+	W = w(I,_Id,[],[],[],[],[]),
+	      
+#else
+	copy_to_unbound_list(GlobalArr,FreshGlobalArr),
+	copy_to_unbound_list(GlobalVar,FreshGlobalVar),
+	copy_to_unbound_list(LocalArr ,FreshLocalArr),
+	copy_to_unbound_list(LocalVar ,FreshLocalVar),
+	W = w(I,_Id,
+	      FreshGlobalArr,FreshGlobalVar,FreshLocalArr,FreshLocalVar,[] /*_FreshArrRef*/),
+#endif  /*ENCODE_CHILD_PARENT*/
+        %----------------------------------------------------------------------
+	% We insert R into the right position in a sorted list
+        %----------------------------------------------------------------------
+	add_witnesses_sorted(PostWs,W,Post1Ws),	
+	add_fresh_witnesses(Ws,Post1Ws,GlobalArr,GlobalVar,LocalArr,LocalVar,Post2Ws).
+		      
+
+add_witnesses_sorted([],X, [X]):- !.
+add_witnesses_sorted([w(I,IdI,A,B,C,D,E)|Xs],
+		     w(J,IdJ,F,G,H,K,L),
+		     [w(I,IdI,A,B,C,D,E)|Ys]):-
+	J > I, !,
+	add_witnesses_sorted(Xs,w(J,IdJ,F,G,H,K,L),Ys).
+add_witnesses_sorted([w(I,IdI,A,B,C,D,E)|Xs],
+		     w(J,IdJ,F,G,H,K,L),
+		     [w(J,IdJ,F,G,H,K,L),
+		      w(I,IdI,A,B,C,D,E)|Xs]):-
+	J < I, !.
+add_witnesses_sorted([w(I,IdI,A,B,C,D,E)|Xs],
+		     w(J,_IdJ,_,_,_,_,_),
+		     [w(I,IdI,A,B,C,D,E)|Xs]):-
+	I = J, !.
+
+% %------------------------------------------------------------------------------
+% % collect_witness_symbols_from_constraints(+,+,-)
+% % ------------------------------------------------------------------------------
+% % Given a list of constraints where variables may be instantiated to
+% % symbols w(_), return a list of  w(_).
+% % ------------------------------------------------------------------------------
+% collect_witness_symbols_from_constraints([],Ws,Ws):-!.
+% collect_witness_symbols_from_constraints([C|Cs],Ws0,Ws2):-
+% 	collect_witness_symbols_from_constraint(C,Ws0,Ws1),
+% 	collect_witness_symbols_from_constraints(Cs,Ws1,Ws2).
+
+% collect_witness_symbols_from_constraint(C,Acc,Acc):-
+% 	var(C),!.
+% collect_witness_symbols_from_constraint(C,Acc,Acc):-
+% 	atomic(C),!.
+% collect_witness_symbols_from_constraint(C,Acc,Acc1):-
+% 	C = w(_),!,
+% 	unord_setunion([C],Acc,Acc1).
+% collect_witness_symbols_from_constraint(C,Acc,Acc1):-
+% 	functor(C,F,_A),!,
+% 	C =.. [F|Args],
+% 	collect_witness_symbols_from_constraints_args(Args,Acc,Acc1).
+
+% collect_witness_symbols_from_constraints_args([],Acc,Acc):-!.
+% collect_witness_symbols_from_constraints_args([A|As],Acc,Acc2):-
+% 	collect_witness_symbols_from_constraint(A,Acc,Acc1),
+% 	collect_witness_symbols_from_constraints_args(As,Acc1,Acc2).
+
+%--------------------------------------------------------------------------------
+% produce_markings_from_witnesses(Ws, VarsMark)
+%--------------------------------------------------------------------------------
+% Generate a marking list from a list of witnesses
+% It does not matter if the witnesses are encoded or not. It works in
+% both cases.
+%--------------------------------------------------------------------------------
+#ifdef DEBUG_USE
+test_produce_markings_from_witnesses:- 
+	Ws     = [w(1,_,_,_,_,_,_),w(3,_,_,_,_,_,_),w(5,_,_,_,_,_,_)],
+        VarsMark = [_,_,_,_,_],
+        once(produce_markings_from_witnesses(Ws, VarsMark)),
+	print_message("Ws %\nVarsMark % \n",[Ws,VarsMark]),
+	Ws1     = [w(1,_,_,_,_,_,_),w(7,_,_,_,_,_,_),w(10,_,_,_,_,_,_)],
+        VarsMark1 = [_,_,_,_,_,_,_,_,_,_],
+        once(produce_markings_from_witnesses(Ws1, VarsMark1)),
+	print_message("Ws %\nVarsMark % \n",[Ws1,VarsMark1]).
+#endif  /*DEBUG_USE*/
+%--------------------------------------------------------------------------------
+produce_markings_from_witnesses(Ws, VarsMark) :-
+	produce_markings_from_witnesses_aux(Ws, VarsMark, 1).
+
+produce_markings_from_witnesses_aux([], _, _).
+produce_markings_from_witnesses_aux([Rep|R], VarsMark, ListHeadPos) :-
+	functor(Rep,w,_), arg(1,Rep,I),
+	mark_position(I, ListHeadPos, VarsMark, RemainingVarsMark),
+	produce_markings_from_witnesses_aux(R, RemainingVarsMark, I+1).
+
+mark_position(I, I, [w(I)|VarsMark], VarsMark).
+mark_position(I, ListHeadPos, [_|VarsMark], RemainingVarsMark) :-
+	I > ListHeadPos,
+	mark_position(I, ListHeadPos+1, VarsMark, RemainingVarsMark).
+
+%------------------------------------------------------------------------------
+% get_witness(+,+,-): Get the witness of post-state variable of index
+% PostVarIndex.
+%------------------------------------------------------------------------------
+get_witness(PostVarIndex,
+	    [w(PostVarIndex,Id,
+	       GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef)|_],
+	     w(PostVarIndex,Id,
+	       GlobalArr, GlobalVar, LocalArr, LocalVar, ArrRef)) :- !.
+get_witness(PostVarIndex, [_|PostWitnesses], Witness) :-
+	get_witness(PostVarIndex, PostWitnesses, Witness).
+
+% Generate a list of w(I) terms from a list of markings (starting from
+% 1).
+gen_witnesses_from_markings([],_,[]).
+gen_witnesses_from_markings([M|Ms],I,[w(I)|Rs]):-
+	is_marked_term(M),
+	!,
+	gen_witnesses_from_markings(Ms,I+1,Rs).
+gen_witnesses_from_markings([_M|Ms],I,[_|Rs]):-
+	!,
+	gen_witnesses_from_markings(Ms,I+1,Rs).
+
+%---------------------------------------------------------------------%
+% lazy_combine_gather_transition(+,-,-,-,-,-,-,-,-,-,-,-)
+% Given a transition id, return (pre-state and post-state) symbolic
+% variables as well as XCL.
+%---------------------------------------------------------------------%
+lazy_combine_gather_transition(Id,			      
+			       /* FNameOfChild  */
+			       CallerFName,
+			       /* FNameOfParent */
+			       CalleeFName,
+			       /* Parent variables */
+			       SGlobalArr ,SGlobalVar,SCalleeLocalArr,SCalleeLocalVar,	
+			       /* Child variables  */
+			       SGlobalArr,SGlobalVar ,SLocalArr,SLocalVar,
+			       XCL):-
+	% Inter-procedural transition: RETURN	
+	trans(CallerFName,Id, _,
+	      _, _, SGlobalArr , SGlobalVar,
+	      _, _, SLocalArr  , SLocalVar,
+	      _,
+	      _, _, _SGlobalArr1, _SGlobalVar1,
+	      _, _, _SLocalArr1 , _SLocalVar1 ,
+	      XCL,
+	      [call(CalleeFName,_,_,_)],_,_), !,
+	%print_message("lazy_combine_gather_transition: RETURN \n",[]),	
+	freshlocalarrays(CalleeFName , SCalleeLocalArr),
+	freshlocalvars(  CalleeFName , SCalleeLocalVar).
+lazy_combine_gather_transition(IdX,
+			       /*FNameOfChild*/
+			       CalleeFName,
+			       /*FNameOfParent*/
+			       CallerFName,
+			       /* Parent variables */
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       /* Child variables */ 
+			       SGlobalArr,SGlobalVar,SCalleeLocalArr,SCalleeLocalVar,
+			       CCL):-
+
+	% Inter-procedural transition: CALL
+	IdX = call(Id), !,	
+	%print_message("lazy_combine_gather_transition: CALL \n",[]),	
+	trans(CallerFName,Id, _,
+	      _, _, SGlobalArr , SGlobalVar,
+	      _, _, SLocalArr  , SLocalVar,
+	      _,
+	      _, _, _SGlobalArr1, _SGlobalVar1,
+	      _, _, _SLocalArr1 , _SLocalVar1,
+	      _,
+	      [call(CalleeFName,_,_,CCL)],_,_),
+	freshlocalarrays(CalleeFName , SCalleeLocalArr),
+	freshlocalvars(  CalleeFName , SCalleeLocalVar).
+lazy_combine_gather_transition(Id,			      
+			       FName,FName,
+			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			       XCL):- !,
+	% print_message("lazy_combine_gather_transition: INTRA \n",[]),	
+	% Intra-procedural transition
+        trans(FName, Id, _, _, _, SGlobalArr, SGlobalVar,	    
+             _, _, SLocalArr , SLocalVar,_,	     
+	     _, _, SGlobalArr1, SGlobalVar1,
+	     _, _, SLocalArr1 , SLocalVar1,
+	     XCL, _, _, _).
+
+%----------------------------------------------------------------------------%
+% Wrapper to test satisfiability of witnesses after subsumption test
+% held.
+%----------------------------------------------------------------------------%
+% The following code is a completely mess and a nightmare. The
+% complexity comes from the different options to encode or not
+% the argument Answer.
+%----------------------------------------------------------------------------%
+subsumption_check_witnesses(FName,_PP,
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+			    AnswerX) :-
+	debug_message("Checking witnesses ... \n",[]),
+%-----------------------------------------------------------------------------
+#ifdef  ENCODE_MEMO
+%-----------------------------------------------------------------------------
+        % Only if the context is subsumed, we start decoding the
+        % witnesses to check them.
+#ifdef  PROFILE
+	ctime(T3),
+#endif	/*PROFILE*/
+#if     (UNFOLD_OPT==WCET)
+        decode_wcet_answer(FName,AnswerX,Answer),
+#endif  /*(UNFOLD_OPT==WCET)*/
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+#ifdef  ENCODE_CHILD_PARENT
+        % Here, we need to decode only witnesses!
+        AnswerX = answer(RepsX,
+  			 MarkedGlobalArr,MarkedGlobalVar,
+  			 MarkedLocalArr ,MarkedLocalVar),
+  	decode_multiple_witnesses(RepsX,FName,Reps),
+  	Answer  = answer(Reps,
+  			 MarkedGlobalArr,MarkedGlobalVar,
+ 			 MarkedLocalArr ,MarkedLocalVar),
+#else   /*ENCODE_CHILD_PARENT */
+        decode_analysis_answer(FName,AnswerX,Answer),
+#endif 	/*ENCODE_CHILD_PARENT*/
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+#ifdef  PROFILE
+        ctime(T4),
+	add_counter(decode_memo_2,T4-T3),
+#endif	/* PROFILE */
+%-----------------------------------------------------------------------------
+#else   /* ENCODE_MEMO */
+%-----------------------------------------------------------------------------
+%----------------------------------------
+#if     (UNFOLD_OPT==WCET)
+#ifdef  ENCODE_CHILD_PARENT
+%----------------------------------------
+#ifdef  PROFILE
+	ctime(T5),
+#endif	/* PROFILE */
+        decode_wcet_answer(FName,AnswerX,Answer),
+#ifdef  PROFILE
+        ctime(T6),
+	add_counter(decode_memo_2,T6-T5),
+#endif	/* PROFILE */
+#else   /*ENCODE_CHILD_PARENT*/	
+        Answer=AnswerX,FName=_,
+#endif  /*ENCODE_CHILD_PARENT*/	
+#endif  /*(UNFOLD_OPT==WCET)*/
+%----------------------------------------
+#if     (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+#ifdef  ENCODE_CHILD_PARENT
+%----------------------------------------
+#ifdef  PROFILE
+	ctime(T5),
+#endif	/* PROFILE */
+        % Here, we need to decode only witnesses!
+        AnswerX = answer(RepsX,
+  			 MarkedGlobalArr,MarkedGlobalVar,
+  			 MarkedLocalArr ,MarkedLocalVar),
+  	decode_multiple_witnesses(RepsX,FName,Reps),
+  	Answer  = answer(Reps,
+  			 MarkedGlobalArr,MarkedGlobalVar,
+ 			 MarkedLocalArr ,MarkedLocalVar),
+#ifdef  PROFILE
+        ctime(T6),
+	add_counter(decode_memo_2,T6-T5),
+#endif  /*PROFILE*/
+#else   /*ENCODE_CHILD_PARENT*/	
+        AnswerX=Answer, FName=_,
+#endif  /*ENCODE_CHILD_PARENT*/
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%-----------------------------------------------------------------------------
+#endif  /* ENCODE_MEMO */
+%-----------------------------------------------------------------------------
+% note here it's where we test satisfiability of the witnesses
+%-----------------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET)
+        wcet_check_subsumed_answer(GlobalArr,GlobalVar,LocalArr,LocalVar,
+				   ArrRef,Answer),	
+#elif   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+        analysis_check_subsumed_answer(GlobalArr,GlobalVar,LocalArr,LocalVar,
+	                               ArrRef, Answer),
+#elif   (UNFOLD_OPT==SAFETY) || (UNFOLD_OPT==TESTING)
+        %---------------------------------------------------------------------
+        % There is no answer (i.e., no witnesses)
+        % To prevent warnings
+        %---------------------------------------------------------------------
+#ifdef  ENCODE_CHILD_PARENT
+        AnswerX=_,
+#else
+        AnswerX=Answer,
+#endif  /*ENCODE_CHILD_PARENT*/
+#endif  /* (UNFOLD_OPT==WCET) */
+        true.
+

@@ -1,0 +1,2045 @@
+"dgraph/dGraphViewer.ml" 30 1885 1889 "dgraph/dGraphViewer.ml" 30 1885 1892
+type(
+  ('a -> 'b) -> 'a -> 'b
+)
+ident(
+  def $ "dgraph/dGraphViewer.ml" 31 1903 1903 --
+)
+"dgraph/dGraphViewer.ml" 30 1885 1893 "dgraph/dGraphViewer.ml" 30 1885 1894
+type(
+  'a -> 'b
+)
+ident(
+  def f "dgraph/dGraphViewer.ml" 30 1885 1895 "dgraph/dGraphViewer.ml" 30 1885 1902
+)
+"dgraph/dGraphViewer.ml" 30 1885 1895 "dgraph/dGraphViewer.ml" 30 1885 1896
+type(
+  'a
+)
+ident(
+  def x "dgraph/dGraphViewer.ml" 30 1885 1899 "dgraph/dGraphViewer.ml" 30 1885 1902
+)
+"dgraph/dGraphViewer.ml" 30 1885 1899 "dgraph/dGraphViewer.ml" 30 1885 1900
+type(
+  'a -> 'b
+)
+ident(
+  int_ref f "dgraph/dGraphViewer.ml" 30 1885 1893 "dgraph/dGraphViewer.ml" 30 1885 1894
+)
+"dgraph/dGraphViewer.ml" 30 1885 1901 "dgraph/dGraphViewer.ml" 30 1885 1902
+type(
+  'a
+)
+ident(
+  int_ref x "dgraph/dGraphViewer.ml" 30 1885 1895 "dgraph/dGraphViewer.ml" 30 1885 1896
+)
+"dgraph/dGraphViewer.ml" 30 1885 1899 "dgraph/dGraphViewer.ml" 30 1885 1902
+call(
+  tail
+)
+type(
+  'b
+)
+"dgraph/dGraphViewer.ml" 31 1903 1907 "dgraph/dGraphViewer.ml" 31 1903 1915
+type(
+  'a option -> 'a
+)
+ident(
+  def get_some "dgraph/dGraphViewer.ml" 33 1963 1963 --
+)
+"dgraph/dGraphViewer.ml" 31 1903 1932 "dgraph/dGraphViewer.ml" 31 1903 1933
+type(
+  'a
+)
+ident(
+  def t "dgraph/dGraphViewer.ml" 31 1903 1937 "dgraph/dGraphViewer.ml" 31 1903 1938
+)
+"dgraph/dGraphViewer.ml" 31 1903 1927 "dgraph/dGraphViewer.ml" 31 1903 1933
+type(
+  'a option
+)
+"dgraph/dGraphViewer.ml" 31 1903 1937 "dgraph/dGraphViewer.ml" 31 1903 1938
+type(
+  'a
+)
+ident(
+  int_ref t "dgraph/dGraphViewer.ml" 31 1903 1932 "dgraph/dGraphViewer.ml" 31 1903 1933
+)
+"dgraph/dGraphViewer.ml" 31 1903 1941 "dgraph/dGraphViewer.ml" 31 1903 1945
+type(
+  'a option
+)
+"dgraph/dGraphViewer.ml" 31 1903 1949 "dgraph/dGraphViewer.ml" 31 1903 1961
+type(
+  'a
+)
+"dgraph/dGraphViewer.ml" 31 1903 1918 "dgraph/dGraphViewer.ml" 31 1903 1961
+type(
+  'a option -> 'a
+)
+"dgraph/dGraphViewer.ml" 33 1963 1967 "dgraph/dGraphViewer.ml" 33 1963 1972
+type(
+  bool
+)
+ident(
+  def debug "dgraph/dGraphViewer.ml" 35 1982 1982 --
+)
+"dgraph/dGraphViewer.ml" 33 1963 1975 "dgraph/dGraphViewer.ml" 33 1963 1980
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 43 2168 2172 "dgraph/dGraphViewer.ml" 43 2168 2182
+type(
+  unit -> state
+)
+ident(
+  def init_state "dgraph/dGraphViewer.ml" 62 2602 2602 --
+)
+"dgraph/dGraphViewer.ml" 43 2168 2183 "dgraph/dGraphViewer.ml" 43 2168 2185
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 44 2188 2195 "dgraph/dGraphViewer.ml" 44 2188 2201
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 45 2204 2209 "dgraph/dGraphViewer.ml" 45 2204 2223
+type(
+  ?kind:Gtk.Tags.window_type ->
+  ?title:string ->
+  ?allow_grow:bool ->
+  ?allow_shrink:bool ->
+  ?decorated:bool ->
+  ?deletable:bool ->
+  ?focus_on_map:bool ->
+  ?icon:GdkPixbuf.pixbuf ->
+  ?icon_name:string ->
+  ?modal:bool ->
+  ?position:Gtk.Tags.window_position ->
+  ?resizable:bool ->
+  ?screen:Gdk.screen ->
+  ?type_hint:Gdk.Tags.window_type_hint ->
+  ?urgency_hint:bool ->
+  ?wm_name:string ->
+  ?wm_class:string ->
+  ?border_width:int ->
+  ?width:int -> ?height:int -> ?show:bool -> unit -> GWindow.window
+)
+ident(
+  ext_ref GWindow.window
+)
+"dgraph/dGraphViewer.ml" 46 2224 2238 "dgraph/dGraphViewer.ml" 46 2224 2242
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 46 2224 2251 "dgraph/dGraphViewer.ml" 46 2224 2255
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 47 2256 2270 "dgraph/dGraphViewer.ml" 47 2256 2284
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 48 2285 2306 "dgraph/dGraphViewer.ml" 48 2285 2310
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 48 2285 2323 "dgraph/dGraphViewer.ml" 48 2285 2327
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 48 2285 2328 "dgraph/dGraphViewer.ml" 48 2285 2330
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 45 2204 2209 "dgraph/dGraphViewer.ml" 48 2285 2330
+call(
+  stack
+)
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 50 2337 2344 "dgraph/dGraphViewer.ml" 50 2337 2350
+type(
+  GMisc.label
+)
+"dgraph/dGraphViewer.ml" 50 2337 2353 "dgraph/dGraphViewer.ml" 50 2337 2364
+type(
+  ?text:string ->
+  ?markup:string ->
+  ?use_underline:bool ->
+  ?mnemonic_widget:_#GObj.widget ->
+  ?justify:Gtk.Tags.justification ->
+  ?line_wrap:bool ->
+  ?pattern:string ->
+  ?selectable:bool ->
+  ?ellipsize:PangoEnums.ellipsize_mode ->
+  ?xalign:float ->
+  ?yalign:float ->
+  ?xpad:int ->
+  ?ypad:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GMisc.label
+)
+ident(
+  ext_ref GMisc.label
+)
+"dgraph/dGraphViewer.ml" 50 2337 2373 "dgraph/dGraphViewer.ml" 50 2337 2375
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 50 2337 2376 "dgraph/dGraphViewer.ml" 50 2337 2378
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 50 2337 2353 "dgraph/dGraphViewer.ml" 50 2337 2378
+call(
+  stack
+)
+type(
+  GMisc.label
+)
+"dgraph/dGraphViewer.ml" 51 2382 2385 "dgraph/dGraphViewer.ml" 51 2382 2391
+type(
+  GMisc.label
+)
+ident(
+  int_ref status "dgraph/dGraphViewer.ml" 50 2337 2344 "dgraph/dGraphViewer.ml" 50 2337 2350
+)
+"dgraph/dGraphViewer.ml" 51 2382 2385 "dgraph/dGraphViewer.ml" 51 2382 2406
+type(
+  bool -> unit
+)
+"dgraph/dGraphViewer.ml" 51 2382 2407 "dgraph/dGraphViewer.ml" 51 2382 2411
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 51 2382 2385 "dgraph/dGraphViewer.ml" 51 2382 2411
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 52 2413 2420 "dgraph/dGraphViewer.ml" 52 2413 2424
+type(
+  string option ref
+)
+"dgraph/dGraphViewer.ml" 52 2413 2427 "dgraph/dGraphViewer.ml" 52 2413 2430
+type(
+  string option -> string option ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"dgraph/dGraphViewer.ml" 52 2413 2431 "dgraph/dGraphViewer.ml" 52 2413 2435
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 52 2413 2427 "dgraph/dGraphViewer.ml" 52 2413 2435
+type(
+  string option ref
+)
+"dgraph/dGraphViewer.ml" 53 2439 2448 "dgraph/dGraphViewer.ml" 53 2439 2449
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 53 2439 2453 "dgraph/dGraphViewer.ml" 53 2439 2465
+type(
+  string array -> int
+)
+ident(
+  ext_ref Array.length
+)
+"dgraph/dGraphViewer.ml" 53 2439 2466 "dgraph/dGraphViewer.ml" 53 2439 2474
+type(
+  string array
+)
+ident(
+  ext_ref Sys.argv
+)
+"dgraph/dGraphViewer.ml" 53 2439 2453 "dgraph/dGraphViewer.ml" 53 2439 2474
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 53 2439 2475 "dgraph/dGraphViewer.ml" 53 2439 2476
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"dgraph/dGraphViewer.ml" 53 2439 2477 "dgraph/dGraphViewer.ml" 53 2439 2478
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 53 2439 2453 "dgraph/dGraphViewer.ml" 53 2439 2478
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 54 2482 2487 "dgraph/dGraphViewer.ml" 54 2482 2491
+type(
+  string option ref
+)
+ident(
+  int_ref file "dgraph/dGraphViewer.ml" 52 2413 2420 "dgraph/dGraphViewer.ml" 52 2413 2424
+)
+"dgraph/dGraphViewer.ml" 54 2482 2492 "dgraph/dGraphViewer.ml" 54 2482 2494
+type(
+  string option ref -> string option -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"dgraph/dGraphViewer.ml" 54 2482 2500 "dgraph/dGraphViewer.ml" 54 2482 2508
+type(
+  string array
+)
+ident(
+  ext_ref Sys.argv
+)
+"dgraph/dGraphViewer.ml" 54 2482 2510 "dgraph/dGraphViewer.ml" 54 2482 2511
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 54 2482 2500 "dgraph/dGraphViewer.ml" 54 2482 2512
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 54 2482 2495 "dgraph/dGraphViewer.ml" 54 2482 2512
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 54 2482 2487 "dgraph/dGraphViewer.ml" 54 2482 2512
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 53 2439 2442 "dgraph/dGraphViewer.ml" 55 2513 2520
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 56 2522 2534 "dgraph/dGraphViewer.ml" 56 2522 2535
+type(
+  string option ref -> string option
+)
+ident(
+  ext_ref Pervasives.!
+)
+"dgraph/dGraphViewer.ml" 56 2522 2535 "dgraph/dGraphViewer.ml" 56 2522 2539
+type(
+  string option ref
+)
+ident(
+  int_ref file "dgraph/dGraphViewer.ml" 52 2413 2420 "dgraph/dGraphViewer.ml" 52 2413 2424
+)
+"dgraph/dGraphViewer.ml" 56 2522 2534 "dgraph/dGraphViewer.ml" 56 2522 2539
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 57 2541 2555 "dgraph/dGraphViewer.ml" 57 2541 2561
+type(
+  GWindow.window
+)
+ident(
+  int_ref window "dgraph/dGraphViewer.ml" 44 2188 2195 "dgraph/dGraphViewer.ml" 44 2188 2201
+)
+"dgraph/dGraphViewer.ml" 58 2563 2578 "dgraph/dGraphViewer.ml" 58 2563 2582
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 56 2522 2525 "dgraph/dGraphViewer.ml" 58 2563 2584
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 53 2439 2442 "dgraph/dGraphViewer.ml" 58 2563 2584
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 52 2413 2416 "dgraph/dGraphViewer.ml" 58 2563 2584
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 51 2382 2385 "dgraph/dGraphViewer.ml" 58 2563 2584
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 50 2337 2340 "dgraph/dGraphViewer.ml" 58 2563 2584
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 44 2188 2191 "dgraph/dGraphViewer.ml" 58 2563 2584
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 62 2602 2606 "dgraph/dGraphViewer.ml" 62 2602 2615
+type(
+  string
+)
+ident(
+  def menu_desc "dgraph/dGraphViewer.ml" 72 2820 2820 --
+)
+"dgraph/dGraphViewer.ml" 62 2602 2618 "dgraph/dGraphViewer.ml" 70 2812 2818
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 72 2820 2824 "dgraph/dGraphViewer.ml" 72 2820 2836
+type(
+  state -> packing:(GObj.widget -> unit) -> unit
+)
+ident(
+  def update_state "dgraph/dGraphViewer.ml" 90 3312 3312 --
+)
+"dgraph/dGraphViewer.ml" 72 2820 2837 "dgraph/dGraphViewer.ml" 72 2820 2842
+type(
+  state
+)
+ident(
+  def state "dgraph/dGraphViewer.ml" 72 2820 2843 "dgraph/dGraphViewer.ml" 88 3273 3310
+)
+"dgraph/dGraphViewer.ml" 72 2820 2844 "dgraph/dGraphViewer.ml" 72 2820 2851
+type(
+  GObj.widget -> unit
+)
+ident(
+  def packing "dgraph/dGraphViewer.ml" 73 2854 2856 "dgraph/dGraphViewer.ml" 88 3273 3310
+)
+"dgraph/dGraphViewer.ml" 73 2854 2863 "dgraph/dGraphViewer.ml" 73 2854 2868
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 72 2820 2837 "dgraph/dGraphViewer.ml" 72 2820 2842
+)
+"dgraph/dGraphViewer.ml" 73 2854 2863 "dgraph/dGraphViewer.ml" 73 2854 2876
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 73 2854 2882 "dgraph/dGraphViewer.ml" 73 2854 2886
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 73 2854 2890 "dgraph/dGraphViewer.ml" 73 2854 2892
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 73 2854 2901 "dgraph/dGraphViewer.ml" 73 2854 2902
+type(
+  GPack.table
+)
+ident(
+  def t "dgraph/dGraphViewer.ml" 73 2854 2910 "dgraph/dGraphViewer.ml" 73 2854 2922
+)
+"dgraph/dGraphViewer.ml" 73 2854 2904 "dgraph/dGraphViewer.ml" 73 2854 2905
+type(
+  Content.view_container
+)
+"dgraph/dGraphViewer.ml" 73 2854 2900 "dgraph/dGraphViewer.ml" 73 2854 2906
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 73 2854 2895 "dgraph/dGraphViewer.ml" 73 2854 2906
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 73 2854 2910 "dgraph/dGraphViewer.ml" 73 2854 2911
+type(
+  GPack.table
+)
+ident(
+  int_ref t "dgraph/dGraphViewer.ml" 73 2854 2901 "dgraph/dGraphViewer.ml" 73 2854 2902
+)
+"dgraph/dGraphViewer.ml" 73 2854 2910 "dgraph/dGraphViewer.ml" 73 2854 2919
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 73 2854 2920 "dgraph/dGraphViewer.ml" 73 2854 2922
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 73 2854 2910 "dgraph/dGraphViewer.ml" 73 2854 2922
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 73 2854 2856 "dgraph/dGraphViewer.ml" 73 2854 2923
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 75 2931 2939 "dgraph/dGraphViewer.ml" 75 2931 2940
+type(
+  GPack.table
+)
+"dgraph/dGraphViewer.ml" 75 2931 2942 "dgraph/dGraphViewer.ml" 75 2931 2946
+type(
+  Content.view_container
+)
+ident(
+  def view "dgraph/dGraphViewer.ml" 83 3168 3172 "dgraph/dGraphViewer.ml" 85 3229 3251
+)
+"dgraph/dGraphViewer.ml" 75 2931 2939 "dgraph/dGraphViewer.ml" 75 2931 2946
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 75 2931 2939 "dgraph/dGraphViewer.ml" 75 2931 2957
+type(
+  GPack.table * Content.view_container
+)
+ident(
+  def content "dgraph/dGraphViewer.ml" 83 3168 3172 "dgraph/dGraphViewer.ml" 85 3229 3251
+)
+"dgraph/dGraphViewer.ml" 75 2931 2966 "dgraph/dGraphViewer.ml" 75 2931 2971
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 72 2820 2837 "dgraph/dGraphViewer.ml" 72 2820 2842
+)
+"dgraph/dGraphViewer.ml" 75 2931 2966 "dgraph/dGraphViewer.ml" 75 2931 2976
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 76 2982 2995 "dgraph/dGraphViewer.ml" 76 2982 2999
+type(
+  string
+)
+ident(
+  def file "dgraph/dGraphViewer.ml" 77 3003 3006 "dgraph/dGraphViewer.ml" 79 3078 3125
+)
+"dgraph/dGraphViewer.ml" 76 2982 2990 "dgraph/dGraphViewer.ml" 76 2982 2999
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 77 3003 3009 "dgraph/dGraphViewer.ml" 77 3003 3014
+type(
+  bool
+)
+ident(
+  int_ref debug "dgraph/dGraphViewer.ml" 33 1963 1967 "dgraph/dGraphViewer.ml" 33 1963 1972
+)
+"dgraph/dGraphViewer.ml" 77 3003 3020 "dgraph/dGraphViewer.ml" 77 3003 3026
+type(
+  (unit, out_channel, unit) format -> unit
+)
+ident(
+  ext_ref Printf.printf
+)
+"dgraph/dGraphViewer.ml" 77 3003 3027 "dgraph/dGraphViewer.ml" 77 3003 3048
+type(
+  (unit, out_channel, unit) format
+)
+"dgraph/dGraphViewer.ml" 77 3003 3020 "dgraph/dGraphViewer.ml" 77 3003 3048
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 77 3003 3006 "dgraph/dGraphViewer.ml" 77 3003 3048
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 78 3050 3053 "dgraph/dGraphViewer.ml" 78 3050 3058
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 72 2820 2837 "dgraph/dGraphViewer.ml" 72 2820 2842
+)
+"dgraph/dGraphViewer.ml" 78 3050 3072 "dgraph/dGraphViewer.ml" 78 3050 3076
+type(
+  string
+)
+ident(
+  int_ref file "dgraph/dGraphViewer.ml" 76 2982 2995 "dgraph/dGraphViewer.ml" 76 2982 2999
+)
+"dgraph/dGraphViewer.ml" 78 3050 3067 "dgraph/dGraphViewer.ml" 78 3050 3076
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 78 3050 3053 "dgraph/dGraphViewer.ml" 78 3050 3076
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 79 3078 3081 "dgraph/dGraphViewer.ml" 79 3078 3111
+type(
+  ?packing:(GObj.widget -> unit) ->
+  ?status:Dgraph.DGraphContainer.status ->
+  ?default_callbacks:bool ->
+  ?mk_global_view:((Dgraph.DGraphModel.DotG.V.t, Dgraph.DGraphModel.DotG.E.t,
+                    Dgraph.DGraphModel.cluster)
+                   Dgraph.DGraphModel.abstract_model -> Content.global_view) ->
+  ?mk_tree_view:((Content.Tree.V.t, Content.Tree.E.t,
+                  Dgraph.DGraphModel.cluster)
+                 Dgraph.DGraphModel.abstract_model -> Content.tree_view) ->
+  string -> GPack.table * Content.view_container
+)
+ident(
+  ext_ref Content.from_dot_with_commands
+)
+"dgraph/dGraphViewer.ml" 79 3078 3113 "dgraph/dGraphViewer.ml" 79 3078 3120
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphViewer.ml" 72 2820 2844 "dgraph/dGraphViewer.ml" 72 2820 2851
+)
+"dgraph/dGraphViewer.ml" 79 3078 3121 "dgraph/dGraphViewer.ml" 79 3078 3125
+type(
+  string
+)
+ident(
+  int_ref file "dgraph/dGraphViewer.ml" 76 2982 2995 "dgraph/dGraphViewer.ml" 76 2982 2999
+)
+"dgraph/dGraphViewer.ml" 79 3078 3081 "dgraph/dGraphViewer.ml" 79 3078 3125
+call(
+  stack
+)
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 78 3050 3053 "dgraph/dGraphViewer.ml" 79 3078 3125
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 77 3003 3006 "dgraph/dGraphViewer.ml" 79 3078 3125
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 80 3126 3134 "dgraph/dGraphViewer.ml" 80 3126 3138
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 81 3142 3145 "dgraph/dGraphViewer.ml" 81 3142 3150
+type(
+  exn -> GPack.table * Content.view_container
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"dgraph/dGraphViewer.ml" 81 3142 3151 "dgraph/dGraphViewer.ml" 81 3142 3160
+type(
+  exn
+)
+"dgraph/dGraphViewer.ml" 81 3142 3145 "dgraph/dGraphViewer.ml" 81 3142 3160
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 75 2931 2960 "dgraph/dGraphViewer.ml" 81 3142 3160
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 83 3168 3172 "dgraph/dGraphViewer.ml" 83 3168 3177
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 72 2820 2837 "dgraph/dGraphViewer.ml" 72 2820 2842
+)
+"dgraph/dGraphViewer.ml" 83 3168 3194 "dgraph/dGraphViewer.ml" 83 3168 3201
+type(
+  GPack.table * Content.view_container
+)
+ident(
+  int_ref content "dgraph/dGraphViewer.ml" 75 2931 2939 "dgraph/dGraphViewer.ml" 75 2931 2957
+)
+"dgraph/dGraphViewer.ml" 83 3168 3189 "dgraph/dGraphViewer.ml" 83 3168 3201
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 83 3168 3172 "dgraph/dGraphViewer.ml" 83 3168 3201
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 84 3203 3207 "dgraph/dGraphViewer.ml" 84 3203 3212
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 72 2820 2837 "dgraph/dGraphViewer.ml" 72 2820 2842
+)
+"dgraph/dGraphViewer.ml" 84 3203 3207 "dgraph/dGraphViewer.ml" 84 3203 3219
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 84 3203 3207 "dgraph/dGraphViewer.ml" 84 3203 3224
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 84 3203 3225 "dgraph/dGraphViewer.ml" 84 3203 3227
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 84 3203 3207 "dgraph/dGraphViewer.ml" 84 3203 3227
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 85 3229 3233 "dgraph/dGraphViewer.ml" 85 3229 3237
+type(
+  Content.view_container
+)
+ident(
+  int_ref view "dgraph/dGraphViewer.ml" 75 2931 2942 "dgraph/dGraphViewer.ml" 75 2931 2946
+)
+"dgraph/dGraphViewer.ml" 85 3229 3233 "dgraph/dGraphViewer.ml" 85 3229 3248
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 85 3229 3249 "dgraph/dGraphViewer.ml" 85 3229 3251
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 85 3229 3233 "dgraph/dGraphViewer.ml" 85 3229 3251
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 84 3203 3207 "dgraph/dGraphViewer.ml" 85 3229 3251
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 83 3168 3172 "dgraph/dGraphViewer.ml" 85 3229 3251
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 75 2931 2935 "dgraph/dGraphViewer.ml" 85 3229 3251
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 87 3253 3260 "dgraph/dGraphViewer.ml" 87 3253 3269
+type(
+  exn
+)
+"dgraph/dGraphViewer.ml" 88 3273 3280 "dgraph/dGraphViewer.ml" 88 3273 3285
+type(
+  bool
+)
+ident(
+  int_ref debug "dgraph/dGraphViewer.ml" 33 1963 1967 "dgraph/dGraphViewer.ml" 33 1963 1972
+)
+"dgraph/dGraphViewer.ml" 88 3273 3291 "dgraph/dGraphViewer.ml" 88 3273 3297
+type(
+  (unit, out_channel, unit) format -> unit
+)
+ident(
+  ext_ref Printf.printf
+)
+"dgraph/dGraphViewer.ml" 88 3273 3298 "dgraph/dGraphViewer.ml" 88 3273 3310
+type(
+  (unit, out_channel, unit) format
+)
+"dgraph/dGraphViewer.ml" 88 3273 3291 "dgraph/dGraphViewer.ml" 88 3273 3310
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 88 3273 3277 "dgraph/dGraphViewer.ml" 88 3273 3310
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 74 2925 2927 "dgraph/dGraphViewer.ml" 88 3273 3310
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 73 2854 2856 "dgraph/dGraphViewer.ml" 88 3273 3310
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 90 3312 3316 "dgraph/dGraphViewer.ml" 90 3312 3325
+type(
+  unit -> GFile.filter
+)
+ident(
+  def all_files "dgraph/dGraphViewer.ml" 95 3399 3399 --
+)
+"dgraph/dGraphViewer.ml" 90 3312 3326 "dgraph/dGraphViewer.ml" 90 3312 3328
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 91 3331 3337 "dgraph/dGraphViewer.ml" 91 3331 3338
+type(
+  GFile.filter
+)
+"dgraph/dGraphViewer.ml" 91 3331 3341 "dgraph/dGraphViewer.ml" 91 3331 3353
+type(
+  ?name:string ->
+  ?patterns:string list -> ?mime_types:string list -> unit -> GFile.filter
+)
+ident(
+  ext_ref GFile.filter
+)
+"dgraph/dGraphViewer.ml" 91 3331 3360 "dgraph/dGraphViewer.ml" 91 3331 3365
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 91 3331 3366 "dgraph/dGraphViewer.ml" 91 3331 3368
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 91 3331 3341 "dgraph/dGraphViewer.ml" 91 3331 3368
+call(
+  stack
+)
+type(
+  GFile.filter
+)
+"dgraph/dGraphViewer.ml" 92 3372 3374 "dgraph/dGraphViewer.ml" 92 3372 3375
+type(
+  GFile.filter
+)
+ident(
+  int_ref f "dgraph/dGraphViewer.ml" 91 3331 3337 "dgraph/dGraphViewer.ml" 91 3331 3338
+)
+"dgraph/dGraphViewer.ml" 92 3372 3374 "dgraph/dGraphViewer.ml" 92 3372 3387
+type(
+  string -> unit
+)
+"dgraph/dGraphViewer.ml" 92 3372 3388 "dgraph/dGraphViewer.ml" 92 3372 3391
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 92 3372 3374 "dgraph/dGraphViewer.ml" 92 3372 3391
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 93 3394 3396 "dgraph/dGraphViewer.ml" 93 3394 3397
+type(
+  GFile.filter
+)
+ident(
+  int_ref f "dgraph/dGraphViewer.ml" 91 3331 3337 "dgraph/dGraphViewer.ml" 91 3331 3338
+)
+"dgraph/dGraphViewer.ml" 92 3372 3374 "dgraph/dGraphViewer.ml" 93 3394 3397
+type(
+  GFile.filter
+)
+"dgraph/dGraphViewer.ml" 91 3331 3333 "dgraph/dGraphViewer.ml" 93 3394 3397
+type(
+  GFile.filter
+)
+"dgraph/dGraphViewer.ml" 95 3399 3403 "dgraph/dGraphViewer.ml" 95 3399 3412
+type(
+  state -> packing:(GObj.widget -> unit) -> unit -> unit
+)
+ident(
+  def open_file "dgraph/dGraphViewer.ml" 112 3874 3874 --
+)
+"dgraph/dGraphViewer.ml" 95 3399 3413 "dgraph/dGraphViewer.ml" 95 3399 3418
+type(
+  state
+)
+ident(
+  def state "dgraph/dGraphViewer.ml" 95 3399 3419 "dgraph/dGraphViewer.ml" 110 3824 3872
+)
+"dgraph/dGraphViewer.ml" 95 3399 3420 "dgraph/dGraphViewer.ml" 95 3399 3427
+type(
+  GObj.widget -> unit
+)
+ident(
+  def packing "dgraph/dGraphViewer.ml" 95 3399 3428 "dgraph/dGraphViewer.ml" 110 3824 3872
+)
+"dgraph/dGraphViewer.ml" 95 3399 3428 "dgraph/dGraphViewer.ml" 95 3399 3430
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+"dgraph/dGraphViewer.ml" 97 3448 3452 "dgraph/dGraphViewer.ml" 97 3448 3479
+type(
+  action:GtkEnums.file_chooser_action ->
+  ?backend:string ->
+  ?parent:GWindow.window ->
+  ?destroy_with_parent:bool ->
+  ?title:string ->
+  ?allow_grow:bool ->
+  ?allow_shrink:bool ->
+  ?decorated:bool ->
+  ?deletable:bool ->
+  ?focus_on_map:bool ->
+  ?icon:GdkPixbuf.pixbuf ->
+  ?icon_name:string ->
+  ?modal:bool ->
+  ?position:Gtk.Tags.window_position ->
+  ?resizable:bool ->
+  ?screen:Gdk.screen ->
+  ?type_hint:Gdk.Tags.window_type_hint ->
+  ?urgency_hint:bool ->
+  ?wm_name:string ->
+  ?wm_class:string ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?show:bool ->
+  unit -> [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  ext_ref GWindow.file_chooser_dialog
+)
+"dgraph/dGraphViewer.ml" 98 3480 3494 "dgraph/dGraphViewer.ml" 98 3480 3499
+type(
+  GtkEnums.file_chooser_action
+)
+"dgraph/dGraphViewer.ml" 99 3500 3513 "dgraph/dGraphViewer.ml" 99 3500 3524
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 100 3525 3539 "dgraph/dGraphViewer.ml" 100 3525 3544
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 95 3399 3413 "dgraph/dGraphViewer.ml" 95 3399 3418
+)
+"dgraph/dGraphViewer.ml" 100 3525 3539 "dgraph/dGraphViewer.ml" 100 3525 3551
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 100 3525 3552 "dgraph/dGraphViewer.ml" 100 3525 3554
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 97 3448 3452 "dgraph/dGraphViewer.ml" 100 3525 3554
+call(
+  stack
+)
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+"dgraph/dGraphViewer.ml" 102 3560 3562 "dgraph/dGraphViewer.ml" 102 3560 3568
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 102 3560 3562 "dgraph/dGraphViewer.ml" 102 3560 3585
+type(
+  GtkStock.id -> [ `CANCEL | `DELETE_EVENT | `OPEN ] -> unit
+)
+"dgraph/dGraphViewer.ml" 102 3560 3586 "dgraph/dGraphViewer.ml" 102 3560 3593
+type(
+  GtkStock.id
+)
+"dgraph/dGraphViewer.ml" 102 3560 3594 "dgraph/dGraphViewer.ml" 102 3560 3601
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 102 3560 3562 "dgraph/dGraphViewer.ml" 102 3560 3601
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 103 3604 3606 "dgraph/dGraphViewer.ml" 103 3604 3612
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 103 3604 3606 "dgraph/dGraphViewer.ml" 103 3604 3636
+type(
+  GtkStock.id -> [ `CANCEL | `DELETE_EVENT | `OPEN ] -> unit
+)
+"dgraph/dGraphViewer.ml" 103 3604 3637 "dgraph/dGraphViewer.ml" 103 3604 3642
+type(
+  GtkStock.id
+)
+"dgraph/dGraphViewer.ml" 103 3604 3643 "dgraph/dGraphViewer.ml" 103 3604 3648
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 103 3604 3606 "dgraph/dGraphViewer.ml" 103 3604 3648
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 104 3651 3653 "dgraph/dGraphViewer.ml" 104 3651 3659
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 104 3651 3653 "dgraph/dGraphViewer.ml" 104 3651 3670
+type(
+  GFile.filter -> unit
+)
+"dgraph/dGraphViewer.ml" 104 3651 3672 "dgraph/dGraphViewer.ml" 104 3651 3681
+type(
+  unit -> GFile.filter
+)
+ident(
+  int_ref all_files "dgraph/dGraphViewer.ml" 90 3312 3316 "dgraph/dGraphViewer.ml" 90 3312 3325
+)
+"dgraph/dGraphViewer.ml" 104 3651 3682 "dgraph/dGraphViewer.ml" 104 3651 3684
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 104 3651 3671 "dgraph/dGraphViewer.ml" 104 3651 3685
+call(
+  stack
+)
+type(
+  GFile.filter
+)
+"dgraph/dGraphViewer.ml" 104 3651 3653 "dgraph/dGraphViewer.ml" 104 3651 3685
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 105 3688 3696 "dgraph/dGraphViewer.ml" 105 3688 3702
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 105 3688 3696 "dgraph/dGraphViewer.ml" 105 3688 3706
+type(
+  unit -> [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 105 3688 3707 "dgraph/dGraphViewer.ml" 105 3688 3709
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 105 3688 3696 "dgraph/dGraphViewer.ml" 105 3688 3709
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 106 3715 3719 "dgraph/dGraphViewer.ml" 106 3715 3724
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 107 3728 3734 "dgraph/dGraphViewer.ml" 107 3728 3739
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 95 3399 3413 "dgraph/dGraphViewer.ml" 95 3399 3418
+)
+"dgraph/dGraphViewer.ml" 107 3728 3748 "dgraph/dGraphViewer.ml" 107 3728 3754
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 107 3728 3748 "dgraph/dGraphViewer.ml" 107 3728 3763
+type(
+  string option
+)
+"dgraph/dGraphViewer.ml" 107 3728 3734 "dgraph/dGraphViewer.ml" 107 3728 3763
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 108 3765 3771 "dgraph/dGraphViewer.ml" 108 3765 3777
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 108 3765 3771 "dgraph/dGraphViewer.ml" 108 3765 3785
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 108 3765 3786 "dgraph/dGraphViewer.ml" 108 3765 3788
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 108 3765 3771 "dgraph/dGraphViewer.ml" 108 3765 3788
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 109 3790 3796 "dgraph/dGraphViewer.ml" 109 3790 3808
+type(
+  state -> packing:(GObj.widget -> unit) -> unit
+)
+ident(
+  int_ref update_state "dgraph/dGraphViewer.ml" 72 2820 2824 "dgraph/dGraphViewer.ml" 72 2820 2836
+)
+"dgraph/dGraphViewer.ml" 109 3790 3809 "dgraph/dGraphViewer.ml" 109 3790 3814
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 95 3399 3413 "dgraph/dGraphViewer.ml" 95 3399 3418
+)
+"dgraph/dGraphViewer.ml" 109 3790 3816 "dgraph/dGraphViewer.ml" 109 3790 3823
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphViewer.ml" 95 3399 3420 "dgraph/dGraphViewer.ml" 95 3399 3427
+)
+"dgraph/dGraphViewer.ml" 109 3790 3796 "dgraph/dGraphViewer.ml" 109 3790 3823
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 108 3765 3771 "dgraph/dGraphViewer.ml" 109 3790 3823
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 107 3728 3734 "dgraph/dGraphViewer.ml" 109 3790 3823
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 110 3824 3828 "dgraph/dGraphViewer.ml" 110 3824 3841
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 110 3824 3844 "dgraph/dGraphViewer.ml" 110 3824 3851
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 110 3824 3828 "dgraph/dGraphViewer.ml" 110 3824 3851
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ]
+)
+"dgraph/dGraphViewer.ml" 110 3824 3855 "dgraph/dGraphViewer.ml" 110 3824 3861
+type(
+  [ `CANCEL | `DELETE_EVENT | `OPEN ] GWindow.file_chooser_dialog
+)
+ident(
+  int_ref dialog "dgraph/dGraphViewer.ml" 96 3433 3439 "dgraph/dGraphViewer.ml" 96 3433 3445
+)
+"dgraph/dGraphViewer.ml" 110 3824 3855 "dgraph/dGraphViewer.ml" 110 3824 3869
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 110 3824 3870 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 110 3824 3855 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 105 3688 3690 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 104 3651 3653 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 103 3604 3606 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 102 3560 3562 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 96 3433 3435 "dgraph/dGraphViewer.ml" 110 3824 3872
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 112 3874 3878 "dgraph/dGraphViewer.ml" 112 3874 3889
+type(
+  state -> packing:(GObj.widget -> unit) -> GAction.ui_manager
+)
+ident(
+  def create_menu "dgraph/dGraphViewer.ml" 133 4666 4666 --
+)
+"dgraph/dGraphViewer.ml" 112 3874 3890 "dgraph/dGraphViewer.ml" 112 3874 3895
+type(
+  state
+)
+ident(
+  def state "dgraph/dGraphViewer.ml" 112 3874 3896 "dgraph/dGraphViewer.ml" 129 4641 4647
+)
+"dgraph/dGraphViewer.ml" 112 3874 3897 "dgraph/dGraphViewer.ml" 112 3874 3904
+type(
+  GObj.widget -> unit
+)
+ident(
+  def packing "dgraph/dGraphViewer.ml" 113 3907 3909 "dgraph/dGraphViewer.ml" 129 4641 4647
+)
+"dgraph/dGraphViewer.ml" 113 3907 3913 "dgraph/dGraphViewer.ml" 113 3907 3917
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 113 3907 3920 "dgraph/dGraphViewer.ml" 113 3907 3938
+type(
+  unit -> GAction.ui_manager
+)
+ident(
+  ext_ref GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 113 3907 3939 "dgraph/dGraphViewer.ml" 113 3907 3941
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 113 3907 3920 "dgraph/dGraphViewer.ml" 113 3907 3941
+call(
+  stack
+)
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 114 3945 3951 "dgraph/dGraphViewer.ml" 114 3945 3958
+type(
+  GAction.action_group
+)
+"dgraph/dGraphViewer.ml" 114 3945 3961 "dgraph/dGraphViewer.ml" 114 3945 3981
+type(
+  name:string -> unit -> GAction.action_group
+)
+ident(
+  ext_ref GAction.action_group
+)
+"dgraph/dGraphViewer.ml" 114 3945 3988 "dgraph/dGraphViewer.ml" 114 3945 3997
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 114 3945 3998 "dgraph/dGraphViewer.ml" 114 3945 4000
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 114 3945 3961 "dgraph/dGraphViewer.ml" 114 3945 4000
+call(
+  stack
+)
+type(
+  GAction.action_group
+)
+"dgraph/dGraphViewer.ml" 115 4004 4006 "dgraph/dGraphViewer.ml" 115 4004 4025
+type(
+  GAction.action_group -> unit GAction.entry list -> unit
+)
+ident(
+  ext_ref GAction.add_actions
+)
+"dgraph/dGraphViewer.ml" 115 4004 4026 "dgraph/dGraphViewer.ml" 115 4004 4033
+type(
+  GAction.action_group
+)
+ident(
+  int_ref actions "dgraph/dGraphViewer.ml" 114 3945 3951 "dgraph/dGraphViewer.ml" 114 3945 3958
+)
+"dgraph/dGraphViewer.ml" 116 4036 4040 "dgraph/dGraphViewer.ml" 116 4036 4058
+type(
+  string ->
+  ?callback:(GAction.action -> unit) ->
+  ?stock:GtkStock.id ->
+  ?label:string -> ?accel:string -> ?tooltip:string -> unit GAction.entry
+)
+ident(
+  ext_ref GAction.add_action
+)
+"dgraph/dGraphViewer.ml" 116 4036 4059 "dgraph/dGraphViewer.ml" 116 4036 4069
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 116 4036 4077 "dgraph/dGraphViewer.ml" 116 4036 4083
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 116 4036 4040 "dgraph/dGraphViewer.ml" 116 4036 4083
+call(
+  tail
+)
+call(
+  stack
+)
+type(
+  unit GAction.entry
+)
+type(
+  ?callback:(GAction.action -> unit) ->
+  ?stock:GtkStock.id ->
+  ?accel:string -> ?tooltip:string -> unit GAction.entry
+)
+"dgraph/dGraphViewer.ml" 117 4086 4090 "dgraph/dGraphViewer.ml" 117 4086 4108
+type(
+  string ->
+  ?callback:(GAction.action -> unit) ->
+  ?stock:GtkStock.id ->
+  ?label:string -> ?accel:string -> ?tooltip:string -> unit GAction.entry
+)
+ident(
+  ext_ref GAction.add_action
+)
+"dgraph/dGraphViewer.ml" 117 4086 4109 "dgraph/dGraphViewer.ml" 117 4086 4115
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 117 4086 4123 "dgraph/dGraphViewer.ml" 117 4086 4129
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 117 4086 4137 "dgraph/dGraphViewer.ml" 117 4086 4149
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 117 4086 4157 "dgraph/dGraphViewer.ml" 117 4086 4162
+type(
+  GtkStock.id
+)
+"dgraph/dGraphViewer.ml" 118 4163 4184 "dgraph/dGraphViewer.ml" 118 4163 4185
+type(
+  GAction.action
+)
+"dgraph/dGraphViewer.ml" 118 4163 4189 "dgraph/dGraphViewer.ml" 118 4163 4198
+type(
+  state -> packing:(GObj.widget -> unit) -> unit -> unit
+)
+ident(
+  int_ref open_file "dgraph/dGraphViewer.ml" 95 3399 3403 "dgraph/dGraphViewer.ml" 95 3399 3412
+)
+"dgraph/dGraphViewer.ml" 118 4163 4199 "dgraph/dGraphViewer.ml" 118 4163 4204
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 112 3874 3890 "dgraph/dGraphViewer.ml" 112 3874 3895
+)
+"dgraph/dGraphViewer.ml" 118 4163 4206 "dgraph/dGraphViewer.ml" 118 4163 4213
+type(
+  GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphViewer.ml" 112 3874 3897 "dgraph/dGraphViewer.ml" 112 3874 3904
+)
+"dgraph/dGraphViewer.ml" 118 4163 4214 "dgraph/dGraphViewer.ml" 118 4163 4216
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 118 4163 4189 "dgraph/dGraphViewer.ml" 118 4163 4216
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 118 4163 4179 "dgraph/dGraphViewer.ml" 118 4163 4217
+type(
+  GAction.action -> unit
+)
+"dgraph/dGraphViewer.ml" 117 4086 4090 "dgraph/dGraphViewer.ml" 118 4163 4217
+call(
+  stack
+)
+type(
+  unit GAction.entry
+)
+type(
+  ?tooltip:string -> unit GAction.entry
+)
+"dgraph/dGraphViewer.ml" 119 4219 4223 "dgraph/dGraphViewer.ml" 119 4219 4241
+type(
+  string ->
+  ?callback:(GAction.action -> unit) ->
+  ?stock:GtkStock.id ->
+  ?label:string -> ?accel:string -> ?tooltip:string -> unit GAction.entry
+)
+ident(
+  ext_ref GAction.add_action
+)
+"dgraph/dGraphViewer.ml" 120 4242 4248 "dgraph/dGraphViewer.ml" 120 4242 4258
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 120 4242 4266 "dgraph/dGraphViewer.ml" 120 4242 4276
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 120 4242 4284 "dgraph/dGraphViewer.ml" 120 4242 4296
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 120 4242 4304 "dgraph/dGraphViewer.ml" 120 4242 4313
+type(
+  GtkStock.id
+)
+"dgraph/dGraphViewer.ml" 121 4314 4335 "dgraph/dGraphViewer.ml" 121 4314 4336
+type(
+  GAction.action
+)
+"dgraph/dGraphViewer.ml" 121 4314 4346 "dgraph/dGraphViewer.ml" 121 4314 4351
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 112 3874 3890 "dgraph/dGraphViewer.ml" 112 3874 3895
+)
+"dgraph/dGraphViewer.ml" 121 4314 4346 "dgraph/dGraphViewer.ml" 121 4314 4359
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 122 4366 4375 "dgraph/dGraphViewer.ml" 122 4366 4379
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 122 4366 4383 "dgraph/dGraphViewer.ml" 122 4366 4385
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 123 4386 4401 "dgraph/dGraphViewer.ml" 123 4386 4402
+type(
+  GPack.table
+)
+"dgraph/dGraphViewer.ml" 123 4386 4403 "dgraph/dGraphViewer.ml" 123 4386 4404
+type(
+  Content.view_container
+)
+ident(
+  def v "dgraph/dGraphViewer.ml" 123 4386 4409 "dgraph/dGraphViewer.ml" 123 4386 4424
+)
+"dgraph/dGraphViewer.ml" 123 4386 4400 "dgraph/dGraphViewer.ml" 123 4386 4405
+type(
+  GPack.table * Content.view_container
+)
+"dgraph/dGraphViewer.ml" 123 4386 4395 "dgraph/dGraphViewer.ml" 123 4386 4405
+type(
+  (GPack.table * Content.view_container) option
+)
+"dgraph/dGraphViewer.ml" 123 4386 4409 "dgraph/dGraphViewer.ml" 123 4386 4410
+type(
+  Content.view_container
+)
+ident(
+  int_ref v "dgraph/dGraphViewer.ml" 123 4386 4403 "dgraph/dGraphViewer.ml" 123 4386 4404
+)
+"dgraph/dGraphViewer.ml" 123 4386 4409 "dgraph/dGraphViewer.ml" 123 4386 4421
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 123 4386 4422 "dgraph/dGraphViewer.ml" 123 4386 4424
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 123 4386 4409 "dgraph/dGraphViewer.ml" 123 4386 4424
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 121 4314 4340 "dgraph/dGraphViewer.ml" 123 4386 4424
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 121 4314 4330 "dgraph/dGraphViewer.ml" 123 4386 4425
+type(
+  GAction.action -> unit
+)
+"dgraph/dGraphViewer.ml" 119 4219 4223 "dgraph/dGraphViewer.ml" 123 4386 4425
+call(
+  stack
+)
+type(
+  unit GAction.entry
+)
+type(
+  ?tooltip:string -> unit GAction.entry
+)
+"dgraph/dGraphViewer.ml" 124 4427 4431 "dgraph/dGraphViewer.ml" 124 4427 4449
+type(
+  string ->
+  ?callback:(GAction.action -> unit) ->
+  ?stock:GtkStock.id ->
+  ?label:string -> ?accel:string -> ?tooltip:string -> unit GAction.entry
+)
+ident(
+  ext_ref GAction.add_action
+)
+"dgraph/dGraphViewer.ml" 124 4427 4450 "dgraph/dGraphViewer.ml" 124 4427 4456
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 124 4427 4464 "dgraph/dGraphViewer.ml" 124 4427 4470
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 124 4427 4478 "dgraph/dGraphViewer.ml" 124 4427 4490
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 124 4427 4498 "dgraph/dGraphViewer.ml" 124 4427 4503
+type(
+  GtkStock.id
+)
+"dgraph/dGraphViewer.ml" 125 4504 4525 "dgraph/dGraphViewer.ml" 125 4504 4526
+type(
+  GAction.action
+)
+"dgraph/dGraphViewer.ml" 125 4504 4530 "dgraph/dGraphViewer.ml" 125 4504 4545
+type(
+  unit -> unit
+)
+ident(
+  ext_ref GMain.Main.quit
+)
+"dgraph/dGraphViewer.ml" 125 4504 4546 "dgraph/dGraphViewer.ml" 125 4504 4548
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 125 4504 4530 "dgraph/dGraphViewer.ml" 125 4504 4548
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 125 4504 4520 "dgraph/dGraphViewer.ml" 125 4504 4549
+type(
+  GAction.action -> unit
+)
+"dgraph/dGraphViewer.ml" 124 4427 4431 "dgraph/dGraphViewer.ml" 125 4504 4549
+call(
+  stack
+)
+type(
+  unit GAction.entry
+)
+type(
+  ?tooltip:string -> unit GAction.entry
+)
+"dgraph/dGraphViewer.ml" 115 4004 4034 "dgraph/dGraphViewer.ml" 126 4551 4554
+type(
+  unit GAction.entry list
+)
+"dgraph/dGraphViewer.ml" 115 4004 4006 "dgraph/dGraphViewer.ml" 126 4551 4554
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 127 4556 4558 "dgraph/dGraphViewer.ml" 127 4556 4562
+type(
+  GAction.ui_manager
+)
+ident(
+  int_ref ui_m "dgraph/dGraphViewer.ml" 113 3907 3913 "dgraph/dGraphViewer.ml" 113 3907 3917
+)
+"dgraph/dGraphViewer.ml" 127 4556 4558 "dgraph/dGraphViewer.ml" 127 4556 4582
+type(
+  GAction.action_group -> int -> unit
+)
+"dgraph/dGraphViewer.ml" 127 4556 4583 "dgraph/dGraphViewer.ml" 127 4556 4590
+type(
+  GAction.action_group
+)
+ident(
+  int_ref actions "dgraph/dGraphViewer.ml" 114 3945 3951 "dgraph/dGraphViewer.ml" 114 3945 3958
+)
+"dgraph/dGraphViewer.ml" 127 4556 4591 "dgraph/dGraphViewer.ml" 127 4556 4592
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 127 4556 4558 "dgraph/dGraphViewer.ml" 127 4556 4592
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 128 4595 4597 "dgraph/dGraphViewer.ml" 128 4595 4603
+type(
+  GAction.ui_id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphViewer.ml" 128 4595 4604 "dgraph/dGraphViewer.ml" 128 4595 4605
+type(
+  (GAction.ui_id -> unit) -> GAction.ui_id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphViewer.ml" 30 1885 1889 "dgraph/dGraphViewer.ml" 30 1885 1892
+)
+"dgraph/dGraphViewer.ml" 128 4595 4606 "dgraph/dGraphViewer.ml" 128 4595 4610
+type(
+  GAction.ui_manager
+)
+ident(
+  int_ref ui_m "dgraph/dGraphViewer.ml" 113 3907 3913 "dgraph/dGraphViewer.ml" 113 3907 3917
+)
+"dgraph/dGraphViewer.ml" 128 4595 4606 "dgraph/dGraphViewer.ml" 128 4595 4629
+type(
+  string -> GAction.ui_id
+)
+"dgraph/dGraphViewer.ml" 128 4595 4630 "dgraph/dGraphViewer.ml" 128 4595 4639
+type(
+  string
+)
+ident(
+  int_ref menu_desc "dgraph/dGraphViewer.ml" 62 2602 2606 "dgraph/dGraphViewer.ml" 62 2602 2615
+)
+"dgraph/dGraphViewer.ml" 128 4595 4606 "dgraph/dGraphViewer.ml" 128 4595 4639
+type(
+  GAction.ui_id
+)
+"dgraph/dGraphViewer.ml" 128 4595 4597 "dgraph/dGraphViewer.ml" 128 4595 4639
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 129 4641 4643 "dgraph/dGraphViewer.ml" 129 4641 4647
+type(
+  GAction.ui_manager
+)
+ident(
+  int_ref ui_m "dgraph/dGraphViewer.ml" 113 3907 3913 "dgraph/dGraphViewer.ml" 113 3907 3917
+)
+"dgraph/dGraphViewer.ml" 128 4595 4597 "dgraph/dGraphViewer.ml" 129 4641 4647
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 127 4556 4558 "dgraph/dGraphViewer.ml" 129 4641 4647
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 115 4004 4006 "dgraph/dGraphViewer.ml" 129 4641 4647
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 114 3945 3947 "dgraph/dGraphViewer.ml" 129 4641 4647
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 113 3907 3909 "dgraph/dGraphViewer.ml" 129 4641 4647
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 133 4666 4670 "dgraph/dGraphViewer.ml" 133 4666 4674
+type(
+  unit -> unit
+)
+ident(
+  def main "dgraph/dGraphViewer.ml" 151 5303 5303 --
+)
+"dgraph/dGraphViewer.ml" 133 4666 4675 "dgraph/dGraphViewer.ml" 133 4666 4677
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 135 4692 4706 "dgraph/dGraphViewer.ml" 135 4692 4716
+type(
+  unit -> state
+)
+ident(
+  int_ref init_state "dgraph/dGraphViewer.ml" 43 2168 2172 "dgraph/dGraphViewer.ml" 43 2168 2182
+)
+"dgraph/dGraphViewer.ml" 135 4692 4717 "dgraph/dGraphViewer.ml" 135 4692 4719
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 135 4692 4706 "dgraph/dGraphViewer.ml" 135 4692 4719
+call(
+  stack
+)
+type(
+  state
+)
+"dgraph/dGraphViewer.ml" 136 4723 4729 "dgraph/dGraphViewer.ml" 136 4723 4733
+type(
+  GPack.box
+)
+"dgraph/dGraphViewer.ml" 137 4736 4740 "dgraph/dGraphViewer.ml" 137 4736 4750
+type(
+  ?homogeneous:bool ->
+  ?spacing:int ->
+  ?border_width:int ->
+  ?width:int ->
+  ?height:int ->
+  ?packing:(GObj.widget -> unit) -> ?show:bool -> unit -> GPack.box
+)
+ident(
+  ext_ref GPack.vbox
+)
+"dgraph/dGraphViewer.ml" 137 4736 4765 "dgraph/dGraphViewer.ml" 137 4736 4766
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 137 4736 4776 "dgraph/dGraphViewer.ml" 137 4736 4777
+type(
+  int
+)
+"dgraph/dGraphViewer.ml" 137 4736 4787 "dgraph/dGraphViewer.ml" 137 4736 4792
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+)
+"dgraph/dGraphViewer.ml" 137 4736 4787 "dgraph/dGraphViewer.ml" 137 4736 4799
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 137 4736 4787 "dgraph/dGraphViewer.ml" 137 4736 4803
+type(
+  GObj.widget -> unit
+)
+"dgraph/dGraphViewer.ml" 137 4736 4804 "dgraph/dGraphViewer.ml" 137 4736 4806
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 137 4736 4740 "dgraph/dGraphViewer.ml" 137 4736 4806
+call(
+  stack
+)
+type(
+  GPack.box
+)
+"dgraph/dGraphViewer.ml" 139 4812 4818 "dgraph/dGraphViewer.ml" 139 4812 4825
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphViewer.ml" 139 4812 4828 "dgraph/dGraphViewer.ml" 139 4812 4832
+type(
+  GPack.box
+)
+ident(
+  int_ref vbox "dgraph/dGraphViewer.ml" 136 4723 4729 "dgraph/dGraphViewer.ml" 136 4723 4733
+)
+"dgraph/dGraphViewer.ml" 139 4812 4828 "dgraph/dGraphViewer.ml" 139 4812 4837
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphViewer.ml" 139 4812 4846 "dgraph/dGraphViewer.ml" 139 4812 4850
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 139 4812 4857 "dgraph/dGraphViewer.ml" 139 4812 4861
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 139 4812 4828 "dgraph/dGraphViewer.ml" 139 4812 4861
+call(
+  tail
+)
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphViewer.ml" 141 4878 4884 "dgraph/dGraphViewer.ml" 141 4878 4888
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 141 4878 4891 "dgraph/dGraphViewer.ml" 141 4878 4902
+type(
+  state -> packing:(GObj.widget -> unit) -> GAction.ui_manager
+)
+ident(
+  int_ref create_menu "dgraph/dGraphViewer.ml" 112 3874 3878 "dgraph/dGraphViewer.ml" 112 3874 3889
+)
+"dgraph/dGraphViewer.ml" 141 4878 4903 "dgraph/dGraphViewer.ml" 141 4878 4908
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+)
+"dgraph/dGraphViewer.ml" 141 4878 4910 "dgraph/dGraphViewer.ml" 141 4878 4917
+call(
+  tail
+)
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphViewer.ml" 139 4812 4818 "dgraph/dGraphViewer.ml" 139 4812 4825
+)
+"dgraph/dGraphViewer.ml" 141 4878 4891 "dgraph/dGraphViewer.ml" 141 4878 4917
+call(
+  stack
+)
+type(
+  GAction.ui_manager
+)
+"dgraph/dGraphViewer.ml" 142 4921 4923 "dgraph/dGraphViewer.ml" 142 4921 4928
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+)
+"dgraph/dGraphViewer.ml" 142 4921 4923 "dgraph/dGraphViewer.ml" 142 4921 4935
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 142 4921 4923 "dgraph/dGraphViewer.ml" 142 4921 4951
+type(
+  Gtk.accel_group -> unit
+)
+"dgraph/dGraphViewer.ml" 142 4921 4952 "dgraph/dGraphViewer.ml" 142 4921 4956
+type(
+  GAction.ui_manager
+)
+ident(
+  int_ref ui_m "dgraph/dGraphViewer.ml" 141 4878 4884 "dgraph/dGraphViewer.ml" 141 4878 4888
+)
+"dgraph/dGraphViewer.ml" 142 4921 4952 "dgraph/dGraphViewer.ml" 142 4921 4972
+type(
+  Gtk.accel_group
+)
+"dgraph/dGraphViewer.ml" 142 4921 4923 "dgraph/dGraphViewer.ml" 142 4921 4972
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 143 4975 4977 "dgraph/dGraphViewer.ml" 143 4975 4981
+type(
+  GPack.box
+)
+ident(
+  int_ref vbox "dgraph/dGraphViewer.ml" 136 4723 4729 "dgraph/dGraphViewer.ml" 136 4723 4733
+)
+"dgraph/dGraphViewer.ml" 143 4975 4977 "dgraph/dGraphViewer.ml" 143 4975 4986
+type(
+  ?from:Gtk.Tags.pack_type ->
+  ?expand:bool -> ?fill:bool -> ?padding:int -> GObj.widget -> unit
+)
+"dgraph/dGraphViewer.ml" 143 4975 4995 "dgraph/dGraphViewer.ml" 143 4975 5000
+type(
+  bool
+)
+"dgraph/dGraphViewer.ml" 143 4975 5002 "dgraph/dGraphViewer.ml" 143 4975 5006
+type(
+  GAction.ui_manager
+)
+ident(
+  int_ref ui_m "dgraph/dGraphViewer.ml" 141 4878 4884 "dgraph/dGraphViewer.ml" 141 4878 4888
+)
+"dgraph/dGraphViewer.ml" 143 4975 5002 "dgraph/dGraphViewer.ml" 143 4975 5017
+type(
+  string -> GObj.widget
+)
+"dgraph/dGraphViewer.ml" 143 4975 5018 "dgraph/dGraphViewer.ml" 143 4975 5028
+type(
+  string
+)
+"dgraph/dGraphViewer.ml" 143 4975 5001 "dgraph/dGraphViewer.ml" 143 4975 5029
+type(
+  GObj.widget
+)
+"dgraph/dGraphViewer.ml" 143 4975 4977 "dgraph/dGraphViewer.ml" 143 4975 5029
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 144 5031 5033 "dgraph/dGraphViewer.ml" 144 5031 5039
+type(
+  GtkSignal.id -> unit
+)
+ident(
+  ext_ref Pervasives.ignore
+)
+"dgraph/dGraphViewer.ml" 144 5031 5040 "dgraph/dGraphViewer.ml" 144 5031 5041
+type(
+  (GtkSignal.id -> unit) -> GtkSignal.id -> unit
+)
+ident(
+  int_ref $ "dgraph/dGraphViewer.ml" 30 1885 1889 "dgraph/dGraphViewer.ml" 30 1885 1892
+)
+"dgraph/dGraphViewer.ml" 144 5031 5042 "dgraph/dGraphViewer.ml" 144 5031 5047
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+)
+"dgraph/dGraphViewer.ml" 144 5031 5042 "dgraph/dGraphViewer.ml" 144 5031 5054
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 144 5031 5042 "dgraph/dGraphViewer.ml" 144 5031 5062
+type(
+  GContainer.container_signals
+)
+"dgraph/dGraphViewer.ml" 144 5031 5042 "dgraph/dGraphViewer.ml" 144 5031 5070
+type(
+  callback:(unit -> unit) -> GtkSignal.id
+)
+"dgraph/dGraphViewer.ml" 144 5031 5081 "dgraph/dGraphViewer.ml" 144 5031 5096
+type(
+  unit -> unit
+)
+ident(
+  ext_ref GMain.Main.quit
+)
+"dgraph/dGraphViewer.ml" 144 5031 5042 "dgraph/dGraphViewer.ml" 144 5031 5096
+type(
+  GtkSignal.id
+)
+"dgraph/dGraphViewer.ml" 144 5031 5033 "dgraph/dGraphViewer.ml" 144 5031 5096
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 145 5098 5103 "dgraph/dGraphViewer.ml" 145 5098 5108
+type(
+  bool
+)
+ident(
+  int_ref debug "dgraph/dGraphViewer.ml" 33 1963 1967 "dgraph/dGraphViewer.ml" 33 1963 1972
+)
+"dgraph/dGraphViewer.ml" 145 5098 5114 "dgraph/dGraphViewer.ml" 145 5098 5120
+type(
+  (float -> unit, out_channel, unit) format -> float -> unit
+)
+ident(
+  ext_ref Printf.printf
+)
+"dgraph/dGraphViewer.ml" 145 5098 5121 "dgraph/dGraphViewer.ml" 145 5098 5144
+type(
+  (float -> unit, out_channel, unit) format
+)
+"dgraph/dGraphViewer.ml" 145 5098 5146 "dgraph/dGraphViewer.ml" 145 5098 5154
+type(
+  unit -> float
+)
+ident(
+  ext_ref Sys.time
+)
+"dgraph/dGraphViewer.ml" 145 5098 5155 "dgraph/dGraphViewer.ml" 145 5098 5157
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 145 5098 5145 "dgraph/dGraphViewer.ml" 145 5098 5158
+type(
+  float
+)
+"dgraph/dGraphViewer.ml" 145 5098 5114 "dgraph/dGraphViewer.ml" 145 5098 5158
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 145 5098 5100 "dgraph/dGraphViewer.ml" 145 5098 5158
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 146 5160 5162 "dgraph/dGraphViewer.ml" 146 5160 5174
+type(
+  state -> packing:(GObj.widget -> unit) -> unit
+)
+ident(
+  int_ref update_state "dgraph/dGraphViewer.ml" 72 2820 2824 "dgraph/dGraphViewer.ml" 72 2820 2836
+)
+"dgraph/dGraphViewer.ml" 146 5160 5175 "dgraph/dGraphViewer.ml" 146 5160 5180
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+)
+"dgraph/dGraphViewer.ml" 146 5160 5182 "dgraph/dGraphViewer.ml" 146 5160 5189
+call(
+  tail
+)
+type(
+  ?from:Gtk.Tags.pack_type -> ?padding:int -> GObj.widget -> unit
+)
+ident(
+  int_ref packing "dgraph/dGraphViewer.ml" 139 4812 4818 "dgraph/dGraphViewer.ml" 139 4812 4825
+)
+"dgraph/dGraphViewer.ml" 146 5160 5162 "dgraph/dGraphViewer.ml" 146 5160 5189
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 147 5191 5193 "dgraph/dGraphViewer.ml" 147 5191 5198
+type(
+  state
+)
+ident(
+  int_ref state "dgraph/dGraphViewer.ml" 135 4692 4698 "dgraph/dGraphViewer.ml" 135 4692 4703
+)
+"dgraph/dGraphViewer.ml" 147 5191 5193 "dgraph/dGraphViewer.ml" 147 5191 5205
+type(
+  GWindow.window
+)
+"dgraph/dGraphViewer.ml" 147 5191 5193 "dgraph/dGraphViewer.ml" 147 5191 5210
+type(
+  unit -> unit
+)
+"dgraph/dGraphViewer.ml" 147 5191 5211 "dgraph/dGraphViewer.ml" 147 5191 5213
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 147 5191 5193 "dgraph/dGraphViewer.ml" 147 5191 5213
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 148 5215 5217 "dgraph/dGraphViewer.ml" 148 5215 5232
+type(
+  unit -> unit
+)
+ident(
+  ext_ref GMain.Main.main
+)
+"dgraph/dGraphViewer.ml" 148 5215 5233 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 148 5215 5217 "dgraph/dGraphViewer.ml" 148 5215 5235
+call(
+  tail
+)
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 147 5191 5193 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 146 5160 5162 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 145 5098 5100 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 144 5031 5033 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 143 4975 4977 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 142 4921 4923 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 141 4878 4880 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 139 4812 4814 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 136 4723 4725 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 135 4692 4694 "dgraph/dGraphViewer.ml" 148 5215 5235
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 151 5303 5330 "dgraph/dGraphViewer.ml" 151 5303 5334
+type(
+  unit -> unit
+)
+ident(
+  int_ref main "dgraph/dGraphViewer.ml" 133 4666 4670 "dgraph/dGraphViewer.ml" 133 4666 4674
+)
+"dgraph/dGraphViewer.ml" 151 5303 5335 "dgraph/dGraphViewer.ml" 151 5303 5337
+type(
+  unit
+)
+"dgraph/dGraphViewer.ml" 151 5303 5330 "dgraph/dGraphViewer.ml" 151 5303 5337
+call(
+  stack
+)
+type(
+  unit
+)

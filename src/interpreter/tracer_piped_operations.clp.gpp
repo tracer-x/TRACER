@@ -1,0 +1,1885 @@
+#if   (defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO))
+%=============================================================================%
+% Piping/multiprocessing routines
+%=============================================================================%
+% export
+%  pipe_init/0                     % initialize all the pipes
+%  pipe_terminate/0                % terminate all the pipes
+%
+%  pipe_dump_slave_loop/0          % infinite loop for serving (dump) requests
+%  pipe_store_answers_slave_loop/0 % infinite loop for serving (store answers)
+%                                    requests
+%  pipe_memo_slave_loop/0          % infinite loop for serving (memo) requests
+%
+%  process_slave_output/2          % used for master pipe to communicate 
+%                                    with slaves
+%  write_dump_slave/2.             % Write master to slave
+%  read_from_dump_slave/1,         % Read master  from slave
+%  write_store_answers_slave/2,    % Write master to slave
+%  read_from_store_answers_slave/1 % Read master from slave
+%  write_memo_slave/2,             % Write master to slave
+%  read_from_memo_slave/1          % Read master from slave
+%=============================================================================%
+% NOTES:
+%
+% The operations defined in this file are used to improve (hopefully)
+% the performance in TRACER. The improvements are achieved by
+% launching several processes to do different tasks. Those tasks are
+% NOT parallel tasks, but:
+%
+% - If PIPEDUMP then we create a slave process to perform the dump
+% operation.  The limitation of dump/3 in CLP(R) is that all
+% constraints stored in the solver are considered by dump/3 even if
+% they are clearly unrelated to the variables of interest. We mitigate
+% this by running always in isolation dump/3. After each execution, we
+% clean the whole solver and wait for next request.
+%
+% - If PIPEDUMP_AND_ANSWERS then we create two slave processes: one as
+% before to do the dumps and another to store the interpolants and
+% answers propagated from children to parents. The basic mechanism is
+% that a child stores (by assert/1) its answer and then its father
+% will collect all its children's answers (by retract/1 all of them),
+% combine them, and then, finally, it asserts a new answer (by
+% assert/1) for its ancestor, and so on. CLP(R) does not have a
+% garbage collector mechanism. Therefore, even if we retract those
+% answers, the code space is not freed. We mitigate this by storing
+% all these answers in another slave. By doing this, we have more code
+% space and also we can apply some simple code space reusing
+% techniques.
+%
+% - If PIPEMEMO then the memo table entries will be stored in another
+% slave to achieve similar advantages as PIPEDUMP_AND_ANSWERS.  If
+% PIPEMEMO then PIPEDUMP_AND_ANSWERS.
+% 
+% FIXME:
+%
+% - for simplicity, if PIPEMEMO then we are forced to use
+%   PIPEDUMP_AND_ANSWERS and PIPEDUMP. If PIPEDUMP_AND_ANSWERS then we
+%   are forced to use PIPEDUMP. However, these three optimization are
+%   independent. Therefore, we should allow to use any of them alone.
+%=============================================================================%
+% README: operations can be done in other processes are
+%=============================================================================%
+% Common
+% 
+%   - project_and_negate: specific key operation to compute negated
+%     interpolants to be stored in the memo table. It cannot fail.
+%
+%   - project_sym_constraints: project a list of symbolic
+%     constraints. It may fail.
+%
+%   - dump_solver: project the solver context of the process for
+%                  debugging purposes. No code if it fails.
+%
+%   - store entry into memo table
+%   - check entry from memo table
+%   - print memo table
+%   - retrieve entry from memo table
+%
+%   some utilities: counter_value, zmem_usage, cmem_usage, diagnostic,
+%   get_pid, cs_mark, etc
+%
+% For WCET
+%   - update witness
+%   - assert interpolant+answer
+%   - retract interpolant+answer
+% For analyses
+%   - update witnesses
+%   - assert/retract interpolant+answer
+% For safety
+%   - assert/retract interpolant
+%   - read answer (for minmax)
+%
+%-----------------------------------------------------------------------------%
+% #define PIPE_DEBUG
+%-----------------------------------------------------------------------------%
+% INITIALIZATION
+%-----------------------------------------------------------------------------%
+%------------------------------------------------------------------------------
+#ifdef  PIPEDUMP
+%------------------------------------------------------------------------------
+pipe_init :-
+	pipe(pipe_master_dump_slave),
+	pipe(pipe_dump_slave_master),
+	fork,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: STARTED\n", []), 
+#endif  /* PIPE_DEBUG*/
+	tell(pipe_master_dump_slave),
+	see(pipe_dump_slave_master),
+	!.
+pipe_init :-
+	see(pipe_master_dump_slave),
+	tell(pipe_dump_slave_master),
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: STARTED\n", []),
+#endif  /* PIPE_DEBUG */
+	!,
+	fail.
+%------------------------------------------------------------------------------
+#elif   defined(PIPEDUMP_AND_ANSWERS)
+%------------------------------------------------------------------------------
+pipe_init :-
+	pipe(pipe_master_dump_slave),
+	pipe(pipe_dump_slave_master),
+	fork,
+        pipe_init_1,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: STARTED\n", []), 
+#endif  	
+	!.
+pipe_init :-
+	counter_value(pipe_init_flag,X),
+	X = 1, !,
+	see(pipe_master_dump_slave),
+	tell(pipe_dump_slave_master),
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: STARTED\n", []),
+#endif
+	!,
+	fail.
+
+pipe_init_1:-
+        set_counter(pipe_init_flag,2),	
+        pipe(pipe_master_store_answers_slave),
+        pipe(pipe_store_answers_slave_master),
+        fork,
+#ifdef  PIPEMEMO
+        pipe_init_2,
+#endif  /*PIPEMEMO*/
+	!.
+pipe_init_1:-
+        counter_value(pipe_init_flag,X),
+        X = 2, !,	
+        see(pipe_master_store_answers_slave), 
+        tell(pipe_store_answers_slave_master),
+#ifdef  PIPE_DEBUG
+        print_message("*** ANSWERS SLAVE: STARTED\n", []),
+#endif
+        !,
+        fail.
+#ifdef  PIPEMEMO
+pipe_init_2:-
+	set_counter(pipe_init_flag,3),
+	pipe(pipe_master_memo_slave),
+	pipe(pipe_memo_slave_master),
+	fork,
+        !.
+pipe_init_2:-
+	counter_value(pipe_init_flag,X),
+	X = 3, !,
+	see(pipe_master_memo_slave),
+	tell(pipe_memo_slave_master),
+#ifdef  PIPE_DEBUG
+        print_message("*** MEMO SLAVE: STARTED\n", []),
+#endif  
+        !,
+	fail.
+#endif  /*PIPEMEMO*/
+%------------------------------------------------------------------------------
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%------------------------------------------------------------------------------
+
+
+%-----------------------------------------------------------------------------%
+% Terminate the slave(s) and close files
+%-----------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+pipe_terminate:-
+	% Send kill signal to slave 1
+	write_dump_slave("halt .\n", []),
+	% Send kill signal to slave 2 
+	write_store_answers_slave("halt .\n", []),
+#ifdef  PIPEMEMO
+	% Send kill signal to slave 3 
+	write_memo_slave("halt .\n", []),
+#endif  /*PIPEMEMO*/
+	flush, seen, told,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: HALT SENT\n", []),
+#endif  
+        true.
+#elif   defined(PIPEDUMP)
+pipe_terminate :-
+	print_file("halt .\n", []), flush, seen, told,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: HALT SENT\n", []),
+#endif  
+	true.
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+
+
+%------------------------------------------------------------------------------
+#if     defined(PIPEDUMP_AND_ANSWERS)
+%------------------------------------------------------------------------------
+%%%
+% Here the master has to redirect the pipes on the fly each time it
+% wants to communicate with the slaves.
+%%%
+write_dump_slave(Msg,Args):-
+	unsafe_tell(pipe_master_dump_slave),
+	print_file(Msg,Args),
+	flush,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: making a request to DUMP slave \n", []),
+#endif  /*PIPE_DEBUG */	
+	!.
+write_store_answers_slave(Msg,Args):-
+	unsafe_tell(pipe_master_store_answers_slave),
+	print_file(Msg,Args),
+	flush,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: making a request to ANSWERS SLAVE \n",
+		      []),
+#endif  /*PIPE_DEBUG */	
+	!.
+#ifdef  PIPEMEMO
+write_memo_slave(Msg,Args):-
+	unsafe_tell(pipe_master_memo_slave),
+	print_file(Msg,Args),
+	flush,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: making a request to MEMO SLAVE \n",
+		      []),
+	print_message(Msg,Args),
+#endif  /*PIPE_DEBUG */	
+	!.
+#endif  /*PIPEMEMO*/
+
+read_from_dump_slave(X):-
+	unsafe_see(pipe_dump_slave_master),
+	read(X),
+	!.
+read_from_store_answers_slave(X):-
+	unsafe_see(pipe_store_answers_slave_master),
+	read(X),
+	!.
+#ifdef  PIPEMEMO
+read_from_memo_slave(X):-
+	unsafe_see(pipe_memo_slave_master),
+	read(X),
+	!.
+#endif  /*PIPEMEMO*/
+%------------------------------------------------------------------------------
+#elif   defined(PIPEDUMP)
+%------------------------------------------------------------------------------
+% Here the pipes were already redirected.
+write_dump_slave(Msg,Args):-
+	print_file(Msg,Args),
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: making a request\n", []),
+#endif       
+	flush.
+read_from_dump_slave(X):-
+	read(X).
+%------------------------------------------------------------------------------
+#endif  /*defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEDUMP)*/
+%------------------------------------------------------------------------------
+
+%-----------------------------------------------------------------------------%
+% SLAVES
+%-----------------------------------------------------------------------------%
+pipe_dump_slave_loop :-
+        %---------------------------------------------------------------------%	
+	% It is vital to reuse code space after each
+	% request. Otherwise, the slave will run out of code space.
+        %---------------------------------------------------------------------%
+	%% This is to try to reuse code space: remember current code
+	%% space pointer
+	set_cs_mark,	
+	pipe_slave_perform_action,
+	%% This is to try to reuse code space: move code space pointer
+	%% to last mark.
+	pop_cs_mark,
+	%% To try to free pterm buffer
+	clear_pterm_buffer,
+	pipe_dump_slave_loop.
+
+#ifdef  PIPEDUMP_AND_ANSWERS
+pipe_store_answers_slave_loop :-
+	pipe_slave_perform_action,
+	pipe_store_answers_slave_loop.
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+
+#ifdef  PIPEMEMO
+pipe_memo_slave_loop :-
+	pipe_slave_perform_action,
+	pipe_memo_slave_loop.
+#endif  /*PIPEMEMO*/
+
+pipe_slave_perform_action :-
+	%----------------------------------------------------------------------
+        % We use "not not" technique to clear up the context
+	%----------------------------------------------------------------------
+	pipe_slave_perform_action_aux, !, fail.
+pipe_slave_perform_action.
+
+pipe_slave_perform_action_aux :-	
+	% Read slave from the master. Note that the pipes for the
+	% slave have already been redirected properly.
+	read(X),
+	% Process master request
+        process_master_input(X,
+			     RequestArgs,
+			     Action
+#ifdef  PROFILE
+			    ,MsgTimeStamp1
+#endif
+			    ),
+#ifdef  PROFILE
+	ctime(MsgTimeStamp2),
+	MsgTime1 = MsgTimeStamp2 - MsgTimeStamp1,
+#endif
+        % Perform action for master and reply
+        pipe_slave_perform_action_and_reply(Action,
+					    RequestArgs
+#ifdef  PROFILE
+					   ,MsgTime1
+#endif
+					   ),
+	!, fail.
+pipe_slave_perform_action_aux.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Process input from master
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Perform the project the solver and construct the interpolant to be
+% stored in the memo table
+process_master_input(
+	in_state1(SGlobalArr, SGlobalVar,
+	          SLocalArr, SLocalVar, ShortCL
+#ifdef  PROFILE
+                 ,MsgTimeStamp
+#endif
+                 ),
+        request_args(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,ShortCL),
+	project_and_negate		     	     
+#ifdef  PROFILE
+	         ,MsgTimeStamp
+#endif        
+                    ) :-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [project_and_negate]),
+#endif /* PIPE_DEBUG */
+	true.
+% Dump solver of the slave
+process_master_input(
+	dump_solver(GlobalArr, GlobalVar,LocalArr, LocalVar, ArrRef
+#ifdef  PROFILE
+		   ,MsgTimeStamp
+#endif
+		   ),
+        request_args(GlobalArr,GlobalVar,LocalArr, LocalVar, ArrRef),
+	dump_solver		     	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+                    ) :-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: RECEIVED NORMAL MSG: %\n", [dump_solver]),
+#endif /* PIPE_DEBUG */
+	true.
+% Project a list of symbolic constraints
+process_master_input(
+	project_sym_constraints(SGlobalArr, SGlobalVar,SLocalArr,SLocalVar,CL		    
+#ifdef  PROFILE
+			       ,MsgTimeStamp
+#endif
+			       ),
+        request_args(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL),
+	project_sym_constraints
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+                    ) :-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [project_sym_constraints]),
+#endif /* PIPE_DEBUG */
+	true.
+
+%--------------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET)
+%--------------------------------------------------------------------------
+% Update WCET witness (perform dump)
+process_master_input(
+	in_state2(FNameOfChild,FNameOfParent, XCL,
+		  SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+		  WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX,
+		  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar
+#ifdef  PROFILE
+                 ,MsgTimeStamp
+#endif
+		 ),
+        request_args(FNameOfChild, FNameOfParent, XCL,
+		     SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+		     WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX,
+		     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	update_witness
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: RECEIVED NORMAL MSG: %\n", [update_witness]),
+#endif /* PIPE_DEBUG */
+	true.
+%---------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%---------------------------------------------------------------------%
+% Assert WCET answer
+process_master_input(
+	assert_answer(Depth,Id,ML,WP,A,
+		      WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef
+#ifdef  PROFILE
+		     ,MsgTimeStamp
+#endif			  
+		     ),
+	request_args(Depth,Id,ML,WP,A,
+		     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+	assert_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [assert_answer]),
+#endif 
+	true.
+% Retract WCET answer
+process_master_input(
+	retract_answer(Depth,Id,ML,WP,A,
+		       WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef
+#ifdef  PROFILE
+		      ,MsgTimeStamp
+#endif			  
+		     ),
+	request_args(Depth,Id,ML,WP,A,
+		     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef),
+	retract_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [retract_answer]),
+#endif 
+	true.
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%--------------------------------------------------------------------------
+#endif /*UNFOLD_OPT==WCET */
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+#if   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%--------------------------------------------------------------------------
+% Update slicing witnesses (perform dump)
+process_master_input(
+	in_state2(PostVarIndex,PreVarIndex,
+		  FNameOfChild,FNameOfParent,
+		  PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+		  PreGlobalArr ,PreGlobalVar ,PreLocalArr ,PreLocalVar,
+		  XCL, PostWitness
+#ifdef  PROFILE
+                 ,MsgTimeStamp
+#endif
+                 ),		 
+        request_args(PostVarIndex,PreVarIndex,
+		     FNameOfChild,FNameOfParent,
+		     PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+		     PreGlobalArr ,PreGlobalVar ,PreLocalArr ,PreLocalVar,
+		     XCL, PostWitness),
+	update_witness
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** DUMP SLAVE: RECEIVED NORMAL MSG: %\n", [update_witness]),
+#endif /* PIPE_DEBUG */
+	true.
+%---------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%---------------------------------------------------------------------%
+% Assert slicing answers
+process_master_input(
+	assert_answer(Depth,ML,Reps,
+		      GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark
+#ifdef  SLICING_CONTROL_OPT		      
+		     ,Aux
+#endif		     
+#ifdef  PROFILE
+		     ,MsgTimeStamp
+#endif			  
+		     ),
+	request_args(Depth,ML,Reps,
+		     GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark
+#ifdef  SLICING_CONTROL_OPT		    
+		    ,Aux
+#endif		    
+		    ),		    
+	assert_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [assert_answer]),
+#endif 
+	true.
+% Retract slicing answers
+process_master_input(
+	retract_answer(Depth,ML,Reps,
+		       GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark
+#ifdef  SLICING_CONTROL_OPT		      
+		      ,Aux
+#endif		      
+#ifdef  PROFILE
+		      ,MsgTimeStamp
+#endif			  
+		      ),
+	request_args(Depth,ML,Reps,
+		     GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark
+#ifdef  SLICING_CONTROL_OPT		    
+		    ,Aux
+#endif		    
+		    ),
+	retract_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [retract_answer]),
+#endif 
+	true.
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%--------------------------------------------------------------------------
+#endif  /* UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+#if     (UNFOLD_OPT == SAFETY)
+%--------------------------------------------------------------------------
+#ifdef  PIPEDUMP_AND_ANSWERS
+%--------------------------------------------------------------------------
+% Assert safety answers
+process_master_input(
+#ifdef  MINMAX
+	assert_answer(NodeId, Depth, ML, LoopStackML, Intp, LoopContext
+#ifdef  PROFILE
+		     ,MsgTimeStamp
+#endif	/*PROFILE*/		  
+		     ),
+	request_args(NodeId, Depth, ML, LoopStackML, Intp, LoopContext),		    
+	assert_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif  /*PROFILE*/
+#else	/*MINMAX*/	    
+	assert_answer(Depth,ML,WP
+#ifdef  PROFILE
+		     ,MsgTimeStamp
+#endif	/*PROFILE*/		  
+		     ),
+	request_args(Depth,ML,WP),		    
+	assert_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif  /*PROFILE*/
+#endif  /*MINMAX*/
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [assert_answer]),
+#endif  /*PIPE_DEBUG*/
+	true.
+% Retract safety answers
+process_master_input(
+#ifdef  MINMAX
+	retract_answer(NodeId, Depth, ML, LoopStackML, Intp, LoopContext
+#ifdef  PROFILE
+		      ,MsgTimeStamp
+#endif	/*PROFILE*/		  
+		      ),
+	request_args(NodeId, Depth, ML, LoopStackML, Intp, LoopContext),
+	retract_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif  /*PROFILE*/
+
+#else		    
+	retract_answer(Depth,ML,WP	       
+#ifdef  PROFILE
+		      ,MsgTimeStamp
+#endif	/*PROFILE*/		  
+		      ),
+	request_args(Depth,ML,WP),
+	retract_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif  /*PROFILE*/
+#endif  /*MINMAX*/		    
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [retract_answer]),
+#endif 
+	true.
+#ifdef  MINMAX
+% Retract all answers whose depth > Depth
+process_master_input(
+	retract_all_answers(Depth
+#ifdef  PROFILE
+		           ,MsgTimeStamp
+#endif	/*PROFILE*/		  
+		           ),
+	request_args(Depth),
+	retract_all_answers	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif  /*PROFILE*/
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [retract_all_answers]),
+#endif  /*PIPE_DEBUG*/
+	true.
+#endif  /*MINMAX*/
+#ifdef  MINMAX
+% Get safety answers
+process_master_input(
+	get_answer(NodeId, Depth, ML, LoopStackML, Intp, LoopContext
+#ifdef  PROFILE
+		  ,MsgTimeStamp
+#endif	/*PROFILE*/		  
+		  ),
+	request_args(NodeId, Depth, ML, LoopStackML, Intp, LoopContext),
+	get_answer	     
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif  /*PROFILE*/
+		   ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** ANSWERS SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [get_answer]),
+#endif 
+	true.
+#endif  /*MINMAX*/
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%--------------------------------------------------------------------------
+#endif  /*UNFOLD_OPT == SAFETY*/
+%--------------------------------------------------------------------------
+#ifdef  PIPEMEMO
+process_master_input(store_memo(EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+				CList,Answer
+#ifdef  PROFILE
+			       ,MsgTimeStamp
+#endif
+			       ),		 
+		     request_args(EntryIndex,TableId,PPIdx,FName,PPContext,CallStack,
+				  CList,Answer),
+		     store_memo
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** MEMO SLAVE: RECEIVED NORMAL MSG: %\n", [store_memo]),
+#endif  /* PIPE_DEBUG */
+	true.
+process_master_input(check_memo(EntryIndex,TableId,PPIdx,FName,PPContext,CallStack
+#ifdef  PROFILE
+			       ,MsgTimeStamp
+#endif
+			       ),		 
+		     request_args(EntryIndex,TableId,PPIdx,FName,PPContext,CallStack),	
+		     check_memo
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** MEMO SLAVE: RECEIVED NORMAL MSG: %\n", [check_memo]),
+#endif  /* PIPE_DEBUG */
+	true.
+process_master_input(
+#ifdef  PROFILE  
+                     print_memo_table(MsgTimeStamp),
+#else
+		     print_memo_table,
+#endif
+		     _,
+		     print_memo_table 
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+                    ):-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** MEMO SLAVE: RECEIVED NORMAL MSG: %\n", [print_memo]),
+#endif 
+	true.
+process_master_input(
+	retract_memo(MemoEntry
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif			  
+		    ),
+	request_args(MemoEntry),
+	retract_memo
+#ifdef  PROFILE
+        ,MsgTimeStamp
+#endif        
+		    ) :-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** MEMO SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [retract_memo]),
+#endif 
+	true.
+process_master_input(
+#ifdef  PROFILE  
+                     print_tablespace_entries(G,Key,MsgTimeStamp),
+#else
+		     print_tablespace_entries(G,Key),
+#endif
+		     request_args(G,Key),
+		     print_tablespace_entries 
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+                    ):-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** MEMO SLAVE: RECEIVED NORMAL MSG: %\n",
+		      [print_tablespace_entries]),
+#endif 
+	true.
+#endif  /* PIPEMEMO */
+% Get counter values from slave
+process_master_input(get_counter_value(Counter
+#ifdef  PROFILE
+				      ,MsgTimeStamp
+#endif
+				      ),		 
+		     request_args(Counter),
+		     get_counter_value
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: RECEIVED NORMAL MSG: %\n", [get_counter_value]),
+#endif /* PIPE_DEBUG */
+	true.
+% Execute zmem_usage/0 in the slave
+process_master_input(
+#ifdef  PROFILE  
+                     zmem_usage(MsgTimeStamp),
+#else
+		     zmem_usage,
+#endif
+		     _,
+		     zmem_usage 
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+                    ):-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: RECEIVED NORMAL MSG: %\n", [zmem_usage]),
+#endif 
+	true.
+% Execute cmem_usage/1 in the slave
+process_master_input(
+#ifdef  PROFILE  
+                     cmem_usage(MsgTimeStamp),
+#else
+		     cmem_usage,
+#endif
+		     _,
+		     cmem_usage 
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+                    ):-
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: RECEIVED NORMAL MSG: %\n", [cmem_usage]),
+#endif 
+	true.
+% Execute diagnostic/7 in the slave
+process_master_input(
+#ifdef  PROFILE
+		     diagnostic(MsgTimeStamp),
+#else
+		     diagnostic,
+#endif
+		     _Request,
+		     diagnostic
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: RECEIVED NORMAL MSG: %\n", [diagnostic]),
+#endif 
+	true.
+process_master_input(
+#ifdef  PROFILE
+		     get_pid(MsgTimeStamp),
+#else
+		     get_pid,
+#endif
+		     _Request,
+		     get_pid
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: RECEIVED NORMAL MSG: %\n", [get_pid]),
+#endif 
+	true.
+% Execute set_cs_mark/0 or pop_cs_mark/0 in the slave
+process_master_input(
+#ifdef  PROFILE
+		     cs_mark(Action,MsgTimeStamp),
+#else
+		     cs_mark(Action),
+#endif
+		     request_args(Action),
+		     cs_mark
+#ifdef  PROFILE
+		    ,MsgTimeStamp
+#endif        
+		    ) :-                    
+	!,
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: RECEIVED NORMAL MSG: %\n", [cs_mark(Action)]),
+#endif 
+	true.
+% Stop the slave
+process_master_input(halt,_RequestArgs,_Action
+#ifdef  PROFILE
+                   ,_MsgTimeStamp
+#endif
+		    ):- 
+	%----------------------------------------------------------------------
+	% Slave terminates after receiving a "halt" message from master,
+	% after cleaning up
+	%----------------------------------------------------------------------
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: CLOSING PIPE\n", []),
+#endif /* PIPE_DEBUG */
+	told, seen,
+	halt.
+process_master_input(Msg,_RequestArgs,_Action
+#ifdef  PROFILE
+                   ,_MsgTimeStamp
+#endif
+                    ):-		     
+#ifdef  PIPE_DEBUG
+	print_message("*** SLAVE: UNRECOGNIZED: %\n", [Msg]).
+#else
+        Msg=_ .
+#endif /* PIPE_DEBUG */
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Perform action for master and reply
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Perform the dump to build interpolant for the memo table 
+pipe_slave_perform_action_and_reply(project_and_negate,	
+				    request_args(SGlobalArr,SGlobalVar,
+						 SLocalArr,SLocalVar,ShortCL)
+#ifdef  PROFILE
+				   ,MsgTime1
+#endif
+				   ):-
+
+	% Do action
+	% Defined in tracer_interpolants.clp.gpp
+	pipe_slave_project_and_negate(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				      ShortCL,
+				      SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+				      CList
+#ifdef  PROFILE
+				     , Time1, Time2
+#endif
+				     ),
+        % Reply 
+#ifdef  PROFILE
+	ctime(MsgTimeStamp3),
+#endif
+	print_file("state1_response(%,%,%,%,%",
+                   [SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1, CList]),
+#ifdef  PROFILE
+        print_file(",%,%,%,%", [Time1, Time2, MsgTime1, MsgTimeStamp3]),
+#endif
+        print_file(") .\n", []),
+
+	% Flush pipes
+	flush.
+% Dump the solver
+pipe_slave_perform_action_and_reply(dump_solver,	
+				    request_args(GlobalArr,GlobalVar,
+						 LocalArr,LocalVar,ArrRef)
+#ifdef  PROFILE
+				   ,MsgTime1
+#endif
+				   ):-
+
+	% Do action
+	% Defined in tracer_solver.clp.gpp
+	project_solver_context(state(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+			       state(GlobalArr1,GlobalVar1,LocalArr1,LocalVar1,CList)),	
+        % Reply 
+#ifdef  PROFILE
+	ctime(MsgTimeStamp3),
+#endif
+	print_file("dump_solver_response(%,%,%,%,%",
+                   [GlobalArr1, GlobalVar1, LocalArr1, LocalVar1, CList]),
+#ifdef  PROFILE
+        % To avoid warnings 
+        Time1=_,Time2=_,
+        print_file(",%,%,%,%", [Time1, Time2, MsgTime1, MsgTimeStamp3]),
+#endif
+        print_file(") .\n", []),
+
+	% Flush pipes
+	flush.
+% Perform the projection of symbolic constraints
+pipe_slave_perform_action_and_reply(project_sym_constraints,	
+				    request_args(SGlobalArr, SGlobalVar,
+						 SLocalArr , SLocalVar , CL)
+#ifdef  PROFILE
+				   ,MsgTime1
+#endif
+				   ):-
+
+	% Do action
+	% Defined in tracer_solver.clp.gpp
+	pipe_slave_project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   CL, SimpCL, SuccessFlag
+#ifdef  PROFILE
+					  , Time1, Time2
+#endif
+					  ),
+        % Reply 
+#ifdef  PROFILE
+	ctime(MsgTimeStamp3),
+#endif
+	print_file("project_sym_constraints_response(%,%,%,%,%,%",
+                   [SuccessFlag,
+		    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,SimpCL]),
+#ifdef  PROFILE
+        print_file(",%,%,%,%", [Time1, Time2, MsgTime1, MsgTimeStamp3]),
+#endif
+        print_file(") .\n", []),
+	% Flush pipes
+	flush.
+%---------------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET)
+%---------------------------------------------------------------------------
+% Update WCET witness (perform dump)
+pipe_slave_perform_action_and_reply(update_witness,			
+		 request_args(FNameOfChild,FNameOfParent,XCL,
+			      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+			      WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX,
+			      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar)
+#ifdef PROFILE
+		              ,_MsgTime1
+#endif
+				   ):-
+	
+	% Do action
+	% Defined in tracer_witnesses.clp.gpp
+	update_encoded_single_witness(FNameOfChild, FNameOfParent,XCL,
+				      SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,
+				      w(WGlobalArrX,WGlobalVarX,WLocalArrX,WLocalVarX,WArrRefX),
+				      SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      w(WGlobalArrY,WGlobalVarY,WLocalArrY,WLocalVarY,WArrRefY)),	
+        
+	% Slave replies to master.
+	% Note that the pipes have been already redirected properly.
+	print_file("state2_response(%,%,%,%,%) .\n",
+                   [WGlobalArrY, WGlobalVarY, WLocalArrY, WLocalVarY, WArrRefY]),
+	% Flush pipes
+	flush.
+%---------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%---------------------------------------------------------------------------%
+% IMPORTANT NOTE: the use of a dedicated slave to store only answers
+% allows us to reuse code space assuming that the code space grows
+% monotonically in the same direction. We have implemented in CLP(R)
+% two systems calls: set_cs_mark/0 and pop_cs_mark/0 to manipulate the
+% code space pointer in order to reuse the code space cells. Here, an
+% example how to use them:
+%
+%    set_cs_mark, fassert(foo(1)),
+%    set_cs_mark, fassert(foo(2)),
+%    set_cs_mark, fassert(foo(3)),
+%    set_cs_mark, fassert(foo(4)),
+%    w/o opt    CS= [ foo(1) | foo(2) | foo(3) | foo(4) ]    
+%    w/  opt    CS= [ foo(1) | foo(2) | foo(3) | foo(4) ]
+%    retract(foo(X1))   , pop_cs_mark,    
+%    retract(foo(X2))   , pop_cs_mark,   
+%    set_cs_mark        , fassert(foo(X1+X2)),
+%    w/o opt    CS= [ foo(1+2) |   |    | foo(3) | foo(4) ]       
+%    w/  opt    CS= [ foo(1+2) | foo(3) | foo(4) ]
+%    retract(foo(X1X2)),pop_cs_mark,   
+%    retract(foo(X3))  ,pop_cs_mark,        
+%    set_cs_mark       ,fassert(foo(X1X2+X3)),
+%    w/o opt    CS= [ foo(1+2+3) |     |    |    |     | foo(4) ]        
+%    w/  opt    CS= [ foo(1+2+3) | foo(4) ]
+%    retract(foo(X1X2X3)), pop_cs_mark,    
+%    retract(foo(X4))    , pop_cs_mark,        
+%    set_cs_mark         , fassert(foo(X1X2X3+X4)),
+%    w/o opt    CS= [ foo(1+2+3+4) |    |     |    |    |     |     ]
+%    w/  opt    CS= [ foo(1+2+3+4) ]
+%    
+% Assert WCET answer
+pipe_slave_perform_action_and_reply(assert_answer,			
+		request_args(Depth,Id,ML,WP,A,
+			     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			     WArrRef)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+        % Do the action
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS	
+	%%%%
+	%% This is to try to reuse code space: remember current code
+	%% space pointer
+	%%%
+        set_cs_mark,
+#endif	
+	fassert(wcet_answer(Depth,xx,Id,ML,WP,A,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef))),
+			      
+	% Reply to master
+	print_file("ok .\n",[]),
+	
+	% Flush pipes
+	flush.
+% Retract WCET answer
+pipe_slave_perform_action_and_reply(retract_answer,			
+		request_args(Depth,Id,ML,WP,A,
+			     WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,
+			     WArrRef)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	% Do the action 
+	retract(wcet_answer(Depth,_,Id,ML,WP,A,
+			    w(WGlobalArr,WGlobalVar,WLocalArr,WLocalVar,WArrRef))),
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS	
+	%%%%
+	%% This is to try to reuse code space: move code space pointer
+	%% to last mark.
+	%%%
+        pop_cs_mark,
+#endif		
+	% Reply to master
+	print_file("retract_answer_response(%,%,%,%,%,%,%,%,%,%) .\n",
+                   [Depth,Id,ML,WP,A,
+		    WGlobalArr, WGlobalVar, WLocalArr, WLocalVar, WArrRef]),
+	
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(retract_answer,			
+				    request_args(_,_,_,_,_,_,_,_,_,_)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	%%%
+	% Here not more wcet_answer facts
+	%%%	
+	% Reply to master
+	print_file("fail .\n", []),	
+	% Flush pipes
+	flush.
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%---------------------------------------------------------------------------
+#endif
+%---------------------------------------------------------------------------
+%---------------------------------------------------------------------------
+#if   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%---------------------------------------------------------------------------
+% Update slicing witnesses (perform dump)
+pipe_slave_perform_action_and_reply(update_witness,		
+	        request_args(PostVarIndex,PreVarIndex,
+			     FNameOfChild,FNameOfParent,
+			     PostGlobalArr,PostGlobalVar,PostLocalArr,PostLocalVar,
+			     PreGlobalArr ,PreGlobalVar ,PreLocalArr ,PreLocalVar,
+			     XCL, PostWitness)
+#ifdef PROFILE
+				   , _MsgTime1
+#endif
+				   ):-
+	
+	% Do action
+	% Defined in tracer_witnesses.clp.gpp
+	backward_propagate_witness2(PostVarIndex , PreVarIndex,
+				    FNameOfChild , FNameOfParent,
+				    PostGlobalArr, PostGlobalVar,
+				    PostLocalArr , PostLocalVar,
+				    PreGlobalArr , PreGlobalVar,
+				    PreLocalArr  , PreLocalVar,
+				    XCL,
+				    PostWitness, PreWitness),
+        % Reply 
+	print_file("state2_response(%) .\n",[PreWitness]),
+	% Flush pipes
+	flush.
+%---------------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%---------------------------------------------------------------------------%
+% Assert slicing answers
+pipe_slave_perform_action_and_reply(assert_answer,			
+				    request_args(Depth,ML,Reps,
+						 GlobalArrMark,GlobalVarMark,
+						 LocalArrMark,LocalVarMark
+#ifdef  SLICING_CONTROL_OPT						
+						 ,Aux
+#endif						
+						)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	% Do the action
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS		
+	%%%%
+	%% This is to try to reuse code space: remember current code
+	%% space pointer
+	%%%
+        set_cs_mark,
+#endif		
+	/*table*/fassert(analysis_answer(Depth,ML,Reps,
+					 GlobalArrMark,GlobalVarMark,
+					 LocalArrMark,LocalVarMark)),
+	% Reply to master
+	print_file("ok .\n",[]),	
+	% Flush pipes
+	flush.
+% Retract slicing answers
+pipe_slave_perform_action_and_reply(retract_answer,			
+				    request_args(Depth,ML,Reps,
+						 GlobalArrMark,GlobalVarMark,
+						 LocalArrMark,LocalVarMark
+#ifdef  SLICING_CONTROL_OPT						
+						,Aux
+#endif						
+						)	
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	% Do the action
+	% print_analysis_answer,
+	/*detable*/retract(analysis_answer(Depth,ML,Reps,
+					   GlobalArrMark,GlobalVarMark,
+					   LocalArrMark,LocalVarMark)),
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS	
+	%%%%
+	%% This is to try to reuse code space: move code space pointer
+	%% to last mark.
+	%%%
+        pop_cs_mark,
+#endif		
+	% Reply to master
+#ifdef  SLICING_CONTROL_OPT
+	print_file("retract_answer_response(%,%,%,%,%,%,%,%) .\n",
+                   [Depth,ML,Reps,
+		    GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark,
+		    Aux]),
+#else
+	print_file("retract_answer_response(%,%,%,%,%,%,%) .\n",
+                   [Depth,ML,Reps,
+		    GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark]),
+#endif  /*SLICING_CONTROL_OPT*/
+		   
+	
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(retract_answer,			
+				    request_args(_,_,_,_,_,_,_
+#ifdef  SLICING_CONTROL_OPT						
+						,_
+#endif						
+						)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	%%%
+	% Here not more slicing_answer facts
+	%%%
+	% Reply to master
+	print_file("fail .\n", []),	
+	% Flush pipes
+	flush.
+%---------------------------------------------------------------------------%
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%---------------------------------------------------------------------------%
+#endif  /*(UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%----------------------------------------------------------------------%
+#if     (UNFOLD_OPT == SAFETY)
+%----------------------------------------------------------------------%
+#ifdef  PIPEDUMP_AND_ANSWERS
+%----------------------------------------------------------------------%
+% Assert SAFETY answer
+pipe_slave_perform_action_and_reply(assert_answer,
+#ifdef 	MINMAX
+				   request_args(NodeId, Depth, ML,
+						LoopStackML, Intp, LoopContext)
+#else				   
+				   request_args(Depth,ML,WP)
+#endif  /*MINMAX*/				   
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+        % Do the action
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS	
+	%%%%
+	%% This is to try to reuse code space: remember current code
+	%% space pointer
+	%%%
+        set_cs_mark,
+#endif
+#ifdef  MINMAX
+        fassert(safety_answer(NodeId,Depth,ML,LoopStackML,Intp,LoopContext)),
+#else
+	fassert(safety_answer(Depth,ML,WP)),
+#endif  /*MINMAX*/	
+	% Reply to master
+	print_file("ok .\n",[]),	
+	% Flush pipes
+	flush.
+% Retract SAFETY answer
+pipe_slave_perform_action_and_reply(retract_answer,
+#ifdef 	MINMAX
+				   request_args(NodeId, Depth, ML,
+						LoopStackML, Intp, LoopContext)
+#else				   				    
+				   request_args(Depth,ML,WP)
+#endif /*MINMAX*/				   
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	% Do the action
+#ifdef  MINMAX
+        retract(safety_answer(NodeId,Depth,ML,LoopStackML,Intp,LoopContext)),
+#else
+	retract(safety_answer(Depth,ML,WP)),
+#endif  /*MINMAX*/	
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS	
+	%%%%
+	%% This is to try to reuse code space: move code space pointer
+	%% to last mark.
+	%%%
+        pop_cs_mark,
+#endif		
+	% Reply to master
+#ifdef  MINMAX
+        print_file("retract_answer_response(%,%,%,%,%,%) .\n",
+		   [NodeId,Depth,ML,LoopStackML,Intp,LoopContext]),
+#else
+	print_file("retract_answer_response(%,%,%) .\n",[Depth,ML,WP]),
+#endif 	/*MINMAX*/
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(retract_answer,
+#ifdef 	MINMAX
+				   request_args(_,_,_,_,_,_)
+#else				   
+				   request_args(_,_,_)
+#endif  /*MINMAX*/				   
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	%%%
+	% Here not more safety_answer facts
+	%%%	
+	% Reply to master
+	print_file("fail .\n", []),	
+	% Flush pipes
+	flush.
+#ifdef  MINMAX
+% Retract all SAFETY answers whose depth > Depth
+pipe_slave_perform_action_and_reply(retract_all_answers,
+				    request_args(Depth)
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif  /*PROFILE*/
+				   ):-
+	store_answers$retract_all_safety_answers_below(Depth),
+	% Reply to master
+	print_file("ok .\n",[]),
+	% Flush pipes
+	flush.
+#endif  /*MINMAX*/
+#ifdef  MINMAX
+% Get SAFETY answer
+pipe_slave_perform_action_and_reply(get_answer,
+				    request_args(NodeId, Depth, ML, LoopStackML, Intp, LoopContext)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	% Do the action 
+	safety_answer(NodeId, Depth, ML, LoopStackML, Intp, LoopContext),
+	% Reply to master
+	print_file("get_answer_response(%,%,%,%,%,%) .\n",
+		   [NodeId, Depth, ML, LoopStackML, Intp, LoopContext]),
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(get_answer,			
+				    request_args(_,_,_,_,_,_)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	%%%
+	% Here not more safety_answer facts
+	%%%	
+	% Reply to master
+	print_file("fail .\n", []),	
+	% Flush pipes
+	flush.
+#endif  /*MINMAX*/
+%---------------------------------------------------------------------------%
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%---------------------------------------------------------------------------%
+#endif  /*UNFOLD_OPT==SAFETY*/
+%---------------------------------------------------------------------------%
+#ifdef  PIPEMEMO
+%---------------------------------------------------------------------------%
+%%%
+% Store an entry in the (slave) memo table.
+%%%
+pipe_slave_perform_action_and_reply(store_memo,	
+		       request_args(EntryIndex,
+				    TableId,PPIdx,FName,PPContext,CallStack,
+				    CList,Answer)
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	% Do action	
+	% Defined in tracer_memo.clp.gpp
+	store_t(EntryIndex,TableId,  PPIdx, FName, PPContext,CallStack,		
+	        _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar,
+		CList, Answer),
+
+        % Reply
+	print_file(" ok. \n",[]),
+
+	% Flush pipes
+	flush.
+%%%
+% Check if an entry is in the (slave) memo table.
+%%%
+pipe_slave_perform_action_and_reply(check_memo,	
+		       request_args(EntryIndex,
+				    TableId,PPIdx,FName,PPContext,CallStack)
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	
+	% Do action	
+	% Defined in tracer_memo.clp.gpp
+	check_t(EntryIndex,TableId,  PPIdx, FName, PPContext,CallStack,		
+	        _SGlobalArr,_SGlobalVar,_SLocalArr,_SLocalVar,
+		NegConstraints, Answer),
+
+        % Reply
+	print_file("check_memo_response(%,%) . \n",
+                   [%TableId,PPIdx,FName,PPContext,CallStack,
+		    NegConstraints,Answer]),	
+
+	% Flush pipes
+	flush.	
+pipe_slave_perform_action_and_reply(check_memo,_RequestArgs
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	%%%
+        % Here no entry found in the memo table.
+	%%%
+	% Reply to the master
+	print_file("fail. \n",[]),
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(print_memo_table,_Request	
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-	
+	% Do action
+	% Defined in tracer_memo.clp.gpp
+	print_memo_table_slave,
+        % Reply 
+	print_file("ok . \n",[]),
+	% Flush pipes
+	flush.
+% Retract memo table entries
+pipe_slave_perform_action_and_reply(retract_memo,			
+				    request_args(MemoEntry)	
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+
+	% Do the action
+	retract(MemoEntry),
+	% Reply to master
+	print_file("ok. \n",[]),	
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(retract_memo,			
+				    request_args(_)
+#ifdef PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	%%%
+	% Here not more entry facts 
+	%%%
+	% Reply to master
+	print_file("fail .\n", []),	
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(print_tablespace_entries,
+				    request_args(G,Key)
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-	
+	% Do action
+	% Defined in tracer_loops_fixpo.clp.gpp
+	print_tablespace_entries(G,Key),
+        % Reply 
+	print_file("ok . \n",[]),
+	% Flush pipes
+	flush.
+%---------------------------------------------------------------------------%
+#endif  /*PIPEMEMO*/
+%---------------------------------------------------------------------------%
+% Get counter values from slave
+pipe_slave_perform_action_and_reply(get_counter_value,		
+				    request_args(Counter)
+#ifdef  PROFILE
+				   , _MsgTime1
+#endif
+				   ):-
+	% Do the action
+	( counter_value(Counter,Val) ->
+	  true
+	;
+	  print_message("ERROR: counter % not defined \n",[Counter])
+	),
+        % Reply 
+	print_file("get_counter_value_response(%) .\n",[Val]),
+	% Flush pipes
+	flush.
+% Execute zmem_usage/0 in the slave
+pipe_slave_perform_action_and_reply(zmem_usage,_Request			
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	% Do action	
+	zmem_usage,
+	% Reply to master
+	print_file("ok .\n",[]),	
+	% Flush pipes
+	flush.
+% Execute cmem_usage/1 in the slave
+pipe_slave_perform_action_and_reply(cmem_usage,_Request	
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-	
+	% Do action
+	cmem_usage(MemUsage),	
+        % Reply 
+	print_file("cmem_usage_response(%) . \n",[MemUsage]),
+	% Flush pipes
+	flush.
+% Execute diagnostic/7 in the slave
+pipe_slave_perform_action_and_reply(diagnostic,_Request	
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-	
+	% Do action
+	diagnostic(A,B,C,D,E,F,G),	
+        % Reply 
+	print_file("diagnostic_response(%,%,%,%,%,%,%) . \n",[A,B,C,D,E,F,G]),
+	% Flush pipes
+	flush.
+% Execute get_pid/1 in the slave
+pipe_slave_perform_action_and_reply(get_pid,_Request	
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-	
+	% Do action
+	get_pid(PID),	
+        % Reply 
+	print_file("get_pid_response(%) . \n",[PID]),
+	% Flush pipes
+	flush.
+pipe_slave_perform_action_and_reply(cs_mark,
+				    request_args(Action)
+#ifdef  PROFILE
+				   ,_MsgTime1
+#endif
+				   ):-
+	% Do action	
+	cs_mark(Action),
+	% Reply to master
+	print_file("ok .\n",[]),	
+	% Flush pipes
+	flush.
+
+cs_mark(Action):-
+	Action == set,
+	!,
+	set_cs_mark,
+#ifdef  PIPE_DEBUG	
+	print_message("MEMO SLAVE: put a mark in code space \n",[]),
+#endif  /*PIPE_DEBUG*/
+        true.
+cs_mark(Action):-
+	Action == pop,
+	!,
+	pop_cs_mark,
+#ifdef  PIPE_DEBUG		
+	print_message("MEMO SLAVE: moving code space pointer to last mark. \n",
+		      []),
+#endif  /*PIPE_DEBUG*/
+        true.
+cs_mark(Action):-
+	print_message("MEMO SLAVE: cs_mark option % not recognized. \n",
+		      [Action]),
+	!,
+	fail.
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+% MASTER
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Process output from slave
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reply after performing the dump to store interpolant in the memo
+% table
+process_slave_output(
+   	state1_response(SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			CList
+#ifdef  PROFILE
+		       ,Time1, Time2
+		       ,MsgTime1, MsgTimeStamp3
+#endif
+		       ),
+        reply_args(SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+		   CList
+#ifdef  PROFILE
+		  ,Time1, Time2
+		  ,MsgTime1, MsgTimeStamp3
+#endif
+		  ) 
+        ) :- !,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [project_and_negate]),
+#endif
+	true.
+% Reply after dumping the solver
+process_slave_output(
+   	dump_solver_response(GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+			     CList
+#ifdef  PROFILE
+			    ,Time1, Time2
+			    ,MsgTime1, MsgTimeStamp3
+#endif
+			    ),
+        reply_args(GlobalArr1, GlobalVar1, LocalArr1, LocalVar1,
+		   CList
+#ifdef  PROFILE
+		  ,Time1, Time2
+		  ,MsgTime1, MsgTimeStamp3
+#endif
+		  ) 
+        ) :- !,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [dump_solver]),
+#endif
+	true.
+% Reply after projecting symbolic constraints
+process_slave_output(
+   	project_sym_constraints_response(SuccessFlag,
+					 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					 SimpCL
+#ifdef  PROFILE
+					,Time1, Time2
+					,MsgTime1, MsgTimeStamp3
+#endif  /*PROFILE*/
+					),
+        reply_args(SuccessFlag,
+		   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		   SimpCL 
+#ifdef  PROFILE
+		  ,Time1, Time2
+		  ,MsgTime1, MsgTimeStamp3
+#endif  /*PROFILE*/
+		  ) 
+        ) :- !,
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n",
+		      [project_sym_constraints]),
+#endif
+	true.
+%------------------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET)
+%------------------------------------------------------------------------------
+% Reply after performing the dump for updating WCET witness
+process_slave_output(
+   	state2_response(WGlobalArrY, WGlobalVarY, WLocalArrY, WLocalVarY,
+			WArrRefY),                    
+        reply_args(WGlobalArrY, WGlobalVarY, WLocalArrY, WLocalVarY,
+	           WArrRefY)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [update_witness]),
+#endif
+	true.
+%-----------------------------------------------------------------------
+#ifdef  PIPEDUMP_AND_ANSWERS
+%-----------------------------------------------------------------------
+% Reply after retracting WCET answer
+process_slave_output(
+   	retract_answer_response(Depth,Id,ML,WP,A,
+				WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+				WArrRef),                    
+        reply_args(Depth,Id,ML,WP,A,
+		   WGlobalArr, WGlobalVar, WLocalArr, WLocalVar,
+	           WArrRef)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [retract_answer]),
+#endif
+	true.
+%-----------------------------------------------------------------------
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%-----------------------------------------------------------------------
+%------------------------------------------------------------------------------
+#endif  /*(UNFOLD_OPT==WCET)*/
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+#if   (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%------------------------------------------------------------------------------
+% Reply after performing the dump for updating slicing witnesses
+process_slave_output(state2_response(PreWitness),   	
+		     reply_args(PreWitness)):-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG:% \n",
+		      [update_witness]),
+#endif
+	true.
+%-----------------------------------------------------------------------
+#ifdef  PIPEDUMP_AND_ANSWERS
+%-----------------------------------------------------------------------
+% Reply after retracting slicing answer
+process_slave_output(retract_answer_response(Depth,ML,Reps,   	
+		     GlobalArrMark, GlobalVarMark, LocalArrMark, LocalVarMark
+#ifdef  SLICING_CONTROL_OPT					     
+					    ,Aux
+#endif					    
+					    ),                    
+        reply_args(Depth,ML,Reps,
+		   GlobalArrMark, GlobalVarMark, LocalArrMark, LocalVarMark
+#ifdef  SLICING_CONTROL_OPT					     		  
+	           ,Aux
+#endif		  
+		  )) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [retract_answer]),
+#endif
+	true.
+%-----------------------------------------------------------------------
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%-----------------------------------------------------------------------
+%------------------------------------------------------------------------------
+#endif  /*UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE*/
+%------------------------------------------------------------------------------
+#if     (UNFOLD_OPT==SAFETY)
+%-----------------------------------------------------------------------
+#ifdef  PIPEDUMP_AND_ANSWERS
+%-----------------------------------------------------------------------
+% Reply after retracting safety answer
+process_slave_output(
+#ifdef  MINMAX
+		     retract_answer_response(NodeId,Depth,ML,LoopStackML,Intp,LoopContext),                    
+		     reply_args(NodeId,Depth,ML,LoopStackML,Intp,LoopContext)
+#else	/*MINMAX*/	    
+		     retract_answer_response(Depth,ML,WP),                    
+		     reply_args(Depth,ML,WP)
+#endif  /*MINMAX*/		    
+		    ) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [retract_answer]),
+#endif
+	true.
+#ifdef  MINMAX
+% Reply after getting safety answer
+process_slave_output(get_answer_response(NodeId,Depth,ML,LoopStackML,Intp,LoopContext),                    
+		     reply_args(NodeId,Depth,ML,LoopStackML,Intp,LoopContext)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [get_answer]),
+#endif
+	true.
+#endif  /*MINMAX*/
+%-----------------------------------------------------------------------
+#endif  /*PIPEDUMP_AND_ANSWERS*/
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+#endif  /*(UNFOLD_OPT==SAFETY)*/
+%-----------------------------------------------------------------------
+#ifdef  PIPEMEMO
+process_slave_output(check_memo_response(%TableId,PPIdx,FName,PPContext,CallStack,
+		     %SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     NegConstraints,Answer),
+	reply_args(%TableId,PPIdx,FName,PPContext,CallStack,
+		   %SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		   NegConstraints,Answer)):-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG:% \n",
+		      [check_memo]),
+#endif
+	true.
+#endif  /*PIPEMEMO*/
+% Reply with the counter value
+process_slave_output(get_counter_value_response(Val),   	
+		     reply_args(Val)):-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG:% \n",
+		      [get_counter_value]),
+#endif
+	true.
+% For reply of cmem_usage/1
+process_slave_output(cmem_usage_response(MemUsage),   	
+        reply_args(MemUsage)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [cmem_usage]),
+#endif
+	true.
+% For reply of diagnostic/7
+process_slave_output(diagnostic_response(A,B,C,D,E,F,G),   	
+        reply_args(A,B,C,D,E,F,G)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [diagnostic]),
+#endif
+	true.
+% For reply of get_pid_response/1
+process_slave_output(get_pid_response(A),   	
+        reply_args(A)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [get_pid]),
+#endif
+	true.
+% For failure replies
+process_slave_output(fail, reply_args(fail)) :-                    
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [fail]),
+#endif
+	true.
+% For success replies 
+process_slave_output(ok,reply_args(ok)) :-
+	!,        
+#ifdef  PIPE_DEBUG
+ 	print_message("*** MASTER: RECEIVED NORMAL MSG: %\n", [ok]),
+#endif
+	true.
+process_slave_output(Msg,_RequestArgs) :-
+#ifdef  PIPE_DEBUG
+	print_message("*** MASTER: UNRECOGNIZED ANSWER FROM SLAVE %\n", [Msg]).
+#else
+        Msg=_ .
+#endif
+
+#endif /* defined(PIPEDUMP) || defined(PIPEDUMP_AND_ANSWERS) || defined(PIPEMEMO)*/
+
+#ifdef  MINMAX
+store_answers$retract_all_safety_answers_below(Depth):-
+        X > Depth,
+	retract(safety_answer(NodeId,X,ML,LoopStackML,LoopContext,Intp)),
+#ifdef  PIPEDUMP_AND_ANSWERS_REUSE_CS	
+	%%%%
+	%% This is to try to reuse code space: move code space pointer
+	%% to last mark.
+	%%%
+        pop_cs_mark,
+#endif	/*PIPEDUMP_AND_ANSWERS_REUSE_CS*/		
+%#ifdef  MINMAX_DEBUG_RETRACT		
+%	print_message("RETRACTED ANSWER (%, %, %, %, %, %)\n",
+%		      [NodeId, Depth, ML, LoopStackML, LoopContext, Intp]),
+%#else
+        % To avoid warnings
+	NodeId=_,ML=_,LoopStackML=_,LoopContext=_,Intp=_,
+%#endif	
+	fail.
+store_answers$retract_all_safety_answers_below(_).
+#endif  /*MINMAX*/

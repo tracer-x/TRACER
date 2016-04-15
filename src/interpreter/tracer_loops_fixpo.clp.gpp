@@ -1,0 +1,689 @@
+% tracer_loops_fixpo.clp.gpp
+
+%=============================================================================%
+% This file implements specific operations needed to compute a loop
+% fixpoint (used in some TRACER analyses)
+%=============================================================================%
+% export
+%
+% cleanup_fixpo/0
+% combine_variables_fixp_iterations/12
+% Cleanup of fixpoint iteration
+% tracer_loops.clp.gpp
+% record_tablespace_structure/2
+% tracer.clp.gpp
+% record_tablespace_content/3
+% tracer_slicer.clp.gpp (for profiling)
+% find_latest_child/2
+% tracer_slicer.clp.gpp
+% clear_loop_in_memo_table/2         
+% Debugging
+% tracer_piped_operations 
+% print_tablespace_entries/2         
+%
+% In order to be general and factorize code as much as possible, we
+% assume that the information kept track of a loop is basically the
+% one stored in loop_fixpoint/7 fact:
+% 
+% FName: function name
+% PP: program point
+% GlobalArrSet, GlobalVarSet,LocalArrSet,LocalVarSet: if an element is
+% marked 'o' then its corresponding variable belongs to the set.
+% Ws: witnesses associated to each marked variable.
+%-----------------------------------------------------------------------------%
+% We use TableSpace to identify a loop. Each loop has an unique
+% TableSpace. If the loop has nested loops then we use
+% tablespace_structure_memo/2 to represent the parent-child
+% relationship between TableSpaces. Each TableSpace corresponds to a
+% set of memo table entries via the relation
+% record_tablespace_content_memo/3.
+%
+% Comments about options:
+% - OPTIMIZED_FIXPO: avoids redundant fixpoint iterations.
+%      DO NOT USE IT. OBSOLETE and NOT TESTED
+%=============================================================================%
+
+cleanup_fixpo:-
+	retractall(loop_fixpoint(_,_,_,_,_,_,_)),
+#ifdef  PROFILE	
+        retractall(fixp_iteration_timing(_)),
+#endif  /*PROFILE*/
+#ifdef  OPTIMIZED_FIXPO
+        cleanup_optimized_fixpo,
+#endif  /*OPTIMIZED_FIXPO*/
+	clear_tablespace_record,
+	clear_tablespace_structure_memo.
+
+%------------------------------------------------------------------------------
+% combine_variables_fixp_iterations/12
+% ------------------------------------------------------------------------------
+% Combine the set of old and new variables. Also return the flag
+% denoting similarity of old and new markings: =0: same, >0: different
+%------------------------------------------------------------------------------
+combine_variables_fixp_iterations(OldGlobalArr,OldGlobalVar,OldLocalArr,OldLocalVar,
+				  NewGlobalArr,NewGlobalVar,NewLocalArr,NewLocalVar,
+				  A+B+C+D) :-	
+	combine_marking(OldGlobalArr, NewGlobalArr, A),
+	combine_marking(OldGlobalVar, NewGlobalVar, B),
+	combine_marking(OldLocalArr , NewLocalArr , C),
+	combine_marking(OldLocalVar , NewLocalVar , D),!.
+
+combine_marking(Old, New, NoFixpoint) :-
+	fcopy_term(Old,New),
+	same_marking(Old, New, NoFixpoint), !.
+
+same_marking(Old , New , 0):-
+	same_marking_aux(Old, New).
+same_marking(_Old, _New, 1).
+
+same_marking_aux([], []).
+same_marking_aux([A|_], [B|_]) :-
+	mark_term(Z),
+	var(A), B==Z,
+	!,
+	fail.
+same_marking_aux([_|R], [_|S]) :-
+	same_marking_aux(R, S).
+	
+%------------------------------------------------------------------------------
+% Associate tablespace with table ids (called by store_interp)
+%------------------------------------------------------------------------------
+record_tablespace_content(0, _, _) :- !.
+record_tablespace_content(TableSpace, FName, TableId) :-
+	record_tablespace_content_memo(TableSpace, FName, TableId), !.
+record_tablespace_content(TableSpace, FName, TableId) :-
+	fassert(record_tablespace_content_memo(TableSpace, FName, TableId)).
+
+%------------------------------------------------------------------------------
+% Clear tablespace (record_tablespace_content_memo/3) for a given
+% TableSpace id.
+%------------------------------------------------------------------------------
+clear_tablespace_record(TableSpace) :-
+	TableSpace > 0,
+	retract(record_tablespace_content_memo(TableSpace, _, _)),
+	fail.
+clear_tablespace_record(_) :- !.
+
+% Clean all tablespace records just for sanitization.
+clear_tablespace_record :-
+	retractall(record_tablespace_content_memo(_, _, _)).
+
+%------------------------------------------------------------------------------
+% TableSpace structure record handling
+%------------------------------------------------------------------------------
+record_tablespace_structure(Parent, Child) :-
+	fassert(tablespace_structure_memo(Parent, Child)), !.
+% clear_tablespace_structure(Parent) :-
+% 	tablespace_structure_memo(Parent, Child),
+% 	clear_tablespace_structure(Child),
+% 	fail.
+% clear_tablespace_structure(_) :- !.
+
+%------------------------------------------------------------------------------
+% Clean all tablespace records just for sanitization.
+%------------------------------------------------------------------------------
+clear_tablespace_structure_memo:-
+	retractall(tablespace_structure_memo(_,_)).
+
+%------------------------------------------------------------------------------
+% To navigate through the TableSpace hierarchy
+%------------------------------------------------------------------------------
+find_latest_child(Parent, Child) :-
+	counter_value(current_tablespace, Id),
+	find_latest_child_aux(Parent, Id, Child).
+find_latest_child_aux(Parent, Child, Child) :-
+	tablespace_structure_memo(Parent, Child), !.
+find_latest_child_aux(Parent, Id, Child) :-
+	find_latest_child_aux(Parent, Id-1, Child).
+
+%----------------------------------------------------------------------------
+% Main operation: clear the memo table before restarting fixpoint
+%----------------------------------------------------------------------------
+clear_loop_in_memo_table(
+#ifdef 	OPTIMIZED_FIXPO
+			 FName,
+#endif /*OPTIMIZED_FIXPO*/ 			 
+			 TableSpace):-
+#ifdef  PROFILE
+	ctime(Time0),
+#endif  		
+#ifdef  FIXPO_CLEAN_DEBUG
+        print_message("Current TableSpace: %\n", [TableSpace]),
+#endif	
+        find_latest_child(TableSpace, NewTableSpace),
+#if     defined(FIXPO_DEBUG) || defined(FIXPO_CLEAN_DEBUG)
+        print_message("found child % \n",[NewTableSpace]),
+#endif
+#ifdef  FIXPO_CLEAN_DEBUG
+        print_message("%\n", [clear_tablespace(NewTableSpace)]),
+#endif
+#ifdef  PROFILE
+        set_counter(deleted_memo_entries,0),	
+#endif
+#ifdef  OPTIMIZED_FIXPO
+        lazy_clear_tablespace(NewTableSpace, FName),
+#else
+	clear_tablespace(NewTableSpace),
+#endif  /*OPTIMIZED_FIXPO*/
+#ifdef  DEBUG_USE
+	counter_value(deleted_memo_entries,DME),
+	print_message("deleted % memo table entries because (%,%) is not fixpoint\n",
+		      [DME,TableSpace,NewTableSpace]),
+#endif	/*DEBUG_USE*/
+#ifdef  PIPEMEMO_REUSE_CS
+        % We move the code space pointer of the slave to the last
+        % remembered address in order to reuse code space.
+        pipe_master_cs_mark(pop),
+#endif  /*PIPEMEMO*/			
+#ifdef  FIXPO_DEBUG
+        print_message("Table space associated with % cleared \n",
+	       [NewTableSpace]),
+#endif
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(cleanup_loop_memo,Time1-Time0),
+#endif
+        true.
+	
+%==============================================================================
+% Clean RECURSIVELY all memo table entries and tablespace information.
+%==============================================================================
+clear_tablespace(TableSpace) :-
+	% Cleanup memo entries corresponding to current loop
+	clear_current_tablespace(TableSpace),
+	!,
+	% Cleanup memo entries corresponding to nested loops.
+	clear_tablespace_recursively(TableSpace).
+
+
+% To clean memo table entries in the current loop
+clear_current_tablespace(TableSpace):-
+#ifdef  FIXPO_CLEAN_DEBUG	
+	print_message("BEFORE CLEARING TableSpace %\n", [TableSpace]),
+        print_tablespace(TableSpace),
+	print_tablespace_record(TableSpace),
+#endif
+        %-----------------------------------------------------------------%
+        % To actually delete memo table entries
+        %-----------------------------------------------------------------%
+#ifdef  PIPEMEMO        
+        pipe_master_clear_tablespace_memo(TableSpace),
+#else
+	clear_tablespace_memo(TableSpace),
+#endif  /*PIPEMEMO*/
+        %-----------------------------------------------------------------%
+        % To delete meta-information that related TableSpace and MemoTable
+        %-----------------------------------------------------------------%
+	clear_tablespace_record(TableSpace),	
+#ifdef  FIXPO_CLEAN_DEBUG		
+	print_message("AFTER CLEARING TableSpace %\n", [TableSpace]),
+        print_tablespace(TableSpace),
+	print_tablespace_record(TableSpace),	
+#endif		
+        true.
+
+% To clean recursively memo table entries in the nested loops
+clear_tablespace_recursively(TableSpace) :-
+ 	tablespace_structure_memo(TableSpace, ChildTableSpace),
+ 	clear_tablespace(ChildTableSpace),
+ 	fail.
+clear_tablespace_recursively(_) :- !.
+
+%==============================================================================
+% Clear the memo table entries  (tpX) for a given TableSpace id.
+%==============================================================================
+#ifdef  PIPEMEMO
+pipe_master_clear_tablespace_memo(TableSpace) :-
+	TableSpace > 0,
+	record_tablespace_content_memo(TableSpace, FName, TableId),
+	printf_to_atom(PName, "t%", [TableId]),
+	%%%
+	% We get the number of entries corresponding to the same
+	% program point.
+	%%%
+	memo_entry_counter_value(FName,TableId,N),
+	% Reset the counter value 
+	memo_entry_reset_counter(FName,TableId),
+	% Get the init value of the counter 
+	memo_entry_start_counter(I),	
+	pipe_master_clear_tablespace_memo_backtrack(I,N,
+						    PName,FName,TableId),	
+	fail.
+pipe_master_clear_tablespace_memo(_).
+#endif  /*PIPEMEMO*/
+
+
+#if     (!defined(PIPEMEMO))
+clear_tablespace_memo(TableSpace) :-
+	TableSpace > 0,
+	record_tablespace_content_memo(TableSpace, FName, TableId),
+	printf_to_atom(PName, "t%", [TableId]),
+#ifdef  ENCODE_MEMO
+        % tpX/7
+        T =.. [PName, FName, TableId, _IpIdx, _ContextId,
+	       [sinfo(FName, _)|_],_L, _Answer],	       
+#else
+        % tpX/10
+        T =.. [PName, FName, _IpIdx, _ContextId, [sinfo(FName, _)|_],
+	       _GlobalArr, _GlobalVar, _LocalArr, _LocalVar,
+               _L, _Answer],	
+#endif  /*ENCODE_MEMO*/
+#if     (defined(ENCODE_MEMO) && defined(ENCODE_CHILD_PARENT))
+        retract(T),
+#else
+        robust_retract(T),
+#endif
+#ifdef  PROFILE
+        add_counter(deleted_memo_entries,1),
+#endif	
+	fail.
+clear_tablespace_memo(_) :- !.
+#endif  /*!PIPEMEMO*/
+
+#ifdef  FIXPO_CLEAN_DEBUG
+%==============================================================================
+% Print the memo table entries (tpX) for a given TableSpace id.
+%==============================================================================
+print_tablespace(TableSpace) :-
+	TableSpace > 0,
+	record_tablespace_content_memo(TableSpace,FName, TableId),
+	printf_to_atom(PName, "t%", [TableId]),
+#ifdef  PIPEMEMO
+	Arity=8,	
+#elif   defined(ENCODE_MEMO)
+	Arity=7,	
+#else
+	Arity=10,	
+#endif
+        functor(G,PName,Arity),
+	arg(1,G,FName),	
+#ifdef  PIPEMEMO
+        pipe_master_print_tablespace_entries(G,PName),
+#else
+	print_tablespace_entries(G,PName),
+#endif  /*PIPEMEMO*/	
+	fail.
+print_tablespace(_) :- !.
+
+#ifdef  PIPEMEMO
+pipe_master_print_tablespace_entries(G,Key):-
+#ifdef  PROFILE
+        ctime(MsgTimeStamp1),
+	write_memo_slave("print_tablespace_entries(%,%,%) . \n",
+			 [G,Key,MsgTimeStamp1]),
+#else
+        write_memo_slave("print_tablespace_entries(%,%) . \n",
+			 [G,Key]),
+#endif  /* PROFILE*/
+        read_from_memo_slave(_).
+#endif  /*PIPEMEMO*/
+
+print_tablespace_entries(G,Key):-
+	warning(warning_off),		
+	call(G),
+	warning(warning_on),		
+	print_message("\tEntry %: % \n",[Key,G]),
+	fail.
+print_tablespace_entries(_,_).
+
+%==============================================================================
+% Print the tablespace (record_tablespace_content_memo/3) for a given
+% TableSpace id.
+%==============================================================================
+print_tablespace_record(TableSpace) :-
+	TableSpace > 0,
+	record_tablespace_content_memo(TableSpace, FName, TableId),
+        print_message("\t % \n",
+		      [record_tablespace_content_memo(TableSpace, FName, TableId)]),
+	fail.
+print_tablespace_record(_) :- !.
+#endif  /*FIXPO_CLEAN_DEBUG*/
+
+%==============================================================================
+%==============================================================================
+#ifdef  OPTIMIZED_FIXPO
+%==============================================================================
+%==============================================================================
+% Sometimes there is no need to redo the computation of the inner
+% loop. For instance, assume we would like to slice the following
+% program at the end on variable a:
+%
+% i=0;
+% while (i < n){
+%   j=0;
+%   while (j < n-i-1){ 
+%      if (a>b){tmp=b;b=a;a=b;}
+%      j++;
+%   }
+%   i++
+% } 
+%
+% The fixpo of the inner loop is reached after 2 iterations marking
+% {i,j,a,b,n}. However and after that, the outer loop has not reached
+% yet its fixpo. Therefore, in the naive algorithm the fixpo
+% computation of the inner loop is done again. The key observation is
+% that the inner loop's fixpo cannot add more variables in this case,
+% and hence, it should be not redone.
+
+cleanup_optimized_fixpo:-
+	retractall(reusable_fixpo_loop(_,_)),
+	retractall(pending_clear_tablespace(_,_,_)),
+	cleanup_loop_memotable,
+	clear_tablespace_loop.
+
+% Associate TableSpace with the start PC of the loop
+record_tablespace_loop(0 ,_ ,_ ) :- !.
+record_tablespace_loop(TableSpace, FName, PC):-
+	relation_tablespace_loop(TableSpace, FName, PC), !.
+record_tablespace_loop(TableSpace, FName, PC):-
+	block(_,FName,[PC],_,_,l,_,_,_,_,_),
+	fassert(relation_tablespace_loop(TableSpace,FName,PC)).
+record_tablespace_loop(_,_,_):-!.
+
+% clear_tablespace_loop
+clear_tablespace_loop:-
+	retractall(relation_tablespace_loop(_,_,_)).
+
+% lazy_clear_tablespace(+,+)
+lazy_clear_tablespace(TableSpace, FName) :-
+	% Clean only current loop
+	clear_current_tablespace(TableSpace),
+	% and record cleanup of nested loops for later
+	lazy_clear_tablespace_recursively(TableSpace,FName),
+	!.
+lazy_clear_tablespace_recursively(TableSpace,FName):-	
+	relation_tablespace_loop(TableSpace,FName, PP),
+	fassert(pending_clear_tablespace(TableSpace,FName,[PP])),
+        print_message("DELAY recursive cleanup of TableSpace's child of %\n",
+		      [TableSpace]).
+lazy_clear_tablespace_recursively(_,_):- !.
+
+% To store the result of the analysis of a loop
+store_loop_memotable(FName, Id, PP, Depth,        
+		     GlobalArr, GlobalVar, LocalArr, LocalVar,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     ArrRef, CallStack, Interp, Answer):-
+
+        assert(loop_memotable(FName, Id, PP, Depth,        
+			      GlobalArr, GlobalVar, LocalArr, LocalVar,
+			      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,ArrRef,
+			      CallStack, Interp, Answer)).
+
+% To retract the result of the analysis of a loop
+retract_loop_memotable(FName, Id, PP, Depth,        
+		       GlobalArr, GlobalVar, LocalArr, LocalVar,
+		       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		       ArrRef, CL, ML, CallStack, Answer):-
+
+	
+        loop_memotable(FName, Id, PP, Depth,        
+		       GlobalArr, GlobalVar, LocalArr, LocalVar,
+		       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		       ArrRef, CallStack, Interp, Answer),
+	robust_retract_no_call(loop_memotable(FName,_,PP,Depth,
+					      _,_,_,_,_,_,_,_,
+					      _,_,_,_)),
+	
+	% Here we produce  CL and ML from Interp
+	Interp = interp(TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,CList),
+	SGlobalArr = TGlobalArr, SGlobalVar = TGlobalVar,
+	SLocalArr  = TLocalArr , SLocalVar  = TLocalVar,
+	make_dnf(CList, CList1),
+	interpolate_constraints_path(CList1, CL, ML, no_check).
+cleanup_loop_memotable:-
+	retractall(loop_memotable(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)).
+
+%------------------------------------------------------------------------%
+% If it fails then there is an asserted fact reusable_fixpo_loop/2 as
+% side effect. It means that the loop is an inner loop which is not
+% affected by the changes done by the outer loop's
+% fixpoint. Therefore, there is no need to redo the computation of
+% this inner loop. Otherwise, it success without no side effect.
+%------------------------------------------------------------------------%
+attempt_reusing_fixpo(TableSpace, FName, PP, PP1, Depth ,
+		      CL, ML, CallStack):-
+%#ifdef  DEBUG_USE	
+%	print_message("Trying to reuse fixpoint at %:% \n",[FName, PP]),
+%#endif 	/*DEBUG_USE*/
+
+	% First, we check we already memoed before one result for the
+	% inner loop at hand
+	loop_memotable(FName,_,PP,_,_,_,_,_,_,_,_,_,_,_,_,_),        
+
+	% Then, we take the markings at the beginning of the fixpo
+	% iteration for the inner loop
+	loop_fixpoint(FName, PP, _,
+		      CurrMarkGlobalArr, CurrMarkGlobalVar,
+		      CurrMarkLocalArr , CurrMarkLocalVar),
+%#ifdef  DEBUG_USE	
+%	print_message("CURRENT MARKINGS: <%,%,%,%> \n",
+%	              [CurrMarkGlobalArr, CurrMarkGlobalVar,
+%		       CurrMarkLocalArr , CurrMarkLocalVar]),
+%#endif 	/*DEBUG_USE*/
+
+	% We take also the coming markings from the outer loop
+        lookup_loop_in_memo_table(FName,PP1,CallStack,
+				  FixpMarkGlobalArr,FixpMarkGlobalVar,
+				  FixpMarkLocalArr,FixpMarkLocalVar),
+	!,
+%#ifdef  DEBUG_USE
+%	print_message("PREVIOUS FIXPO MARKINGS: <%,%,%,%> \n",
+%	              [FixpMarkGlobalArr, FixpMarkGlobalVar,
+%		       FixpMarkLocalArr , FixpMarkLocalVar]),
+%#endif  /*DEBUG_USE*/
+
+	test_if_fixpo_is_reusable(FName,PP, Depth, TableSpace,CL,ML,
+				  CurrMarkGlobalArr , CurrMarkGlobalVar,
+				  CurrMarkLocalArr  , CurrMarkLocalVar,			  
+				  FixpMarkGlobalArr , FixpMarkGlobalVar,
+				  FixpMarkLocalArr  , FixpMarkLocalVar),
+	!.
+attempt_reusing_fixpo(_,_,_,_,_,_,_,_).
+
+
+test_if_fixpo_is_reusable(FName , PP , _Depth , _TableSpace,
+			  CL, ML,
+			  OldMarkGlobalArr , OldMarkGlobalVar,
+			  OldMarkLocalArr  , OldMarkLocalVar,
+			  NewMarkGlobalArr , NewMarkGlobalVar,
+			  NewMarkLocalArr  , NewMarkLocalVar):-
+		
+	%----------------------------------------------------------% 
+	% Condition to decide whether fixpo redo is needed or not
+	%----------------------------------------------------------%
+#ifdef  DEBUG_USE	
+	print_message("Trying to reuse fixpoint at %:% \n",[FName, PP]),
+	print_message("Marked variables coming from the inner loop: \n",[]),	
+	pretty_printer_markings(FName,
+				OldMarkGlobalArr  , OldMarkGlobalVar,		  
+				OldMarkLocalArr   , OldMarkLocalVar),
+	print_message("Memoed marked variables for the outer loop %:% : \n",
+		      [FName,PP]),
+	pretty_printer_markings(FName,
+				NewMarkGlobalArr  , NewMarkGlobalVar,		  
+				NewMarkLocalArr   , NewMarkLocalVar),
+#endif 	/*DEBUG_USE*/
+
+/*	
+	project_markings_onto_loop_scope(FName,PP,
+					 OldMarkGlobalArr    , OldMarkGlobalVar,
+					 OldMarkLocalArr     , OldMarkLocalVar,
+					 ProjOldMarkGlobalArr, ProjOldMarkGlobalVar,
+					 ProjOldMarkLocalArr , ProjOldMarkLocalVar),		
+ 	print_message("Projected marked variables coming from the inner loop: \n",[]),
+	
+ 	pretty_printer_markings(FName,
+ 				ProjOldMarkGlobalArr  , ProjOldMarkGlobalVar,		  
+ 				ProjOldMarkLocalArr   , ProjOldMarkLocalVar),
+	subseteq_markings(ProjOldMarkGlobalArr, ProjOldMarkGlobalVar,		  
+			  ProjOldMarkLocalArr , ProjOldMarkLocalVar,
+			  NewMarkGlobalArr    , NewMarkGlobalVar,
+			  NewMarkLocalArr     , NewMarkLocalVar),
+	
+*/
+	
+	subseteq_markings(OldMarkGlobalArr  , OldMarkGlobalVar,		  
+			  OldMarkLocalArr   , OldMarkLocalVar,
+			  NewMarkGlobalArr  , NewMarkGlobalVar,
+			  NewMarkLocalArr   , NewMarkLocalVar),	
+	
+	!,
+	% Here, the fixpo can be reused
+	print_message("Fixpoint of %:% is reused!\n",[FName,PP]),
+#ifdef  DEBUG_USE	
+	print_message("BEGIN REUSING answer and interpolant for loop %:% \n",
+		      [FName,PP]),
+#endif	
+	reusing_fixpo_catch_error(FName, PP,CL,ML),
+	
+	% Side-effect fact to control unfolder execution	
+	fassert(reusable_fixpo_loop(FName,PP)),
+#ifdef  PROFILE
+        % This should not be here. The problem is that we increment
+        % the counters before checking if we can reuse fixpo
+        % computations or not. Need to fix this ...
+        add_counter(fixpoint_iteration,-1),
+        add_counter(total_fixpoint_iteration,-1),		
+#endif
+#ifdef  DEBUG_USE	
+	print_message("END REUSING answer and interpolant for loop %:% \n",
+		      [FName,PP]),
+#endif	
+        !,	
+	fail.
+test_if_fixpo_is_reusable(FName,PP,_,_,_,_,_,_,_,_,_,_,_,_):-
+	%---------------------------------------------------------------%
+	% Here, the fixpo cannot be reused.
+	%---------------------------------------------------------------%	
+	% Then, we need to delete memo table entries from the previous
+	% loop computation for the next fixpo iteration.
+	%---------------------------------------------------------------%		
+#ifdef  DEBUG_USE	
+	print_message("FIXPO cannot be reused ;-( \n",[]),
+#endif	
+	retract(pending_clear_tablespace(TableSpace,FName,PP)),
+#ifdef  DEBUG_USE		
+	print_message("BEGIN cleanup TableSpace % (%:%) \n",
+		      [TableSpace,FName,PP]),
+#endif	
+#ifdef  PROFILE
+        set_counter(deleted_memo_entries,0),	
+#endif	
+	clear_tablespace_recursively(TableSpace),
+#ifdef  PROFILE
+	counter_value(deleted_memo_entries,DME),
+	print_message("Deleted % memo entries from DELAYED TableSpace's child of % \n",
+		      [DME,TableSpace]),
+#endif
+#ifdef  DEBUG_USE	
+	print_message("END   cleanup TableSpace % (%:%) \n",
+		      [TableSpace,FName,PP]),
+#endif	
+	!.
+
+%--------------------------------------------------------------------------%
+% Retract the analysis of the loop memoed before and perform two
+% things: create an answer to be collected later by parent and also
+% store in the memo table the interpolant.
+%--------------------------------------------------------------------------%
+reusing_fixpo_catch_error(FName, PP,CL,ML):-
+	
+	% Retract from an special memo table for storing the analysis
+	% of the loops
+
+	retract_loop_memotable(FName, Id, PP, Depth,        
+			       GlobalArr, GlobalVar, LocalArr, LocalVar,
+			       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			       ArrRef, CL, ML, CallStack, Answer),
+
+	% Assert the analysis of the loops as an answer to be collected
+	% by ancestors and interpolants in memo table.
+
+	store_loop_summary(FName, Id, PP, Depth,
+			   GlobalArr, GlobalVar, LocalArr, LocalVar,
+			   SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			   ArrRef, CL, ML,
+			   CallStack, Answer ,
+#ifdef  OPTIMIZED_FIXPO
+                           _,
+#endif 			  
+			   _),
+	!.
+reusing_fixpo_catch_error(_,_,_,_):-        
+	error_message("Unexpected error in reusing_fixpo_catch_error/4\n",[]).
+
+/* Begin temporary */
+/*project_markings_onto_loop_scope(FName,PP,
+				 MarkGlobalArr    , MarkGlobalVar,
+				 MarkLocalArr     , MarkLocalVar,
+				 ProjMarkGlobalArr, ProjMarkGlobalVar,
+				 ProjMarkLocalArr , ProjMarkLocalVar):-
+        block(_,FName,PP,_,_,l,_,
+              UpdGlobalArr,UpdGlobalVar,UpdLocalArr,UpdLocalVar),
+	
+	forget_markings(MarkGlobalArr,UpdGlobalArr,ProjMarkGlobalArr),
+	forget_markings(MarkGlobalVar,UpdGlobalVar,ProjMarkGlobalVar),
+	forget_markings(MarkLocalArr ,UpdLocalArr ,ProjMarkLocalArr),
+	forget_markings(MarkLocalVar ,UpdLocalVar ,ProjMarkLocalVar),
+	!.
+
+project_markings_onto_loop_scope(_FName,_PP,
+				 MarkGlobalArr    , MarkGlobalVar,
+				 MarkLocalArr     , MarkLocalVar,
+				 MarkGlobalArr, MarkGlobalVar,
+				 MarkLocalArr , MarkLocalVar):-
+	error_message("Unexpected error in project_markings_onto_loop_scope/10\n",[]).
+
+forget_markings([],[],[]):-!.
+forget_markings([_|Ms],[U|Us],[_|Zs]):-
+	is_syntactic_invariant(U),!,
+	forget_markings(Ms,Us,Zs).
+forget_markings([M|Ms],[_|Us],[M|Zs]):-
+	!,
+	forget_markings(Ms,Us,Zs).
+*/
+/* End temporary */
+
+subseteq_markings(MarkGlobalArr1 , MarkGlobalVar1,
+		  MarkLocalArr1  , MarkLocalVar1,
+		  MarkGlobalArr2 , MarkGlobalVar2,
+		  MarkLocalArr2  , MarkLocalVar2):-
+
+	subseteq_markings_aux(MarkGlobalArr1 , MarkGlobalArr2),
+	subseteq_markings_aux(MarkGlobalVar1 , MarkGlobalVar2),
+	subseteq_markings_aux(MarkLocalArr1  , MarkLocalArr2),
+	subseteq_markings_aux(MarkLocalVar1  , MarkLocalVar2),!.
+
+subseteq_markings_aux([],[]):-!.
+subseteq_markings_aux([M1|M1s],[M2|M2s]):-
+	is_marked_term(M1),
+	is_marked_term(M2),!,
+	subseteq_markings_aux(M1s,M2s).
+subseteq_markings_aux([M1|M1s],[_|M2s]):-
+	not(is_marked_term(M1)),!,
+	subseteq_markings_aux(M1s,M2s).
+	
+lookup_loop_in_memo_table(FName,PP,CallStack,
+			  MarkedGlobalArr,MarkedGlobalVar,
+			  MarkedLocalArr,MarkedLocalVar):-
+
+	lookup_memo_table(FName,PP,CallStack,_,_,_,_,_,_,AnswerX),
+
+  	AnswerX  = answer(_,
+			  MarkedGlobalArrX,MarkedGlobalVarX,
+			  MarkedLocalArrX ,MarkedLocalVarX),
+#ifdef  ENCODE_MEMO
+	decode_marked_list(MarkedGlobalArrX,MarkedGlobalArr),
+	decode_marked_list(MarkedGlobalVarX,MarkedGlobalVar),
+	decode_marked_list(MarkedLocalArrX ,MarkedLocalArr),
+	decode_marked_list(MarkedLocalVarX ,MarkedLocalVar).
+#else
+	MarkedGlobalArrX = MarkedGlobalArr,
+	MarkedGlobalVarX = MarkedGlobalVar,
+	MarkedLocalArrX  = MarkedLocalArr,
+	MarkedLocalVarX  = MarkedLocalVar.
+#endif  /*ENCODE_MEMO*/
+%==============================================================================
+#endif  /*OPTIMIZED_FIXPO*/
+%==============================================================================
+%==============================================================================

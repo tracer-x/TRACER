@@ -1,0 +1,34 @@
+#!/bin/bash
+result=0
+
+rm -f log
+
+while [ $result -eq 0 ]
+do
+#echo "Repeating"
+
+# -nofp ignore function pointer calls (Unsound: Blast does not handle function pointers)
+# -cf use context free reachability
+# -craig 1 Use craig interpolants (FOCI) to get predicates ([1] use with scope, [2] goes the whole hog)
+#	   See the paper Abstractions from Proofs
+# -alias alias options
+#	 Options: If file name is bdd, invokes a bdd based alias analysis,
+#	 otherwise reads the alias relationships from a file. See also -pta
+# -incref incomplete counterex. analysis
+# -skipfun skip functions that dont modify any variable in the present pred set
+# -noinitialize do not initialize compound globals
+# -L ERROR: target label for reachability (default ERROR)
+# -funlabel __error__: target function for reachability: runs each call separately. 
+# -reloadmod Reload mods from previously saved file 
+# -dmod Demand-driven tproj 
+# -pred seed predicates file
+
+#pblast.opt -nofp -cf -craig 1 -alias $1.bdd -incref -skipfun -noinitialize -L BERROR  -funlabel __error__ -reloadmod -dmod -pred $1.pred $1.c $2 >> log 2>&1
+
+pblast.opt -nofp -cf -craig 1 -alias $1.bdd -incref -skipfun -noinitialize -L BERROR  -funlabel __error__ -reloadmod -dmod -pred $1.pred $1.c >> log 2>&1
+
+if grep "Timings:" log; then
+  result=1
+fi
+
+done

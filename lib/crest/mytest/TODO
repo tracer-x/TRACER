@@ -1,0 +1,33 @@
+Things todo to massage a benchmark to run:
+
+1) Make all variables in all functions CREST_int. CREST does not
+   generate inputs for a variable if it's really a local variable so
+   it doesn't matter. Also make all global vars CREST_int too.
+
+2) Convert all if(x == y) to if(x >= y && x <= y). Similarly for
+   !=. Make sure all if(x) and if(!x) are also handled accordingly.
+   Use the following vim commands:
+
+   :%s/if (\([^=]*\) == \([^=]*\)) {/if ((\1 >= \2) \&\& (\1 <= \2)) {
+   :%s/if (\([^=]*\) != \([^=]*\)) {/if ((\1 > \2) \|\| (\1 < \2)) {
+   /if ([a-zA-Z_ 0-9]*)
+   /if (!.*)
+
+3) *STRICTLY NO UNSIGNED VARIABLES (unsigned int/long, 123456UL) or
+   hex numbers that overflow such as 0xc0000016*. If there are no.s
+   that overflow, convert them properly (eg, -1 <---> 2^31). Also
+   convert all "long" to "int" (and 12345L to 12345).
+
+4) Rename all labels named _L to my_L, _L___ to my_L___, switch_ to
+   myswitch_, while_ to mywhile_.
+
+5) Remove all _TRACER_abort annotations if any. Instead of safety
+   properties, when a bug is reached call exit(1) and add 
+   _TRACER_assume(0).
+
+6) Make sure there are no external/system calls with side effects,
+   such as exit(1). If yes they need to be handled properly so that
+   TRACER can reason about it. For eg, for an exit call, add a
+   _TRACER_assume(0) after it to invoke TRACER backtrack mechanism.
+
+7) BE AWARE OF FUNCTION POINTERS!

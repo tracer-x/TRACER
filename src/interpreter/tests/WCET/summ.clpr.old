@@ -1,0 +1,68 @@
+trans(func_main, 1,
+	[0],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[1],[H],[],[SH],[],[],[ReturnValue,INext,Sum],[],[SReturnValue,SINext,SSum],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 2,
+	[1],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[2],[H],[],[SH],[],[],[ReturnValue,I,SumNext],[],[SReturnValue,SI,SSumNext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 3,
+	[2],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[3],[H],[],[SH],[],[],[ReturnValue,INext,SumNext],[],[SReturnValue,SINext,SSumNext],
+	[eq(SSumNext,0),eq(SINext,1)],
+	[],
+	[],
+	not_branch) :-
+	SumNext=0,INext=1.
+trans(func_main, 4,
+	[3],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[5],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[gt(100,SI)],
+	[],
+	[],
+	branch) :-
+	I<100.
+trans(func_main, 5,
+	[3],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[4],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[geq(SI,100)],
+	[],
+	[],
+	branch) :-
+	I>=100.
+trans(func_main, 6,
+	[5],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[3],[H],[],[SH],[],[],[ReturnValue,INext,Sum],[],[SReturnValue,SINext,SSum],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[],
+	not_branch) :-
+	INext=I+1.
+trans(func_main, 7,
+	[4],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[6],[H],[],[SH],[],[],[ReturnValue,I,Sum],[],[SReturnValue,SI,SSum],
+	[],
+	[],
+	[],
+	not_branch).
+%--------------------------------------------------
+%loop(func_main, [3],[4], 99 , [n],[],[],[n,u,n]).
+block(1,func_main, [3],[4], 99 ,l,_ListId,_,_,_,_,[n],[],[],[n,u,n]).
+%--------------------------------------------------
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_main, [6]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_main,[_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).

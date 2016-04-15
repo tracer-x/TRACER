@@ -1,0 +1,47 @@
+
+coinductionlimit(0).		% No coinduction
+unfolddepthbound(2).
+tracedepthbound(2).
+
+% These should be defined in the solver. Put here temporarily
+% before the solver is ready.
+
+% equality(arreq).
+% equality(multiseteq).
+
+% solver(arith).
+
+% Specification
+%
+% avl(H,null,0,{}).
+% avl(H,X,D1+1,{X} * S1 * S2) :-
+%         H[X]=D1-D2, 0 <= D1-D2, D1-D2 <= 1,
+%         avl(H,H[X+1],D1,S1), avl(H,H[X+2],D2,S2).
+% avl(H,X,D2+1,{X} * S1 * S2) :-
+%         H[X]=D1-D2, D1-D2 = -1,
+%         avl(H,H[X+1],D1,S1), avl(H,H[X+2],D2,S2).
+
+declare_unification_type(allz, [arreq,eq,eq,multiseteq]).
+
+unfold(avl(H,P,D,S),
+       [
+	body([], [eq(P,0),eq(D,0),multiseteq(S,multisetempty)]),
+	body([avl(H,P1,D1,S1), avl(H,P2,D2,S2)],
+	     [multiseteq(S,union([S1,S2,multiset([P,plus(P,1),plus(P,2)])])),
+	      disjoint([S1,S2,multiset([P,plus(P,1),plus(P,2)])]),
+	      eq(plus(ref(H,P),D2),D1), geq(D1,D2),
+	      geq(plus(D2,1),D1),
+	      eq(P1,ref(H,plus(P,1))),
+	      eq(P2,ref(H,plus(P,2)))]),
+	body([avl(H,P1,D1,S1), avl(H,P2,D2,S2)],
+	     [multiseteq(S,union([S1,S2,multiset([P,plus(P,1),plus(P,2)])])),
+	      disjoint([S1,S2,multiset([P,plus(P,1),plus(P,2)])]),
+	      eq(plus(ref(H,P),D2),D1), eq(D2,plus(D1,1)),
+	      eq(P1,ref(H,plus(P,1))),
+	      eq(P2,ref(H,plus(P,2)))])
+       ]).
+
+
+
+:- consult('recursive.clpr').
+

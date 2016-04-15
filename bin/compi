@@ -1,0 +1,14 @@
+#!/bin/bash
+
+dir=`pwd`
+
+arg1=${dir}/$1
+if [ "$2" = "-" ] ; then
+	arg2="-"
+else
+	arg2="${dir}/$2"
+fi
+arg3=$3
+
+cd /home/vijay/new-new-work/TRACER/trunk
+ant compi -Darg1=${arg1} -Darg2=${arg2} -Darg3=${arg3}

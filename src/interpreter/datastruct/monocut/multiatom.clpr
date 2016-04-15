@@ -1,0 +1,31 @@
+unfolddepthbound(2).
+solver(arith).
+
+unfold(even(X),
+       [
+	body([], [eq(X,0)]),
+	body([even(Y)], [eq(X,plus(Y,2))])
+       ]).
+
+unfold(m5(X),
+       [
+	body([], [eq(X,0)]),
+	body([m5(Y)], [eq(X,plus(Y,5))])
+       ]).
+
+run :-
+	prove(0, 0,
+	      [m5(X), even(X)], [],
+	      [m5(A), even(Z)], [eq(A,Z)],
+	      []),
+	counter_value(assertionnumber, K),
+	printf("Proof succeed\n", []),
+	printf("Number of assertions: %\n", [K]).
+run :-
+        printf("PROOF FAILED.\n", []).	
+
+
+:- consult('monocut.clpr').
+
+
+

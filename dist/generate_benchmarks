@@ -1,0 +1,50 @@
+#!/bin/bash
+
+TESTS_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter/tests/SAFETY/MACRO
+DEST_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/dist/benchmarks
+
+rm -r $DEST_PATH
+echo "Creating $DEST_PATH directory ..."
+mkdir $DEST_PATH
+
+cp regrtest-benchmarks $DEST_PATH/regrtest
+
+# NTWINDOWS DRIVERS
+
+cp $TESTS_PATH/ntdrivers/kbfiltr/kbfiltr-TRACER.c          $DEST_PATH/kbfiltr.c
+cp $TESTS_PATH/ntdrivers/kbfiltr/kbfiltr-TRACER-unsafe-1.c $DEST_PATH/kbfiltr-unsafe1.c
+cp $TESTS_PATH/ntdrivers/kbfiltr/kbfiltr-TRACER-unsafe-2.c $DEST_PATH/kbfiltr-unsafe2.c
+
+cp $TESTS_PATH/ntdrivers/cdaudio/cdaudio-TRACER-MINMAX.c   $DEST_PATH/cdaudio.c
+cp $TESTS_PATH/ntdrivers/diskperf/diskperf-TRACER.c        $DEST_PATH/diskperf.c
+cp $TESTS_PATH/ntdrivers/floppy/floppy-TRACER-MINMAX.c     $DEST_PATH/floppy.c
+
+# LINUX DRIVERS
+
+cp $TESTS_PATH/linuxdrivers/qpmouse/qpmouse-TRACER.c       $DEST_PATH/qpmouse.c
+cp $TESTS_PATH/linuxdrivers/tlan/tlan-TRACER.c             $DEST_PATH/tlan.c
+
+# TCAS DRIVERS
+
+cp $TESTS_PATH/tcas/tcas_1a.c  $DEST_PATH/tcas1a.c
+cp $TESTS_PATH/tcas/tcas_1b.c  $DEST_PATH/tcas1b.c
+cp $TESTS_PATH/tcas/tcas_2a.c  $DEST_PATH/tcas2a.c
+cp $TESTS_PATH/tcas/tcas_2b.c  $DEST_PATH/tcas2b.c
+cp $TESTS_PATH/tcas/tcas_3a.c  $DEST_PATH/tcas3a.c
+cp $TESTS_PATH/tcas/tcas_3b.c  $DEST_PATH/tcas3b.c
+cp $TESTS_PATH/tcas/tcas_4a.c  $DEST_PATH/tcas4a.c
+cp $TESTS_PATH/tcas/tcas_4b.c  $DEST_PATH/tcas4b.c
+cp $TESTS_PATH/tcas/tcas_5a.c  $DEST_PATH/tcas5a.c
+cp $TESTS_PATH/tcas/tcas_5b.c  $DEST_PATH/tcas5b.c
+
+# SSH
+cp $TESTS_PATH/ssh/simpler/s3_clnt.blast.1.c  $DEST_PATH/s3_clnt.blast.1.c
+cp $TESTS_PATH/ssh/simpler/s3_clnt.blast.2.c  $DEST_PATH/s3_clnt.blast.2.c
+cp $TESTS_PATH/ssh/simpler/s3_clnt.blast.3.c  $DEST_PATH/s3_clnt.blast.3.c
+cp $TESTS_PATH/ssh/simpler/s3_clnt.blast.4.c  $DEST_PATH/s3_clnt.blast.4.c
+
+cp $TESTS_PATH/ssh/simpler/s3_srvr.blast.2.c  $DEST_PATH/s3_srvr.blast.2.c
+cp $TESTS_PATH/ssh/simpler/s3_srvr.blast.3.c  $DEST_PATH/s3_srvr.blast.3.c
+cp $TESTS_PATH/ssh/simpler/s3_srvr.blast.4.c  $DEST_PATH/s3_srvr.blast.4.c
+cp $TESTS_PATH/ssh/simpler/s3_srvr.blast.13.c $DEST_PATH/s3_srvr.blast.13.c
+

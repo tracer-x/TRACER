@@ -1,0 +1,34 @@
+int NONDET1,NONDET2;
+
+int foo(){
+  int x,b,y,z;
+
+  if (NONDET1)   
+    y =0;    
+  else{
+    b = z ; 
+    x = 0 ;  
+  }
+ 
+  if (x > 0)   
+    x = y ;  
+
+  return x;               
+}
+
+
+void main(int n){
+  int p,i;
+
+  i=0;
+  while (i<n){
+    if (NONDET2) 
+      p=5;
+    else  
+      p=foo();
+    i++;
+  }
+  return;               
+}
+
+     

@@ -1,0 +1,142 @@
+trans(func_foo, 1,
+	[0],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[1],[H],[],[SH],[],[],[ReturnValue,N,INext,Sum,Product],[],[SReturnValue,SN,SINext,SSum,SProduct],
+	[eq(SINext,1)],
+	[],
+	[],
+	not_branch) :-
+	INext=1.
+trans(func_foo, 2,
+	[1],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,SumNext,Product],[],[SReturnValue,SN,SI,SSumNext,SProduct],
+	[eq(SSumNext,0)],
+	[],
+	[],
+	not_branch) :-
+	SumNext=0.
+trans(func_foo, 3,
+	[2],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,ProductNext],[],[SReturnValue,SN,SI,SSum,SProductNext],
+	[eq(SProductNext,1)],
+	[],
+	[],
+	not_branch) :-
+	ProductNext=1.
+trans(func_foo, 4,
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,SumNext,Product],[],[SReturnValue,SN,SI,SSumNext,SProduct],
+	[eq(SSumNext,plus(SSum,SI))],
+	[],
+	[],
+	not_branch) :-
+	SumNext=Sum+I.
+trans(func_foo, 5,
+	[5],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,ProductNext],[],[SReturnValue,SN,SI,SSum,SProductNext],
+	[eq(SProductNext,plus(SProduct,SI))],
+	[],
+	[],
+	not_branch) :-
+	ProductNext=Product+I.
+trans(func_foo, 6,
+	[6],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[7],[H],[],[SH],[],[],[ReturnValue,N,INext,Sum,Product],[],[SReturnValue,SN,SINext,SSum,SProduct],
+	[eq(SINext,plus(SI,1))],
+	[],
+	[],
+	not_branch) :-
+	INext=I+1.
+trans(func_foo, 7,
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[4],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[geq(SN,SI)],
+	[],
+	[],
+	branch) :-
+	I<=N.
+trans(func_foo, 8,
+	[3],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[gt(SI,SN)],
+	[],
+	[],
+	branch) :-
+	I>N.
+trans(func_foo, 9,
+	[7],[H],[],[SH],[],[],[ReturnValue,N,I,Sum,Product],[],[SReturnValue,SN,SI,SSum,SProduct],
+	[8],[H],[],[SH],[],[],[ReturnValueNext,N,I,Sum,Product],[],[SReturnValueNext,SN,SI,SSum,SProduct],
+	[eq(SReturnValueNext,SSum)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=Sum.
+trans(func_main, 10,
+	[0],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[1],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z],[],[SReturnValue,SXNext,SY,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 11,
+	[1],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[2],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 12,
+	[2],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext],[],[SReturnValue,SX,SY,SZNext],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, 13,
+	[3],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[4],[H],[],[SH],[],[],[ReturnValue,X,YNext,Z],[],[SReturnValue,SX,SYNext,SZ],
+	[eq(SYNext,5)],
+	[],
+	[],
+	not_branch) :-
+	YNext=5.
+trans(func_main, 14,
+	[4],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[5],[H],[],[SH],[],[],[ReturnValue,XNext,Y,Z],[],[SReturnValue,SXNext,SY,SZ],
+	[eq(SXNext,minus(SRV0,1))],
+	[call(func_foo,[RV0,Y|_],[SRV0,_V1|_],[eq(_V1,SY)])],
+	[],
+	not_branch) :-
+	XNext=RV0-1.
+trans(func_main, 15,
+	[5],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,ZNext],[],[SReturnValue,SX,SY,SZNext],
+	[eq(SZNext,minus(SRV2,1))],
+	[call(func_foo,[RV2,Y|_],[SRV2,_V2|_],[eq(_V2,SY)])],
+	[],
+	not_branch) :-
+	ZNext=RV2-1.
+trans(func_main, 16,
+	[6],[H],[],[SH],[],[],[ReturnValue,X,Y,Z],[],[SReturnValue,SX,SY,SZ],
+	[7],[H],[],[SH],[],[],[ReturnValueNext,X,Y,Z],[],[SReturnValueNext,SX,SY,SZ],
+	[eq(SReturnValueNext,plus(SX,SZ))],
+	[],
+	[],
+	not_branch) :-
+	ReturnValueNext=X+Z.
+%--------------------------------------------------
+%--------------------------------------------------
+start(func_foo, [0]).
+start(func_main, [0]).
+%--------------------------------------------------
+bottom(func_foo, [8]).
+bottom(func_main, [7]).
+%--------------------------------------------------
+freshlocalarrays(func_foo,[]).
+freshlocalarrays(func_main,[]).
+%--------------------------------------------------
+freshlocalvars(func_foo,[_,_,_,_,_]).
+freshlocalvars(func_main,[_,_,_,_]).
+%--------------------------------------------------
+init_goal(func_main, [0], 1, [_],[],[_],[],A,L,SA,SL,[]) :-
+	freshlocalarrays(func_main, A), freshlocalvars(func_main, L),
+	freshlocalarrays(func_main, SA), freshlocalvars(func_main, SL).

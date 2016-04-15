@@ -1,0 +1,77 @@
+---------------   [Steensgaard, field-insensitive] ----------------------
+
+points-to-set([&(&(entry___0->arg)[1]), &(entry___0->arg), entry___0])
+points-to-set([&(t->tm_mon), &(t->tm_sec), &(t->tm_min),
+                &(t->tm_year), &(t->tm_hour), t, &(t->tm_mday)])
+points-to-set([&(&(yytable)[yyn]), ((int)&(yycheck)[yyn]),
+                &(yycheck)[yyn], tmp___5, &(&(yydefact)[yystate]),
+                tmp___23, &(yyss[yystacksize]), (&(yyss[yystacksize])
+                - 1), ((unsigned int)(&(yyss[yystacksize]) - 1)),
+                tmp___34, ((int)&(yydefgoto)[(yyn - 77)]),
+                &(yydefgoto)[(yyn - 77)], &(&(yycheck)[yystate]),
+                &(yyvsp[(1 - yylen)]), (yyvsp - yylen),
+                &(&(yypgoto)[(yyn - 77)]), tmp___50,
+                &(yyvsp[-3].Number), &(yyvsp[-1].Number),
+                &(yyvsp[-5]), &(yyvsp[-3]), &(yyvsp[-1]), yyvsp,
+                tmp___45, (yyvsp - 1), &(yyvsp[1]), &(yyvsp[-7]),
+                tmp___20, &(yyvsp[-5].Number), &(yyvsp[-7].Number),
+                &(yyptr->yyvs), ((unsigned int)&(yyssa)), tmp___39,
+                ((unsigned int)yyss1), yyss1, ((int)&(yyr1)[yyn]),
+                &(yyr1)[yyn], &(yyvsp[-1].String),
+                &(yyvsp[-3].String), ((int)&(yypgoto)[(yyn - 77)]),
+                &(yypgoto)[(yyn - 77)], tmp___9, tmp___43, ((unsigned
+                int)yyss), yyss, yyptr, *yyvsp, tmp___14, yysize,
+                ((int)&(yypact)[yystate]), &(yypact)[yystate], (yyssp
+                - yylen), (&(yyss[yysize]) - 1), tmp___18,
+                &(yyvs[yysize]), &(yyss[yysize]), (&(yyvs[yysize]) -
+                1), &(strunames)[yyvsp[-1].Number],
+                &(&(yydefgoto)[(yyn - 77)]), (yyssp - 1), &(yyssp[1]),
+                timeout_idle, yystate, ((short)yystate), &(yyr2)[yyn],
+                ((int)&(yyr2)[yyn]), tmp___26, yyvs, yyval.Number, cp,
+                &(cp[1]), yyssp, ((unsigned int)yyssp),
+                &(&(yyr1)[yyn]), tmp___7, tmp___28, *cp, ((int)*cp),
+                &(yyptr->yyss), &(&(strunames)[yyvsp[-1].Number]),
+                ((int)(((int)&(yypgoto)[(yyn - 77)]) +
+                ((int)*yyssp))), (((int)&(yypgoto)[(yyn - 77)]) +
+                ((int)*yyssp)), tmp, yyval, nullstr, tmp___48,
+                ((int)restart_point), restart_point, (yyn + yychar1),
+                tmp___41, &(yydefact)[yystate],
+                ((int)&(yydefact)[yystate]), ((unsigned int)&((yyssp -
+                yyss)[1])), &((yyssp - yyss)[1]), (yyssp - yyss),
+                ((int)&(yycheck)[yystate]), &(yycheck)[yystate],
+                &(modenames)[yyvsp[-1].Number], (yyn - 77), yyvsp[(1 -
+                yylen)], &(&(yytable)[yystate]),
+                &(&(modenames)[yyvsp[-1].Number]), &(yyptr[(yynewbytes
+                / size(union(yyalloc)))]), ((unsigned
+                int)yyvsp[-3].Number), yyvsp[-3].Number,
+                yyvsp[-3].String, yyvsp[-5].Number, yyvsp[-1].String,
+                ((unsigned int)yyvsp[-1].String), yyvsp[-7].Number,
+                &(yyptr[(yynewbytes___0 / size(union(yyalloc)))]),
+                tmp___38, &(yyvsp[-1].String[4]),
+                ((int)&(yytable)[yystate]), &(yytable)[yystate],
+                &(&(yypact)[yystate]), yylen, (1 - yylen),
+                ((int)&(yytable)[yyn]), &(yytable)[yyn], tmp___16,
+                ((unsigned int)yyvsp[-1].Number), yyvsp[-1].Number,
+                ((int)*yyssp), *yyssp, &(&(yyr2)[yyn]), (yyn + 1),
+                &(&(yycheck)[yyn]), yyn, &(yycheck), &(modenames),
+                &(yydefgoto), &(strunames), &(yyr2), &(yytable),
+                &(yyvsa), &(yypgoto), &(yydefact), &(yyssa),
+                &(yypact), &(yyr1)])
+ points-to-set([&(stbuf.st_mtim.tv_sec), &(stbuf.st_mode),
+                &(stbuf.st_mtim), &(stbuf)])
+ points-to-set([&(data_dest.sin_family), &(data_dest.sin_addr.s_addr),
+                &(data_dest.sin_port), &(data_dest.sin_addr), &(data_dest)])
+ points-to-set([&(&(yytranslate)[yychar]), &(yytranslate)])
+ points-to-set([&(yyval.Number), &(yyval)])
+ points-to-set([&(cliaddr.s_addr), &(cliaddr)])
+ points-to-set([cliaddr.s_addr, cliaddr])
+ points-to-set([((ptr(char))&(buf___2)), &(buf___2)])
+ points-to-set([((unsigned int)fromname), fromname])
+ points-to-set([entry->arg, ((unsigned int)&(entry->arg)[1]), &(entry->arg)[1]])
+ points-to-set([&(pw->pw_name), pw])
+ points-to-set([data_dest.sin_addr.s_addr, data_dest.sin_family, data_dest.sin_port])
+ points-to-set([entry, &(&(entry->arg)[1]), &(entry->arg)])
+ points-to-set([&(&(typenames)[cmd_type]), &(typenames)])
+ points-to-set([&(his_addr.sin_addr), &(his_addr.sin_addr.s_addr), &(his_addr)])
+ points-to-set([t->tm_mday, t->tm_year, t->tm_hour, t->tm_min, t->tm_mon, t->tm_sec])
+ points-to-set([entry___0->arg, ((unsigned int)&(entry___0->arg)[1]), &(entry___0->arg)[1]])

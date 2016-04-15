@@ -1,0 +1,984 @@
+% tracer_solver.clp.gpp
+
+%=============================================================================%
+%                           Constraint solver
+%=============================================================================%
+% This file contains all operations needed to interact with the native
+% CLP(R) solver.
+%=============================================================================%
+% export
+%   Evaluation of constraints
+%   constraint_symbolic/3,        % evaluate symbolic constraints
+#ifdef  ENCODE_MEMO_OPT
+%   constraint_symbolic_encoded/4,% same but for encoded version
+#endif  /*ENCODE_MEMO_OPT*/
+%   satisfiable_segment/2         % wrapper to consider array constraints
+%   unsatisfiable_segment/3       % wrapper to consider array constraints 
+%   Manipulation of constraints
+%   make_symbolic/3,              % used for loop inv. gen.
+%   make_negated_symbolic/3
+%   negate_numerical_list/2,      % used for loop inv. gen., abstraction 
+%   Projection
+%   project_solver_context/2      % used for abstractions, loop inv, wp,...
+%   project_sym_constraints/6     % used for wp,...
+%   Miscellaneous
+%   uninterpreted_function/1,     % used for tracer_graphviz
+%=============================================================================%
+
+%-----------------------------------------------------------------------------%
+% constraint_symbolic/3(+CL,+InArrRef,-OutArrRef)
+%-----------------------------------------------------------------------------%
+% Evaluate (using the underlying CLP(R) solver) the list of symbolic
+% constraints CL.
+%-----------------------------------------------------------------------------%
+% InArrRef is a list of array references of the form ref(A,I,V)
+% (typically []). OutArrRef consists of the input array references
+% (InArrRef) + discovered array references. OutArrRef is to be passed
+% on satisfiable_array_references/1 to test (un)satisfiability.
+%
+% Whenever an expression op(ref(A,I),Expr) is found where op = eq |
+% gt| geq | ... the subexpression ref(A,I) is replaced with a fresh
+% variable Tmp and the third argument is augmented with ref(A,I,Tmp).
+%
+% Note: constraint_symbolic/3 should not handle neq constraints for
+% performance reasons (the corresponding clauses are commented
+% out). Backtracking here would be costly.  Also, this version of
+% constraint_symbolic/3 does not handle array equalities such as
+% arreq, arrassign, and arrneq. We assume that arrays have been
+% substituted into the corresponding references. This technique is
+% complete because all array equalities are of the form
+% arrassign(A,upd(B,I,X)), s.t.  we can substitute all occurrences of
+% A with upd(B,I,X). The negation of an array equality arrassign(A,B)
+% is exists K s.t. A[K] != B[K], which is not an array equality
+%----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_constraint_symbolic_1 :-
+	constraint_symbolic([assign(_A, plus(_B, X)),
+				  assign(_C, mult(_Z, X)),
+				  assign(_Y, plus(X, 1))],_).
+test_constraint_symbolic2 :-
+	constraint_symbolic([gt(0, ref(H, X)),
+			     gt(ref(H, X), 0), gt(0, ref(H, X)),
+			     gt(0, ref(H, X)), gt(ref(H, X), 0)],_).
+test_constraint_symbolic3 :-
+	A=0,B=1,C=0,D=1,E=1,F>1, G <=0,
+	LC=[neq(0,A),neq(1,B),neq(0,C),neq(1,D),neq(1,E),geq(F,1),
+	    geq(minus(0,G),0)],
+	constraint_symbolic(LC, [], _).
+test_constraint_symbolic4 :-
+	F>1,
+	LC=[geq(F,1)],
+	constraint_symbolic(LC, [], _).
+test_constraint_symbolic5:-
+	LC=[eq(X, 0), assign(X, unk)],
+	constraint_symbolic(LC,[],_).
+#endif  /*DEBUG_USE*/
+#ifdef  PROFILE
+% We do some sanity checks for detecting wrong inputs only in PROFILE
+% mode.
+constraint_symbolic_sanity_check(arrassign):-
+	current_tracer_flag(array_solver, y),!,
+	error_message("arrassign passed to constraint_symbolic \n", []).
+constraint_symbolic_sanity_check(arreq):-
+	current_tracer_flag(array_solver, y),!,
+	error_message("arreq passed to constraint_symbolic \n", []).
+constraint_symbolic_sanity_check(arrneq):-
+	current_tracer_flag(array_solver, y),!,
+	error_message("arrneq passed to constraint_symbolic \n", []).
+constraint_symbolic_sanity_check(_):- !.
+        % If the array solver is off, we don't report error. Actually,
+        % in this case it's possible these constraints (arrassign,
+        % arreq, etc) because substitute_arrays/2 is not called.
+constraint_symbolic(X,_,_) :-
+	var(X),
+	error_message("constraint_symbolic/3/1 is var \n", []).
+constraint_symbolic(X,_,_) :-
+	functor(X,arrassign,_), !,
+	constraint_symbolic_sanity_check(arrassign).
+constraint_symbolic(X,_,_) :-
+	functor(X,arreq,_), !,
+	constraint_symbolic_sanity_check(arreq).
+constraint_symbolic(X,_,_) :-
+	functor(X,arrneq,_), !,
+	constraint_symbolic_sanity_check(arrneq).
+#endif  /*PROFILE*/
+%-----------------------------------------------------------------------------%
+% Checking if input is a list, then we assume that it's a conjunction
+%-----------------------------------------------------------------------------%
+constraint_symbolic([], ArrRef, ArrRef) :- !.
+constraint_symbolic([C|R], InArrRef, OutArrRef) :- !,
+	constraint_symbolic_list([C|R], InArrRef, OutArrRef).
+
+constraint_symbolic(tt,ArrRef,ArrRef) :- !.
+constraint_symbolic(assign(A,B), InArrRef, OutArrRef) :- !,
+ 	numconstraint_symbolic(A,M, InArrRef, ArrRef1),
+ 	numconstraint_symbolic(B,N, ArrRef1, OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M=N.
+#elif   (CLP_SYS==SWI)
+        {M=:=N}.
+#else
+        true.
+#endif
+constraint_symbolic(eq(A,B),InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M=N.
+#elif   (CLP_SYS==SWI)
+        {M=:=N}.
+#else
+        true.
+#endif
+constraint_symbolic(gt(A,B),InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M>N.
+#elif   (CLP_SYS==SWI)
+        {M>N}.
+#else
+        true.
+#endif
+constraint_symbolic(geq(A,B),InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M>=N.
+#elif   (CLP_SYS==SWI)
+        {M>=N}.
+#else
+        true.
+#endif
+% constraint_symbolic(neq(A,B),InArrRef,OutArrRef) :- 
+% 	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+% 	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+% #if (CLP_SYS==CLPR)
+% 	M>N.
+% #elif (CLP_SYS==SWI)
+%         {M>N}.
+% #else
+%         true.
+% #endif
+% constraint_symbolic(neq(A,B),InArrRef,OutArrRef) :- !,
+% 	numconstraint_symbolic(A,M,InArrRef,ArrRef1),
+% 	numconstraint_symbolic(B,N,ArrRef1,OutArrRef),
+% #if (CLP_SYS==CLPR)
+% 	M<N.
+% #elif (CLP_SYS==SWI)
+%         {M<N}.
+% #else
+%         true.
+% #endif
+%------------------------------------------------------------------------------
+% New constraint to represent things like &y by using
+% addref(SY,ref(SH,SAndSY)). Before it was eq. Slicer needs to
+% distinguish them. In addref(A,B), it is always
+% the case that B is a ref(H,P), where H is some heap (not array), and
+% P is translated from dereference, e.g., &x. Therefore, semantically,
+% addref is equivalent to eq: we are just saying that A=H[&A].
+%------------------------------------------------------------------------------
+constraint_symbolic(ff,_,_ ) :- !, fail.
+constraint_symbolic(C, _, _) :-
+	error_message("% not supported \n",[C]).
+
+
+constraint_symbolic_list([], ArrRef, ArrRef) :- !.
+constraint_symbolic_list([C|R], InArrRef, OutArrRef) :-
+	constraint_symbolic(C, InArrRef, ArrRef1),
+	constraint_symbolic_list(R, ArrRef1, OutArrRef).
+%-----------------------------------------------------------------------------%
+% Numeric expression evaluator
+%-----------------------------------------------------------------------------%
+numconstraint_symbolic(A,A,ArrRef,ArrRef) :- var(A), !.
+numconstraint_symbolic(A,_,InArrRef,InArrRef) :-
+	% Uninterpreted function with 0 input arguments
+	uninterpreted_function(A),!.
+numconstraint_symbolic(A,A,ArrRef,ArrRef) :- atomic(A), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,I,X)|OutArrRef]) :-
+	var(I), !,
+	numconstraint_symbolic(A,B,InArrRef,OutArrRef), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,I,X)|OutArrRef]) :-
+	atomic(I), !,
+	numconstraint_symbolic(A,B,InArrRef,OutArrRef).
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	I=[_|_], !,
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic_list(I,J,ArrRef1,OutArrRef), !.
+numconstraint_symbolic(ref(A,I),X,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic(I,J,ArrRef1,OutArrRef), !.
+numconstraint_symbolic(upd(A,I,X),upd(B,J,Y),InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,B,InArrRef,ArrRef1),
+	numconstraint_symbolic(I,J,ArrRef1,ArrRef2),
+	numconstraint_symbolic(X,Y,ArrRef2,OutArrRef), !.
+numconstraint_symbolic(minus(A),-N,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,N,InArrRef,OutArrRef).
+numconstraint_symbolic(plus(A,B),E+F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(minus(A,B),E-F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(mult(A,B),E*F,InArrRef,OutArrRef) :-
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef), !.
+numconstraint_symbolic(div(A,B),E/F,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic(A,E,InArrRef,ArrRef1),
+	numconstraint_symbolic(B,F,ArrRef1,OutArrRef).
+numconstraint_symbolic(mod(_,_), _ , InArrRef, InArrRef ) :- !.
+numconstraint_symbolic(A, _, InArrRef, InArrRef) :-
+	% Uninterpreted function with > 0 input arguments	
+        functor(A,FName,_),
+	uninterpreted_function(FName),!.	
+numconstraint_symbolic(A, _, _ , _ ) :-
+	error_message(" right-hand side constraint % not allowed \n",[A]).
+	
+numconstraint_symbolic_list([], [], ArrRef, ArrRef).
+numconstraint_symbolic_list([X|R], [Y|S], InArrRef, OutArrRef) :-
+	numconstraint_symbolic(X, Y, InArrRef, ArrRef1),
+	numconstraint_symbolic_list(R, S, ArrRef1, OutArrRef).
+
+%============================================================================%
+#ifdef  ENCODE_MEMO_OPT
+%============================================================================%
+%  Similar code to constraint_symbolic but assuming that the list of
+%  constraints is in encoded form. Thus, before evaluating a variable
+%  we need to decode it. See test_constraint_symbolic_encoded/0 to see how
+%  constraints are encoded.
+#ifdef  DEBUG_USE
+test_constraint_symbolic_encoded :-
+	EncodedList= [assign(gv(1),24),assign(gv(2),25),
+		      assign(gv(3),26),
+		      assign(lv(1), mult(gv(1), gv(2))),
+		      assign(lv(2), plus(lv(1), 1))],
+	Vars = state(func_main,b(_H),b(_A,_B,_C),b,b(_X,_Y,_Z)),
+	constraint_symbolic_encoded(EncodedList,Vars,[],_OutRef),				
+	dump([Vars]).
+#endif  /*DEBUG_USE*/
+#ifdef  PROFILE
+constraint_symbolic_encoded(X,_,_,_) :-
+	var(X),
+	error_message("constraint_symbolic_encoded/4/1 is var \n",[]).
+constraint_symbolic_encoded(X,_,_,_) :-
+	functor(X,arrassign,_), !,
+	constraint_symbolic_sanity_check(arrassign).
+constraint_symbolic_encoded(X,_,_,_) :-
+	functor(X,arreq,_), !,
+	constraint_symbolic_sanity_check(arreq).	
+constraint_symbolic_encoded(X,_,_,_) :-
+	functor(X,arrneq,_), !,
+	constraint_symbolic_sanity_check(arrneq).	
+#endif  /*PROFILE*/
+constraint_symbolic_encoded([],_, ArrRef, ArrRef) :- !.
+constraint_symbolic_encoded([C|R],Vars, InArrRef, OutArrRef) :- !,
+	constraint_symbolic_encoded_list([C|R],Vars,InArrRef, OutArrRef).
+constraint_symbolic_encoded(tt,_Vars,ArrRef,ArrRef) :- !.
+constraint_symbolic_encoded(assign(A,B), Vars,InArrRef, OutArrRef) :- !,
+ 	numconstraint_symbolic_encoded(A,M,Vars,InArrRef, ArrRef1),
+ 	numconstraint_symbolic_encoded(B,N,Vars,ArrRef1, OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M=N.
+#elif   (CLP_SYS==SWI)
+        {M=:=N}.
+#else
+        true.
+#endif
+constraint_symbolic_encoded(eq(A,B),Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,M,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,N,Vars,ArrRef1,OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M=N.
+#elif   (CLP_SYS==SWI)
+        {M=:=N}.
+#else
+        true.
+#endif
+constraint_symbolic_encoded(gt(A,B),Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,M,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,N,Vars,ArrRef1,OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M>N.
+#elif   (CLP_SYS==SWI)
+        {M>N}.
+#else
+        true.
+#endif
+constraint_symbolic_encoded(geq(A,B),Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,M,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,N,Vars,ArrRef1,OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M>=N.
+#elif   (CLP_SYS==SWI)
+        {M>=N}.
+#else
+        true.
+#endif
+constraint_symbolic_encoded(addref(A,B), Vars, InArrRef, OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,M, Vars, InArrRef, ArrRef1),
+	numconstraint_symbolic_encoded(B,N, Vars, ArrRef1, OutArrRef),
+#if     (CLP_SYS==CLPR)
+	M=N.
+#elif   (CLP_SYS==SWI)
+        {M=:=N}.
+#else
+        true.
+#endif
+constraint_symbolic_encoded(ff,_,_,_) :- !, fail.
+
+constraint_symbolic_encoded_list([],_,ArrRef,ArrRef) :- !.
+constraint_symbolic_encoded_list([C|R],Vars,InArrRef, OutArrRef) :-
+	constraint_symbolic_encoded(C,Vars,InArrRef, ArrRef1),
+	constraint_symbolic_encoded_list(R,Vars,ArrRef1, OutArrRef).
+
+%------------------------------------------------------------------------------
+% Numeric expression evaluator
+%------------------------------------------------------------------------------
+% We decode the variable and then evaluate it.
+numconstraint_symbolic_encoded(gv(I),A,state(_,_,GV,_,_),ArrRef,ArrRef) :-
+	arg(I,GV,A),!.
+numconstraint_symbolic_encoded(lv(I),A,state(_,_,_,_,LV),ArrRef,ArrRef) :-
+	arg(I,LV,A),!.
+numconstraint_symbolic_encoded(la(I),A,state(_,_,_,LA,_),ArrRef,ArrRef) :-
+	arg(I,LA,A),!.
+numconstraint_symbolic_encoded(ga(I),A,state(_,GA,_,_,_),ArrRef,ArrRef) :-
+	arg(I,GA,A),!.
+numconstraint_symbolic_encoded(A,_,_,InArrRef,InArrRef) :-
+	% Uninterpreted function with 0 input arguments
+	uninterpreted_function(A),!.
+numconstraint_symbolic_encoded(A,A,_,ArrRef,ArrRef) :- atomic(A), !.
+% We don't encode/decode yet array constraints
+numconstraint_symbolic_encoded(ref(A,I),X,Vars,InArrRef,[ref(B,I,X)|OutArrRef]) :-
+	var(I), !,
+	numconstraint_symbolic_encoded(A,B,Vars,InArrRef,OutArrRef), !.
+numconstraint_symbolic_encoded(ref(A,I),X,Vars,InArrRef,[ref(B,I,X)|OutArrRef]) :-
+	atomic(I), !,
+	numconstraint_symbolic_encoded(A,B,Vars,InArrRef,OutArrRef).
+numconstraint_symbolic_encoded(ref(A,I),X,Vars,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	I=[_|_], !,
+	numconstraint_symbolic_encoded(A,B,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded_list(I,J,Vars,ArrRef1,OutArrRef), !.
+numconstraint_symbolic_encoded(ref(A,I),X,Vars,InArrRef,[ref(B,J,X)|OutArrRef]) :-
+	numconstraint_symbolic_encoded(A,B,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(I,J,Vars,ArrRef1,OutArrRef), !.
+numconstraint_symbolic_encoded(upd(A,I,X),upd(B,J,Y),Vars,InArrRef,OutArrRef) :-
+	numconstraint_symbolic_encoded(A,B,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(I,J,Vars,ArrRef1,ArrRef2),
+	numconstraint_symbolic_encoded(X,Y,Vars,ArrRef2,OutArrRef), !.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+numconstraint_symbolic_encoded(minus(A),-N,Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,N,Vars,InArrRef,OutArrRef).
+numconstraint_symbolic_encoded(plus(A,B),E+F,Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,E,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,F,Vars,ArrRef1,OutArrRef).
+numconstraint_symbolic_encoded(minus(A,B),E-F,Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,E,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,F,Vars,ArrRef1,OutArrRef).
+numconstraint_symbolic_encoded(mult(A,B),E*F,Vars,InArrRef,OutArrRef) :-
+	numconstraint_symbolic_encoded(A,E,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,F,Vars,ArrRef1,OutArrRef), !.
+numconstraint_symbolic_encoded(div(A,B),E/F,Vars,InArrRef,OutArrRef) :- !,
+	numconstraint_symbolic_encoded(A,E,Vars,InArrRef,ArrRef1),
+	numconstraint_symbolic_encoded(B,F,Vars,ArrRef1,OutArrRef).
+numconstraint_symbolic_encoded(mod(_,_), _ , _, InArrRef, InArrRef ) :- !.
+numconstraint_symbolic_encoded(A, _, _, InArrRef, InArrRef) :-
+	% Uninterpreted function with > 0 input arguments	
+        functor(A,FName,_), 
+	uninterpreted_function(FName),!.	
+
+numconstraint_symbolic_encoded_list([], [], _Vars, ArrRef, ArrRef):- !.
+numconstraint_symbolic_encoded_list([X|R], [Y|S], Vars, InArrRef, OutArrRef) :-
+	numconstraint_symbolic_encoded(X, Y, Vars, InArrRef, ArrRef1),
+	numconstraint_symbolic_encoded_list(R, S, Vars, ArrRef1, OutArrRef).
+%============================================================================%
+#endif  /*ENCODE_MEMO_OPT*/
+%============================================================================%
+
+
+%------------------------------------------------------------------------------ 
+% satisfiable_segment(CL1,CL2)
+% Succeed iff CL1 in conjunction with CL2 is satisfiable. 
+%------------------------------------------------------------------------------
+satisfiable_segment(CL1, CL2) :-
+	unsatisfiable_segment(CL1, CL2), !, fail.
+satisfiable_segment(_,_).
+
+%------------------------------------------------------------------------------
+% unsatisfiable_segment(CL1, CL2):
+%------------------------------------------------------------------------------
+% Succeed iff constraints in CL1 and CL2 are unsatisfiable,
+%------------------------------------------------------------------------------
+unsatisfiable_segment(MinCL, CL) :-
+	constraint_symbolic(MinCL, [], ArrRef1),
+	%----------------------------------------------------------------------
+        % Note: CL can contain array assigments
+	%----------------------------------------------------------------------
+	constraint_symbolic_arrays_SAT_check_form(CL,ArrRef1,ArrRef),	
+	satisfiable_array_references(ArrRef),
+	!,
+	fail.
+unsatisfiable_segment(_,_).
+
+%============================================================================%
+%                      Manipulation of Constraints 
+%============================================================================%
+% GENERAL NOTE: all non tail-recursive predicates have been redefined
+% to be tail-recursive. To respect the original order of constraints
+% we should call reverse/2 or append_dl (difference lists). However,
+% based on some preliminary experiments there is a significant gain if
+% reverse/2 or append_dl are not used. We need to confirm this for
+% more programs.
+
+%----------------------------------------------------------------------------%
+% negate_numerical_list/2: Negate symbolic constraints
+%----------------------------------------------------------------------------%
+negate_numerical_list(CL,NCL1):-
+	current_tracer_flag(convert_strict_inequality,n),!,
+	negate_numerical_list_aux(CL,[],NCL1).
+	% Note that we use reverse/2 to keep the order of the constraints.
+	% reverse(NCL0,NCL1).
+negate_numerical_list(CL,NCL1):-
+	current_tracer_flag(convert_strict_inequality,y),!,
+	negate_numerical_list_aux_with_conversion(CL,[],NCL1).
+
+negate_numerical_list_aux([],NL,NL):-!.
+negate_numerical_list_aux([C|R],Acc,NL):-
+	negate_numeric(C,NCs),!,
+	append(NCs,Acc,NAcc),
+	negate_numerical_list_aux(R,NAcc,NL).
+
+negate_numeric(eq(A,B),     [gt(A,B),gt(B,A)]).
+negate_numeric(assign(A,B), [gt(A,B),gt(B,A)]).
+negate_numeric(gt(A,B),     [geq(B,A)]).
+negate_numeric(geq(A,B)   , [gt(B,A)]).
+negate_numeric(ff         , [tt]).
+negate_numeric(tt         , []).
+negate_numeric(C          , _ ):-
+	error_message("negate_numeric/2 failed with %.\n",[C]).
+
+%----------------------------------------------------------------------------%
+% negate numeric constraints with conversion of strict inequalities to
+% 'greater or equal than' constraints.
+%
+% IMPORTANT: This transformation is unsound if type information is not
+% considered!
+%----------------------------------------------------------------------------%
+% if x>y then x >= y+1                 if x<y then x+1 <= y
+%----------------------------------------------------------------------------%
+negate_numerical_list_aux_with_conversion([],NL,NL):-!.
+negate_numerical_list_aux_with_conversion([C|R],Acc,NL):-
+	negate_numeric_with_conversion(C,NCs),!,
+	append(NCs,Acc,NAcc),
+	negate_numerical_list_aux_with_conversion(R,NAcc,NL).
+negate_numeric_with_conversion(eq(A,B),
+				[geq(A,plus(B,1)),geq(B,plus(A,1))]).
+negate_numeric_with_conversion(assign(A,B),
+				[geq(A,plus(B,1)),geq(B,plus(A,1))]).
+negate_numeric_with_conversion(gt(A,B),     [geq(B,A)]).
+negate_numeric_with_conversion(geq(A,B)   , [geq(B,plus(A,1))]).
+negate_numeric_with_conversion(ff         , [tt]).
+negate_numeric_with_conversion(tt         , []).
+negate_numeric_with_conversion(C          , _ ):-
+	error_message("negate_numeric_with_conversion/2 failed with %.\n",[C]).
+
+%------------------------------------------------------------------------------%
+% make_symbolic(+DumpCL, -CL, -FreeL)
+%------------------------------------------------------------------------------%
+% Convert a dumped constraints in DumpCL (dump/3 format) into
+% symbolic constraints CL, also outputs FreeL, a list of free
+% variables in DumpCL (and CL), with possible duplicates
+%
+% FIXME: the 3rd argument is not used. We should remove it.
+%------------------------------------------------------------------------------%
+make_symbolic(DumpCL, CL, FreeL) :-
+	make_symbolic_aux(pos, DumpCL, _, [], CL, [], FreeL).
+
+make_symbolic_aux(_, [], [], InCL, InCL, InFreeL, InFreeL) :- !.
+make_symbolic_aux(CFlag, [A|R], [U|S], InCL, OutCL,
+	          InFreeL, OutFreeL) :- !,
+	symb_conversion(CFlag, A, U, InCL, CL1, InFreeL, FreeL1),
+	make_symbolic_aux(CFlag, R, S, CL1, OutCL, FreeL1, OutFreeL).
+make_symbolic_aux(CFlag, C, SC, InCL, OutCL, InFreeL, OutFreeL) :-
+	C=..[A|Args],
+	copy_to_unbound_list(Args, SArgs),
+	SC1=..[A|SArgs],
+	symb_conversion(CFlag, SC1, SC, InCL, CL1, InFreeL, FreeL1), !,
+	make_symbolic_aux(term, Args, SArgs, CL1, OutCL, FreeL1, OutFreeL).
+
+symb_conversion(pos, A, B, InCL, OutCL, InFreeL, OutFreeL) :- !,
+	symb_conversion_pos(A, B, InCL, OutCL, InFreeL, OutFreeL).
+symb_conversion(neg, A, B, InCL, OutCL, InFreeL, OutFreeL) :- !,
+	symb_conversion_neg(A, B, InCL, OutCL, InFreeL, OutFreeL).
+symb_conversion(term, A, B, InCL, InCL, InFreeL, OutFreeL) :- !,
+	symb_conversion_term(A, B, InFreeL, OutFreeL).
+
+symb_conversion_pos('='(U,V),  geq(A,B),  InCL, [geq(A,B),geq(B,A)|InCL],
+	            InFreeL, OutFreeL) :-
+	current_tracer_flag(convert_eq_to_ineq,y),
+	% Whenever we perform a projection and produce a symbolic form
+	% we translate equalities to inequalities. This helps
+	% significantly to produce weaker interpolants.
+	!,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('='(U,V),  eq(A,B),  InCL, [eq(A,B)|InCL],
+	            InFreeL, OutFreeL) :-
+	!,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('<'(U,V),  gt(A,B),  InCL, [gt(A,B)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('<='(U,V), geq(A,B), InCL, [geq(A,B)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('>'(U,V),  gt(B,A),  InCL, [gt(B,A)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_pos('>='(U,V), geq(B,A), InCL, [geq(B,A)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+#if     (CLP_SYS==CLPR)
+symb_conversion_pos(real(_),   tt,       InCL, InCL,
+                    InFreeL, InFreeL) :- !.
+#endif
+symb_conversion_pos(C,         C,        InCL, [C|InCL],
+	            InFreeL, InFreeL).
+
+symb_conversion_neg('='(U,V),  gt(B,A),  InCL, [gt(B,A),gt(A,B)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('<'(U,V),  geq(B,A), InCL, [geq(B,A)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('<='(U,V), gt(B,A),  InCL, [gt(B,A)|InCL],
+                    InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('>'(U,V),  geq(A,B), InCL, [geq(A,B)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+symb_conversion_neg('>='(U,V), gt(A,B),  InCL, [gt(A,B)|InCL],
+	            InFreeL, OutFreeL) :- !,
+	symb_conversion_term(V, A, InFreeL, FreeL1),
+	symb_conversion_term(U, B, FreeL1, OutFreeL).
+#if     (CLP_SYS==CLPR)
+symb_conversion_neg(real(_),   ff,       InCL, InCL, InFreeL, InFreeL) :- !.
+#endif
+symb_conversion_neg(_,         ff,       InCL, InCL, InFreeL, InFreeL).
+
+symb_conversion_term(V,        V,          InFreeL, [V|InFreeL]) :- var(V), !.
+#if defined(ENCODE_CHILD_PARENT) || defined(ENCODE_MEMO)
+% This clause is needed by tracer_encode_answers.clp.gpp
+symb_conversion_term(v(N),  v(N),          InFreeL, InFreeL)     :- !.
+#endif
+symb_conversion_term(A,        A,          InFreeL, InFreeL)     :- atomic(A), !.
+#if     (CLP_SYS==SWI)
+symb_conversion_term('-'(U),   minus(0,A), InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, OutFreeL).
+symb_conversion_term('-'(U,V), minus(A,B), InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term('+'(U,V), plus(A,B),  InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term('*'(U,V), mult(A,B),  InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term('/'(U,V), div(A,B),   InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+#else
+symb_conversion_term(quote(- (U)),  minus(0,A), InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, OutFreeL).
+symb_conversion_term(quote(U - V), minus(A,B), InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(quote(U + V), plus(A,B),  InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(quote(U * V), mult(A,B),  InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+symb_conversion_term(quote(U / V), div(A,B),   InFreeL, OutFreeL) :- !,
+	symb_conversion_term(U, A, InFreeL, FreeL1),
+	symb_conversion_term(V, B, FreeL1, OutFreeL).
+#endif
+symb_conversion_term(T, OutT, InFreeL, OutFreeL) :-
+	T=..[N|ArgList],
+	symb_conversion_term_list(ArgList, ArgList1, InFreeL, OutFreeL),
+	OutT=..[N|ArgList1], !.
+symb_conversion_term(T,        T,          InFreeL, InFreeL).
+
+symb_conversion_term_list([], [], FreeL, FreeL).
+symb_conversion_term_list([T|R], [U|S], InFreeL, OutFreeL) :-
+	symb_conversion_term(T, U, InFreeL, FreeL1), !,
+	symb_conversion_term_list(R, S, FreeL1, OutFreeL).
+
+%------------------------------------------------------------------------------%
+% make_negated_symbolic(+DumpCL, -CL, -FreeL)
+%------------------------------------------------------------------------------%
+% Convert a dumped constraints in DumpCL (dump/3 format) into symbolic
+% constraints CL, which denotes a disjunction of their negations, also
+% outputs FreeL, a list of free variables in DumpCL (and CL), with
+% possible duplicates
+%------------------------------------------------------------------------------%
+make_negated_symbolic(DumpCL, CL, FreeL) :-
+	make_symbolic_aux(neg, DumpCL, _, [], CL, [], FreeL).
+
+%-----------------------------------------------------------------------------%
+%                         CORE OF THE PROJECTION
+%-----------------------------------------------------------------------------%
+% project_solver_context/2: projection of the solver store on
+%                           symbolic variables.
+%-----------------------------------------------------------------------------%
+% This operation is needed basically for two reasons:
+% - store interpolants in the memo table.
+% - apply user/loop abstractions.
+%-----------------------------------------------------------------------------%
+% Usage 1: projection directly of the solver context.  For linear
+% arithmetic constraints the projection is straightforward by using
+% dump/3. For array constraints is not so straightforward.  GlobalArr
+% and LocalArr may have array updates.  ArrRef is a list of array
+% references used for those updates.  project_array_solver_context/2
+% will deal with that.
+%
+% Usage 2: evaluate a list of symbolic constraints and them projection
+% of the solver. For linear arithmetic constraints is as in Usage
+% 1. For array constraints, GlobalArr and LocalArr WILL NOT have any
+% array update. All the array updates will be in form of equalities in
+% ArrRef. project_array_solver_context/2 will deal also with that but
+% it's vital to evaluate the list of symbolic constraints with the
+% predicate constraint_symbolic_with_array_update_subst/3.
+%
+% The availability of two usages makes things more complicated. It
+% would be more convenient to have just the Usage 2 because it's more
+% general and easier to handle it. However, we keep Usage 1 because
+% it's faster for linear arithmetic constraints.
+%-----------------------------------------------------------------------------%
+#ifdef  EXTERNAL_SOLVER
+project_solver_context(State,ProjState):-
+	extern_solver_project_solver_context(State,ProjState).
+#else
+project_solver_context(State,ProjState):-
+	project_solver_context_aux(State,ProjState).
+#endif  /*EXTERNAL_SOLVER*/
+
+project_solver_context_aux(state(GlobalArrX,GlobalVar,LocalArrX,LocalVar,_),
+			   state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 SProjCL)) :-
+	%=====================================================================%
+	% No array constraints: only linear arithmetic constraints
+	%=====================================================================%	
+	current_tracer_flag(array_solver,n),!,
+	%---------------------------------------------------------------------%
+	% Step 1: Make a fresh copy of the evaluated variables to
+	%         produce a new symbolic set.
+	%---------------------------------------------------------------------%	
+	copy_to_unbound_list(GlobalArrX, GlobalArr),
+	copy_to_unbound_list(LocalArrX , LocalArr),	
+	copy_to_unbound_list(GlobalArr , SGlobalArr),
+	copy_to_unbound_list(GlobalVar , SGlobalVar), 
+	copy_to_unbound_list(LocalArr  , SLocalArr),
+	copy_to_unbound_list(LocalVar  , SLocalVar),	
+	append(LocalArr  , LocalVar, S1),
+	append(GlobalVar , S1, S2),
+	append(GlobalArr , S2, S3),		
+	append(SLocalArr , SLocalVar, T1),
+	append(SGlobalVar, T1, T2),
+	append(SGlobalArr, T2, T3),
+	%---------------------------------------------------------------------%	
+	% Step 2: use dump/3 to project the solver state
+	%---------------------------------------------------------------------%	
+#if     (CLP_SYS==CLPR)	
+	dump(S3, T3, SProjCL0),
+#elif   (CLP_SYS==SWI)
+	swi_dump(S3, T3, SProjCL0),
+#endif
+	%---------------------------------------------------------------------%
+        % Step 3: convert from internal dump/3 format to ours
+	%---------------------------------------------------------------------%
+	make_symbolic(SProjCL0,SProjCL, _).
+project_solver_context_aux(EvalState,ProjectedSymState):-
+	%=====================================================================%
+	% With array constraints
+	%=====================================================================%	
+	current_tracer_flag(array_solver,y),!,
+	project_array_solver_context(EvalState,ProjectedSymState).
+
+% %---------------------------------------------------------------------------------%
+% % eliminate_existentially_quantified_variables(+FName,+SGlobalArr,..., +CL,-NewCL)
+% %---------------------------------------------------------------------------------%
+% % A bit unusual way of eliminate free variables from a list of terms.
+% % We first use the dictionary to instantiate all variables from a
+% % constraint into atoms that correspond to the variable names in the
+% % program. After that, if some constraint contains a free variable
+% % then we exclude it.
+% %---------------------------------------------------------------------------------%
+% eliminate_existentially_quantified_variables(FName,
+% 					     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+% 					     CL, NewCL):-	
+% 	fcopy_term(t(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL),
+% 		   t(SGlobalArr1,SGlobalVar1,SLocalArr1,SLocalVar1,CL1)),
+% 	apply_dict(global,SGlobalArr1,SGlobalVar1),
+% 	apply_dict(FName ,SLocalArr1 ,SLocalVar1),
+% 	delete_term_if_free_var(CL1,CL,NewCL).
+% eliminate_existentially_quantified_variables(_,_,_,_,_,_,_):-
+% 	error_message("eliminate_existentially_quantified_variables/7 failed\n",[]).
+
+% delete_term_if_free_var([],[],[]).
+% delete_term_if_free_var([X|Xs],[Y|Ys],[Y|Zs]):-
+% 	ground(X),
+% 	!,
+% 	delete_term_if_free_var(Xs,Ys,Zs).
+% delete_term_if_free_var([_|Xs],[_|Ys],Zs):-
+% 	!,
+% 	delete_term_if_free_var(Xs,Ys,Zs).
+	
+%-----------------------------------------------------------------------------%
+% project_sym_constraints(+SGlobalArr,...,+CL,-ProjCL)
+% Project a list of symbolic constraints CL onto SGlobalArr,....
+%-----------------------------------------------------------------------------%
+% Wrapper to hide whether pipes are used or not.
+%-----------------------------------------------------------------------------%
+#if     defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)
+project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			CL,ProjCL):-
+	pipe_master_project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					    CL,ProjCL,Flag
+#ifdef  PROFILE
+					   ,_,_
+#endif  /*PROFILE*/
+					   ),
+	Flag == success,
+	!.
+#else
+project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			CL,ProjCL):-
+	project_sym_constraints_aux(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    CL,ProjCL,Flag),
+	Flag == success,
+	!.
+#endif  /*defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)*/
+
+#if     defined(PIPEDUMP)||defined(PIPEDUMP_AND_ANSWERS)
+%-----------------------------------------------------------------------------
+% The master process makes a request to the slave
+%-----------------------------------------------------------------------------
+pipe_master_project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    CL,SimpCL,SuccessFlag
+#ifdef  PROFILE
+				   ,Time1, Time2
+#endif  /*PROFILE*/
+				   ) :-	
+#ifdef  PROFILE
+	ctime(MsgTimeStamp1),
+	write_dump_slave("project_sym_constraints(%,%,%,%,%,%) .\n",
+			 [SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL,
+			  MsgTimeStamp1]),
+#else   /*PROFILE*/
+	write_dump_slave("project_sym_constraints(%,%,%,%,%) .\n",
+			 [SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL]),
+#endif  /*PROFILE*/
+	read_from_dump_slave(X),
+	process_slave_output(X,
+			     reply_args(SuccessFlag,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					SimpCL
+#ifdef  PROFILE
+				       ,Time1,Time2
+				       ,MsgTime1,MsgTimeStamp3
+#endif  /*PROFILE*/
+				       )
+			     ),
+#ifdef  PROFILE
+	ctime(MsgTimeStamp4),
+	add_counter(pipe_timing,(MsgTimeStamp4-MsgTimeStamp3)+MsgTime1),
+#endif  /*PROFILE*/
+	true.
+%-----------------------------------------------------------------------------
+%    This is executed by the slave process
+%-----------------------------------------------------------------------------
+pipe_slave_project_sym_constraints(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   CL, SimpCL, SuccessFlag
+#ifdef  PROFILE
+				  , TimeA, TimeB
+#endif  /*PROFILE*/
+				  ) :-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+#ifdef  PROFILE
+        ctime(Time1),
+	TimeA = Time1-Time0,
+	ctime(Time2),
+#endif
+        project_sym_constraints_aux(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    CL,SimpCL,SuccessFlag),	
+#ifdef  PROFILE
+	ctime(Time3),
+	TimeB = Time3-Time2.
+#else
+        true.
+#endif  /*PROFILE*/
+#endif  /*PIPEDUMP || PIPEDUMP_AND_ANSWERS*/
+
+%-----------------------------------------------------------------------------
+% Core to project a list of symbolic constraints.
+% The predicate does not fail. Instead, it returns a flag that
+% determines if the call failed or not.
+%-----------------------------------------------------------------------------
+project_sym_constraints_aux(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    CL,ProjCL,success):-
+	fcopy_term(t(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CL),
+		   t(GlobalArr,GlobalVar,LocalArr,LocalVar,CLX)),
+	
+	constraint_symbolic_with_array_update_subst(CLX,[],ArrRef),
+	
+	project_solver_context(state(GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef),
+			       state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,ProjCL)),
+	!.
+project_sym_constraints_aux(_,_,_,_,_,_,fail):-!.
+
+%------------------------------------------------------------------------------
+% uninterpreted_function(+Term)
+%------------------------------------------------------------------------------
+uninterpreted_function(unk).
+
+
+%=============================================================================%
+%=============================================================================%
+#ifdef  UNUSED_CODE
+%=============================================================================%
+%=============================================================================%
+%=============================================================================%
+% NOTE: the below predicates are either not used or used in the old
+% days for compositional which is outdated and obsolete currently.
+%=============================================================================%
+% %=============================================================================%
+% %                      Operations for compositional
+% %=============================================================================%
+% % NOTE: For the moment, these operations are not optimized neither updated.
+% %------------------------------------------------------------------------------
+% % copy_constraint_symbolic_to_evaluated:
+% % Apply the evaluation of symbolic constraint list CL to another variable sets
+% %------------------------------------------------------------------------------
+% % % Note: this operation is really really slow 
+% % copy_constraint_symbolic_to_evaluated(CL,
+% %       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+% %       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+% %       GlobalArr, GlobalVar, LocalArr, LocalVar,
+% %       GlobalArr1, GlobalVar1, LocalArr1, LocalVar1, ArrRef1) :-
+% % 	not(copy_constraint_symbolic_to_evaluated_aux1(CL,
+% % 	    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+% % 	    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1)),
+% %         robust_retract(copy_constraint_symbolic_to_evaluated_memo(
+% %             GlobalArr, GlobalVar, LocalArr, LocalVar,
+% %             GlobalArr1, GlobalVar1, LocalArr1, LocalVar1, ArrRef1)), !.
+
+% % copy_constraint_symbolic_to_evaluated_aux1(CL,
+% %       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+% %       SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1) :-
+% % 	constraint_symbolic(CL, [], SArrRef1),
+% % 	assert(copy_constraint_symbolic_to_evaluated_memo(
+% % 	      SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+% % 	      SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1, SArrRef1)),
+% % 	!, fail.
+
+% %------------------------------------------------------------------------------%
+% % neg_proj_sym_constraints/9: negated projection of the solver store
+% %                             on the variables.
+% %------------------------------------------------------------------------------%
+% % neg_proj_sym_constraints(GlobalArr , GlobalVar , LocalArr , LocalVar,
+% % 	                 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, 
+% % 	  	         NegProj):-
+% % 	copy_to_unbound_list(GlobalArr,SGlobalArr),
+% % 	copy_to_unbound_list(GlobalVar,SGlobalVar),
+% % 	copy_to_unbound_list(LocalArr,SLocalArr),
+% % 	copy_to_unbound_list(LocalVar,SLocalVar),
+% % 	append(GlobalArr,LocalArr,Arr),
+% % 	append(GlobalVar,LocalVar,Var),
+% % 	append(SGlobalArr,SLocalArr,SArr),
+% % 	append(SGlobalVar,SLocalVar,SVar),
+% % 	dump(Arr,SArr,Arr1),
+% % 	dump(Var,SVar,Var1),
+% % 	%----------------------------------------------------------------------
+% % 	% Calls to negate_list_array and negate_list_numeric here were
+% % 	% previously enclosed in once/1. We replaced them with cuts.
+% % 	%----------------------------------------------------------------------
+% % 	negate_list_array(Arr1, NegatedArr), !,
+% % 	negate_list_numeric(Var1, NegatedVar), !,  
+% % 	append(NegatedArr,NegatedVar,NegProj).
+% %------------------------------------------------------------------------------
+% % negate_list_numeric/2: Produce a negation of the dumped numeric constraints
+% % to be stored in the table.
+% %------------------------------------------------------------------------------
+% % IMPORTANT: This predicate has been replaced with
+% % make_symbolic/3. However, it's still used in
+% % neg_proj_sym_constraints/9 which is outdated and obsolete. Thus, we
+% % should delete this predicate at some point.
+% %------------------------------------------------------------------------------
+% negate_list_numeric(CL,NCL1):-
+% 	negate_list_numeric_aux(CL,[],NCL1).
+% 	% Note that we use reverse/2 to keep the order of the constraints.	 
+% 	% reverse(NCL0,NCL1).
+% negate_list_numeric_aux([], NL, NL):-!.
+% negate_list_numeric_aux([C|R],Acc,NL):-
+%         negate_numeric(C,NCs),!,
+% 	%append_constraints(NCs,Acc,NAcc),
+% 	append(NCs,Acc,NAcc),	    
+% 	negate_list_numeric_aux(R,NAcc,NL).
+
+% %append_constraints([],Acc,Acc):-!.
+% %append_constraints([NC],Acc,[NC|Acc]):-!.
+% %append_constraints([NC1,NC2],Acc,[NC1,NC2|Acc]):-!.
+
+% #if     (CLP_SYS == CLPR)
+% negate_numeric(quote(A = B), [gt(M,N),gt(N,M)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric(quote(A < B), [geq(M,N)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric(quote(A > B), [geq(N,M)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric(quote(A <= B), [gt(M,N)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric(quote(A >= B), [gt(N,M)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric(ff, [tt]).
+% negate_numeric(quote(real(_)), []).
+% negate_numeric(tt, []).
+% #elif  (CLP_SYS == SWI)
+% negate_numeric('='(A,B), [gt(M,N),gt(N,M)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric('<'(A,B), [geq(M,N)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric('>'(A,B), [geq(N,M)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric('=<'(A,B), [gt(M,N)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric('>='(A,B), [gt(N,M)]) :-
+% 	make_symbolic_numeric_term(A,M),
+% 	make_symbolic_numeric_term(B,N).
+% negate_numeric(ff, [tt]).
+% negate_numeric(tt, []).
+% negate_numeric(_ , []).
+% #endif
+#endif /*UNUSED_CODE*/
+
+

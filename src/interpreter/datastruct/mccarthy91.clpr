@@ -1,0 +1,37 @@
+% This is another simple example that demonstrates that induction hypothesis
+% is being searched, not always the first (original assertion) is used.
+
+coinductionlimit(1).   % Limit coinduction to depth 2.
+unfolddepthbound(2).
+solver(arith).
+
+% McCarthy's 91 function
+unfold(m(X,Y),
+       [
+	body([m(A,B),m(B,Y)], [eq(A,plus(X,11)), geq(100,X)]),
+	body([], [eq(X,plus(Y,10)), gt(X,100)])
+       ]).
+
+% Some function g
+unfold(g(X,Y),
+       [
+        body([m(X,Z)], [eq(Y,plus(Z,1))])
+       ]).
+
+% To Prove:
+%
+% g(X,Y) |= Y>91
+
+run :-
+	init_counters,
+	addunfoldlevel(0, [g(X,Y)], UnfoldableGAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [],
+		     [], [], [gt(Y,91)], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

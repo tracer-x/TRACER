@@ -1,0 +1,12 @@
+rm -f output
+
+echo "crashes in 3 run"
+sleep 2
+
+#completes in 984 runs
+../cutec mem f
+../cute mem -i 500 -q
+../cuteStat.exe
+
+cat output
+../clean

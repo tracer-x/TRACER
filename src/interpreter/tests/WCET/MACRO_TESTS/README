@@ -1,0 +1,24 @@
+Update by Jorge (19/07/2012)
+
+The first three errors seem to be easy to fix. The current compiler
+is less tolerant than older versions and complain now about errors.
+
+However, the problem with tlan is a CLP(R) error during the TRACER
+execution. We should look at it.
+
+
+tracer wcet cdaudio.c -witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y
+     [java] Fatal error in line 4848: could not find size of array Addr_func_CdAudio535DeviceControl__cdaudioDataOut_
+
+tracer wcet floppy.c -witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y
+     [java] Fatal error in line 3386: Duplicate global variable Addr_GLOBAL__DriverEntry_
+
+tracer wcet qpmouse.c -witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y
+     [java] Syntax error: "/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter/tests/WCET/MACRO_TESTS/qpmouse.c_CIL.c", line 19, token: '}'
+     [java] (01) Parsing file: "/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter/tests/WCET/MACRO_TESTS/qpmouse.c_CIL.c"
+
+
+tracer wcet tlan.c -witnesses y -clean-after-dump y -include-pointers y -ignore-comp-errors y
+Fatal Error: Run out of registers during compilation
+
+

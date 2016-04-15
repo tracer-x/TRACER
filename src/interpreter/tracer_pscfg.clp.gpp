@@ -1,0 +1,16 @@
+#ifdef  SLICE_PSCFG
+retract_trans_in_slice_pscfg([]).
+retract_trans_in_slice_pscfg([Id|Ids]):-
+    retract(trans_in_slice(Id,_)), !,
+    retract_trans_in_slice_pscfg(Ids).
+retract_trans_in_slice_pscfg([_|Ids]):-
+    retract_trans_in_slice_pscfg(Ids).
+
+record_trans_in_slice_pscfg(FName,Id,SliceXCL):-
+    is_marked_list(SliceXCL), !,
+    twice_top_context_stack([_],[PPContext]),
+    fassert(trans_in_slice_pscfg(FName,PPContext,Id)),
+    printf_to_atom(A,"callee_mark_%",[FName]),
+    set_counter(A,1).
+record_trans_in_slice_pscfg(_,_,_).
+#endif  /*SLICE_PSCFG*/

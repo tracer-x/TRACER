@@ -1,0 +1,335 @@
+% tracer_flags.clp.gpp
+
+%=======================================================================
+% This module defines TRACER flags.
+% export:
+%   current_tracer_flag/2
+%   set_tracer_flag/2
+%=======================================================================
+%   Flags                     Description                     
+%------------------------------------------------------------------------
+%   interpolation             Turn on/off interpolation         
+%   interpolant               Choose interpolation method   
+%   depth_bound               Set maximum depth
+%   states_bound              Set maximum visited states (debugging)
+%   path_datastructure        To choose the data-structure of a path
+%                             (partition or naive)
+%   path_slicing              Turn on/off backward slicing on a path
+%   path_filter_ground        Turn on/off filtering of ground constraints
+%   path_sensitive            Turn on/off use of path-sensitiveness
+%   unroll_loop               Turn on/off unrolling of loops
+%   convert_strict_inequality Turn on/off convert strict inequalities into 
+%                             less than or equal and greater than or equal
+%   convert_eq_to_ineq        Turn on/off convert strict x=y into x>=y and x<=y
+#if    (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%   witnesses                 Turn on/off witnesses (for slicing and WCET)
+%   witnesses_threshold       Maximum number of witnesses (for slicing and WCET)
+#endif /*(UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%   array_solver              Turn on/off array solver
+%   array_solver_backtrack    Set maximum num of backtrackings in array solver
+%   alias                     Turn on/off alias analysis
+#ifdef SLICING_CONTROL_OPT
+%   slicer_control_opt        Turn on/off a slicing optimization for branches
+#endif /*SLICING_CONTROL_OPT*/
+#if    (UNFOLD_OPT==SLICING)
+%   slicer_data_dep           Compute only data dependencies
+%   slicer_control_dep        Compute only control dependencies
+#endif /*(UNFOLD_OPT==SLICING)*/
+#ifdef MINMAX
+% refinement_heuristics       Choose heuristics to refine spurious errors
+% allow_become_non_invariant_to_subsume Allow subsumption to make constraints non-invariant
+% minmax_cs_reuse             Allow reuse code space across restarts
+% reuse_interp_infeasible     Reuse interpolants from sibling rather than
+%                             generating new interpolant from the infeasible path
+% delete_subsumed_memo        Delete redundant memo table entries
+#endif /*MINMAX*/
+%   other_interp              Turn on/off computation of other interpolants
+%   other_interp_method       Interpolation methods apart from basic unsatisfiable
+%                             cores
+%                             [ disjunctive |  non disjunctive | rybal ]
+%   wp_max_structure_size     WP size bound. Value of -1 means WP without limit.
+%                             Value of n is the size limit
+%                             of wp information before switching automatically
+%                             to basic unsatisfiable cores (basic interpolation method).
+%                             
+%========================================================================%
+% IMPORTANT: '$tracer_flag' can be only queried or modified through
+% current_tracer_flag/2 and set_tracer_flag/2.
+%========================================================================%
+
+% We define this flag as a CLP(R) counter rather than a fact.
+% We need to initialize it.
+:- set_counter(refinement_heuristics,2).	
+	
+current_tracer_flag(refinement_heuristics,ValX):-	
+	counter_value(refinement_heuristics,Val),
+	ValX = Val,
+	!.
+current_tracer_flag(X,Y):-
+	var(X),
+	'$tracer_flag'(X,Y).
+current_tracer_flag(X,Y):-
+	nonvar(X),
+	'$tracer_flag'(X,Y),!.
+
+set_tracer_flag(X,Y):-
+	nonvar(X),
+	nonvar(Y),
+	valid_tracer_flag_value_catch_error(X,Y),
+	assert_flag(X,Y).
+
+assert_flag(refinement_heuristics, Val):-
+	!,
+	set_counter(refinement_heuristics,Val).
+assert_flag(recursive_def, Filename) :-
+	!,
+	reconsult(Filename).	
+assert_flag(X,Y):-
+	retract('$tracer_flag'(X,_OldValue)), !,
+	fassert('$tracer_flag'(X,Y)).
+assert_flag(X,Y):-
+	fassert('$tracer_flag'(X,Y)),!.
+
+valid_tracer_flag_value_catch_error(X,Y):-
+	valid_tracer_flag_value(X,Y),
+	check_valid_tracer_flag_combination(X,Y),
+	!.
+valid_tracer_flag_value_catch_error(X,Y):-
+#if     UNFOLD_OPT==SAFETY
+	error_message("invalid flag (%,%) for safety\n",[X,Y]).
+#elif   UNFOLD_OPT==WCET
+        error_message("invalid flag (%,%) for wcet\n",[X,Y]).
+#elif   UNFOLD_OPT==SLICING
+        error_message("invalid flag (%,%) for slicing\n",[X,Y]).
+#elif   UNFOLD_OPT==LIVE
+        error_message("invalid flag (%,%) for liveness\n",[X,Y]).
+#elif   UNFOLD_OPT==TESTING
+        error_message("invalid flag (%,%) for testing\n",[X,Y]).
+#else
+        error_message("unknown application.\n",[]).
+#endif 
+%------------------------------------------------------------------------%
+% Here when the valid value of a flag not only depends on the domain
+% but also on other flags
+%------------------------------------------------------------------------%
+#if     (UNFOLD_OPT == WCET)
+check_valid_tracer_flag_combination(Flag,Val):-
+	Flag == path_sensitive,
+	Val  == n,
+	(current_tracer_flag(witnesses,y) ;
+	 current_tracer_flag(unroll_loop,y) ),!,
+        set_tracer_flag(witnesses,n),
+	set_tracer_flag(unroll_loop,n),
+	print_message("\nWARNING: unrolling of loops is not allowed!\n\n",[]),
+	!.
+#endif  /*(UNFOLD_OPT == WCET)*/
+#if     (UNFOLD_OPT == SLICING || UNFOLD_OPT==LIVE) 
+check_valid_tracer_flag_combination(Flag,Val):-
+ 	Flag == path_sensitive,
+ 	Val  == n,
+ 	%current_tracer_flag(witnesses,y),!,
+	!,
+ 	set_tracer_flag(witnesses,n).
+ 	%print_message("\nWARNING: witnesses will not be used.\n",[]).
+#endif  /*(UNFOLD_OPT == SLICING || UNFOLD_OPT==LIVE) */
+check_valid_tracer_flag_combination(_,_):-!.
+
+%=========================================================================%
+% Begin generic flags
+%=========================================================================%
+% Initialization of default values for generic flags.
+#if     (CLP_SYS==CLPR)
+:- no_style_check(all).
+#endif
+% NOTE: if you want to change some value, PLEASE use set_tracer_flag/2.
+'$tracer_flag'(interpolation,y).          
+'$tracer_flag'(interpolant,deletion).
+% No depth bound
+'$tracer_flag'(depth_bound,-1).
+% No state bound
+'$tracer_flag'(states_bound,-1).         
+'$tracer_flag'(path_datastructure,partition).
+'$tracer_flag'(path_slicing,n).
+'$tracer_flag'(path_filter_ground,n).
+'$tracer_flag'(path_sensitive,y).
+'$tracer_flag'(unroll_loop,n).
+'$tracer_flag'(convert_strict_inequality,n).
+'$tracer_flag'(convert_eq_to_ineq,n).
+#if     (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+'$tracer_flag'(witnesses,y).
+'$tracer_flag'(witnesses_threshold,-1).
+				          % -1 : no threshold.
+                                          %  0 : no witnesses.
+                                          % >0 : maximum number of witnesses.
+#endif  /*(UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%'$tracer_flag'(array_solver_backtrack,100).
+'$tracer_flag'(array_solver_backtrack,-1).
+				          % -1 : no limit
+                                          % >=0: maximum number of
+                                          % backtrackings 
+#if (UNFOLD_OPT == SLICING)
+'$tracer_flag'(slicer_data_dep,y).
+'$tracer_flag'(slicer_control_dep,y).     
+#endif
+'$tracer_flag'(array_solver, n).
+'$tracer_flag'(alias, y).
+#ifdef MINMAX
+%'$tracer_flag'(refinement_heuristics,2).
+'$tracer_flag'(allow_become_non_invariant_to_subsume,y).
+'$tracer_flag'(minmax_cs_reuse,y).
+'$tracer_flag'(reuse_interp_infeasible,n).
+'$tracer_flag'(delete_subsumed_memo,n).
+#endif /*MINMAX*/
+'$tracer_flag'(other_interp, n).
+'$tracer_flag'(other_interp_method,non_disjunctive).
+'$tracer_flag'(wp_max_structure_size,-1).
+				  % -1  : no limit size of the WP.
+                                  % > 0 : maximum size of the WP.
+
+%-------------------------------------------------------------------------%
+% All possible valid values for generic flags
+%-------------------------------------------------------------------------%
+% Maximum depth 
+valid_tracer_flag_value(depth_bound,X):-
+	% integer
+	arithmetic(X).		
+% Maximum visited states 
+valid_tracer_flag_value(states_bound,X):-
+	% integer
+	arithmetic(X).		
+% Use of interpolation
+valid_tracer_flag_value(interpolation,y).
+valid_tracer_flag_value(interpolation,n).
+% Type of interpolants:   
+%    Linear scan of the constraints to decide which is still needed to
+%    imply a formula (use of theorem-prover).
+valid_tracer_flag_value(interpolant,deletion).
+%    Use of syntactic means. Keep all constraints which share some
+%    variable with the formula. (doesn't use theorem prover).
+valid_tracer_flag_value(interpolant,partition).
+% Representation of a  path.
+%    CL and ML are represented using two lists.
+valid_tracer_flag_value(path_datastructure,naive).
+%    CL is represented as an union find but ML is still a list.
+valid_tracer_flag_value(path_datastructure,partition).
+% Slice the path before interpolation is applied.
+valid_tracer_flag_value(path_slicing,n).
+valid_tracer_flag_value(path_slicing,y).
+% Filter ground constraints from the path before interpolation
+% is applied.
+valid_tracer_flag_value(path_filter_ground,n).
+valid_tracer_flag_value(path_filter_ground,y).
+% Switch on/off array solving
+valid_tracer_flag_value(array_solver, y).
+valid_tracer_flag_value(array_solver, n).
+% Setup number of backtrackings in the array solver. Each flattened
+% expression is given by backtracking and tested for
+% unsatisfiability. If unsat, we are done. Otherwise, we backtrack and
+% test the next one. The number of backtrackings may be
+% exponential. This is why this flag limit that number.
+% If X=-1 then no limit.
+valid_tracer_flag_value(array_solver_backtrack, X):-
+	% integer
+	arithmetic(X).		
+% Alias information 
+valid_tracer_flag_value(alias, y).
+valid_tracer_flag_value(alias, n).
+% Convert strict inequalities into non-strict
+valid_tracer_flag_value(convert_strict_inequality,y).
+valid_tracer_flag_value(convert_strict_inequality,n).
+% Convert strict equalities into inequalities
+valid_tracer_flag_value(convert_eq_to_ineq,y).
+valid_tracer_flag_value(convert_eq_to_ineq,n).
+% Recursive definition file: Anything goes
+valid_tracer_flag_value(recursive_def, _).
+#ifdef MINMAX
+%valid_tracer_flag_value(refinement_heuristics,bu). % bottom-up
+%valid_tracer_flag_value(refinement_heuristics,td). % top-down
+valid_tracer_flag_value(refinement_heuristics,1).
+valid_tracer_flag_value(refinement_heuristics,2).
+valid_tracer_flag_value(refinement_heuristics,3).
+valid_tracer_flag_value(refinement_heuristics,4).
+% Disable subsumption if some constraint becomes non-invariant
+valid_tracer_flag_value(allow_become_non_invariant_to_subsume,y).
+valid_tracer_flag_value(allow_become_non_invariant_to_subsume,n).
+% Allow reusing code space across restarts
+valid_tracer_flag_value(minmax_cs_reuse,y).
+valid_tracer_flag_value(minmax_cs_reuse,n).
+% Reuse interpolants from siblings rather than generating new ones
+valid_tracer_flag_value(reuse_interp_infeasible,y).
+valid_tracer_flag_value(reuse_interp_infeasible,n).
+% Delete subsumed memo entries
+valid_tracer_flag_value(delete_subsumed_memo,y).
+valid_tracer_flag_value(delete_subsumed_memo,n).
+#endif /*MINMAX*/
+% Computation of weakest precondition
+valid_tracer_flag_value(other_interp, y).
+valid_tracer_flag_value(other_interp, n).
+valid_tracer_flag_value(wp_max_structure_size, X):-
+	% integer
+	arithmetic(X).
+valid_tracer_flag_value(other_interp_method, disjunctive).
+valid_tracer_flag_value(other_interp_method, non_disjunctive).
+valid_tracer_flag_value(other_interp_method, rybal).
+
+%=========================================================================%
+% End generic flags
+%=========================================================================%
+#if   (UNFOLD_OPT==WCET)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% All possible valid values for flags
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Unrolling of loops 
+valid_tracer_flag_value(unroll_loop,y).
+valid_tracer_flag_value(unroll_loop,n).
+#if     (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%% Use of witnesses
+valid_tracer_flag_value(witnesses,y).
+valid_tracer_flag_value(witnesses,n).
+#endif  /*(UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%% Detection of infeasible paths
+valid_tracer_flag_value(path_sensitive,y).
+valid_tracer_flag_value(path_sensitive,n).
+#elif (UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+% All possible valid values for flags
+%% Unrolling of loops 
+valid_tracer_flag_value(unroll_loop,n).
+#if     (UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)
+%% Use of witnesses
+valid_tracer_flag_value(witnesses,y).
+valid_tracer_flag_value(witnesses,n).
+valid_tracer_flag_value(witnesses_threshold,N):- N >= -1.
+#endif  /*(UNFOLD_OPT==WCET || UNFOLD_OPT==SLICING || UNFOLD_OPT==LIVE)*/
+%% Detection of infeasible paths
+valid_tracer_flag_value(path_sensitive,y).
+valid_tracer_flag_value(path_sensitive,n).
+%% Data/Control dependencies
+valid_tracer_flag_value(slicer_data_dep,y).
+valid_tracer_flag_value(slicer_data_dep,n).
+valid_tracer_flag_value(slicer_control_dep,y).
+valid_tracer_flag_value(slicer_control_dep,n).
+#ifdef SLICING_CONTROL_OPT
+%% Don't propagate back control dependencies when
+%% only one feasible branch
+'$tracer_flag'(slicer_control_opt,y).
+valid_tracer_flag_value(slicer_control_opt,y).
+valid_tracer_flag_value(slicer_control_opt,n).
+#endif
+#elif (UNFOLD_OPT == SAFETY)
+% All possible valid values for flags
+%% Unrolling of loops 
+valid_tracer_flag_value(unroll_loop,y).
+valid_tracer_flag_value(unroll_loop,n).
+%% Detection of infeasible paths
+valid_tracer_flag_value(path_sensitive,y).
+#elif (UNFOLD_OPT == TESTING)
+% All possible valid values for flags
+%% Unrolling of loops 
+valid_tracer_flag_value(unroll_loop,y).
+%% Detection of infeasible paths
+valid_tracer_flag_value(path_sensitive,y).
+#endif
+#if     (CLP_SYS==CLPR)
+:- style_check(all).
+#endif
+

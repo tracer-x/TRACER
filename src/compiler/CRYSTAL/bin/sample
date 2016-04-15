@@ -1,0 +1,20 @@
+#!/bin/bash
+# Automatically generated file.
+
+while true; do
+    case "$1" in
+        "") break;;
+        -v) verbose="1"; shift;;
+        -h) shift; vmargs="$vmargs -Xmx$1m"; shift;;
+        -j) shift; vmargs="$vmargs '$1'"; shift;;
+        *) args="$args '$1'"; shift;;
+    esac
+done
+
+cmd="\"/home/jorge/src/jdk1.6.0_13/jre/bin/java\" -ea $vmargs -cp \"/home/jorge/Systems/Pointer-Analysis/crystal-1.1/classes:/home/jorge/Systems/Pointer-Analysis/crystal-1.1/jars/java-cup-11a-runtime.jar\" crystal.projects.sample.Main $args"
+
+if [ -n "$verbose" ]; then
+  echo "$cmd"
+fi
+
+eval "$cmd"

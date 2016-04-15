@@ -1,0 +1,3 @@
+The two files an643_encoder.c and an643_decoder.c are from the white paper
+"Adaptive Differential Pulse Code Modulation Using PICMicro Microcontrollers"
+by Rodger Richey, Microchip Technology, Inc.

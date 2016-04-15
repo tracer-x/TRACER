@@ -1,0 +1,32 @@
+
+% p(22,50).
+p(32,60).
+p(I,X) :-
+	I<22,
+	flag(goalcount,Old,Old+1),
+	I1 is I+1,
+	p(I1,X).
+p(I,X) :-
+	I<22,
+	flag(goalcount,Old,Old+1),
+	I1 is I+1,
+	X1 is X+1,
+	p(I1,X1).
+
+q :- 
+	ztime,
+	flag(goalcount,_,0),
+	p(0,0).
+q :-
+	ctime(Y),
+	flag(goalcount,X,0),
+	write('No. goals '), write(X), write(' Time '), write(Y), write(' seconds, '),
+	Z is X / Y,
+	write(Z), write(' goals/sec'),nl.
+
+ztime :-
+	statistics(runtime,_).
+ctime(Time) :-	
+	statistics(runtime,[_,T1]),
+	Time is T1/1000.
+

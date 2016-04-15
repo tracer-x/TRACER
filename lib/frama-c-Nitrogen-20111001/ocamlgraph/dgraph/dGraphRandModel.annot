@@ -1,0 +1,739 @@
+"dgraph/dGraphRandModel.ml" 30 1889 1893 "dgraph/dGraphRandModel.ml" 30 1889 1896
+type(
+  ('a -> 'b) -> 'a -> 'b
+)
+ident(
+  def $ "dgraph/dGraphRandModel.ml" 32 1908 1908 --
+)
+"dgraph/dGraphRandModel.ml" 30 1889 1897 "dgraph/dGraphRandModel.ml" 30 1889 1898
+type(
+  'a -> 'b
+)
+ident(
+  def f "dgraph/dGraphRandModel.ml" 30 1889 1899 "dgraph/dGraphRandModel.ml" 30 1889 1906
+)
+"dgraph/dGraphRandModel.ml" 30 1889 1899 "dgraph/dGraphRandModel.ml" 30 1889 1900
+type(
+  'a
+)
+ident(
+  def x "dgraph/dGraphRandModel.ml" 30 1889 1903 "dgraph/dGraphRandModel.ml" 30 1889 1906
+)
+"dgraph/dGraphRandModel.ml" 30 1889 1903 "dgraph/dGraphRandModel.ml" 30 1889 1904
+type(
+  'a -> 'b
+)
+ident(
+  int_ref f "dgraph/dGraphRandModel.ml" 30 1889 1897 "dgraph/dGraphRandModel.ml" 30 1889 1898
+)
+"dgraph/dGraphRandModel.ml" 30 1889 1905 "dgraph/dGraphRandModel.ml" 30 1889 1906
+type(
+  'a
+)
+ident(
+  int_ref x "dgraph/dGraphRandModel.ml" 30 1889 1899 "dgraph/dGraphRandModel.ml" 30 1889 1900
+)
+"dgraph/dGraphRandModel.ml" 30 1889 1903 "dgraph/dGraphRandModel.ml" 30 1889 1906
+call(
+  tail
+)
+type(
+  'b
+)
+"dgraph/dGraphRandModel.ml" 32 1908 1912 "dgraph/dGraphRandModel.ml" 32 1908 1919
+type(
+  'a list -> 'a
+)
+ident(
+  def element "dgraph/dGraphRandModel.ml" 38 2061 2061 --
+)
+"dgraph/dGraphRandModel.ml" 33 1931 1935 "dgraph/dGraphRandModel.ml" 33 1931 1937
+type(
+  'a list
+)
+"dgraph/dGraphRandModel.ml" 33 1931 1941 "dgraph/dGraphRandModel.ml" 33 1931 1952
+type(
+  string -> 'a
+)
+ident(
+  ext_ref Pervasives.invalid_arg
+)
+"dgraph/dGraphRandModel.ml" 33 1931 1953 "dgraph/dGraphRandModel.ml" 33 1931 1976
+type(
+  string
+)
+"dgraph/dGraphRandModel.ml" 33 1931 1941 "dgraph/dGraphRandModel.ml" 33 1931 1976
+call(
+  tail
+)
+type(
+  'a
+)
+"dgraph/dGraphRandModel.ml" 34 1977 1981 "dgraph/dGraphRandModel.ml" 34 1977 1982
+type(
+  'a list
+)
+ident(
+  def l "dgraph/dGraphRandModel.ml" 35 1987 1993 "dgraph/dGraphRandModel.ml" 36 2014 2059
+)
+"dgraph/dGraphRandModel.ml" 35 1987 1993 "dgraph/dGraphRandModel.ml" 35 1987 2009
+type(
+  unit -> unit
+)
+ident(
+  ext_ref Random.self_init
+)
+"dgraph/dGraphRandModel.ml" 35 1987 2010 "dgraph/dGraphRandModel.ml" 35 1987 2012
+type(
+  unit
+)
+"dgraph/dGraphRandModel.ml" 35 1987 1993 "dgraph/dGraphRandModel.ml" 35 1987 2012
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2020 "dgraph/dGraphRandModel.ml" 36 2014 2028
+type(
+  'a list -> int -> 'a
+)
+ident(
+  ext_ref List.nth
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2029 "dgraph/dGraphRandModel.ml" 36 2014 2030
+type(
+  'a list
+)
+ident(
+  int_ref l "dgraph/dGraphRandModel.ml" 34 1977 1981 "dgraph/dGraphRandModel.ml" 34 1977 1982
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2032 "dgraph/dGraphRandModel.ml" 36 2014 2042
+type(
+  int -> int
+)
+ident(
+  ext_ref Random.int
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2044 "dgraph/dGraphRandModel.ml" 36 2014 2055
+type(
+  'a list -> int
+)
+ident(
+  ext_ref List.length
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2056 "dgraph/dGraphRandModel.ml" 36 2014 2057
+type(
+  'a list
+)
+ident(
+  int_ref l "dgraph/dGraphRandModel.ml" 34 1977 1981 "dgraph/dGraphRandModel.ml" 34 1977 1982
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2043 "dgraph/dGraphRandModel.ml" 36 2014 2058
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2031 "dgraph/dGraphRandModel.ml" 36 2014 2059
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 36 2014 2020 "dgraph/dGraphRandModel.ml" 36 2014 2059
+call(
+  tail
+)
+type(
+  'a
+)
+"dgraph/dGraphRandModel.ml" 35 1987 1993 "dgraph/dGraphRandModel.ml" 36 2014 2059
+type(
+  'a
+)
+"dgraph/dGraphRandModel.ml" 32 1908 1922 "dgraph/dGraphRandModel.ml" 36 2014 2059
+type(
+  'a list -> 'a
+)
+"dgraph/dGraphRandModel.ml" 38 2061 2065 "dgraph/dGraphRandModel.ml" 38 2061 2070
+type(
+  int
+)
+ident(
+  def black "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 38 2061 2075 "dgraph/dGraphRandModel.ml" 38 2061 2083
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 39 2084 2088 "dgraph/dGraphRandModel.ml" 39 2084 2093
+type(
+  int
+)
+ident(
+  def white "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 39 2084 2098 "dgraph/dGraphRandModel.ml" 39 2084 2106
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 40 2107 2111 "dgraph/dGraphRandModel.ml" 40 2107 2114
+type(
+  int
+)
+ident(
+  def red "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 40 2107 2121 "dgraph/dGraphRandModel.ml" 40 2107 2129
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 41 2130 2134 "dgraph/dGraphRandModel.ml" 41 2130 2139
+type(
+  int
+)
+ident(
+  def green "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 41 2130 2144 "dgraph/dGraphRandModel.ml" 41 2130 2152
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 42 2153 2157 "dgraph/dGraphRandModel.ml" 42 2153 2161
+type(
+  int
+)
+ident(
+  def blue "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 42 2153 2167 "dgraph/dGraphRandModel.ml" 42 2153 2175
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 43 2176 2180 "dgraph/dGraphRandModel.ml" 43 2176 2186
+type(
+  int
+)
+ident(
+  def yellow "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 43 2176 2190 "dgraph/dGraphRandModel.ml" 43 2176 2198
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 44 2199 2203 "dgraph/dGraphRandModel.ml" 44 2199 2207
+type(
+  int
+)
+ident(
+  def cyan "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 44 2199 2213 "dgraph/dGraphRandModel.ml" 44 2199 2221
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 45 2222 2226 "dgraph/dGraphRandModel.ml" 45 2222 2233
+type(
+  int
+)
+ident(
+  def magenta "dgraph/dGraphRandModel.ml" 47 2248 2248 --
+)
+"dgraph/dGraphRandModel.ml" 45 2222 2236 "dgraph/dGraphRandModel.ml" 45 2222 2244
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 53 2327 2333 "dgraph/dGraphRandModel.ml" 53 2327 2340
+type(
+  int -> int -> int
+)
+ident(
+  def compare "dgraph/dGraphRandModel.ml" 54 2382 2384 "dgraph/dGraphRandModel.ml" 55 2400 2403
+)
+"dgraph/dGraphRandModel.ml" 53 2327 2363 "dgraph/dGraphRandModel.ml" 53 2327 2381
+type(
+  int -> int -> int
+)
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.compare
+)
+"dgraph/dGraphRandModel.ml" 54 2382 2388 "dgraph/dGraphRandModel.ml" 54 2382 2395
+type(
+  int
+)
+ident(
+  def default "dgraph/dGraphRandModel.ml" 54 2382 2399 "dgraph/dGraphRandModel.ml" 55 2400 2403
+)
+"dgraph/dGraphRandModel.ml" 54 2382 2398 "dgraph/dGraphRandModel.ml" 54 2382 2399
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 57 2405 2416 "dgraph/dGraphRandModel.ml" 57 2405 2458
+call(
+  stack
+)
+"dgraph/dGraphRandModel.ml" 57 2405 2416 "dgraph/dGraphRandModel.ml" 57 2405 2464
+call(
+  stack
+)
+"dgraph/dGraphRandModel.ml" 58 2465 2476 "dgraph/dGraphRandModel.ml" 58 2465 2485
+call(
+  stack
+)
+"dgraph/dGraphRandModel.ml" 62 2526 2532 "dgraph/dGraphRandModel.ml" 62 2526 2548
+type(
+  'a -> 'b list
+)
+ident(
+  def graph_attributes "dgraph/dGraphRandModel.ml" 63 2556 2558 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 62 2526 2549 "dgraph/dGraphRandModel.ml" 62 2526 2550
+type(
+  'a
+)
+"dgraph/dGraphRandModel.ml" 62 2526 2553 "dgraph/dGraphRandModel.ml" 62 2526 2555
+type(
+  'b list
+)
+"dgraph/dGraphRandModel.ml" 63 2556 2562 "dgraph/dGraphRandModel.ml" 63 2556 2587
+type(
+  'c -> 'd list
+)
+ident(
+  def default_vertex_attributes "dgraph/dGraphRandModel.ml" 64 2595 2597 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 63 2556 2588 "dgraph/dGraphRandModel.ml" 63 2556 2589
+type(
+  'c
+)
+"dgraph/dGraphRandModel.ml" 63 2556 2592 "dgraph/dGraphRandModel.ml" 63 2556 2594
+type(
+  'd list
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2601 "dgraph/dGraphRandModel.ml" 64 2595 2612
+type(
+  G.V.t -> string
+)
+ident(
+  def vertex_name "dgraph/dGraphRandModel.ml" 65 2645 2647 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2613 "dgraph/dGraphRandModel.ml" 64 2595 2614
+type(
+  G.V.t
+)
+ident(
+  def v "dgraph/dGraphRandModel.ml" 64 2595 2617 "dgraph/dGraphRandModel.ml" 64 2595 2644
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2617 "dgraph/dGraphRandModel.ml" 64 2595 2630
+type(
+  G.V.label -> string
+)
+ident(
+  ext_ref Pervasives.string_of_int
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2632 "dgraph/dGraphRandModel.ml" 64 2595 2641
+type(
+  G.V.t -> G.V.label
+)
+ident(
+  ext_ref G.V.label
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2642 "dgraph/dGraphRandModel.ml" 64 2595 2643
+type(
+  G.V.t
+)
+ident(
+  int_ref v "dgraph/dGraphRandModel.ml" 64 2595 2613 "dgraph/dGraphRandModel.ml" 64 2595 2614
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2631 "dgraph/dGraphRandModel.ml" 64 2595 2644
+call(
+  stack
+)
+type(
+  G.V.label
+)
+"dgraph/dGraphRandModel.ml" 64 2595 2617 "dgraph/dGraphRandModel.ml" 64 2595 2644
+call(
+  tail
+)
+type(
+  string
+)
+"dgraph/dGraphRandModel.ml" 65 2645 2651 "dgraph/dGraphRandModel.ml" 65 2645 2668
+type(
+  'e ->
+  [> `Color of int
+   | `Shape of [> `Box | `Circle | `Diamond | `Doublecircle | `Ellipse ] ]
+  list
+)
+ident(
+  def vertex_attributes "dgraph/dGraphRandModel.ml" 69 2867 2869 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 65 2645 2669 "dgraph/dGraphRandModel.ml" 65 2645 2670
+type(
+  'e
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2681 "dgraph/dGraphRandModel.ml" 66 2673 2686
+type(
+  [> `Box | `Circle | `Diamond | `Doublecircle | `Ellipse ]
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2689 "dgraph/dGraphRandModel.ml" 66 2673 2696
+type(
+  ([> `Box | `Circle | `Diamond | `Doublecircle | `Ellipse ] as 'f) list ->
+  'f
+)
+ident(
+  int_ref element "dgraph/dGraphRandModel.ml" 32 1908 1912 "dgraph/dGraphRandModel.ml" 32 1908 1919
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2698 "dgraph/dGraphRandModel.ml" 66 2673 2706
+type(
+  'f
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2708 "dgraph/dGraphRandModel.ml" 66 2673 2712
+type(
+  'f
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2714 "dgraph/dGraphRandModel.ml" 66 2673 2721
+type(
+  'f
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2723 "dgraph/dGraphRandModel.ml" 66 2673 2736
+type(
+  'f
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2738 "dgraph/dGraphRandModel.ml" 66 2673 2746
+type(
+  'f
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2697 "dgraph/dGraphRandModel.ml" 66 2673 2747
+type(
+  'f list
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2689 "dgraph/dGraphRandModel.ml" 66 2673 2747
+call(
+  stack
+)
+type(
+  'f
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2759 "dgraph/dGraphRandModel.ml" 67 2751 2764
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2767 "dgraph/dGraphRandModel.ml" 67 2751 2774
+type(
+  int list -> int
+)
+ident(
+  int_ref element "dgraph/dGraphRandModel.ml" 32 1908 1912 "dgraph/dGraphRandModel.ml" 32 1908 1919
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2776 "dgraph/dGraphRandModel.ml" 67 2751 2781
+type(
+  int
+)
+ident(
+  int_ref black "dgraph/dGraphRandModel.ml" 38 2061 2065 "dgraph/dGraphRandModel.ml" 38 2061 2070
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2783 "dgraph/dGraphRandModel.ml" 67 2751 2788
+type(
+  int
+)
+ident(
+  int_ref white "dgraph/dGraphRandModel.ml" 39 2084 2088 "dgraph/dGraphRandModel.ml" 39 2084 2093
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2790 "dgraph/dGraphRandModel.ml" 67 2751 2793
+type(
+  int
+)
+ident(
+  int_ref red "dgraph/dGraphRandModel.ml" 40 2107 2111 "dgraph/dGraphRandModel.ml" 40 2107 2114
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2795 "dgraph/dGraphRandModel.ml" 67 2751 2800
+type(
+  int
+)
+ident(
+  int_ref green "dgraph/dGraphRandModel.ml" 41 2130 2134 "dgraph/dGraphRandModel.ml" 41 2130 2139
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2802 "dgraph/dGraphRandModel.ml" 67 2751 2806
+type(
+  int
+)
+ident(
+  int_ref blue "dgraph/dGraphRandModel.ml" 42 2153 2157 "dgraph/dGraphRandModel.ml" 42 2153 2161
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2808 "dgraph/dGraphRandModel.ml" 67 2751 2814
+type(
+  int
+)
+ident(
+  int_ref yellow "dgraph/dGraphRandModel.ml" 43 2176 2180 "dgraph/dGraphRandModel.ml" 43 2176 2186
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2816 "dgraph/dGraphRandModel.ml" 67 2751 2820
+type(
+  int
+)
+ident(
+  int_ref cyan "dgraph/dGraphRandModel.ml" 44 2199 2203 "dgraph/dGraphRandModel.ml" 44 2199 2207
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2822 "dgraph/dGraphRandModel.ml" 67 2751 2829
+type(
+  int
+)
+ident(
+  int_ref magenta "dgraph/dGraphRandModel.ml" 45 2222 2226 "dgraph/dGraphRandModel.ml" 45 2222 2233
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2775 "dgraph/dGraphRandModel.ml" 67 2751 2830
+type(
+  int list
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2767 "dgraph/dGraphRandModel.ml" 67 2751 2830
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 68 2834 2846 "dgraph/dGraphRandModel.ml" 68 2834 2851
+type(
+  [> `Box | `Circle | `Diamond | `Doublecircle | `Ellipse ] as 'g
+)
+ident(
+  int_ref shape "dgraph/dGraphRandModel.ml" 66 2673 2681 "dgraph/dGraphRandModel.ml" 66 2673 2686
+)
+"dgraph/dGraphRandModel.ml" 68 2834 2839 "dgraph/dGraphRandModel.ml" 68 2834 2851
+type(
+  [> `Color of int | `Shape of 'g ] as 'h
+)
+"dgraph/dGraphRandModel.ml" 68 2834 2860 "dgraph/dGraphRandModel.ml" 68 2834 2865
+type(
+  int
+)
+ident(
+  int_ref color "dgraph/dGraphRandModel.ml" 67 2751 2759 "dgraph/dGraphRandModel.ml" 67 2751 2764
+)
+"dgraph/dGraphRandModel.ml" 68 2834 2853 "dgraph/dGraphRandModel.ml" 68 2834 2865
+type(
+  'h
+)
+"dgraph/dGraphRandModel.ml" 68 2834 2838 "dgraph/dGraphRandModel.ml" 68 2834 2866
+type(
+  'h list
+)
+"dgraph/dGraphRandModel.ml" 67 2751 2755 "dgraph/dGraphRandModel.ml" 68 2834 2866
+type(
+  'h list
+)
+"dgraph/dGraphRandModel.ml" 66 2673 2677 "dgraph/dGraphRandModel.ml" 68 2834 2866
+type(
+  'h list
+)
+"dgraph/dGraphRandModel.ml" 69 2867 2873 "dgraph/dGraphRandModel.ml" 69 2867 2896
+type(
+  'i -> 'j list
+)
+ident(
+  def default_edge_attributes "dgraph/dGraphRandModel.ml" 70 2904 2906 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 69 2867 2897 "dgraph/dGraphRandModel.ml" 69 2867 2898
+type(
+  'i
+)
+"dgraph/dGraphRandModel.ml" 69 2867 2901 "dgraph/dGraphRandModel.ml" 69 2867 2903
+type(
+  'j list
+)
+"dgraph/dGraphRandModel.ml" 70 2904 2910 "dgraph/dGraphRandModel.ml" 70 2904 2925
+type(
+  'k -> 'l list
+)
+ident(
+  def edge_attributes "dgraph/dGraphRandModel.ml" 71 2933 2935 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 70 2904 2926 "dgraph/dGraphRandModel.ml" 70 2904 2927
+type(
+  'k
+)
+"dgraph/dGraphRandModel.ml" 70 2904 2930 "dgraph/dGraphRandModel.ml" 70 2904 2932
+type(
+  'l list
+)
+"dgraph/dGraphRandModel.ml" 71 2933 2939 "dgraph/dGraphRandModel.ml" 71 2933 2951
+type(
+  'm -> 'n option
+)
+ident(
+  def get_subgraph "dgraph/dGraphRandModel.ml" 71 2933 2960 "dgraph/dGraphRandModel.ml" 72 2961 2964
+)
+"dgraph/dGraphRandModel.ml" 71 2933 2952 "dgraph/dGraphRandModel.ml" 71 2933 2953
+type(
+  'm
+)
+"dgraph/dGraphRandModel.ml" 71 2933 2956 "dgraph/dGraphRandModel.ml" 71 2933 2960
+type(
+  'n option
+)
+"dgraph/dGraphRandModel.ml" 74 2966 2981 "dgraph/dGraphRandModel.ml" 74 2966 3009
+call(
+  stack
+)
+"dgraph/dGraphRandModel.ml" 76 3011 3015 "dgraph/dGraphRandModel.ml" 76 3011 3021
+type(
+  unit -> Model.model
+)
+ident(
+  def create "dgraph/dGraphRandModel.ml" 82 3153 3173 --
+)
+"dgraph/dGraphRandModel.ml" 76 3011 3022 "dgraph/dGraphRandModel.ml" 76 3011 3024
+type(
+  unit
+)
+"dgraph/dGraphRandModel.ml" 78 3041 3043 "dgraph/dGraphRandModel.ml" 78 3041 3059
+type(
+  unit -> unit
+)
+ident(
+  ext_ref Random.self_init
+)
+"dgraph/dGraphRandModel.ml" 78 3041 3060 "dgraph/dGraphRandModel.ml" 78 3041 3062
+type(
+  unit
+)
+"dgraph/dGraphRandModel.ml" 78 3041 3043 "dgraph/dGraphRandModel.ml" 78 3041 3062
+call(
+  stack
+)
+type(
+  unit
+)
+"dgraph/dGraphRandModel.ml" 79 3064 3070 "dgraph/dGraphRandModel.ml" 79 3064 3071
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 79 3064 3074 "dgraph/dGraphRandModel.ml" 79 3064 3077
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3087 "dgraph/dGraphRandModel.ml" 80 3081 3088
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3091 "dgraph/dGraphRandModel.ml" 80 3081 3101
+type(
+  int -> int
+)
+ident(
+  ext_ref Random.int
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3103 "dgraph/dGraphRandModel.ml" 80 3081 3104
+type(
+  int
+)
+ident(
+  int_ref v "dgraph/dGraphRandModel.ml" 79 3064 3070 "dgraph/dGraphRandModel.ml" 79 3064 3071
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3104 "dgraph/dGraphRandModel.ml" 80 3081 3105
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.*
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3105 "dgraph/dGraphRandModel.ml" 80 3081 3106
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3102 "dgraph/dGraphRandModel.ml" 80 3081 3107
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3091 "dgraph/dGraphRandModel.ml" 80 3081 3107
+call(
+  stack
+)
+type(
+  int
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3117 "dgraph/dGraphRandModel.ml" 81 3111 3118
+type(
+  R.graph
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3121 "dgraph/dGraphRandModel.ml" 81 3111 3128
+type(
+  ?loops:bool -> v:int -> e:int -> unit -> R.graph
+)
+ident(
+  ext_ref R.graph
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3136 "dgraph/dGraphRandModel.ml" 81 3111 3140
+type(
+  bool
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3142 "dgraph/dGraphRandModel.ml" 81 3111 3143
+type(
+  int
+)
+ident(
+  int_ref v "dgraph/dGraphRandModel.ml" 79 3064 3070 "dgraph/dGraphRandModel.ml" 79 3064 3071
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3145 "dgraph/dGraphRandModel.ml" 81 3111 3146
+type(
+  int
+)
+ident(
+  int_ref e "dgraph/dGraphRandModel.ml" 80 3081 3087 "dgraph/dGraphRandModel.ml" 80 3081 3088
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3147 "dgraph/dGraphRandModel.ml" 81 3111 3149
+type(
+  unit
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3121 "dgraph/dGraphRandModel.ml" 81 3111 3149
+call(
+  stack
+)
+type(
+  R.graph
+)
+"dgraph/dGraphRandModel.ml" 82 3153 3155 "dgraph/dGraphRandModel.ml" 82 3153 3171
+type(
+  ?cmd:string -> ?tmp_name:string -> GraphAttrs.t -> Model.model
+)
+ident(
+  ext_ref Model.from_graph
+)
+"dgraph/dGraphRandModel.ml" 82 3153 3172 "dgraph/dGraphRandModel.ml" 82 3153 3173
+type(
+  R.graph
+)
+ident(
+  int_ref g "dgraph/dGraphRandModel.ml" 81 3111 3117 "dgraph/dGraphRandModel.ml" 81 3111 3118
+)
+"dgraph/dGraphRandModel.ml" 82 3153 3155 "dgraph/dGraphRandModel.ml" 82 3153 3173
+call(
+  tail
+)
+type(
+  Model.model
+)
+"dgraph/dGraphRandModel.ml" 81 3111 3113 "dgraph/dGraphRandModel.ml" 82 3153 3173
+type(
+  Model.model
+)
+"dgraph/dGraphRandModel.ml" 80 3081 3083 "dgraph/dGraphRandModel.ml" 82 3153 3173
+type(
+  Model.model
+)
+"dgraph/dGraphRandModel.ml" 79 3064 3066 "dgraph/dGraphRandModel.ml" 82 3153 3173
+type(
+  Model.model
+)
+"dgraph/dGraphRandModel.ml" 78 3041 3043 "dgraph/dGraphRandModel.ml" 82 3153 3173
+type(
+  Model.model
+)

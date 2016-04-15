@@ -1,0 +1,291 @@
+
+% In unfolding G |= H, when G contains the atoms A1 ... An and H
+% contains the atoms B1 ... Bm. When Ai is unfolded, we will never
+% unfold A1 ... Ai-1 anymore. When Bj is unfolded, we will never
+% unfold A1 ... An, B1 ... Bj-1 anymore. This minimally covers all
+% possible combinations of G and H.
+
+
+% alist(H,L,emptymultiset) :- L=0.
+% alist(H,L,union([S,multiset([L,L+1])])) :-
+%       L>0,
+%       disjoint([multiset([L,L+1]),S]),
+% 	access(H,L+1,X),
+% 	alist(H,X,S).
+
+unfold(alist(H,L,T),
+	[
+         body([], [multiseteq(T,emptymultiset),eq(L,0)]),
+	 body([alist(H,X,S)],
+              [multiseteq(T,union([S,multiset([L,plus(L,1)])])),
+               gt(L,0),
+               access(H,plus(L,1),X)])
+        ]).
+
+% reverse(H,I,I,H,0).
+% reverse(H,I,E,aupd(H1,E1+1,J),E1) :-
+% 	access(H,E1+1,X), X=E,
+% 	reverse(H,I,E1,H1,J).
+
+unfold(reverse(H,I,E,H1,E1),
+	[
+         body([], [eq(I,E),arrayeq(H,H1),eq(E1,0)]),
+	 body([reverse(H,I,E1,H1,J)],
+	      [arrayeq(H1,aupd(H1,plus(E1,1),J)), access(H,plus(E1,1),E)])
+        ]).
+
+% To Prove:
+%
+%     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+%     disjoint([T,U]), S=union([T,U]), I>0, access(H,I+1,X)
+%         |= reverse(H0,I0,X,aupd(H,I+1,J),I),
+%            alist(aupd(H,I+1,J),I,?T'),
+%            alist(aupd(H,I+1,J),X,?U'),
+%            disjoint([?T',?U']), S=union([?T',?U']).
+
+%------------------------------------------------------------------------------
+
+% Unfold depth bound for each initial atom
+
+unfolddepthbound(1).
+
+% Trace depth bound, unfold path depth bound for all unfold paths
+
+tracedepthbound(100).
+
+%------------------------------------------------------------------------------
+
+run :-
+	set_counter(assertionnumber, 0),
+ 	addunfoldlevel(0, [reverse(H0,I0,I,H,J),
+                            alist(H,J,T),
+                            alist(H,I,U)],
+ 	               UnfoldableGAtoms),
+        addunfoldlevel(0, [reverse(H0,I0,X,aupd(H,plus(I,1),J),I),
+                           alist(aupd(H,plus(I,1),J),I,T1),
+                           alist(aupd(H,plus(I,1),J),X,U1)],
+ 		       UnfoldableHAtoms),
+	prove(0, [], UnfoldableGAtoms,
+                 [disjoint([T,U]), multiseteq(S,union([T,U])), gt(I,0),
+                  access(H,plus(I,1),X)],
+		 [], UnfoldableHAtoms,
+                 [disjoint([T1,U1]), multiseteq(S,union([T1,U1]))], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	counter_value(assertionnumber, X),
+	printf("Proof succeed\n", []),
+	printf("Number of assertions: %\n", [X]).
+
+%------------------------------------------------------------------------------
+
+removeatm([], []).
+removeatm([atm(_,X)|R], [X|S]) :- removeatm(R, S).
+
+prettyprint(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+            NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints) :-
+	set_counter(variable_number, 0),
+	append(NonUnfoldableGAtoms, UnfoldableGAtoms, GAtoms),
+	append(NonUnfoldableHAtoms, UnfoldableHAtoms, HAtoms),
+	removeatm(GAtoms, GAtoms1),
+	removeatm(HAtoms, HAtoms1),
+	prettyprintlist(" , ", GAtoms1),
+	printf(",", []),
+	prettyprintlist(" , ", GConstraints),
+	printf("\n\t|=\n", []),
+	prettyprintlist(" , ", HAtoms1),
+	printf(",", []),
+	prettyprintlist(" , ", HConstraints),
+	printf("\n", []).
+
+prettyprint(A) :-
+	var(A), counter_value(variable_number, N),
+	printf_to_atom(A, "v%", [N]), printf("%", [A]),
+        add_counter(variable_number, 1).
+prettyprint(A) :-
+	atomic(A), printf("%", [A]).
+prettyprint(multiseteq(A,B)) :-
+	prettyprint(A),	printf("=", []), prettyprint(B).
+prettyprint(plus(A,B)) :-
+	prettyprint(A),	printf("+", []), prettyprint(B).
+prettyprint(gt(A,B)) :-
+	prettyprint(A),	printf(">", []), prettyprint(B).
+prettyprint(union(L)) :- prettyprintlist("U", L).
+prettyprint(disjoint(L)) :- prettyprintlist("(X)", L).
+prettyprint(multiset(L)) :-
+	printf("{", []),
+	prettyprintlist(",", L),
+	printf("}", []).
+prettyprint(aupd(A,B,C)) :-
+	printf("<", []), prettyprint(A),
+	printf(",", []), prettyprint(B),
+	printf(",", []), prettyprint(C),
+	printf(">", []).
+prettyprint(A) :-
+	A =.. [X|L],
+	printf("%(", [X]),
+        prettyprintlist(",", L),
+        printf(")", []).
+
+prettyprintlist(_Op, []).
+prettyprintlist(_Op, [X]) :-
+	prettyprint(X).
+prettyprintlist(Op, [X,Y|R]) :-
+	prettyprint(X),	printf("%", [Op]),
+        prettyprintlist(Op, [Y|R]).
+
+%------------------------------------------------------------------------------
+
+prove(Depth, 
+        NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+        NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	add_counter(assertionnumber, 1),
+	printf("Depth = %\n", [Depth]),
+        once(prettyprint(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                         NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints)),
+%	printf("% % % % % %\n", 
+%               [Depth, GAtoms, GConstraints, HAtoms, HConstraints, Table]),
+        read(_), fail.
+
+prove(_Depth, 
+        _NonUnfoldableGAtoms, [], _GConstraints, 
+        _NonUnfoldableHAtoms, [], _HConstraints, _Table) :- 
+	printf("NO UNFOLD ATOMS\n", []), !, fail.
+
+prove(Depth, 
+        _NonUnfoldableGAtoms, _UnfoldableGAtoms, _GConstraints,
+        _NonUnfoldableHAtoms, _UnfoldableHAtoms, _HConstraints, _Table) :-
+	tracedepthbound(Depth), !, fail.
+
+prove(Depth, 
+	NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	left_unfold(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                    GList),
+	printf("LEFT UNFOLD\n", []),
+	prove_all(Depth+1, GList, 
+	          NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+	      [obligation(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                          NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints)|
+               Table]).
+
+prove(Depth, 
+	NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+	NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	right_unfold(NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+	             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1),
+	printf("RIGHT UNFOLD\n", []),
+	append(UnfoldableGAtoms, NonUnfoldableGAtoms, GAtoms),
+	prove(Depth+1, 
+	      GAtoms, [], GConstraints,
+	      NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1, Table).
+
+
+%------------------------------------------------------------------------------
+
+addunfoldlevel(_UnfoldLevel, [], []).
+addunfoldlevel(UnfoldLevel, [X|R], [atm(UnfoldLevel,X)|S]) :-
+	addunfoldlevel(UnfoldLevel, R, S).
+
+
+append([], B, B).
+append([X|A], B, [X|C]) :- append(A, B, C).
+
+union2([], B, B).
+union2(A, [], A).
+union2([X|A], [Y|B], [X,Y|C]) :-
+	union2(A, B, C).
+
+% union3([], B, C, D) :- once(union2(B, C, D)).
+% union3(A, [], C, D) :- once(union2(A, C, D)).
+% union3(A, B, [], D) :- once(union2(A, B, D)).
+% union3([X|A], [Y|B], [Z|C], [X,Y,Z|D]) :-
+% 	union3(A, B, C, D).
+
+%------------------------------------------------------------------------------
+
+right_unfold(NonUnfoldableHAtoms,
+	     [atm(UnfoldLevel,HPureAtom)|UnfoldableHAtoms], HConstraints,
+             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1) :-
+	UnfoldLevel < X, unfolddepthbound(X),
+	unfold(HPureAtom, BodyList),
+	addtobody(UnfoldLevel+1,
+                  NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints,
+                  BodyList, 
+		  NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1).
+right_unfold(NonUnfoldableHAtoms, [HAtom|UnfoldableHAtoms], HConstraints,
+             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1) :-
+	right_unfold([HAtom|NonUnfoldableHAtoms], UnfoldableHAtoms, 
+	             HConstraints, 
+	             NonUnfoldableHAtoms1, UnfoldableHAtoms1, HConstraints1).
+
+addtobody(UnfoldLevel,
+          NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+          [body(BAtoms, BConstraints)|_],
+          NonUnfoldableGAtoms, UnfoldableGAtoms1, GConstraints1) :-
+	addunfoldlevel(UnfoldLevel, BAtoms, BAtoms1),
+	once(union2(BAtoms1, UnfoldableGAtoms, UnfoldableGAtoms1)),
+	once(union2(BConstraints, GConstraints, GConstraints1)).
+addtobody(UnfoldLevel, 
+	  NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+          [_|R],
+	  NonUnfoldableGAtoms1, UnfoldableGAtoms1, GConstraints1) :-
+	addtobody(UnfoldLevel,
+	          NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                  R, 
+		  NonUnfoldableGAtoms1, UnfoldableGAtoms1, GConstraints1).
+
+%------------------------------------------------------------------------------
+
+
+left_unfold(NonUnfoldableGAtoms,
+	    [atm(UnfoldLevel,GPureAtom)|UnfoldableGAtoms],
+            GConstraints, GList) :-
+	UnfoldLevel < X, unfolddepthbound(X),
+	unfold(GPureAtom, BodyList),
+	addtoallbodies(UnfoldLevel+1,
+                       NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                       BodyList, GList).
+left_unfold(NonUnfoldableGAtoms, [GAtom|UnfoldableGAtoms], 
+            GConstraints, GList) :-
+	left_unfold([GAtom|NonUnfoldableGAtoms], 
+                    UnfoldableGAtoms, GConstraints, GList).
+
+addtoallbodies(_UnfoldLevel, 
+               _NonUnfoldableGAtoms, _UnfoldableGAtoms, _GConstraints, [], []).
+addtoallbodies(UnfoldLevel,
+               NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+          [body(BAtoms, BConstraints)|R],
+          [goal(NonUnfoldableGAtoms, UnfoldableGAtoms1, GConstraints1)|S]) :-
+	addunfoldlevel(UnfoldLevel, BAtoms, BAtoms1),
+	once(union2(BAtoms1, UnfoldableGAtoms, UnfoldableGAtoms1)),
+	once(union2(BConstraints, GConstraints, GConstraints1)),
+	addtoallbodies(UnfoldLevel, 
+                       NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+                       R, S).
+
+%------------------------------------------------------------------------------
+% prove_all
+%------------------------------------------------------------------------------
+
+% Case when the whole proof is succesful
+prove_all(_Depth, [],
+          _NonUnfoldableHAtoms, _UnfoldableHAtoms, _HConstraints, _Table) :-
+	!, fail.
+
+% Case when one of the resulting obligations is succesful
+prove_all(Depth, [goal(NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints)|R],
+          NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table) :-
+	not(prove(Depth,
+	          NonUnfoldableGAtoms, UnfoldableGAtoms, GConstraints,
+		  NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table)),
+	!,
+	prove_all(Depth, R,
+                  NonUnfoldableHAtoms, UnfoldableHAtoms, HConstraints, Table).
+
+% Case when one of the proofs is unsuccesful, in which case
+% prove_all also succeed
+prove_all(_Depth, [_|_],
+          _NonUnfoldableHAtoms, _UnfoldableHAtoms, _HConstraints, _Table).
+
+
+

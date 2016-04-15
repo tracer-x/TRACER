@@ -1,0 +1,83 @@
+trans(func_main, i6,
+	[p$init_0],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[p$init_1],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i7,
+	[p$init_1],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[p0],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[],
+	[call(func___TRACER_INIT,[RV0|_],[SRV0|_],[])],
+	[],
+	not_branch).
+trans(func_main, i1,
+	[p0],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[p7],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z$Next$],[ReturnValue,X$Next$,Y$Next$],[SZ$Next$],[SReturnValue,SX$Next$,SY$Next$],
+	[assign(SX$Next$,5),assign(SY$Next$,2),arrassign(SZ$Next$,upd(SZ,3,2))],
+	[],
+	[ref(Z,3,ZRef0)],
+	not_branch) :-
+	X$Next$=5,Y$Next$=2,Z$Next$=upd(Z,3,2).
+trans(func_main, i2,
+	[p7],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[p8],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[],
+	[],
+	[],
+	not_branch).
+trans(func_main, i3,
+	[p8],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],
+	[p9],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue$Next$,X,Y],[SZ],[SReturnValue$Next$,SX,SY],
+	[assign(SReturnValue$Next$,_)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValue$Next$=_.
+trans(func___TRACER_INIT, i4,
+	[p0],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[],[ReturnValue],[],[SReturnValue],
+	[p1],[H$1$,H$2$,H$3$,P],[Q$Next$],[SH$1$,SH$2$,SH$3$,SP],[SQ$Next$],[],[ReturnValue],[],[SReturnValue],
+	[assign(SQ$Next$,5)],
+	[],
+	[],
+	not_branch) :-
+	Q$Next$=5.
+trans(func___TRACER_INIT, i5,
+	[p1],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[],[ReturnValue],[],[SReturnValue],
+	[p2],[H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[],[ReturnValue$Next$],[],[SReturnValue$Next$],
+	[assign(SReturnValue$Next$,_)],
+	[],
+	[],
+	not_branch) :-
+	ReturnValue$Next$=_.
+%--------------------------------------------------
+block(b1, func_main, [_], [_], _, nl, [i1,i2,i3,i6,i7],  [n,n,n,n],[n],[u],[u,u,u]).
+block(b2, func___TRACER_INIT, [_], [_], _, nl, [i4,i5],  [n,n,n,n],[u],[],[u]).
+%--------------------------------------------------
+start(func_main, [p$init_0]).
+start(func___TRACER_INIT, [p0]).
+%--------------------------------------------------
+bottom(func_main, [p9]).
+bottom(func___TRACER_INIT, [p2]).
+%--------------------------------------------------
+freshglobalarrays([SH$1$,SH$2$,SH$3$,SP]).
+%--------------------------------------------------
+freshglobalvars([SQ]).
+%--------------------------------------------------
+freshlocalarrays(func_main,[SZ]).
+freshlocalarrays(func___TRACER_INIT,[]).
+%--------------------------------------------------
+freshlocalvars(func_main,[SReturnValue,SX,SY]).
+freshlocalvars(func___TRACER_INIT,[SReturnValue]).
+%--------------------------------------------------
+freshparams(func_main,[lv(0)]).
+freshparams(func___TRACER_INIT,[lv(0)]).
+%--------------------------------------------------
+init_goal(func_main, [p$init_0], i6, [H$1$,H$2$,H$3$,P],[Q],[SH$1$,SH$2$,SH$3$,SP],[SQ],[Z],[ReturnValue,X,Y],[SZ],[SReturnValue,SX,SY],[]).
+%--------------------------------------------------
+abstract(func_main,[p8],
+	[H$1$,H$2$,H$3$,P],[Q],[Z],[ReturnValue,X,Y],
+	[SH$1$,SH$2$,SH$3$,SP],[SQ],[SZ],[SReturnValue,SX,SY],
+	[_,_,_,o],[_],[o],[_,_,_],
+	[gt(ref(SP,3),5),eq(ref(SZ,3),6)]).

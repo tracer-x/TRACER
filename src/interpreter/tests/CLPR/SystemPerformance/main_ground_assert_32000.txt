@@ -1,0 +1,2708 @@
+Here the program tested with N=32000
+
+main_ground3(N):-
+        no_style_check(all),	
+	FName= func_main,
+	Depth= 0,
+	ML = f(0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0),
+	Reps = [rep(2 ,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(10,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(15,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(31,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f, f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+		rep(33,f(0),f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+		       f ,f(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))],
+        GlobalArrMark=f(0),
+	GlobalVarMark=f(1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0),
+	LocalArrMark=f,
+	LocalVarMark=f(0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0),
+	ztime,
+	p(N,FName,Depth,ML,Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark),
+	ctime(Time),
+	printf("Time: %\n",[Time]).
+
+
+p(0,_,_,_,_,_,_,_,_):-!.
+p(N,
+  FName,Depth, 
+  ML,
+  Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark):-
+       N > 0,!,	
+       assert(slicing_answer(FName,Depth,
+			     ML,
+			     Reps,
+			     GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark)),
+       p(N-1,
+	 FName,Depth+1, 
+	 ML,
+	 Reps,GlobalArrMark,GlobalVarMark,LocalArrMark,LocalVarMark).
+
+
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 13.77      0.34     0.34    32000     0.00     0.00  ht_to_pterm
+ 12.75      0.66     0.32 18592058     0.00     0.00  is_ground
+ 11.34      0.94     0.28 10500050     0.00     0.00  new_pterm
+ 10.73      1.20     0.27  9248000     0.00     0.00  emit_uninum
+  9.11      1.43     0.23   160138     0.00     0.00  fetch_func
+  8.91      1.65     0.22    32000     0.00     0.00  collect_deep_vars
+  7.09      1.82     0.17   256894     0.00     0.00  vars_in_term
+  4.45      1.93     0.11  9280656     0.00     0.00  new_real
+  3.85      2.02     0.10  9440091     0.00     0.00  fetch_uni_nonfunc
+  3.04      2.10     0.07 10048154     0.00     0.00  can_gen_uni2var
+  2.43      2.16     0.06 10560144     0.00     0.00  findbind
+  1.62      2.20     0.04    32262     0.00     0.00  lookatvars
+  1.62      2.24     0.04        7     0.01     0.34  rungoal
+  0.81      2.26     0.02   768133     0.00     0.00  emit_getstr
+  0.81      2.28     0.02    32615     0.00     0.00  vars_in_atom
+  0.81      2.30     0.02    32249     0.00     0.00  compile_head
+  0.81      2.32     0.02        1     0.02     0.02  init_solver
+  0.61      2.33     0.01   160063     0.00     0.00  gen_uni2var
+  0.61      2.35     0.01    96406     0.00     0.00  free_eqn_nodes
+  0.61      2.37     0.01        8     0.00     0.00  unify
+  0.61      2.38     0.01        5     0.00     0.00  val_to_pc
+  0.40      2.39     0.01  1024627     0.00     0.00  make_dead_reg
+  0.40      2.40     0.01   256277     0.00     0.00  fetch_arg
+  0.40      2.41     0.01   160000     0.00     0.00  emit_unicon
+  0.40      2.42     0.01   160000     0.00     0.00  s_evar
+  0.40      2.43     0.01    32000     0.00     0.00  greater0
+  0.40      2.44     0.01    32000     0.00     0.00  kohler_setup
+  0.40      2.45     0.01       20     0.00     0.00  init_index
+  0.40      2.46     0.01                             free_pterm
+  0.20      2.46     0.01     1862     0.00     0.00  notevar
+  0.20      2.47     0.01       71     0.00     0.00  emit_univoid
+  0.00      2.47     0.00   768423     0.00     0.00  getreg
+  0.00      2.47     0.00   448044     0.00     0.00  emit_unitvar
+  0.00      2.47     0.00   302960     0.00     0.00  find_hash_p_node
+  0.00      2.47     0.00   160028     0.00     0.00  emit_uni2ttvar
+  0.00      2.47     0.00   160005     0.00     0.00  emit_getlist
+  0.00      2.47     0.00   132521     0.00     0.00  emalloc
+  0.00      2.47     0.00   129160     0.00     0.00  new_hash_p_node
+  0.00      2.47     0.00   128696     0.00     0.00  free_occ_nodes
+  0.00      2.47     0.00    96015     0.00     0.00  add_eqns
+  0.00      2.47     0.00    96000     0.00     0.00  add_entry
+  0.00      2.47     0.00    96000     0.00     0.00  init_eqn
+  0.00      2.47     0.00    73737     0.00     0.00  p_compiled
+  0.00      2.47     0.00    64510     0.00     0.00  p_dynamic
+  0.00      2.47     0.00    64348     0.00     0.00  backup_null_eqn
+  0.00      2.47     0.00    64348     0.00     0.00  free_nl_occ_nodes
+  0.00      2.47     0.00    64348     0.00     0.00  wakeup
+  0.00      2.47     0.00    64249     0.00     0.00  assign_p_last_rule
+  0.00      2.47     0.00    64249     0.00     0.00  p_protected
+  0.00      2.47     0.00    64068     0.00     0.00  emit_getcon
+  0.00      2.47     0.00    64002     0.00     0.00  int_to_float
+  0.00      2.47     0.00    64000     0.00     0.00  elim_quasi
+  0.00      2.47     0.00    64000     0.00     0.00  s_econ
+  0.00      2.47     0.00    35319     0.00     0.00  p_first_rule
+  0.00      2.47     0.00    32308     0.00     0.00  init_live_regs
+  0.00      2.47     0.00    32256     0.00     0.00  alocvar
+  0.00      2.47     0.00    32256     0.00     0.00  free_varlist
+  0.00      2.47     0.00    32256     0.00     0.00  init_emit
+  0.00      2.47     0.00    32249     0.00     0.00  assign_p_n_rules
+  0.00      2.47     0.00    32249     0.00     0.00  compile_rule
+  0.00      2.47     0.00    32249     0.00     0.00  new_rule
+  0.00      2.47     0.00    32249     0.00     0.00  store_rule
+  0.00      2.47     0.00    32248     0.00     0.00  p_last_rule
+  0.00      2.47     0.00    32229     0.00     0.00  p_n_rules
+  0.00      2.47     0.00    32220     0.00     0.00  emit_proceed
+  0.00      2.47     0.00    32068     0.00     0.00  new_pt_emptylist
+  0.00      2.47     0.00    32062     0.00     0.00  emul_sys_pred
+  0.00      2.47     0.00    32040     0.00     0.00  assign_p_last_compiled_rule
+  0.00      2.47     0.00    32015     0.00     0.00  init_lable
+  0.00      2.47     0.00    32015     0.00     0.00  resolve
+  0.00      2.47     0.00    32001     0.00     0.00  emit_gettnum
+  0.00      2.47     0.00    32001     0.00     0.00  emit_uninil
+  0.00      2.47     0.00    32000     0.00     0.00  add_flatten_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  add_ineq_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  add_linear_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  add_nlin_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  add_remaining_real_vars
+  0.00      2.47     0.00    32000     0.00     0.00  cleanup_dump
+  0.00      2.47     0.00    32000     0.00     0.00  collect_assert_vars
+  0.00      2.47     0.00    32000     0.00     0.00  collect_nlin_vars
+  0.00      2.47     0.00    32000     0.00     0.00  do_assert_rule
+  0.00      2.47     0.00    32000     0.00     0.00  do_assertz
+  0.00      2.47     0.00    32000     0.00     0.00  get_rule_constraints
+  0.00      2.47     0.00    32000     0.00     0.00  init_dump
+  0.00      2.47     0.00    32000     0.00     0.00  init_ht_to_pterm
+  0.00      2.47     0.00    32000     0.00     0.00  intern_numbers
+  0.00      2.47     0.00    32000     0.00     0.00  make_equiv_funct_vars
+  0.00      2.47     0.00    32000     0.00     0.00  make_equiv_pivot_vars
+  0.00      2.47     0.00    32000     0.00     0.00  make_funct_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  normalise_ineq
+  0.00      2.47     0.00    32000     0.00     0.00  prepare_ineq_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  prepare_linear_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  prepare_nlin_eqns
+  0.00      2.47     0.00    32000     0.00     0.00  s_gt0
+  0.00      2.47     0.00    18648     0.00     0.00  readchar
+  0.00      2.47     0.00    13548     0.00     0.00  hash_p
+  0.00      2.47     0.00    12742     0.00     0.00  getmaxfunc
+  0.00      2.47     0.00     5573     0.00     0.00  scan
+  0.00      2.47     0.00     2669     0.00     0.00  is_punc
+  0.00      2.47     0.00     2658     0.00     0.00  hash
+  0.00      2.47     0.00     2076     0.00     0.00  get_pterm
+  0.00      2.47     0.00     1777     0.00     0.00  numfunc
+  0.00      2.47     0.00     1676     0.00     0.00  get_name
+  0.00      2.47     0.00     1623     0.00     0.00  insert_name
+  0.00      2.47     0.00     1587     0.00     0.00  narg_pterm
+  0.00      2.47     0.00     1535     0.00     0.00  sum_str
+  0.00      2.47     0.00     1345     0.00     0.00  is_op_hnode
+  0.00      2.47     0.00     1271     0.00     0.00  lookup_name
+  0.00      2.47     0.00     1057     0.00     0.00  hash_l
+  0.00      2.47     0.00     1041     0.00     0.00  char_malloc
+  0.00      2.47     0.00     1003     0.00     0.00  put_bld_nonfunc
+  0.00      2.47     0.00      946     0.00     0.00  emit_word
+  0.00      2.47     0.00      879     0.00     0.00  insert_var
+  0.00      2.47     0.00      879     0.00     0.00  lookup_var
+  0.00      2.47     0.00      743     0.00     0.00  has_live_reg
+  0.00      2.47     0.00      621     0.00     0.00  get_vrec
+  0.00      2.47     0.00      588     0.00     0.00  emit_bldnum
+  0.00      2.47     0.00      569     0.00     0.00  get_args
+  0.00      2.47     0.00      543     0.00     0.00  p_added
+  0.00      2.47     0.00      542     0.00     0.00  emit_bldlist
+  0.00      2.47     0.00      515     0.00     0.00  find_loc_for_lable
+  0.00      2.47     0.00      507     0.00     0.00  store_lable
+  0.00      2.47     0.00      507     0.00     0.00  storename
+  0.00      2.47     0.00      500     0.00     0.00  add_unres_lable
+  0.00      2.47     0.00      500     0.00     0.00  check_pred
+  0.00      2.47     0.00      481     0.00     0.00  check_quote
+  0.00      2.47     0.00      412     0.00     0.00  make_op_func
+  0.00      2.47     0.00      409     0.00     0.00  make_ftag
+  0.00      2.47     0.00      408     0.00     0.00  unreadchar
+  0.00      2.47     0.00      402     0.00     0.00  peek
+  0.00      2.47     0.00      350     0.00     0.00  put_arg
+  0.00      2.47     0.00      348     0.00     0.00  makenum
+  0.00      2.47     0.00      348     0.00     0.00  solve_eqn_1
+  0.00      2.47     0.00      324     0.00     0.00  make_change_reg
+  0.00      2.47     0.00      323     0.00     0.00  maketag
+  0.00      2.47     0.00      322     0.00     0.00  check_if_save_reg
+  0.00      2.47     0.00      321     0.00     0.00  put_arg_nonfunc
+  0.00      2.47     0.00      306     0.00     0.00  compile_body
+  0.00      2.47     0.00      303     0.00     0.00  make_live_reg
+  0.00      2.47     0.00      301     0.00     0.00  hashbuiltina
+  0.00      2.47     0.00      297     0.00     0.00  set_arg
+  0.00      2.47     0.00      290     0.00     0.00  is_nfix_hnode
+  0.00      2.47     0.00      275     0.00     0.00  add_string
+  0.00      2.47     0.00      275     0.00     0.00  new_hashnode
+  0.00      2.47     0.00      274     0.00     0.00  emit_bldvoid
+  0.00      2.47     0.00      265     0.00     0.00  make_rtag
+  0.00      2.47     0.00      260     0.00     0.00  assign_p_added
+  0.00      2.47     0.00      259     0.00     0.00  readterm
+  0.00      2.47     0.00      259     0.00     0.00  zero_vars
+  0.00      2.47     0.00      256     0.00     0.00  num_bits
+  0.00      2.47     0.00      255     0.00     0.00  check_clause
+  0.00      2.47     0.00      241     0.00     0.00  emit_addr
+  0.00      2.47     0.00      234     0.00     0.00  freereg
+  0.00      2.47     0.00      209     0.00     0.00  add_to_chain
+  0.00      2.47     0.00      195     0.00     0.00  emit_retry
+  0.00      2.47     0.00      169     0.00     0.00  emit_spcall
+  0.00      2.47     0.00      159     0.00     0.00  emit_realsave
+  0.00      2.47     0.00      156     0.00     0.00  add_func
+  0.00      2.47     0.00      147     0.00     0.00  checksave
+  0.00      2.47     0.00      147     0.00     0.00  compile_tail
+  0.00      2.47     0.00      143     0.00     0.00  malloc_null_HASH_P_NODE
+  0.00      2.47     0.00      127     0.00     0.00  assign_p_protected
+  0.00      2.47     0.00      111     0.00     0.00  emit_putcon
+  0.00      2.47     0.00      109     0.00     0.00  find_target_reg
+  0.00      2.47     0.00      101     0.00     0.00  fold_multi1
+  0.00      2.47     0.00       99     0.00     0.00  emit_bldtval
+  0.00      2.47     0.00       94     0.00     0.00  addspred
+  0.00      2.47     0.00       82     0.00     0.00  arith_tree
+  0.00      2.47     0.00       72     0.00     0.00  val_info
+  0.00      2.47     0.00       71     0.00     0.00  p_cut
+  0.00      2.47     0.00       65     0.00     0.00  var_has_reg
+  0.00      2.47     0.00       59     0.00     0.00  emit_puttnum
+  0.00      2.47     0.00       58     0.00     0.00  emit_bldnil
+  0.00      2.47     0.00       55     0.00     0.00  fold_multi2
+  0.00      2.47     0.00       54     0.00     0.00  emit_putlist
+  0.00      2.47     0.00       53     0.00     0.00  get_list
+  0.00      2.47     0.00       49     0.00     0.00  assign_p_jump_occ
+  0.00      2.47     0.00       49     0.00     0.00  p_jump_occ
+  0.00      2.47     0.00       46     0.00     0.00  malloc_null_EQN
+  0.00      2.47     0.00       42     0.00     0.00  assign_p_first_rule
+  0.00      2.47     0.00       41     0.00     0.00  assign_p_compiled
+  0.00      2.47     0.00       41     0.00     0.00  assign_p_end_hdrcode
+  0.00      2.47     0.00       41     0.00     0.00  assign_p_start_hdrcode
+  0.00      2.47     0.00       41     0.00     0.00  emit_putstr
+  0.00      2.47     0.00       39     0.00     0.00  emit_gettvar
+  0.00      2.47     0.00       38     0.00     0.00  add_simple_entry
+  0.00      2.47     0.00       38     0.00     0.00  emit_bldcon
+  0.00      2.47     0.00       38     0.00     0.00  make_simple_eqn
+  0.00      2.47     0.00       36     0.00     0.00  flatten_arith_term
+  0.00      2.47     0.00       35     0.00     0.00  delete_lable
+  0.00      2.47     0.00       34     0.00     0.00  addop
+  0.00      2.47     0.00       34     0.00     0.00  do_op
+  0.00      2.47     0.00       33     0.00     0.00  put_last_func
+  0.00      2.47     0.00       31     0.00     0.00  do_prot
+  0.00      2.47     0.00       31     0.00     0.00  emit_trust
+  0.00      2.47     0.00       31     0.00     0.00  emit_try
+  0.00      2.47     0.00       30     0.00     0.00  emit_gettval
+  0.00      2.47     0.00       29     0.00     0.00  emit_putpvar
+  0.00      2.47     0.00       29     0.00     0.00  set_rr_info
+  0.00      2.47     0.00       28     0.00     0.00  emit_jump
+  0.00      2.47     0.00       28     0.00     0.00  val_of_cur_rule
+  0.00      2.47     0.00       26     0.00     0.00  emit_maybesave
+  0.00      2.47     0.00       26     0.00     0.00  emit_putpval
+  0.00      2.47     0.00       24     0.00     0.00  emit_puttvar
+  0.00      2.47     0.00       23     0.00     0.00  do_op3
+  0.00      2.47     0.00       23     0.00     0.00  emit_callp
+  0.00      2.47     0.00       22     0.00     0.00  make_itag
+  0.00      2.47     0.00       22     0.00     0.00  make_ttag
+  0.00      2.47     0.00       21     0.00     0.00  gen_index_code
+  0.00      2.47     0.00       20     0.00     0.00  emit_addtpfval
+  0.00      2.47     0.00       20     0.00     0.00  gen_general_chain
+  0.00      2.47     0.00       20     0.00     0.00  make_index_chains
+  0.00      2.47     0.00       19     0.00     0.00  add_to_all_chains
+  0.00      2.47     0.00       19     0.00     0.00  assign_p_cut
+  0.00      2.47     0.00       19     0.00     0.00  emit_crestore
+  0.00      2.47     0.00       17     0.00     0.00  full_constraint
+  0.00      2.47     0.00       16     0.00     0.00  setconst
+  0.00      2.47     0.00       15     0.00     0.00  choose_a_switch
+  0.00      2.47     0.00       15     0.00     0.00  emit_initpf
+  0.00      2.47     0.00       15     0.00     0.00  gen_addpfs
+  0.00      2.47     0.00       14     0.00     0.00  emit_addpfval
+  0.00      2.47     0.00       14     0.00     0.00  half_constraint
+  0.00      2.47     0.00       14     0.00     0.00  is_ground_eqn
+  0.00      2.47     0.00       13     0.00     0.00  emit_getpvar
+  0.00      2.47     0.00       13     0.00     0.00  emit_savecurcp
+  0.00      2.47     0.00       12     0.00     0.00  mult_eqn
+  0.00      2.47     0.00       12     0.00     0.00  val_info
+  0.00      2.47     0.00       11     0.00     0.00  check_rule
+  0.00      2.47     0.00       11     0.00     0.00  gen_jump_table
+  0.00      2.47     0.00       10     0.00     0.00  copy_unres_lable
+  0.00      2.47     0.00       10     0.00     0.00  emit_fastcut
+  0.00      2.47     0.00       10     0.00     0.00  emit_solve_pf0
+  0.00      2.47     0.00       10     0.00     0.00  gen_emit_addpf
+  0.00      2.47     0.00       10     0.00     0.00  gen_switch1type
+  0.00      2.47     0.00        9     0.00     0.00  emit_docut
+  0.00      2.47     0.00        9     0.00     0.00  emit_inst
+  0.00      2.47     0.00        9     0.00     0.00  emit_savecut
+  0.00      2.47     0.00        9     0.00     0.00  gen_index_chain
+  0.00      2.47     0.00        8     0.00     0.00  compile
+  0.00      2.47     0.00        8     0.00     0.00  emit_printf
+  0.00      2.47     0.00        8     0.00     0.00  make_constant_eqn
+  0.00      2.47     0.00        8     0.00     0.00  new_input
+  0.00      2.47     0.00        8     0.00     0.00  put_func
+  0.00      2.47     0.00        7     0.00     0.00  emit_bldpvar
+  0.00      2.47     0.00        7     0.00     0.00  emit_halt
+  0.00      2.47     0.00        7     0.00     0.00  emit_restore
+  0.00      2.47     0.00        7     0.00     0.00  emit_special_savecut
+  0.00      2.47     0.00        7     0.00     0.00  find_last_arg
+  0.00      2.47     0.00        7     0.00     0.00  init_rungoal
+  0.00      2.47     0.00        7     0.00     0.00  init_solver_goal
+  0.00      2.47     0.00        7     0.00     0.00  restore_context
+  0.00      2.47     0.00        7     0.00     0.00  save_context
+  0.00      2.47     0.00        6     0.00     0.00  alloc_mem
+  0.00      2.47     0.00        6     0.00     0.00  compile_fgoal
+  0.00      2.47     0.00        6     0.00     0.00  gen_secondary_switch1type
+  0.00      2.47     0.00        6     0.00     0.00  myisdigit
+  0.00      2.47     0.00        5     0.00     0.00  emit_bldstr
+  0.00      2.47     0.00        5     0.00     0.00  emit_getnil
+  0.00      2.47     0.00        5     0.00     0.00  emit_putnil
+  0.00      2.47     0.00        5     0.00     0.00  emit_switchtype
+  0.00      2.47     0.00        5     0.00     0.00  gen_switchtype
+  0.00      2.47     0.00        5     0.00     0.00  p_start_hdrcode
+  0.00      2.47     0.00        4     0.00     0.00  emit_putpnum
+  0.00      2.47     0.00        4     0.00     0.00  emit_retract
+  0.00      2.47     0.00        4     0.00     0.00  emit_switchfunc
+  0.00      2.47     0.00        4     0.00     0.00  emit_uni2ppvar
+  0.00      2.47     0.00        4     0.00     0.00  gen_putgetnum
+  0.00      2.47     0.00        3     0.00     0.00  do_style_check
+  0.00      2.47     0.00        3     0.00     0.00  emit_bldtvar
+  0.00      2.47     0.00        3     0.00     0.00  emit_print
+  0.00      2.47     0.00        3     0.00     0.00  emit_solve_gt0
+  0.00      2.47     0.00        3     0.00     0.00  emit_uni2tpvar
+  0.00      2.47     0.00        2     0.00     0.00  assign_p_dynamic
+  0.00      2.47     0.00        2     0.00     0.00  close_input
+  0.00      2.47     0.00        2     0.00     0.00  do_dynamic
+  0.00      2.47     0.00        2     0.00     0.00  do_ztime
+  0.00      2.47     0.00        2     0.00     0.00  duplicate_pterm
+  0.00      2.47     0.00        2     0.00     0.00  emit_addtpfvar
+  0.00      2.47     0.00        2     0.00     0.00  emit_bldpval
+  0.00      2.47     0.00        2     0.00     0.00  emit_solve_ge0
+  0.00      2.47     0.00        2     0.00     0.00  emit_switch2con
+  0.00      2.47     0.00        2     0.00     0.00  emit_switch2func
+  0.00      2.47     0.00        2     0.00     0.00  emit_switchcon
+  0.00      2.47     0.00        2     0.00     0.00  emit_switchnil
+  0.00      2.47     0.00        2     0.00     0.00  emit_unipvar
+  0.00      2.47     0.00        2     0.00     0.00  first_engine
+  0.00      2.47     0.00        2     0.00     0.00  get_goal
+  0.00      2.47     0.00        2     0.00     0.00  gobble_nl
+  0.00      2.47     0.00        2     0.00     0.00  my_open
+  0.00      2.47     0.00        2     0.00     1.04  readfile_low
+  0.00      2.47     0.00        2     0.00     0.00  top_free_things
+  0.00      2.47     0.00        1     0.00     1.05  bootstrap
+  0.00      2.47     0.00        1     0.00     0.00  check_solver_sizes
+  0.00      2.47     0.00        1     0.00     0.00  checkhist
+  0.00      2.47     0.00        1     0.00     0.00  clean_temp_file
+  0.00      2.47     0.00        1     0.00     0.00  compile_goal
+  0.00      2.47     0.00        1     0.00     0.00  daemons_remaining
+  0.00      2.47     0.00        1     0.00     0.00  do_clear_style
+  0.00      2.47     0.00        1     0.00     0.00  do_ctime
+  0.00      2.47     0.00        1     0.00     0.00  do_dump
+  0.00      2.47     0.00        1     0.00     0.00  do_printf
+  0.00      2.47     0.00        1     0.00     0.00  dumpvarnames
+  0.00      2.47     0.00        1     0.00     0.00  emit_dump
+  0.00      2.47     0.00        1     0.00     0.00  emit_dynamic_try
+  0.00      2.47     0.00        1     0.00     0.00  emit_read
+  0.00      2.47     0.00        1     0.00     0.00  emit_roole
+  0.00      2.47     0.00        1     0.00     0.00  emit_switchdot
+  0.00      2.47     0.00        1     0.00     0.00  emit_switchreal
+  0.00      2.47     0.00        1     0.00     0.00  emit_uni2ptvar
+  0.00      2.47     0.00        1     0.00     0.00  emul_halt
+  0.00      2.47     0.00        1     0.00     0.00  file_allclose
+  0.00      2.47     0.00        1     0.00     0.00  files_shutdown
+  0.00      2.47     0.00        1     0.00     0.00  final_clean
+  0.00      2.47     0.00        1     0.00     0.00  float_to_int
+  0.00      2.47     0.00        1     0.00     0.00  fmt_printf
+  0.00      2.47     0.00        1     0.00     0.00  func_narg_pterm
+  0.00      2.47     0.00        1     0.00     0.00  gen_all_chain
+  0.00      2.47     0.00        1     0.00     0.00  gen_default_chain
+  0.00      2.47     0.00        1     0.00     0.02  init_all
+  0.00      2.47     0.00        1     0.00     0.00  init_compiler
+  0.00      2.47     0.00        1     0.00     0.00  init_engine
+  0.00      2.47     0.00        1     0.00     0.00  init_engine_mem
+  0.00      2.47     0.00        1     0.00     0.00  init_hash_l_table
+  0.00      2.47     0.00        1     0.00     0.00  init_hash_p_table
+  0.00      2.47     0.00        1     0.00     0.00  init_kohler
+  0.00      2.47     0.00        1     0.00     0.00  init_malloc
+  0.00      2.47     0.00        1     0.00     0.00  init_name
+  0.00      2.47     0.00        1     0.00     0.00  init_scanner
+  0.00      2.47     0.00        1     0.00     0.00  init_unify
+  0.00      2.47     0.00        1     0.00     1.05  internal_consult
+  0.00      2.47     0.00        1     0.00     0.00  is_clam_file
+  0.00      2.47     0.00        1     0.00     0.00  makedumpvars
+  0.00      2.47     0.00        1     0.00     0.00  makedumpvars1
+  0.00      2.47     0.00        1     0.00     0.00  pushhist
+  0.00      2.47     0.00        1     0.00     0.00  quote_expand
+  0.00      2.47     0.00        1     0.00     1.04  readfile
+  0.00      2.47     0.00        1     0.00     0.00  term_printf
+  0.00      2.47     0.00        1     0.00     0.00  test_pmask
+  0.00      2.47     0.00        1     0.00     0.00  test_system_defaults
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 0.40% of 2.47 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     99.6    0.00    2.46                 main [1]
+                0.00    1.05       1/1           bootstrap [7]
+                0.00    1.05       1/1           internal_consult [8]
+                0.01    0.34       1/7           rungoal [2]
+                0.00    0.02       1/1           init_all [28]
+                0.00    0.00       1/7           restore_context [38]
+                0.00    0.00       1/1           compile_goal [74]
+                0.00    0.00       2/2           get_goal [89]
+                0.00    0.00       1/1           quote_expand [94]
+                0.00    0.00       4/6           myisdigit [279]
+                0.00    0.00       4/8           new_input [268]
+                0.00    0.00       2/408         unreadchar [181]
+                0.00    0.00       2/2           first_engine [305]
+                0.00    0.00       2/2           top_free_things [308]
+                0.00    0.00       1/1           test_system_defaults [341]
+                0.00    0.00       1/1           init_scanner [335]
+                0.00    0.00       1/2           do_ztime [296]
+                0.00    0.00       1/18648       readchar [155]
+                0.00    0.00       1/1           final_clean [325]
+                0.00    0.00       1/1           files_shutdown [324]
+                0.00    0.00       1/1           checkhist [310]
+                0.00    0.00       1/1           pushhist [339]
+                0.00    0.00       1/7           save_context [276]
+-----------------------------------------------
+                0.01    0.34       1/7           main [1]
+                0.03    2.03       6/7           readfile_low [6]
+[2]     97.6    0.04    2.37       7         rungoal [2]
+                0.00    2.32   32062/32062       emul_sys_pred [3]
+                0.01    0.00       5/5           val_to_pc [35]
+                0.00    0.01   32000/32000       s_gt0 [36]
+                0.01    0.00       7/8           unify [34]
+                0.01    0.00  160000/160000      s_evar [40]
+                0.00    0.00   32001/18592058     is_ground [20]
+                0.00    0.00       1/1           do_printf [95]
+                0.00    0.00       1/10560144     findbind [27]
+                0.00    0.00   96000/96000       init_eqn [112]
+                0.00    0.00   64002/64002       int_to_float [121]
+                0.00    0.00   64000/64000       s_econ [123]
+                0.00    0.00     347/348         makenum [183]
+                0.00    0.00       7/7           init_rungoal [274]
+                0.00    0.00       1/1           do_dump [314]
+                0.00    0.00       1/1           emul_halt [322]
+-----------------------------------------------
+                0.00    2.32   32062/32062       rungoal [2]
+[3]     93.9    0.00    2.32   32062         emul_sys_pred [3]
+                0.00    2.32   32000/32000       do_assertz [5]
+                0.00    0.00       1/1           do_ctime [49]
+                0.00    0.00      23/23          do_op3 [83]
+                0.00    0.00      31/31          do_prot [87]
+                0.00    0.00       2/2           do_dynamic [91]
+                0.00    0.00       3/3           do_style_check [100]
+                0.00    0.00       1/2           do_ztime [296]
+                0.00    0.00       1/1           do_clear_style [313]
+-----------------------------------------------
+                0.00    2.32   32000/32000       do_assertz [5]
+[4]     93.8    0.00    2.32   32000         do_assert_rule [4]
+                0.00    0.98   32000/32249       compile_rule [10]
+                0.34    0.61   32000/32000       ht_to_pterm [11]
+                0.00    0.39   32000/32000       get_rule_constraints [15]
+                0.00    0.00   32000/10560144     findbind [27]
+                0.00    0.00   32000/32000       init_ht_to_pterm [147]
+                0.00    0.00   32000/32000       cleanup_dump [144]
+                0.00    0.00   32000/64249       p_protected [119]
+                0.00    0.00   32000/64510       p_dynamic [114]
+                0.00    0.00   32000/32015       init_lable [135]
+                0.00    0.00   32000/32249       store_rule [130]
+                0.00    0.00   32000/73737       p_compiled [113]
+                0.00    0.00   32000/64249       assign_p_last_rule [118]
+                0.00    0.00   32000/32040       assign_p_last_compiled_rule [134]
+                0.00    0.00   32000/32015       resolve [136]
+                0.00    0.00       1/42          assign_p_first_rule [219]
+                0.00    0.00       1/41          assign_p_start_hdrcode [222]
+                0.00    0.00       1/1           emit_dynamic_try [316]
+                0.00    0.00       1/41          assign_p_end_hdrcode [221]
+                0.00    0.00       1/41          assign_p_compiled [220]
+-----------------------------------------------
+                0.00    2.32   32000/32000       emul_sys_pred [3]
+[5]     93.8    0.00    2.32   32000         do_assertz [5]
+                0.00    2.32   32000/32000       do_assert_rule [4]
+-----------------------------------------------
+                0.00    1.04       1/2           readfile [9]
+                0.00    1.04       1/2           internal_consult [8]
+[6]     84.6    0.00    2.09       2         readfile_low [6]
+                0.03    2.03       6/7           rungoal [2]
+                0.00    0.01       6/8           compile [31]
+                0.00    0.01       6/7           restore_context [38]
+                0.00    0.00       6/6           compile_fgoal [59]
+                0.00    0.00     257/259         readterm [61]
+                0.00    0.00       6/32262       lookatvars [23]
+                0.00    0.00     255/255         check_clause [196]
+                0.00    0.00     249/32249       store_rule [130]
+                0.00    0.00     249/260         assign_p_added [193]
+                0.00    0.00      19/19          assign_p_cut [246]
+                0.00    0.00       9/35319       p_first_rule [124]
+                0.00    0.00       6/32015       resolve [136]
+                0.00    0.00       6/7           save_context [276]
+                0.00    0.00       4/73737       p_compiled [113]
+-----------------------------------------------
+                0.00    1.05       1/1           main [1]
+[7]     42.4    0.00    1.05       1         bootstrap [7]
+                0.00    1.04       1/1           readfile [9]
+                0.00    0.00       1/8           compile [31]
+                0.00    0.00       1/32015       resolve [136]
+-----------------------------------------------
+                0.00    1.05       1/1           main [1]
+[8]     42.4    0.00    1.05       1         internal_consult [8]
+                0.00    1.04       1/2           readfile_low [6]
+                0.00    0.00       1/8           compile [31]
+                0.00    0.00       2/8           new_input [268]
+                0.00    0.00       1/1           is_clam_file [337]
+                0.00    0.00       1/2           my_open [307]
+                0.00    0.00       1/32015       resolve [136]
+                0.00    0.00       1/2           close_input [295]
+-----------------------------------------------
+                0.00    1.04       1/1           bootstrap [7]
+[9]     42.3    0.00    1.04       1         readfile [9]
+                0.00    1.04       1/2           readfile_low [6]
+                0.00    0.00       2/8           new_input [268]
+                0.00    0.00       1/2           my_open [307]
+                0.00    0.00       1/2           close_input [295]
+-----------------------------------------------
+                0.00    0.01     249/32249       compile [31]
+                0.00    0.98   32000/32249       do_assert_rule [4]
+[10]    40.1    0.00    0.99   32249         compile_rule [10]
+                0.02    0.73   32249/32249       compile_head [12]
+                0.04    0.20   32249/32262       lookatvars [23]
+                0.00    0.00     147/147         compile_tail [51]
+                0.00    0.00   32249/32256       alocvar [90]
+                0.00    0.00   32249/32256       init_emit [127]
+                0.00    0.00   32249/32308       init_live_regs [125]
+                0.00    0.00   32249/32256       free_varlist [126]
+                0.00    0.00   32102/32220       emit_proceed [133]
+                0.00    0.00     147/147         checksave [202]
+                0.00    0.00      19/303         make_live_reg [187]
+                0.00    0.00      19/26          emit_maybesave [236]
+                0.00    0.00      19/159         emit_realsave [201]
+                0.00    0.00      11/11          check_rule [256]
+                0.00    0.00       9/9           emit_savecut [264]
+-----------------------------------------------
+                             10464000             ht_to_pterm [11]
+                0.34    0.61   32000/32000       do_assert_rule [4]
+[11]    38.3    0.34    0.61   32000+10464000 ht_to_pterm [11]
+                0.11    0.25 9280000/9280656     new_real [19]
+                0.16    0.00 9280000/18592058     is_ground [20]
+                0.06    0.00 10496000/10560144     findbind [27]
+                0.03    0.00 1184000/10500050     new_pterm [21]
+                0.00    0.00   32000/32068       new_pt_emptylist [55]
+                             10464000             ht_to_pterm [11]
+-----------------------------------------------
+                0.02    0.73   32249/32249       compile_rule [10]
+[12]    30.4    0.02    0.73   32249         compile_head [12]
+                0.01    0.72  256277/256277      fetch_arg [13]
+                0.00    0.00     249/323         maketag [185]
+                0.00    0.00     249/507         storename [176]
+                0.00    0.00      19/71          p_cut [210]
+                0.00    0.00       2/13          emit_savecurcp [254]
+-----------------------------------------------
+                0.01    0.72  256277/256277      compile_head [12]
+[13]    29.6    0.01    0.72  256277         fetch_arg [13]
+                0.23    0.49  160138/160138      fetch_func [14]
+                0.00    0.00   96074/1024627     make_dead_reg [46]
+                0.00    0.00      65/1862        notevar [47]
+                0.00    0.00   64068/64068       emit_getcon [120]
+                0.00    0.00   32001/32001       emit_gettnum [137]
+                0.00    0.00      73/409         make_ftag [180]
+                0.00    0.00      73/507         storename [176]
+                0.00    0.00      49/303         make_live_reg [187]
+                0.00    0.00      36/743         has_live_reg [169]
+                0.00    0.00      13/13          emit_getpvar [253]
+                0.00    0.00       5/5           emit_getnil [281]
+                0.00    0.00       1/30          emit_gettval [231]
+-----------------------------------------------
+                              768000             fetch_func [14]
+                0.23    0.49  160138/160138      fetch_arg [13]
+[14]    29.1    0.23    0.49  160138+768000  fetch_func [14]
+                0.10    0.28 9440091/9440091     fetch_uni_nonfunc [18]
+                0.07    0.00 10048154/10048154     can_gen_uni2var [26]
+                0.02    0.00  768133/768133      emit_getstr [29]
+                0.01    0.00  160063/160063      gen_uni2var [32]
+                0.01    0.00  928138/1024627     make_dead_reg [46]
+                0.00    0.00  448000/768423      getreg [102]
+                0.00    0.00  448000/448044      emit_unitvar [103]
+                0.00    0.00  160005/160005      emit_getlist [106]
+                0.00    0.00     137/409         make_ftag [180]
+                0.00    0.00     137/507         storename [176]
+                              768000             fetch_func [14]
+-----------------------------------------------
+                0.00    0.39   32000/32000       do_assert_rule [4]
+[15]    15.7    0.00    0.39   32000         get_rule_constraints [15]
+                0.00    0.38   32000/32000       collect_assert_vars [16]
+                0.00    0.01   32000/32000       prepare_ineq_eqns [42]
+                0.00    0.00   32000/10560144     findbind [27]
+                0.00    0.00   32000/32000       init_dump [146]
+                0.00    0.00   32000/32000       prepare_linear_eqns [153]
+                0.00    0.00   32000/32000       make_equiv_funct_vars [149]
+                0.00    0.00   32000/32000       prepare_nlin_eqns [154]
+                0.00    0.00   32000/32000       make_equiv_pivot_vars [150]
+                0.00    0.00   32000/32000       make_funct_eqns [151]
+                0.00    0.00   32000/32000       add_linear_eqns [141]
+                0.00    0.00   32000/32000       add_nlin_eqns [142]
+                0.00    0.00   32000/32000       add_ineq_eqns [140]
+                0.00    0.00   32000/32000       add_remaining_real_vars [143]
+                0.00    0.00   32000/32000       add_flatten_eqns [139]
+                0.00    0.00   32000/32000       intern_numbers [148]
+-----------------------------------------------
+                0.00    0.38   32000/32000       get_rule_constraints [15]
+[16]    15.3    0.00    0.38   32000         collect_assert_vars [16]
+                0.22    0.16   32000/32000       collect_deep_vars [17]
+                0.00    0.00   32000/32000       collect_nlin_vars [145]
+-----------------------------------------------
+                             10464000             collect_deep_vars [17]
+                0.22    0.16   32000/32000       collect_assert_vars [16]
+[17]    15.3    0.22    0.16   32000+10464000 collect_deep_vars [17]
+                0.16    0.00 9280000/18592058     is_ground [20]
+                             10464000             collect_deep_vars [17]
+-----------------------------------------------
+                0.10    0.28 9440091/9440091     fetch_func [14]
+[18]    15.1    0.10    0.28 9440091         fetch_uni_nonfunc [18]
+                0.27    0.00 9248000/9248000     emit_uninum [22]
+                0.01    0.00  160000/160000      emit_unicon [39]
+                0.00    0.00      44/71          emit_univoid [48]
+                0.00    0.00      90/1862        notevar [47]
+                0.00    0.00   32001/32001       emit_uninil [138]
+                0.00    0.00      44/743         has_live_reg [169]
+                0.00    0.00      44/109         find_target_reg [206]
+                0.00    0.00      44/303         make_live_reg [187]
+                0.00    0.00      44/448044      emit_unitvar [103]
+                0.00    0.00      39/768423      getreg [102]
+                0.00    0.00       2/2           emit_unipvar [304]
+-----------------------------------------------
+                0.00    0.00     656/9280656     scan [64]
+                0.11    0.25 9280000/9280656     ht_to_pterm [11]
+[19]    14.5    0.11    0.25 9280656         new_real [19]
+                0.25    0.00 9280656/10500050     new_pterm [21]
+-----------------------------------------------
+                0.00    0.00       1/18592058     term_printf [97]
+                0.00    0.00       2/18592058     do_dynamic [91]
+                0.00    0.00      23/18592058     do_op3 [83]
+                0.00    0.00      31/18592058     do_prot [87]
+                0.00    0.00   32001/18592058     rungoal [2]
+                0.16    0.00 9280000/18592058     ht_to_pterm [11]
+                0.16    0.00 9280000/18592058     collect_deep_vars [17]
+[20]    12.8    0.32    0.00 18592058         is_ground [20]
+-----------------------------------------------
+                0.00    0.00       1/10500050     makedumpvars [99]
+                0.00    0.00       2/10500050     duplicate_pterm [92]
+                0.00    0.00     115/10500050     narg_pterm [80]
+                0.00    0.00     156/10500050     add_func [79]
+                0.00    0.00     301/10500050     hashbuiltina [76]
+                0.00    0.00     601/10500050     get_list <cycle 1> [71]
+                0.00    0.00     879/10500050     lookup_var [72]
+                0.00    0.00    1271/10500050     lookup_name [68]
+                0.00    0.00   32068/10500050     new_pt_emptylist [55]
+                0.03    0.00 1184000/10500050     ht_to_pterm [11]
+                0.25    0.00 9280656/10500050     new_real [19]
+[21]    11.3    0.28    0.00 10500050         new_pterm [21]
+                0.00    0.00  131251/132521      emalloc [107]
+-----------------------------------------------
+                0.27    0.00 9248000/9248000     fetch_uni_nonfunc [18]
+[22]    10.7    0.27    0.00 9248000         emit_uninum [22]
+-----------------------------------------------
+                0.00    0.00       1/32262       compile_goal [74]
+                0.00    0.00       6/32262       readfile_low [6]
+                0.00    0.00       6/32262       compile_fgoal [59]
+                0.04    0.20   32249/32262       compile_rule [10]
+[23]     9.6    0.04    0.20   32262         lookatvars [23]
+                0.02    0.18   32615/32615       vars_in_atom [24]
+-----------------------------------------------
+                0.02    0.18   32615/32615       lookatvars [23]
+[24]     8.0    0.02    0.18   32615         vars_in_atom [24]
+                0.17    0.00  256894/256894      vars_in_term [25]
+-----------------------------------------------
+                             10209853             vars_in_term [25]
+                0.17    0.00  256894/256894      vars_in_atom [24]
+[25]     7.2    0.17    0.00  256894+10209853 vars_in_term [25]
+                0.00    0.00     879/1862        notevar [47]
+                             10209853             vars_in_term [25]
+-----------------------------------------------
+                0.07    0.00 10048154/10048154     fetch_func [14]
+[26]     3.0    0.07    0.00 10048154         can_gen_uni2var [26]
+-----------------------------------------------
+                0.00    0.00       1/10560144     rungoal [2]
+                0.00    0.00       1/10560144     do_printf [95]
+                0.00    0.00       1/10560144     do_ctime [49]
+                0.00    0.00       3/10560144     term_printf [97]
+                0.00    0.00       3/10560144     do_style_check [100]
+                0.00    0.00       4/10560144     do_dynamic [91]
+                0.00    0.00      62/10560144     do_prot [87]
+                0.00    0.00      69/10560144     do_op3 [83]
+                0.00    0.00   32000/10560144     do_assert_rule [4]
+                0.00    0.00   32000/10560144     get_rule_constraints [15]
+                0.06    0.00 10496000/10560144     ht_to_pterm [11]
+[27]     2.4    0.06    0.00 10560144         findbind [27]
+-----------------------------------------------
+                0.00    0.02       1/1           main [1]
+[28]     0.8    0.00    0.02       1         init_all [28]
+                0.02    0.00       1/1           init_solver [30]
+                0.00    0.00       1/1           init_name [77]
+                0.00    0.00       1/1           init_engine [93]
+                0.00    0.00       1/301         hashbuiltina [76]
+                0.00    0.00       1/1           init_engine_mem [330]
+                0.00    0.00       1/1           init_malloc [334]
+                0.00    0.00       1/1           init_compiler [329]
+                0.00    0.00       1/1           init_hash_p_table [332]
+                0.00    0.00       1/1           init_hash_l_table [331]
+                0.00    0.00       1/1           init_unify [336]
+                0.00    0.00       1/18648       readchar [155]
+                0.00    0.00       1/1           init_kohler [333]
+-----------------------------------------------
+                0.02    0.00  768133/768133      fetch_func [14]
+[29]     0.8    0.02    0.00  768133         emit_getstr [29]
+-----------------------------------------------
+                0.02    0.00       1/1           init_all [28]
+[30]     0.8    0.02    0.00       1         init_solver [30]
+                0.00    0.00       2/6           alloc_mem [277]
+-----------------------------------------------
+                0.00    0.00       1/8           bootstrap [7]
+                0.00    0.00       1/8           internal_consult [8]
+                0.00    0.01       6/8           readfile_low [6]
+[31]     0.7    0.00    0.02       8         compile [31]
+                0.00    0.01      21/21          gen_index_code [43]
+                0.00    0.01     249/32249       compile_rule [10]
+                0.00    0.00    3069/12742       getmaxfunc [157]
+                0.00    0.00    3061/35319       p_first_rule [124]
+                0.00    0.00     205/64510       p_dynamic [114]
+                0.00    0.00     205/73737       p_compiled [113]
+                0.00    0.00     143/543         p_added [172]
+                0.00    0.00      40/41          assign_p_start_hdrcode [222]
+                0.00    0.00      40/41          assign_p_end_hdrcode [221]
+                0.00    0.00      40/32248       p_last_rule [131]
+                0.00    0.00      40/32040       assign_p_last_compiled_rule [134]
+                0.00    0.00      40/41          assign_p_compiled [220]
+                0.00    0.00      35/35          delete_lable [228]
+                0.00    0.00      21/32229       p_n_rules [132]
+                0.00    0.00       8/32015       init_lable [135]
+-----------------------------------------------
+                0.01    0.00  160063/160063      fetch_func [14]
+[32]     0.7    0.01    0.00  160063         gen_uni2var [32]
+                0.00    0.00      27/71          emit_univoid [48]
+                0.00    0.00     126/1862        notevar [47]
+                0.00    0.00      72/72          val_info [60]
+                0.00    0.00  320000/768423      getreg [102]
+                0.00    0.00  160028/160028      emit_uni2ttvar [105]
+                0.00    0.00      60/303         make_live_reg [187]
+                0.00    0.00       4/4           emit_uni2ppvar [289]
+                0.00    0.00       3/3           emit_uni2tpvar [293]
+                0.00    0.00       1/1           emit_uni2ptvar [321]
+-----------------------------------------------
+                0.00    0.00      10/96406       flatten_arith_term [82]
+                0.00    0.00      14/96406       half_constraint [65]
+                0.00    0.00      34/96406       full_constraint [62]
+                0.00    0.00   32000/96406       greater0 [37]
+                0.01    0.00   64348/96406       restore_context [38]
+[33]     0.6    0.01    0.00   96406         free_eqn_nodes [33]
+-----------------------------------------------
+                0.00    0.00       1/8           do_ctime [49]
+                0.01    0.00       7/8           rungoal [2]
+[34]     0.6    0.01    0.00       8         unify [34]
+-----------------------------------------------
+                0.01    0.00       5/5           rungoal [2]
+[35]     0.6    0.01    0.00       5         val_to_pc [35]
+                0.00    0.00       5/73737       p_compiled [113]
+                0.00    0.00       5/5           p_start_hdrcode [285]
+-----------------------------------------------
+                0.00    0.01   32000/32000       rungoal [2]
+[36]     0.6    0.00    0.01   32000         s_gt0 [36]
+                0.01    0.00   32000/32000       greater0 [37]
+-----------------------------------------------
+                0.01    0.00   32000/32000       s_gt0 [36]
+[37]     0.6    0.01    0.00   32000         greater0 [37]
+                0.00    0.00   32000/96406       free_eqn_nodes [33]
+-----------------------------------------------
+                0.00    0.00       1/7           main [1]
+                0.00    0.01       6/7           readfile_low [6]
+[38]     0.4    0.00    0.01       7         restore_context [38]
+                0.01    0.00   64348/96406       free_eqn_nodes [33]
+                0.00    0.00  128696/128696      free_occ_nodes [109]
+                0.00    0.00   64348/64348       free_nl_occ_nodes [116]
+-----------------------------------------------
+                0.01    0.00  160000/160000      fetch_uni_nonfunc [18]
+[39]     0.4    0.01    0.00  160000         emit_unicon [39]
+-----------------------------------------------
+                0.01    0.00  160000/160000      rungoal [2]
+[40]     0.4    0.01    0.00  160000         s_evar [40]
+                0.00    0.00   96000/96000       add_entry [111]
+-----------------------------------------------
+                0.01    0.00   32000/32000       prepare_ineq_eqns [42]
+[41]     0.4    0.01    0.00   32000         kohler_setup [41]
+-----------------------------------------------
+                0.00    0.01   32000/32000       get_rule_constraints [15]
+[42]     0.4    0.00    0.01   32000         prepare_ineq_eqns [42]
+                0.01    0.00   32000/32000       kohler_setup [41]
+                0.00    0.00   64000/64000       elim_quasi [122]
+                0.00    0.00   32000/32000       normalise_ineq [152]
+-----------------------------------------------
+                0.00    0.01      21/21          compile [31]
+[43]     0.4    0.00    0.01      21         gen_index_code [43]
+                0.01    0.00      20/20          init_index [44]
+                0.00    0.00      21/323         maketag [185]
+                0.00    0.00      21/507         storename [176]
+                0.00    0.00      21/71          p_cut [210]
+                0.00    0.00      20/20          make_index_chains [244]
+                0.00    0.00      15/15          choose_a_switch [249]
+                0.00    0.00      11/13          emit_savecurcp [254]
+                0.00    0.00       5/20          gen_general_chain [243]
+                0.00    0.00       1/1           gen_all_chain [327]
+-----------------------------------------------
+                0.01    0.00      20/20          gen_index_code [43]
+[44]     0.4    0.01    0.00      20         init_index [44]
+-----------------------------------------------
+                                                 <spontaneous>
+[45]     0.4    0.01    0.00                 free_pterm [45]
+-----------------------------------------------
+                0.00    0.00      18/1024627     alocvar [90]
+                0.00    0.00      37/1024627     put_arg_nonfunc [58]
+                0.00    0.00     126/1024627     make_change_reg [84]
+                0.00    0.00     234/1024627     freereg [81]
+                0.00    0.00   96074/1024627     fetch_arg [13]
+                0.01    0.00  928138/1024627     fetch_func [14]
+[46]     0.4    0.01    0.00 1024627         make_dead_reg [46]
+-----------------------------------------------
+                0.00    0.00      12/1862        val_info [69]
+                0.00    0.00      26/1862        gen_addpfs [66]
+                0.00    0.00      65/1862        fetch_arg [13]
+                0.00    0.00      72/1862        val_info [60]
+                0.00    0.00      90/1862        fetch_uni_nonfunc [18]
+                0.00    0.00     126/1862        gen_uni2var [32]
+                0.00    0.00     129/1862        set_arg [53]
+                0.00    0.00     144/1862        put_arg_nonfunc [58]
+                0.00    0.00     319/1862        put_bld_nonfunc [54]
+                0.00    0.00     879/1862        vars_in_term [25]
+[47]     0.2    0.01    0.00    1862         notevar [47]
+                0.00    0.00     621/621         get_vrec [170]
+-----------------------------------------------
+                0.00    0.00      27/71          gen_uni2var [32]
+                0.00    0.00      44/71          fetch_uni_nonfunc [18]
+[48]     0.2    0.01    0.00      71         emit_univoid [48]
+-----------------------------------------------
+                0.00    0.00       1/1           emul_sys_pred [3]
+[49]     0.1    0.00    0.00       1         do_ctime [49]
+                0.00    0.00       1/8           unify [34]
+                0.00    0.00       1/10560144     findbind [27]
+                0.00    0.00       1/348         makenum [183]
+-----------------------------------------------
+                0.00    0.00       1/306         compile_goal [74]
+                0.00    0.00      60/306         compile_fgoal [59]
+                0.00    0.00     245/306         compile_tail [51]
+[50]     0.1    0.00    0.00     306         compile_body [50]
+                0.00    0.00     297/297         set_arg [53]
+                0.00    0.00     149/350         put_arg [52]
+                0.00    0.00      17/17          full_constraint [62]
+                0.00    0.00     169/301         hashbuiltina [76]
+                0.00    0.00     168/234         freereg [81]
+                0.00    0.00     169/169         emit_spcall [200]
+                0.00    0.00      82/82          arith_tree [209]
+                0.00    0.00      58/768423      getreg [102]
+                0.00    0.00      52/32308       init_live_regs [125]
+                0.00    0.00      29/30          emit_gettval [231]
+                0.00    0.00      10/10          emit_fastcut [259]
+                0.00    0.00       9/9           emit_docut [262]
+                0.00    0.00       8/8           emit_printf [266]
+                0.00    0.00       8/9           emit_inst [263]
+                0.00    0.00       4/4           emit_retract [287]
+                0.00    0.00       3/3           emit_print [291]
+                0.00    0.00       1/1           emit_read [317]
+                0.00    0.00       1/1           emit_roole [318]
+-----------------------------------------------
+                0.00    0.00     147/147         compile_rule [10]
+[51]     0.1    0.00    0.00     147         compile_tail [51]
+                0.00    0.00     245/306         compile_body [50]
+                0.00    0.00     245/64510       p_dynamic [114]
+                0.00    0.00     118/32220       emit_proceed [133]
+                0.00    0.00      49/323         maketag [185]
+                0.00    0.00      28/28          emit_jump [234]
+                0.00    0.00      21/23          emit_callp [239]
+                0.00    0.00      19/19          emit_crestore [247]
+                0.00    0.00       1/9           emit_inst [263]
+-----------------------------------------------
+                0.00    0.00       1/350         compile_goal [74]
+                0.00    0.00     149/350         compile_body [50]
+                0.00    0.00     200/350         set_arg [53]
+[52]     0.1    0.00    0.00     350         put_arg [52]
+                0.00    0.00       8/8           put_func [56]
+                0.00    0.00     321/321         put_arg_nonfunc [58]
+                0.00    0.00       8/33          put_last_func [57]
+                0.00    0.00     139/1003        put_bld_nonfunc [54]
+                0.00    0.00      29/324         make_change_reg [84]
+                0.00    0.00       8/234         freereg [81]
+                0.00    0.00      29/29          set_rr_info [233]
+                0.00    0.00      29/322         check_if_save_reg [186]
+                0.00    0.00      18/54          emit_putlist [215]
+                0.00    0.00      11/41          emit_putstr [223]
+                0.00    0.00       8/99          emit_bldtval [208]
+-----------------------------------------------
+                0.00    0.00     297/297         compile_body [50]
+[53]     0.0    0.00    0.00     297         set_arg [53]
+                0.00    0.00     200/350         put_arg [52]
+                0.00    0.00     129/1862        notevar [47]
+                0.00    0.00     200/768423      getreg [102]
+                0.00    0.00     129/743         has_live_reg [169]
+-----------------------------------------------
+                0.00    0.00     139/1003        put_arg [52]
+                0.00    0.00     194/1003        put_func [56]
+                0.00    0.00     670/1003        put_last_func [57]
+[54]     0.0    0.00    0.00    1003         put_bld_nonfunc [54]
+                0.00    0.00     319/1862        notevar [47]
+                0.00    0.00     588/588         emit_bldnum [171]
+                0.00    0.00     310/743         has_live_reg [169]
+                0.00    0.00     274/274         emit_bldvoid [191]
+                0.00    0.00      58/58          emit_bldnil [213]
+                0.00    0.00      38/38          emit_bldcon [226]
+                0.00    0.00      33/99          emit_bldtval [208]
+                0.00    0.00       7/7           emit_bldpvar [269]
+                0.00    0.00       3/109         find_target_reg [206]
+                0.00    0.00       3/3           emit_bldtvar [290]
+                0.00    0.00       3/303         make_live_reg [187]
+                0.00    0.00       2/2           emit_bldpval [298]
+                0.00    0.00       2/768423      getreg [102]
+-----------------------------------------------
+                0.00    0.00      19/32068       scan [64]
+                0.00    0.00      49/32068       get_list <cycle 1> [71]
+                0.00    0.00   32000/32068       ht_to_pterm [11]
+[55]     0.0    0.00    0.00   32068         new_pt_emptylist [55]
+                0.00    0.00   32068/10500050     new_pterm [21]
+-----------------------------------------------
+                                  58             put_func [56]
+                0.00    0.00       8/8           put_arg [52]
+[56]     0.0    0.00    0.00       8+58      put_func [56]
+                0.00    0.00      25/33          put_last_func [57]
+                0.00    0.00     194/1003        put_bld_nonfunc [54]
+                0.00    0.00      58/234         freereg [81]
+                0.00    0.00      66/768423      getreg [102]
+                0.00    0.00      58/99          emit_bldtval [208]
+                0.00    0.00      36/54          emit_putlist [215]
+                0.00    0.00      30/41          emit_putstr [223]
+                                  58             put_func [56]
+-----------------------------------------------
+                                 514             put_last_func [57]
+                0.00    0.00       8/33          put_arg [52]
+                0.00    0.00      25/33          put_func [56]
+[57]     0.0    0.00    0.00      33+514     put_last_func [57]
+                0.00    0.00     670/1003        put_bld_nonfunc [54]
+                0.00    0.00     542/542         emit_bldlist [173]
+                0.00    0.00       5/5           emit_bldstr [280]
+                                 514             put_last_func [57]
+-----------------------------------------------
+                0.00    0.00     321/321         put_arg [52]
+[58]     0.0    0.00    0.00     321         put_arg_nonfunc [58]
+                0.00    0.00     144/1862        notevar [47]
+                0.00    0.00       2/14          half_constraint [65]
+                0.00    0.00     295/324         make_change_reg [84]
+                0.00    0.00      37/1024627     make_dead_reg [46]
+                0.00    0.00     293/322         check_if_save_reg [186]
+                0.00    0.00     144/743         has_live_reg [169]
+                0.00    0.00     111/111         emit_putcon [205]
+                0.00    0.00      65/65          var_has_reg [211]
+                0.00    0.00      59/59          emit_puttnum [212]
+                0.00    0.00      37/39          emit_gettvar [224]
+                0.00    0.00      29/29          emit_putpvar [232]
+                0.00    0.00      26/26          emit_putpval [237]
+                0.00    0.00      24/24          emit_puttvar [238]
+                0.00    0.00       5/5           emit_putnil [282]
+-----------------------------------------------
+                0.00    0.00       6/6           readfile_low [6]
+[59]     0.0    0.00    0.00       6         compile_fgoal [59]
+                0.00    0.00      60/306         compile_body [50]
+                0.00    0.00       6/32262       lookatvars [23]
+                0.00    0.00       6/32256       alocvar [90]
+                0.00    0.00      60/64510       p_dynamic [114]
+                0.00    0.00       6/32256       init_emit [127]
+                0.00    0.00       6/32015       init_lable [135]
+                0.00    0.00       6/32308       init_live_regs [125]
+                0.00    0.00       6/159         emit_realsave [201]
+                0.00    0.00       6/26          emit_maybesave [236]
+                0.00    0.00       6/7           emit_special_savecut [272]
+                0.00    0.00       6/7           emit_restore [271]
+                0.00    0.00       6/7           emit_halt [270]
+                0.00    0.00       6/32015       resolve [136]
+                0.00    0.00       6/32256       free_varlist [126]
+                0.00    0.00       1/323         maketag [185]
+                0.00    0.00       1/23          emit_callp [239]
+-----------------------------------------------
+                0.00    0.00      72/72          gen_uni2var [32]
+[60]     0.0    0.00    0.00      72         val_info [60]
+                0.00    0.00      72/1862        notevar [47]
+                0.00    0.00      60/743         has_live_reg [169]
+                0.00    0.00      60/109         find_target_reg [206]
+                0.00    0.00      56/768423      getreg [102]
+-----------------------------------------------
+                0.00    0.00       2/259         get_goal [89]
+                0.00    0.00     257/259         readfile_low [6]
+[61]     0.0    0.00    0.00     259         readterm [61]
+                0.00    0.00     256/256         get_pterm <cycle 1> [67]
+                0.00    0.00     259/5573        scan [64]
+                0.00    0.00     259/259         zero_vars [194]
+                0.00    0.00     256/2669        is_punc [158]
+-----------------------------------------------
+                0.00    0.00      17/17          compile_body [50]
+[62]     0.0    0.00    0.00      17         full_constraint [62]
+                0.00    0.00      12/14          half_constraint [65]
+                0.00    0.00       5/15          gen_addpfs [66]
+                0.00    0.00      34/96406       free_eqn_nodes [33]
+                0.00    0.00      22/36          flatten_arith_term [82]
+                0.00    0.00       5/96015       add_eqns [110]
+                0.00    0.00       5/15          emit_initpf [250]
+                0.00    0.00       3/3           emit_solve_gt0 [292]
+                0.00    0.00       2/12          mult_eqn [255]
+                0.00    0.00       2/2           emit_solve_ge0 [299]
+-----------------------------------------------
+[63]     0.0    0.00    0.00     256+2442    <cycle 1 as a whole> [63]
+                0.00    0.00    2076+452         get_pterm <cycle 1> [67]
+                0.00    0.00     569             get_args <cycle 1> [70]
+                0.00    0.00      53+548         get_list <cycle 1> [71]
+-----------------------------------------------
+                0.00    0.00     259/5573        readterm [61]
+                0.00    0.00     605/5573        get_list <cycle 1> [71]
+                0.00    0.00    1784/5573        get_args <cycle 1> [70]
+                0.00    0.00    2925/5573        get_pterm <cycle 1> [67]
+[64]     0.0    0.00    0.00    5573         scan [64]
+                0.00    0.00    1266/1271        lookup_name [68]
+                0.00    0.00     656/9280656     new_real [19]
+                0.00    0.00     879/879         lookup_var [72]
+                0.00    0.00      19/32068       new_pt_emptylist [55]
+                0.00    0.00   10920/18648       readchar [155]
+                0.00    0.00    1676/1676        get_name [161]
+                0.00    0.00     402/402         peek [182]
+-----------------------------------------------
+                0.00    0.00       2/14          put_arg_nonfunc [58]
+                0.00    0.00      12/14          full_constraint [62]
+[65]     0.0    0.00    0.00      14         half_constraint [65]
+                0.00    0.00      10/15          gen_addpfs [66]
+                0.00    0.00      10/10          gen_emit_addpf [73]
+                0.00    0.00       4/4           gen_putgetnum [75]
+                0.00    0.00      14/96406       free_eqn_nodes [33]
+                0.00    0.00      14/36          flatten_arith_term [82]
+                0.00    0.00      14/14          is_ground_eqn [252]
+                0.00    0.00      10/12          mult_eqn [255]
+                0.00    0.00      10/15          emit_initpf [250]
+                0.00    0.00      10/10          emit_solve_pf0 [260]
+-----------------------------------------------
+                0.00    0.00       5/15          full_constraint [62]
+                0.00    0.00      10/15          half_constraint [65]
+[66]     0.0    0.00    0.00      15         gen_addpfs [66]
+                0.00    0.00      26/1862        notevar [47]
+                0.00    0.00      19/743         has_live_reg [169]
+                0.00    0.00      19/20          emit_addtpfval [242]
+                0.00    0.00       7/14          emit_addpfval [251]
+-----------------------------------------------
+                                 452             get_pterm <cycle 1> [67]
+                                 605             get_list <cycle 1> [71]
+                                1215             get_args <cycle 1> [70]
+                0.00    0.00     256/256         readterm [61]
+[67]     0.0    0.00    0.00    2076+452     get_pterm <cycle 1> [67]
+                0.00    0.00    2925/5573        scan [64]
+                0.00    0.00     412/412         make_op_func [88]
+                0.00    0.00     304/1587        narg_pterm [80]
+                0.00    0.00    1345/1345        is_op_hnode [164]
+                0.00    0.00     290/290         is_nfix_hnode [188]
+                                 569             get_args <cycle 1> [70]
+                                  53             get_list <cycle 1> [71]
+                                 452             get_pterm <cycle 1> [67]
+-----------------------------------------------
+                0.00    0.00       2/1271        init_engine [93]
+                0.00    0.00       3/1271        init_name [77]
+                0.00    0.00    1266/1271        scan [64]
+[68]     0.0    0.00    0.00    1271         lookup_name [68]
+                0.00    0.00    1271/10500050     new_pterm [21]
+                0.00    0.00    1271/1623        insert_name [162]
+-----------------------------------------------
+                0.00    0.00       4/12          gen_putgetnum [75]
+                0.00    0.00       8/12          gen_emit_addpf [73]
+[69]     0.0    0.00    0.00      12         val_info [69]
+                0.00    0.00      12/1862        notevar [47]
+                0.00    0.00       1/743         has_live_reg [169]
+-----------------------------------------------
+                                 569             get_pterm <cycle 1> [67]
+[70]     0.0    0.00    0.00     569         get_args <cycle 1> [70]
+                0.00    0.00    1784/5573        scan [64]
+                0.00    0.00     569/1587        narg_pterm [80]
+                0.00    0.00    1215/2669        is_punc [158]
+                                1215             get_pterm <cycle 1> [67]
+-----------------------------------------------
+                                 548             get_list <cycle 1> [71]
+                                  53             get_pterm <cycle 1> [67]
+[71]     0.0    0.00    0.00      53+548     get_list <cycle 1> [71]
+                0.00    0.00     601/10500050     new_pterm [21]
+                0.00    0.00     605/5573        scan [64]
+                0.00    0.00      49/32068       new_pt_emptylist [55]
+                0.00    0.00    1198/2669        is_punc [158]
+                                 605             get_pterm <cycle 1> [67]
+                                 548             get_list <cycle 1> [71]
+-----------------------------------------------
+                0.00    0.00     879/879         scan [64]
+[72]     0.0    0.00    0.00     879         lookup_var [72]
+                0.00    0.00     879/10500050     new_pterm [21]
+                0.00    0.00     879/879         insert_var [168]
+-----------------------------------------------
+                0.00    0.00      10/10          half_constraint [65]
+[73]     0.0    0.00    0.00      10         gen_emit_addpf [73]
+                0.00    0.00       8/12          val_info [69]
+                0.00    0.00       7/14          emit_addpfval [251]
+                0.00    0.00       2/2           emit_addtpfvar [297]
+                0.00    0.00       1/20          emit_addtpfval [242]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[74]     0.0    0.00    0.00       1         compile_goal [74]
+                0.00    0.00       1/32262       lookatvars [23]
+                0.00    0.00       1/306         compile_body [50]
+                0.00    0.00       1/350         put_arg [52]
+                0.00    0.00       1/1           emit_dump [98]
+                0.00    0.00       1/1           makedumpvars [99]
+                0.00    0.00       1/32256       alocvar [90]
+                0.00    0.00       1/32256       init_emit [127]
+                0.00    0.00       1/32015       init_lable [135]
+                0.00    0.00       1/32308       init_live_regs [125]
+                0.00    0.00       1/26          emit_maybesave [236]
+                0.00    0.00       1/159         emit_realsave [201]
+                0.00    0.00       1/7           emit_special_savecut [272]
+                0.00    0.00       1/64510       p_dynamic [114]
+                0.00    0.00       1/323         maketag [185]
+                0.00    0.00       1/23          emit_callp [239]
+                0.00    0.00       1/1           dumpvarnames [315]
+                0.00    0.00       1/7           emit_restore [271]
+                0.00    0.00       1/7           emit_halt [270]
+                0.00    0.00       1/32015       resolve [136]
+                0.00    0.00       1/32256       free_varlist [126]
+-----------------------------------------------
+                0.00    0.00       4/4           half_constraint [65]
+[75]     0.0    0.00    0.00       4         gen_putgetnum [75]
+                0.00    0.00       4/12          val_info [69]
+                0.00    0.00       4/4           emit_putpnum [286]
+-----------------------------------------------
+                0.00    0.00       1/301         init_all [28]
+                0.00    0.00       1/301         emit_dump [98]
+                0.00    0.00       2/301         do_dynamic [91]
+                0.00    0.00      34/301         addop [85]
+                0.00    0.00      94/301         addspred [78]
+                0.00    0.00     169/301         compile_body [50]
+[76]     0.0    0.00    0.00     301         hashbuiltina [76]
+                0.00    0.00     301/10500050     new_pterm [21]
+                0.00    0.00     301/1587        narg_pterm [80]
+                0.00    0.00     301/1535        sum_str [163]
+                0.00    0.00     301/1623        insert_name [162]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[77]     0.0    0.00    0.00       1         init_name [77]
+                0.00    0.00      94/94          addspred [78]
+                0.00    0.00      62/156         add_func [79]
+                0.00    0.00      11/34          do_op [86]
+                0.00    0.00       3/1271        lookup_name [68]
+                0.00    0.00       1/1           func_narg_pterm [101]
+                0.00    0.00      16/16          setconst [248]
+                0.00    0.00       3/1535        sum_str [163]
+-----------------------------------------------
+                0.00    0.00      94/94          init_name [77]
+[78]     0.0    0.00    0.00      94         addspred [78]
+                0.00    0.00      94/301         hashbuiltina [76]
+                0.00    0.00      94/156         add_func [79]
+                0.00    0.00      94/127         assign_p_protected [204]
+-----------------------------------------------
+                0.00    0.00      62/156         init_name [77]
+                0.00    0.00      94/156         addspred [78]
+[79]     0.0    0.00    0.00     156         add_func [79]
+                0.00    0.00     156/10500050     new_pterm [21]
+                0.00    0.00     156/1535        sum_str [163]
+                0.00    0.00     156/2658        hash [159]
+                0.00    0.00     156/1777        numfunc [160]
+                0.00    0.00     145/275         new_hashnode [190]
+                0.00    0.00     145/275         add_string [189]
+-----------------------------------------------
+                0.00    0.00       1/1587        func_narg_pterm [101]
+                0.00    0.00     301/1587        hashbuiltina [76]
+                0.00    0.00     304/1587        get_pterm <cycle 1> [67]
+                0.00    0.00     412/1587        make_op_func [88]
+                0.00    0.00     569/1587        get_args <cycle 1> [70]
+[80]     0.0    0.00    0.00    1587         narg_pterm [80]
+                0.00    0.00     115/10500050     new_pterm [21]
+                0.00    0.00    1587/1777        numfunc [160]
+-----------------------------------------------
+                0.00    0.00       8/234         put_arg [52]
+                0.00    0.00      58/234         put_func [56]
+                0.00    0.00     168/234         compile_body [50]
+[81]     0.0    0.00    0.00     234         freereg [81]
+                0.00    0.00     234/1024627     make_dead_reg [46]
+-----------------------------------------------
+                                  20             flatten_arith_term [82]
+                0.00    0.00      14/36          half_constraint [65]
+                0.00    0.00      22/36          full_constraint [62]
+[82]     0.0    0.00    0.00      36+20      flatten_arith_term [82]
+                0.00    0.00      10/96406       free_eqn_nodes [33]
+                0.00    0.00      38/38          make_simple_eqn [227]
+                0.00    0.00      10/96015       add_eqns [110]
+                0.00    0.00       8/8           make_constant_eqn [267]
+                                  20             flatten_arith_term [82]
+-----------------------------------------------
+                0.00    0.00      23/23          emul_sys_pred [3]
+[83]     0.0    0.00    0.00      23         do_op3 [83]
+                0.00    0.00      23/34          do_op [86]
+                0.00    0.00      69/10560144     findbind [27]
+                0.00    0.00      23/18592058     is_ground [20]
+-----------------------------------------------
+                0.00    0.00      29/324         put_arg [52]
+                0.00    0.00     295/324         put_arg_nonfunc [58]
+[84]     0.0    0.00    0.00     324         make_change_reg [84]
+                0.00    0.00     126/1024627     make_dead_reg [46]
+                0.00    0.00     126/303         make_live_reg [187]
+-----------------------------------------------
+                0.00    0.00      34/34          do_op [86]
+[85]     0.0    0.00    0.00      34         addop [85]
+                0.00    0.00      34/301         hashbuiltina [76]
+                0.00    0.00      34/1535        sum_str [163]
+                0.00    0.00      34/1623        insert_name [162]
+                0.00    0.00      34/1777        numfunc [160]
+                0.00    0.00      32/132521      emalloc [107]
+-----------------------------------------------
+                0.00    0.00      11/34          init_name [77]
+                0.00    0.00      23/34          do_op3 [83]
+[86]     0.0    0.00    0.00      34         do_op [86]
+                0.00    0.00      34/34          addop [85]
+-----------------------------------------------
+                0.00    0.00      31/31          emul_sys_pred [3]
+[87]     0.0    0.00    0.00      31         do_prot [87]
+                0.00    0.00      31/18592058     is_ground [20]
+                0.00    0.00      62/10560144     findbind [27]
+                0.00    0.00    9272/73737       p_compiled [113]
+                0.00    0.00    9272/12742       getmaxfunc [157]
+                0.00    0.00      31/127         assign_p_protected [204]
+-----------------------------------------------
+                0.00    0.00     412/412         get_pterm <cycle 1> [67]
+[88]     0.0    0.00    0.00     412         make_op_func [88]
+                0.00    0.00     412/1587        narg_pterm [80]
+-----------------------------------------------
+                0.00    0.00       2/2           main [1]
+[89]     0.0    0.00    0.00       2         get_goal [89]
+                0.00    0.00       2/259         readterm [61]
+                0.00    0.00       2/2           gobble_nl [306]
+-----------------------------------------------
+                0.00    0.00       1/32256       compile_goal [74]
+                0.00    0.00       6/32256       compile_fgoal [59]
+                0.00    0.00   32249/32256       compile_rule [10]
+[90]     0.0    0.00    0.00   32256         alocvar [90]
+                0.00    0.00      18/1024627     make_dead_reg [46]
+-----------------------------------------------
+                0.00    0.00       2/2           emul_sys_pred [3]
+[91]     0.0    0.00    0.00       2         do_dynamic [91]
+                0.00    0.00       2/301         hashbuiltina [76]
+                0.00    0.00       2/18592058     is_ground [20]
+                0.00    0.00       4/10560144     findbind [27]
+                0.00    0.00       2/73737       p_compiled [113]
+                0.00    0.00       2/2           assign_p_dynamic [294]
+-----------------------------------------------
+                0.00    0.00       2/2           quote_expand [94]
+[92]     0.0    0.00    0.00       2         duplicate_pterm [92]
+                0.00    0.00       2/10500050     new_pterm [21]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[93]     0.0    0.00    0.00       1         init_engine [93]
+                0.00    0.00       2/1271        lookup_name [68]
+                0.00    0.00       2/1535        sum_str [163]
+                0.00    0.00       2/323         maketag [185]
+                0.00    0.00       2/507         storename [176]
+                0.00    0.00       2/127         assign_p_protected [204]
+-----------------------------------------------
+                                   1             quote_expand [94]
+                0.00    0.00       1/1           main [1]
+[94]     0.0    0.00    0.00       1+1       quote_expand [94]
+                0.00    0.00       2/2           duplicate_pterm [92]
+                                   1             quote_expand [94]
+-----------------------------------------------
+                0.00    0.00       1/1           rungoal [2]
+[95]     0.0    0.00    0.00       1         do_printf [95]
+                0.00    0.00       1/1           fmt_printf [96]
+                0.00    0.00       1/10560144     findbind [27]
+                0.00    0.00       1/6           myisdigit [279]
+-----------------------------------------------
+                0.00    0.00       1/1           do_printf [95]
+[96]     0.0    0.00    0.00       1         fmt_printf [96]
+                0.00    0.00       1/1           term_printf [97]
+                0.00    0.00       1/6           myisdigit [279]
+-----------------------------------------------
+                0.00    0.00       1/1           fmt_printf [96]
+[97]     0.0    0.00    0.00       1         term_printf [97]
+                0.00    0.00       3/10560144     findbind [27]
+                0.00    0.00       1/18592058     is_ground [20]
+-----------------------------------------------
+                0.00    0.00       1/1           compile_goal [74]
+[98]     0.0    0.00    0.00       1         emit_dump [98]
+                0.00    0.00       1/301         hashbuiltina [76]
+                0.00    0.00       1/159         emit_realsave [201]
+                0.00    0.00       1/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       1/1           compile_goal [74]
+[99]     0.0    0.00    0.00       1         makedumpvars [99]
+                0.00    0.00       1/10500050     new_pterm [21]
+                0.00    0.00       1/1           makedumpvars1 [338]
+-----------------------------------------------
+                0.00    0.00       3/3           emul_sys_pred [3]
+[100]    0.0    0.00    0.00       3         do_style_check [100]
+                0.00    0.00       3/10560144     findbind [27]
+-----------------------------------------------
+                0.00    0.00       1/1           init_name [77]
+[101]    0.0    0.00    0.00       1         func_narg_pterm [101]
+                0.00    0.00       1/1587        narg_pterm [80]
+                0.00    0.00       1/1535        sum_str [163]
+                0.00    0.00       1/1623        insert_name [162]
+-----------------------------------------------
+                0.00    0.00       2/768423      put_bld_nonfunc [54]
+                0.00    0.00       2/768423      check_if_save_reg [186]
+                0.00    0.00      39/768423      fetch_uni_nonfunc [18]
+                0.00    0.00      56/768423      val_info [60]
+                0.00    0.00      58/768423      compile_body [50]
+                0.00    0.00      66/768423      put_func [56]
+                0.00    0.00     200/768423      set_arg [53]
+                0.00    0.00  320000/768423      gen_uni2var [32]
+                0.00    0.00  448000/768423      fetch_func [14]
+[102]    0.0    0.00    0.00  768423         getreg [102]
+-----------------------------------------------
+                0.00    0.00      44/448044      fetch_uni_nonfunc [18]
+                0.00    0.00  448000/448044      fetch_func [14]
+[103]    0.0    0.00    0.00  448044         emit_unitvar [103]
+-----------------------------------------------
+                0.00    0.00       5/302960      p_start_hdrcode [285]
+                0.00    0.00      49/302960      p_jump_occ [217]
+                0.00    0.00      71/302960      p_cut [210]
+                0.00    0.00     543/302960      p_added [172]
+                0.00    0.00   32229/302960      p_n_rules [132]
+                0.00    0.00   32248/302960      p_last_rule [131]
+                0.00    0.00   35319/302960      p_first_rule [124]
+                0.00    0.00   64249/302960      p_protected [119]
+                0.00    0.00   64510/302960      p_dynamic [114]
+                0.00    0.00   73737/302960      p_compiled [113]
+[104]    0.0    0.00    0.00  302960         find_hash_p_node [104]
+                0.00    0.00   13209/13548       hash_p [156]
+-----------------------------------------------
+                0.00    0.00  160028/160028      gen_uni2var [32]
+[105]    0.0    0.00    0.00  160028         emit_uni2ttvar [105]
+-----------------------------------------------
+                0.00    0.00  160005/160005      fetch_func [14]
+[106]    0.0    0.00    0.00  160005         emit_getlist [106]
+-----------------------------------------------
+                0.00    0.00      23/132521      emit_callp [239]
+                0.00    0.00      26/132521      emit_jump [234]
+                0.00    0.00      32/132521      addop [85]
+                0.00    0.00     278/132521      get_vrec [170]
+                0.00    0.00     404/132521      new_rule [129]
+                0.00    0.00     507/132521      store_lable [175]
+                0.00    0.00  131251/132521      new_pterm [21]
+[107]    0.0    0.00    0.00  132521         emalloc [107]
+-----------------------------------------------
+                0.00    0.00       2/129160      assign_p_dynamic [294]
+                0.00    0.00      19/129160      assign_p_cut [246]
+                0.00    0.00      41/129160      assign_p_start_hdrcode [222]
+                0.00    0.00      41/129160      assign_p_end_hdrcode [221]
+                0.00    0.00      41/129160      assign_p_compiled [220]
+                0.00    0.00      42/129160      assign_p_first_rule [219]
+                0.00    0.00      49/129160      assign_p_jump_occ [216]
+                0.00    0.00     127/129160      assign_p_protected [204]
+                0.00    0.00     260/129160      assign_p_added [193]
+                0.00    0.00   32040/129160      assign_p_last_compiled_rule [134]
+                0.00    0.00   32249/129160      assign_p_n_rules [128]
+                0.00    0.00   64249/129160      assign_p_last_rule [118]
+[108]    0.0    0.00    0.00  129160         new_hash_p_node [108]
+                0.00    0.00     339/13548       hash_p [156]
+                0.00    0.00     143/143         malloc_null_HASH_P_NODE [203]
+-----------------------------------------------
+                0.00    0.00  128696/128696      restore_context [38]
+[109]    0.0    0.00    0.00  128696         free_occ_nodes [109]
+-----------------------------------------------
+                0.00    0.00       5/96015       full_constraint [62]
+                0.00    0.00      10/96015       flatten_arith_term [82]
+                0.00    0.00   96000/96015       add_entry [111]
+[110]    0.0    0.00    0.00   96015         add_eqns [110]
+-----------------------------------------------
+                0.00    0.00   96000/96000       s_evar [40]
+[111]    0.0    0.00    0.00   96000         add_entry [111]
+                0.00    0.00   96000/96015       add_eqns [110]
+-----------------------------------------------
+                0.00    0.00   96000/96000       rungoal [2]
+[112]    0.0    0.00    0.00   96000         init_eqn [112]
+-----------------------------------------------
+                0.00    0.00       2/73737       do_dynamic [91]
+                0.00    0.00       4/73737       readfile_low [6]
+                0.00    0.00       5/73737       val_to_pc [35]
+                0.00    0.00     205/73737       compile [31]
+                0.00    0.00    9272/73737       do_prot [87]
+                0.00    0.00   32000/73737       do_assert_rule [4]
+                0.00    0.00   32249/73737       store_rule [130]
+[113]    0.0    0.00    0.00   73737         p_compiled [113]
+                0.00    0.00   73737/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00       1/64510       compile_goal [74]
+                0.00    0.00      60/64510       compile_fgoal [59]
+                0.00    0.00     205/64510       compile [31]
+                0.00    0.00     245/64510       compile_tail [51]
+                0.00    0.00   31999/64510       store_rule [130]
+                0.00    0.00   32000/64510       do_assert_rule [4]
+[114]    0.0    0.00    0.00   64510         p_dynamic [114]
+                0.00    0.00   64510/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00     348/64348       solve_eqn_1 [184]
+                0.00    0.00   64000/64348       s_econ [123]
+[115]    0.0    0.00    0.00   64348         backup_null_eqn [115]
+-----------------------------------------------
+                0.00    0.00   64348/64348       restore_context [38]
+[116]    0.0    0.00    0.00   64348         free_nl_occ_nodes [116]
+-----------------------------------------------
+                0.00    0.00     348/64348       solve_eqn_1 [184]
+                0.00    0.00   64000/64348       s_econ [123]
+[117]    0.0    0.00    0.00   64348         wakeup [117]
+-----------------------------------------------
+                0.00    0.00   32000/64249       do_assert_rule [4]
+                0.00    0.00   32249/64249       store_rule [130]
+[118]    0.0    0.00    0.00   64249         assign_p_last_rule [118]
+                0.00    0.00   64249/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00   32000/64249       do_assert_rule [4]
+                0.00    0.00   32249/64249       store_rule [130]
+[119]    0.0    0.00    0.00   64249         p_protected [119]
+                0.00    0.00   64249/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00   64068/64068       fetch_arg [13]
+[120]    0.0    0.00    0.00   64068         emit_getcon [120]
+-----------------------------------------------
+                0.00    0.00   64002/64002       rungoal [2]
+[121]    0.0    0.00    0.00   64002         int_to_float [121]
+-----------------------------------------------
+                0.00    0.00   64000/64000       prepare_ineq_eqns [42]
+[122]    0.0    0.00    0.00   64000         elim_quasi [122]
+-----------------------------------------------
+                0.00    0.00   64000/64000       rungoal [2]
+[123]    0.0    0.00    0.00   64000         s_econ [123]
+                0.00    0.00   64000/64348       backup_null_eqn [115]
+                0.00    0.00   64000/64348       wakeup [117]
+-----------------------------------------------
+                0.00    0.00       9/35319       readfile_low [6]
+                0.00    0.00    3061/35319       compile [31]
+                0.00    0.00   32249/35319       store_rule [130]
+[124]    0.0    0.00    0.00   35319         p_first_rule [124]
+                0.00    0.00   35319/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00       1/32308       compile_goal [74]
+                0.00    0.00       6/32308       compile_fgoal [59]
+                0.00    0.00      52/32308       compile_body [50]
+                0.00    0.00   32249/32308       compile_rule [10]
+[125]    0.0    0.00    0.00   32308         init_live_regs [125]
+-----------------------------------------------
+                0.00    0.00       1/32256       compile_goal [74]
+                0.00    0.00       6/32256       compile_fgoal [59]
+                0.00    0.00   32249/32256       compile_rule [10]
+[126]    0.0    0.00    0.00   32256         free_varlist [126]
+-----------------------------------------------
+                0.00    0.00       1/32256       compile_goal [74]
+                0.00    0.00       6/32256       compile_fgoal [59]
+                0.00    0.00   32249/32256       compile_rule [10]
+[127]    0.0    0.00    0.00   32256         init_emit [127]
+-----------------------------------------------
+                0.00    0.00   32249/32249       store_rule [130]
+[128]    0.0    0.00    0.00   32249         assign_p_n_rules [128]
+                0.00    0.00   32249/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00   32249/32249       store_rule [130]
+[129]    0.0    0.00    0.00   32249         new_rule [129]
+                0.00    0.00     404/132521      emalloc [107]
+-----------------------------------------------
+                0.00    0.00     249/32249       readfile_low [6]
+                0.00    0.00   32000/32249       do_assert_rule [4]
+[130]    0.0    0.00    0.00   32249         store_rule [130]
+                0.00    0.00   32249/64249       p_protected [119]
+                0.00    0.00   32249/73737       p_compiled [113]
+                0.00    0.00   32249/32249       new_rule [129]
+                0.00    0.00   32249/35319       p_first_rule [124]
+                0.00    0.00   32249/64249       assign_p_last_rule [118]
+                0.00    0.00   32249/32249       assign_p_n_rules [128]
+                0.00    0.00   32208/32248       p_last_rule [131]
+                0.00    0.00   32208/32229       p_n_rules [132]
+                0.00    0.00   31999/64510       p_dynamic [114]
+                0.00    0.00      41/42          assign_p_first_rule [219]
+-----------------------------------------------
+                0.00    0.00      40/32248       compile [31]
+                0.00    0.00   32208/32248       store_rule [130]
+[131]    0.0    0.00    0.00   32248         p_last_rule [131]
+                0.00    0.00   32248/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00      21/32229       compile [31]
+                0.00    0.00   32208/32229       store_rule [130]
+[132]    0.0    0.00    0.00   32229         p_n_rules [132]
+                0.00    0.00   32229/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00     118/32220       compile_tail [51]
+                0.00    0.00   32102/32220       compile_rule [10]
+[133]    0.0    0.00    0.00   32220         emit_proceed [133]
+-----------------------------------------------
+                0.00    0.00      40/32040       compile [31]
+                0.00    0.00   32000/32040       do_assert_rule [4]
+[134]    0.0    0.00    0.00   32040         assign_p_last_compiled_rule [134]
+                0.00    0.00   32040/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00       1/32015       compile_goal [74]
+                0.00    0.00       6/32015       compile_fgoal [59]
+                0.00    0.00       8/32015       compile [31]
+                0.00    0.00   32000/32015       do_assert_rule [4]
+[135]    0.0    0.00    0.00   32015         init_lable [135]
+-----------------------------------------------
+                0.00    0.00       1/32015       bootstrap [7]
+                0.00    0.00       1/32015       compile_goal [74]
+                0.00    0.00       1/32015       internal_consult [8]
+                0.00    0.00       6/32015       readfile_low [6]
+                0.00    0.00       6/32015       compile_fgoal [59]
+                0.00    0.00   32000/32015       do_assert_rule [4]
+[136]    0.0    0.00    0.00   32015         resolve [136]
+                0.00    0.00     510/515         find_loc_for_lable [174]
+-----------------------------------------------
+                0.00    0.00   32001/32001       fetch_arg [13]
+[137]    0.0    0.00    0.00   32001         emit_gettnum [137]
+-----------------------------------------------
+                0.00    0.00   32001/32001       fetch_uni_nonfunc [18]
+[138]    0.0    0.00    0.00   32001         emit_uninil [138]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[139]    0.0    0.00    0.00   32000         add_flatten_eqns [139]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[140]    0.0    0.00    0.00   32000         add_ineq_eqns [140]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[141]    0.0    0.00    0.00   32000         add_linear_eqns [141]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[142]    0.0    0.00    0.00   32000         add_nlin_eqns [142]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[143]    0.0    0.00    0.00   32000         add_remaining_real_vars [143]
+-----------------------------------------------
+                0.00    0.00   32000/32000       do_assert_rule [4]
+[144]    0.0    0.00    0.00   32000         cleanup_dump [144]
+-----------------------------------------------
+                0.00    0.00   32000/32000       collect_assert_vars [16]
+[145]    0.0    0.00    0.00   32000         collect_nlin_vars [145]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[146]    0.0    0.00    0.00   32000         init_dump [146]
+-----------------------------------------------
+                0.00    0.00   32000/32000       do_assert_rule [4]
+[147]    0.0    0.00    0.00   32000         init_ht_to_pterm [147]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[148]    0.0    0.00    0.00   32000         intern_numbers [148]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[149]    0.0    0.00    0.00   32000         make_equiv_funct_vars [149]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[150]    0.0    0.00    0.00   32000         make_equiv_pivot_vars [150]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[151]    0.0    0.00    0.00   32000         make_funct_eqns [151]
+-----------------------------------------------
+                0.00    0.00   32000/32000       prepare_ineq_eqns [42]
+[152]    0.0    0.00    0.00   32000         normalise_ineq [152]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[153]    0.0    0.00    0.00   32000         prepare_linear_eqns [153]
+-----------------------------------------------
+                0.00    0.00   32000/32000       get_rule_constraints [15]
+[154]    0.0    0.00    0.00   32000         prepare_nlin_eqns [154]
+-----------------------------------------------
+                0.00    0.00       1/18648       main [1]
+                0.00    0.00       1/18648       init_all [28]
+                0.00    0.00       1/18648       gobble_nl [306]
+                0.00    0.00       3/18648       new_input [268]
+                0.00    0.00     402/18648       peek [182]
+                0.00    0.00    7320/18648       get_name [161]
+                0.00    0.00   10920/18648       scan [64]
+[155]    0.0    0.00    0.00   18648         readchar [155]
+-----------------------------------------------
+                0.00    0.00     339/13548       new_hash_p_node [108]
+                0.00    0.00   13209/13548       find_hash_p_node [104]
+[156]    0.0    0.00    0.00   13548         hash_p [156]
+-----------------------------------------------
+                0.00    0.00     401/12742       do_clear_style [313]
+                0.00    0.00    3069/12742       compile [31]
+                0.00    0.00    9272/12742       do_prot [87]
+[157]    0.0    0.00    0.00   12742         getmaxfunc [157]
+-----------------------------------------------
+                0.00    0.00     256/2669        readterm [61]
+                0.00    0.00    1198/2669        get_list <cycle 1> [71]
+                0.00    0.00    1215/2669        get_args <cycle 1> [70]
+[158]    0.0    0.00    0.00    2669         is_punc [158]
+-----------------------------------------------
+                0.00    0.00     156/2658        add_func [79]
+                0.00    0.00     879/2658        insert_var [168]
+                0.00    0.00    1623/2658        insert_name [162]
+[159]    0.0    0.00    0.00    2658         hash [159]
+-----------------------------------------------
+                0.00    0.00      34/1777        addop [85]
+                0.00    0.00     156/1777        add_func [79]
+                0.00    0.00    1587/1777        narg_pterm [80]
+[160]    0.0    0.00    0.00    1777         numfunc [160]
+-----------------------------------------------
+                0.00    0.00    1676/1676        scan [64]
+[161]    0.0    0.00    0.00    1676         get_name [161]
+                0.00    0.00    7320/18648       readchar [155]
+-----------------------------------------------
+                0.00    0.00       1/1623        func_narg_pterm [101]
+                0.00    0.00      16/1623        setconst [248]
+                0.00    0.00      34/1623        addop [85]
+                0.00    0.00     301/1623        hashbuiltina [76]
+                0.00    0.00    1271/1623        lookup_name [68]
+[162]    0.0    0.00    0.00    1623         insert_name [162]
+                0.00    0.00    1623/2658        hash [159]
+                0.00    0.00      86/275         new_hashnode [190]
+                0.00    0.00      86/275         add_string [189]
+-----------------------------------------------
+                0.00    0.00       1/1535        func_narg_pterm [101]
+                0.00    0.00       2/1535        init_engine [93]
+                0.00    0.00       3/1535        init_name [77]
+                0.00    0.00      16/1535        setconst [248]
+                0.00    0.00      34/1535        addop [85]
+                0.00    0.00     156/1535        add_func [79]
+                0.00    0.00     301/1535        hashbuiltina [76]
+                0.00    0.00     507/1535        store_lable [175]
+                0.00    0.00     515/1535        find_loc_for_lable [174]
+[163]    0.0    0.00    0.00    1535         sum_str [163]
+-----------------------------------------------
+                0.00    0.00    1345/1345        get_pterm <cycle 1> [67]
+[164]    0.0    0.00    0.00    1345         is_op_hnode [164]
+-----------------------------------------------
+                0.00    0.00      35/1057        delete_lable [228]
+                0.00    0.00     507/1057        store_lable [175]
+                0.00    0.00     515/1057        find_loc_for_lable [174]
+[165]    0.0    0.00    0.00    1057         hash_l [165]
+-----------------------------------------------
+                0.00    0.00      22/1041        make_itag [240]
+                0.00    0.00      22/1041        make_ttag [241]
+                0.00    0.00     265/1041        make_rtag [192]
+                0.00    0.00     323/1041        maketag [185]
+                0.00    0.00     409/1041        make_ftag [180]
+[166]    0.0    0.00    0.00    1041         char_malloc [166]
+-----------------------------------------------
+                0.00    0.00       1/946         emit_dump [98]
+                0.00    0.00       2/946         emit_read [317]
+                0.00    0.00       2/946         emit_dynamic_try [316]
+                0.00    0.00       3/946         emit_roole [318]
+                0.00    0.00       6/946         emit_print [291]
+                0.00    0.00       8/946         emit_retract [287]
+                0.00    0.00      16/946         emit_printf [266]
+                0.00    0.00      18/946         emit_docut [262]
+                0.00    0.00      20/946         emit_fastcut [259]
+                0.00    0.00      26/946         emit_savecurcp [254]
+                0.00    0.00      27/946         emit_savecut [264]
+                0.00    0.00     208/946         gen_jump_table [257]
+                0.00    0.00     609/946         emit_spcall [200]
+[167]    0.0    0.00    0.00     946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00     879/879         lookup_var [72]
+[168]    0.0    0.00    0.00     879         insert_var [168]
+                0.00    0.00     879/2658        hash [159]
+                0.00    0.00      44/275         new_hashnode [190]
+                0.00    0.00      44/275         add_string [189]
+-----------------------------------------------
+                0.00    0.00       1/743         val_info [69]
+                0.00    0.00      19/743         gen_addpfs [66]
+                0.00    0.00      36/743         fetch_arg [13]
+                0.00    0.00      44/743         fetch_uni_nonfunc [18]
+                0.00    0.00      60/743         val_info [60]
+                0.00    0.00     129/743         set_arg [53]
+                0.00    0.00     144/743         put_arg_nonfunc [58]
+                0.00    0.00     310/743         put_bld_nonfunc [54]
+[169]    0.0    0.00    0.00     743         has_live_reg [169]
+-----------------------------------------------
+                0.00    0.00     621/621         notevar [47]
+[170]    0.0    0.00    0.00     621         get_vrec [170]
+                0.00    0.00     278/132521      emalloc [107]
+-----------------------------------------------
+                0.00    0.00     588/588         put_bld_nonfunc [54]
+[171]    0.0    0.00    0.00     588         emit_bldnum [171]
+-----------------------------------------------
+                0.00    0.00     143/543         compile [31]
+                0.00    0.00     400/543         do_clear_style [313]
+[172]    0.0    0.00    0.00     543         p_added [172]
+                0.00    0.00     543/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00     542/542         put_last_func [57]
+[173]    0.0    0.00    0.00     542         emit_bldlist [173]
+-----------------------------------------------
+                0.00    0.00       5/515         emit_jump [234]
+                0.00    0.00     510/515         resolve [136]
+[174]    0.0    0.00    0.00     515         find_loc_for_lable [174]
+                0.00    0.00     515/1057        hash_l [165]
+                0.00    0.00     515/1535        sum_str [163]
+-----------------------------------------------
+                0.00    0.00     507/507         storename [176]
+[175]    0.0    0.00    0.00     507         store_lable [175]
+                0.00    0.00     507/1057        hash_l [165]
+                0.00    0.00     507/1535        sum_str [163]
+                0.00    0.00     507/132521      emalloc [107]
+-----------------------------------------------
+                0.00    0.00       2/507         init_engine [93]
+                0.00    0.00       2/507         gen_secondary_switch1type [278]
+                0.00    0.00       6/507         gen_switch1type [261]
+                0.00    0.00       6/507         gen_switchtype [284]
+                0.00    0.00      11/507         gen_jump_table [257]
+                0.00    0.00      21/507         gen_index_code [43]
+                0.00    0.00      73/507         fetch_arg [13]
+                0.00    0.00     137/507         fetch_func [14]
+                0.00    0.00     249/507         compile_head [12]
+[176]    0.0    0.00    0.00     507         storename [176]
+                0.00    0.00     507/507         store_lable [175]
+-----------------------------------------------
+                0.00    0.00       2/500         emit_jump [234]
+                0.00    0.00      31/500         emit_try [230]
+                0.00    0.00      31/500         emit_trust [229]
+                0.00    0.00     195/500         emit_retry [199]
+                0.00    0.00     241/500         emit_addr [197]
+[177]    0.0    0.00    0.00     500         add_unres_lable [177]
+-----------------------------------------------
+                0.00    0.00     500/500         check_clause [196]
+[178]    0.0    0.00    0.00     500         check_pred [178]
+                0.00    0.00     481/481         check_quote [179]
+-----------------------------------------------
+                                2723             check_quote [179]
+                0.00    0.00     481/481         check_pred [178]
+[179]    0.0    0.00    0.00     481+2723    check_quote [179]
+                                2723             check_quote [179]
+-----------------------------------------------
+                0.00    0.00       4/409         gen_switchtype [284]
+                0.00    0.00       5/409         gen_index_chain [265]
+                0.00    0.00      73/409         fetch_arg [13]
+                0.00    0.00     137/409         fetch_func [14]
+                0.00    0.00     190/409         gen_jump_table [257]
+[180]    0.0    0.00    0.00     409         make_ftag [180]
+                0.00    0.00     409/1041        char_malloc [166]
+-----------------------------------------------
+                0.00    0.00       1/408         gobble_nl [306]
+                0.00    0.00       2/408         main [1]
+                0.00    0.00       3/408         new_input [268]
+                0.00    0.00     402/408         peek [182]
+[181]    0.0    0.00    0.00     408         unreadchar [181]
+-----------------------------------------------
+                0.00    0.00     402/402         scan [64]
+[182]    0.0    0.00    0.00     402         peek [182]
+                0.00    0.00     402/18648       readchar [155]
+                0.00    0.00     402/408         unreadchar [181]
+-----------------------------------------------
+                0.00    0.00       1/348         do_ctime [49]
+                0.00    0.00     347/348         rungoal [2]
+[183]    0.0    0.00    0.00     348         makenum [183]
+                0.00    0.00     348/348         solve_eqn_1 [184]
+-----------------------------------------------
+                0.00    0.00     348/348         makenum [183]
+[184]    0.0    0.00    0.00     348         solve_eqn_1 [184]
+                0.00    0.00     348/64348       backup_null_eqn [115]
+                0.00    0.00     348/64348       wakeup [117]
+-----------------------------------------------
+                0.00    0.00       1/323         compile_goal [74]
+                0.00    0.00       1/323         compile_fgoal [59]
+                0.00    0.00       2/323         init_engine [93]
+                0.00    0.00      21/323         gen_index_code [43]
+                0.00    0.00      49/323         compile_tail [51]
+                0.00    0.00     249/323         compile_head [12]
+[185]    0.0    0.00    0.00     323         maketag [185]
+                0.00    0.00     323/1041        char_malloc [166]
+-----------------------------------------------
+                0.00    0.00      29/322         put_arg [52]
+                0.00    0.00     293/322         put_arg_nonfunc [58]
+[186]    0.0    0.00    0.00     322         check_if_save_reg [186]
+                0.00    0.00       7/7           find_last_arg [273]
+                0.00    0.00       2/109         find_target_reg [206]
+                0.00    0.00       2/768423      getreg [102]
+                0.00    0.00       2/39          emit_gettvar [224]
+                0.00    0.00       2/303         make_live_reg [187]
+-----------------------------------------------
+                0.00    0.00       2/303         check_if_save_reg [186]
+                0.00    0.00       3/303         put_bld_nonfunc [54]
+                0.00    0.00      19/303         compile_rule [10]
+                0.00    0.00      44/303         fetch_uni_nonfunc [18]
+                0.00    0.00      49/303         fetch_arg [13]
+                0.00    0.00      60/303         gen_uni2var [32]
+                0.00    0.00     126/303         make_change_reg [84]
+[187]    0.0    0.00    0.00     303         make_live_reg [187]
+-----------------------------------------------
+                0.00    0.00     290/290         get_pterm <cycle 1> [67]
+[188]    0.0    0.00    0.00     290         is_nfix_hnode [188]
+-----------------------------------------------
+                0.00    0.00      44/275         insert_var [168]
+                0.00    0.00      86/275         insert_name [162]
+                0.00    0.00     145/275         add_func [79]
+[189]    0.0    0.00    0.00     275         add_string [189]
+-----------------------------------------------
+                0.00    0.00      44/275         insert_var [168]
+                0.00    0.00      86/275         insert_name [162]
+                0.00    0.00     145/275         add_func [79]
+[190]    0.0    0.00    0.00     275         new_hashnode [190]
+-----------------------------------------------
+                0.00    0.00     274/274         put_bld_nonfunc [54]
+[191]    0.0    0.00    0.00     274         emit_bldvoid [191]
+-----------------------------------------------
+                0.00    0.00       2/265         gen_all_chain [327]
+                0.00    0.00       2/265         gen_switch1type [261]
+                0.00    0.00       2/265         gen_jump_table [257]
+                0.00    0.00       3/265         gen_default_chain [328]
+                0.00    0.00       9/265         gen_switchtype [284]
+                0.00    0.00      19/265         gen_index_chain [265]
+                0.00    0.00     228/265         gen_general_chain [243]
+[192]    0.0    0.00    0.00     265         make_rtag [192]
+                0.00    0.00     265/1041        char_malloc [166]
+-----------------------------------------------
+                0.00    0.00      11/260         do_clear_style [313]
+                0.00    0.00     249/260         readfile_low [6]
+[193]    0.0    0.00    0.00     260         assign_p_added [193]
+                0.00    0.00     260/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00     259/259         readterm [61]
+[194]    0.0    0.00    0.00     259         zero_vars [194]
+-----------------------------------------------
+                0.00    0.00     256/256         init_kohler [333]
+[195]    0.0    0.00    0.00     256         num_bits [195]
+-----------------------------------------------
+                0.00    0.00     255/255         readfile_low [6]
+[196]    0.0    0.00    0.00     255         check_clause [196]
+                0.00    0.00     500/500         check_pred [178]
+-----------------------------------------------
+                0.00    0.00       1/241         emit_switchdot [319]
+                0.00    0.00       1/241         emit_switchreal [320]
+                0.00    0.00       2/241         emit_switchnil [303]
+                0.00    0.00       2/241         emit_switchcon [302]
+                0.00    0.00       2/241         emit_switch2con [300]
+                0.00    0.00       2/241         emit_switch2func [301]
+                0.00    0.00       4/241         emit_switchfunc [288]
+                0.00    0.00      19/241         emit_switchtype [283]
+                0.00    0.00     208/241         gen_jump_table [257]
+[197]    0.0    0.00    0.00     241         emit_addr [197]
+                0.00    0.00     241/500         add_unres_lable [177]
+-----------------------------------------------
+                0.00    0.00     209/209         make_index_chains [244]
+[198]    0.0    0.00    0.00     209         add_to_chain [198]
+-----------------------------------------------
+                0.00    0.00       1/195         gen_default_chain [328]
+                0.00    0.00       6/195         gen_index_chain [265]
+                0.00    0.00     188/195         gen_general_chain [243]
+[199]    0.0    0.00    0.00     195         emit_retry [199]
+                0.00    0.00     195/500         add_unres_lable [177]
+-----------------------------------------------
+                0.00    0.00     169/169         compile_body [50]
+[200]    0.0    0.00    0.00     169         emit_spcall [200]
+                0.00    0.00     609/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       1/159         compile_goal [74]
+                0.00    0.00       1/159         emit_uni2ptvar [321]
+                0.00    0.00       1/159         emit_dump [98]
+                0.00    0.00       2/159         emit_unipvar [304]
+                0.00    0.00       2/159         emit_bldpval [298]
+                0.00    0.00       3/159         emit_uni2tpvar [293]
+                0.00    0.00       4/159         emit_uni2ppvar [289]
+                0.00    0.00       4/159         emit_putpnum [286]
+                0.00    0.00       6/159         compile_fgoal [59]
+                0.00    0.00       7/159         emit_bldpvar [269]
+                0.00    0.00       7/159         emit_special_savecut [272]
+                0.00    0.00      13/159         emit_getpvar [253]
+                0.00    0.00      14/159         emit_addpfval [251]
+                0.00    0.00      19/159         compile_rule [10]
+                0.00    0.00      23/159         emit_putpval [237]
+                0.00    0.00      23/159         emit_callp [239]
+                0.00    0.00      29/159         emit_putpvar [232]
+[201]    0.0    0.00    0.00     159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00     147/147         compile_rule [10]
+[202]    0.0    0.00    0.00     147         checksave [202]
+-----------------------------------------------
+                0.00    0.00     143/143         new_hash_p_node [108]
+[203]    0.0    0.00    0.00     143         malloc_null_HASH_P_NODE [203]
+-----------------------------------------------
+                0.00    0.00       2/127         init_engine [93]
+                0.00    0.00      31/127         do_prot [87]
+                0.00    0.00      94/127         addspred [78]
+[204]    0.0    0.00    0.00     127         assign_p_protected [204]
+                0.00    0.00     127/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00     111/111         put_arg_nonfunc [58]
+[205]    0.0    0.00    0.00     111         emit_putcon [205]
+-----------------------------------------------
+                0.00    0.00       2/109         check_if_save_reg [186]
+                0.00    0.00       3/109         put_bld_nonfunc [54]
+                0.00    0.00      44/109         fetch_uni_nonfunc [18]
+                0.00    0.00      60/109         val_info [60]
+[206]    0.0    0.00    0.00     109         find_target_reg [206]
+-----------------------------------------------
+                0.00    0.00       2/101         emit_bldpval [298]
+                0.00    0.00      99/101         emit_bldtval [208]
+[207]    0.0    0.00    0.00     101         fold_multi1 [207]
+-----------------------------------------------
+                0.00    0.00       8/99          put_arg [52]
+                0.00    0.00      33/99          put_bld_nonfunc [54]
+                0.00    0.00      58/99          put_func [56]
+[208]    0.0    0.00    0.00      99         emit_bldtval [208]
+                0.00    0.00      99/101         fold_multi1 [207]
+-----------------------------------------------
+                0.00    0.00      82/82          compile_body [50]
+[209]    0.0    0.00    0.00      82         arith_tree [209]
+-----------------------------------------------
+                0.00    0.00      19/71          compile_head [12]
+                0.00    0.00      21/71          gen_index_code [43]
+                0.00    0.00      31/71          emit_try [230]
+[210]    0.0    0.00    0.00      71         p_cut [210]
+                0.00    0.00      71/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00      65/65          put_arg_nonfunc [58]
+[211]    0.0    0.00    0.00      65         var_has_reg [211]
+-----------------------------------------------
+                0.00    0.00      59/59          put_arg_nonfunc [58]
+[212]    0.0    0.00    0.00      59         emit_puttnum [212]
+-----------------------------------------------
+                0.00    0.00      58/58          put_bld_nonfunc [54]
+[213]    0.0    0.00    0.00      58         emit_bldnil [213]
+-----------------------------------------------
+                0.00    0.00      26/55          emit_putpval [237]
+                0.00    0.00      29/55          emit_putpvar [232]
+[214]    0.0    0.00    0.00      55         fold_multi2 [214]
+-----------------------------------------------
+                0.00    0.00      18/54          put_arg [52]
+                0.00    0.00      36/54          put_func [56]
+[215]    0.0    0.00    0.00      54         emit_putlist [215]
+-----------------------------------------------
+                0.00    0.00      23/49          emit_callp [239]
+                0.00    0.00      26/49          emit_jump [234]
+[216]    0.0    0.00    0.00      49         assign_p_jump_occ [216]
+                0.00    0.00      49/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00      23/49          emit_callp [239]
+                0.00    0.00      26/49          emit_jump [234]
+[217]    0.0    0.00    0.00      49         p_jump_occ [217]
+                0.00    0.00      49/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00       8/46          make_constant_eqn [267]
+                0.00    0.00      38/46          make_simple_eqn [227]
+[218]    0.0    0.00    0.00      46         malloc_null_EQN [218]
+-----------------------------------------------
+                0.00    0.00       1/42          do_assert_rule [4]
+                0.00    0.00      41/42          store_rule [130]
+[219]    0.0    0.00    0.00      42         assign_p_first_rule [219]
+                0.00    0.00      42/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00       1/41          do_assert_rule [4]
+                0.00    0.00      40/41          compile [31]
+[220]    0.0    0.00    0.00      41         assign_p_compiled [220]
+                0.00    0.00      41/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00       1/41          do_assert_rule [4]
+                0.00    0.00      40/41          compile [31]
+[221]    0.0    0.00    0.00      41         assign_p_end_hdrcode [221]
+                0.00    0.00      41/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00       1/41          do_assert_rule [4]
+                0.00    0.00      40/41          compile [31]
+[222]    0.0    0.00    0.00      41         assign_p_start_hdrcode [222]
+                0.00    0.00      41/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00      11/41          put_arg [52]
+                0.00    0.00      30/41          put_func [56]
+[223]    0.0    0.00    0.00      41         emit_putstr [223]
+-----------------------------------------------
+                0.00    0.00       2/39          check_if_save_reg [186]
+                0.00    0.00      37/39          put_arg_nonfunc [58]
+[224]    0.0    0.00    0.00      39         emit_gettvar [224]
+-----------------------------------------------
+                0.00    0.00      38/38          make_simple_eqn [227]
+[225]    0.0    0.00    0.00      38         add_simple_entry [225]
+-----------------------------------------------
+                0.00    0.00      38/38          put_bld_nonfunc [54]
+[226]    0.0    0.00    0.00      38         emit_bldcon [226]
+-----------------------------------------------
+                0.00    0.00      38/38          flatten_arith_term [82]
+[227]    0.0    0.00    0.00      38         make_simple_eqn [227]
+                0.00    0.00      38/46          malloc_null_EQN [218]
+                0.00    0.00      38/38          add_simple_entry [225]
+-----------------------------------------------
+                0.00    0.00      35/35          compile [31]
+[228]    0.0    0.00    0.00      35         delete_lable [228]
+                0.00    0.00      35/1057        hash_l [165]
+-----------------------------------------------
+                0.00    0.00       1/31          gen_all_chain [327]
+                0.00    0.00       1/31          gen_default_chain [328]
+                0.00    0.00       9/31          gen_index_chain [265]
+                0.00    0.00      20/31          gen_general_chain [243]
+[229]    0.0    0.00    0.00      31         emit_trust [229]
+                0.00    0.00      31/500         add_unres_lable [177]
+-----------------------------------------------
+                0.00    0.00       1/31          gen_all_chain [327]
+                0.00    0.00       1/31          gen_default_chain [328]
+                0.00    0.00       9/31          gen_index_chain [265]
+                0.00    0.00      20/31          gen_general_chain [243]
+[230]    0.0    0.00    0.00      31         emit_try [230]
+                0.00    0.00      31/500         add_unres_lable [177]
+                0.00    0.00      31/71          p_cut [210]
+-----------------------------------------------
+                0.00    0.00       1/30          fetch_arg [13]
+                0.00    0.00      29/30          compile_body [50]
+[231]    0.0    0.00    0.00      30         emit_gettval [231]
+-----------------------------------------------
+                0.00    0.00      29/29          put_arg_nonfunc [58]
+[232]    0.0    0.00    0.00      29         emit_putpvar [232]
+                0.00    0.00      29/55          fold_multi2 [214]
+                0.00    0.00      29/159         emit_realsave [201]
+-----------------------------------------------
+                                1616             set_rr_info [233]
+                0.00    0.00      29/29          put_arg [52]
+[233]    0.0    0.00    0.00      29+1616    set_rr_info [233]
+                                1616             set_rr_info [233]
+-----------------------------------------------
+                0.00    0.00      28/28          compile_tail [51]
+[234]    0.0    0.00    0.00      28         emit_jump [234]
+                0.00    0.00      28/28          val_of_cur_rule [235]
+                0.00    0.00      26/132521      emalloc [107]
+                0.00    0.00      26/49          p_jump_occ [217]
+                0.00    0.00      26/49          assign_p_jump_occ [216]
+                0.00    0.00      10/10          copy_unres_lable [258]
+                0.00    0.00       5/515         find_loc_for_lable [174]
+                0.00    0.00       2/500         add_unres_lable [177]
+-----------------------------------------------
+                0.00    0.00      28/28          emit_jump [234]
+[235]    0.0    0.00    0.00      28         val_of_cur_rule [235]
+-----------------------------------------------
+                0.00    0.00       1/26          compile_goal [74]
+                0.00    0.00       6/26          compile_fgoal [59]
+                0.00    0.00      19/26          compile_rule [10]
+[236]    0.0    0.00    0.00      26         emit_maybesave [236]
+-----------------------------------------------
+                0.00    0.00      26/26          put_arg_nonfunc [58]
+[237]    0.0    0.00    0.00      26         emit_putpval [237]
+                0.00    0.00      26/55          fold_multi2 [214]
+                0.00    0.00      23/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00      24/24          put_arg_nonfunc [58]
+[238]    0.0    0.00    0.00      24         emit_puttvar [238]
+-----------------------------------------------
+                0.00    0.00       1/23          compile_goal [74]
+                0.00    0.00       1/23          compile_fgoal [59]
+                0.00    0.00      21/23          compile_tail [51]
+[239]    0.0    0.00    0.00      23         emit_callp [239]
+                0.00    0.00      23/159         emit_realsave [201]
+                0.00    0.00      23/132521      emalloc [107]
+                0.00    0.00      23/49          p_jump_occ [217]
+                0.00    0.00      23/49          assign_p_jump_occ [216]
+-----------------------------------------------
+                0.00    0.00       2/22          gen_secondary_switch1type [278]
+                0.00    0.00       6/22          gen_switch1type [261]
+                0.00    0.00       6/22          gen_switchtype [284]
+                0.00    0.00       8/22          gen_jump_table [257]
+[240]    0.0    0.00    0.00      22         make_itag [240]
+                0.00    0.00      22/1041        char_malloc [166]
+-----------------------------------------------
+                0.00    0.00       4/22          gen_secondary_switch1type [278]
+                0.00    0.00       7/22          gen_switch1type [261]
+                0.00    0.00      11/22          gen_jump_table [257]
+[241]    0.0    0.00    0.00      22         make_ttag [241]
+                0.00    0.00      22/1041        char_malloc [166]
+-----------------------------------------------
+                0.00    0.00       1/20          gen_emit_addpf [73]
+                0.00    0.00      19/20          gen_addpfs [66]
+[242]    0.0    0.00    0.00      20         emit_addtpfval [242]
+-----------------------------------------------
+                0.00    0.00       5/20          gen_index_code [43]
+                0.00    0.00       5/20          gen_switchtype [284]
+                0.00    0.00      10/20          gen_switch1type [261]
+[243]    0.0    0.00    0.00      20         gen_general_chain [243]
+                0.00    0.00     228/265         make_rtag [192]
+                0.00    0.00     188/195         emit_retry [199]
+                0.00    0.00      20/31          emit_try [230]
+                0.00    0.00      20/31          emit_trust [229]
+-----------------------------------------------
+                0.00    0.00      20/20          gen_index_code [43]
+[244]    0.0    0.00    0.00      20         make_index_chains [244]
+                0.00    0.00     209/209         add_to_chain [198]
+                0.00    0.00      19/19          add_to_all_chains [245]
+                0.00    0.00       1/1           float_to_int [326]
+-----------------------------------------------
+                0.00    0.00      19/19          make_index_chains [244]
+[245]    0.0    0.00    0.00      19         add_to_all_chains [245]
+-----------------------------------------------
+                0.00    0.00      19/19          readfile_low [6]
+[246]    0.0    0.00    0.00      19         assign_p_cut [246]
+                0.00    0.00      19/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00      19/19          compile_tail [51]
+[247]    0.0    0.00    0.00      19         emit_crestore [247]
+-----------------------------------------------
+                0.00    0.00      16/16          init_name [77]
+[248]    0.0    0.00    0.00      16         setconst [248]
+                0.00    0.00      16/1535        sum_str [163]
+                0.00    0.00      16/1623        insert_name [162]
+-----------------------------------------------
+                0.00    0.00      15/15          gen_index_code [43]
+[249]    0.0    0.00    0.00      15         choose_a_switch [249]
+                0.00    0.00      10/10          gen_switch1type [261]
+                0.00    0.00       5/5           gen_switchtype [284]
+-----------------------------------------------
+                0.00    0.00       5/15          full_constraint [62]
+                0.00    0.00      10/15          half_constraint [65]
+[250]    0.0    0.00    0.00      15         emit_initpf [250]
+-----------------------------------------------
+                0.00    0.00       7/14          gen_addpfs [66]
+                0.00    0.00       7/14          gen_emit_addpf [73]
+[251]    0.0    0.00    0.00      14         emit_addpfval [251]
+                0.00    0.00      14/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00      14/14          half_constraint [65]
+[252]    0.0    0.00    0.00      14         is_ground_eqn [252]
+-----------------------------------------------
+                0.00    0.00      13/13          fetch_arg [13]
+[253]    0.0    0.00    0.00      13         emit_getpvar [253]
+                0.00    0.00      13/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       2/13          compile_head [12]
+                0.00    0.00      11/13          gen_index_code [43]
+[254]    0.0    0.00    0.00      13         emit_savecurcp [254]
+                0.00    0.00      26/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       2/12          full_constraint [62]
+                0.00    0.00      10/12          half_constraint [65]
+[255]    0.0    0.00    0.00      12         mult_eqn [255]
+-----------------------------------------------
+                0.00    0.00      11/11          compile_rule [10]
+[256]    0.0    0.00    0.00      11         check_rule [256]
+-----------------------------------------------
+                0.00    0.00       4/11          gen_secondary_switch1type [278]
+                0.00    0.00       7/11          gen_switch1type [261]
+[257]    0.0    0.00    0.00      11         gen_jump_table [257]
+                0.00    0.00     208/946         emit_word [167]
+                0.00    0.00     208/241         emit_addr [197]
+                0.00    0.00     190/409         make_ftag [180]
+                0.00    0.00      11/22          make_ttag [241]
+                0.00    0.00      11/507         storename [176]
+                0.00    0.00       8/22          make_itag [240]
+                0.00    0.00       2/265         make_rtag [192]
+-----------------------------------------------
+                0.00    0.00      10/10          emit_jump [234]
+[258]    0.0    0.00    0.00      10         copy_unres_lable [258]
+-----------------------------------------------
+                0.00    0.00      10/10          compile_body [50]
+[259]    0.0    0.00    0.00      10         emit_fastcut [259]
+                0.00    0.00      20/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00      10/10          half_constraint [65]
+[260]    0.0    0.00    0.00      10         emit_solve_pf0 [260]
+-----------------------------------------------
+                0.00    0.00      10/10          choose_a_switch [249]
+[261]    0.0    0.00    0.00      10         gen_switch1type [261]
+                0.00    0.00      10/20          gen_general_chain [243]
+                0.00    0.00       7/22          make_ttag [241]
+                0.00    0.00       7/11          gen_jump_table [257]
+                0.00    0.00       6/22          make_itag [240]
+                0.00    0.00       6/507         storename [176]
+                0.00    0.00       5/9           gen_index_chain [265]
+                0.00    0.00       4/4           emit_switchfunc [288]
+                0.00    0.00       2/265         make_rtag [192]
+                0.00    0.00       2/2           emit_switchnil [303]
+                0.00    0.00       2/2           emit_switchcon [302]
+                0.00    0.00       1/1           emit_switchdot [319]
+                0.00    0.00       1/1           emit_switchreal [320]
+                0.00    0.00       1/1           gen_default_chain [328]
+-----------------------------------------------
+                0.00    0.00       9/9           compile_body [50]
+[262]    0.0    0.00    0.00       9         emit_docut [262]
+                0.00    0.00      18/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       1/9           compile_tail [51]
+                0.00    0.00       8/9           compile_body [50]
+[263]    0.0    0.00    0.00       9         emit_inst [263]
+-----------------------------------------------
+                0.00    0.00       9/9           compile_rule [10]
+[264]    0.0    0.00    0.00       9         emit_savecut [264]
+                0.00    0.00      27/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       4/9           gen_secondary_switch1type [278]
+                0.00    0.00       5/9           gen_switch1type [261]
+[265]    0.0    0.00    0.00       9         gen_index_chain [265]
+                0.00    0.00      19/265         make_rtag [192]
+                0.00    0.00       9/31          emit_try [230]
+                0.00    0.00       9/31          emit_trust [229]
+                0.00    0.00       6/195         emit_retry [199]
+                0.00    0.00       5/409         make_ftag [180]
+-----------------------------------------------
+                0.00    0.00       8/8           compile_body [50]
+[266]    0.0    0.00    0.00       8         emit_printf [266]
+                0.00    0.00      16/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       8/8           flatten_arith_term [82]
+[267]    0.0    0.00    0.00       8         make_constant_eqn [267]
+                0.00    0.00       8/46          malloc_null_EQN [218]
+-----------------------------------------------
+                0.00    0.00       2/8           readfile [9]
+                0.00    0.00       2/8           internal_consult [8]
+                0.00    0.00       4/8           main [1]
+[268]    0.0    0.00    0.00       8         new_input [268]
+                0.00    0.00       3/408         unreadchar [181]
+                0.00    0.00       3/18648       readchar [155]
+-----------------------------------------------
+                0.00    0.00       7/7           put_bld_nonfunc [54]
+[269]    0.0    0.00    0.00       7         emit_bldpvar [269]
+                0.00    0.00       7/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       1/7           compile_goal [74]
+                0.00    0.00       6/7           compile_fgoal [59]
+[270]    0.0    0.00    0.00       7         emit_halt [270]
+-----------------------------------------------
+                0.00    0.00       1/7           compile_goal [74]
+                0.00    0.00       6/7           compile_fgoal [59]
+[271]    0.0    0.00    0.00       7         emit_restore [271]
+-----------------------------------------------
+                0.00    0.00       1/7           compile_goal [74]
+                0.00    0.00       6/7           compile_fgoal [59]
+[272]    0.0    0.00    0.00       7         emit_special_savecut [272]
+                0.00    0.00       7/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       7/7           check_if_save_reg [186]
+[273]    0.0    0.00    0.00       7         find_last_arg [273]
+-----------------------------------------------
+                0.00    0.00       7/7           rungoal [2]
+[274]    0.0    0.00    0.00       7         init_rungoal [274]
+-----------------------------------------------
+                0.00    0.00       7/7           save_context [276]
+[275]    0.0    0.00    0.00       7         init_solver_goal [275]
+-----------------------------------------------
+                0.00    0.00       1/7           main [1]
+                0.00    0.00       6/7           readfile_low [6]
+[276]    0.0    0.00    0.00       7         save_context [276]
+                0.00    0.00       7/7           init_solver_goal [275]
+-----------------------------------------------
+                0.00    0.00       1/6           init_compiler [329]
+                0.00    0.00       2/6           init_solver [30]
+                0.00    0.00       3/6           init_engine_mem [330]
+[277]    0.0    0.00    0.00       6         alloc_mem [277]
+-----------------------------------------------
+                0.00    0.00       6/6           gen_switchtype [284]
+[278]    0.0    0.00    0.00       6         gen_secondary_switch1type [278]
+                0.00    0.00       4/9           gen_index_chain [265]
+                0.00    0.00       4/22          make_ttag [241]
+                0.00    0.00       4/11          gen_jump_table [257]
+                0.00    0.00       2/2           emit_switch2con [300]
+                0.00    0.00       2/2           emit_switch2func [301]
+                0.00    0.00       2/22          make_itag [240]
+                0.00    0.00       2/507         storename [176]
+-----------------------------------------------
+                0.00    0.00       1/6           do_printf [95]
+                0.00    0.00       1/6           fmt_printf [96]
+                0.00    0.00       4/6           main [1]
+[279]    0.0    0.00    0.00       6         myisdigit [279]
+-----------------------------------------------
+                0.00    0.00       5/5           put_last_func [57]
+[280]    0.0    0.00    0.00       5         emit_bldstr [280]
+-----------------------------------------------
+                0.00    0.00       5/5           fetch_arg [13]
+[281]    0.0    0.00    0.00       5         emit_getnil [281]
+-----------------------------------------------
+                0.00    0.00       5/5           put_arg_nonfunc [58]
+[282]    0.0    0.00    0.00       5         emit_putnil [282]
+-----------------------------------------------
+                0.00    0.00       5/5           gen_switchtype [284]
+[283]    0.0    0.00    0.00       5         emit_switchtype [283]
+                0.00    0.00      19/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       5/5           choose_a_switch [249]
+[284]    0.0    0.00    0.00       5         gen_switchtype [284]
+                0.00    0.00       9/265         make_rtag [192]
+                0.00    0.00       6/22          make_itag [240]
+                0.00    0.00       6/507         storename [176]
+                0.00    0.00       6/6           gen_secondary_switch1type [278]
+                0.00    0.00       5/20          gen_general_chain [243]
+                0.00    0.00       5/5           emit_switchtype [283]
+                0.00    0.00       4/409         make_ftag [180]
+-----------------------------------------------
+                0.00    0.00       5/5           val_to_pc [35]
+[285]    0.0    0.00    0.00       5         p_start_hdrcode [285]
+                0.00    0.00       5/302960      find_hash_p_node [104]
+-----------------------------------------------
+                0.00    0.00       4/4           gen_putgetnum [75]
+[286]    0.0    0.00    0.00       4         emit_putpnum [286]
+                0.00    0.00       4/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       4/4           compile_body [50]
+[287]    0.0    0.00    0.00       4         emit_retract [287]
+                0.00    0.00       8/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       4/4           gen_switch1type [261]
+[288]    0.0    0.00    0.00       4         emit_switchfunc [288]
+                0.00    0.00       4/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       4/4           gen_uni2var [32]
+[289]    0.0    0.00    0.00       4         emit_uni2ppvar [289]
+                0.00    0.00       4/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       3/3           put_bld_nonfunc [54]
+[290]    0.0    0.00    0.00       3         emit_bldtvar [290]
+-----------------------------------------------
+                0.00    0.00       3/3           compile_body [50]
+[291]    0.0    0.00    0.00       3         emit_print [291]
+                0.00    0.00       6/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       3/3           full_constraint [62]
+[292]    0.0    0.00    0.00       3         emit_solve_gt0 [292]
+-----------------------------------------------
+                0.00    0.00       3/3           gen_uni2var [32]
+[293]    0.0    0.00    0.00       3         emit_uni2tpvar [293]
+                0.00    0.00       3/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       2/2           do_dynamic [91]
+[294]    0.0    0.00    0.00       2         assign_p_dynamic [294]
+                0.00    0.00       2/129160      new_hash_p_node [108]
+-----------------------------------------------
+                0.00    0.00       1/2           readfile [9]
+                0.00    0.00       1/2           internal_consult [8]
+[295]    0.0    0.00    0.00       2         close_input [295]
+-----------------------------------------------
+                0.00    0.00       1/2           main [1]
+                0.00    0.00       1/2           emul_sys_pred [3]
+[296]    0.0    0.00    0.00       2         do_ztime [296]
+-----------------------------------------------
+                0.00    0.00       2/2           gen_emit_addpf [73]
+[297]    0.0    0.00    0.00       2         emit_addtpfvar [297]
+-----------------------------------------------
+                0.00    0.00       2/2           put_bld_nonfunc [54]
+[298]    0.0    0.00    0.00       2         emit_bldpval [298]
+                0.00    0.00       2/101         fold_multi1 [207]
+                0.00    0.00       2/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       2/2           full_constraint [62]
+[299]    0.0    0.00    0.00       2         emit_solve_ge0 [299]
+-----------------------------------------------
+                0.00    0.00       2/2           gen_secondary_switch1type [278]
+[300]    0.0    0.00    0.00       2         emit_switch2con [300]
+                0.00    0.00       2/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       2/2           gen_secondary_switch1type [278]
+[301]    0.0    0.00    0.00       2         emit_switch2func [301]
+                0.00    0.00       2/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       2/2           gen_switch1type [261]
+[302]    0.0    0.00    0.00       2         emit_switchcon [302]
+                0.00    0.00       2/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       2/2           gen_switch1type [261]
+[303]    0.0    0.00    0.00       2         emit_switchnil [303]
+                0.00    0.00       2/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       2/2           fetch_uni_nonfunc [18]
+[304]    0.0    0.00    0.00       2         emit_unipvar [304]
+                0.00    0.00       2/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       2/2           main [1]
+[305]    0.0    0.00    0.00       2         first_engine [305]
+-----------------------------------------------
+                0.00    0.00       2/2           get_goal [89]
+[306]    0.0    0.00    0.00       2         gobble_nl [306]
+                0.00    0.00       1/408         unreadchar [181]
+                0.00    0.00       1/18648       readchar [155]
+-----------------------------------------------
+                0.00    0.00       1/2           readfile [9]
+                0.00    0.00       1/2           internal_consult [8]
+[307]    0.0    0.00    0.00       2         my_open [307]
+-----------------------------------------------
+                0.00    0.00       2/2           main [1]
+[308]    0.0    0.00    0.00       2         top_free_things [308]
+-----------------------------------------------
+                0.00    0.00       1/1           test_system_defaults [341]
+[309]    0.0    0.00    0.00       1         check_solver_sizes [309]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[310]    0.0    0.00    0.00       1         checkhist [310]
+-----------------------------------------------
+                0.00    0.00       1/1           final_clean [325]
+[311]    0.0    0.00    0.00       1         clean_temp_file [311]
+-----------------------------------------------
+                0.00    0.00       1/1           emul_halt [322]
+[312]    0.0    0.00    0.00       1         daemons_remaining [312]
+-----------------------------------------------
+                0.00    0.00       1/1           emul_sys_pred [3]
+[313]    0.0    0.00    0.00       1         do_clear_style [313]
+                0.00    0.00     401/12742       getmaxfunc [157]
+                0.00    0.00     400/543         p_added [172]
+                0.00    0.00      11/260         assign_p_added [193]
+-----------------------------------------------
+                0.00    0.00       1/1           rungoal [2]
+[314]    0.0    0.00    0.00       1         do_dump [314]
+-----------------------------------------------
+                0.00    0.00       1/1           compile_goal [74]
+[315]    0.0    0.00    0.00       1         dumpvarnames [315]
+-----------------------------------------------
+                0.00    0.00       1/1           do_assert_rule [4]
+[316]    0.0    0.00    0.00       1         emit_dynamic_try [316]
+                0.00    0.00       2/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       1/1           compile_body [50]
+[317]    0.0    0.00    0.00       1         emit_read [317]
+                0.00    0.00       2/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       1/1           compile_body [50]
+[318]    0.0    0.00    0.00       1         emit_roole [318]
+                0.00    0.00       3/946         emit_word [167]
+-----------------------------------------------
+                0.00    0.00       1/1           gen_switch1type [261]
+[319]    0.0    0.00    0.00       1         emit_switchdot [319]
+                0.00    0.00       1/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       1/1           gen_switch1type [261]
+[320]    0.0    0.00    0.00       1         emit_switchreal [320]
+                0.00    0.00       1/241         emit_addr [197]
+-----------------------------------------------
+                0.00    0.00       1/1           gen_uni2var [32]
+[321]    0.0    0.00    0.00       1         emit_uni2ptvar [321]
+                0.00    0.00       1/159         emit_realsave [201]
+-----------------------------------------------
+                0.00    0.00       1/1           rungoal [2]
+[322]    0.0    0.00    0.00       1         emul_halt [322]
+                0.00    0.00       1/1           daemons_remaining [312]
+-----------------------------------------------
+                0.00    0.00       1/1           files_shutdown [324]
+[323]    0.0    0.00    0.00       1         file_allclose [323]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[324]    0.0    0.00    0.00       1         files_shutdown [324]
+                0.00    0.00       1/1           file_allclose [323]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[325]    0.0    0.00    0.00       1         final_clean [325]
+                0.00    0.00       1/1           clean_temp_file [311]
+-----------------------------------------------
+                0.00    0.00       1/1           make_index_chains [244]
+[326]    0.0    0.00    0.00       1         float_to_int [326]
+-----------------------------------------------
+                0.00    0.00       1/1           gen_index_code [43]
+[327]    0.0    0.00    0.00       1         gen_all_chain [327]
+                0.00    0.00       2/265         make_rtag [192]
+                0.00    0.00       1/31          emit_try [230]
+                0.00    0.00       1/31          emit_trust [229]
+-----------------------------------------------
+                0.00    0.00       1/1           gen_switch1type [261]
+[328]    0.0    0.00    0.00       1         gen_default_chain [328]
+                0.00    0.00       3/265         make_rtag [192]
+                0.00    0.00       1/31          emit_try [230]
+                0.00    0.00       1/195         emit_retry [199]
+                0.00    0.00       1/31          emit_trust [229]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[329]    0.0    0.00    0.00       1         init_compiler [329]
+                0.00    0.00       1/6           alloc_mem [277]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[330]    0.0    0.00    0.00       1         init_engine_mem [330]
+                0.00    0.00       3/6           alloc_mem [277]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[331]    0.0    0.00    0.00       1         init_hash_l_table [331]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[332]    0.0    0.00    0.00       1         init_hash_p_table [332]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[333]    0.0    0.00    0.00       1         init_kohler [333]
+                0.00    0.00     256/256         num_bits [195]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[334]    0.0    0.00    0.00       1         init_malloc [334]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[335]    0.0    0.00    0.00       1         init_scanner [335]
+-----------------------------------------------
+                0.00    0.00       1/1           init_all [28]
+[336]    0.0    0.00    0.00       1         init_unify [336]
+-----------------------------------------------
+                0.00    0.00       1/1           internal_consult [8]
+[337]    0.0    0.00    0.00       1         is_clam_file [337]
+-----------------------------------------------
+                0.00    0.00       1/1           makedumpvars [99]
+[338]    0.0    0.00    0.00       1         makedumpvars1 [338]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[339]    0.0    0.00    0.00       1         pushhist [339]
+-----------------------------------------------
+                0.00    0.00       1/1           test_system_defaults [341]
+[340]    0.0    0.00    0.00       1         test_pmask [340]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[341]    0.0    0.00    0.00       1         test_system_defaults [341]
+                0.00    0.00       1/1           test_pmask [340]
+                0.00    0.00       1/1           check_solver_sizes [309]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+
+Index by function name
+
+ [111] add_entry             [286] emit_putpnum          [274] init_rungoal
+ [110] add_eqns              [237] emit_putpval          [335] init_scanner
+ [139] add_flatten_eqns (dump.c) [232] emit_putpvar       [30] init_solver
+  [79] add_func              [223] emit_putstr           [275] init_solver_goal
+ [140] add_ineq_eqns (dump.c) [212] emit_puttnum         [336] init_unify
+ [141] add_linear_eqns (dump.c) [238] emit_puttvar       [162] insert_name
+ [142] add_nlin_eqns         [317] emit_read             [168] insert_var (table.c)
+ [143] add_remaining_real_vars [201] emit_realsave       [121] int_to_float
+ [225] add_simple_entry      [271] emit_restore          [148] intern_numbers (dump.c)
+ [189] add_string            [287] emit_retract            [8] internal_consult
+ [245] add_to_all_chains     [199] emit_retry            [337] is_clam_file
+ [198] add_to_chain          [318] emit_roole             [20] is_ground
+ [177] add_unres_lable       [254] emit_savecurcp        [252] is_ground_eqn (arithgen.c)
+  [85] addop                 [264] emit_savecut          [188] is_nfix_hnode
+  [78] addspred              [299] emit_solve_ge0        [164] is_op_hnode
+ [277] alloc_mem             [292] emit_solve_gt0        [158] is_punc
+  [90] alocvar               [260] emit_solve_pf0         [41] kohler_setup
+ [209] arith_tree            [200] emit_spcall            [23] lookatvars
+ [193] assign_p_added        [272] emit_special_savecut   [68] lookup_name
+ [220] assign_p_compiled     [300] emit_switch2con        [72] lookup_var
+ [246] assign_p_cut          [301] emit_switch2func       [84] make_change_reg
+ [294] assign_p_dynamic      [302] emit_switchcon        [267] make_constant_eqn (arithgen.c)
+ [221] assign_p_end_hdrcode  [319] emit_switchdot         [46] make_dead_reg
+ [219] assign_p_first_rule   [288] emit_switchfunc       [149] make_equiv_funct_vars (dump.c)
+ [216] assign_p_jump_occ     [303] emit_switchnil        [150] make_equiv_pivot_vars (dump.c)
+ [134] assign_p_last_compiled_rule [320] emit_switchreal [180] make_ftag
+ [118] assign_p_last_rule    [283] emit_switchtype       [151] make_funct_eqns (dump.c)
+ [128] assign_p_n_rules      [229] emit_trust            [244] make_index_chains
+ [204] assign_p_protected    [230] emit_try              [240] make_itag (index.c)
+ [222] assign_p_start_hdrcode [289] emit_uni2ppvar       [187] make_live_reg
+ [115] backup_null_eqn       [321] emit_uni2ptvar         [88] make_op_func (parse.c)
+   [7] bootstrap             [293] emit_uni2tpvar        [192] make_rtag (index.c)
+  [26] can_gen_uni2var       [105] emit_uni2ttvar        [227] make_simple_eqn (arithgen.c)
+ [166] char_malloc            [39] emit_unicon           [241] make_ttag (index.c)
+ [196] check_clause (compile.c) [138] emit_uninil         [99] makedumpvars
+ [186] check_if_save_reg      [22] emit_uninum           [338] makedumpvars1
+ [178] check_pred (compile.c) [304] emit_unipvar         [183] makenum
+ [179] check_quote (compile.c) [103] emit_unitvar        [185] maketag
+ [256] check_rule             [48] emit_univoid          [218] malloc_null_EQN (arithgen.c)
+ [309] check_solver_sizes    [167] emit_word             [203] malloc_null_HASH_P_NODE
+ [310] checkhist             [322] emul_halt             [255] mult_eqn
+ [202] checksave               [3] emul_sys_pred         [307] my_open
+ [249] choose_a_switch        [13] fetch_arg             [279] myisdigit
+ [311] clean_temp_file        [14] fetch_func             [80] narg_pterm
+ [144] cleanup_dump           [18] fetch_uni_nonfunc     [108] new_hash_p_node
+ [295] close_input           [323] file_allclose         [190] new_hashnode
+  [16] collect_assert_vars (dump.c) [324] files_shutdown [268] new_input
+  [17] collect_deep_vars     [325] final_clean            [55] new_pt_emptylist
+ [145] collect_nlin_vars     [104] find_hash_p_node       [21] new_pterm
+  [31] compile               [273] find_last_arg          [19] new_real
+  [50] compile_body          [174] find_loc_for_lable    [129] new_rule
+  [59] compile_fgoal         [206] find_target_reg       [152] normalise_ineq
+  [74] compile_goal           [27] findbind               [47] notevar
+  [12] compile_head          [305] first_engine          [195] num_bits
+  [10] compile_rule           [82] flatten_arith_term (arithgen.c) [160] numfunc
+  [51] compile_tail          [326] float_to_int          [172] p_added
+ [258] copy_unres_lable       [96] fmt_printf            [113] p_compiled
+ [312] daemons_remaining     [207] fold_multi1           [210] p_cut
+ [228] delete_lable          [214] fold_multi2           [114] p_dynamic
+   [4] do_assert_rule         [33] free_eqn_nodes        [124] p_first_rule
+   [5] do_assertz            [116] free_nl_occ_nodes     [217] p_jump_occ
+ [313] do_clear_style        [109] free_occ_nodes        [131] p_last_rule
+  [49] do_ctime               [45] free_pterm            [132] p_n_rules
+ [314] do_dump               [126] free_varlist          [119] p_protected
+  [91] do_dynamic             [81] freereg               [285] p_start_hdrcode
+  [86] do_op                  [62] full_constraint       [182] peek
+  [83] do_op3                [101] func_narg_pterm        [42] prepare_ineq_eqns
+  [95] do_printf              [66] gen_addpfs (arithgen.c) [153] prepare_linear_eqns
+  [87] do_prot               [327] gen_all_chain         [154] prepare_nlin_eqns
+ [100] do_style_check        [328] gen_default_chain     [339] pushhist
+ [296] do_ztime               [73] gen_emit_addpf (arithgen.c) [52] put_arg
+ [315] dumpvarnames          [243] gen_general_chain      [58] put_arg_nonfunc
+  [92] duplicate_pterm       [265] gen_index_chain        [54] put_bld_nonfunc
+ [122] elim_quasi             [43] gen_index_code         [56] put_func
+ [107] emalloc               [257] gen_jump_table         [57] put_last_func
+ [251] emit_addpfval          [75] gen_putgetnum (arithgen.c) [94] quote_expand
+ [197] emit_addr             [278] gen_secondary_switch1type [155] readchar
+ [242] emit_addtpfval        [261] gen_switch1type         [9] readfile
+ [297] emit_addtpfvar        [284] gen_switchtype          [6] readfile_low
+ [226] emit_bldcon            [32] gen_uni2var            [61] readterm
+ [173] emit_bldlist           [70] get_args              [136] resolve
+ [213] emit_bldnil            [89] get_goal               [38] restore_context
+ [171] emit_bldnum            [71] get_list                [2] rungoal
+ [298] emit_bldpval          [161] get_name              [123] s_econ
+ [269] emit_bldpvar           [67] get_pterm              [40] s_evar
+ [280] emit_bldstr            [15] get_rule_constraints   [36] s_gt0
+ [208] emit_bldtval          [170] get_vrec              [276] save_context
+ [290] emit_bldtvar          [157] getmaxfunc             [64] scan
+ [191] emit_bldvoid          [102] getreg                 [53] set_arg
+ [239] emit_callp            [306] gobble_nl             [233] set_rr_info
+ [247] emit_crestore          [37] greater0              [248] setconst
+ [262] emit_docut             [65] half_constraint       [184] solve_eqn_1
+  [98] emit_dump             [169] has_live_reg          [175] store_lable
+ [316] emit_dynamic_try      [159] hash                  [130] store_rule
+ [259] emit_fastcut          [165] hash_l                [176] storename
+ [120] emit_getcon           [156] hash_p                [163] sum_str
+ [106] emit_getlist           [76] hashbuiltina           [97] term_printf
+ [281] emit_getnil            [11] ht_to_pterm (lib.c)   [340] test_pmask
+ [253] emit_getpvar           [28] init_all              [341] test_system_defaults
+  [29] emit_getstr           [329] init_compiler         [308] top_free_things
+ [137] emit_gettnum          [146] init_dump              [34] unify
+ [231] emit_gettval          [127] init_emit             [181] unreadchar
+ [224] emit_gettvar           [93] init_engine            [60] val_info (codegen.c)
+ [270] emit_halt             [330] init_engine_mem        [69] val_info (arithgen.c)
+ [250] emit_initpf           [112] init_eqn              [235] val_of_cur_rule
+ [263] emit_inst             [331] init_hash_l_table      [35] val_to_pc
+ [234] emit_jump             [332] init_hash_p_table     [211] var_has_reg
+ [236] emit_maybesave        [147] init_ht_to_pterm       [24] vars_in_atom
+ [291] emit_print             [44] init_index             [25] vars_in_term
+ [266] emit_printf           [333] init_kohler           [117] wakeup
+ [133] emit_proceed          [135] init_lable            [194] zero_vars
+ [205] emit_putcon           [125] init_live_regs         [63] <cycle 1>
+ [215] emit_putlist          [334] init_malloc
+ [282] emit_putnil            [77] init_name

@@ -1,0 +1,87 @@
+tracedepthbound(2).
+unfolddepthbound(1).
+
+% alist(H,L,multisetempty) :- L=0.
+% alist(H,L,union([S,multiset([L,L+1])])) :-
+%       L>0,
+%       disjoint([multiset([L,L+1]),S]),
+% 	access(H,L+1,X),
+% 	alist(H,X,S).
+
+unfold(alist(H,L,T),
+	[
+         body([], [multiseteq(T,multisetempty),eq(L,0)]),
+	 body([alist(H,X,S)],
+              [multiseteq(T,union([S,multiset([L,plus(L,1)])])),
+               geq(L,1), eq(X,ref(H,plus(L,1)))])
+        ]).
+
+% reverse(H,I,I,H,0).
+% reverse(H,I,E,aupd(H1,E1+1,J),E1) :-
+% 	access(H,E1+1,X), X=E,
+% 	reverse(H,I,E1,H1,J).
+
+unfold(reverse(H,I,OldNext,H2,J),
+	[
+         body([], [eq(I,OldNext),arreq(H,H2),eq(J,0)]),
+	 body([reverse(H,I,J,H1,NewNext)],
+	      [arreq(H2,upd(H1,plus(J,1),NewNext)),
+	       eq(OldNext,ref(H1,plus(J,1)))])
+	]).
+
+% To Prove:
+%
+%     reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U),
+%     disjoint([T,U]), S=union([T,U]), I>0, access(H,I+1,X)
+%         |= reverse(H0,I0,X,aupd(H,I+1,J),I),
+%            alist(aupd(H,I+1,J),I,?T'),
+%            alist(aupd(H,I+1,J),X,?U'),
+%            disjoint([?T',?U']), S=union([?T',?U']).
+
+desired_configuration([atm(0, _), atm(0, _), atm(1, _)], [atm(1, _), atm(1, _), atm(0, _)]).
+
+run :-
+	init_counters,
+	prove(0, 0,
+	      [reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,I,U)],
+	      [disjoint([T,U]), multiseteq(S,union([T,U])), gt(I,0),
+	       eq(X,ref(H,plus(I,1))), eq(H1,upd(H,plus(I,1),J))],
+	      [reverse(H0,I0,X,H1,I),
+	       alist(H1,I,T1), alist(H1,X,U1)],
+	      [disjoint([T1,U1]), multiseteq(S,union([T1,U1]))],
+	      []),
+	printf("PROOF SUCCEED\n", []),
+	show_counters.
+run :-
+	printf("PROOF FAILED\n", []).
+
+
+
+% To Prove:
+%
+%      reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,H[I+1],U1),
+%         U=U1*{I}, T*U=S, I!=0
+%          |= I!=0, ?T=T * {I}, alist(<H,I+1,J>,<H,I+1,J>[I+1],T),
+%             alist(<H,I+1,J>,H[I+1],U1), ?T*U1=S
+
+% run :-
+% 	set_counter(assertionnumber, 0),	
+% 	prove(0, 0,
+% 	      [reverse(H0,I0,I,H,J), alist(H,J,T), alist(H,X,U1)],
+% 	      [disjoint([T,U]), multiseteq(S,union([T,U])),
+% 	       disjoint([multiset([I,plus(I,1)]),U1]),
+% 	       multiseteq(U,union([U1,multiset([I,plus(I,1)])])),
+% 	       gt(I,0),
+% 	       eq(X,ref(H,plus(I,1))), arreq(H1,upd(H,plus(I,1),J)),
+% 	       eq(Y,ref(H1,plus(I,1)))],
+% 	      [alist(H1,Y,T), alist(H1,X,U1)],
+% 	      [disjoint([multiset([I,plus(I,1)]),T]),
+% 	       multiseteq(T2,union([multiset([I,plus(I,1)]),T])),
+% 	       disjoint([T2,U1]),
+% 	       multiseteq(S,union([T2,U1])),
+% 	       gt(I,0)],
+% 	      []).
+
+
+:- consult('monocut_reverse.clpr').
+

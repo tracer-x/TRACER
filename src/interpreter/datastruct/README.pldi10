@@ -1,0 +1,41 @@
+To obtain the answers as reported in the PLDI '10 paper:
+
+Fibonacci:
+
+clpr fibonacci5.clpr
+
+?- run.
+
+Idempotent:
+
+clpr idempotent.clpr
+
+?- run.
+
+Reverse (located in monocut/reverse subdirectory):
+
+clpr reverse.clpr
+
+?- run.
+
+For the subsequent questions, answer:
+n. n. n. y. n. n. n. y. n. n. n. n. n. y. y.
+
+Bubble sort (located in the monocut subdirectory):
+
+clpr bubblesort.clpr
+
+?- run.
+
+For the subsequent questions, answer:
+y. n. y. y. y. y.
+
+AVL tree (located in the monocut subdirectory):
+
+clpr avl_tree.clpr
+
+?- run.
+
+For the subsequent questions, answer:
+n. y. y. n. n. y. y.
+

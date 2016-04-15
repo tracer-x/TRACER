@@ -1,0 +1,42 @@
+
+coinductionlimit(1). % Apply at most 1 level of induction
+
+%------------------------------------------------------------------------------
+% Uncomment the following to finish the proof visiting only 22 assertions
+% instead of 25.
+%------------------------------------------------------------------------------
+% tracedepthbound(2).
+
+solver(uif).         % Use the UIF congruence closure solver
+
+%% s(X,X) :- X=error.
+%% s(X,Xf) :- not X=error, p(X)=1, Xf=X.
+%% s(X,Xf) :- not X=error, p(X)=0, s(h(X),Y), s(Y,Xf).
+
+unfold(s(X,Xf),
+	[
+         body([], [eq(X,error),eq(X,Xf)]),
+	 body([], [neq(X,error),eq(p(X),1),eq(X,Xf)]),
+	 body([s(h(X),Y),s(Y,Xf)], [neq(X,error),eq(p(X),0)])
+        ]).
+
+% To Prove:
+%
+% s(X,Y), s(Y,Xf) |= s(X,Xf)
+
+run :-
+	init_counters,
+ 	addunfoldlevel(0, [s(X,Y), s(Y,Xf)],
+ 	               UnfoldableGAtoms),
+        addunfoldlevel(0, [s(X,Xf)],
+ 		       UnfoldableHAtoms),
+	lprove(0, 0, [], UnfoldableGAtoms, [],
+		     [], UnfoldableHAtoms, [], []),
+        printf("PROOF FAILED.\n", []).
+run :-
+	printf("Proof succeed\n", []),
+	show_counters.
+
+
+:- consult('recursive.clpr').
+

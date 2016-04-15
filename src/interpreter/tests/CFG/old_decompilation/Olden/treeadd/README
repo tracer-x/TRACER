@@ -1,0 +1,17 @@
+/* For copyright information, see olden_v1.0/COPYRIGHT */
+**********************
+olden_v1.0/benchmarks/treeadd/README
+January 3, 1995
+Martin C. Carlisle
+
+this directory contains the TreeAdd benchmark:
+
+This benchmark simply adds the numbers stored at each node of a binary tree
+
+**********************
+
+Makefile - use "make treeadd" to create executable
+
+args.c - process command line args
+node.c,tree.h - main routines
+par-alloc.c - build tree

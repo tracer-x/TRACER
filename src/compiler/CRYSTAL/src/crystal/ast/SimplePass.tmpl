@@ -1,0 +1,147 @@
+package crystal.ast;
+
+import crystal.general.StdSymtab;
+
+import java.util.Stack;
+
+
+/** A helper for implementing passes that only need to visit a 
+ *  few nodes --- it takes care of all the subchildren walking; 
+ *  and provides do-nothing defaults for localVisit methods. */
+public class SimplePass implements StatVisitor, ExprVisitor
+{
+    /** Initiates the recursive walk */
+    public void process(Statement s) {
+        s.accept(this, null);
+    }
+
+    public void process(Expression e) {
+        e.accept(this, null);
+    }
+
+    /** Returns the parent of the node whose localVisitPre/Post 
+     *  method is currently called */
+    protected Parent getParent() {
+        return parentStack.peek();
+    }
+
+    /** Returns the grandparent */
+    protected Parent getGrandParent() {
+        return parentStack.get(parentStack.size() - 2);
+    }
+
+    /** Returns the closest enclosing statement */
+    protected Statement getEnclosingStatement() {
+        for (int pos = parentStack.size() - 1; pos >= 0; --pos) {
+            if (parentStack.get(pos) instanceof Statement)
+                return (Statement)parentStack.get(pos);
+        }
+
+        return null;
+    }
+
+    /** Returns the symbol table for the currently active scope. 
+     * Note: do not use this in passes altering which symbol tables 
+     * should be active */
+    protected StdSymtab activeSymtab() {
+        return scopeStack.peek();
+    }
+
+    private boolean doChildWalk = true;
+    
+    /** This may be called from a pre() hook to prevent recursion 
+     * through the children */
+    protected void abortChildWalk() {
+        doChildWalk = false;
+    }
+
+    protected void pushParent(Parent node) {
+        parentStack.push(node);
+    }
+
+    protected void popParent() {
+        parentStack.pop();
+    }
+
+    private Stack<Parent> parentStack = new Stack<Parent>();
+    private Stack<StdSymtab> scopeStack = new Stack<StdSymtab>();
+
+    /** Recursively walks the children and manages the parent and 
+     * scope stacks */
+    private void recurseThroughChildren(Statement s) {
+        if (!doChildWalk) {
+            doChildWalk = true;
+            return;
+        }
+
+        parentStack.push(s);
+
+        for (int child = 0; child < s.numKids(); ++child) {
+            if (s.getKid(child) != null)
+                s.getKid(child).accept(this, null);
+        }
+
+        for (int child = 0; child < s.numStatKids(); ++child) {
+            if (s.getStatKid(child) != null)
+                s.getStatKid(child).accept(this, null);
+        }
+
+        parentStack.pop();
+    }
+
+    /** Recursively walks the children and manages the parent stack */
+    protected void recurseThroughChildren(Expression e) {
+        if (!doChildWalk) {
+            doChildWalk = true;
+            return;
+        }
+    
+        parentStack.push(e);
+
+        for (int child = 0; child < e.numKids(); ++child) {
+            if (e.getKid(child) != null)
+                e.getKid(child).accept(this, null);
+        }
+
+        for (int child = 0; child < e.numStatKids(); ++child) {
+            if (e.getStatKid(child) != null)
+                e.getStatKid(child).accept(this, null);
+        }
+
+        parentStack.pop();
+    }
+    
+
+    /** The implementation for BlockStat is special, as it manages 
+     * the scope stack */
+    public Object visit(BlockStat n, Object o) {
+        boolean pushedScope = false;
+        if (n.getSymTab() != null) {
+            scopeStack.push(n.getSymTab());
+            pushedScope = true;
+        }
+    
+        localVisitPre(n);
+        recurseThroughChildren(n);
+        localVisitPost(n);
+
+        if (pushedScope)
+            scopeStack.pop();
+        
+        return null;
+    }
+
+    protected void localVisitPre (BlockStat e) {}
+    protected void localVisitPost(BlockStat e) {}
+
+    /* Visit hook for all statements */
+    protected void localVisitPre (Statement s) {}
+    protected void localVisitPost(Statement s) {}
+
+    /* Visit hook for all expressions */
+    protected void localVisitPre (Expression e) {}
+    protected void localVisitPost(Expression e) {}
+
+
+    %merge%
+}

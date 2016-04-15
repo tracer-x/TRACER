@@ -1,0 +1,107 @@
+# NOTE: benchmarks specifically for ARMC. decompiler was modified
+# to reset local variables for each function call (by calling a
+# nondet() function) rather than
+# declare new variables, which caused ARMC to run out of maximum
+# vars in a goal.
+
+=============== cdaudio ================$
+tmp.c:1628: Warning: Return statement with a value in function returning void
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.005s
+user	0m0.000s
+sys	0m0.000s
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.005s
+user	0m0.000s
+sys	0m0.000s
+Q'ARMC: program is correct
+
+real	0m20.581s
+user	0m20.420s
+sys	0m0.070s
+=============== diskperf ================$
+tmp.c:753: Warning: Return statement with a value in function returning void
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.009s
+user	0m0.000s
+sys	0m0.000s
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.007s
+user	0m0.000s
+sys	0m0.000s
+Q'ARMC: program is correct
+
+real	0m6.123s
+user	0m6.020s
+sys	0m0.040s
+=============== floppy ================$
+tmp.c:769: Warning: Body of function main falls-through. Adding a return statement
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.009s
+user	0m0.000s
+sys	0m0.000s
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.005s
+user	0m0.000s
+sys	0m0.000s
+Q'ARMC: program is correct
+
+real	0m5.926s
+user	0m5.800s
+sys	0m0.050s
+=============== floppy2 ================$
+tmp.c:785: Warning: Body of function main falls-through. Adding a return statement
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.005s
+user	0m0.000s
+sys	0m0.000s
+Timeout: aborting command ``./myqarmc.sh'' with signal 9
+
+real	10m0.006s
+user	0m0.020s
+sys	0m0.000s
+Q'ARMC: program is correct
+
+real	0m17.249s
+user	0m17.120s
+sys	0m0.030s
+=============== kbfiltr ================$
+Q'ARMC: program is correct
+
+real	0m34.991s
+user	0m34.920s
+sys	0m0.010s
+Q'ARMC: program is correct
+
+real	0m2.489s
+user	0m2.440s
+sys	0m0.000s
+Q'ARMC: program is correct
+
+real	0m0.395s
+user	0m0.320s
+sys	0m0.020s
+=============== kbfiltr2 ================$
+tmp.c:469: Warning: Return statement with a value in function returning void
+Q'ARMC: program is correct
+
+real	1m21.907s
+user	1m21.700s
+sys	0m0.140s
+Q'ARMC: program is correct
+
+real	0m12.168s
+user	0m12.090s
+sys	0m0.020s
+Q'ARMC: program is correct
+
+real	0m0.695s
+user	0m0.610s
+sys	0m0.030s

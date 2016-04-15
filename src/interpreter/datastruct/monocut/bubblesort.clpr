@@ -1,0 +1,50 @@
+coinductionlimit(0).
+unfolddepthbound(1).
+tracedepthbound(2).
+%solver(array).
+
+declare_unification_type(sorted, [arreq,eq,eq]).
+declare_unification_type(max, [arreq,eq,eq]).
+
+unfold(sorted(A,I,N),
+       [
+	body([], [eq(I,N)]),
+	body([sorted(A,J,N)],
+	     [gt(N,I), geq(ref(A,plus(I,1)),ref(A,I)), eq(J,plus(I,1))])
+       ]).
+
+unfold(max(A,Y,U),
+       [
+	body([], [gt(0,Y)]),
+	body([max(A,Z,U)],
+	     [eq(Y,plus(Z,1)), geq(Y,0), geq(U,ref(A,Y))])
+       ]).
+
+
+desired_configuration([atm(0, _), atm(0, _)], [atm(1, _)]).
+
+% To Prove:
+%
+%        allz(H,P0,P,H1), P1=H1[P+1], P1!=null, H2=<H1,P1,0>
+%        |= allz(H,P0,P1,H2)
+
+run :-
+	init_counters,
+	prove(0, 0,
+	      [max(A,Idx1,UB),
+	       sorted(A,Idx2,Idx3)],
+	      [eq(Idx1,minus(Nf,plus(If,2))),
+	       eq(Idx2,minus(Nf,plus(If,1))),
+	       eq(Idx3,minus(Nf,1)),
+	       eq(UB,ref(A,Idx2)),
+	       eq(If,I), eq(Nf,N), geq(If,0), gt(Nf,plus(If,1))],
+	      [sorted(A,Idx1,Idx3)],
+	      [eq(If,I), eq(Nf,N)],
+	      []),
+	printf("Proof succeed\n", []),
+	show_counters.
+run :-
+        printf("PROOF FAILED.\n", []).
+
+:- consult('monocut.clpr').
+

@@ -1,0 +1,1151 @@
+package crystal.parser;
+
+import java.util.*;
+
+import crystal.general.*;
+import crystal.ast.*;
+
+parser code {:
+    public parser(String file) {
+        this(new Lexer(file), new CrystalSymbolFactory());
+    }
+
+    public void syntax_error(java_cup.runtime.Symbol tok) {
+        System.err.println("\nSyntax error: \"" + Lexer.getSourceFile() + 
+                           "\", line " + tok.left + 
+                           ", token: '" + tok.value + "'");
+        System.exit(1);
+    }
+    
+    public void report_error(String message, java_cup.runtime.Symbol info) {
+    }
+    
+    public void report_fatal_error(String message, Object info) {
+    }
+    
+    static public void error(String s) {
+        System.err.println(s);
+        System.exit(1);
+    }
+:}    
+
+action code {:
+    Loc loc(int line) {
+        return Loc.newLoc(Lexer.getSourceFile(), line);
+    }
+:}
+
+terminal String      IDENTIFIER;
+terminal TypedefType TYPE_NAME;
+terminal String      STRING_LITERAL, CONSTANT_INT, CONSTANT_CHAR, 
+					 CONSTANT_FLOAT, CONSTANT_HEXFLOAT;
+
+terminal PTR_OP, INC_OP, DEC_OP, LEFT_OP, RIGHT_OP, LE_OP, GE_OP, EQ_OP, NE_OP;
+terminal AND_OP, OR_OP, MUL_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, ADD_ASSIGN;
+terminal SUB_ASSIGN, LEFT_ASSIGN, RIGHT_ASSIGN, AND_ASSIGN;
+terminal XOR_ASSIGN, OR_ASSIGN, SIZEOF;
+
+terminal TYPEDEF, EXTERN, STATIC;
+terminal AUTO, REGISTER, CONST, VOLATILE, RESTRICT, FUNCTION;
+
+terminal VOID, CHAR, SHORT, INT, SIGNED, UNSIGNED;
+terminal LONG, FLOAT, DOUBLE;
+terminal STRUCT, UNION, ENUM, ELLIPSIS;
+
+terminal COMMA, SEMI, LPAREN, RPAREN, LBRACE, RBRACE, LBRACK, RBRACK, COLON;
+terminal DOT, ASSIGN, STAR, PLUS, MINUS, DIV, LT_OP, GT_OP, QUESTION, BANG;
+terminal TILDA, AMPERSAND, CARET, BAR, PERCENT;
+
+terminal CASE, DEFAULT, IF, ELSE, SWITCH, WHILE, DO, FOR, GOTO;
+terminal CONTINUE, BREAK, RETURN, LABEL;
+
+non terminal String id_or_type, identifier_opt;
+non terminal maybe_comma;
+
+non terminal program, translation_unit, external_declaration;
+non terminal function_definition, declaration, declaration_list;
+non terminal enumerator, enumerator_list;
+non terminal struct_declaration_list, struct_declaration;
+non terminal declaration_specifiers;
+non terminal declaration_specifiers_opt;
+non terminal declaration_specifiers_no_type;
+non terminal specifier_qualifier_list;
+non terminal specifier_qualifier_list_opt;
+non terminal specifier_qualifier_list_no_type;
+non terminal init_declarator, init_declarator_list;
+non terminal struct_declarator, struct_declarator_list;
+non terminal block_item, block_item_list;
+non terminal parameter_list, parameter_type_list;
+non terminal parameter_type_list_opt, parameter_declaration;
+non terminal identifier_list, identifier_list_opt;
+
+non terminal Specifiers 
+    storage_class_specifier, function_specifier,
+    type_specifier, type_qualifier, type_qualifier_opt, 
+    type_qualifier_list, type_qualifier_list_opt,
+    label_identifier_list;
+
+non terminal Byte
+    struct_or_union;
+
+non terminal Type
+    struct_or_union_specifier, enum_specifier, type_name;
+
+non terminal Declarator     
+    declarator, direct_declarator, 
+    abstract_declarator, direct_abstract_declarator,
+    abstract_declarator_opt, direct_abstract_declarator_opt,
+    pointer, pointer_opt;
+
+non terminal Initializer
+    initializer;
+
+non terminal InitList
+	initializer_list;
+
+non terminal InitElement
+	designation;
+
+non terminal Designator 
+	designator, designator_list;
+	
+non terminal Expression  
+    primary_expression, postfix_expression, 
+    unary_expression, cast_expression,
+    expression, multiplicative_expression, 
+    additive_expression, shift_expression,
+    relational_expression, equality_expression, 
+    and_expression, exclusive_or_expression, 
+    inclusive_or_expression, logical_and_expression, 
+    logical_or_expression, conditional_expression,
+    constant_expression, assignment_expression, 
+    expression_statement,
+    assignment_expression_opt, expression_opt;
+    
+non terminal List<Expression>
+    argument_expression_list, comma_expression;
+
+non terminal StringExpr
+    stringlit;
+    
+non terminal String
+	offset_designator;
+
+non terminal Statement
+    statement, labeled_statement, selection_statement, 
+    iteration_statement, jump_statement;
+
+non terminal BlockStat
+    compound_statement;
+
+/* gnu extensions */
+terminal INLINE, TYPEOF, ATTRIBUTE, ASM,
+         BUILTIN_VA_LIST, BUILTIN_VA_ARG, BUILTIN_OFFSETOF;
+
+non terminal 
+    gnu_label_declaration, attribute, attributes;
+
+non terminal String
+	attributes_asm;
+
+non terminal AsmStat
+    asm_statement, asm_operand_sequence;
+
+non terminal AsmOperand
+	asm_operand;
+	
+non terminal List<AsmOperand>
+	asm_operands, asm_operands_opt;
+	
+non terminal List<String>
+	asm_clobbers;
+	
+
+precedence left  COMMA;
+precedence right ASSIGN, ADD_ASSIGN, SUB_ASSIGN, MUL_ASSIGN, DIV_ASSIGN,
+                 MOD_ASSIGN, AND_ASSIGN, OR_ASSIGN, XOR_ASSIGN, 
+                 RIGHT_ASSIGN, LEFT_ASSIGN;
+precedence right QUESTION, COLON;
+precedence left  OR_OP;
+precedence left  AND_OP;
+precedence left  BAR;
+precedence left  CARET;
+precedence left  AMPERSAND;
+precedence left  EQ_OP, NE_OP;
+precedence left  LT_OP, GT_OP, LE_OP, GE_OP;
+precedence left  RIGHT_OP, LEFT_OP;
+precedence left  PLUS, MINUS;
+precedence left  STAR, DIV, PERCENT, CONST, RESTRICT, VOLATILE;
+precedence right BANG, TILDA, INC_OP, DEC_OP, /*CAST,*/ 
+                 RPAREN, AMPERSAND, SIZEOF /*, ALIGNOF*/;
+precedence left  LBRACK;
+precedence left  DOT, PTR_OP, LPAREN, LBRACE;
+precedence right TYPE_NAME;
+precedence left  IDENTIFIER;
+
+precedence nonassoc IF;   /* handles dangling-else ambiguity */
+precedence nonassoc ELSE; /* handles dangling-else ambiguity */
+precedence right LONG;    /* forces parsing LONG LONG */
+
+
+program ::=
+      /* empty */
+
+    |     {: Actions.pushFileScope(); :} 
+      translation_unit 
+          {: Actions.popFileScope(); :}
+    ;
+ 
+translation_unit ::= /* ISO99 6.9 */
+      external_declaration
+    | translation_unit external_declaration
+    ;
+
+external_declaration ::= /* ISO99 6.9 */
+      function_definition:d 
+
+    | attribute declaration
+
+    | declaration:d
+
+    | SEMI /* not ISO99 */
+    ;
+
+function_definition ::= /* ISO99 6.9.1 */
+      declaration_specifiers:ds declarator:d
+          {: Actions.pushFunScope(d,true); :}
+      declaration_list  
+          {: Actions.setFunSymbol(d,true); :}
+      compound_statement:body
+          {: Actions.popFunScope(body); :}
+
+    | declaration_specifiers:ds declarator:d
+          {: Actions.pushFunScope(d,false);
+             Actions.setFunSymbol(d,true); :}
+      compound_statement:body
+          {: Actions.popFunScope(body); :}
+
+    | declarator:d /* not ISO99 */
+          {: Actions.pushFunScope(d,true); :}
+      declaration_list 
+          {: Actions.setFunSymbol(d,false); :}
+      compound_statement:body
+          {: Actions.popFunScope(body); :}
+
+    | declarator:d /* not ISO99 */
+          {: Actions.pushFunScope(d,false);
+             Actions.setFunSymbol(d,false); :}
+      compound_statement:body
+          {: Actions.popFunScope(body); :}
+    ;
+
+declaration_list ::= /* ISO99 6.9.1 */
+      declaration
+    | declaration_list declaration
+    ;
+
+declaration ::= /* ISO99 6.7 */
+      declaration_specifiers SEMI
+          {: Actions.specifiersStack.pop(); :}
+
+    | declaration_specifiers init_declarator_list SEMI
+          {: Actions.specifiersStack.pop(); :}
+
+    | gnu_label_declaration /* not ISO99 */
+    ;
+
+declaration_specifiers ::= /* ISO99 6.7 */
+      storage_class_specifier:s attributes declaration_specifiers_opt
+          {: Actions.addSpecifier(s); :} 
+
+    | type_specifier:s attributes declaration_specifiers_no_type 
+          {: Actions.addSpecifier(s); :} 
+
+    | type_qualifier:s attributes declaration_specifiers_opt
+          {: Actions.addSpecifier(s); :} 
+
+    | function_specifier:s attributes declaration_specifiers_opt
+          {: Actions.addSpecifier(s); :} 
+    ;
+
+declaration_specifiers_opt ::= declaration_specifiers
+    |     {: Actions.specifiersStack.push(null); :} 
+    ;
+
+declaration_specifiers_no_type ::=  declaration_specifiers
+    |      {: Actions.specifiersStack.push(null); :} %prec IDENTIFIER
+    ;
+
+init_declarator_list ::= /* ISO99 6.7 */
+      init_declarator
+    | init_declarator_list COMMA init_declarator
+    ;
+
+init_declarator ::= /* ISO99 6.7 */
+      declarator:d 
+          {: Actions.processDeclaration(d,false,false); :}
+
+    | declarator:d ASSIGN 
+          {: Symbol sym = Actions.processDeclaration(d,false,true); 
+             Actions.initStack.push(sym); :}
+      initializer:i
+          {: Symbol sym = Actions.initStack.pop();
+             Actions.addInitializer(sym, i); :}
+    ;
+
+function_specifier ::= /* ISO99 6.7.4 */
+      INLINE   {: RESULT = new Specifiers(Flags.INLINE); :}
+    ;
+    
+storage_class_specifier ::= /* ISO99 6.7.1  */
+      TYPEDEF  {: RESULT = new Specifiers(Flags.TYPEDEF); :}
+    | EXTERN   {: RESULT = new Specifiers(Flags.EXTERN); :}
+    | STATIC   {: RESULT = new Specifiers(Flags.STATIC); :}
+    | AUTO     {: RESULT = new Specifiers(Flags.AUTO); :}
+    | REGISTER {: RESULT = new Specifiers(Flags.REGISTER); :}
+    ;
+
+type_qualifier ::= /* ISO99 6.7.3 */
+      CONST    {: RESULT = new Specifiers(Flags.CONST); :}
+    | VOLATILE {: RESULT = new Specifiers(Flags.VOLATILE); :}
+    | RESTRICT {: RESULT = new Specifiers(Flags.RESTRICT); :}
+    ;
+
+/* type specifiers */
+
+type_specifier ::= /* ISO99 6.7.2, missing _Bool, _Complex, _Imaginary */
+      VOID      {: RESULT = new Specifiers(Type.Void); :}
+    | CHAR      {: RESULT = new Specifiers(Flags.CHAR); :} 
+    | SHORT     {: RESULT = new Specifiers(Flags.SHORT); :} 
+    | INT       {: RESULT = new Specifiers(Flags.INT); :} 
+    | LONG      {: RESULT = new Specifiers(Flags.LONG); :} 
+    | LONG LONG /* not ISO99 */ 
+                {: RESULT = new Specifiers(Flags.LONGLONG); :} 
+    | FLOAT     {: RESULT = new Specifiers(Flags.FLOAT); :} 
+    | DOUBLE    {: RESULT = new Specifiers(Flags.DOUBLE); :} 
+    | SIGNED    {: RESULT = new Specifiers(Flags.SIGNED); :} 
+    | UNSIGNED  {: RESULT = new Specifiers(Flags.UNSIGNED); :} 
+    
+    | struct_or_union_specifier:t 
+         {: RESULT = new Specifiers(t); :}
+
+    | enum_specifier:t 
+         {: RESULT = new Specifiers(t); :}
+
+    | TYPE_NAME:t      
+         {: RESULT = new Specifiers(t); :}
+    
+    | TYPEOF LPAREN type_name:t RPAREN /* not ISO99 */
+         {: RESULT = new Specifiers(t); :}
+
+    | TYPEOF LPAREN expression:e RPAREN /* not ISO99 */
+         {: RESULT = new Specifiers(e.getType()); :}
+                
+    | BUILTIN_VA_LIST  /* not ISO99 */
+         {: RESULT = new Specifiers(Type.BuiltinVaList); :}
+    ;
+
+struct_or_union_specifier ::= /* ISO99 6.7.2.1 */
+      struct_or_union:s identifier_opt:id 
+          {: Actions.pushStructScope(s, id); :}
+      LBRACE struct_declaration_list RBRACE
+          {: RESULT = Actions.popStructScope(s); :}
+
+    | struct_or_union:s id_or_type:id
+          {: RESULT = Actions.enterStructName(s, id); :}
+    ;
+
+struct_or_union ::= /* ISO99 6.7.2.1 */
+      STRUCT {: RESULT = Flags.STRUCT; :}
+    | UNION  {: RESULT = Flags.UNION; :}
+    ;
+
+struct_declaration_list ::= /* ISO99 6.7.2.1 */
+      struct_declaration
+    | struct_declaration_list struct_declaration
+    ;
+
+struct_declaration ::= /* ISO99 6.7.2.1 */
+      specifier_qualifier_list struct_declarator_list:d SEMI
+          {: Actions.specifiersStack.pop(); :}
+      
+    | specifier_qualifier_list SEMI /* not IS099 */
+          {: Actions.processNestedStruct();
+             Actions.specifiersStack.pop(); :}
+    ;
+
+specifier_qualifier_list ::= /* ISO99 6.7.2.1 */
+      type_specifier:s attributes specifier_qualifier_list_no_type
+          {: Actions.addSpecifier(s); :}
+      
+    | type_qualifier:s attributes specifier_qualifier_list_opt
+          {: Actions.addSpecifier(s); :}
+    ;
+
+specifier_qualifier_list_opt ::= specifier_qualifier_list
+    |      {: Actions.specifiersStack.push(null); :} 
+    ;
+
+specifier_qualifier_list_no_type ::= specifier_qualifier_list
+    |      {: Actions.specifiersStack.push(null); :} %prec IDENTIFIER
+    ;
+
+struct_declarator_list ::= /* ISO99 6.7.2.1 */
+      struct_declarator
+    | struct_declarator_list COMMA struct_declarator
+    ;
+
+struct_declarator ::= /* ISO99 6.7.2.1 */
+      declarator:d
+          {: Actions.processDeclaration(d,false,true); :}
+
+    | declarator:d COLON constant_expression
+          {: Actions.processDeclaration(d,false,true); :}
+
+    | COLON constant_expression
+          {: :}
+    ;
+
+enum_specifier ::= /* ISO99 6.7.2.2 */
+      ENUM identifier_opt:id 
+         {: Actions.pushStructScope(Flags.ENUM, id); :}
+      LBRACE enumerator_list maybe_comma RBRACE
+         {: RESULT = Actions.popStructScope(Flags.ENUM); :}
+
+    | ENUM id_or_type:id
+         {: RESULT = Actions.enterStructName(Flags.ENUM, id); :}
+    ;
+
+identifier_opt ::=  {: RESULT = null; :}
+    | id_or_type:id {: RESULT = id; :}
+    ;
+enumerator_list ::= /* ISO99 6.7.2.2 */
+      enumerator 
+    | enumerator_list COMMA enumerator
+    ;
+
+enumerator ::= /* ISO99 6.7.2.2 */
+      IDENTIFIER:id
+             {: Actions.enterEnumId(id, null, loc(idleft)); :}
+
+    | IDENTIFIER:id ASSIGN constant_expression:e
+             {: Actions.enterEnumId(id, e, loc(idleft)); :}
+    ;
+
+
+/* declarator */
+
+declarator ::= /* ISO99 6.7.5 */
+      pointer_opt:pd direct_declarator:d attributes_asm:s
+          {: (RESULT = pd == null ? d : pd.fill(d)).asm = s; :}
+    ;
+
+direct_declarator ::=
+      id_or_type:id 
+          {: RESULT = new IdDeclarator(id, loc(idleft)); :} 
+
+    | LPAREN attributes declarator:d RPAREN
+          {: RESULT = d; :}
+
+    | direct_declarator:d LBRACK type_qualifier_list_opt:s 
+                                 assignment_expression_opt:e RBRACK
+          {: RESULT = new ArrayDeclarator(d,e); :}
+
+    | direct_declarator:d LBRACK STATIC type_qualifier_list_opt:s 
+                                 assignment_expression:e RBRACK
+          {: RESULT = new ArrayDeclarator(d,e); :}
+
+    | direct_declarator:d LBRACK type_qualifier_list:s STATIC 
+                                 assignment_expression:e RBRACK
+          {: RESULT = new ArrayDeclarator(d,e); :}
+
+    | direct_declarator:d LBRACK type_qualifier_list_opt:s STAR RBRACK
+          {: RESULT = new ArrayDeclarator(d,null); :}
+
+    | direct_declarator:d LPAREN 
+          {: Actions.pushParamScope(); :}
+      parameter_type_list RPAREN
+          {: RESULT = Actions.popParamScope(d); :}
+
+    | direct_declarator:d LPAREN
+          {: Actions.pushParamScope(); :}
+      identifier_list_opt RPAREN
+          {: RESULT = Actions.popParamScope(d); :}
+    ;
+
+pointer ::= /* ISO99 6.7.5 */
+      STAR attributes type_qualifier_list_opt:s pointer_opt:d 
+          {: RESULT = new PointerDeclarator(d, s); :}
+    ;
+    
+pointer_opt ::= {: RESULT = null; :}
+    | pointer:d {: RESULT = d; :}
+    ;
+
+type_qualifier_list ::= /* ISO99 6.7.5 */
+      type_qualifier:q 
+          {: (RESULT = new Specifiers()).merge(q); :}
+
+    | type_qualifier_list:l type_qualifier:q 
+          {: RESULT = l.merge(q); :}
+    ;
+
+type_qualifier_list_opt ::= {: RESULT = null; :}
+    | type_qualifier_list:q {: RESULT = q; :}
+    ;
+
+parameter_type_list ::= /* ISO99 6.7.5 */
+      parameter_list 
+
+    | parameter_list COMMA ELLIPSIS
+          {: Symtab.getCurrentScope().insertSymLocal(Symbol.varargs); :}
+    ;
+
+parameter_list ::= /* ISO99 6.7.5 */
+      parameter_declaration
+    | parameter_list COMMA parameter_declaration
+    ;
+
+parameter_declaration ::= /* ISO99 6.7.5 */
+      declaration_specifiers declarator:d
+          {: Actions.processDeclaration(d,true,true); :} 
+
+    | declaration_specifiers abstract_declarator_opt:d
+          {: Actions.processDeclaration(d,true,true); :} 
+    ;
+
+identifier_list ::= /* ISO99 6.7.5 */
+      IDENTIFIER:id
+          {: Symbol s = Symbol.newVar(id, Type.SignedInt, loc(idleft));
+             Symtab.getCurrentScope().insertSymLocal(s); :}
+
+    | identifier_list_opt:l COMMA IDENTIFIER:id
+          {: Symbol s = Symbol.newVar(id, Type.SignedInt, loc(idleft));
+             Symtab.getCurrentScope().insertSymLocal(s); :}
+    ;
+
+identifier_list_opt ::=
+    | identifier_list
+    ;
+
+type_name ::= /* ISO99 6.7.6 */
+      specifier_qualifier_list abstract_declarator_opt:d
+          {: RESULT = Actions.getType(d); :}
+    ;
+
+abstract_declarator_opt ::=  
+          {: RESULT = new IdDeclarator(); :}
+
+    |  abstract_declarator:d 
+          {: RESULT = d; :}
+	;
+
+abstract_declarator ::= /* ISO99 6.7.6 */
+      pointer:pd
+          {: RESULT = pd.fill(new IdDeclarator()); :}
+
+    | pointer_opt:pd direct_abstract_declarator:d attributes 
+          {: RESULT = pd == null ? d : pd.fill(d); :}
+    ;
+
+direct_abstract_declarator ::= /* ISO99 6.7.6 */
+      LPAREN attributes abstract_declarator:d RPAREN
+          {: RESULT = d; :}
+
+    | direct_abstract_declarator_opt:d 
+      LBRACK assignment_expression_opt:e RBRACK
+          {: RESULT = new ArrayDeclarator(d, e); :}
+
+    | direct_abstract_declarator_opt:d LBRACK STAR RBRACK
+          {: RESULT = new ArrayDeclarator(d, null); :}
+
+    | direct_abstract_declarator_opt:d LPAREN
+          {: Actions.pushParamScope(); :}
+      parameter_type_list_opt:l RPAREN
+          {: RESULT = Actions.popParamScope(d); :}
+    ;
+
+parameter_type_list_opt ::= 
+    | parameter_type_list
+    ;
+
+direct_abstract_declarator_opt ::=  {: RESULT = new IdDeclarator(); :}
+    | direct_abstract_declarator:d  {: RESULT = d; :}
+    ;
+
+assignment_expression_opt ::=       {: RESULT = null; :}
+    | assignment_expression:e       {: RESULT = e; :}
+    ;
+    
+    
+/* initializers */
+
+initializer ::= /* ISO99 6.7.8 */
+      assignment_expression:e
+          {: RESULT = new InitExpr(e); :}
+
+    | LBRACE initializer_list:l maybe_comma RBRACE
+          {: RESULT = l; :}
+
+    | LBRACE  RBRACE  /* not ISO99  */
+          {: RESULT = new InitList(null); :}
+    ;
+
+maybe_comma ::= | COMMA ;
+
+initializer_list ::= /* ISO99 6.7.8 */
+      designation:i 
+          {: RESULT = new InitList(i); :}
+
+    | initializer_list:il COMMA designation:i
+          {: RESULT = il.add(i); :}
+    ;
+
+designation ::= /* ISO99 6.7.8 */
+      initializer:i
+          {: RESULT = new InitElement(null, i); :}
+
+    | designator_list:d ASSIGN initializer:i
+          {: RESULT = new InitElement(d, i); :}
+      
+    | designator:d  initializer:i /* not ISO99 */
+          {: RESULT =  new InitElement(d, i); :}
+
+    | id_or_type:id COLON initializer:i /* not ISO99 */
+          {: RESULT =  new InitElement(new Designator(id), i); :}
+    ;
+
+designator_list ::= /* ISO99 6.7.8 */
+      designator:d
+          {: RESULT = d; :}
+        
+    | designator:d designator_list:dl 
+          {: RESULT = d.add(dl); :}
+    ;
+    
+designator ::= /* ISO99 6.7.8 */
+      DOT id_or_type:id
+          {: RESULT = new Designator(id); :}
+        
+    | LBRACK constant_expression:e RBRACK
+          {: RESULT = new Designator(e, null); :}
+
+    | /* not ISO99 */
+      LBRACK constant_expression:e1 ELLIPSIS constant_expression:e2 RBRACK 
+          {: RESULT = new Designator(e1, e2); :}
+    ;
+
+
+/* expressions */
+
+primary_expression ::=
+      IDENTIFIER:id
+          {: RESULT = Actions.buildVarExpr(id); :}
+
+    | CONSTANT_INT:s
+          {: RESULT = NumberExpr.parseInt(s); :}
+
+    | CONSTANT_CHAR:s
+          {: RESULT = NumberExpr.parseChar(s); :}
+
+    | CONSTANT_FLOAT:s
+          {: RESULT = NumberExpr.parseFloat(s); :}
+
+    | CONSTANT_HEXFLOAT:s
+          {: RESULT = NumberExpr.parseHexFloat(s); :}
+
+    | stringlit:s
+          {: RESULT = s; :}
+
+    | LPAREN expression:e RPAREN
+          {: RESULT = e; :}
+
+    | /* GNU function name string */
+      FUNCTION
+          {: RESULT = Actions.buildFunctionName(); :}
+
+    | /* GNU statement expressions */
+      LPAREN compound_statement:s RPAREN
+          {: RESULT = new StatExpr(s); :} 
+          
+    | /* GNU compound literals */
+      LPAREN type_name:t RPAREN
+      LBRACE initializer_list:l maybe_comma RBRACE 
+         {: RESULT = Actions.buildCompoundLiteral(t, l); :}
+    ;
+
+stringlit ::=
+      STRING_LITERAL:s
+         {: RESULT = new StringExpr(s); :}
+
+    | stringlit:sl STRING_LITERAL:s
+         {: RESULT = sl.add(s); :}
+    ;
+ 
+postfix_expression ::=
+      primary_expression:e
+          {: RESULT = e; :}
+      
+    | postfix_expression:e1 LBRACK expression:e2 RBRACK
+          {: RESULT = new ArrayExpr(e1, e2); :}
+    
+    | postfix_expression:e LPAREN RPAREN
+          {: RESULT = Actions.buildCallExpr(e, null); :}
+        
+    | postfix_expression:e LPAREN argument_expression_list:ve RPAREN
+          {: RESULT = Actions.buildCallExpr(e, ve); :}
+        
+    | postfix_expression:e DOT id_or_type:id
+          {: RESULT = Actions.buildFieldExpr(false, e, id); :}
+    
+    | postfix_expression:e PTR_OP id_or_type:id
+          {: RESULT = Actions.buildFieldExpr(true, e, id); :}
+
+    | postfix_expression:e INC_OP
+          {: RESULT = new AutoIncExpr(e, true, true); :}
+
+    | postfix_expression:e DEC_OP
+          {: RESULT = new AutoIncExpr(e, true, false); :}
+
+    | BUILTIN_VA_ARG LPAREN assignment_expression:e COMMA type_name:t RPAREN
+          {: RESULT = Actions.buildVaArgExpr(e, t); :}
+             
+    | BUILTIN_OFFSETOF 
+      LPAREN type_name:t COMMA offset_designator:d RPAREN
+    	  {: RESULT = Actions.buildOffsetofExpr(t, d); :}
+    ;
+
+offset_designator ::=
+      IDENTIFIER:id
+          {: RESULT = id; :}
+
+    | offset_designator:d DOT IDENTIFIER:id
+          {: RESULT = d + "." + id; :}
+          
+    | offset_designator:d LBRACK expression:e RBRACK
+          {: RESULT = d + "[" + e.toString() + "]"; :}
+    ;
+
+argument_expression_list ::=
+      assignment_expression:e
+          {: (RESULT = new ArrayList<Expression>(3)).add(e); :}
+      
+    | argument_expression_list:ve COMMA assignment_expression:e
+          {: (RESULT = ve).add(e); :}
+    ;
+
+unary_expression ::=
+      postfix_expression:e
+          {: RESULT = Actions.checkSymbols(e); :}
+      
+    | INC_OP unary_expression:e
+          {: RESULT = new AutoIncExpr(e, false, true); :}
+
+    | DEC_OP unary_expression:e
+          {: RESULT = new AutoIncExpr(e, false, false); :}
+
+    | SIZEOF unary_expression:e 
+          {: RESULT = new SizeofExpr(ExprType.typeOf(e)); :}
+
+    | SIZEOF LPAREN type_name:t RPAREN 
+          {: RESULT = new SizeofExpr(t); :} 
+    
+    | AMPERSAND cast_expression:e
+          {: RESULT = new AddressofExpr(e); :}
+    
+    | STAR cast_expression:e
+          {: RESULT = new DerefExpr(e); :}
+    
+    | MINUS cast_expression:e
+          {: RESULT = UnaryArithmExpr.newExpr(ArithmOps.Minus, e); :}
+    
+    | PLUS cast_expression:e
+          {: RESULT = UnaryArithmExpr.newExpr(ArithmOps.Plus, e); :}    
+
+    | TILDA cast_expression:e
+          {: RESULT = new UnaryBitwiseExpr(BitwiseOps.Neg, e); :}    
+
+    | BANG cast_expression:e
+          {: RESULT = new NegationExpr(e); :}    
+
+    | AND_OP cast_expression:e
+    ;
+
+cast_expression ::= 
+      unary_expression:e
+          {: RESULT = e; :}    
+      
+    | LPAREN type_name:t RPAREN cast_expression:e
+          {: RESULT = new CastExpr(t, e); :}        
+    ;
+
+multiplicative_expression ::=
+      cast_expression:e
+          {: RESULT = e; :}    
+      
+    | multiplicative_expression:e1 STAR cast_expression:e2
+          {: RESULT = new ArithmExpr(ArithmOps.Times, e1, e2); :}    
+    
+    | multiplicative_expression:e1 DIV cast_expression:e2
+          {: RESULT = new ArithmExpr(ArithmOps.Div, e1, e2); :}    
+
+    | multiplicative_expression:e1 PERCENT cast_expression:e2
+          {: RESULT = new ArithmExpr(ArithmOps.Mod, e1, e2); :}    
+    ;
+
+additive_expression ::=
+      multiplicative_expression:e
+          {: RESULT = e; :}    
+      
+    | additive_expression:e1 PLUS multiplicative_expression:e2
+          {: RESULT = new ArithmExpr(ArithmOps.Plus, e1, e2); :}    
+    
+    | additive_expression:e1 MINUS multiplicative_expression:e2
+          {: RESULT = new ArithmExpr(ArithmOps.Minus, e1, e2); :}    
+    ;
+
+shift_expression ::=
+      additive_expression:e
+          {: RESULT = e; :}    
+      
+    | shift_expression:e1 LEFT_OP additive_expression:e2
+          {: RESULT = new BitwiseExpr(BitwiseOps.Shl, e1, e2); :}    
+    
+    | shift_expression:e1 RIGHT_OP additive_expression:e2
+          {: RESULT = new BitwiseExpr(BitwiseOps.Shr, e1, e2); :}    
+    ;
+
+relational_expression ::=
+      shift_expression:e
+          {: RESULT = e; :}    
+      
+    | relational_expression:e1 LT_OP shift_expression:e2
+          {: RESULT = new CompareExpr(CompareOps.Less, e1, e2); :}    
+    
+    | relational_expression:e1 GT_OP shift_expression:e2
+          {: RESULT = new CompareExpr(CompareOps.More, e1, e2); :}    
+    
+    | relational_expression:e1 LE_OP shift_expression:e2
+          {: RESULT = new CompareExpr(CompareOps.LessEq, e1, e2); :}    
+
+    | relational_expression:e1 GE_OP shift_expression:e2
+          {: RESULT = new CompareExpr(CompareOps.MoreEq, e1, e2); :}    
+    ;
+
+equality_expression ::=
+      relational_expression:e
+          {: RESULT = e; :}    
+      
+    | equality_expression:e1 EQ_OP relational_expression:e2
+          {: RESULT = new CompareExpr(CompareOps.Eq, e1, e2); :}    
+    
+    | equality_expression:e1 NE_OP relational_expression:e2
+          {: RESULT = new CompareExpr(CompareOps.Neq, e1, e2); :}    
+    ;
+
+and_expression ::=
+      equality_expression:e
+          {: RESULT = e; :}    
+      
+    | and_expression:e1 AMPERSAND equality_expression:e2
+          {: RESULT = new BitwiseExpr(BitwiseOps.Band, e1, e2); :}    
+    ;
+
+exclusive_or_expression ::=
+      and_expression:e
+          {: RESULT = e; :}    
+
+    | exclusive_or_expression:e1 CARET and_expression:e2
+          {: RESULT = new BitwiseExpr(BitwiseOps.Xor, e1, e2); :}    
+    ;
+
+inclusive_or_expression ::=
+      exclusive_or_expression:e
+          {: RESULT = e; :}    
+
+    | inclusive_or_expression:e1 BAR exclusive_or_expression:e2
+          {: RESULT = new BitwiseExpr(BitwiseOps.Bor, e1, e2); :}    
+    ;
+
+logical_and_expression ::=
+      inclusive_or_expression:e
+          {: RESULT = e; :}    
+
+    | logical_and_expression:e1 AND_OP inclusive_or_expression:e2
+          {: RESULT = new LogicalExpr(LogicalOps.And, e1, e2); :}    
+    ;
+
+logical_or_expression ::=
+      logical_and_expression:e
+          {: RESULT = e; :}    
+
+    | logical_or_expression:e1 OR_OP logical_and_expression:e2
+          {: RESULT = new LogicalExpr(LogicalOps.Or, e1, e2); :}    
+    ;
+
+conditional_expression ::=
+      logical_or_expression:e
+          {: RESULT = e; :}    
+
+    | logical_or_expression:e1 QUESTION expression:e2 
+          COLON conditional_expression:e3
+          {: RESULT = new ConditionalExpr(e1, e2, e3); :}    
+
+    ;
+
+assignment_expression ::=
+      conditional_expression:e
+          {: RESULT = e; :}    
+
+    | unary_expression:e1 ASSIGN assignment_expression:e2
+          {: RESULT = new AssignExpr(e1, e2); :}    
+
+    | unary_expression:e1 MUL_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignArithmExpr(ArithmOps.Times, e1, e2); :}    
+
+    | unary_expression:e1 DIV_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignArithmExpr(ArithmOps.Div, e1, e2); :}    
+
+    | unary_expression:e1 MOD_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignArithmExpr(ArithmOps.Mod, e1, e2); :}    
+
+    | unary_expression:e1 ADD_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignArithmExpr(ArithmOps.Plus, e1, e2); :}    
+
+    | unary_expression:e1 SUB_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignArithmExpr(ArithmOps.Minus, e1, e2); :}    
+
+    | unary_expression:e1 LEFT_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignBitwiseExpr(BitwiseOps.Shl, e1, e2); :}    
+
+    | unary_expression:e1 RIGHT_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignBitwiseExpr(BitwiseOps.Shr, e1, e2); :}    
+
+    | unary_expression:e1 AND_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignBitwiseExpr(BitwiseOps.Band, e1, e2); :}    
+
+    | unary_expression:e1 XOR_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignBitwiseExpr(BitwiseOps.Xor, e1, e2); :}    
+
+    | unary_expression:e1 OR_ASSIGN assignment_expression:e2
+          {: RESULT = new AssignBitwiseExpr(BitwiseOps.Bor, e1, e2); :}    
+    ;
+
+expression ::=
+      comma_expression:ve
+          {: RESULT = Actions.buildCommaExpr(ve); :}
+    ;
+
+comma_expression ::=
+      assignment_expression:e
+          {: (RESULT = new ArrayList<Expression>(3)).add(e); :}    
+
+    | comma_expression:ve COMMA assignment_expression:e
+          {: (RESULT = ve).add(e); :}
+    ;
+
+constant_expression ::=
+      conditional_expression:e
+          {: RESULT = e; :}    
+    ;
+
+
+/* statements */
+
+statement ::= /* ISO99 6.8 */
+      labeled_statement:s
+          {: RESULT = s; :}    
+
+    | compound_statement:s
+          {: RESULT = s; :}    
+
+    | expression_statement:e
+          {: RESULT = new ExprStat(e); :}    
+
+    | selection_statement:s
+          {: RESULT = s; :}    
+
+    | iteration_statement:s
+          {: RESULT = s; :}    
+
+    | jump_statement:s
+          {: RESULT = s; :}    
+
+    | asm_statement:s /* not ISO99 */
+          {: RESULT = s; :}    
+    ;
+
+labeled_statement ::= /* ISO99 6.8.1 */
+      IDENTIFIER:id COLON statement:s
+          {: RESULT = Actions.makeLabelStatement(id,s); :}
+
+    | CASE constant_expression:guard COLON statement:s
+          {: RESULT = new CaseLabelStat(guard, s); :}
+
+    | DEFAULT COLON statement:s
+          {: RESULT = new CaseLabelStat(CaseLabelStat.DEFAULT, s); :}
+    ;
+
+compound_statement ::= /* ISO99 6.8.2 */
+      LBRACE
+          {: Actions.pushBlockScope(); :}
+      block_item_list RBRACE
+          {: RESULT = Actions.popBlockScope(); :}
+    ;
+    
+block_item_list ::= /* ISO99 6.8.2 */
+      /* empty */
+    | block_item_list block_item 
+    ;
+    
+block_item ::= /* ISO99 6.8.2 */
+      declaration
+      
+    | statement:s
+          {: Actions.addStatement(s); :}
+    ;
+
+expression_statement ::= /* ISO99 6.8.3 */
+      SEMI
+          {: RESULT = new NumberExpr(1); :}    
+      
+    | expression:e SEMI
+          {: RESULT = e; :}    
+    ;
+
+selection_statement ::= /* ISO99 6.8.4 */
+      IF LPAREN expression:e RPAREN statement:s1 ELSE statement:s2
+          {: RESULT = new IfStat(e, s1, s2); :}    
+
+    | IF LPAREN expression:e RPAREN statement:s1 
+          {: RESULT = new IfStat(e, s1, null); :}
+
+    | SWITCH LPAREN expression:e RPAREN statement:s
+          {: RESULT = new SwitchStat(e, s); :}    
+    ;
+
+iteration_statement ::= /* ISO99 6.8.5 */
+      WHILE LPAREN expression:e RPAREN statement:s
+          {: RESULT = new WhileStat(e, s); :}    
+
+    | DO statement:s WHILE LPAREN expression:e RPAREN SEMI
+          {: RESULT = new DoWhileStat(e, s); :}    
+
+    | FOR LPAREN expression_opt:e1 SEMI expression_opt:e2 SEMI expression_opt:e3 
+          RPAREN statement:s
+          {: RESULT = new ForStat(e1, e2, e3, s); :}    
+
+    | FOR LPAREN declaration expression_opt:e1 SEMI expression_opt:e2 
+          RPAREN statement:s
+          {: RESULT = new ForStat(e1, e2, new NumberExpr(1), s); :}    
+    ;
+
+expression_opt ::=  {: RESULT = null; :}
+    | expression:e  {: RESULT = e; :}
+    ;
+      
+jump_statement ::= /* ISO99 6.8.6 */
+      GOTO IDENTIFIER:id SEMI
+          {: RESULT = new GotoStat(Actions.lookupOrAddLabel(id)); :}
+
+    | CONTINUE SEMI
+          {: RESULT = new ContinueStat(); :}
+
+    | BREAK SEMI
+          {: RESULT = new BreakStat(); :}
+
+    | RETURN expression_opt:e SEMI
+          {: RESULT = new ReturnStat(e); :}    
+    ;
+
+
+/* gnu extensions */
+
+gnu_label_declaration ::=
+      LABEL label_identifier_list SEMI
+    ;
+
+label_identifier_list ::=
+      IDENTIFIER:id
+          {: Actions.markLocalLabel(id); :}
+
+    | label_identifier_list COMMA IDENTIFIER:id
+          {: Actions.markLocalLabel(id); :}
+    ;
+
+attributes ::= 
+    | attribute attributes
+    ;
+
+attributes_asm ::= 
+    | attribute attributes
+    | ASM LPAREN stringlit:s RPAREN attributes
+          {: RESULT = s.getString(); :}
+    ;
+
+attribute ::=
+      ATTRIBUTE 
+    ;
+    
+asm_statement ::=
+      ASM type_qualifier_opt 
+      LPAREN asm_operand_sequence:s RPAREN SEMI
+	     {: RESULT = s; :}
+    ;
+
+type_qualifier_opt ::=  {: RESULT = null; :}
+	| type_qualifier:q  {: RESULT = q; :}
+	;
+
+asm_operand_sequence ::= 
+	  stringlit:op
+        {: RESULT = new AsmStat(op, null, null, null); :}
+
+    | stringlit:op
+      COLON asm_operands_opt:d
+        {: RESULT = new AsmStat(op, d, null, null); :}
+
+    | stringlit:op
+      COLON asm_operands_opt:d COLON asm_operands_opt:s
+        {: RESULT = new AsmStat(op, d, s, null); :}
+
+    | stringlit:op
+      COLON asm_operands_opt:d COLON asm_operands_opt:s COLON asm_clobbers:c
+        {: RESULT = new AsmStat(op, d, s, c); :}
+    ;
+    
+asm_operands_opt ::= 
+        {: RESULT = null; :}
+     
+    | asm_operands:v
+        {: RESULT = v; :}
+    ;
+    
+asm_operands ::=
+	  asm_operand:o
+        {: (RESULT = new ArrayList<AsmOperand>()).add(o); :}
+
+	| asm_operands:v COMMA asm_operand:o
+        {: (RESULT = v).add(o); :}
+	;
+	
+asm_operand ::=
+      stringlit:s LPAREN expression:e RPAREN
+        {: RESULT = new AsmOperand(null, s, e); :}
+
+    | LBRACK IDENTIFIER:id RBRACK stringlit:s LPAREN expression:e RPAREN
+        {: RESULT = new AsmOperand(id, s, e); :}
+    ;
+
+asm_clobbers ::=
+      stringlit:s
+        {: (RESULT = new ArrayList<String>()).add(s.toString()); :}
+
+    | asm_clobbers:v COMMA stringlit:s
+        {: (RESULT = v).add(s.toString()); :}
+    ;
+
+id_or_type ::= 
+     IDENTIFIER:id {: RESULT = id; :}
+   | TYPE_NAME:tn  {: RESULT = tn.getTypeSymbol().getName(); :}
+   ;

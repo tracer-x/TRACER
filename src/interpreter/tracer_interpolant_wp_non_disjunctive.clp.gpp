@@ -1,0 +1,1364 @@
+% tracer_wp_non_disjunctive.clp.gpp
+
+% #define NDWP_DEBUG
+% #define NDWP_COMBINE_DEBUG
+% #define NDWP_MAKE_CONJUNCTIVE_DEBUG
+
+%---------------------------FLAGS---------------------------------------------%
+% This flag to use different approaches to propagate wp across a guard
+% Use of redundancy free cores or projection.
+%
+%use_abduction(redundant_free_core).
+use_abduction(projection).
+%-----------------------------------------------------------------------------%
+% We do implication tests using the forward symbolic execution state
+% "fse" or an approximation of it that we call prefix core.
+%
+%use_for_implication_test_recovery(fse). 
+use_for_implication_test_recovery(core). 
+%-----------------------------------------------------------------------------%
+% We eliminate disjuncts using the forward symbolic execution state
+% "fse" or an approximation of it that we call prefix core
+%
+%use_eliminate_disjuncts(fse).  
+use_eliminate_disjuncts(core).  
+%-----------------------------------------------------------------------------%
+% Use of convex hull
+% use_convex_hull(y).
+use_convex_hull(n).
+%-----------------------------------------------------------------------------%
+
+%=============================================================================%
+% This file contains procedures used to compute weaker preconditions
+% without keeping disjunctions.
+%=============================================================================%
+% export
+%
+%   wp_nondisjunct_gen_success_path/5
+%   wp_nondisjunct_infeasible_path/9
+%   wp_nondisjunct_pre_operator/18
+%   wp_nondisjunct_combine/9
+%   wp_nondisjunct_simplify_after_combined/3
+%   wp_nondisjunct_subsumed/15                    
+%   wp_nondisjunct_create_subsumed_interpolant/12  
+%   wp_nondisjunct_create_memo_interpolant/11
+%   wp_nondisjunct_create_abstraction_interpolant/12
+%   wp_nondisjunct_merge_loop_interpolant/8
+%   wp_nondisjunct_print_pre_stats/0
+%   wp_nondisjunct_print_combine_stats/0
+%
+%=============================================================================%
+% We say a formula is a prefix core if it is an overapproximation of
+% the states represented by a symbolic path. We use as prefix cores
+% the projected unsatisfiable cores computed in
+% tracer_interpolant_basic.
+%
+% The weakest precondition is computed as follows:
+%
+%   - If state <pc,Phi> and guard g is reached. Then, if Phi and g is
+%     unsatisfiable then return the formula g => false. See below (*)
+%     how to return a conjunctive formula.
+%   - If state <pc,Phi> and (pc = pc_end and Phi is satisfiable) then
+%     return trivially true, because (anything => true) = true.
+%   - If state <pc,Phi> and exists another state <pc,Phi_bar> such
+%     that Phi and Phi_bar are unsatisfiable then return (not Phi_bar)
+%     (see below why we use not)
+%   - Otherwise, perform one symbolic execution step and during
+%     backtracking:
+%
+%     pre(op,Q) = Q[E/x]  , if op = x:=e
+%     pre(g,Q)  = g => Q
+%
+%     Note that g => Q is disjunctive. We underapproximate the formula
+%     g => Q in a conjunctive manner. The main idea is a mix of the
+%     following ingredients: existential quantifier elimination,
+%     forward symbolic execution and convex hull.
+%
+%     (*)
+%     Let be Q w1 and ... and wk
+%
+%     (1) By Morgan's law: not(g) or Q
+%      ------------------ go to NEGATIVE ------------------------------
+%     (2) Negate g and not(Q). Then, we have (g and not(c1)) or
+%         (g and not(c2)) or ... or (g and not(ck))
+%
+%     (3) Project each disjunct onto current variables (as usual) and
+%     also project away from each disjunct those variables which are
+%     not in the core
+%
+%     Let d1 or d2 or .... dk the result of (3)
+%
+%     Optionally we can apply CH(d_i) // convex hull
+%
+%     4) Negate not(d1) and not(d2) and .... not(dk)
+%
+%     The use of projection is an overapproximation and hence unsound
+%     for wp purposes. This is why we do the process
+%     "negate-projection-negate" (steps (2),(3), and(4)).
+%     ------------------- come back to POSITIVE ------------------------
+%     The remaining problem is that each not(d_i) can be disjunctive:
+%
+%     NOTE: we are already positive at this point, so only
+%     underapproximations are allowed.
+%
+%     5) foreach not(d_i)  do
+%       5.1) If it's already conjunctive do nothing
+%       5.2) If it's disjunctive then:
+%              - Eliminate those disjuncts from each not(d_i) which
+%                are not consistent with the forward symbolic state.
+%              - If the remaining is conjunctive do nothing
+%                Else return the most general conjunctive interpolant
+%                I s.t.
+%                     Core => I => not(d_i)                
+% 
+%     combine(pre(op,Q1),pre(op,Q2)) = pre(op,Q1) and pre(op,Q2)
+%
+%     To store the wp formula in the memo, we negate it
+%     first. Therefore, what it's stored in the memo table must be
+%     interpreted as a disjunction of negated literals.
+%----------------------------------------------------------------------------%
+% TODO:
+%----------------------------------------------------------------------------%
+% - Array references and aliasing.
+% - Not implemented for TRACER analyses (wcet is outdated, slicing...)
+%----------------------------------------------------------------------------%
+% FIXME:
+%----------------------------------------------------------------------------%
+% ************27/12/11: I think this one is solved. Need to check properly!
+%
+% - if path_datastructure=naive problems in compute_nondisjunct_wp/17.
+% The length of CL and ML1 doesn't match and this part of the normal
+% behavior, but select_marked_constraints_path/4 complains. Related to
+% this, get_marked_constraints/4 is very dangerous because
+% it assumes very easy breakable assumptions.
+%
+% - NONLINEAR constraints: simplify_constraints/7 may raise CLPR(R)
+% fatal error due to nonlinear constraints. Observed some time ago in
+% floppy-TRACER.c. Now it does occur.
+%----------------------------------------------------------------------------%
+% OBSERVATIONS:
+%----------------------------------------------------------------------------%
+% - By construction, no wp conjunct is unsatisfiable. Thus no need of
+%   using remove_infeasible_interp_conjunct/2.
+% - Also by construction, we keep only one conjunct. Thus no need of
+%   using remove_all_duplicates_aux/3 or
+%   remove_all_duplicates_limit_size/3.
+%=============================================================================%
+
+% Auxiliary predicate
+extract_prefix_core(_FName,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		    Es, ML, ProjCore):-
+	select_marked_constraints_path(Es,ML,Core,o),
+	project_sym_constraints(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				Core, ProjCore).
+extract_prefix_core(_,_,_,_,_,_,_,_):-
+        error_message("extract_prefix_core/8 failed\n",[]).
+
+%-----------------------------------------------------------------------------%
+% wp_nondisjunct_gen_success_path(+,+,+,+,-)
+% Generate the formula true as weakest-precondition.
+%-----------------------------------------------------------------------------%
+wp_nondisjunct_gen_success_path(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,WP):-
+	WP = state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, [],_).
+	                                              %          ^^ means true
+	
+%-----------------------------------------------------------------------------%
+% wp_nondisjunct_infeasible_path(+,+,+,+,+,+,+,+,-)
+% Generate the weakest-precondition of an infeasible path.
+%-----------------------------------------------------------------------------%
+wp_nondisjunct_infeasible_path(FName,
+ 			       SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+ 			       Es,ML,Guard,WP):-
+        %----------------------------------------------------------------------
+        % WP is the formula (Guard implies false)
+        %----------------------------------------------------------------------
+#ifdef  PROFILE     
+	add_counter(num_of_wp_guard_not_skipped,1),	
+#endif  /*PROFILE*/
+        % Step 1: extract core and its variables.
+	extract_prefix_core(FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    Es,ML,Core),	
+	varset_constraints(Core,CoreVars),
+	% Step 2: project away the variables that are not in CoreVars
+	% from Guard
+        wrapper_project_sym_constraints(CoreVars,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					SGlobalArrX,SGlobalVarX,SLocalArrX,SLocalVarX,
+					Guard, NegProjF),
+	SGlobalArr = SGlobalArrX, SGlobalVar = SGlobalVarX,
+	SLocalArr  = SLocalArrX , SLocalVar  = SLocalVarX,
+	%======================================================================%	
+	% We apply convex hull if flag is on
+        %======================================================================%	
+	apply_list_convex_hull(NegProjF,
+			       SGlobalArr,SGlobalVar,SLocalVar,SLocalVar,
+			       CHNegProjF),
+	% Step 3: negate back			
+	negate_numerical_list(CHNegProjF,DisjProjF),
+	
+	%----------------------------------------------------------------------%
+	% Step 4: we try to eliminate those disjuncts which are
+	% inconsistent with the forward symbolic execution state, and
+	% other tricks.
+	%----------------------------------------------------------------------%	
+	convert_path_to_list(Es,CL),
+	make_conjunctive(CL,Core,DisjProjF,
+			 FName, SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			 ConjProjF),
+ 	append(ConjProjF,Tail,WPCL),	
+ 	WP=state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		 [intp_conjunct(Tail,WPCL)],_),
+        !.
+				     
+%-----------------------------------------------------------------------------%
+% wp_nondisjunct_pre_operator
+%-----------------------------------------------------------------------------%
+% Compute the wp of an operation
+%-----------------------------------------------------------------------------%
+wp_nondisjunct_pre_operator(WP1, ML1,
+			    _Id, FName1, 
+			    SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1,
+			    XCL, GuardFlag, CL, ML,
+			    FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    WP) :-
+	%----------------------------------------------------------------------
+	% Always be aware that across function calls, the variables of the
+	% parent can be different from children
+        %----------------------------------------------------------------------
+#if     (UNFOLD_OPT==WCET) 
+        %----------------------------------------------------------------------
+        % With WCET, copying is necessary since the variables are to be
+        % used in computing witnesses hence to be constrained
+        %----------------------------------------------------------------------
+	fcopy_term(t(XCL,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     SGlobalArr1, SGlobalVar1, SLocalArr1, SLocalVar1),
+		   t(XCLA,
+		     SGlobalArrA, SGlobalVarA, SLocalArrA, SLocalVarA,
+		     SGlobalArr1A, SGlobalVar1A, SLocalArr1A, SLocalVar1A)),
+#else   /*UNFOLD_OPT==WCET*/
+        SGlobalArr1A = SGlobalArr1, SGlobalVar1A = SGlobalVar1,
+        SLocalArr1A  = SLocalArr1,  SLocalVar1A  = SLocalVar1,
+	SGlobalArrA  = SGlobalArr,  SGlobalVarA  = SGlobalVar,
+	SLocalArrA   = SLocalArr,   SLocalVarA   = SLocalVar,
+        XCLA = XCL,
+#endif  /*UNFOLD_OPT==WCET*/
+        WP1 = state(SGlobalArr1A, SGlobalVar1A, SLocalArr1A, SLocalVar1A, _,_),
+	WP  = state(SGlobalArrA , SGlobalVarA , SLocalArrA , SLocalVarA , _,_),
+	compute_nondisjunct_wp(GuardFlag, WP1, ML1,
+			       FName1,SGlobalArr1A,SGlobalVar1A,SLocalArr1A,SLocalVar1A,
+			       FName ,SGlobalArrA ,SGlobalVarA ,SLocalArrA ,SLocalVarA,
+			       CL, ML, XCLA, WP).
+
+%-----------------------------------------------------------------------------%
+% compute_nondisjunct_wp(+GuardFlag,+PostWP,+ML,+,+,+,+,+,+,+,+,+,+,+CL,+ML,
+%                        +XCL,-PreWP)
+%-----------------------------------------------------------------------------%
+compute_nondisjunct_wp(branch,WP1,ML1,FName,_,_,_,_,_,_,_,_,_,CL,ML,XCL,WP):-
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	WP1=state(SGA,SGV,SLA,SLV,WPConj1,_),
+	compute_nondisjunct_wp_guard(WPConj1,
+				     ML1,
+				     FName,SGA,SGV,SLA,SLV,
+				     CL,ML,XCL,WPConj),
+	WP =state(SGA,SGV,SLA,SLV,WPConj,_),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(compute_wp_guard_timing,Time1-Time0),
+#endif  /*PROFILE*/
+	true.
+compute_nondisjunct_wp(not_branch,PostWP, _,
+		       _,PostSGA,PostSGV,PostSLA,PostSLV,
+		       _,PreSGA ,PreSGV ,PreSLA ,PreSLV,_,_,XCL,PreWP) :-	
+	compute_wp_assignment(1, PostWP,
+			      PostSGA,PostSGV,PostSLA,PostSLV,
+			      PreSGA ,PreSGV ,PreSLA ,PreSLV , XCL, PreWP).
+
+#ifdef  DEBUG_USE
+test_compute_nondisjunct_wp_guard:-
+	compute_nondisjunct_wp_guard([intp_conjunct(Tail,[eq(X,Y),geq(Y,0),eq(Z,0)|Tail])],
+				     [o,_,_,_],
+				     func_main,[_H],[],[],[X,Y,Z],
+				     _CL,[o,_,_,_],[gt(X,0)],WP),
+	print_message("WP:%\n",[WP]).
+#endif  /*DEBUG_USE*/
+compute_nondisjunct_wp_guard([],_,_,_,_,_,_,_,_,_,[]):-!.
+% Note that ML has the same length than CL concatenated with Guard
+compute_nondisjunct_wp_guard([intp_conjunct([],WPCL)],PostML,FName,SGA,SGV,SLA,SLV,
+			     CL,ML,Guard,WPConj):-
+	%---------------------------------------------------------------------
+	% Key step: remove from consideration irrelevant constraints
+	% from Guard. By irrelevant we mean not included in the core.
+	% This is equivalent to replace the guard with "skip" and
+	% hence, wp(skip,Q)=Q.	
+	%---------------------------------------------------------------------
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+	get_marked_constraints(PostML, Guard, RelGuard, []),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(time_pre_delete_irrelevant,Time1-Time0),
+        length(Guard,N1),
+	length(RelGuard,N2),
+	add_counter(num_of_wp_guard_skipped,N1-N2),
+	add_counter(num_of_wp_guard_not_skipped,N2),	
+#endif  /*PROFILE*/
+	compute_nondisjunct_wp_guard_aux(RelGuard, WPCL,
+					 FName, SGA, SGV, SLA, SLV,
+					 CL, ML, WPConj),
+	!.
+compute_nondisjunct_wp_guard(_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("compute_nondisjunct_wp_guard/11\n",[]).
+
+%=============================================================================%
+% NOTE: If we uncomment this clause the number of states for some
+% programs such as floppy, cdaudio, etc is much higher. Don't
+% understand why ;-(
+%=============================================================================%
+/*
+compute_nondisjunct_wp_guard_aux([],WPCL,_,_,_,_,_,
+				 _,_,[intp_conjunct(Tail,WPCLTail)]):-
+ 	add_counter(num_of_wp_guard_skipped,1),
+ 	append(WPCL,Tail,WPCLTail),
+ 	!.
+*/
+compute_nondisjunct_wp_guard_aux(Guard, PostWPCL,
+				 FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 Es,ML,
+				 PreWPConj):-
+%	add_counter(num_of_wp_guard_not_skipped,1),
+	%======================================================================	
+	% Step 1[Preprocessing]: any constraint syntactically
+	% irrelevant to the guard must be passed through. Due to how
+	% we compile programs considering aliasing, syntactic means
+	% here are sound.
+	%======================================================================
+	% 16/08/11: this step is unsound for programs like wp16.c	
+	% In general, we cannot push back directly part of the post-wp
+	% even if it's unrelated syntactically.
+	%======================================================================	
+ 	%varset_constraints(Guard,RelVsGuard),
+	%irrel_rel_constraints(PostWPCL,RelVsGuard,PostIrrelWPCL,PostRelWPCL),
+
+	%======================================================================
+	% Step 2[Abduction]:
+	%======================================================================
+#ifdef  PROFILE
+        ctime(Time0),
+#endif  /*PROFILE*/
+        wp_abduction(Guard, PostWPCL /*PostRelWPCL*/,
+ 		     FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+ 		     Es,ML, PreRelWPCL),
+#ifdef  PROFILE
+        ctime(Time1),
+	add_counter(time_pre_abduction,Time1-Time0),
+#endif  /*PROFILE*/
+#ifdef  NDWP_DEBUG		
+        print_message("BEGIN ABDUCTIVE STEP \n",[]),
+        print_message("\tPost wp: "   ,[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					PostWPCL),
+        % print_message("\tRel Post wp: ",[]),
+	% pretty_printer_constraints_list(FName,
+	% 				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	% 				PostRelWPCL),	
+	print_message("\tRel Pre wp: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					PreRelWPCL),	
+#endif  /*NDWP_DEBUG*/	
+	%----------------------------------------------------------------------		
+ 	% The final result is the conjunction of Step 1 and 2:
+	%----------------------------------------------------------------------			
+ 	%append(PreRelWPCL,PostIrrelWPCL,PreWPCL0),
+	PreWPCL0=PreRelWPCL,
+	
+	%======================================================================
+	% Step 3[Correction]: if forward symbolic state is not
+	% stronger than wp we replace wp with the core.
+	%======================================================================	
+	% 16/08/11: this step is not needed anymore. This step was
+	% needed due to the incorrect Step 1.
+	%======================================================================
+#ifdef  PROFILE
+        ctime(Time2),
+#endif  /*PROFILE*/	
+  	recover_if_context_not_stronger_than_wp(FName,Es,ML,Guard,
+					        SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+						PreWPCL0,PreWPCL),
+#ifdef  PROFILE
+        ctime(Time3),
+	add_counter(time_pre_recover_underapproximation,Time3-Time2),
+#endif  /*PROFILE*/	
+#ifdef  NDWP_DEBUG
+	print_message("\tPre wp: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					PreWPCL),
+        print_message("END ABDUCTIVE STEP \n",[]),	
+#endif  /*NDWP_DEBUG*/
+
+	insert_conjunct_if_not_empty(PreWPCL,PreWPConj),
+	!.
+
+%-----------------------------------------------------------------------------%
+% wp_abduction(+,+,+,+,+,+,+,+,+,-)
+%-----------------------------------------------------------------------------%
+wp_abduction(_, [],_,_,_,_,_,_,_,[]):-!.
+wp_abduction(Guard, RelWPCL,
+	     FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	     _,_,CoreRelWPCL):-
+	use_abduction(redundant_free_core),
+	!,
+ 	wp_abduction_with_redund_free_cores(RelWPCL,
+					    FName,
+					    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					    Guard,CoreRelWPCL).
+wp_abduction(Guard, RelWPCL,
+	     FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	     CL,ML, CoreRelWPCL):-
+	use_abduction(projection),	
+	!,
+	wp_abduction_with_projection(Guard, RelWPCL,
+				     FName,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     CL,ML, CoreRelWPCL).
+
+%------------------------------------------------------------------------------%
+% wp_abduction_with_redund_free_cores(+C,+,+,+,+,+,+B,-A)
+%------------------------------------------------------------------------------%
+% We want to solve the following abduction problem: given a guard B
+% and a formula C (where B and C are consistent), we want to discover
+% another formula A such that A and B -> C.  An easy method that does
+% not compute generally the most general A is the computation of redundancy
+% free cores (Maher, ICLP'05).
+%
+% core(c_1,...,c_n,B) is a subset of c_1,..,c_n such that 
+%   delete c_i, 1<=i<=n if
+%   (c_1 and ... and c_n \ c_i) and B implies c_i
+%   
+% where "C \ c" denotes the conjunction of all elements of C except c.
+%------------------------------------------------------------------------------%
+test_wp_abduction_with_redund_free_cores:-
+	CL1=[eq(minus(mult(2,X),Y),0),
+	     eq(plus(mult(3,X),Y),0)],
+	wp_abduction_with_redund_free_cores(CL1,
+					    func_main,[],[],[],[X,Y],
+					    [eq(plus(X,Y),0)],Core1),
+	print_message("Core:%\n",[Core1]),
+	CL2=[eq(plus(mult(3,X),Y),0),
+	     eq(minus(mult(2,X),Y),0)],
+	wp_abduction_with_redund_free_cores(CL2,
+					    func_main,[],[],[],[X,Y],
+					    [eq(plus(X,Y),0)],Core2),	
+	print_message("Core:%\n",[Core2]),
+	CL3=[eq(X,Y),gt(Y,0)],
+	wp_abduction_with_redund_free_cores(CL3,
+					    func_main,[],[],[],[X,Y],[gt(X,0)],
+					    Core3),
+	print_message("Core:%\n",[Core3]),
+	CL4=[gt(plus(X,Y),0)],
+	wp_abduction_with_redund_free_cores(CL4,
+					    func_main,[],[],[],[X,Y],[gt(Y,0)],
+					    Core4),
+	print_message("Core:%\n",[Core4]).
+%------------------------------------------------------------------------------
+wp_abduction_with_redund_free_cores(Cs,FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				    B,As):-
+	compute_redundancy_free_core(Cs,1,Cs,FName,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     B,As).
+compute_redundancy_free_core([],_,_,_,_,_,_,_,_,[]):-!.	
+compute_redundancy_free_core([C|Cs],Index, AllCs,FName,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     B,As):-
+	% note that the length of AllCs is quite short (projected form).	
+	deletenth(AllCs,Index,RestCs),
+	append(RestCs,B,Lhs),
+	% make the test (C \ c) and B |= c
+	do_test_implication(FName,Lhs,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,[C],CS),
+	CS==[],
+	!,
+	compute_redundancy_free_core(Cs,Index+1,AllCs,FName,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     B,As).
+compute_redundancy_free_core([C|Cs],Index,AllCs,FName,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,B,[C|As]):-
+	!,
+	compute_redundancy_free_core(Cs,Index+1,AllCs,FName,
+				     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				     B,As).
+
+%--------------------------------------------------------------------------------%
+% wp_abduction_with_projection(+GuardCL, +RelWPCL,
+%			       +FName,+SGlobalArr,...
+%			       +PrefixCL,+PrefixML,-WPCL)
+%--------------------------------------------------------------------------------%
+% WPCL is an underapproximation of the formula:  GuardCL => RelWPCL
+% More details above. Search for (*)
+%--------------------------------------------------------------------------------%
+wp_abduction_with_projection(GuardCL, RelWPCL,
+			     FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     PrefixEs,PrefixML,WPCL):-
+	%-------------------------------------------------------------------------%	
+ 	% Step 1: We get the prefix core and the variables that appear
+	% on it.
+	%-------------------------------------------------------------------------%
+	extract_prefix_core(FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			    PrefixEs,PrefixML,PrefixCore),	
+	varset_constraints(PrefixCore,PrefixCoreVars),
+	%-------------------------------------------------------------------------%
+	% Step 2: We use projection as an underapproximation of the
+	% wp.  To do that, we need to negate the child's wp, do
+	% projection, and then negate again. The key is to use the
+	% prefix core to decide which variables are projected away.
+	% Moreover, the underapproximated wp may be disjunctive. We
+	% need to make it (safely) conjunctive.
+	%-------------------------------------------------------------------------%
+	negate_numerical_list(RelWPCL,NegWPCL),
+	convert_path_to_list(PrefixEs,PrefixCL),
+
+	varset_constraints(GuardCL,GuardVars),
+	wp_abduction_with_projection_aux(NegWPCL, GuardCL, GuardVars, FName,
+					 PrefixCoreVars, PrefixCore, PrefixCL,
+					 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					 WPCLs),
+	flatten(WPCLs,WPCL).
+
+wp_abduction_with_projection_aux([],_,_,_,_,_,_,_,_,_,_,[]):-!.
+wp_abduction_with_projection_aux([NegDisjunct|NDs], Guard, GuardVars, FName,
+				 PrefixCoreVars, PrefixCore, PrefixCL,
+				 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				 [ConjProjF|ProjFs]):-
+	%======================================================================%
+	% Step 2.1: Project away all variables which are not in the core.
+	%======================================================================%	
+	wrapper_project_sym_constraints(PrefixCoreVars,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					SGlobalArrX,SGlobalVarX,SLocalArrX,SLocalVarX,
+					[NegDisjunct|Guard],NegProjF),
+	SGlobalArr = SGlobalArrX, SGlobalVar = SGlobalVarX,
+	SLocalArr  = SLocalArrX , SLocalVar  = SLocalVarX,
+	%======================================================================%	
+	% We apply convex hull if flag is on
+        %======================================================================%	
+	apply_list_convex_hull(NegProjF,
+			       SGlobalArr,SGlobalVar,SLocalVar,SLocalVar,
+			       CHNegProjF),
+	
+	negate_numerical_list(CHNegProjF,DisjProjF),
+	%======================================================================%
+	% Step 2.2: we try to eliminate those disjuncts which are
+	% inconsistent with the forward symbolic execution state.
+	%======================================================================%
+	make_conjunctive(PrefixCL, PrefixCore, DisjProjF,
+			 FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			 ConjProjF),
+	!,
+	wp_abduction_with_projection_aux(NDs, Guard, GuardVars, FName,
+	                                 PrefixCoreVars,PrefixCore, PrefixCL,
+ 	                                 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,ProjFs).
+wp_abduction_with_projection_aux([_|NDs], Guard, GuardVars, FName,
+				 PrefixCoreVars, PrefixCore, PrefixCL,
+				 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, ProjFs):-
+	% In case projection fails
+	wp_abduction_with_projection_aux(NDs, Guard, GuardVars, FName,
+					 PrefixCoreVars, PrefixCore, PrefixCL,
+					 SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+					 ProjFs).
+
+%----------------------------------------------------------------------------%
+% make_conjunctive(+CL,+Core,+DisjCL,+FName,+...,-ConjCL)
+%----------------------------------------------------------------------------%
+% DisjCL is interpreted as a disjunction of formulas.  Core is the
+% subset of symbolic constraints that overapproximates the current
+% symbolic state.  CL is the symbolic constraints that represent the
+% current symbolic state. The idea is to filter out those disjunctions
+% from DisjCL which are unsatisfiable in conjunction with the current
+% state.
+%
+% Then, if after deleting unsatisfiable conjuncts with CL we still
+% have a disjunction then we just return Core, which is going to
+% be stronger than the weakest precondition but conjunctive.
+%----------------------------------------------------------------------------%
+make_conjunctive(_,_, ConjCL,_,_,_,_,_,ConjCL):-
+	% it's already conjunctive, do nothing
+	ConjCL = [_],
+	!.
+make_conjunctive(CL, Core, DisjCL,
+		 FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		 ConjCL):-
+#ifdef  PROFILE
+        length(DisjCL,N1),
+	add_counter(num_of_disjuncts,N1),
+#endif  /*PROFILE*/	
+	choose_disjunct_eliminator(CL,Core,Eliminator),
+	% Eliminate inconsistent disjuncts with the forward symbolic state
+	eliminate_inconsistent_disjuncts(DisjCL,Eliminator,SimpDisjCL),		
+	counter_value(num_of_unavoidable_disjuncts,OldUD),
+	% Check if still we have disjuncts
+	make_conjunctive_aux(SimpDisjCL, DisjCL, Core,
+			     FName, SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			     ConjCL),
+	counter_value(num_of_unavoidable_disjuncts,NewUD),
+	add_counter(num_of_unavoidable_disjuncts_at_infesible,NewUD-OldUD),
+	!.
+
+% We eliminate disjuncts using the forward symbolic execution state
+% (FSE)
+choose_disjunct_eliminator(FSE,_Core,FSE):-
+	use_eliminate_disjuncts(fse),
+	!.
+% We eliminate disjuncts using an overapproximation of FSE, the core.
+choose_disjunct_eliminator(_FSE,Core,Core):-
+	use_eliminate_disjuncts(core),
+	!.
+
+%==========================================================================%
+% make_conjunctive_aux(+SimpDisjCL,+DisjCL,+Core,+FName,+SGlobalArr,...,-PreWPCL)
+%==========================================================================%
+% DisjCL     is the formula after the negation-projection-negation step.
+% SimpDisjCL is the formula after removal of inconsistent disjuncts
+%            wrt the forward symbolic state.
+% Core       is the conjunctive interpolant that underapproximate the
+%            weakest precondition.
+%==========================================================================%
+make_conjunctive_aux(ConjCL,_,_,_,_,_,_,_,ConjCL):-
+	%------------------------------------------------------------%
+	% after simplification the remaining formula is
+	% conjunctive. Then, do nothing
+	%------------------------------------------------------------%	
+	ConjCL = [_],
+	!.
+make_conjunctive_aux(SimpDisjCL, DisjCL, Core,
+		     FName,
+		     SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+		     PreWPCL):-
+	%-------------------------------------------------------------%
+	% bad luck!: the wp of the guard is disjunctive
+	%-------------------------------------------------------------%
+#ifdef  PROFILE
+        length(SimpDisjCL,N1),
+	add_counter(num_of_unavoidable_disjuncts,N1),
+#endif  /*PROFILE*/	
+#ifdef  NDWP_MAKE_CONJUNCTIVE_DEBUG	
+	print_message("Core                     : \t",[]),		
+ 	pretty_printer_constraints_list(FName,
+        				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+ 					Core),
+	
+	print_message("disjunctive wp           : \t",[]),
+ 	pretty_printer_constraints_list(FName,
+ 					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+ 					DisjCL),
+	print_message("simplified disjunctive wp: \t",[]),	
+ 	pretty_printer_constraints_list(FName,
+        				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+ 					SimpDisjCL),
+#else
+        % To avoid warnings
+        DisjCL=_,
+#endif  /*NDWP_MAKE_CONJUNCTIVE_DEBUG*/
+        %==========================================================================%
+        % Need to confirm the correctness of this step
+        % this step is key to get good results with statement, wp16.c, etc.
+
+        do_test_implication(FName, Core ,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    SimpDisjCL, ConflictSet),
+	
+	% Disjunct which are not implied by the core are replaced with
+	% some subformula from the core.
+ 	varset_constraints(ConflictSet,ConflictVs),
+	irrel_rel_constraints(Core,ConflictVs,_,RelCore),
+	% Disjuncts which are implied by the core are kept.
+	irrel_rel_constraints(SimpDisjCL,ConflictVs,IrrelWPCL,_),
+        % The final formula is the conjunction ?!? (is this sound?)
+	append(RelCore,IrrelWPCL,PreWPCL),
+        %==========================================================================%	
+	%PreWPCL=Core,	
+	% We approximate the disjunct with a conjunctive interpolant
+	% from the core.
+	%approx_disjunct_with_interpolant(Core,SimpDisjCL,
+        %			          FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+	%				  InterpDisj),
+		
+	!.
+%----------------------------------------------------------------------------%
+% eliminate_inconsistent_disjuncts(C1,C2,C3)
+%----------------------------------------------------------------------------%
+% C3 is a subset of C1 such that \forall c \in C3. c in conjunction
+% with C2 is satisfiable.
+%----------------------------------------------------------------------------%
+eliminate_inconsistent_disjuncts([],_,[]):-!.
+eliminate_inconsistent_disjuncts([X|Xs],CL,Ys):-
+	unsatisfiable_segment(X,CL),
+	!,
+	eliminate_inconsistent_disjuncts(Xs,CL,Ys).
+eliminate_inconsistent_disjuncts([Y|Xs],CL,[Y|Ys]):-
+ 	eliminate_inconsistent_disjuncts(Xs,CL,Ys).
+
+
+% %----------------------------------------------------------------------------%
+% % Given that Core => DisjWP
+% % We compute I such that Core => I = > DisjWP
+% %----------------------------------------------------------------------------%
+% approx_disjunct_with_interpolant(Core,DisjCL,_,_,_,_,_,Interpolant):-
+% 	copy_to_unbound_list(Core,ML),
+% 	negate_numerical_list(DisjCL,NegDisjCL),	
+% 	% ML represents all constraints from Core needed to imply all
+% 	% disjuncts from NegDisjCL	
+% 	approx_disjunct_with_interpolant_aux(NegDisjCL,Core,ML,_),
+% 	pick_constraints(Core,ML,[],Interpolant,o),
+% 	!.
+% approx_disjunct_with_interpolant(Core,DisjCL,
+% 				 FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+% 				 _):-
+% 	print_message("approx_disjunct_with_interpolant/3 failed\n",[],red),
+% 	pretty_printer_constraints_list(FName,
+% 					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+% 					Core),
+% 	print_message("does not imply \n",[]),
+% 	pretty_printer_constraints_list(FName,
+% 					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+% 					DisjCL),					
+% 	halt.
+
+% approx_disjunct_with_interpolant_aux([],_Core,_ML,[]):- !.
+% approx_disjunct_with_interpolant_aux([NegD|NegDs],Core,ML,[NegD|Zs]):-
+% 	compute_unsat_core([NegD],Core,ML,check),
+% 	!,
+% 	approx_disjunct_with_interpolant_aux(NegDs,Core,ML,Zs).
+% approx_disjunct_with_interpolant_aux([_|NegDs],Core,ML,Zs):-
+% 	% The core does not imply this disjunct. Thus, the
+% 	% introduction of disjunct was spurious.
+% 	% E.g., x>y ...if (x>y && y>z)
+%         %	
+% 	% Assume the guard is needed. By syntax the whole guard is
+% 	% needed.  During the abduction step **I think** it's possible
+% 	% to propagate back some constraint about y and z which did
+% 	% not cause the infeasibility and hence, it is not implied by
+% 	% the forward symbolic execution.   NEED TO CONFIRM THIS		
+% 	approx_disjunct_with_interpolant_aux(NegDs,Core,ML,Zs).
+
+%----------------------------------------------------------------------------%
+% apply_list_convex_hull(+Ls,+...,-CH)
+% Apply the convex hull of list Ls
+%----------------------------------------------------------------------------%
+#ifdef  DEBUG_USE
+test_apply_list_convex_hull:-
+	Disjuncts = [ geq(D,A), gt(plus(U,100),D)],
+	apply_list_convex_hull(Disjuncts,
+						  [],[],[],[A,D,U],
+						  UnderCH),
+	% Dictionary
+	A = 'alim', D='down', U='up',
+	print_message("%\n",[UnderCH]).
+#endif  /*DEBUG_USE*/
+%----------------------------------------------------------------------------%
+apply_list_convex_hull(Disjuncts,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,CH):-		       
+	use_convex_hull(y),
+	append(SLocalArr ,SLocalVar,S1),
+	append(SGlobalVar,S1,S2),
+	append(SGlobalArr,S2,Vars),
+	apply_list_convex_hull_aux(Disjuncts,Vars,CH0),
+	flatten(CH0,CH),
+	!.
+apply_list_convex_hull(Disjuncts,_,_,_,_,Disjuncts):- !.
+
+apply_list_convex_hull_aux([D],_,[D]):-!.			     
+apply_list_convex_hull_aux([D1,D2|Ds],Vars,UnderCH):-
+        convex_hull(Vars,[D1],Vars,[D2],NewVars,D),	
+	NewVars = Vars,
+	apply_list_convex_hull_aux([D|Ds],Vars,UnderCH).
+
+%------------------------------------------------------------------------------%
+% recover_if_context_not_stronger_than_wp(+FName,+Es,+ML,+Guard,
+%                                         +SGlobalArr,...,
+%                                         +WPCL,-NewWPCL)
+%------------------------------------------------------------------------------%
+% If the formula associated to Es implies WPCL then NewWPCL=WPCL.
+%
+% Otherwise, NewWPCL is those constraints from Es which are part of the
+% interpolant and project them onto SGlobalArr,...
+%------------------------------------------------------------------------------%
+recover_if_context_not_stronger_than_wp(_,_,_,_,_,_,_,_,[],[]):- !.						
+recover_if_context_not_stronger_than_wp(FName,Es,ML,Guard,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					WPCL, WPCL1):-
+        extract_prefix_core(FName,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    Es, ML, Core),
+	choose_for_implication_test_recovery(Es,Core,Lhs),
+        do_test_implication(FName, Lhs ,
+			    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+			    WPCL, ConflictSet),
+	recover_if_context_not_stronger_than_wp_aux(ConflictSet,
+						    FName, Es, ML, Core, Guard,
+						    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+						    WPCL, WPCL1).
+	!.
+
+choose_for_implication_test_recovery(Es,_,CL):-
+	use_for_implication_test_recovery(fse),
+	!,
+	convert_path_to_list(Es,CL).
+choose_for_implication_test_recovery(_,Core,Core):-
+	use_for_implication_test_recovery(core),
+	!.
+
+recover_if_context_not_stronger_than_wp_aux(ConflictSet,_,_,_,_,_,_,_,_,_,WPCL,WPCL):-
+	ConflictSet == [],
+	!.
+recover_if_context_not_stronger_than_wp_aux(ConflictSet, FName, Es, _ML, Core, _,
+					    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					    WPCL,WPCL0):-	
+	add_counter(num_context_not_stronger_than_wp,1),
+#ifdef  NDWP_DEBUG
+        print_message("\tConflict set: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					ConflictSet),
+#endif  /*NDWP_DEBUG*/			
+	%-------------------------------------------------------------------%
+	% Key step: avoid fully replacement of the wp with the
+	% core. The main observation is that some constraints of the
+	% wp are still entailed by the forward symbolic
+	% state. Therefore, we shouldn't throw them away.
+	%-------------------------------------------------------------------%	
+	% Given the conflict set (i.e., constraints not implied by
+	% forward symbolic state), we return as final wp the constraints
+	% from the wp which are not connected to the conflict set
+	% together with the core part related to the conflict set.
+	%
+	% E.g., see wp16.c
+        %
+	%   t = 1;
+        %   x2 = temp;
+        %   x3 = temp;
+	%   // With    this optimization
+	%   {t<= 999 and x2=temp and x3=tmp}
+	%   // Without this optimization
+	%   { t=1    and x2=temp and x3=tmp}
+        %   if (x2==0)
+	%   {t <= 999 and x3 <3}
+	%-------------------------------------------------------------------%		
+ 	varset_constraints(ConflictSet,ConflictVs),
+	irrel_rel_constraints(Core,ConflictVs,_,RelCore),
+	irrel_rel_constraints(WPCL,ConflictVs,IrrelWPCL,_),
+	append(RelCore,IrrelWPCL,WPCL0),
+			
+#ifdef  NDWP_DEBUG	
+        convert_path_to_list(Es,CL),
+	print_message("\tFSE is not stronger than proposed wp!!\n",[]),
+	print_message("\t** FSE state: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					CL),
+	print_message("\t** Core: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					Core),
+	
+	print_message("\t** WP: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					WPCL),
+	print_message("\t** Final WP: ",[]),
+	pretty_printer_constraints_list(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					WPCL0),
+#else
+        % To avoid warnings
+        Es=_,
+	FName=_, SGlobalArr=_,SGlobalVar=_,SLocalArr=_,SLocalVar=_,
+#endif  /*NDWP_DEBUG*/	
+	!.
+
+%-----------------------------------------------------------------------------%
+% do_test_implication(+FName,+Lhs,+SGlobalArr,...,+Rhs,-ConflictSet)
+%-----------------------------------------------------------------------------%
+% Check if l.h.s |= r.h.s
+%-----------------------------------------------------------------------------%
+% do_test_implication(FName,Lhs,
+% 		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,Rhs):-
+% 	%----------------------------------------------------------------------
+% 	% Implication is done by testing inconsistency of lhs and not(rhs)
+% 	%----------------------------------------------------------------------
+% 	fcopy_term(t(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Lhs),
+% 		   t(GlobalArr,GlobalVar,LocalArr,LocalVar,Lhs0)),
+
+% 	% Negation of r.h.s
+% 	% FIXME: array constraints
+% 	negate_numerical_list(Rhs,NegRhs),
+
+% 	% Evaluation of l.h.s.
+% 	constraint_symbolic(Lhs0,[],ArrRef),
+
+% 	% Checking inconsistency 
+% 	subsumed_profiled(FName,_,_,_,_,
+% 			  GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+% 			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,NegRhs),	
+% 	!.
+%-----------------------------------------------------------------------------%
+% This predicate never fails. If ConflictSet=[] then the implication
+% tests was successful. Otherwise, it failed and the conflicting
+% literals are in ConflictSet.
+%-----------------------------------------------------------------------------%
+do_test_implication(FName,Lhs,
+		    SGlobalArr, SGlobalVar, SLocalArr, SLocalVar, Rhs,
+		    ConflictSet):-
+	%----------------------------------------------------------------------
+	% Implication is done by testing inconsistency of lhs and not(rhs)
+	%----------------------------------------------------------------------
+	fcopy_term(t(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,Lhs),
+		   t(GlobalArr,GlobalVar,LocalArr,LocalVar,Lhs0)),
+	% Negation of r.h.s
+	% FIXME: array constraints
+	negate_numerical_list(Rhs,NegRhs),
+	% Evaluation of l.h.s.
+	constraint_symbolic(Lhs0,[],ArrRef),
+	% Checking inconsistency	
+	% if ConflictSet = [] then the implication test succeed.
+	% Otherwise, ConflictSet contains all disjuncts from NegRhs
+	% which are not implied by the forward symbolic execution
+	% state (solver state)
+	test_unsat_with_negated_constraints(FName,
+					    GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+					    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,NegRhs,
+					    ConflictSet),
+	!.
+do_test_implication(_,_,_,_,_,_,_,_):-
+	error_message("do_test_implication/8 should not fail\n",[]).
+
+/*
+test_unsat_with_negated_constraints(FName,
+				    GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,NegRhs,
+				    []):-
+ 	subsumed_profiled(FName,_,_,_,_,
+ 			  GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+ 			  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,NegRhs),
+	!.
+test_unsat_with_negated_constraints(_,_,_,_,_,_,_,_,_,_,_,[_]):- !.
+*/
+test_unsat_with_negated_constraints(_,
+				    GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,NegRhs,
+				    _):-
+				   
+	% We unify variables to connect the constraints at the solver
+	% (GlobalArr,...) with the symbolic constraints of NegRhs.
+	GlobalArr=SGlobalArr,
+	GlobalVar=SGlobalVar,
+	LocalArr =SLocalArr,
+	LocalVar =SLocalVar,
+
+	once(test_unsat_with_negated_constraints_aux(NegRhs,ArrRef,BitSet)),
+	fassert(wp_conflict_set(BitSet)),
+	fail.
+test_unsat_with_negated_constraints(_,_,_,_,_,_,_,_,_,_,NegRhs,ConflictSet):-				    
+	retract(wp_conflict_set(BitSet)),
+	pick_constraints(NegRhs,BitSet,[],ConflictSet,o),	
+	!.
+
+test_unsat_with_negated_constraints_aux([],_,[]):-!.
+test_unsat_with_negated_constraints_aux([NegC|NegCs],ArrRef,[o|ConflictSet]):-
+	not(not(check_satisfiability(NegC,ArrRef))),
+	!,
+	% Here the implication test does not hold anymore.  Still we
+	% continue in order to get all "conflicting" constraints. That
+	% is, those constraints which make not possible the
+	% implication test to hold.
+	test_unsat_with_negated_constraints_aux(NegCs,ArrRef,ConflictSet).
+test_unsat_with_negated_constraints_aux([_|NegCs],ArrRef,[_|ConflictSet]):-
+	% Here the implication test still can hold.
+	test_unsat_with_negated_constraints_aux(NegCs,ArrRef,ConflictSet).
+
+check_satisfiability(C,ArrRef):-
+	constraint_symbolic(C,ArrRef,ArrRef1),
+	satisfiable_array_references(ArrRef1).
+
+%------------------------------------------------------------------------------%
+% wp_nondisjunct_simplify_after_combined(+FName,+WP,-SimpWP)
+%------------------------------------------------------------------------------%
+wp_nondisjunct_simplify_after_combined(_FName,WP, WP):- !.
+	%--------------------------------------------------------------------
+	% This call is not needed in our setting. By construction we
+	% just keep a conjunct.
+	%--------------------------------------------------------------------
+	%remove_all_duplicates(FName, WP, SimpWP).
+
+%-----------------------------------------------------------------------------
+% wp_nondisjunct_combine(+WP1,+WP2,
+%                        +Depth,+FName,
+%                        +SGlobalArr,+SGlobalVar,+SLocalArr,+SLocalVar,-WP3)
+%-----------------------------------------------------------------------------
+wp_nondisjunct_combine(WP1,WP2,_,FName,_,_,_,_,WP3):-
+	WP1 = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,WPConj1,_),
+	WP2 = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,WPConj2,_),
+	merge_two_nondisjunct_wps(WPConj1,WPConj2,FName,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				  WPConj3),
+	WP3 = state(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,WPConj3,_).
+
+merge_two_nondisjunct_wps([],X,_,_,_,_,_,X):-!.
+merge_two_nondisjunct_wps(X,[],_,_,_,_,_,X):-!.
+merge_two_nondisjunct_wps(WPConjA,WPConjB,
+			  FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			  WPConjC):-
+	merge_two_nondisjunct_wps0(WPConjA,WPConjB,
+				   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   WPConjC0),
+#ifdef  NDWP_COMBINE_DEBUG	
+        print_message("Merging \n",[]),	
+        pretty_printer_interp_aux(WPConjA,
+				  FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+        print_message("and \n\t",[]),
+        pretty_printer_interp_aux(WPConjB,
+				  FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	pretty_printer_interp_aux(WPConjC0,
+				  FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),	
+#endif  /*NDWP_COMBINE_DEBUG*/	
+	
+	make_diff_list_intp(WPConjC0, WPConjC),
+	!.
+merge_two_nondisjunct_wps(WPConjA,WPConjB,_,_,_,_,_,_):-
+	error_message("merge_two_nondisjunct_wps/8 failed.\nMerging % and % \n",
+		      [WPConjA,WPConjB]).
+
+merge_two_nondisjunct_wps0([],_,_,_,_,_,_,[]):-!.
+merge_two_nondisjunct_wps0([intp_conjunct([],A)|WPConjA],WPConjB,
+			   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			   WPConjC):-
+	merge_two_nondisjunct_wps_aux(WPConjB,A,
+				      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      WPConjAB),
+	merge_two_nondisjunct_wps0(WPConjA,WPConjB,
+				   FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				   WPConjC0),
+	append(WPConjC0,WPConjAB,WPConjC).
+
+merge_two_nondisjunct_wps_aux([],_,_,_,_,_,_,[]):-!.
+merge_two_nondisjunct_wps_aux([intp_conjunct([],WPCLY)|T],WPCLX,
+			      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			      [intp_conjunct([],WPCLZ)|R]):-	
+	append(WPCLY,WPCLX,WPCLZ0),
+	%-----------------------------------------------------------------------------
+	% make each conjunction as short as possible
+	%-----------------------------------------------------------------------------
+	simplify_constraints(pre,
+			     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			     WPCLZ0,WPCLZ1),
+	%-----------------------------------------------------------------------------
+	% Check if conjunction was false or not.  In theory, the
+	% conjunction is never false. In practice, we approximate the
+	% weakest precondition (i.e., underapproximate). Therefore,
+	% the conjunction of two children's wp's can be false.
+	%-----------------------------------------------------------------------------
+	if_empty_conjunction_then_false(WPCLZ0,WPCLZ1,WPCLZ2),	
+	%-----------------------------------------------------------------------------
+	% eliminate redundant disjunctions
+	% -----------------------------------------------------------------------------
+	% Not applicable since we keep always by construction one
+	% conjunct without disjunction
+	%-----------------------------------------------------------------------------
+	%remove_all_duplicates_aux(WPCLZ2,
+	%			  vars(FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar),
+	%			  WPCLZ),
+	WPCLZ=WPCLZ2,
+	%-----------------------------------------------------------------------------	
+	merge_two_nondisjunct_wps_aux(T,WPCLX,
+				      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      R),
+	!.
+merge_two_nondisjunct_wps_aux(_,_,_,_,_,_,_,_):-
+	error_message("merge_two_nondisjunct_wps_aux/8 failed.\n",[]).
+
+if_empty_conjunction_then_false([] ,_ ,[]):-!.
+if_empty_conjunction_then_false(_WP,[],[ff]):-
+        %print_message("SANITY CHECK simplify_constraints failed: % \n",[WP]).
+	add_counter(num_of_empty_conjunctions,1).	
+if_empty_conjunction_then_false(_  ,WP,WP):-!.
+	
+%------------------------------------------------------------------------------
+% wp_nondisjunct_subsumed(+,+,+,+,+,+,+,+,+,+,+,+,+,+,+)
+%------------------------------------------------------------------------------
+wp_nondisjunct_subsumed(_,_,_,_,_,_,_,_,_,_,_,_,_,_,WPConj) :-
+	WPConj == [],
+	!.
+wp_nondisjunct_subsumed(FName,
+			SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+			GlobalArr ,GlobalVar ,LocalArr ,LocalVar ,ArrRef,
+			TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,WPConj) :-
+#ifdef  PROFILE
+       wp_nondisjunct_subsumed_profiled(FName,
+					SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					GlobalArr, GlobalVar,LocalArr, LocalVar,ArrRef,
+					TGlobalArr, TGlobalVar,TLocalArr, TLocalVar,
+					WPConj).
+#else  
+        wp_nondisjunct_subsumed_aux(WPConj,
+				    FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	       
+				    GlobalArr, GlobalVar, LocalArr, LocalVar,ArrRef,
+				    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar).
+#endif  /*PROFILE*/
+
+	
+#ifdef  PROFILE
+%------------------------------------------------------------------------------
+% wp_nondisjunct_subsumed_profiled
+% A wrapper that collects some profiling information
+%------------------------------------------------------------------------------
+wp_nondisjunct_subsumed_profiled(FName,
+				SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	
+			        GlobalArr, GlobalVar, LocalArr, LocalVar,
+	                        ArrRef,
+				TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,
+				WPConj) :-
+	ctime(T0),
+	wp_nondisjunct_subsumed_profiled0(FName,
+					  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	    
+					  GlobalArr, GlobalVar,LocalArr, LocalVar,
+					  ArrRef,
+					  TGlobalArr, TGlobalVar,TLocalArr, TLocalVar,
+					  WPConj, T0).
+
+wp_nondisjunct_subsumed_profiled0(FName,
+				  SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,		    
+				  GlobalArr, GlobalVar, LocalArr, LocalVar,ArrRef,
+				  TGlobalArr, TGlobalVar,TLocalArr, TLocalVar,
+				  WPConj, T0) :-
+	wp_nondisjunct_subsumed_aux(WPConj,
+				    FName,
+				    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,	       
+				    GlobalArr, GlobalVar, LocalArr, LocalVar,ArrRef,
+				    TGlobalArr, TGlobalVar, TLocalArr, TLocalVar),
+	!,
+	ctime(T1),
+	add_counter(subsumed_timing_ok,T1-T0),
+	add_counter(subsumed_ok,1).
+wp_nondisjunct_subsumed_profiled0(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,T0) :-
+	ctime(T1),
+	add_counter(subsumed_timing_failed,T1-T0),
+	add_counter(subsumed_failed,1), !, fail.
+#endif  /*PROFILE*/
+
+% sanity_check_singleton_list([]):-!.
+% sanity_check_singleton_list([_]):-!.
+% sanity_check_singleton_list(_):- 
+% 	error_message("subsumption test detected more than one disjunct\n",[]).
+
+%------------------------------------------------------------------------------
+% wp_nondisjunct_subsumed_aux
+%------------------------------------------------------------------------------
+% Check that all conjuncts of negated literals in the WPConj are
+% unsatisfiable
+%------------------------------------------------------------------------------
+wp_nondisjunct_subsumed_aux([],_,_,_,_,_,_,_,_,_,_,_,_,_,_).
+wp_nondisjunct_subsumed_aux([intp_conjunct([], WPCL)],FName,
+			    SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,				    
+			    GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+			    TGlobalArr,TGlobalVar,TLocalArr,TLocalVar):-
+	%----------------------------------------------------------------------
+	% WPCL1 will be interpreted as a disjunction of negated
+	% literals
+	%----------------------------------------------------------------------
+        make_dnf(WPCL,WPCL1),
+	subsumed(FName,
+		 SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		 GlobalArr,GlobalVar,LocalArr,LocalVar,ArrRef,
+		 TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,WPCL1).
+
+%------------------------------------------------------------------------------%
+% wp_nondisjunct_create_subsumed_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% Create interpolant from subsuming memo goal
+%------------------------------------------------------------------------------%
+wp_nondisjunct_create_subsumed_interpolant(_, _, _, _, _, _,TGA,TGV,TLA,TLV,[],
+					   state(TGA,TGV,TLA,TLV,[],_)):- !.
+wp_nondisjunct_create_subsumed_interpolant(SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   CL, ML,
+					   TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					   NegWPConj, WP) :-
+	%----------------------------------------------------------------------
+	% Generate ML from the wp and and construct the new wp
+	%----------------------------------------------------------------------
+	SGlobalArr=TGlobalArr,
+	SGlobalVar=TGlobalVar,
+	SLocalArr =TLocalArr,
+	SLocalVar =TLocalVar,
+	add_counter(num_deletion_markings_from_wp,1),
+	unsat_core_from_ndwp(NegWPConj,
+			     SGlobalArr,SGlobalVar,
+			     SLocalArr ,SLocalVar,
+			     CL, ML),
+	%----------------------------------------------------------------------
+	% Return the negation of the wp
+	%----------------------------------------------------------------------
+        negate_interp_conjuncts(NegWPConj,WPConj0),	
+	make_diff_list_intp(WPConj0, WPConj1),
+	WP = state(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,WPConj1,_),
+	!.
+wp_nondisjunct_create_subsumed_interpolant(_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("wp_nondisjunct_create_subsumed_interpolant/12 failed\n",[]).
+
+unsat_core_from_ndwp([],_,_,_,_,_,_).
+unsat_core_from_ndwp([intp_conjunct([],NegWPCL)|R],
+		     SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+		     CL,ML) :-	
+	%--------------------------------------------------------------------
+	% WPCL1 should interpreted as a disjunction of negated
+	% literals
+	%--------------------------------------------------------------------
+        make_dnf(NegWPCL,NegWPCL1),
+	% We know that XCL is unsat, so no need of checking that
+	interpolate_constraints_path(NegWPCL1, CL, ML, no_check),
+	add_counter(num_deletion_markings_from_wp_aux,1),	
+	!,
+	unsat_core_from_ndwp(R,
+			     SGlobalArr,SGlobalVar,
+			     SLocalArr,SLocalVar,CL,ML).
+						  
+%------------------------------------------------------------------------------%
+% wp_nondisjunct_create_abstraction_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+% Create interpolant from an abstraction point (e.g., loops)
+%------------------------------------------------------------------------------%
+wp_nondisjunct_create_abstraction_interpolant(_, _, _, _, _, _,TGA,TGV,TLA,TLV,[],
+					      state(TGA,TGV,TLA,TLV,[],_)):- !.
+wp_nondisjunct_create_abstraction_interpolant(TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					      CL, ML,
+					      TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+					      NegWPConj, WP) :-
+	%----------------------------------------------------------------------
+	% Generate unsatisfiable core (ML) from the wp 
+	%----------------------------------------------------------------------
+	add_counter(num_deletion_markings_from_wp,1),
+	unsat_core_from_ndwp(NegWPConj,
+			     TGlobalArr,TGlobalVar,TLocalArr,TLocalVar,
+			     CL, ML),	
+	%----------------------------------------------------------------------	
+	% Return the negated wp
+	%----------------------------------------------------------------------
+	negate_interp_conjuncts(NegWPConj, WPConj0),	
+	make_diff_list_intp(WPConj0, WPConj1),
+	WP = state(TGlobalArr, TGlobalVar, TLocalArr, TLocalVar,WPConj1,_),
+	!.
+wp_nondisjunct_create_abstraction_interpolant(_,_,_,_,_,_,_,_,_,_,_,_):-
+	error_message("wp_nondisjunct_create_abstraction_interpolant/12 failed\n",[]).
+
+%------------------------------------------------------------------------------
+% wp_nondisjunct_create_memo_interpolant(+,+,+,+,+,+,+,+,+,+,+,-)
+%------------------------------------------------------------------------------
+wp_nondisjunct_create_memo_interpolant(_,_,_,_,_,_,state(SGA1,SGV1,SLA1,SLV1,[],_),
+				       SGA1,SGV1,SLA1,SLV1,[]) :- !.
+wp_nondisjunct_create_memo_interpolant(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				       _,_, WP,
+				       SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,
+				       OutWPConj) :-
+	WP=state(SGlobalArr, SGlobalVar, SLocalArr, SLocalVar,WPConj,_),
+	%------------------------------------------------------------------------%
+	% The following call is useless because we should not get, by
+	% construction, unsatisfiable conjuncts.
+	%------------------------------------------------------------------------%
+	% remove_infeasible_interp_conjunct(WPConj, WPConj1),
+	%------------------------------------------------------------------------%	
+	WPConj1=WPConj,
+	wp_create_memo_interpolant_nondisjunct_aux(WPConj1,
+						   SGlobalArr,SGlobalVar,
+						   SLocalArr,SLocalVar,
+						   OutWPConj).
+wp_nondisjunct_create_memo_interpolant(_,_,_,_,_,_,_,_,_,_,_,_) :-
+	error_message("wp_nondisjunct_create_memo_interpolant/12 failed.\n ",[]).
+
+wp_create_memo_interpolant_nondisjunct_aux([],_,_,_,_,[]):-!.
+wp_create_memo_interpolant_nondisjunct_aux([intp_conjunct([],[ff])|R],
+	                                   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   [intp_conjunct(Tail,NegInterpT)|S]) :-
+        append([tt],Tail,NegInterpT),
+	wp_create_memo_interpolant_nondisjunct_aux(R,
+						   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+						   S).
+wp_create_memo_interpolant_nondisjunct_aux([intp_conjunct([],WPCL)|R],
+					   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+					   [intp_conjunct(Tail,NegInterpT)|S]) :-
+	%-------------------------------------------------------------------------	
+	% Here, each conjunction is satisfiable
+	%-------------------------------------------------------------------------
+	init_marked_constraints_path(WPCL,CL,ML),
+	make_negated_projected_interpolant(SGlobalArr, SGlobalVar,
+					   SLocalArr, SLocalVar,
+					   CL, ML,
+					   NegInterp),
+	% note: NegInterp will be interpreted as a disjunction when
+	% subsumption test.
+	append(NegInterp,Tail,NegInterpT),
+	%-------------------------------------------------------------------------
+	wp_create_memo_interpolant_nondisjunct_aux(R,
+						   SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+						   S).
+
+
+
+%------------------------------------------------------------------------------%
+% wp_nondisjunct_merge_loop_interpolant(+WP1,+WP2,+FName,+SGlobalArr,...,-WP3)
+%------------------------------------------------------------------------------%
+% Merge the weakest precondition of the loop body with the loop exit's
+%------------------------------------------------------------------------------%
+wp_nondisjunct_merge_loop_interpolant(WP1,WP2,
+				      FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+				      WP3):-
+	wp_nondisjunct_combine(WP1,WP2,_,
+			       FName,SGlobalArr,SGlobalVar,SLocalArr,SLocalVar,
+			       WP3).
+
+%==================================================================================%
+%                                  STATS
+%==================================================================================%
+wp_nondisjunct_print_pre_stats:-
+	current_tracer_flag(other_interp_method,non_disjunctive),!,
+	counter_value(num_of_disjuncts,NumDisj),	
+	counter_value(num_of_unavoidable_disjuncts,NumUnAvoidableDisj),
+        counter_value(num_of_unavoidable_disjuncts_at_infeasible,NumUnAvoidableDisjInfeasible),	
+	counter_value(num_context_not_stronger_than_wp,NumStrongWP),
+	counter_value(num_of_wp_guard_skipped,NumSkipGuards),
+	counter_value(num_of_wp_guard_not_skipped,NumNonSkipGuards),
+	counter_value(time_pre_delete_irrelevant,DeleteIrrelT),
+	counter_value(time_pre_abduction,AbductionT),
+	counter_value(time_pre_recover_underapproximation,RecoverUnderT),
+	print_message("\t\t\tTime for removing irrelevant guards               : % sec.\n",
+		      [DeleteIrrelT]),
+	print_message("\t\t\tTime for existential quantifier elimination       : % sec.\n",
+		      [AbductionT]),
+	print_message("\t\t\tTime for recovering too narrow underapproximations: % sec.\n",
+		      [RecoverUnderT]),
+	print_message("\tNum of disjuncts in the wp after abduction               : %\n",
+		      [NumDisj]),	
+	print_message("\t\tNum of disjuncts cannot be simplified            : %\n",
+		      [NumUnAvoidableDisj]),
+	print_message("\t\tNum of times a disjunctive wp at infeasible node : %\n",
+		      [NumUnAvoidableDisjInfeasible]),
+	print_message("\tNum of times a guard is skipped from wp computation      : %\n",
+		      [NumSkipGuards]),
+	print_message("\tNum of times a guard is not skipped from wp computation  : %\n",
+		      [NumNonSkipGuards]),
+	
+        print_message("\tNum of times the wp is stronger than forward symb. state : %\n",
+		      [NumStrongWP]).
+wp_nondisjunct_print_pre_stats.
+
+wp_nondisjunct_print_combine_stats:-
+	current_tracer_flag(other_interp_method,non_disjunctive),!,
+	counter_value(num_of_empty_conjunctions,NEC),
+	print_message("\tNum of times conjunction is false                        : %\n",
+                      [NEC]).
+wp_nondisjunct_print_combine_stats.
