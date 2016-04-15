@@ -56,7 +56,7 @@ Directories
    - `src`
      - `compiler/antlr` - contains the compiler from C to CLP 
      - `compiler/GUIFrontEnd` - contains the GUI front end of the system
-     - `interpreter - contains the interpreter that runs the CLP program
+     - `interpreter` - contains the interpreter that runs the CLP program
 
 
       
