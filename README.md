@@ -1,4 +1,4 @@
-# TRACER 0.1
+# TRACER Symbolic Execution Tool
 
 Copyright 2008-2016 National University of Singapore. All rights reserved.
 
