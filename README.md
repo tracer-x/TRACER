@@ -4,7 +4,7 @@ Copyright 2008-2016 National University of Singapore. All rights reserved.
 
 See LICENSE.md for license information of TRACER 0.1. This distribution contains third party software. See lib/LICENSE for the copyright and license information of the included third-party software.
 
-This is a version of TRACER software verification tool with CIL front-end. Chu Duc Hiep, Joxan Jaffar, Rasool Maghareh, Vijayaraghavan Murali, Jorge Navas, Andrew Santosa, and Razvan Voicu contributed to its initial development.
+This is a version of TRACER symbolic execution tool with CIL front-end. Chu Duc Hiep, Joxan Jaffar, Rasool Maghareh, Vijayaraghavan Murali, Jorge Navas, Andrew Santosa, and Razvan Voicu contributed to its initial development.
 
 Prerequisites
 =============
