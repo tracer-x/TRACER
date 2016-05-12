@@ -11,7 +11,6 @@ Prerequisites
 
 - jdk  >= 1.5 
 - ant  >= 1.7.0
-- clpr >= 1.2
 - gpp  >= 2.24
 - ocaml >= 3.12.1 (for CIL)
 
