@@ -22,8 +22,8 @@ Installation
 
    For instance, in bash:
    ```
-   export TRACER_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk
-   export CLPR_BASE_PATH=/home/jorge/SvnReps/Systems/CLPR
+   export TRACER_PATH=<some_prefix>/tracer
+   export CLPR_BASE_PATH=<some_prefix>/tracer/src
    ```
    For convenience, add to `PATH` the directory `$TRACER_PATH/bin`
 
