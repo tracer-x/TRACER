@@ -1,0 +1,170 @@
+
+------------------
+CLP(R) Version 1.2
+INSTALLATION NOTES
+------------------
+
+This system, consisting of a compiler, byte-code emulator and 
+constraint-solver, is written entirely in C.  It has been known to 
+run on a number of machines: IBM RS/6000, IBM RT/PC, IBM PS/2-80, 
+PC's, Sun 3, Sun 4 and Vaxen, using a number of UNIX[tm]-based operating 
+systems: AIX, BSD, Mach and SunOS.  It is expected that only minor 
+modifications are needed to accomodate other 32-bit machines 
+running a UNIX-based operating system. There is also a port to MS/DOS
+and OS/2 2.0 using gcc.
+
+0.  Read the RESEARCH SOFTWARE DISCLAIMER and USER AGREEMENT below.
+
+1.  The CLP(R) manual is in the DOC subdirectory and Chapter 6 contains 
+the installation guide. If you have one of the UNIX machines listed
+in the installation guide or the Makefile then you should be able
+to install right away, otherwise it may be helpful to read the
+guide first. For old users of CLP(R) the file "README.NEW" summarizes
+the new features and changes in version 1.2 from version 1.1.
+A UNIX manual style page is in ./DOC/clpr.1 but it should be customized
+for the library path in your installation.
+
+2.  If you are installing on MS/DOS or OS/2 2.0 then you will need to
+use the files in the DOS subdirectory. The appropriate README files
+there should be used in addition to these instructions.
+Note also that many of the files in the DOS directory are symbolic
+links to files in this directory.
+
+3.  Decide on a directory to install the library file (eg. /usr/lib/clpr),
+and copy the file "./lib/init.clpr" there.
+
+4.  Edit the Makefile for your particular configuration. The variables
+which you may need to CC (the C compiler eg. cc or gcc), CCOPT 
+(options such as -O, -O2) for specific C compiler options such
+as higher optimization levels, LIBPATH (the path to the library from Step 3), 
+CLIB (any special libraries required by the C compiler) and OPTIONS. 
+(** NOTE: Sometimes -O causes some problems with some C compilers, some
+old versions of cc on the Suns have had problems with -O on, also
+some compilers may need specific options to invoke the floating point
+or have better floating point performance. **) 
+The main variable which needs to be changed is OPTIONS and if you have
+one of the systems listed in the Makefile, you simply need to use the
+sample as your setting for OPTIONS. 
+Otherwise for a Unix system adding "-DBSD" or "-DSYS5"
+is likely to be sufficient. You may also need to add "-DHZ=XX" where XX
+is the resolution of the clock ticks in hertz for System V Unix derivatives.
+
+5.  Run "make clean clpr".
+
+6.  Type "clpr" to see if everything worked. Enjoy ...
+For old users, because there is now style checking see (README.NEW and
+the manual) which is currently defaulted to be on, your old programs
+may generate some warnings. If you don't like this you can either
+comment out the style checking in "init.clpr" in the last few lines
+or you can turn style checking off with "no_style_check(all)".
+
+7.  There are some simple sample PROLOG and CLP(R) programs in the
+EXAMPLES subdirectory which may be used to run some quick verification
+tests. Chapter 4.6 of the manual contains a sample session which
+may be useful to gain familiarization with the system.
+
+8.  Please let us know about how your installation went.  Address 
+correspondence to:
+
+        Joxan Jaffar
+        IBM Thomas J. Watson Research Center
+        P.O. Box 704
+        Yorktown Heights, NY 10598
+        U.S.A.
+        E-mail: joxan@watson.ibm.com (internet), joxan@yktvmh (bitnet)
+
+    You may also be interested to join the CLP mailing lists.  The list 
+    clp@cs.cmu.edu concerns general CLP matters, and to enrol, email to 
+    clp-request@cs.cmu.edu.  The other list clpr-users@cs.cmu.edu is for 
+    matters concerning the CLP(R) system.  To join this, email to 
+    clpr-users-request@cs.cmu.edu.
+
+===============================================================================
+
+
+ ------------------------------------------------------------------------
+ RESEARCH SOFTWARE DISCLAIMER -------------------------------------------
+ ------------------------------------------------------------------------
+
+    As unestablished, research software, this program is provided free of 
+    charge on an "as is" basis without warranty of any kind, either 
+    expressed or implied, including but not limited to implied warranties 
+    of merchantability and fitness for a particular purpose.  IBM does not 
+    warrant that the functions contained in this program will meet the user's
+    requirements or that the operation of this program will be uninterrupted 
+    or error-free.  Acceptance and use of this program constitutes the user's
+    understanding that he will have no recourse to IBM for any actual or 
+    consequential damages, including, but not limited to, lost profits or 
+    savings, arising out of the use or inability to use this program.  Even 
+    if the user informs IBM of the possibility of such damages, IBM expects 
+    the user of this program to accept the risk of any harm arising out of 
+    the use of this program, or the user shall not attempt to use this 
+    program for any purpose.
+
+ ------------------------------------------------------------------------
+ USER AGREEMENT ---------------------------------------------------------
+ ------------------------------------------------------------------------
+
+     BY ACCEPTANCE AND USE OF THIS EXPERIMENTAL PROGRAM
+     THE USER AGREES TO THE FOLLOWING:
+
+     a.  This program is provided for the user's personal, non-commercial, 
+         experimental use and the user is granted permission to copy this
+         program to the extent reasonably required for such use.
+
+     b.  All title, ownership and rights to this program and any copies 
+         remain with IBM, irrespective of the ownership of the media on 
+         which the program resides.
+
+     c.  The user is permitted to create derivative works to this program.  
+         However, all copies of the program and its derivative works must
+         contain the IBM copyright notice, the UNESTABLISHED SOFTWARE 
+         DISCLAIMER and this USER AGREEMENT.
+
+     d.  By furnishing this program to the user, IBM does NOT grant either 
+         directly or by implication, estoppel, or otherwise any license
+         under any patents, patent applications, trademarks, copyrights or 
+         other rights belonging to IBM or to any third party, except as 
+         expressly provided herein.
+
+     e.  The user understands and agrees that this program and any derivative
+         works are to be used solely for experimental uses and are not to be
+         sold, distributed to a commercial organization, or be commercially 
+         exploited in any manner.
+
+     f.  IBM requests that the user supply to IBM a copy of any changes, 
+         enhancements, or derivative works which the user may create.  The 
+         user grants IBM and its subsidiaries an irrevocable, nonexclusive, 
+         worldwide and royalty-free license to use, execute, reproduce, 
+         display, perform, prepare derivative works based upon, and 
+         distribute, (INTERNALLY AND EXTERNALLY) copies of any and all such 
+         materials and derivative works thereof, and to sublicense others to 
+         do any, some, or all of the foregoing, (including supporting
+         documentation).
+
+         Copies of these modifications should be sent to:
+
+               SOFTWARE @ YKTVMV.BITNET
+
+     g.  Technical data and/or commodities furnished under this agreement
+         are subject to United States export/reexport control laws and
+         regulations.  The user agrees to comply with such laws and 
+         regulations, including complying with the terms of the U.S. 
+         license authorizing IBM to furnish the technical data and/or 
+         commodities to the user.
+     
+     h.  The user agrees not to export, directly or indirectly, any technical
+         data provided by IBM or any direct product of such data to, or to the
+         nationals of, Czechoslovakia, Estonia, Hungary, Iraq, Laos, Latvia,
+         Libya, Lithuania, Mongolian Peoples Republic, North Korea, People's
+         Republic of China, Poland, Romania, Union of Soviet Socialist
+         Republics, and Vietnam.
+     
+     i.  It is a requirement that the assurance from the recipient of the
+         tech data be received by IBM prior to the disclosure or export.  It
+         need not be in the actual license/contract/or other agreement
+         setting forth the deal itself-a side letter is perfectly acceptable.
+         The executed copy of the assurance should be retained locally for
+         file purposes.         
+
+ ------------------------------------------------------------------------

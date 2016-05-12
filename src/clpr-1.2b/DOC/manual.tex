@@ -1,0 +1,3759 @@
+\documentstyle[12pt]{report}
+
+\topmargin -0.25in
+\headheight 10pt
+\headsep 30pt
+\footheight 24pt
+\oddsidemargin 0.0in
+\evensidemargin 0.0in
+\parskip 4mm
+\footskip 50pt
+\textheight 8.5in
+\textwidth 6.5in
+
+%%%%%%% changebar.sty %%%%%%%
+\makeatletter
+% Change bar document-style option for LaTeX.
+% Copyright (C) 1990 by David B. Johnson (dbj@titan.rice.edu).
+ 
+% These macros draw a solid bar down the right margin of the output,
+% covering a range of the input file that has been declared to be changed.
+%
+% The beginning and end of a change bar in the text are marked with
+% \chgbarbegin and \chgbarend, respectively.  For example,
+%
+%     Here is some sample text \chgbarbegin that was
+%     changed\chgbarend{} and some that wasn't changed.
+%
+% The change bar is drawn continuously between the line of output
+% containing the \chgbarbegin and the line of output containing the
+% \chgbarend.  These lines can end up on separate pages, and the
+% division at page boundaries is handled automatically.
+ 
+% Two dimensions control the size and placement of the change bars:
+%     \chgbarwidth      The width of a change bar
+%     \chgbarsep        The distance between the text and the change bar
+ 
+% Warning: it does not appear to be possible to do this completely
+% correctly, due to the time at which the verticle glue on a page is
+% finally set, and the way that page breaks are decided.  With
+% \raggedbottom, this normally works fine.  It hasn't been tested with
+% \flushbottom, but will probably behave worse.  In strange rare
+% situations, a change bar might be drawn from the first line of a page
+% up off the top of a page; this can usually be fixed by slightly moving
+% the \chngbarend around, or by breaking a single change bar range
+% into two ranges.
+ 
+\newdimen\chgbarwidth \newdimen\chgbarsep
+\chgbarwidth 4pt
+\chgbarsep .25in
+ 
+\def\chgbarbegin{\ifhmode\@chgbar{-2}\else\@chgbar{-3}\fi}
+\def\chgbarend{\@chgbar{-4}}
+ 
+\marginparpush 0pt
+ 
+% The remainder of this is hacked up based on the LaTeX 2.09 latex.tex.
+ 
+% copied from \marginpar
+\def\@chgbar#1{\ifhmode \@bsphack\@floatpenalty -\@Mii\else
+   \@floatpenalty-\@Miii\fi\ifinner
+      \@parmoderr\@floatpenalty\z@
+    \else\@next\@currbox\@freelist{\global
+      \count\@currbox#1}{\@floatpenalty\z@ \@fltovf
+      \def\@currbox{\@tempboxa}}\fi
+     \setbox\@tempboxa\vbox
+     \bgroup\end@float\@esphack}
+ 
+\newdimen\@chgbarbegin
+\newif\if@inchgbar \@inchgbarfalse
+ 
+\def\@addmarginpar{%
+\ifnum\count\@currbox = -2	% change bar begin from hmode
+    \global\@chgbarbegin\@pageht \global\advance\@chgbarbegin -\baselineskip
+    \global\@inchgbartrue
+    \@cons\@freelist\@currbox
+\else
+\ifnum\count\@currbox = -3	% change bar begin not from hmode
+    \global\@chgbarbegin\@pageht
+    \global\@inchgbartrue
+    \@cons\@freelist\@currbox
+\else
+\ifnum\count\@currbox = -4	% change bar end
+    \if@inchgbar\else\@latexbug\fi
+    \@tempdima\@pageht \advance\@tempdima -\@chgbarbegin
+    \nointerlineskip
+    \@tempcnta\@ne
+    \if@twocolumn
+        \if@firstcolumn \@tempcnta\m@ne \fi
+    \else
+      \if@mparswitch
+         \ifodd\c@page \else\@tempcnta\m@ne \fi
+      \fi
+      \if@reversemargin \@tempcnta -\@tempcnta \fi
+    \fi
+    \hbox to\columnwidth
+      {\ifnum \@tempcnta >\z@
+          \hskip\columnwidth \hskip\chgbarsep
+        \else \hskip -\chgbarsep \fi
+\hbox{\vbox to 0pt{\vss
+       \hrule \@height\@tempdima \@width\chgbarwidth \@depth\z@
+}}
+\hss}
+    \nointerlineskip
+    \global\@inchgbarfalse
+    \@cons\@freelist\@currbox
+\else
+    \@next\@marbox\@currlist{\@cons\@freelist\@marbox
+    \@cons\@freelist\@currbox}\@latexbug\@tempcnta\@ne
+    \if@twocolumn
+        \if@firstcolumn \@tempcnta\m@ne \fi
+    \else
+      \if@mparswitch
+         \ifodd\c@page \else\@tempcnta\m@ne \fi
+      \fi
+      \if@reversemargin \@tempcnta -\@tempcnta \fi
+    \fi
+    \ifnum\@tempcnta <\z@  \global\setbox\@marbox\box\@currbox \fi
+    \@tempdima\@mparbottom \advance\@tempdima -\@pageht
+       \advance\@tempdima\ht\@marbox \ifdim\@tempdima >\z@
+       \@warning{Marginpar on page \thepage\space moved}\else\@tempdima\z@ \fi
+    \global\@mparbottom\@pageht \global\advance\@mparbottom\@tempdima
+       \global\advance\@mparbottom\dp\@marbox
+       \global\advance\@mparbottom\marginparpush
+    \advance\@tempdima -\ht\@marbox
+    \global\ht\@marbox\z@ \global\dp\@marbox\z@
+    \vskip -\@pagedp \vskip\@tempdima\nointerlineskip
+    \hbox to\columnwidth
+      {\ifnum \@tempcnta >\z@
+          \hskip\columnwidth \hskip\marginparsep
+        \else \hskip -\marginparsep \hskip -\marginparwidth \fi
+       \box\@marbox \hss}
+    \vskip -\@tempdima
+    \nointerlineskip
+    \hbox{\vrule \@height\z@ \@width\z@ \@depth\@pagedp}
+\fi\fi\fi}
+ 
+\def\@makecol{\setbox\@outputbox\box\@cclv
+   \if@inchgbar
+    \@tempcnta\@ne
+    \if@twocolumn
+        \if@firstcolumn \@tempcnta\m@ne \fi
+    \else
+      \if@mparswitch
+         \ifodd\c@page \else\@tempcnta\m@ne \fi
+      \fi
+      \if@reversemargin \@tempcnta -\@tempcnta \fi
+    \fi
+    \@tempdima\ht\@outputbox \advance\@tempdima -\@chgbarbegin
+    \advance\@tempdima -\baselineskip
+    \setbox\@outputbox
+     \vbox{\boxmaxdepth \maxdepth
+     \unvbox\@outputbox \nointerlineskip \hbox to\columnwidth
+      {\ifnum \@tempcnta >\z@
+          \hskip\columnwidth \hskip\chgbarsep
+        \else \hskip -\chgbarsep \fi
+       \hbox{\vbox to 0pt{\vss
+         \hrule \@height\@tempdima \@width\chgbarwidth \@depth\z@}}\hss}}
+    \global\@chgbarbegin 0pt
+\fi
+   \ifvoid\footins\else\setbox\@outputbox
+     \vbox{\boxmaxdepth \maxdepth
+     \unvbox\@outputbox\vskip\skip\footins\footnoterule\unvbox\footins}\fi
+     \xdef\@freelist{\@freelist\@midlist}\gdef\@midlist{}\@combinefloats
+     \setbox\@outputbox\vbox to\@colht{\boxmaxdepth\maxdepth
+        \@texttop\dimen128=\dp\@outputbox\unvbox\@outputbox
+        \vskip-\dimen128\@textbottom}
+     \global\maxdepth\@maxdepth}
+ 
+\makeatother
+%%%%%%% end changebar.sty %%%%%%%
+
+\def\CLPR{\mbox{CLP(${\cal R}$)}}
+\def\cut{\mbox{!}}
+
+\newcommand{\indexentry}[2]{\protect\item{\protect#1}, #2}
+\newcommand{\nl}{\hfill \\} % silent line break
+\newcommand{\ignore}[1]{}
+\newcommand{\ouritem}[1]{\item[{\mbox{\tt #1}}]\ \\}
+\newcommand{\oursitem}[1]{\item[{\mbox{\tt #1}}]\ \\\vspace{-0.33in}}
+\newcommand{\unint}[1]{ \mbox{ $\widehat{#1}$ } }
+\newcommand{\unintt}[1]{ \mbox{$\widehat{\mbox{\tt #1}}$} }
+\newcommand{\p}[1]{ \mbox{{\tt #1}} }
+\newcommand{\pct}{\mbox{\%}}
+
+\newcommand{\lhs}{\frenchspacing l.h.s. }
+\newcommand{\rhs}{\frenchspacing r.h.s. }
+\newcommand{\wrt}{\frenchspacing w.r.t. }
+\newcommand{\singlespace}{
+	\renewcommand{\baselinestretch}{1.00} \large \normalsize}
+\newcommand{\doublespace}{
+	\renewcommand{\baselinestretch}{1.75} \large \normalsize}
+\newcommand{\ttsl}{$\tt \backslash$}
+
+\newcommand{\stuff}[1]{
+	\begin{minipage}{4in}
+	{\tt \samepage 
+	\begin{tabbing} 
+	\hspace{8mm} \= \hspace{6mm} \= \hspace{10mm} \= \hspace{55mm} \= \kill
+	#1
+	\end{tabbing}
+	}
+	\end{minipage}
+}
+
+\makeindex
+
+\pagestyle{empty}
+\begin{document}
+\title{\bf The \CLPR\ Programmer's Manual \\ Version 1.2}
+\author{
+{\sc Nevin C. Heintze} \ $^{\dag}$ \\
+{\sc Joxan Jaffar} \ $^{\ddag}$ \\ 
+{\sc Spiro Michaylov} \ $^{*}$ \\
+{\sc Peter J. Stuckey} \ $^{\S}$ \\
+{\sc Roland H.C. Yap} \ $^{\P\S}$ \\ \ \\
+$^{\ddag}$ 
+{\normalsize\em IBM Thomas J Watson Research Center} \\
+{\normalsize\em PO Box 704} \\
+{\normalsize\em Yorktown Heights, NY 10598, U.S.A.}
+\\ \ \\
+$^{\dag}$ 
+{\normalsize\em School of Computer Science} \\
+{\normalsize\em Carnegie Mellon University} \\
+{\normalsize\em Pittsburgh, PA 15213, U.S.A.}
+\\ \ \\
+$^{*}$
+{\normalsize\em Department of Computer and Information Science} \\
+{\normalsize\em The Ohio State University} \\
+{\normalsize\em Columbus, OH 43210-1277, U.S.A.}
+\\ \ \\
+$^{\S}$ 
+{\normalsize\em Department of Computer Science} \\
+{\normalsize\em University of Melbourne} \\ 
+{\normalsize\em Parkville, Victoria 3052, Australia}
+\\ \ \\
+$^{\P}$ 
+{\normalsize\em Department of Computer Science} \\
+{\normalsize\em Monash University} \\ 
+{\normalsize\em Clayton, Victoria 3168, Australia}
+%\\ \ \\ 
+}
+\date{September 1992}
+\maketitle
+\pagestyle{headings}
+
+%\newpage
+\pagenumbering{roman}
+\tableofcontents
+
+\chapter{Introduction}
+\pagenumbering{arabic}
+This manual describes \CLPR{} version 1.2, and at a number of places
+throughout this text changebars have been placed either to indicate new
+features in version 1.2 from version 1.1 or some changes in the manual.
+The \CLPR\ language is an instance of the Constraint Logic Programming scheme
+defined by Jaffar and Lassez \cite{JAFFAR87A}.
+Its operational model is similar to that of
+PROLOG. A major difference is that unification is replaced by a more general
+mechanism: solving constraints in the domain of uninterpreted functors over
+real arithmetic terms. A working knowledge of PROLOG programming is assumed in
+this document; the book by Sterling and Shapiro \cite{STERLING86} 
+can serve as a suitable introductory text.  Further technical
+information on \CLPR\  is available on language design and implementation
+\cite{JAFFAR87B,JAFFAR92C}, meta-programming \cite{HEINTZE89} and delay
+mechanisms \cite{JAFFAR91}. 
+Additionally, much has been written about
+applications in electrical engineering \cite{HEINTZE87,MOZETIC91}, 
+differential equations \cite{HARLAND87,HOMIAK91}, 
+temporal reasoning \cite{AMON92,AMON92B,BRZOSKA91},
+protocol testing \cite{GORLICK87},
+structural analysis and synthesis \cite{LAKMAZAHERI89},
+mechanical engineering \cite{STHANUSUBRAMONIAN91},
+user interfaces \cite{YEUNG88},
+model-based diagnosis \cite{YU91},
+options trading \cite{LASSEZ87A}, 
+music theory \cite{TOBIAS88},
+molecular biology \cite{YAP91},
+{\em etc}.
+
+This document is both an introductory tutorial and  
+reference manual describing the compiler-based
+implementation of \CLPR. The reader experienced with PROLOG or \CLPR{}
+may wish to 
+skip to Chapter \ref{chap:system}, and in particular, see the sample
+session in Section \ref{sample-session} to get started quickly.
+Compiled \CLPR\ is an interactive system that compiles all programs and
+goals into CLAM code which is interpreted by a byte-code emulator
+that is part of the system. The system is portable in the sense that it will
+run on virtually all 32 bit UNIX$^{\mbox{\scriptsize TM}}$ 
+machines with a reasonably 
+standard C compiler, as well as many others.
+
+We would like to emphasize that this manual describes a constantly-evolving,
+experimental system. Hence much of what is described is subject to change in
+future releases. Furthermore, the use of undocumented features is 
+particularly dangerous.
+
+Finally, we adopt some standard notational conventions, 
+such as the name/arity convention for describing predicates and functors, 
+{\tt +} for input arguments, {\tt -} for output arguments, and {\tt ?} for 
+arguments that may be either input or output.\index{notation conventions}
+
+\chapter{Syntax and Simple Examples} \label{syntax-examples}
+
+A \CLPR\ program is a collection of rules. 
+The definition of a
+rule is similar to that of a PROLOG clause, but it differs in two 
+important ways: rules can contain constraints as well as atoms in the body,
+and the definition of terms is more general. A goal is a rule without a head,
+as usual.\index{program}\index{rule}\index{goal}
+
+The body of a rule may contain any number of arithmetic
+constraints, separated by commas in the usual way.
+Constraints are equations or inequalities, built up from real
+constants, variables, {\tt +}, {\tt -}, {\tt *}, {\tt /}, and 
+{\tt =}, {\tt >=}, {\tt <=}, {\tt >}, {\tt <}
+where all of these symbols have the usual meanings and parentheses
+may be used in the usual way to resolve ambiguity.  Unary arithmetic 
+negation is also available, as are some special
+interpreted function symbols which will be described later.
+Any variable that
+appears in an arithmetic constraint is said to be an arithmetic variable, 
+and cannot take a non-arithmetic value. These constraints may be thought of as
+built-in predicates written infix, but they are really much more powerful, as
+we shall see later. Goals are also similar to those in PROLOG, and may
+contain explicit constraints as well.
+
+Comments in the program are either in the PROLOG style,
+beginning with a ``{\tt \%}'' and continuing to the
+end of the line, or
+also in the form of C style comments, starting with ``{\tt /*}''
+and ending with ``{\tt */}'' (comments can contain newlines).
+Unlike normal C comments, these can be nested so that
+code already containing comments can be commented easily. \index{comments}
+
+\section{Terms and Constraints}
+
+Syntactically, 
+a term is either a simple term or a compound term constructed from
+simple terms.
+A term is then either an arithmetic term or a functor term.
+The simple terms are:
+\begin{itemize}
+\item Variable terms \\
+A variable is a sequence of alphanumeric
+characters (including ``{\tt \_}''),
+either begins with an uppercase alphabetic character or an
+underscore ``{\tt \_}''. Variables consisting of an
+underscore only are anonymous variables and always represent a new variable.
+Variables that are longer than one character and begin with an underscore
+are the same as any other ordinary variable,\footnote{ 
+These are not anonymous variables.} except that they are ignored
+for the purposes of style checking.
+
+\item Numeric constant terms\\
+\chgbarbegin
+This is a real number with an optional decimal point and optional integer
+exponent which may be positive or negative.
+\chgbarend
+
+\item Symbolic numeric constants\\
+\chgbarbegin
+These denote special constant values, eg. $\pi$ and have the
+syntax {\tt \#}$<\!name\!>$ where the name is just an
+atomic functor constant. The following are the special constants
+defined by default:
+
+\begin{tabular}{lrll}
+{\tt \#p} & $\pi = $ & $ 3.14159265358979323846 $ \\
+{\tt \#p\_2} & $\pi/2 = $ & $ 1.57079632679489661923 $ \\
+{\tt \#p\_4} & $\pi/4 = $ & $ 0.78539816339744830962 $ \\
+{\tt \#e} & $e = $ & $ 2.7182818284590452354 $ \\
+{\tt \#sqrt2} & $\sqrt{2} = $ & $ 1.41421356237309504880 $ \\
+{\tt \#sqrt1\_2} & $1/\sqrt{2} = $ & $ 0.70710678118654752440 $ \\
+{\tt \#c} & $c = $ & $ 2.99792458*10^8$ & (speed of light in vacumn) \\
+{\tt \#g} & $g = $ & $ 9.80665$ & (acceleration of gravity) \\
+{\tt \#h} & $h = $ & $ 6.626176*10^{-34}$ & (Planck's constant) \\
+{\tt \#ec} & & $1.6021892*10^{-19}$ & (elementary charge) \\
+\end{tabular}
+
+\noindent
+There are also some handy metric conversion ratios predefined:
+
+\begin{tabular}{lll}
+
+{\tt \#cm2in} & 0.393701 & (centimeters to inches)\\
+{\tt \#km2mile} &  0.62137 & (kilometers to miles)\\
+{\tt \#gm2oz} & 0.03527 & (grams to ounces)\\
+{\tt \#kg2lb} & 2.20462 & (kilograms to pounds)\\
+{\tt \#l2gal} &  0.21998 & (litres to imperial gallons)\\
+{\tt \#l2usgal} & 0.26418 & (litres to US gallons)\\
+\end{tabular}
+
+\noindent
+(Note that new constants can be created by using 
+{\tt new\_constant/2}.)
+\chgbarend
+
+\item functor constant terms\\
+These are either a sequence of alphanumeric characters (including ``{\tt \_}'',
+starting with a lowercase letter; or a sequence of characters from the set,
+\[\left\{ \rule[0.5ex]{0pt}{1.5ex} \mbox{\tt \&*+-./:;<=>?@{\\}\^{}\~{}} \right\}\]
+Also any sequence of characters delimited by single quotes ``{\tt '}''
+is allowed, e.g. {\tt 'foo + bar'} is a functor constant (atom) with
+that name including the blanks.
+The special constant ``{\tt []}'' denotes the empty list or nil.
+Note also that the special arithmetic function symbols, though having
+the same syntax, are arithmetic terms and not functor terms.
+
+\item String constant terms\\
+This is any sequence of characters delimited by double quotes ({\tt "}).
+NOTE: At present the interpretation of strings in the syntax has not
+been finalized and all strings are being treated as functor constants
+(i.e. the single quote form).
+This differs from some PROLOG's which use this syntax
+as an alternative notation for lists.
+
+\end{itemize}
+
+\chgbarbegin
+An arithmetic term is either a variable, numeric constant 
+\index{arithmetic term}
+or a compound term built up from arithmetic terms in the usual way
+using the arithmetic function symbols:
+{\tt +}, {\tt -}, {\tt *}, {\tt /}, 
+{\tt sin}, {\tt arcsin}, {\tt cos}, {\tt arccos},
+{\tt pow}, {\tt abs}, {\tt min} and {\tt max}.
+\chgbarend
+For example,
+ 
+\stuff{
+\> X \\
+\> 3.14159 \\
+\> 42e-8 \\
+\> X + Y \\
+\> sin(X + 2.0) \\
+\> (X + Y) / 4 
+}
+
+\noindent
+are all valid arithmetic terms. 
+However, 
+
+\stuff{
+\> f(a) \\
+\> c + 5.0 \\
+\> cos(f(3))
+}
+
+\noindent
+are not.
+The arithmetic terms are interpreted as having their usual meaning
+as arithmetic expressions.
+Operator precedences for the arithmetic
+function symbols follow the normal convention\footnote{
+User defined unary or binary operators in the standard PROLOG
+fashion using {\tt op/3} are also supported.
+}.
+Parentheses can be also used to escape the application of
+the default operator precedences.
+
+Functor terms are either variable or functor \index{functor term}
+constant terms or compound terms.
+A compound functor term has the form
+$f(t_1, t_2, \cdots , t_N)$ where $N \geq 0$, $f$ is
+an $N$-ary uninterpreted functor and 
+$t_1, t_2, \cdots , t_N$ are (not necessarily functor) terms.
+The functor is uninterpreted, meaning that the functor
+is simply to be treated as a symbolic constant,
+as opposed to the arithmetic terms, which are interpreted.
+The allowable syntax of the functor symbol $f$
+is that of any functor constant term.
+The other compound functor terms are lists, which are specified using
+the usual PROLOG list notation ({\tt [L]}), for example ``{\tt [a, b]}''.
+A dot notation for lists, as in ``{\tt a.b.[]}'', may also be used.
+For example, the following are valid terms:
+
+\stuff{
+\> [a, 1+X] \\
+\> f([3.12, g(a)]) \\
+\> f(c) \\
+\> f(X) \\
+\> f(3.14159) \\
+\> g(22, h(4))  \\
+\> f(X + 3)
+}
+
+\index{constraint}\index{arithmetic constraint}\index{functor constraint}
+\noindent
+~~A {\em constraint} is either an {\em arithmetic constraint} or
+a {\em functor constraint}.  The former is defined to be of the
+the form $t_1 ~\Delta~ t_2$ where $t_1$ and $t_2$ are arithmetic terms
+and $\Delta$ is one of the arithmetic relations 
+{\tt =}, {\tt >=}, {\tt <=}, {\tt >}, and {\tt <}.
+For example, 
+
+\stuff{
+\> X > 5.0 \\
+\> X + Y + Z = 3 \\
+\> X <= Y \\
+\> X = V \\
+\> 3 = sin(X) \\
+\> 1.234 + X < Y 
+}
+
+\noindent
+are all valid arithmetic constraints, while the following are not.
+
+\stuff{
+\> c > Y \\
+\> X = 3.0 < Y  \\
+\> pow(X = Y, 3) \\
+\> 4 < X < 5
+}
+
+\noindent
+A functor constraint is of the form $t_1 = t_2$ where
+each of $t_1$ and $t_2$ is either a variable or a functor term.
+We shall sometimes refer to a functor constraint as a functor equation below.
+
+\section{Some Simple Programs}
+
+Now we will look at some example programs without considering 
+the details of their execution.
+The first example is a program expressing the relation {\tt fib(N, X)} where 
+{\tt X} is the {\tt N}th Fibonacci number. 
+
+\stuff{
+\> fib(0, 1). \\
+\> fib(1, 1). \\
+\> fib(N, X1 + X2) :- \\
+\>\> 	N > 1, \\
+\>\> 	fib(N - 1, X1), \\
+\>\> 	fib(N - 2, X2).
+}
+
+\noindent
+To compute the 10th Fibonacci number, 
+we can use the goal
+
+\stuff{
+\> ?- fib(10, Z).
+}
+
+\noindent
+while to find out which Fibonacci number is 89, we can use the goal
+
+\stuff{
+\> ?- fib(X, 89).
+}
+
+\noindent
+The next program describes the relationship between two complex numbers and
+their product. We will represent the complex number {\tt X + iY} as 
+the term {\tt c(X, Y)}.
+
+\stuff{
+\> zmul(c(R1, I1), c(R2, I2), c(R3, I3)) :- \\
+\>\>	R3 = R1 * R2 - I1 * I2 , \\
+\>\>	I3 = R1 * I2 + R2 * I1 .
+}
+
+\noindent
+Any of the following goals will return a unique answer. The first goal asks
+for the product of two complex numbers, while the other two ask for the
+result when one complex number is divided by another. 
+
+\stuff{
+\> ?- zmul(c(1, 1), c(2, 2), Z). \\
+\> ?- zmul(c(1, 1), Y, c(0, 4)). \\
+\> ?- zmul(X, c(2, 2), c(0, 4)).
+}
+
+\noindent
+Notice how both
+operations are described using the definition of complex multiplication,
+rather than writing a separate rule that divides complex numbers by first
+realizing the divisor and then multiplying. This declarative aspect will be an
+important
+feature of many of the programs we look at. Also notice that both of the 
+programs we have seen so far have been invertible in the sense that it did
+not matter which terms in the goals were ground and which were not. This is a
+property that we will try to obtain as often as possible when we define
+programs or parts of programs. 
+As a further example,
+the special {\tt pow} function can 
+be used to compute powers, roots and logarithms
+of an arbitrary base. The rules below for square root,
+
+\stuff{
+\> sqroot(X, pow(X, 0.5)):- \\
+\>\>	X >= 0. \\
+\> sqroot(X, -pow(X, 0.5)) :- \\
+\>\>	X >= 0.
+}
+
+\noindent
+state that a non-negative number has a positive and negative square root.
+Finally consider the following program, which relates 
+the key parameters in a mortgage.
+
+\stuff{
+\> mortgage(P, Time, IntRate, Bal, MP) :- \\
+\>\>   Time > 0, Time <= 1, \\
+\>\>   Bal = P * (1 + Time * IntRate/1200) - Time * MP. \\
+\> mortgage(P, Time, IntRate, Bal, MP) :- \\
+\>\>   Time > 1, \\
+\>\>   mortgage(P*(1 + IntRate/1200) - MP, Time-1, IntRate, Bal, MP).
+}
+
+\noindent
+The parameters above are principal, life of the mortgage (in months),
+annual interest rate (\%) which is compounded monthly,
+the monthly payment, and finally, the outstanding balance.
+The goal
+
+\stuff{
+\> ?- mortgage(100000, 180, 12, 0, MP).
+}
+
+\noindent
+asks the straightforward query as to how much it would cost
+to finance a \$100,000 mortgage at $12$ percent for $15$ years,
+and the answer obtained is {\tt MP = 1200.17}.
+We can ask the question backwards:
+
+\stuff{
+\> ?- mortgage(P, 180, 12, 0, 1200.17).
+}
+
+\noindent
+to obtain the expected answer {\tt P = 100000}, or ask for how long
+a mortgage is needed:
+
+\stuff{
+\> ?- mortgage(100000, Time, 12, Bal, 1300).
+}
+
+\noindent
+Here we get the answer {\tt Time = 147.365}.
+The main point of this example, however, is that we can ask,
+not for the values of, but for the {\em relationship between\/}
+{\tt P}, {\tt MP} and {\tt Bal}.  For example,
+
+\stuff{
+\> ?- mortgage(P, 180, 12, Bal, MP).
+}
+
+\noindent
+gives the answer
+
+\stuff{
+\> P = 0.166783 * Bal + 83.3217 * MP
+}
+
+\noindent
+This particular example illustrates how
+answer constraints may be viewed as a partial evaluation
+of the program.  In this case, the equation above is the result of
+partially evaluating the program with respect to
+{\tt Time = 180} and {\tt I = 12}.
+
+\section{The Type Issue}\index{type}
+
+Informally, one of the two types in \CLPR\ is given by the real numbers, 
+and the other by the remaining ground (variable-free) terms.  
+Strictly speaking, \CLPR\ is a statically typed language in the sense
+that variables, uninterpreted functors and predicates in a program
+must be used in a consistent way with respect to their type.
+That is, each variable and each argument of 
+every predicate and uninterpreted functor 
+is first acknowledged to be of a certain type.
+The program is then considered to be ill-typed if, for example,
+a variable appears both in a functor constraint and an arithmetic
+constraint; similarly, the program is ill-typed  
+if one occurrence of a predicate or uninterpreted functor 
+has a number in the first argument while, in another occurrence,
+it has a functor term in the first argument.
+
+For programming convenience, however, \CLPR\ does not perform
+such type-checking at compile time.  This decision is based on
+the fact that it is often useful to overload a symbol; for example,
+one may want a database {\tt p} of both numbers and letters:
+
+\begin{minipage}{4in}
+{\tt \samepage
+\begin{tabbing}
+\hspace{10mm} \= \hspace{10mm} \= \hspace{10mm} \= \kill
+\> p(1). \\
+\> p(2). \\
+\> p(a). \\
+\> p(b).
+\end{tabbing}
+}
+\end{minipage}
+
+\noindent
+and one may run a goal containing {\tt p(X)} and some
+constraints used for selection within the database.
+Note that by not performing type-checking, one can have a
+runtime type error. That is, an execution sequence which 
+fails because of a ``type clash''.
+Often such failures indicate that there is an error in the program.
+The \CLPR\ system will not distinguish such failures from failures obtained
+from well-typed constraints.
+
+A straightforward way of thinking about the type issue when
+writing \CLPR\ programs is that whenever an arithmetic term
+appears in a rule, for each variable {\tt X} therein,
+we can implicitly add a corresponding atom {\tt real(X)} 
+to the body of the rule.
+The system predicate {\tt real/1} is {\em true} just in case
+there is a real solution for {\tt X} in the context of the current
+collection of constraints.
+
+\chapter{Programming in \CLPR}
+
+\section{Preliminaries}
+
+Before we can look at more advanced programming examples, it is necessary to
+have some idea of how the programs are executed. This is similar in flavor
+to the way PROLOG programs are executed, but the basic operational 
+step of unifying an atom with the head of a rule is
+replaced by something more general.
+In this preliminary section, we assume that all arithmetic constraints
+are {\em linear}; the general case is discussed in a later section.
+
+The computation begins with a goal and an initially empty set of
+{\em collected constraints}.
+The usual left-right atom selection rule is used to select either an
+arithmetic constraint or an atom at each stage. 
+When a constraint is selected, 
+it is added to the set of collected constraints,
+and it is determined whether the resulting set has a solution.
+If there is no solution, backtracking takes place in the usual way.
+On the other hand, when an atom is selected, the set of 
+rules is searched in the usual top-down fashion, each time 
+matching that atom with the head of some rule.
+Such a match is realized by an equation between these two atoms;
+such an equation is treated like any equation between terms.
+
+As before, it is required that the system of constraints collected 
+so far has a solution.
+In general, solving this equation proceeds at first by unifying the
+syntactic parts of the terms in the usual way. However, these terms may
+contain arithmetic terms. As arithmetic terms have a special meaning, 
+they are not unified syntactically, but rather an equation between
+them is solved in the domain of real arithmetic. 
+
+Let us consider some examples. 
+We start with a program that has no explicit
+constraints or arithmetic terms, effectively written in PROLOG.
+
+\stuff{
+\> p(f(c)). \\
+\> q(g(X)) :- \\
+\>\>	p(f(X)). \\
+\> ?- q(Y).
+}
+
+As the computation proceeds, the collected constraint set and current goal
+are as follows:
+
+\stuff{
+\> \{\} ?- q(Y). \\
+\> \{q(Y) = q(g(X)) \} ?- p(f(X)). \\
+\> \{q(Y) = q(g(X)), p(f(X)) = p(f(c)) \} ?- .
+}
+
+\noindent
+Note that only one successful path is shown here. 
+Also, as we will discuss in more detail later, the ``answer'' 
+to this query is just the set of constraints
+collected, but ``projected'' onto the goal variables, in this case {\tt Y}. 
+So the answer to the above query is 
+
+\stuff{
+\> Y = g(c).
+}
+
+\noindent
+Now consider a program that includes both arithmetic terms
+and explicit constraints:
+
+\stuff{
+\> p(10, 10). \\
+\> q(W, c(U, V)) :- \\
+\>\>	W - U + V = 10, \\
+\>\>	p(U, V). \\
+\> ?- q(Z, c(X + Y, X - Y)).
+}
+
+\noindent
+and again we only look at one successful path of the execution:
+
+\stuff{
+\> \{\} ?- q(Z, c(X + Y, X - Y)). \\
+\> \{q(Z, c(X + Y, X - Y)) = q(W, c(U, V)) \} ?- W - U + V = 10, p(U, V). \\
+\> \{q(Z, c(X + Y, X - Y)) = q(W, c(U, V)), W - U + V = 10 \} ?- p(U, V). \\
+\> \{$\cdots$ , p(U,V) = p(10, 10) \} ?- .\\
+}
+
+\noindent
+The answer for this derivation is
+
+\stuff{
+\> Y = 0, X = 10, Z = 10.
+}
+
+\noindent
+and we should notice that, as expected,
+it does not contain any mention of the variables U, V, and W. 
+Also note that, in general, the answers need not give values to 
+variables, and it is possible to get an answer constraint like
+
+\stuff{
+\> X + Y + Z = 0, X > Y.
+}
+
+\noindent
+This facility is a very important and useful feature of \CLPR\ as we will
+illustrate later.
+
+\section{Delay of Nonlinear Constraints} \index{delayed constraint}
+\index{nonlinear constraint}
+
+In the above discussion of the operational model, we saw how each
+operational step results in one or more constraints being added to the
+collected constraint set, and the new set being checked for satisfiability.
+Because of efficiency requirements, there
+is a limit to how sophisticated the decision algorithm for constraints
+can be, and consequently the collected constraint set may get too
+complicated for the decision algorithm. In particular, consider a case when
+the collected constraint set is solvable, but one constraint is added
+that makes the set so complicated that it is not practical to decide
+whether it has remained solvable. 
+
+A naive approach to dealing with this problem is simply
+to disallow expressions that can result in such complexity. 
+This is tantamount to disallowing all nonlinear constraints.
+The loss in expressive power is, however, unacceptable.
+Instead, \CLPR{} allows nonlinear constraints but keeps them in a 
+{\em delayed constraint set}. 
+More precisely, at each operational
+step, instead of blindly adding each constraint to the collected constraint
+set and incurring the cost of performing a satisfiability test, 
+we remove certain constraints that would make the set too complicated.
+We keep these removed constraints in the delayed constraint set. 
+Additionally, at each step it is
+possible that some constraint in the delayed constraint set need no longer
+be delayed because of new information. 
+In this case it should be moved
+from the delayed constraint set to the collected constraint set and the
+usual solvability check made. 
+Note that, in general, the notion of which expressions are
+``too complicated'' is dependent on the implementation.
+In \CLPR\, only the nonlinear constraints are delayed.
+
+Now let us consider an example where the collected constraint set is 
+initially empty; then suppose we obtain the constraint
+
+\stuff{
+\> V = I * R.
+}
+
+\noindent
+This is placed in the delayed constraint set. Continuing, if the
+next constraint is
+
+\stuff{
+\> V = 10
+}
+
+\noindent
+it may be added to the collected constraint set, but note that it is still
+not easy to decide whether the two constraints together are solvable
+Now consider what happens if the next constraint is
+
+\stuff{
+\> R = 5.
+}
+
+\noindent
+This gives us enough information to make the delayed constraint linear, so
+we simply remove this constraint from the delayed constraint set, 
+place it in the collected constraint set,
+and check that it is solvable, which of course it is. Note that the delayed
+constraint set may have contained other constraints, which may have to
+remain there until much later. Also note that because of this delay
+mechanism, we may continue through a certain computation sequence even
+though the collected and delayed constraint sets together are not solvable.
+In the worst case it can result in an infinite loop.
+This is the price we pay for an efficient decision algorithm.
+
+As we have already stated, in the \CLPR\ system
+a linear equation or inequality is always considered to be 
+sufficiently simple to be solved immediately, but nonlinear
+constraints are delayed until they become linear.
+\chgbarbegin
+This includes the functions {\tt sin/1}, {\tt arcsin/1}, {\tt cos/1}, 
+{\tt arccos/1}, {\tt pow/2},
+{\tt max/2}, {\tt min/2} and {\tt abs/1} 
+\index{{\tt sin/1}}\index{{\tt arcsin/1}}\index{{\tt cos/1}}
+\index{{\tt arccos/1}}\index{{\tt pow/2}}
+\index{{\tt max/2}}\index{{\tt min/2}}\index{{\tt abs/1}}
+which are delayed until they become 
+simple evaluations in one direction or another. 
+\chgbarend
+This means that {\tt sin} and  
+{\tt cos} require the input to be ground, 
+while {\tt pow} requires at least two
+out of three arguments to be ground, except in cases such as 
+
+\stuff{
+\> X = pow(Y, Z)
+}
+
+\noindent
+where Z = 0.
+The reason is that $Y^0$ is defined to be $1$ for all values of Y. 
+Note that while this
+is sufficient to determine the value of X, Y remains non-ground. There are
+similar special cases when Z is $1$, and when Y is $0$ or $1$.
+\chgbarbegin
+The functions {\tt arcsin} and {\tt arccos} are delayed until either the
+input is ground or the result of the function is ground. They are also
+different in that they are functions and the input domain for {\tt arcsin}
+ranges from $-\pi/2$ to $\pi/2$ and {\tt arccos} from $0$ to $\pi$
+whereas {\tt sin} and {\tt cos} are defined for any number in radians.
+Thus {\tt sin} and {\tt cos} behave as relations which is non-invertible
+while {\tt arcsin} and {\tt arccos} are true functions which are invertible.
+See Section \ref{nl-section} for a more precise definition
+of the delaying conditions
+for the different nonlinear functions.
+\chgbarend
+
+As a final example, consider the {\tt mortgage} program
+in Chapter \ref{syntax-examples}, and consider the goal:
+
+\stuff{
+\> ?-  mortgage(120, 2, IR, 0, 80).
+}
+
+\noindent
+This will give rise to nonlinear constraints,
+and the system returns a quadratic equation as the answer constraint:
+
+\stuff{
+\> 80 = (0.1*IR + 40) * (0.000833333*IR + 1)
+}
+
+\noindent
+and indicates that this is an unsolved answer.
+Note that while \CLPR\ cannot
+determine whether this equation is solvable, the equation indeed
+describes the correct answer.
+
+\section{The \CLPR\ Operational Model} \index{operational model}
+
+We now precisely but informally define the operational model of \CLPR.
+A goal {\tt G} is written in the form {\tt C, D ?- E} where 
+{\tt C} is a satisfiable collection of constraints, 
+{\tt D} a collection of nonlinear constraints
+called the {\em delayed constraints}, and \index{delayed constraint}
+{\tt E} a sequence of atoms and constraints.  
+In what follows, we define how such a goal
+is reduced into another in the context of an ongoing derivation.
+
+In reducing a goal {\tt C, D ?- E}, 
+\CLPR\ either selects an element from {\tt E},
+call this a {\em forward} reduction, or selects a
+constraint from {\tt D}, call this
+a {\em wakeup} reduction.  Initially,
+{\tt C} and {\tt D} are empty, and \CLPR\ attempts to
+make a forward reduction.
+
+\noindent
+{\bf Forward reductions}
+
+If {\tt E} is empty, then we say that the
+goal is {\em terminal}, and no more reduction of the goal is possible.
+If {\tt D} is also empty, then the derivation is {\em successful};
+otherwise, the derivation is {\em conditionally successful} (depending
+on the nonlinear constraints).
+
+Now consider the case where {\tt E} is nonempty;
+let {\tt E0} denote the first element of {\tt E} and
+let {\tt E2} denote the remaining subsequence of {\tt E}.
+
+If {\tt E0} is an atom, then {\tt E0} will be selected for atom reduction
+in the manner described above.
+First, an appropriate program rule will be selected. 
+The atom and rule head will then be matched, giving rise to
+a collection of constraints, which we will write as {\tt M1 \& M2}
+where {\tt M1} consists only of linear constraints and {\tt M2}
+only of nonlinear ones.  The new goal consists of 
+(a) {\tt C \& M1} in its first component; 
+(b) {\tt D \& M2} in its second component, and
+(c) the body of the rule and {\tt E2}, sequenced in this order,
+in its third component.
+
+If {\tt E0} is a linear constraint, then the reduced goal
+is {\tt C \& E0, D ?- E2} providing {\tt C \& E0} is satisfiable;
+otherwise there is no reduced goal and the derivation is 
+{\em finitely failed}.
+
+Finally, if {\tt E0} is a nonlinear constraint, then the reduced
+goal is {\tt C, D \& E0 ?- E2}.  That is, the constraint {\tt E0} is simply
+delayed.
+
+\noindent
+{\bf Wakeup reductions}
+
+Let the goal at hand be {\tt C, D ?- E}.  This reduction step starts by
+considering whether there is a delayed constraint {\tt D0} in {\tt D}
+which is in fact linear. That is, {\tt C} implies that {\tt D0}
+is equivalent to a linear constraint.  If there is no such delayed
+constraint, then no reduction is performed.
+
+Otherwise, consider the case in which {\tt C} is inconsistent 
+with this linear constraint.  Here reduction is not possible and
+a finitely failed derivation is obtained.  However, if {\tt C} is consistent 
+with the linear constraint, then the reduced goal is 
+{\tt C \& D0, D2 ?- E} where {\tt D2} is result of deleting
+{\tt D0} from {\tt D}.
+
+\section{Meta--programming}
+\label{meta-section}
+\index{meta-programming}
+
+In the context of Prolog, meta--programming refers to the destruction and
+construction of rules and terms, and the examination and modification of the
+rulebase. All of the same issues arise in \CLPR. However,
+some extra facilities are needed because of the special nature
+of arithmetic terms and constraints.
+Furthermore, some of the remaining ones must be modified. 
+For example, without such extra facilities and modifications,
+there is no way that a \CLPR\ program can distinguish the two terms 
+{\tt p(3 - 1)} and {\tt p(1 + 1)} since they are semantically identical. 
+
+More specifically, the extra facilities and modifications are needed to:
+\begin{itemize}
+\item 
+	make arithmetic terms be interpreted syntactically, by introducing a
+	coded form;
+\item 
+	convert coded forms of arithmetic terms into the 
+	appropriate arithmetic terms;
+\item 
+	obtain a coded form of [some projection of] the current constraint set; 
+\item 
+	add appropriate constraints to asserted rules;
+\item 
+	examine the rulebase completely syntactically.
+\end{itemize}
+
+\subsection{{\tt quote/1} and {\tt eval/1}}
+\index{{\tt quote/1}}
+\index{{\tt eval/1}}
+
+First we introduce the macro-like operator 
+{\tt quote/1}\index{quote}. 
+This is expanded in an outer-most first
+fashion when expressions are first read. 
+The argument of the {\tt quote} operator is translated to a version in 
+which all arithmetic operators are translated to a special coded form, 
+which is not otherwise directly accessible to the programmer. 
+This coded form can then be treated like a functor term.
+In this discussion, such coded forms of arithmetic function 
+symbols will be be represented with a caret over them. 
+For example, the rule
+
+\stuff{
+\> p(X, Y, quote(X + Y)).
+}
+
+\noindent
+would be read in as
+
+\stuff{
+\> p(X, Y, X \unintt{+} Y).
+}
+
+\noindent
+and so on. Furthermore, the {\tt quote} operator passes through all other
+function symbols, constants, variables etc. without changing them. Thus for
+example, the rule
+
+\stuff{
+\> q(X,Y) :- X = quote(f(g(Y), 2 * Y)).
+}
+
+\noindent
+becomes
+
+\stuff{
+\> q(X,Y) :- X = f(g(Y), 2 \unintt{*} Y).
+}
+
+\noindent
+Of course, the original form of the rule is always shown when listing the
+database, etc., but when printing a term, coded function symbols  
+are printed preceded by a caret\footnote{
+In this manual, we take the liberty of placing the caret as
+an accent for readability}. 
+For example,
+the query {\tt ?- q(X, 5).} to the above rule would yield the answer 
+{\tt X = f(g(5), 2 \^{}* 5)}. 
+Note that that the caret form of coded terms cannot be input directly,
+but only through the use of {\tt quote}. 
+Additionally, to facilitate manipulating programs which themselves use
+meta-programming facilities, we need coded forms of the {\tt quote} operator
+itself, as well as the new {\tt eval} interpreted function symbol, 
+which will be described below. 
+This is why {\tt quote} is expanded outer-most first. For example, 
+
+\stuff{
+\> P = quote(p(quote(X + Y), X + Y)) {\rm \ expands to} \\
+\>\>	P = p(\unintt{quote}(X\unintt{+}Y), X\unintt{+}Y)).
+}
+
+\noindent
+Thus an occurrence of
+{\tt quote} that appears within the scope of another {\tt quote} will be
+translated to \unintt{quote}, and will not be quote-expanded.
+The {\tt eval} interpreted function can be coded by using {\tt quote}
+as well, for example,
+
+\stuff{
+\> X = quote(eval(1 + 2)) {\rm gives} \\
+\>\> X = \unintt{eval}(1 \unintt{+} 2).
+}
+
+Now, the major linguistic feature for meta--programming with constraints 
+is the interpreted function symbol {\tt eval}\index{eval}
+which converts a coded term to the term it codes.  It passes through
+uninterpreted function symbols, other than those that are coded forms of
+interpreted ones, without changing them.  Likewise for constants and
+interpreted function symbols.  Some examples:
+
+\stuff{
+\> X = 1 \unintt{+} 2, U = eval(X) {\rm \ implies} \\
+\>\>	U = 3. \\
+\> X = Y \unintt{+} Z, U = eval(X) {\rm \ implies} \\
+\>\>	U = eval(Y) + eval(Z). \\
+\> X = Y \unintt{+} Z, U = eval(X), Y = 1, Z = 2 {\rm \ implies} \\
+\>\>	U = 3.
+}
+
+\noindent
+The function {\tt eval} has no effect on uninterpreted functors.
+For example, the goal
+
+\stuff{
+\> ?- X = f(a, g(c)), U = eval(X).
+}
+
+\noindent
+results in both {\tt U} and {\tt X} being {\tt f(a, g(c))}.  However,
+
+\stuff{
+\> ?- X = f(Y, g(c)), U = eval(X).
+}
+
+\noindent
+results in {\tt U} being {\tt f(eval(Y), g(c))}, 
+as the ``best'' representation of terms
+containing {\tt eval} is that with {\tt eval} pushed inwards as far as
+possible.  
+
+Formally, the meaning of {\tt quote} and {\tt eval} are given
+by the axioms: \index{quote}\index{eval}
+
+\begin{center}
+$
+\begin{array}{lcl}
+{\tt eval}(\unint{f}(t_1, \cdots, t_n)) & = & f({\tt eval}(t_1), \cdots,
+{\tt eval}(t_n)), \ n \geq 0 \\
+{\tt eval}(g(t_1, \cdots, t_n)) & = & g({\tt eval}(t_1), \cdots,
+{\tt eval}(t_n)), \ n \geq 0  \\
+{\tt eval}(\unintt{quote}(t)) & = & t
+\end{array}
+$
+\end{center}
+
+\noindent
+where $f$ ranges over all arithmetic function symbols, $g$ ranges over
+all uncoded function symbols different from {\tt eval}, and $t$, $t_1,
+\cdots , t_n$ range over terms.
+
+In general, deciding the satisfiability of constraints
+involving {\tt quote} and {\tt eval} is a nontrivial problem.
+Consider for example the two equations: 
+
+\[
+\begin{array}{rcl}
+f(eval^2(x), eval^2(y)) & = &
+f(\unintt{quote}(eval^4(y)), \unintt{quote}(eval^3(x))) \\
+f(eval^3(x), eval^4(y)) & = &
+f(\unintt{quote}(eval^2(y)), \unintt{quote}(eval^2(x)))
+\end{array}
+\]
+
+\noindent
+The first of these constraints is solvable, while the second is not.
+There is in fact an algorithm to deal with such constraints in
+their full generality.  However, for efficiency reasons,
+\CLPR\ implements a partial algorithm: maintaining constraints 
+so that {\tt eval} appears only in the form {\tt X = eval(Y)},
+{\em
+these equations are delayed until the argument of {\tt eval} is constructed.
+}
+In fact, the delay of such {\tt eval} equations is implemented
+in much the same way as nonlinear equations.
+
+For example, consider the goal
+
+\stuff{
+\> ?- X = quote(U + 1), eval(X) = 5, Y = eval(U) - 5.
+}
+
+\noindent
+After the first constraint, {\tt X} is equal to {\tt U \unintt{+} 1}, 
+but after the second constraint, {\tt eval} goes as far through {\tt X} 
+as it can, so we obtain the simplified constraint {\tt eval(U) + 1 = 5},
+which is further simplified to {\tt eval(U) = 4}.  Hence the third 
+constraint results in {\tt Y} being {\tt -1}. 
+
+However, if the goal were permuted to
+
+\stuff{
+\> ?- eval(X) = 5, Y = eval(U) - 5, X = quote(U + 1).
+}
+
+\noindent
+the first and second constraints both result in delayed {\tt eval} 
+constraints. The third constraint wakes the first delayed 
+{\tt eval} since {\tt X} is now 
+constructed, resulting in the constraint {\tt eval(U) + 1 = 5} again, 
+which, together with the second delayed {\tt eval} constraint --- which 
+is not awakened --- results in {\tt Y} being grounded to {\tt -1} again.
+
+As a final example, consider the goal
+
+\stuff{
+\> ?- eval(X) + eval(Y) = 4, eval(X) - eval(Y) = 1.
+}
+
+\noindent
+which is rather silly in isolation, but could arise as the result of a longer
+computation. In this case, the answer constraints are 
+{\tt eval(X) = 2.5, eval(Y) = 1.5} 
+although the values of {\tt X} and {\tt Y} cannot be determined uniquely. 
+For example, {\tt X} might be {\tt 2.5}, or {\tt 1 \unintt{+} 1.5}, etc.
+It should be noted that the {\tt eval} mechanism described here is an 
+approximation to that proposed in \cite{HEINTZE89}.
+
+\subsection{{\tt rule/2, retract/1} and {\tt assert/1}}
+\label{assert-section}
+\index{{\tt rule/2}}
+\index{{\tt retract/1}}
+\index{{\tt assert/1}}
+
+Next we consider how these basic facilities may be used for reasoning
+about programs (see also Section \ref{dynamic-section} which describes
+how to use the dynamic code facilities).  
+The canonical application for such reasoning is
+the meta-circular interpreter, discussed in detail in 
+\cite{HEINTZE89}.
+Like the {\tt clause/2} predicate of Prolog, \index{clause}
+we require a system predicate 
+{\tt rule/2} such that the goal {\tt ?- rule(H, B)} behaves as if there 
+were facts {\tt rule(E, F)} for each rule {\tt E :- F} in the program 
+(and of course {\tt rule(A, true)} for each fact {\tt A}). 
+
+There is, however, one aspect of {\tt rule} which has no analog in
+{\tt clause}: arithmetic function symbols will become coded.
+More precisely, the system predicate {\tt rule} 
+behaves as if there were facts {\tt rule(quote(E), quote(F))}
+for each rule {\tt E :- F} in the rulebase 
+(and {\tt rule(quote(A), true)} for each fact {\tt A}).
+We note that a direct analog to {\tt clause} can be written in terms of 
+{\tt rule}: \index{clause}\index{analog to clause}
+
+\stuff{
+\> analog\_to\_clause(H, B) :- \\
+\>\>functor(H, Name, Arity), \\
+\>\>functor(H1, Name, Arity), \% rule needs a constructed head \\
+\>\>eval(H) = eval(H1), \\
+\>\>rule(H1, eval(B)).
+}
+
+\noindent
+In a similar fashion, the \CLPR\ system predicate {\tt retract/1}
+is like that in PROLOG but differs in that one matches arithmetic
+function symbols with their coded forms.
+As before, a direct analog to the PROLOG's {\tt retract} can be written
+as follows:\index{analog to retract}
+
+\stuff{
+\> analog\_to\_retract(eval(R)) :- \\
+\>\>functor(R, Name, Arity), \\
+\>\>functor(R1, Name, Arity), \% retract needs a constructed argument \\
+\>\>eval(R) = eval(R1), \\
+\>\>retract(R1).
+}
+
+\noindent
+Now consider the following example program:
+
+\stuff{
+\> {\rm (a)} \hspace*{5mm} p(1, 1.5). \\
+\> {\rm (b)} \hspace*{5mm} p(X, Y) :- Y = 2 * X. \\
+\> {\rm (c)} \hspace*{5mm} p(X, 2 * X). \\
+\> {\rm (d)} \hspace*{5mm} p(X, 2 + X). 
+}
+
+\noindent
+The goal {\tt ?- retract(quote(p(X, 2*X)))} removes only the rule (c).
+The goal 
+
+\stuff{
+\> ?- analog\_to\_retract(p(X, 2*X))
+}
+
+\noindent
+on the other hand, should remove rules (c) and (d).
+
+As explained in  \cite{HEINTZE89}, {\tt assert/1} in \CLPR\
+differs from that in PROLOG not just because of term codings;
+additional constraints may have to be added to the asserted rule.
+For example,
+
+\stuff{
+\> ?- X + Y > 2, assert(p(X, Y)).
+}
+
+\noindent
+results in the rule
+
+\stuff{
+\> p(X, Y) :- X + Y > 2.
+}
+
+\noindent
+As another example, the goal:
+
+\stuff{
+\> ?- \> X + Y = 2, X >= 0, Y - 2*X <= 2, X > W, Y - X >= 1, \\
+\>\>	assert(p(X, Y)).
+}
+
+\noindent
+asserts the rule:
+
+\stuff{
+\> p(X, Y) :- Y = -X + 2, X <= 0.5, -X <= 0.
+}
+
+\noindent
+Note that a considerable simplification of the initial constraints has
+occurred.  More generally, this supports a technique of constraint partial
+evaluation.  This technique consists of
+executing a query, and then using the simplified form of the answer
+constraints to construct new rules.  These new rules represent a
+specialization of the program with respect to that query.
+For example:
+
+\stuff{
+\> resistor(V, I, R) :- V = I * R. \\
+\> ?- \> resistor(V, I1, R1), resistor(V, I2, R2), \\
+\>\>	I = I1 + I2, \\
+\>\>	assert( parallel\_resistors(V, I, R1, R2)). 
+}
+
+\noindent
+results in the assertion of a rule describing the 
+equivalent voltage-current relationship
+of a pair of resistors connected in parallel\footnote{
+The actual names of variables in the rule being asserted will be internally
+constructed names but we will use the original ones for clarity}:
+
+\stuff{
+\> parallel\_resistors(V, I, R1, R2) :- \\
+\>\>    V = I2 * R2, \\
+\>\>	V = (I - I2) * R1.
+}
+
+\noindent
+The facilities we have discussed for adding rules to the database have
+provided no control over the exact syntax of the rule added.  For example
+constraints may be simplified and/or rearranged before the rule is added.
+It is particularly important in some applications to have complete control
+over the syntax of rules added to the database.
+This control is provided by using a coded form of
+the rule to be asserted, where \p{assert} of a
+coded rule is defined to add the rule that is coded.  For
+example, the goal
+
+\stuff{
+\> ?- assert(quote( p(X, X + X) :- X - 3 > 0 )).
+}
+
+\noindent
+asserts the rule
+
+\stuff{
+\> p(X, X + X) :- X - 3 > 0.
+}
+
+\noindent
+In contrast, the goal 
+
+\stuff{
+\> ?- assert(p(X, X + X) :- X - 3 > 0).
+}
+
+\noindent
+could, for example, add the (semantically equivalent) rule:
+
+\stuff{
+\> p(X, Y) :- Y = 2*X, Z = X - 3, Z > 0.
+}
+
+\section{Output} \index{output} \label{dump-section} \index{dump}
+
+An important feature of the \CLPR\ system is its ability
+to output the collected constraints of a successful derivation in 
+a simpler form.  In a typical derivation, thousands of constraints
+may be collected, and printing them out without simplification would
+lead to an unusable answer.  When a derivation succeeds the output
+module of \CLPR\ is invoked to print the constraints relating the
+variables in the goal.  The module can also be invoked using the
+system predicate {\tt dump([X,Y,...,Z])}, discussed later.
+
+The \CLPR\ system attempts to simplify \index{projection}
+the constraints in two ways: by projecting the constraints onto 
+a set of {\em target\/} variables \index{target variables}
+(those appearing in the original goal or given by the 
+user in the argument of {\tt dump}), and by eliminating
+redundancy in the constraints.  Ideally the output constraints will
+only involve target variables and be free of redundancy, but
+this will not always be possible.
+
+Recall that there are constraints of four different forms:
+\begin{itemize}
+\item
+functor constraints, e.g. {\tt X = f(Y, a, g(Y))}
+\item
+linear equations, e.g. {\tt 3*X + 4*Y = 6}
+\item
+linear inequalities, e.g. {\tt 3*X > 4 + Y}
+\item
+non-linear equations, 
+e.g. {\tt X = Y * Z, T = pow(U, V), U = eval(V)}\footnote{
+	Delayed constraints involving {\tt eval} are treated 
+	like nonlinears.
+}
+\end{itemize}
+Each of these constraint types is handled differently and in turn.
+
+\subsection{Outline of Algorithm}
+
+In this section, we outline how the output is obtained to give a flavor
+of the kinds of simplifications and reductions that are possible
+in the answer constraints.
+
+Functor equations are handled first, and in much the same way as in
+PROLOG. The constraints are stored in solved form using bindings, and
+printing the simplest form of each target variable simply
+involves printing their term representation. 
+For example
+
+\stuff{
+\> ?- X = f(Y, Z), Z = g(a, Y), dump([X, Y]).
+}
+
+\noindent
+results in the output
+
+\stuff{
+\> X = f(Y, g(a, Y)).
+}
+
+\noindent
+Note that there is no equation for {\tt Y} since it is its own 
+term representation.   With functor equations, it is not always
+possible to present the output in terms of target variables alone,
+and some non-target variables are printed out using an internal name.
+For example,
+
+\stuff{
+\> ?- X = f(Y, Z), Z = g(a, Y), dump([X]).
+}
+
+\noindent
+results in an output such as
+
+\stuff{
+\> X = f(\_h6, g(a, \_h6)).
+}
+
+\noindent
+Linear equations are used to substitute out non-target variables
+in the following manner.  If $E$ is a linear
+equation containing non-target variable $X$, then we rewrite $E$
+into the form $X = t$ and substitute $t$ for $X$ in all the other
+constraints (including functor equations, inequalities and non-linear
+equations).  Consider, for example
+
+\stuff{
+\> ?- T = 3 + Y, X = 2 * Y + U, Z = 3 * U + Y, dump([X, T, Z]).
+}
+
+\noindent 
+First, we eliminate $Y$ using the first equation $Y = 3 - T$ 
+and obtain
+
+\stuff{
+\> X = 2 * T - 6 + U, Z = 3 * U + T - 3.
+}
+
+\noindent
+Then we eliminate $U$ using the the first equation and obtain
+
+\stuff{
+\> Z = 3*X - 5*T + 15.
+}
+
+\noindent
+This is the final answer since only the variables {\tt X, T} and {\tt Z}
+remain.
+\ignore{
+This kind of elimination proceeds, and eventually the final equation is used
+to eliminate $T$.  This is the correct answer since there is no
+constraint directly between $X$ and $Z$, or more formally, given any
+value pairs for $X$ and $Z$ the above constraints are satisfiable.
+}
+
+Linear inequalities are more difficult to handle than linear
+equations.
+We will not go into the details of how variables can be
+eliminated from inequalities except to mention that
+a variation of Fourier-Motzkin elimination \cite{SCHRIJVER86}
+with some improvements is used (see \cite{JAFFAR92B} for more details).
+In general, eliminating variables from inequalities can be
+expensive and the projection can contain an exponential number of inequalities.
+\ignore{
+  First, they do not allow us to eliminate variables from
+other parts of the constraint set.  
+Second, while in the constraints handled above redundancy is eliminated
+automatically by the solver, redundancy of linear inequalities is
+present and expensive to remove. Furthermore
+the variable elimination method we use
+for linear inequalities, Fourier-Motzkin elimination \cite{SCHRIJVER86},
+is expensive and can cause exponential explosions in the number of 
+redundant constraints if not handled carefully.  
+
+The Fourier-Motzkin elimination method 
+\index{Fourier-Motzkin algorithm}
+eliminates a variable $X$ from
+some inequalities using the following approach.  Separate the
+inequalities into three sets: inequalities without $X$, inequalities
+that can be written $X > t_i$ or $X \geq t^=_i$, and inequalities
+that can be written $s_j > X$ or $s^=_j \geq X$.
+Then we obtain the new constraints $s_j > t_i$, $s_j > t^=_i$,
+$s^=_j > t_i$ and $s^=_j \geq t^=_i$, and remove all the constraints
+containing the variable $X$.  In the worst case this transformation
+can square the number of constraints, and it usually produces
+considerable redundancy.  If we do not eliminate any redundancy the
+Fourier-Motzkin elimination can can quickly explode the number of 
+inequalities.  For example, starting from $32$ constraints we can generate
+in $4$ steps a total of $390,417,582,083,242$ constraints; of these,
+only $2$ constraints being non-redundant.
+
+Full redundancy elimination on sets of linear inequalities is a non-trivial
+task and quite computationally expensive.  
+A compromise solution was described by Kohler \cite{KOHLER67};
+he devised an inexpensive test that detects many redundant 
+constraints produced by Fourier-Motzkin elimination, which 
+allows us to detect their
+redundancy {\em before\/} they are actually produced.  
+\index{Fourier algorithm}
+This
+simple check allows us to perform enough redundancy elimination
+to avoid the worst case behavior of  Fourier-Motzkin and at very
+little computational cost.  In the \CLPR\ system, we use an adaptation
+of the Kohler method which incorporates more redundancy removal
+\cite{JAFFAR92B}.
+}
+
+We finally deal with the nonlinear equations.
+In general, the algorithm here simply outputs each
+nonlinear equation unless it has been used as a substitution.
+We will not define formally what exactly constitutes a substitution,
+but will discuss some examples.
+Recall that each non-linear constraint takes the form
+$X = Y * Z, ~ X = sin(Y), ~ X = cos(Y), ~
+X = pow(Y, Z), ~ X = max(Y,Z), ~
+X = min(Y, Z)$ or $X = abs(Y)$.  Each of these equations can be used
+to substitute for $X$ if $X$ is a non-target variable. 
+For example,
+
+\stuff{
+\> ?- Y = sin(X), Y = cos(Z), dump([X,Z]).
+}
+
+\noindent
+leads to the output
+
+\stuff{
+\> sin(X) = cos(Z).
+}
+
+\noindent
+As in the case for functor equations, we cannot in practice
+eliminate all non-target variables appearing in non-linear constraints. 
+As before, we display any non-target variable using an internal name.  
+
+\noindent
+{\bf A Complete Example}
+
+Consider the goal
+
+\stuff{
+\>?- \> X = f(V, M), V = a, N = 2 * T, Y = 4 * T, Z = R + T, M = N * R, \\
+\>\>	Y + Z >= U, U > T, U >= R + N, \\
+\>\>	dump([X, Y, Z]).
+}
+
+\noindent
+First we eliminate $V$ by substitution obtaining
+
+\stuff{
+\> X = f(a, M), N = 2 * T, Y = 4 * T, Z = R + T, M = N * R, \\
+\> Y + Z >= U, U > T, U >= R + N
+}
+
+\noindent
+Next we eliminate $N$ using the second constraint obtaining
+
+\stuff{
+\> X = f(a, M), Y = 4 * T, Z = R + T, M = (2 * T) * R, \\
+\> Y + Z >= U, U > T, U >= R + 2 * T
+}
+
+\noindent
+Next we eliminate $T$ using the second constraint obtaining
+
+\stuff{
+\> X = f(a, M), Z = R + 0.25 * Y, M = (0.5 * Y) * R, \\
+\> Y + Z >= U, U > 0.25 * Y, U >= R + 0.5 * Y
+}
+
+\noindent
+Next we eliminate $R$ using the second constraint obtaining
+
+\stuff{
+\> X = f(a, M), M = (0.5 * Y) * (Z - 0.25 * Y), \\
+\> Y + Z >= U, U > 0.25 * Y, U >= Z + 0.25 * Y
+}
+
+\noindent
+Next we eliminate $U$ from the inequalities
+(and here the individual steps taken may not
+be so obvious), obtaining
+
+\stuff{
+\> X = f(a, M), M = (0.5 * Y) * (Z - 0.25 * Y), \\
+\> 0.75 * Y + Z > 0, 0.75 * Y >= 0
+}
+
+\noindent
+Finally, we eliminate $M$ using the second constraint, and as output
+we obtain (after performing some straightforward scaling) the constraints
+
+\stuff{
+\> X = f(a, (0.5 * Y) * (Z - 0.25 * Y)), \\
+\> 0 < Z + 0.75 * Y, \\
+\> 0 <= Y
+}
+
+\noindent
+We finally remark that we can obtain an empty
+output using the algorithm just outlined.  This indicates
+that there are no restrictions on the values that the target
+variables can take.  For example,
+
+\stuff{
+\> ?- T = 3 + Y, X = 2 * Y + U, Z = 3 * U + Y, dump([X, Z]).
+}
+
+\noindent
+results in no constraints at all.  In such cases, 
+the distinguished predicate {\tt real/1}
+is then used to indicate that certain variables are arithmetic,
+and that no further constraints are upon them.
+In this example, we will output the constraints
+
+\stuff{
+\> real(X), real(Z).
+}
+
+\subsection{The {\tt dump} System Predicates}
+\label{dump-preds}
+\index{{\tt dump/1}}
+\index{{\tt dump/2}}
+\index{{\tt dump/3}}
+\index{dump}
+
+The basic facility for output in \CLPR{} is the system
+predicate {\tt dump/1}, mentioned above, whose argument is a list of
+target variables. \index{target variables} 
+Note that, to use this predicate, the
+target variables must appear explicitly in the argument
+(as in {\tt dump([A, B])}) and not be passed in
+(as in {\tt X = [A, B], dump(X)}).  
+This is because the names of the target variables
+are actually used in the output. 
+The ordering of variables in the list is used to specify a priority
+on the variables with the later variables having a higher priority.
+Since {\tt dump} outputs constraints, there are many equivalent
+forms of the same set of constraints and the priority ordering is
+used to express higher priority variables in terms of the lower ones.
+This gives one form of control over the output from {\tt dump}.
+For example, the goal
+
+\stuff{
+\>?- X = 2 * Y + 4, dump([X, Y]) \\
+\>\> {\rm gives} Y = 0.5 * X - 2 
+}
+
+\noindent
+whereas the reverse order would give back the original constraint.
+
+
+The predicate {\tt dump/2} is a refinement of {\tt dump/1},
+and is designed to be far more flexible.
+Its first argument is, as before, a list of target variables.
+Its second argument is a list of constants to be used in place of
+the original target variables in the output.  For example,
+
+\stuff{
+\> ?- Names = [a, b], Targets = [X, Y], X > Y, dump(Targets, Names).
+}
+
+\noindent
+results in the output {\tt a > b}.  This predicate is useful
+when the names of target variables are known only at runtime. 
+More precisely, the operation of {\tt dump/2} is as follows:
+let the first and second arguments be the lists 
+$[t_1, \cdots , t_n]$ and $[u_1, \cdots , u_n]$,
+where the $t_i$ and $u_i$ are {\em arbitrary} terms.
+Construct new variables $T_1, \cdots , T_n$, and add to the current
+collection of constraints the equations 
+$T_1 = t_1, \cdots , T_n = t_n$.
+Now obtain a projection of the augmented constraints \wrt
+$T_1, \cdots , T_n$.
+Finally, output this projection renaming each target variable $T_i$ 
+by its new name $u_i$.
+
+In meta-programming it can be useful to obtain the coded form of 
+the constraints with respect to given target variables. 
+This facility is provided by the system predicate {\tt dump/3}.
+There are three arguments because it is not sufficient to simply
+provide the variables to be projected upon (1st argument) and the variable
+that receives the coded form (3rd argument). The 2nd argument is a list of
+terms that are to replace the original variables in the coded form, and hence
+the lengths of the two lists must be the same. 
+For example,
+
+\stuff{
+\> ?- \> NewVars = [A, B, C], Targets = [X, Y, Z], X > Y + Z, \\
+\>\>	dump(Targets, NewVars, Answer).
+}
+
+\noindent
+results in the binding \ 
+{\tt Answer = [\unintt{-} A \unintt{+} B \unintt{+} C < 0]}.
+
+There are two reasons for having such a second argument.
+First, it is very inconvenient to manipulate a coded form containing variables
+that have the original arithmetic constraints still imposed on them --- in
+particular, printing such a term leads to highly counter-intuitive results.
+Second, in many cases it is more convenient to manipulate ground
+representations of the coded forms. That is, with syntactic constants
+replacing the variables. The terms resulting from manipulation can then have
+the original (or other) variables substituted into place easily.
+
+We conclude with a larger example. 
+We will assume that the predicate {\tt p/2} sets
+up a constraint such that the first argument is a (polynomial) function of 
+the second, and that {\tt diff/2} implements symbolic differentiation on 
+coded forms of arithmetic constraints. Then, to find the turning point of 
+the functional relationship established by {\tt p/2}, we can use the 
+following goal:
+
+
+\stuff{
+\> solve(DYDX,X) :- eval(DYDX) = 0. \\
+\> p(Y, X) :- \\
+\>\>	T = X + 1, \\
+\>\>	Y = T * T. \\
+\> ?- \> p(Y, X), 
+			\>\> \pct {\em \ collect a function Y(X)} \\
+\>\>	dump([Y, X], [V, U], Z), 
+			\>\> \pct {\em \ get coded form of Y(X)} \\
+\>\>	Z = [C], C =.. ['=', V, RHS], 
+			\>\> \pct {\em \ assume Z of the form [V = f(U)]} \\
+\>\>	diff(RHS, DVDU), 
+			\>\> \pct {\em \ symbolic differentiation} \\
+\>\>	solve(DVDU, U), 
+			\>\> \pct {\em \ find extremum} \\
+\>\>	printf("Turning point: X = {\pct}, Y = {\pct}$\backslash$n", [U, V]).
+}
+
+\section{Some Programming Techniques}
+
+Here we collect a number of small programs that serve to illustrate
+some interesting programming techniques.
+
+\noindent
+{\bf A Crypto-arithmetic Puzzle}
+
+Consider one of the
+standard crypto-arithmetic puzzles. We require an injective
+assignment of digits $0, 1, \cdots , 9$ to
+the letters S, E, N, D, M, O, R, Y such that the equation
+
+\begin{verbatim}
+          S E N D
+        + M O R E
+        ---------
+        M O N E Y
+\end{verbatim}
+
+\noindent
+holds. The program first imposes certain constraints on the values. Then
+it tries to assign possible values to the letters. The problem is
+combinatorially explosive and so a naive generate and test solution 
+would be very inefficient.  In contrast, the straightforward
+program below runs quickly in \CLPR.
+
+The program illustrates how \CLPR{} can be used to advantage in solving
+problems over integer domains.  Because the unsolvability of constraints
+in $\cal R$ implies their unsolvability over the integers, \CLPR{} can 
+prune the search space significantly without the expense of invoking an
+integer solver.  For CLP programs in general, the key issue
+is the trade-off between the power and the speed of the constraint-solver:
+powerful solvers entail smaller search spaces but are
+costlier to run.  For \CLPR{} in particular, the use of
+a real-number-based solver to approximate constraint-solving
+over a discrete or finite domain is one important realization
+of this trade-off.
+
+
+\begin{verbatim}
+solve([S, E, N, D, M, O, R, Y]) :-
+        constraints([S, E, N, D, M, O, R, Y]),
+        gen_diff_digits([S, E, N, D, M, O, R, Y]).
+
+constraints([S, E, N, D, M, O, R, Y]) :- 
+        S >= 0, E >= 0, N >= 0, D >= 0, M >= 0, O >= 0, R >= 0, Y >= 0,
+        S <= 9, E <= 9, N <= 9, D <= 9, M <= 9, O <= 9, R <= 9, Y <= 9,
+        S >= 1, M >= 1,
+        C1 >= 0, C2 >= 0, C3 >= 0, C4 >= 0,
+        C1 <= 1, C2 <= 1, C3 <= 1, C4 <= 1,
+        M = C1,
+        C2 + S + M = O + C1 * 10,
+        C3 + E + O = N + 10 * C2,
+        C4 + N + R = E + 10 * C3,
+        D + E = Y + 10*C4,
+        bit(C1), bit(C2), bit(C3), bit(C4).
+
+bit(0).
+bit(1).
+
+gen_diff_digits(L) :- 
+        gen_diff_digits(L, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).
+gen_diff_digits([], _).
+gen_diff_digits([H | T], L) :- 
+        select(H, L, L2), gen_diff_digits(T, L2).
+select(H, [H | T], T).
+select(H, [H2 | T], [H2 | T2]) :- 
+        select(H, T, T2). 
+
+?- solve(S, E, N, D, M, O, R, Y).
+\end{verbatim}
+
+\noindent
+{\bf Critical Path Analysis}
+
+This program uses local propagation to compute start, completion and float
+times for a project network. Significantly, the constraint paradigm allows the
+program to compute these values by making only one pass of the project
+network, as opposed to the three passes that would be needed using a
+conventional programming language.
+
+Most of the program is basically parsing the input and building
+an adjacency graph out of the network. Then the latest completion
+time and earliest starting time for every node is simply the
+minimum of the time required for the outgoing events and maximum of
+the time of the incoming events.
+
+% Network is an input project network of the form
+%       [ [node1 , node2, time ] .... ]
+%       Graph is the critical path graph produced
+%       Latest is the latest possible completion time is specified
+% cpm/3 is used if the latest time is specified; otherwise use cpm/2
+
+\begin{verbatim}
+
+cpm(Network, Graph, Latest) :-
+        build(Network, Graph),
+        early_late(Graph, Graph, End, Latest),
+        Latest >= End,
+        analyse(Graph, Graph).
+        
+cpm(Network, Graph) :-
+        build(Network, Graph),
+        early_late(Graph, Graph, End),
+        analyse(Graph, Graph).
+
+% Build adjacency graph out of the network ... build([], Graph) :- ...
+% Get early start times and latest completion times
+% early/4 is used when a ending time is given
+% otherwise early/3 assumes that the early start time
+% for the end node is equal to the latest completion time
+
+early_late([], _, _, _).
+early_late([ad(I, Es, Lc, To, From) | T], G, End, Latest) :-
+        setearly(From, To, G, End, Es),
+        setlate(To, G, Latest, Lc),
+        early_late(T, G, End, Latest).
+
+early_late([], _, _).
+early_late([ad(I, Es, Lc, To, From) | T], G, End) :-
+        setearly(From, To, G, End, Es),
+        setlate(To, G, End, Lc),
+        early_late(T, G, End).
+
+setearly([], _, _, _, 0).
+setearly([ed(V, C, _, _, _, _) | T],[], G, Es, Es) :-
+        !,
+        getnode(V, G, Es1, _),
+        setmax(T, G, Es1 + C, Es).
+setearly([ed(V, C, _, _, _, _) | T], _, G, End, Es) :-
+        getnode(V, G, Es1, _),
+        setmax(T, G, Es1+C, Es).
+
+setmax([], _, Max, Max).
+setmax([ed(V, C, _, _, _, _) | T], G, Max0, Max) :-
+        getnode(V, G, Es1, _),
+        setmax(T, G, max(Max0, Es1 + C), Max).
+
+setlate([], _, Last, Last).
+setlate([ed(V, C, _, _, _, _) | T], G, Last, Lc) :-
+        getnode(V, G, _, Lc1),
+        setmin(T, G, Lc1-C, Lc).
+
+setmin([], _, Min, Min).
+setmin([ed(V, C, _, _, _, _) | T], G, Min0, Min) :-
+        getnode(V, G, _, Lc1),
+        setmin(T, G, min(Min0, Lc1 - C), Min).
+
+% Search graph for the early & late times for a node
+getnode(I,[ad(I, Es, Lc, _, _) | T], Es, Lc).
+getnode(I,[H | T], Es, Lc) :-
+        getnode(I, T, Es, Lc).
+
+% Compute the other times:
+%               Ls - latest start time
+%               Ec - earliest completion time
+%               Tf - total float time
+%               Ff - free float time
+
+analyse([], G).
+analyse([ad(I, Es, Lc, To, _) | T], G) :-
+        analyse_times(To, Es, Lc, G),
+        analyse(T, G).
+
+analyse_times([], _, _, _).
+analyse_times([ed(V, C, Ls, Ec, Tf, Ff) | T], Esi, Lci, G) :-
+        getnode(V, G, Esj, Lcj),
+        X = Esi + C,
+        Ls = Lcj - C,
+        Ec = Esi + C,
+        Tf = Lcj - X,
+        Ff = Esj - X,
+        analyse_times(T, Esi, Lci, G).
+
+print_analysis(G) :- ...
+
+\end{verbatim}
+
+A goal might be 
+
+\begin{verbatim}
+?-      cpm([
+                [n1, n2, 4], [n1, n3, 3], [n1, n4, 4], [n2, n5, 7],
+                [n2, n3, 1], [n2, n7, 8], [n3, n5, 4], [n4, n6, 2], 
+                [n5, n6, 1], [n5, n7, 3], [n6, n7, 4]], G),
+        print_analysis(G).
+\end{verbatim}
+
+\noindent
+{\bf A Simple Circuit Solver}
+
+The following program performs DC analysis on circuits
+containing resistors, voltage sources and diodes.
+The circuit analysis is decomposed in a hierarchical fashion.
+The individual components are modelled directly by constraints
+such as Ohm's law.
+Then the components are connected together and the global circuit
+constraints on the currents and voltages, as specified by
+Kirchoff's laws, are used to define the whole circuit.
+
+\begin{verbatim}
+solve_dc(C, L) :-
+        solve(C, [], L),
+        solve_current(L).
+
+% solve for every circuit component
+solve([], L, L).
+solve([[Comp, Name, Par, Nodes] | T], In, Out) :-
+        connect(Name, Nodes, Volts, Amps, In, Tmp),
+        component(Comp, Par, Volts, Amps),
+        solve(T, Tmp, Out).
+
+% sum of currents at each node are zero
+solve_current([]).              
+solve_current([n(N, V, IList) | T]) :-
+        kcl(IList, 0),
+        solve_current(T).
+
+kcl([], 0).
+kcl([(Name, I) | T], X) :-
+        kcl(T, I + X).
+
+% connect the arcs which meet at a node
+connect(Name, [], [], [], L, L).      
+connect(Name, [N | T], [V | VR], [I | IR], In, Out) :-
+        add_arc(Name, N, V, I, In, Tmp),
+        connecting(Name, T, VR, IR, Tmp, Out).
+
+% create the voltage and currents
+add_arc(Name, N, V, I, [], [n(N, V, [(Name, I)])]). 
+add_arc(Name, N, V, I, [n(N, V, IList) | T], 
+                       [n(N, V, [(Name, I) | IList]) | T]).
+add_arc(Name, N, V, I, [X | T], [X | T1]) :- 
+        add_arc(Name, N, V, I, T, T1).
+
+component(resistor, R, [V1, V2], [I, -I]) :-
+        V1 - V2 = I*R.
+component(voltage_source, V, [V, 0], [I, -I]).
+component(diode, in914, [V1, V2], [I, -I]) :-
+        diode(in914, [V1, V2], [I, -I]).
+diode(in914, [V1, V2], [I1, I2]) :-
+        V = V1 - V2, V < -100,  DV = V+100,  I1 = 10*DV - 0.1.
+diode(in914, [V1, V2], [I1, I2]) :-
+        V = V1 - V2, V >= -100, V < 0.6, I1 = 0.001*V.
+diode(in914, [V1, V2], [I1, I2]) :-
+        V = V1 - V2, V >= 0.6, DV = V - 0.6, I1 = 100*DV - 0.0006.
+\end{verbatim}
+
+A sample query which returns the currents and voltages in L
+
+\begin{verbatim}
+?-      R1 = 100, R2 = 50, V = 20,
+        solve_dc([[voltage_source, v1, V, [n1, ground]], 
+                  [resistor, r1, R1, [n1, n2]],
+                  [resistor, r2, R2, [n2, ground]], 
+                  [diode, d1, in914, [n2, ground]]], L).
+\end{verbatim}
+
+\chapter{Using the System} \label{chap:system}
+
+The user interface of compiled \CLPR\ is very much like that of a usual
+Edinburgh-style Prolog interpreter. In other words, it is quite possible to
+use this system while almost completely ignoring the fact that it is
+compiler-based. 
+In fact, there is no such thing as an interpreted mode and all code
+(static and dynamic) is compiled.
+All goals are compiled (quickly) before being executed, and any consulted file
+is immediately compiled. The rulebase is available for inspection (except
+for protected rules) and
+can be modified dynamically as long as the relevant relations have been
+declared to be {\em dynamic} as described below. Normally the user will
+find that consulted files take a little longer than usual to be read in
+(because they are being compiled) and that programs will usually
+run much more quickly and use less space than in an interpreter. Symbolic
+debugging is still possible, as are all other aspects of interactive
+programming. However, the user may also take special advantage of the compiler
+by creating {\tt clam} files that contain compiled \CLPR\ code that can be
+loaded extremely quickly and do not include the overhead of the
+original program text, although this rules out certain operations.
+\index{clam files}
+In short, the system is intended to get the best of both worlds by combining
+the flexibility of an interpreter with the efficiency of a compiler.
+The experienced PROLOG user may want to skip directly to 
+Section \ref{sample-session} which illustrates many of the features,
+syntax and user interface of \CLPR{} using an example session.
+
+{
+\Large
+\ \\
+\noindent
+\begin{tabular}{ll}
+% \hspace{12mm} \= \kill
+Note: & Creation of CLAM files has not yet been implemented. \nl
+	& However, compilation in \CLPR\ is relatively quick.
+\end{tabular}
+}
+
+The first operation \CLPR\ performs
+is to load the distinguished library file
+{\tt init.clpr}.  
+\index{init.clpr}
+This file must either be in the current working directory,
+or in a directory whose path name is defined via the environment
+variable {\tt CLPRLIB}, 
+\index{CLPRLIB}\index{Environment variables}
+or in a directory whose path name is specified
+during installation.  This last alternative is explained 
+in Chapter \ref{installation-guide}.
+
+\section{Command Line Arguments}\index{command line arguments}
+\label{command-section}
+The syntax of a command-line is
+
+{\tt clpr} [{\em options}] [$\mbox{{\em filename}}$]
+
+\noindent
+where {\em filename} contains a \CLPR\ program.
+The following explains the various {\em options} available:
+
+\begin{description}
+\ouritem{-cs <n>}
+Specify size of code space\index{code space} (default 128,000).
+\ouritem{-hs <n>}
+Specify size of heap\index{heap} (default 200,000).
+\ouritem{-ls <n>}
+Specify size of local stack\index{local stack} (default 100,000).
+\ouritem{-ss <n>}
+Specify maximum number of solver variables\index{solver variables} 
+	(default 128,000).
+\ouritem{-ts <n>}
+Specify size of trail\index{trail} (default 100,000).
+\ouritem{-z <r>}
+Set internal notion of zero\index{zero} to this small number.
+Numbers between $\pm r$ are taken to be equivalent to zero.
+\ouritem{-r <int>}
+Specify a random number\index{random number seed} seed.
+\end{description}
+
+\section{Filenames}\label{sec:filenames}\index{file names}
+\index{suffix}
+\chgbarbegin
+Filenames consulted or read as an input stream
+may have an optional implicit suffix added to the filename.
+The default suffix is usually ``.clpr'' (``.clp'' for MS/DOS or OS/2)
+depending on the installation.
+This may be changed by the use of the environment variable 
+CLPRSUFFIX\index{CLPRSUFFIX}\index{Environment variables},
+which can be set to a list of suffixes separated by colons,
+e.g. ".clpr:.clp".
+First, the original filename is tried and if that cannot be read
+then a suffix is added in the order specified by the list of suffixes.
+(Note that in version 1.1 and earlier of \CLPR{}, only the specified filename
+was used without any implicit suffixes, but the behavior here is
+compatible).
+\chgbarend
+
+\section{Queries}\index{answer constraints}\index{queries}\index{goals}
+
+After the system has been initialized, it will prompt the user for a query.
+\chgbarbegin
+It will continually accept user goals and solving for them
+until the session is terminated with a {\tt halt/0} or if
+it encounters the end of file (eg: {\tt $^\wedge$D} on UNIX or 
+{\tt $^\wedge$Z} on MSDOS).
+This again is similar to the style of most PROLOG systems. 
+If the user goal failed then the ``{\tt *** No}'' message is output, otherwise
+the query is successful and the
+resulting answer constraints (the constraints on variables in the
+query) are output.
+A successful query will also display a ``{\tt *** Yes}'' message,
+but if there are other alternatives to try for the query then 
+the ``{\tt *** Retry?}'' message is displayed and the 
+user is prompted to either press carriage return or enter ``.'' (or ``n'') 
+to accept the
+answers, or ``;'' (or ``y'') to cause backtracking.
+A different prompt is displayed if delayed (nonlinear) 
+remain at the end \index{delayed constraint}\index{nonlinear constraint}
+of the execution.
+The message ``{\tt *** Maybe}'' replaces ``{\tt *** Yes}''
+and ``{\tt *** (Maybe) Retry?}'' replaces ``{\tt *** Retry?}''
+to indicate that the satisfiability of the nonlinear constraints remaining
+has not been decided by \CLPR.
+Execution of a query can be interrupted at any time by using
+the interrupt keycode ({\tt $^\wedge$C} usually).\footnote{It is however
+not absolutely safe to interrupt at any time,
+and occasionally at critical stages
+an interrupt may cause the system to be internally inconsistent}
+\chgbarend
+A buffer of the last 50 goals is kept, and may
+be examined by the {\tt history/0} (or {\tt h/0}) predicate. 
+An old query may be re-executed by just
+entering its history number as a goal (eg: {\tt ?- 5.}).
+
+For every top-level query. There is also an {\em implicit dump} on
+\index{implicit dump}
+the variables in the goal, i.e. the set of answer constraints
+using those variables are printed, with the exception that anonymous
+variables and also other variables beginning with an ``{\tt \_}''
+are ignored.
+No implicit dump is performed for goals embedded in a file.
+(Note that the output constraints differs from many PROLOG systems
+which display the variable bindings produced from execution.)
+
+\section{Loading/consulting and reconsulting programs}
+\chgbarbegin
+
+A \CLPR{} source program can be loaded using the {\tt consult/1}
+predicate or the more convenient notation{\tt [{\it $<$list of filenames$>$}]},
+e.g. {\tt [myprog, mytest]} at the top level prompt loads those
+two files.
+Loading a program compiles all the rules in that file, makes the 
+new predicates in it available for use and also executes any embedded goals.
+Unlike some PROLOG systems where consulted files are interpreted
+and compilation is done using a different method, all consulted predicates
+in \CLPR{} are compiled (usually fairly quickly). 
+Note that filenames may have an implicit suffix added as in 
+Section \ref{sec:filenames}.
+Filenames which are specified directly should consist entirely of lowercase
+characters and any other kind of filename, eg. a pathname,
+should be surrounded by single quotes.
+
+Reconsulting a file with {\tt reconsult/1} or the notation
+{\tt [`{\it $<$list of filenames$>$}]} will if it encounters previous
+definitions, erase them and replace them by the new definitions.
+By default, a predicate which is redefined will generate a warning.
+This may be turned off by executing the system predicate
+{\tt warning(redefine\_off)}.
+Some PROLOG systems use an alternative notation {\tt [-{\it filename}]}
+but in \CLPR{} this conflicts with unary minus.
+Also in some systems, consulting and reconsulting are combined together.
+In \CLPR{} consulting a previously consulted file with active definitions
+will result in warning messages and redefinitions will be ignored.
+
+The special filename {\tt user} denotes that the file to be consulted
+or reconsulted
+is read from standard input. This allows direct entry of rules which is handy
+for quick modifications from the top query level.
+More on the organization of consulted files is contained in 
+Section \ref{consult-section}.
+\chgbarend
+
+\section{Style Checking and Warnings}\index{style checking}\index{warning}
+\label{style-section}
+\chgbarbegin
+\CLPR{} programs can be optionally checked against
+some stylistic conventions, also called style checking.
+The purpose of the style checking is to give a warning
+that the program may potentially contain some  common ``bugs'' when
+the style rules are not followed.
+It is important to remember that these are merely warnings
+and a program may be perfectly correct otherwise.
+There are three different kinds of style checking that can be applied
+--- {\tt single\_var}, {\tt discontiguous}, {\tt name\_overload}.\footnote{
+The first two options are similar to that in Quintus Prolog.
+The last is different.}
+The option {\tt all} covers all three styles.
+By default, style checking is on and individual style checking
+can be turned on (off) with {\tt style\_check/1} ({\tt no\_style\_check/1}),
+e.g. {\tt no\_style\_check(all)} turns off
+all style checking.
+
+\noindent
+The different style conventions are as follows:
+\begin{description}
+\item{{\tt single\_var} ---}
+This warns if a variable is used only once within a rule and may
+possibly indicate that a variable has been mispelled. Anonymous
+variables ({\tt \_}) and also variables prefixed with an underscore
+are ignored. An example error is the rule ``{\tt p(X, Y)}'' gives
+the following warning message:
+
+\begin{quotation}
+\tt
+Warning: Style check, singleton variables, rule 1 of q/2 \\
+ +++  X, Y
+\end{quotation}
+
+\item{{\tt discontiguous} ---}
+This style check assumes that all the different rules defining
+a predicate occur contiguously within a file and warns if there
+is another intervening rule. Common bugs which
+can result when this style check is not followed
+can be
+mispelling the name of a rule, or substituting a ``.'' 
+to end a rule when a ``,'' was meant to continue the rule,
+e.g. the program ``{\tt p(X) :- X > 0. q(X). p(0) :- r(X).}''
+where there the intent is for a comma to be before {\tt q/1}
+gives the following warning message:
+
+\begin{quotation}
+\tt
+Warning, $<$stdin$>$:1: Style check, p/1 is not contiguous
+\end{quotation}
+
+\item{{\tt name\_overload} ---}
+This checks whether the same predicate name is defined with
+different arities.
+While it is not uncommon to have different predicates of different
+arities with the same name, it may also be indicative of an incorrect
+number of arguments, e.g. the program ``p(0,0). p(1). p(2,2).''
+gives the following warning message:
+
+\begin{quotation}
+\tt
+Warning: rule overloading, same name, different arity: \\
+ +++  p/1, p/2
+\end{quotation}
+\end{description}
+(Note that when this option has been disabled and then re-enabled,
+then rules which were defined before style checking was enabled
+will also generate warnings. The additional warnings can be
+disabled by using the special system predicate {\tt \$clear\_style\_check/0}.
+{\tt style\_check(all\_reset)} also does this,
+clearing all previous warnings and
+turns on style checking.)
+
+\noindent
+Another kind of warning is given when a rule is defined in more than
+one file. The basic unit of compilation is a single file and all
+the occurences of rules for a predicate have to be defined within
+the same file. The exception is that when a file is being reconsulted,
+then the new definitions replace the old ones. The compiler will
+simply ignore all additions to an existing previously compiled
+predicate and by default a warning is given. See also {\tt warning/1}
+to control whether warnings are given.
+\chgbarend
+
+\section{Sample Session}\label{sample-session}\index{sample session}
+
+This is a sample session with the \CLPR\ system.
+Some extra information is given using comments after the \% character.
+
+\begin{verbatim}
+
+% clpr
+
+CLP(R) Version 1.2
+(c) Copyright International Business Machines Corporation
+1989 (1991) All Rights Reserved
+
+1 ?- f(X,Y) = f(g(A),B).        % some simple ``unification''
+
+B = Y
+X = g(A)
+
+*** Yes
+
+2 ?- X = Y + 4 , Y = Z - 3, Z = 2.      % simple arithmetic evaluation
+
+Z = 2
+Y = -1
+X = 3
+
+*** Yes
+
+3 ?- X + Y < Z, 3 * X - 4 * Y = 4, 3 * X + 2 * Y = 1.
+
+Y = -0.5
+X = 0.666667
+0.166667 < Z
+
+*** Yes
+
+4 ?- X + Y < Z, 3 * X - 4 * Y = 4, 2 * X + 3 * Z = 1.
+
+Y = -1.125*Z - 0.625
+X = -1.5*Z + 0.5
+-0.0344828 < Z
+
+*** Yes
+
+5 ?- history.
+1       f(X, Y) = f(g(A), B).
+2       X = Y + 4, Y = Z - 3, Z = 2.
+3       X + Y < Z, 3 * X - 4 * Y = 4, 3 * X + 2 * Y = 1.
+4       X + Y < Z, 3 * X - 4 * Y = 4, 2 * X + 3 * Z = 1.
+
+*** Yes
+
+6 ?- 2.                                  % run second goal again 
+X = Y + 4, Y = Z - 3, Z = 2.
+
+Z = 2
+Y = -1
+X = 3
+
+*** Yes
+
+7 ?- ['examples/fib'].          % consult (load) a program
+
+>>> Sample goal: go/0
+
+*** Yes
+
+8 ?- ls fib.                    % look at the program
+
+fib(0, 1).
+fib(1, 1).
+fib(N, X1 + X2):-
+        N > 1,
+        fib(N - 1, X1),
+        fib(N - 2, X2).
+
+*** Yes
+
+9 ?- fib(5,F).                  % only one answer to this
+
+F = 8
+
+*** Retry?;
+
+*** No
+
+10 ?- F > 7, F < 9, fib(N,F).  % only ask for the first answer
+
+N = 5
+F = 8
+
+*** Retry? 
+11 ?- [`'examples/mortgage'].  % use "`" to reconsult
+
+>>> Sample goals: go1/0, go2/0
+
+*** Yes
+
+12 ?- ls.               % look at the entire rulebase
+
+h:-
+        history.
+
+fib(0, 1).
+fib(1, 1).
+fib(N, X1 + X2):-
+        N > 1,
+        fib(N - 1, X1),
+        fib(N - 2, X2).
+
+go:-
+        printf(\nFib(14) = , []),
+        ztime,
+        fib(14, X),
+        ctime(T1),
+        printf(% (Time = %)\n, [X, T1]),
+        printf(Fib-1(610) = , []),
+        ztime,
+        fib(Y, 610),
+        ctime(T2),
+        printf(% (Time = %)\n, [Y, T2]).
+
+mg(P, T, I, B, MP):-
+        T = 1,
+        B = P + P * I - MP.
+mg(P, T, I, B, MP):-
+        T > 1,
+        mg(P * (1 + I) - MP, T - 1, I, B, MP).
+
+go1:-
+        ztime,
+        mg(999999, 360, 0.01, 0, M),
+        ctime(T),
+        printf(Time = %, M = %\n, [T, M]).
+
+go2:-
+        ztime,
+        mg(P, 720, 0.01, B, M),
+        ctime(T),
+        printf(Time = %\n, [T]),
+        dump([P, B, M]).
+
+*** Yes
+
+13 ?- [`'examples/mortgage'].
+Warning: mg/5 has been redefined
+
+>>> Sample goals: go1/0, go2/0
+
+*** Yes
+
+14 ?- ls.
+
+h:-
+        history.
+
+fib(0, 1).
+fib(1, 1).
+fib(N, X1 + X2):-
+        N > 1,
+        fib(N - 1, X1),
+        fib(N - 2, X2).
+
+go:-
+        printf(\nFib(14) = , []),
+        ztime,
+        fib(14, X),
+        ctime(T1),
+        printf(% (Time = %)\n, [X, T1]),
+        printf(Fib-1(610) = , []),
+        ztime,
+        fib(Y, 610),
+        ctime(T2),
+        printf(% (Time = %)\n, [Y, T2]).
+
+mg(P, T, I, B, MP):-
+        T = 1,
+        B = P + P * I - MP.
+mg(P, T, I, B, MP):-
+        T > 1,
+        mg(P * (1 + I) - MP, T - 1, I, B, MP).
+
+go1:-
+        ztime,
+        mg(999999, 360, 0.01, 0, M),
+        ctime(T),
+        printf(Time = %, M = %\n, [T, M]).
+
+go2:-
+        ztime,
+        mg(P, 720, 0.01, B, M),
+        ctime(T),
+        printf(Time = %\n, [T]),
+        dump([P, B, M]).
+
+*** Yes
+
+15 ?- go2.
+Time = 0.25
+
+M = -7.74367e-06*B + 0.0100077*P
+
+*** Retry?
+
+16 ?- [user].
+p(X) :- writeln(X).
+^D
+*** Yes
+
+17 ?- p(hello).
+hello
+
+*** Yes
+
+\end{verbatim}
+
+\section{Organization of Consulted Files}
+\label{consult-section}
+\index{consulted files}
+
+Slightly more care than usual must be taken in organizing program files in
+compiled \CLPR. A file consists of a number of {\em chunks}. Each chunk
+consists of a zero or more rules (defined in the usual way) possibly followed
+by a goal. That is, a goal always closes off a chunk, and the end of the file
+closes off the last chunk if a goal has not done so.
+\chgbarbegin
+A relation may not span more than one chunk unless it has been declared to be
+{\em dynamic} (see below) before the first rule defining it. 
+Defining a relation statically in more than one chunk will generate
+a warning message stating that the new definitions will be ignored is given.
+However if one is reconsulting then the new definitions will replace the
+ones defined in the previous chunk. A warning message that the redefinition
+has taken place is also given.
+However, if such a redefinition during a reconsult is not possible when
+the earlier definition has been protected (using the {\tt prot/2} predicate),
+in which case a warning is printed and the new
+definition is ignored.\index{prot}
+\chgbarend
+The motivation for this restriction is that the state of the rulebase needs to
+be well defined whenever a goal is encountered in the consulted file.
+
+There may be three kinds of goals in any consulted file. \index{goals}
+All three kinds are considered to be identical (and behave in the usual way) 
+when they are encountered in a source file that is being consulted. 
+However, they are different when a source file is first compiled 
+and when the {\tt .clam} file is consulted. 
+All goals of the form {\tt :- goal}
+are only executed during the compilation stage. 
+Those of the form {\tt ::- goal}
+are only executed during the consultation of the compiled code, and the goals
+of the traditional form {\tt ?- goal} are executed twice: once during
+compilation and once during consultation. 
+In summary:
+
+\stuff{
+\> :- goal. \\
+\>\>	{\em is executed during compilation of the source file.} \\
+\> ::- goal. \\
+\>\>	{\em is executed during consultation of the {\tt .clam} file.} \\
+\> ?- goal. \\
+\>\>	{\em is executed during compilation \underline{and} at runtime.}
+}
+
+\noindent
+The first kind of goal might be used
+for compiler directives and messages to whoever is watching while some code is
+being compiled. The second kind might be used for making a program run itself
+straight after it is loaded. Finally, the third kind of goal is useful for
+things like operator declarations which need to be present for the remainder
+of a program to parse correctly and also when the program is running so that
+terms will print correctly, etc.
+\chgbarbegin
+An embedded goal that fails during execution will generate
+a warning message (see also {\tt warning/1}).
+\chgbarend
+
+\section{Static and Dynamic Code}\index{static code}\index{dynamic code}
+\label{dynamic-section}
+
+A \CLPR{} program is divided into static rules, which do not change,
+and dynamic rules, which allow the rulebase to be modified via {\tt assert/1}
+and {\tt retract/1} as well as by 
+consulting\index{{\tt assert/1}}\index{{\tt retract/1}}.
+As mentioned above, static rules/code cannot span more than one chunk.
+\chgbarbegin
+Dynamic code on the other hand can be defined anywhere and dynamic
+rules can be added by asserting them during execution
+or by consulting a program file, which behaves as if those definitions
+were asserted.
+The only requirement for rules intended to be dynamic is that the
+particular predicate name has
+to be pre-declared using {\tt dynamic/2} which ensures that
+all uses of this predicate are now dynamic, e.g. {\tt ?- dynamic(foo, 2).}
+The first argument is the name of the predicate and the second is its
+arity\footnote{Most PROLOG's use the name/arity convention to specify
+this but this could be confused with division, hence the two argument
+form is used}.
+Every dynamic declaration has to occur before any use of a dynamic predicate
+is made (including {\tt rule}, {\tt assert} and {\tt retract}), otherwise
+an error is generated with any of the preceeding system predicates and
+any use of that predicate is assumed to be static.
+\chgbarend
+Declaring a predicate to be dynamic allows the use of {\tt rule/2}
+to inspect the rulebase,
+{\tt assert/1} to add new rules and {\tt retract/1} to delete rules.
+\index{rule}\index{assert}\index{retract}
+
+The operational semantics of the 
+assert, rule and retract family of system
+predicates is that any modifications to the rulebase
+occur immediately and are immediately available for use\footnote{
+The operational semantics of dynamic code may vary considerably
+between different PROLOG systems hence one should not place
+undue reliance on it.}.
+This is called the immediate update view \cite{LINDHOLM87}.
+Consider the following example: 
+
+\stuff{
+\>?- dynamic(p,0). \\
+\>p :- assert(p), fail. \\
+}
+
+This will cause the goal ``{\tt ?- p.}'' to succeed.
+Apart from the dynamic declaration and the immediate update semantics,
+there is no difference between static and dynamic code and they
+may be used interchangeably, e.g. both can be listed with {\tt ls/1}.
+Dynamic code is also compiled but is generally not as efficient
+as static code and also less deterministic.
+Also note that the semantics of {\tt assert}, 
+{\tt rule} and {\tt retract} are an enhancement
+of that in PROLOG (see Section \ref{assert-section}).
+
+\section{Debugging Support}\index{debugging}
+
+The debugging facilities in this version of \CLPR\ are rudimentary.
+
+\begin{description}
+
+\ouritem{codegen\_debug}\index{{\tt codegen\_debug/0}}
+This is a compiler directive, which includes debugging instructions in
+subsequently generated code.
+It should be active before the file to be debugged is consulted.
+
+\ouritem{codegen\_nodebug}\index{{\tt codegen\_nodebug/0}}
+This is a compiler directive that turns off the generation of debugging code in
+subsequent compilation.
+
+\ouritem{spy}\index{{\tt spy/0}}
+This switch makes all relations compiled under {\tt codegen\_debug}
+visible to the debugger. Protected rules are never visible.
+
+\ouritem{spy(+P, +A)}\index{{\tt spy/2}}
+This switch makes the relation for predicate {\tt
+P} with arity {\tt A} visible to the debugger if it was compiled under {\tt
+codegen\_debug}. It cannot be applied to
+protected relations.
+
+\chgbarbegin
+\ouritem{spy({[P1(+A1),...,Pn(+An)]})}\index{{\tt spy/1}}
+Like {\tt spy/2}, except a list is supplied of the predicates to
+be spied on where the {\tt Pi}'s are the predicate names 
+and the {\tt Ai}'s their arity.
+\chgbarend
+
+\ouritem{nospy}\index{{\tt nospy/0}}
+Makes all relations invisible to the debugger.
+
+\ouritem{nospy(+P, +A)}\index{{\tt nospy/2}}
+Makes the relation for predicate {\tt P} with arity {\tt A} 
+invisible to the debugger.
+
+\chgbarbegin
+\ouritem{nospy({[P1(+A1),...,Pn(+An)]})}\index{{\tt nospy/1}}
+Like {\tt nospy/2}, except a list is supplied of the predicates to
+be spied on where the {\tt Pi}'s are the predicate names and 
+the {\tt Ai}'s their arity.
+\chgbarend
+
+\ouritem{trace}\index{{\tt trace/0}}
+Activates printing. All subsequent attempts to search a relation visible
+to the debugger will result in a message being printed. The message is the
+same regardless of whether this is a first or subsequent attempt 
+to satisfy a goal.
+
+\ouritem{notrace}\index{{\tt notrace/0}}
+De-activate printing.
+
+\end{description}
+
+\section{Notes on Efficiency}
+
+Here we indicate some key features that can significantly 
+affect efficiency.  Some of them are unsound in general, and hence
+extreme care should be taken when using them.
+Novice programmers may (and probably should) skip this section entirely.
+
+\begin{itemize}
+\item {\em Indexing} \index{indexing}\nl
+	\CLPR\ employs first argument indexing for constructed functor 
+	terms as well as real numbers.   Using indexing can result in
+	significant speedups.
+\item {\em Tail recursion} \index{tail recursion}\nl
+	Last call optimization is employed, and hence procedures that
+	are tail-recursive will not increase local stack usage.
+\item {\em Logical disjunction ``{\tt ;/2}'' and 
+	if-then-else ``{\tt ->/2}''} \index{disjunction} \index{if-then-else}\nl
+	These are implemented at the meta-level and hence are not
+    particularly efficient.
+\item {\em Dynamic code} \index{dynamic code}\nl
+	Dynamic code is slower than static code and is also less
+	deterministic. Cuts can be used to make it more deterministic.
+	Also, since dynamic code is compiled, asserting large terms
+	may not be very fast.
+\item {\em Garbage collection} \index{garbage collection}\nl
+	Not implemented as yet.
+\item {\em Implicit equalities} \index{implicit equalities}\nl
+	The solving of inequalities that imply some implicit equations can
+	be controlled using {\tt implicit/0}, {\tt noimplicit/0},
+	{\tt partial\_implicit/0} (see Section \ref{special-section}).
+\item {\em Asserting a rule} \index{fassert}\index{assert}\nl
+	The predicate {\tt assert/1} involves incorporating the constraints
+	that relate the variables in that rule (see Section \ref{assert-section}).
+	This is less efficient than if the constraints were not taken
+	into account. The {\tt fassert} family of special 
+    predicates (``fast assert'') performs assertion without
+    incorporating arithmetic constraints (see Section \ref{special-section}),
+	as in PROLOG.
+\end{itemize}
+
+\section{Notes on Formal Correctness}
+
+The following identifies the main reasons why the \CLPR{} implementation
+does not perfectly conform to the idealized CLP scheme. 
+\begin{itemize}
+\item No occurs check during (functor) unification;
+\item Depth-first search (loss of completeness);
+\item Floating point:
+because this implementation of \CLPR\ makes use of double precision floating
+point arithmetic, some problems may be caused by artifacts such as roundoff.
+The most common problem is that a constraint used as a test (in that all
+variables are ground) unexpectedly fails because of round-off. This is dealt
+with by adjusting the amount of slack that the system allows in numerical
+comparisons, using the {\tt -z} command line option.
+\item Nonlinear and meta-level constraints are delayed.
+\end{itemize}
+
+\chapter{Built-In Facilities}
+
+\section{System Predicates}
+
+\subsection{Rulebase}
+
+\begin{description}
+\ouritem{op(+P, +T, +S)}\index{{\tt op/3}}
+Declares the atom {\tt S} to be an operator of type {\tt T} 
+with precedence {\tt P}.
+The type can be used to specify prefix, postfix and binary operators
+using the positional notation: {\tt fy, fx, yf, xf, yfy, xfy, yfx, xfx};
+where the ``{\tt f}'' specifies the operator and 
+the ``{\tt y}'' and ``{\tt x}'' the arguments.
+A ``{\tt y}'' specifies that the topmost functor/operator in the subexpression
+be of the same or lower precedence than the operator ``{\tt f}'', 
+and ``{\tt x}'' specifies that it is to be strictly lower.
+The precedences must range between $\{0 \ldots 1200\}$.
+where a 0 precedence removes the operator.
+
+(See also Section \ref{op-section} for some examples.)
+
+\oursitem{listing}\index{{\tt listing/0}}
+
+\ouritem{ls}\index{{\tt ls/0}}
+List the rules of the entire rulebase that are currently visible.
+
+\oursitem{listing +P}\index{{\tt listing/1}}
+
+\ouritem{ls +P}\index{{\tt ls/1}}
+List the currently visible rules for the predicate {\tt P}, of all arities.
+
+\oursitem{consult(+F)}\index{{\tt consult/1}}
+
+\ouritem{{[+F]}}\index{{\tt [{$\cdots$}]}}
+Read the file {\tt F} and add rules that it contains to the database. Goals in
+the file are handled in a way that is described in 
+Section \ref{consult-section}.
+If the filename is specified as {\tt user} then the standard input
+is used instead of a file.
+\chgbarbegin
+The form {\tt [F]} takes a list of filenames while {\tt consult/1} takes
+only a single file.
+When the file {\tt F} cannot be read then a possible list of file suffixes
+is added using the CLPRSUFFIX environment variable 
+(see Section \ref{sec:filenames}).
+By default, a ``.clpr'' file extension is used.
+(Not currently implemented: If the
+file has a {\tt .clam} extension it is expected to be clam code and is loaded
+appropriately. If it has no extension and a version with a {\tt .clam}
+extension exists it is given preference.)
+\chgbarend
+
+\oursitem{reconsult(+F)}\index{{\tt reconsult/1}}
+
+\ouritem{{[`+F]}}\index{{\tt [`{$\cdots$}]}}
+Same as {\tt consult}, but if a predicate already has rules
+defining it from before, they are deleted before the new ones are added,
+and a warning message is printed. Note
+that {\tt [-F]}, which is a common synonym for {\tt reconsult} in PROLOG
+systems, cannot be used (since it means negative {\tt F}).
+
+\ouritem{retractall}\index{{\tt retractall/0}}
+Delete entire unprotected portion of the rulebase.
+
+\ouritem{retractall(+H)}\index{{\tt retractall/1}}
+Delete all currently visible rules with heads matching {\tt H}.
+Static code cannot be deleted with {\tt retractall/1}.
+
+\ouritem{asserta(+R)}\index{{\tt asserta/1}}
+Add rule {\tt R} to the rulebase before all others defining 
+the same predicate.  
+Note that coded terms become uncoded in the rulebase.
+See Section \ref{assert-section} for more information on meta-coding
+of rules and differences with the usual PROLOG semantics.
+
+\oursitem{assertz(+R)}\index{{\tt assertz/1}}
+\ouritem{assert(+R)}\index{{\tt assert/1}}
+Add rule {\tt R} to the rulebase after all others defining the same predicate.
+Note that coded terms become uncoded in the rulebase.
+See Section \ref{assert-section} for more information on meta-coding
+of rules and differences with the usual PROLOG semantics.
+
+\ouritem{rule(+H,?B)}\index{{\tt rule/2}}
+True if the rule {\tt H:-B} is in the currently visible part of the rulebase.
+Finds the next matching rule on backtracking.  
+Note that the rules in the rulebase are coded before
+matching is done.
+See Section \ref{assert-section} for more information on meta-coding
+of rules and differences with the usual PROLOG semantics.
+
+\ouritem{deny(+H,?B)}\index{{\tt deny/2}}
+Delete rule matching {\tt H :- B} from the currently visible part of the
+rulebase. Also tries again on backtracking.
+It is similar to {\tt retract/1} and both {\tt H} and {\tt B} are
+coded terms.
+See Section \ref{assert-section} for more information on meta-coding
+of rules and differences with the usual PROLOG semantics.
+
+\ouritem{retract(+R)}\index{{\tt retract/1}}
+Delete rule matching {\tt R} from the currently visible part of the rulebase.
+Like {\tt rule/2}, this has a ``coded view'' of the rulebase.
+See Section \ref{assert-section} for more information on meta-coding
+of rules and differences with the usual PROLOG semantics.
+
+\ouritem{prot(+P,+A)}\index{{\tt prot/2}}
+Protect all rules for predicate {\tt P} with arity {\tt A} in the rulebase.
+This makes them look like system predicates to the user. In particular, they
+cannot be listed, asserted or retracted.
+
+\ouritem{prot({[P1(+A1),...,Pn(+An)]})}\index{{\tt prot/1}}
+Same effect as {\tt prot/2} described above, but takes a list of predicate
+names {\tt Pi} with arities {\tt Ai} in parentheses.
+
+\end{description}
+
+\subsection{Control}
+
+\begin{description}
+\ouritem{!}\index{{\tt {\cut}/0}}
+The dreaded cut. As usual, its use is not recommended. It is often more
+appropriate to use {\tt once/1}.
+\ouritem{fail}\index{{\tt fail/0}}
+Always fails.
+\ouritem{true}\index{{\tt true/0}}
+Always succeeds.
+\ouritem{repeat}\index{{\tt repeat/0}}
+Always succeeds, even on backtracking.
+\ouritem{+B1 , +B2}\index{{\tt ,/2}}
+Logical conjunction.
+\ouritem{+B1 ; +B2}\index{{\tt ;/2}}
+Logical disjunction. A cut inside one of these will behave very strangely.
+That is, it will behave as if the two sides of the ``{\tt ;}'' 
+are separate rules.
+\chgbarbegin
+(Note that because {\tt ;/2} is currently implemented as a meta call
+it may sometimes not behave as if it was defined using an auxiliary predicate.
+This can occur if there is an arithmetic term that causes failure.
+The following short example illustrates the difference between
+{\tt try/3} and {\tt try1/3} for the goal {\tt ?- try(X, 1, 0)}, \\
+\stuff{
+\>try(X, Y, Z) :- X=Y/Z ; X=1. \\
+\>try1(Y/Z,Y,Z). try1(1,Y,Z). 
+}\\
+This may possibly change to be the same in some future version.)
+\chgbarend
+\ouritem{+C -> +B1 ; +B2}\index{{\tt ->;/3}}
+If {\tt C} then call {\tt B1} otherwise call {\tt B2}. Uses unsafe negation.
+Inefficient, since it uses {\tt call/1}. A cut inside one of these will behave
+very strangely.
+\end{description}
+
+\subsection{Meta Level}
+
+\begin{description}
+
+\ouritem{call(+X)}\index{{\tt call/1}}
+Usual meta level call, behaving as if the predicate {\tt X} appeared
+directly in the body of a rule or goal.
+Note that this form must be used -- it is not
+permissible to simply put a variable in the body of a rule. 
+Both static and dynamic code can be used with {\tt call}.
+In this version, a cut inside a {\tt call} is ignored.
+Also, {\tt printf/2} and {\tt
+dump/1} cannot be used inside {\tt call}.
+Both these restrictions can be avoided by simply redefining them using
+a subsidiary rule.
+\ouritem{not(+X)}\index{{\tt call/1}}
+Unsafe negation. It is implemented using {\tt call/1}, so it is also likely to
+be rather slow.
+
+\ouritem{dump(+L1, ?L2, ?L3)}\index{{\tt dump/3}}
+Similar to {\tt dump/2} (see Section \ref{dump-preds}); 
+the first argument {\tt L1} represents
+the target variables and the second argument {\tt L2} represents
+new variables.  The difference with {\tt dump/2} is that (a) the 
+projection is meta-coded (cf. Section \ref{meta-section}), and 
+(b) this projection is not output but rather constructed as
+the third argument {\tt L3} (cf. Section
+\ref{dump-preds}).
+Note that {\tt dump/3} does change the current collection
+of constraints.
+
+\ouritem{once(+X)}\index{{\tt once/1}}
+This is equivalent to {\tt call(X), !} and unfortunately right now it is
+implemented that way as well. Only the first answer to the query {\tt X} is
+considered.
+
+\ouritem{nonground(?X)}\index{{\tt nonground/1}}
+True if {\tt X} is not a ground term.
+
+\ouritem{ground(?X)}\index{{\tt ground/1}}
+True if {\tt X} is a ground term.
+
+\ouritem{nonvar(?X)}\index{{\tt nonvar/1}}
+True if {\tt X} is not a variable: i.e, it has been constructed or grounded.
+
+\ouritem{var(?X)}\index{{\tt var/1}}
+True if {\tt X} is a variable. It may have been involved in an arithmetic
+constraint, but has not been grounded or constructed.
+
+\ouritem{?X == ?Y}\index{{\tt ==/2}}
+True if {\tt X} and {\tt Y} are bound to exactly the same term.  In
+particular, variables in equivalent positions must be identical. 
+For example {\tt ?- X == Y} fails while {\tt ?- X = Y, X == Y}
+succeeds.
+
+\ouritem{atom(?X)}\index{{\tt atom/1}}
+True if {\tt X} is an atom --- that is, a functor constant (including
+the empty list).
+
+\ouritem{atomic(?X)}\index{{\tt atomic/1}}
+True if {\tt X} is an atom or real number.
+
+\ouritem{functor(?X)}\index{{\tt functor/1}}
+True if {\tt X} is constructed with a functor.
+
+\ouritem{real(?X)}\index{{\tt real/1}}
+Enforces a constraint that {\tt X} can take real values;
+it is equivalent to any tautologous arithmetic constraint
+involving {\tt X}, eg: {\tt X + 0 = X}. 
+
+\ouritem{arithmetic(?X)}\index{{\tt arithmetic/1}}
+True if {\tt X} is constrained to have a real value.
+Note that this is just a passive test, as opposed to {\tt real/1}.
+
+\ouritem{?T =.. ?L}\index{{\tt =../2}}
+{\tt T} is a term and {\tt L} is the term expanded as a list. 
+(Also known as {\tt univ/2}).  This predicate can be used to both
+decompose and construct terms.  For its use either 
+the first argument must be constructed
+(a nonvar), or the second argument
+must be a list of fixed length whose first element is a functor constant.
+
+\chgbarbegin
+\ouritem{functor(?T, ?F, ?A)}\index{{\tt functor/3}}
+{\tt T} is a term, {\tt F} and {\tt A} are the name and
+arity of the principle functor of {\tt T}.  Either {\tt T} must be
+constructed or {\tt F} must be a functor constant (not a real number)
+and {\tt A} must be a nonnegative integer.
+
+\ouritem{arg(+N, +T, ?A)}\index{{\tt arg/3}}
+{\tt A} is the {\tt N}$^{th}$ argument of term {\tt T}.
+{\tt N} must be a positive integer and {\tt T} a compound term.
+If {\tt N} is out of range the call fails.
+\chgbarend
+
+\ouritem{occurs(-V,?T)}\index{{\tt occurs/2}}
+{\tt V} is a variable occurring in term {\tt T}.
+
+\ouritem{floor(+R, -I)}\index{{\tt floor/2}}
+{\tt R} must be a real number, and
+{\tt I} is the largest integer smaller than or equal to {\tt R}.
+
+\ouritem{dynamic(+P,+A)}\index{{\tt dynamic/2}}
+Declares the predicate {\tt P} with arity {\tt A} to be dynamic, 
+so that rules
+can be added and deleted at will.
+
+\end{description}
+
+\subsection{Input/Output}
+
+In this section,
+non-ground variables will either be printed with a specified name
+(like that in the argument of {\tt dump/1}),
+or if one is not specified they are printed in one of the following formats:
+
+\begin{description}
+\ouritem{\_h\%d} Heap variable.
+\ouritem{\_s\%d} Local stack variable.
+\ouritem{\_t\%d} Parametric variable in solver.
+\ouritem{\_S\%d} Slack variable in solver.
+\end{description}
+
+Input/Output facilities are as follows.
+
+\begin{description}
+
+\ouritem{dump(+L)}\index{{\tt dump/1}}
+List the collection of current constraints on the current output
+stream, projected with respect to the target variables in the list {\tt L}.
+The list {\tt L} must be explicitly supplied, that is, it is written
+syntactically as the argument of {\tt dump}.
+The ordering of variables in the list is used to represent
+the priority of the target variables (see Section \ref{dump-preds}).
+
+\ouritem{dump(+L1, +L2)}\index{{\tt dump/2}}
+A more flexible version of {\tt dump/1}, without its syntactic restriction.
+Its first argument {\tt L1} represents the target variables,
+and its second argument {\tt L2}, which must be ground,
+represents the new names to be used in the output.  
+The elements of these two lists can be arbitrary terms.  
+(See Section \ref{dump-preds} for further explanation.)
+Note that {\tt dump/2} does not change the current
+collection of constraints.
+
+\ouritem{nl}\index{{\tt nl/0}}
+Send a newline character to the current output stream.
+
+\oursitem{print(?T)}\index{{\tt print/1}}
+
+\ouritem{write(?T)}\index{{\tt write/1}}
+Print the term {\tt T}, according to {\tt op} declarations, on the current
+output stream.
+
+\ouritem{writeln(?T)}\index{{\tt writeln/1}}
+The same as {\tt write(T), nl}.
+
+\ouritem{printf(+F,+L)}\index{{\tt printf/2}}
+Print the terms in the list {\tt L} on the current output stream in the format
+given by the string {\tt F}. The behavior is similar to the {\tt printf}
+library function in C. Every character except for the special escape
+or argument patterns will be printed unchanged on the output.
+The special escape characters begin with a ``\ttsl'' and are: 
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+{\ttsl{\it XXX}} & the character represented by the octal number {\it XXX} \\
+{\tt \ttsl{}n} & a new line \\
+{\tt \ttsl{}r} & carriage return \\
+{\tt \ttsl{}b} & backspace \\
+{\tt \ttsl{}f} & form feed \\
+{\tt \ttsl{}{\it X}} & any other character {\it X} appears unchanged \\
+\hline
+\end{tabular}
+\end{center}
+
+The argument patterns all begin with ``{\tt \%}'' and are used to
+denote the formatting for each of corresponding terms in the list {\tt L}.
+A ``{\tt \%\%}'' denotes a single percent.
+Otherwise the format takes the form of an optional field width and optional
+precision followed by one of the C printf conversion characters.
+More precisely this can be described with the regular expression:
+
+\stuff{\>\%[[-][0-9]*][\ttsl.[0-9]*][fegdoxcus\%]}
+
+\chgbarbegin
+The integral specifiers will print the real number, which
+has been rounded to an integer using the ``even''
+rounding rule.
+\chgbarend
+An empty list is needed if no variables are to be printed.
+As a convenience, a single ``{\tt \%}'' may be used instead of
+a specific argument format and a default format appropriate to
+that particular argument will be used (with numbers
+the default is printf format ``{\tt \%g}''). For example,
+
+\stuff{
+\> printf("X = \% Y =\%3.2g{\ttsl}n", [X, Y]).
+}
+
+\chgbarbegin
+\ouritem{printf\_to\_atom(?A, +F, +L)}\index{{\tt printf\_to\_atom/3}}
+Like {\tt printf/2} except that instead of being printed {\tt A}
+is equated with an atom whose string is the same as what would otherwise
+be printed.
+\chgbarend
+
+\ouritem{read(-X)}\index{{\tt read/1}}
+Read a term from the current input and bind the variable X to it. Any
+variables in the input term are deemed to be disjoint from variables appearing
+in the rule. If an end of file is read, the term {\tt ?-(end)} is returned.
+Finally, the term obtained is in quoted form. 
+That is, any arithmetic operators
+are treated syntactically. 
+
+\ouritem{see(+F)}\index{{\tt see/1}}
+Make {\tt F} the current input file.
+
+\ouritem{seeing(?F)}\index{{\tt seeing/1}}
+True when {\tt F} is the current input file.
+
+\ouritem{seen}\index{{\tt seen/0}}
+Close current input file. Revert to ``user'' (standard input).
+
+\ouritem{tell(+F)}\index{{\tt tell/1}}
+Make {\tt F} the current output file.
+
+\ouritem{telling(?F)}\index{{\tt telling/1}}
+True when F is the current output file.
+
+\ouritem{told}\index{{\tt told/0}}
+Close current output file. Revert to ``user'' (standard output).
+
+\ouritem{flush}\index{{\tt flush/0}}
+Flush the buffer associated with the current output file.
+\end{description}
+
+\subsection{Unix-Related Facilities}
+
+\begin{description}
+
+\ouritem{fork}\index{{\tt fork/0}}
+Split the current process. Fails in one child and succeeds in the other.
+\chgbarbegin
+Not available under MS/DOS\footnote{MS/DOS is a trademark of Microsoft
+Corporation} and OS/2.
+\footnote{OS/2 is a trademark of IBM corporation}
+\chgbarend
+
+\ouritem{pipe(+X)}\index{{\tt pipe/1}}
+Create a pipe named {\tt X}. For use with {\tt see}, {\tt tell}, etc.
+\chgbarbegin
+Not available under MS/DOS or OS/2.
+\chgbarend
+
+\ouritem{edit(+F)}\index{{\tt edit/1}}
+Invoke the default editor on file {\tt F}, and then reconsult the file.
+\chgbarbegin
+Under UNIX\footnote{UNIX is a trademark of Bell Laboratories.}
+the default is ``{\tt vi}'', under MS/DOS and OS/2 it is ``{\tt edit}''.
+If the environment variable EDITOR is set then that is used instead.
+\chgbarend
+
+\ouritem{more(+F)}\index{{\tt more/1}}
+Run the file {\tt F} through the ``{\tt more}'' utility or 
+what the environment variable PAGER
+has been set to.
+
+\ouritem{halt}\index{{\tt halt/0}}
+Exit from the \CLPR\ system.
+
+\ouritem{clpr}\index{{\tt clpr/0}}
+True.  Used to test if the program is executing in the \CLPR{} system.
+
+\ouritem{abort}\index{{\tt abort/0}}
+Abort execution of the current goal.
+
+\ouritem{sh}\index{{\tt sh/0}}
+Invoke an image of ``{\tt sh}'' on UNIX systems.
+\chgbarbegin
+On MS/DOS or OS/2, starts a sub-shell of ``{\tt command.com}'' or what
+the environment variable COMPSEC as been set to.
+\chgbarend
+
+\ouritem{csh}\index{{\tt csh/0}}
+Invoke an image of ``{\tt csh}'' under UNIX systems.
+\chgbarbegin
+On MS/DOS or OS/2 behaves the same as {\tt sh/0}.
+\chgbarend
+
+\ouritem{oracle(+F,+P1,+P2)}\index{{\tt oracle/3}}
+Run the executable binary file {\tt F} and set up a pipe {\tt P1} for writing
+to the process and a pipe {\tt P2} for reading from the process. These pipes
+will be attached to the processes standard input and standard output
+respectively.
+\chgbarbegin
+Not available on MS/DOS or OS/2.
+\chgbarend
+
+
+\end{description}
+
+\subsection{Miscellaneous Facilities}
+
+\begin{description}
+
+\ouritem{history}\index{{\tt history/0}}
+Print last 50 command line goals.
+
+\chgbarbegin
+\ouritem{history +N}\index{{\tt history/1}}
+Print last {\tt N} command line goals.
+\chgbarend
+
+\ouritem{h}\index{{\tt h/0}}
+Short for {\tt history/0}.
+
+\ouritem{N}
+Run the command line goal at position {\tt N} in the history list.
+This may only be used as toplevel command.
+
+\ouritem{new\_constant(+A, +N)} \index{{\tt new\_constant}}
+\index{{\tt symbolic constants}}
+\chgbarbegin
+Sets the numeric symbolic constant {\tt A} to the value {\tt N}.
+The constant name is specified without a ``{\tt \#}'',
+e.g. {\tt ?- new\_constant(my\_constant, 5)}.
+A warning is printed if the value of a known constant is changed
+and the warning can be turned off with {\tt warning(warning\_off)}.
+\chgbarend
+
+\ouritem{srand(+X)}\index{{\tt srand/1}}
+Set random number seed to the real number X.
+
+\ouritem{rand(-X)}\index{{\tt rand/1}}
+Generate uniformly distributed random number 0 and 1 inclusive and bind it to
+{\tt X}. The quality of the routine used is not guaranteed. 
+
+\ouritem{ztime}\index{{\tt ztime/0}}\index{statistics}
+Zero the CPU time counter.
+
+\ouritem{ctime(-T)}\index{{\tt ctime/0}}\index{statistics}
+Binds {\tt T} to the elapsed CPU 
+time since the counter was last zeroed. {\tt T}
+should have been uninstantiated.
+
+\chgbarbegin
+\ouritem{style\_check(+A)}\index{{\tt style\_check/1}}
+\index{contiguous}\index{singleton variable}
+\index{{\tt single\_var}}\index{{\tt discontiguous}}
+\index{{\tt name\_overload}}
+Style checking warns about possible program errors. It is to be used
+with {\tt A} being one of {\tt single\_var}, {\tt discontiguous},
+{\tt name\_overload} and {\tt all}.
+A warning is given when the style check rule is violated.
+The option {\tt all} turns on both the checks.
+The special option {\tt reset\_all} clears all previous pending
+warnings which may have accumulated if style checking was off
+and turns on full style checking.
+See Section \ref{style-section} for details.
+
+\ouritem{no\_style\_check(+A)}\index{{\tt no\_style\_check/1}}
+\index{contiguous}\index{singleton variable}
+\index{{\tt single\_var}}\index{{\tt discontiguous}}
+\index{{\tt name\_overload}}\index{{\tt reset\_all}}
+The reverse of {\tt style\_check/1} and turns off the corresponding options
+{\tt single\_var}, {\tt discontiguous}, {\tt name\_overload} and {\tt all}.
+
+\ouritem{\$clear\_style\_check}\index{{\tt \$clear\_style\_check}}
+Clears any pending old style check warnings that may occur when
+style checking is turned from off to on. Usually it is reasonable
+not to need to use this and this is more meant for special uses.
+
+\ouritem{warning(+A)}\index{{\tt warning/1}}\index{warning}
+\index{abort}\index{errors}\index{continue}\index{warning\_on}
+\index{warning\_off}\index{redefine\_on}\index{redefine\_off}
+The behavior when an error occurs can be modified with
+{\tt warning/1}. By default, when an error occurs a warning
+error message is printed and execution is aborted back to the top level.
+The various options for warning change this behavior.
+The options for {\tt A} must be one of 
+{\tt abort}, {\tt continue},
+{\tt warning\_on}, {\tt warning\_off}, {\tt redefine\_on}
+and {\tt redefine\_off}.
+The options {\tt continue} or {\tt abort} control whether or not
+execution is aborted back to the top level on an error.
+The printing of warning messages is controlled by 
+{\tt warning\_on} and {\tt warning\_off},
+while {\tt redefine\_on} and {\tt redefine\_off} control whether or not
+redefinitions of predicates during a reconsult issue a warning.
+The option {\tt abort} overrides {\tt warning\_on} and warning messages
+are displayed when {\tt abort} is active.
+Otherwise the paired options here behave indepently.
+\chgbarend
+\end{description}
+
+\subsection{Special Facilities}
+\label{special-section}
+These are unsupported 
+facilities which may be used to gain more efficiency
+under certain circumstances or are experimental in nature.
+They should be used with care and may change or disappear.
+
+\begin{description}
+\ouritem{fassert(+R)}\index{{\tt fassert/1}}
+Like {\tt assert/1} but it does not take into account meta-level
+constraints or arithmetic constraints and is like assert in PROLOG.
+Consequently it is faster than {\tt assert/1} but makes less sense
+when there are constraints involved.
+When the rules are ground, fassert behaves the same as assert.
+
+\oursitem{fasserta(+R)} \index{{\tt fasserta/1}} 
+\ouritem{fassertz(+R)} \index{{\tt fassertz/1}}
+Ditto for {\tt asserta/1} and {{\tt assertz/1}}.
+
+\chgbarbegin
+\ouritem{\$call(+X)} \index{{\tt \$call/1}}
+Meta level call on a single user-defined predicate only.
+No compound goals or system predicates are allowed.
+\chgbarend
+
+\ouritem{implicit} \index{{\tt implicit/0}}
+Implicit equalities are detected. This is the default.
+A set of inequalities can sometimes be equivalent to some equations;
+and these are known as implicit equalities. A trivial example of an
+implicit equation is the following:
+
+\stuff{
+\>X >= 0, X <= 0 {\rm ~~~is equivalent to~~~} X = 0.
+}
+
+The {\tt implicit/0} flag controls whether these implicit equations
+are detected by the constraint solver.
+One caveat to note with the use of these flags is that switching them
+on or off should be applied betweem different goal executions and not
+during an actual execution.
+Another important point is that, when there are nonlinear constraints,
+turning off implicit equations may lead to delayed constraints
+not being awakened.
+
+\ouritem{noimplicit} \index{{\tt noimplicit/0}}
+Turns off detection of implicit equalities. These are equations
+which are implied by the collection of inequality constraints.
+The implication of this is that delayed constraints which would otherwise
+be awakened may continue to be delayed instead.
+Constraint solving may or may not be faster with {\tt noimplicit}.
+
+\ouritem{partial\_implicit} \index{{\tt partial\_implicit/0}}
+Detects only some implicit equalities. This may be
+faster than {\tt implicit}.
+
+\chgbarbegin
+\ouritem{set\_counter(+C, +V)} \index{{\tt set\_counter/2}}\index{counter}
+This is a global counter which is not changed by backtracking.
+Sets the counter with the atomic name {\tt C} to the real number
+value {\tt V}. The counter name can be any atomic name.
+
+\ouritem{counter\_value(+C, ?V)} \index{{\tt counter\_value/2}}
+{\tt V} is equated with the value of counter {\tt C}.
+
+\ouritem{add\_counter(+C, +V)} \index{{\tt add\_counter/2}}
+The counter {\tt C} is incremented by {\tt V}.
+\chgbarend
+\end{description}
+
+% \subsection{Missing Predicates}
+% 
+% \begin{description}
+% 
+% \ouritem{compile(+F1,+F2)}\index{{\tt compile/2}}
+% Invoke the compiler on file {\tt F1} producing the {\tt clam} file {\tt F2}.
+% 
+% \ouritem{display(?T)}\index{{\tt display/1}}
+% Print {\tt T} in prefix format on current output.
+% 
+% \ouritem{printrule(+R)}\index{{\tt printrule/1}}
+% Print the rule {\tt R} in a suitable format on the current output.
+% 
+% \ouritem{printgoal(+G)}\index{{\tt printgoal/1}}
+% Print the goal {\tt G} in a suitable format on the current output.
+% 
+% \ouritem{eof(+X)}\index{{\tt eof/1}}
+% True when {\tt X} is the term signifying the end-of-file condition.
+% Actually, true when {\tt X = ?-(end)} but the predicate should be used for
+% portability.
+% 
+% \ouritem{libdir ?D}\index{{\tt libdir/1}}
+% Binds {\tt D} to the name of the directory that library files live in.
+% 
+% \ouritem{lib +F}\index{{\tt lib/1}}
+% Consults the file {\tt F} from the library directory.
+% \ouritem{true}\index{{\tt true/0}}
+% Always succeeds.
+% 
+% \ouritem{abort}\index{{\tt abort/0}}
+% Stop executing the current query and return to the command line.
+% 
+% \ouritem{int(+X)}\index{{\tt int/1}}
+% True if {\tt X} is an integer.
+% 
+% \ouritem{string(+X)}\index{{\tt string/1}}
+% True if X is a string. Not appropriate now that strings don't exist.
+% 
+% \ouritem{funstr(?F,?S)}\index{{\tt funstr/2}}
+% Originally converted between a constant {\tt F} and a string {\tt S}. 
+% 
+% \ouritem{shell(+X)}\index{{\tt shell/1}}
+% Invoke the default shell with the string {\tt X} as input.
+% 
+% \ouritem{clpr}\index{{\tt clpr/0}}
+% Check if we're in heaven.
+% 
+% \end{description}
+
+\section{Nonlinear and Delayed Constraints}
+\label{nl-section}\index{delayed constraint}
+\index{nonlinear constraint}\index{Out of range errors}
+\index{{\tt */2}}\index{{\tt sin/1}}\index{{\tt arcsin/1}}\index{{\tt cos/1}}
+\index{{\tt arccos/1}}\index{{\tt pow/2}}
+\index{{\tt max/2}}\index{{\tt min/2}}\index{{\tt abs/1}}
+
+\noindent
+\chgbarbegin
+This section describes the form of the 
+delaying conditions for examples of the various nonlinear
+constraints given below.
+In some of the functions below, {\tt sin}, {\tt arcsin},
+{\tt cos}, {\tt arccos}, there will be values of {\tt X} and {\tt Z}
+which fall outside the range of that function.
+Such invalid values will cause the constraint to fail and by default
+a ``Out of range'' value is generated. See {\tt warning/1}.
+\chgbarend
+
+\begin{description}
+\ouritem{Z = X * Y}
+	Delays until {\tt X} or {\tt Y} is ground.
+\ouritem{Z = sin(X)}
+	Delays until {\tt X} is ground.
+\chgbarbegin
+\ouritem{Z = arcsin(X)}
+	Delays until {\tt X} or {\tt Z} is ground.
+\chgbarend
+\ouritem{Z = cos(X)}
+	Delays until {\tt X} is ground.
+\chgbarbegin
+\ouritem{Z = arccos(X)}
+	Delays until {\tt X} or {\tt Z} is ground.
+\chgbarend
+\ouritem{Z = pow(X, Y)}
+	Delays until (a) {\tt X} and {\tt Y} are ground, or 
+	(b) {\tt X} and {\tt Z} are ground, \\
+	or (c) {\tt X} = 1, or (d) {\tt Y} = 0, or (e) {\tt Y} = 1.
+\ouritem{Z = abs(X)}
+	Delays until (a) {\tt X} is ground, or (b) {\tt Z} = 0, or (c) {\tt Z} is ground
+	and negative.
+\ouritem{Z = min(X, Y)}
+	Delays until {\tt X} and {\tt Y} are ground.\\
+	(A proper implementation, delaying until {\tt X} $\leq$ {\tt Y} 
+    or {\tt X} $\geq$ {\tt Y},
+	may come later.)
+\ouritem{Z = max(X, Y)}
+	Similar to the above.
+\ouritem{Z = eval(X)}
+	Delays until {\tt X} is constructed.
+\end{description}
+
+\section{Pre-Defined Operators}\index{pre-defined operators}\index{operators}
+\label{op-section}
+\begin{verbatim}
+::- op(21, fy, '-').
+::- op(21, yfx, *).
+::- op(21, yfx, /).
+::- op(31, yfx, (-)).
+::- op(31, yfy, +).
+::- op(37, xfx, <).
+::- op(37, xfx, <=).
+::- op(37, xfx, >).
+::- op(37, xfx, >=).
+::- op(40, xfx, =).
+::- op(40, xfx, =..).
+::- op(40, xfx, is).
+::- op(50, fx, `).
+::- op(51, xfy, (.)).
+::- op(60, fx, alisting).
+::- op(60, fx, als).
+::- op(60, fx, h).
+::- op(60, fx, history).
+::- op(60, fx, lib).
+::- op(60, fx, libdir).
+::- op(60, fx, listing).
+::- op(60, fx, ls).
+::- op(60, fx, not).
+::- op(60, fx, once).
+::- op(252, xfy, ',').
+::- op(253, xfy, ;).
+::- op(254, xfy, (->)).
+::- op(255, fx, (:-)).
+::- op(255, fx, (::-)).
+::- op(255, fx, (?-)).
+::- op(255, xfx, (:-)).
+\end{verbatim}
+
+\chapter{Installation Guide}
+\label{installation-guide}
+\index{installation guide}
+
+Here we discuss how \CLPR{} can be made to run on a particular computer system.
+\chgbarbegin
+For installation details on MS/DOS or OS/2, please refer to the
+appropriate README in the DOS directory.
+\chgbarend
+
+\section{Portability}\index{portability}
+
+This version of compiled \CLPR{} should be easily portable to 32-bit 
+computers running some reasonable variant of the UNIX operating system.
+In most cases, all that will be necessary is for the installer to edit the
+{\tt Makefile} to specify the machine and operating system, choose the C 
+compiler, optimization level and name of the \CLPR{} executable file, and
+run {\tt make}. 
+
+\subsection{Pre-defined Installation Options}\index{installation options}
+
+The {\tt Makefile} for \CLPR{} contains definitions of the environment 
+variables {\tt CC}, {\tt CFLAGS}, {\tt EXEC} and {\tt OPTIONS}. They
+should be checked before installation and adjusted as follows. 
+
+\begin{itemize}
+
+\item {\tt CC} is just the name of the C compiler to be used to compile the
+\CLPR{} system. It is almost always reasonable to leave this as {\tt cc}, 
+although many machines now have more efficient (and more correct) C compilers 
+available. Information about these can be obtained from your system 
+administrator.
+
+\item {\tt CFLAGS} specifies switches of the above C compiler that need to 
+be used. While various C compilers have their own range of switches that might
+have to be used to make such a large program compile and run, in most
+cases only the optimization level will be needed here. This will almost 
+always be {\tt -O} but higher optimization levels may be available.
+Also special flags may sometimes be necessary to utilize the
+full performance of the native floating point hardware. 
+However, it is important to realize that {\em many} 
+optimizing C compilers have bugs that are only triggered by compiling 
+a large program at a high optimization level. For this reason, the first 
+attempt to install \CLPR{} should be made without invoking the C compiler's 
+global optimizer. This usually involves just leaving the {\tt CFLAGS} field 
+blank.
+
+\item {\tt EXEC} specifies the name of the \CLPR{} binary to be generated. 
+We recommend {\tt clpr}.
+
+\item {\tt LIBPATH} specifies the default directory for the startup file
+{\tt init.clpr}. It should be set to the directory in which \CLPR{} is
+installed.
+
+\item {\tt OPTIONS} is used to specify the hardware and operating system. 
+A number of predefined options are available, which often need to be used 
+in combinations.
+\begin{enumerate}
+
+\item[{\tt BSD}] Always set if system is running Berkeley Unix, or MACH,
+or Ultrix. This is also to be set for NEXT machines.
+
+\item[{\tt AIX}] Always set if system is running IBM's AIX operating system.
+
+\item[{\tt SYS5}] This broadly indicates that some version of System V Unix
+is being used. Should also be used in combination with {\tt AIX} flag and
+if the operating system is Hewlett-Packard's HP/UX.
+
+\item[{\tt IBMRT}] This indicates that the system is an IBM RT/PC.
+
+\item[{\tt RS6000}] This indicates that the system is an IBM RS/6000.
+
+\item[{\tt HP835}] This is needed for the Hewlett-Packard RISC workstations --
+especially the 9000 series model 835. Note that it is not appropriate for 
+those HP workstations based on Motorola processors.
+
+\item[{\tt MIPS}] Needed for machines with MIPS CPU, such as SGI machines
+and the DECStation 3100.
+
+\chgbarbegin
+\item[{\tt MSDOS}] Set for 386 or 486 PC's running MS/DOS.
+See the file ``DOS/README.DOS'' for details.
+
+\item[{\tt OS2V2}] Set for 386 or 486 PC's running OS/2 2.0 
+(IMPORTANT NOTE: \CLPR{} version 1.2 will not
+work on OS/2 1.x because that only supports 16-bit addressing).
+See the file ``DOS/README.OS2'' for details.
+\chgbarend
+\end{enumerate}
+So, for example an IBM RS/6000 running AIX would need the definition
+\[\mbox{\tt OPTIONS = -DAIX -DSYS5 -DRS6000}\]
+\end{itemize}
+
+\chgbarbegin
+One parameter which may have to be changed to ensure that the CPU timing
+is correct on machines running System V Unix is the Hertz rate which
+determines the unit of time measured.
+Typically this value of {\tt HZ} is either 60 or 100.
+The default value is 60 and otherwise it should be added to the
+OPTIONS line in the Makefile, eg. -DHZ=100,
+(on the RS/6000 the default is 100hz).
+\chgbarend
+
+\subsection{Customized Installation}
+
+
+When \CLPR{} starts up it performs some consistency checks on some
+of the default values in the startup.
+In particular, on failure to startup it may recommend that
+the definition of {\tt PMASK} be changed in {\tt emul.h}.
+If that does not work or if a fatal installation error was reported
+then you may have an unusual operating system problem which cannot
+be easily fixed by the installer, and it may be best to 
+contact the authors.
+
+While there are various system limits, these are mostly parameterized
+and can be changed either directly on the command line or by
+recompiling with new values for the limits.\index{system parameters}
+Most of the limits are contained in the file {\tt config.h},
+and some of them will be described below.
+The parameters which are not listed below may be more dangerous
+to change arbitrarily.
+
+\vspace*{5mm}
+\noindent
+\begin{tabular}{|l|l|}
+\hline
+Pre-defined constant & Meaning \\ \hline
+DEF\_CLP\_SUFFIX & default suffix for \CLPR{} program files\index{suffix} \\ \hline
+INITFNAME & default bootstrap file \index{bootstrap}\index{init.clpr} \\ \hline
+DOS\_TMP\_FILE & name of temporary file used only under MSDOS or OS2 \\ \hline
+DEFAULT\_EPS & default value of for zero \index{zero} \\ \hline
+DEF\_CODE\_SZ & default maximum size of code space \\ \hline
+MAX\_GOAL\_CODE & default maximum size of code for a top-level goal \\ \hline
+DEF\_LSTACK\_SZ & default maximum stack size \\ \hline
+DEF\_HEAP\_SZ & default maximum heap size \\ \hline
+DEF\_TRAIL\_SZ & default maximum trail size \\ \hline
+DEF\_SOLVER\_SZ & default maximum number of solver variables \\ \hline
+MAX\_DUMP\_VAR & maximum number of variables for dump \\ \hline
+MAX\_PROJ\_NUM & maximum number of real constants in dump \\ \hline
+MAX\_IMPLICIT & maximum number of implicit 
+	equations detected by a constraint \\
+\hline
+\end{tabular}
+\vspace*{5mm}
+
+\noindent
+The stack, code, heap and trail sizes; value of zero; and the number of
+solver variables can all be changed from the command line (see Section
+\ref{command-section}).
+
+\section{Basic Configuration}
+
+The only file \CLPR{} system needs to read on startup is {\tt init.clpr}. 
+\index{init.clpr}
+It always looks for this file in the directory specified at runtime by the
+environment variable {\tt CLPRLIB}, defaulting to either the current working 
+directory or what {\tt LIBPATH} has been specified as in the {\tt Makefile}.
+\index{CLPRLIB}\index{LIBPATH}
+
+The only other environment variable which one may want to change is to
+add your own list of file suffixes with the 
+environment variable {\tt CLPRSUFFIX}.
+The format is in the style of the UNIX {\tt sh} {\tt PATH} variable.
+
+\chapter{Bug Reports and Other Comments}
+\index{bug reports}
+
+Please address all correspondence to
+
+\begin{quote}
+Joxan Jaffar, H1-D48 \\
+IBM Thomas J. Watson Research Center \\
+P.O. Box 704 \\
+Yorktown Heights, NY 10598 \\
+U.S.A. \\
+{\tt (joxan@{watson.ibm.com, joxan@yktvmh.bitnet})}
+\end{quote}
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{manual}
+
+%\begin{theindex}
+\input{manual-index}
+%\end{theindex}
+
+\appendix
+\chapter{Differences from the Monash Interpreter}\index{Monash interpreter}
+
+Here we only list those facilities from the Monash interpreter that are
+not supported.
+
+\begin{itemize}
+\item The issue of string handling has not yet been settled.
+\item Predicate definitions cannot be indiscriminately spread over a
+number of files.
+\item There is no automatic variable generation for answer projection;
+there is no {\tt dump/0} predicate.
+\item Goals result in a prompt for alternate solutions whenever there is a
+choice point, regardless of whether there are variables in the goal. 
+\item No profiling; the predicates {\tt prof/0} and {\tt noprof/0} are
+not available.
+\item Sytem warnings are controlled differently using {\tt warning/1}.
+\item Linear inequalities are always decided immediately rather than delayed;
+the predicates {\tt ineq/0} and {\tt noineq/0} are not available.
+\item Statistics are now available through special system predicates, so the
+{\tt stats/0} system predicate, while may exist, is not supported.
+\item There is no {\tt is/2} predicate.
+\end{itemize}
+
+\end{document}
+

@@ -1,0 +1,7 @@
+Added 8 May 2008 by Andrew E. Santosa
+-------------------------------------
+
+Compiling under Cygwin environment can be done using -DLINUX option.
+When encountering some problems, try to turn off compiler optimization
+(e.g., remove -O2 from OPTIONS in Makefile).
+

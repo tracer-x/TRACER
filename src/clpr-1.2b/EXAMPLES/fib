@@ -1,0 +1,22 @@
+% *************************************
+% CLP(R) Version 1.1 - Example Programs
+% *************************************
+%
+% Future standard benchmark for arithmetic-based reasoning systems?
+
+fib(0, 1).
+fib(1, 1).
+fib(N, X1 + X2) :-
+	N > 1,
+	fib(N - 1, X1), 
+	fib(N - 2, X2).
+
+go :- 
+	printf("\nFib(14) = ", []),
+	ztime, fib(14, X), ctime(T1), 
+	printf("% (Time = %)\n", [X, T1]),
+	printf("Fib-1(610) = ", []),
+	ztime, fib(Y, 610), ctime(T2), 
+	printf("% (Time = %)\n", [Y, T2]).
+
+?- printf("\n>>> Sample goal: go/0\n", []).

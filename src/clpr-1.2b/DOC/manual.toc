@@ -1,0 +1,46 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}
+\contentsline {chapter}{\numberline {2}Syntax and Simple Examples}{3}
+\contentsline {section}{\numberline {2.1}Terms and Constraints}{3}
+\contentsline {section}{\numberline {2.2}Some Simple Programs}{6}
+\contentsline {section}{\numberline {2.3}The Type Issue}{8}
+\contentsline {chapter}{\numberline {3}Programming in \unhbox \voidb@x \hbox {CLP(${\fam \tw@ R}$)}}{10}
+\contentsline {section}{\numberline {3.1}Preliminaries}{10}
+\contentsline {section}{\numberline {3.2}Delay of Nonlinear Constraints}{12}
+\contentsline {section}{\numberline {3.3}The \unhbox \voidb@x \hbox {CLP(${\fam \tw@ R}$)}\ Operational Model}{13}
+\contentsline {section}{\numberline {3.4}Meta--programming}{15}
+\contentsline {subsection}{\numberline {3.4.1}{\ptt quote/1} and {\ptt eval/1}}{15}
+\contentsline {subsection}{\numberline {3.4.2}{\ptt rule/2, retract/1} and {\ptt assert/1}}{18}
+\contentsline {section}{\numberline {3.5}Output}{20}
+\contentsline {subsection}{\numberline {3.5.1}Outline of Algorithm}{21}
+\contentsline {subsection}{\numberline {3.5.2}The {\ptt dump} System Predicates}{23}
+\contentsline {section}{\numberline {3.6}Some Programming Techniques}{25}
+\contentsline {chapter}{\numberline {4}Using the System}{31}
+\contentsline {section}{\numberline {4.1}Command Line Arguments}{32}
+\contentsline {section}{\numberline {4.2}Filenames}{32}
+\contentsline {section}{\numberline {4.3}Queries}{33}
+\contentsline {section}{\numberline {4.4}Loading/consulting and reconsulting programs}{33}
+\contentsline {section}{\numberline {4.5}Style Checking and Warnings}{34}
+\contentsline {section}{\numberline {4.6}Sample Session}{35}
+\contentsline {section}{\numberline {4.7}Organization of Consulted Files}{40}
+\contentsline {section}{\numberline {4.8}Static and Dynamic Code}{41}
+\contentsline {section}{\numberline {4.9}Debugging Support}{42}
+\contentsline {section}{\numberline {4.10}Notes on Efficiency}{43}
+\contentsline {section}{\numberline {4.11}Notes on Formal Correctness}{44}
+\contentsline {chapter}{\numberline {5}Built-In Facilities}{45}
+\contentsline {section}{\numberline {5.1}System Predicates}{45}
+\contentsline {subsection}{\numberline {5.1.1}Rulebase}{45}
+\contentsline {subsection}{\numberline {5.1.2}Control}{47}
+\contentsline {subsection}{\numberline {5.1.3}Meta Level}{48}
+\contentsline {subsection}{\numberline {5.1.4}Input/Output}{49}
+\contentsline {subsection}{\numberline {5.1.5}Unix-Related Facilities}{52}
+\contentsline {subsection}{\numberline {5.1.6}Miscellaneous Facilities}{53}
+\contentsline {subsection}{\numberline {5.1.7}Special Facilities}{54}
+\contentsline {section}{\numberline {5.2}Nonlinear and Delayed Constraints}{55}
+\contentsline {section}{\numberline {5.3}Pre-Defined Operators}{56}
+\contentsline {chapter}{\numberline {6}Installation Guide}{58}
+\contentsline {section}{\numberline {6.1}Portability}{58}
+\contentsline {subsection}{\numberline {6.1.1}Pre-defined Installation Options}{58}
+\contentsline {subsection}{\numberline {6.1.2}Customized Installation}{60}
+\contentsline {section}{\numberline {6.2}Basic Configuration}{61}
+\contentsline {chapter}{\numberline {7}Bug Reports and Other Comments}{62}
+\contentsline {chapter}{\numberline {A}Differences from the Monash Interpreter}{69}

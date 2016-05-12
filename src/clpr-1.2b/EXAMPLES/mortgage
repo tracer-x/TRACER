@@ -1,0 +1,28 @@
+% *************************************
+% CLP(R) Version 1.1 - Example Programs
+% *************************************
+%
+% Standard mortgage relationship between:
+%     P: Principal
+%     T: Life of loan in months
+%     I: Fixed (but compounded) monthly interest rate 
+%     B: Outstanding balance at the end
+%     M: Monthly payment
+
+mg(P, T, I, B, MP) :-
+  T = 1,
+  B = P + (P*I - MP).
+mg(P, T, I, B, MP) :-
+  T > 1,
+  mg(P*(1 + I) - MP, T - 1, I, B, MP).
+
+go1 :- 
+	ztime, mg(999999, 360, 0.01, 0, M), ctime(T), 
+	printf("Time = %, M = %\n", [T, M]).
+
+go2 :- 
+	ztime, mg(P, 720, 0.01, B, M), ctime(T), 
+	printf("Time = %\n", [T]),
+	dump([P, B, M]).
+
+?- printf("\n>>> Sample goals: go1/0, go2/0\n", []).

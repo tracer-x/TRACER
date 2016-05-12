@@ -1,0 +1,103 @@
+.TH CLPR 1
+.SH NAME
+clpr \- the CLP(R) constraint logic programming system and compiler
+.SH SYNOPSIS
+.B clpr
+[
+.B \-cs
+.I codesize
+]
+[
+.B \-hs
+.I heapsize
+]
+[
+.B \-ls
+.I stacksize
+]
+[
+.B \-ss
+.I solversize
+]
+[
+.B \-ts
+.I trailsize
+]
+[
+.B \-z
+.I epsilon
+]
+[
+.B \-r
+.I randseed
+]
+[
+.I file
+]
+.SH DESCRIPTION
+.I clpr
+runs the clpr system. The
+.I file
+argument allows an optional CLP(R) program to be compiled and run first.
+CLP(R) is a constraint logic programming system which deals with
+constraints over symbolic terms (uninterpreted terms) and constraints
+over real arithmetic. 
+The system is PROLOG-like and PROLOG compatible
+and is usually run in an interactive mode.
+The environment variable CLPRLIB can be used to specify the directory
+of the bootstrap file
+.I init.clpr.
+The environment variable CLPRSUFFIX specifies a list of possible suffixes
+for CLP(R) program files.
+This is in the usual UNIX path format, eg. setenv CLPRSUFFIX ".clpr:.clp".
+More information about the language
+and system can be found the CLP(R) programmers manual.
+.SH OPTIONS
+The following options can be used to modify various system parameters.
+.TP
+.B \-cs
+Sets the maximum size of compiled code space to
+.I codesize.
+.TP
+.B \-hs
+Sets the maximum size of the runtime heap to
+.I heapsize.
+.TP
+.B \-ls
+Sets the maximum size of the runtime stack to
+.I stacksize.
+.TP
+.B \-ss
+Sets the maximum number of arithmetic solver variables to
+.I solversize.
+.TP
+.B \-ts
+Sets the maximum size of the runtime trail for backtracking to
+.I trailsize.
+.TP
+.B \-z
+Sets the internal notion of zero so that numbers between
+.I -epsilon
+to 
+.I +epsilon
+are considered to be equivalent to zero.
+.TP
+.B \-r
+Sets the random rumber seed to be
+.I randseed
+.SH ENVIRONMENT
+CLPRLIB \(em directory path to look for the file "init.clpr".
+CLPRSUFFIX \(em list of CLP(R) program suffixes
+.SH DIAGNOSTICS
+On errors, self-explanatory messages will be given.
+Fatal errors result in an exit with a fatal error number printed.
+.SH FILES
+<clpr path>/init.clpr		default bootstrap file
+.SH SEE ALSO
+The CLP(R) Programmer's Manual Version 1.2 
+.SH AUTHORS
+Joxan Jaffar, Spiro Michaylov, Peter Stuckey, Roland Yap
+.SH BUGS
+Roland Yap, roland@bruce.cs.monash.edu.au
+\ \ \ \ Joxan Jaffar, joxan@watson.ibm.com
+

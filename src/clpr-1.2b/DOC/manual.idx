@@ -1,0 +1,245 @@
+\indexentry{notation conventions}{2}
+\indexentry{program}{3}
+\indexentry{rule}{3}
+\indexentry{goal}{3}
+\indexentry{comments}{3}
+\indexentry{arithmetic term}{5}
+\indexentry{functor term}{5}
+\indexentry{constraint}{6}
+\indexentry{arithmetic constraint}{6}
+\indexentry{functor constraint}{6}
+\indexentry{type}{8}
+\indexentry{delayed constraint}{12}
+\indexentry{nonlinear constraint}{12}
+\indexentry{{\tt sin/1}}{13}
+\indexentry{{\tt arcsin/1}}{13}
+\indexentry{{\tt cos/1}}{13}
+\indexentry{{\tt arccos/1}}{13}
+\indexentry{{\tt pow/2}}{13}
+\indexentry{{\tt max/2}}{13}
+\indexentry{{\tt min/2}}{13}
+\indexentry{{\tt abs/1}}{13}
+\indexentry{operational model}{13}
+\indexentry{delayed constraint}{13}
+\indexentry{meta-programming}{15}
+\indexentry{{\tt quote/1}}{15}
+\indexentry{{\tt eval/1}}{15}
+\indexentry{quote}{15}
+\indexentry{eval}{16}
+\indexentry{quote}{17}
+\indexentry{eval}{17}
+\indexentry{{\tt rule/2}}{18}
+\indexentry{{\tt retract/1}}{18}
+\indexentry{{\tt assert/1}}{18}
+\indexentry{clause}{18}
+\indexentry{clause}{18}
+\indexentry{analog to clause}{18}
+\indexentry{analog to retract}{18}
+\indexentry{output}{20}
+\indexentry{dump}{20}
+\indexentry{projection}{20}
+\indexentry{target variables}{20}
+\indexentry{{\tt dump/1}}{23}
+\indexentry{{\tt dump/2}}{23}
+\indexentry{{\tt dump/3}}{23}
+\indexentry{dump}{23}
+\indexentry{target variables}{23}
+\indexentry{clam files}{31}
+\indexentry{init.clpr}{31}
+\indexentry{CLPRLIB}{31}
+\indexentry{Environment variables}{31}
+\indexentry{command line arguments}{32}
+\indexentry{code space}{32}
+\indexentry{heap}{32}
+\indexentry{local stack}{32}
+\indexentry{solver variables}{32}
+\indexentry{trail}{32}
+\indexentry{zero}{32}
+\indexentry{random number seed}{32}
+\indexentry{file names}{32}
+\indexentry{suffix}{32}
+\indexentry{CLPRSUFFIX}{32}
+\indexentry{Environment variables}{32}
+\indexentry{answer constraints}{33}
+\indexentry{queries}{33}
+\indexentry{goals}{33}
+\indexentry{delayed constraint}{33}
+\indexentry{nonlinear constraint}{33}
+\indexentry{implicit dump}{33}
+\indexentry{style checking}{34}
+\indexentry{warning}{34}
+\indexentry{sample session}{35}
+\indexentry{consulted files}{40}
+\indexentry{prot}{41}
+\indexentry{goals}{41}
+\indexentry{static code}{41}
+\indexentry{dynamic code}{41}
+\indexentry{{\tt assert/1}}{41}
+\indexentry{{\tt retract/1}}{41}
+\indexentry{rule}{42}
+\indexentry{assert}{42}
+\indexentry{retract}{42}
+\indexentry{debugging}{42}
+\indexentry{{\tt codegen\_debug/0}}{42}
+\indexentry{{\tt codegen\_nodebug/0}}{42}
+\indexentry{{\tt spy/0}}{42}
+\indexentry{{\tt spy/2}}{42}
+\indexentry{{\tt spy/1}}{43}
+\indexentry{{\tt nospy/0}}{43}
+\indexentry{{\tt nospy/2}}{43}
+\indexentry{{\tt nospy/1}}{43}
+\indexentry{{\tt trace/0}}{43}
+\indexentry{{\tt notrace/0}}{43}
+\indexentry{indexing}{43}
+\indexentry{tail recursion}{43}
+\indexentry{disjunction}{43}
+\indexentry{if-then-else}{43}
+\indexentry{dynamic code}{43}
+\indexentry{garbage collection}{44}
+\indexentry{implicit equalities}{44}
+\indexentry{fassert}{44}
+\indexentry{assert}{44}
+\indexentry{{\tt op/3}}{45}
+\indexentry{{\tt listing/0}}{45}
+\indexentry{{\tt ls/0}}{45}
+\indexentry{{\tt listing/1}}{45}
+\indexentry{{\tt ls/1}}{45}
+\indexentry{{\tt consult/1}}{45}
+\indexentry{{\tt [{$\cdots$}]}}{45}
+\indexentry{{\tt reconsult/1}}{46}
+\indexentry{{\tt [`{$\cdots$}]}}{46}
+\indexentry{{\tt retractall/0}}{46}
+\indexentry{{\tt retractall/1}}{46}
+\indexentry{{\tt asserta/1}}{46}
+\indexentry{{\tt assertz/1}}{46}
+\indexentry{{\tt assert/1}}{46}
+\indexentry{{\tt rule/2}}{46}
+\indexentry{{\tt deny/2}}{46}
+\indexentry{{\tt retract/1}}{46}
+\indexentry{{\tt prot/2}}{47}
+\indexentry{{\tt prot/1}}{47}
+\indexentry{{\tt {\cut}/0}}{47}
+\indexentry{{\tt fail/0}}{47}
+\indexentry{{\tt true/0}}{47}
+\indexentry{{\tt repeat/0}}{47}
+\indexentry{{\tt ,/2}}{47}
+\indexentry{{\tt ;/2}}{47}
+\indexentry{{\tt ->;/3}}{47}
+\indexentry{{\tt call/1}}{48}
+\indexentry{{\tt call/1}}{48}
+\indexentry{{\tt dump/3}}{48}
+\indexentry{{\tt once/1}}{48}
+\indexentry{{\tt nonground/1}}{48}
+\indexentry{{\tt ground/1}}{48}
+\indexentry{{\tt nonvar/1}}{48}
+\indexentry{{\tt var/1}}{48}
+\indexentry{{\tt ==/2}}{48}
+\indexentry{{\tt atom/1}}{48}
+\indexentry{{\tt atomic/1}}{49}
+\indexentry{{\tt functor/1}}{49}
+\indexentry{{\tt real/1}}{49}
+\indexentry{{\tt arithmetic/1}}{49}
+\indexentry{{\tt =../2}}{49}
+\indexentry{{\tt functor/3}}{49}
+\indexentry{{\tt arg/3}}{49}
+\indexentry{{\tt occurs/2}}{49}
+\indexentry{{\tt floor/2}}{49}
+\indexentry{{\tt dynamic/2}}{49}
+\indexentry{{\tt dump/1}}{50}
+\indexentry{{\tt dump/2}}{50}
+\indexentry{{\tt nl/0}}{50}
+\indexentry{{\tt print/1}}{50}
+\indexentry{{\tt write/1}}{50}
+\indexentry{{\tt writeln/1}}{50}
+\indexentry{{\tt printf/2}}{50}
+\indexentry{{\tt printf\_to\_atom/3}}{51}
+\indexentry{{\tt read/1}}{51}
+\indexentry{{\tt see/1}}{51}
+\indexentry{{\tt seeing/1}}{51}
+\indexentry{{\tt seen/0}}{51}
+\indexentry{{\tt tell/1}}{51}
+\indexentry{{\tt telling/1}}{51}
+\indexentry{{\tt told/0}}{52}
+\indexentry{{\tt flush/0}}{52}
+\indexentry{{\tt fork/0}}{52}
+\indexentry{{\tt pipe/1}}{52}
+\indexentry{{\tt edit/1}}{52}
+\indexentry{{\tt more/1}}{52}
+\indexentry{{\tt halt/0}}{52}
+\indexentry{{\tt clpr/0}}{52}
+\indexentry{{\tt abort/0}}{52}
+\indexentry{{\tt sh/0}}{52}
+\indexentry{{\tt csh/0}}{52}
+\indexentry{{\tt oracle/3}}{53}
+\indexentry{{\tt history/0}}{53}
+\indexentry{{\tt history/1}}{53}
+\indexentry{{\tt h/0}}{53}
+\indexentry{{\tt new\_constant}}{53}
+\indexentry{{\tt symbolic constants}}{53}
+\indexentry{{\tt srand/1}}{53}
+\indexentry{{\tt rand/1}}{53}
+\indexentry{{\tt ztime/0}}{53}
+\indexentry{statistics}{53}
+\indexentry{{\tt ctime/0}}{53}
+\indexentry{statistics}{53}
+\indexentry{{\tt style\_check/1}}{53}
+\indexentry{contiguous}{53}
+\indexentry{singleton variable}{53}
+\indexentry{{\tt single\_var}}{53}
+\indexentry{{\tt discontiguous}}{53}
+\indexentry{{\tt name\_overload}}{53}
+\indexentry{{\tt no\_style\_check/1}}{54}
+\indexentry{contiguous}{54}
+\indexentry{singleton variable}{54}
+\indexentry{{\tt single\_var}}{54}
+\indexentry{{\tt discontiguous}}{54}
+\indexentry{{\tt name\_overload}}{54}
+\indexentry{{\tt reset\_all}}{54}
+\indexentry{{\tt \$clear\_style\_check}}{54}
+\indexentry{{\tt warning/1}}{54}
+\indexentry{warning}{54}
+\indexentry{abort}{54}
+\indexentry{errors}{54}
+\indexentry{continue}{54}
+\indexentry{warning\_on}{54}
+\indexentry{warning\_off}{54}
+\indexentry{redefine\_on}{54}
+\indexentry{redefine\_off}{54}
+\indexentry{{\tt fassert/1}}{54}
+\indexentry{{\tt fasserta/1}}{54}
+\indexentry{{\tt fassertz/1}}{54}
+\indexentry{{\tt \$call/1}}{54}
+\indexentry{{\tt implicit/0}}{55}
+\indexentry{{\tt noimplicit/0}}{55}
+\indexentry{{\tt partial\_implicit/0}}{55}
+\indexentry{{\tt set\_counter/2}}{55}
+\indexentry{counter}{55}
+\indexentry{{\tt counter\_value/2}}{55}
+\indexentry{{\tt add\_counter/2}}{55}
+\indexentry{delayed constraint}{55}
+\indexentry{nonlinear constraint}{55}
+\indexentry{Out of range errors}{55}
+\indexentry{{\tt */2}}{55}
+\indexentry{{\tt sin/1}}{55}
+\indexentry{{\tt arcsin/1}}{55}
+\indexentry{{\tt cos/1}}{55}
+\indexentry{{\tt arccos/1}}{55}
+\indexentry{{\tt pow/2}}{55}
+\indexentry{{\tt max/2}}{55}
+\indexentry{{\tt min/2}}{55}
+\indexentry{{\tt abs/1}}{55}
+\indexentry{pre-defined operators}{56}
+\indexentry{operators}{56}
+\indexentry{installation guide}{58}
+\indexentry{portability}{58}
+\indexentry{installation options}{58}
+\indexentry{system parameters}{60}
+\indexentry{suffix}{60}
+\indexentry{bootstrap}{60}
+\indexentry{init.clpr}{60}
+\indexentry{zero}{60}
+\indexentry{init.clpr}{61}
+\indexentry{CLPRLIB}{61}
+\indexentry{LIBPATH}{61}
+\indexentry{bug reports}{62}
+\indexentry{Monash interpreter}{69}

@@ -1,0 +1,168 @@
+These are briefly what's changed in versions 1.2 of CLP(R). The manual
+should also reflect the changes here (if not please tell me) and should
+contain a more detailed description than what is contained here.
+If you are installing for the first time, you should also look
+at README.OLD for basic installation instructions.
+
+There are new features, some ommisions/corrections from the manual
+and a new unix style man page, bugfixes, and support for MS/DOS
+and OS/2 2.0 systems.
+
+One note for those using gcc 2.2.2 you may possibily encounter problems
+using it with -O so it may be safer not to use -O.
+
+***** IMPORTANT NOTE:
+There have also been some changes to the bootstrap file "init.clpr"
+and the init file for version 1.1 and 1.2 should not be mixed. If you
+already have your CLPRLIB environment variable set to the old one
+then you will have to change that otherwise you may get 
+various complaints, etc.
+
+NEW FEATURES:
+-------------
+
+1. CLP(R) files consulted now can have default suffixes. The system
+default setup in config.h (DEF_CLP_SUFFIX) controls this. By default,
+DOS and OS2 use ".clp" and Unix uses ".clpr". The environment variable
+CLPRSUFFIX overrides this - and a suffix can be specified in the
+same way as in the standard Unix PATH way in sh/csh.
+
+2. A little less memory is now being used when reading in programs.
+
+3. Exponents on numbers can now be positive, eg. 1e+10. Previously
+1e+10 was treated as (1e0)+10. Of course 1e10 is also still valid.
+
+4. printf/2 with a "%d" format now rounds the number using the even
+rounding rule. 
+
+5. There is a new version of printf, printf_to_atom/3 which makes a new
+atom using what would otherwise be printed (can be used to create
+new atoms). Usage is printf_to_atom(<Term>, <Format>, <Vars List>).
+
+6. Warnings are now given when rules are redefined by a reconsult. This
+can be turned off using warning(redefine_off), see manual for details.
+
+7. Style checking of programs is now done - this issues warnings
+when a style checking rule is violated but otherwise compilation is not
+affected. The anonymous check option checks when
+there is only one use of a variable in a rule that it begins with a "_".
+The style option discontiguous warns if the rules are not defined 
+in a contiguous block. The name_overload option warns if there are
+multiple rules with the same name but of different arities.
+These style checks are turned on/off with
+style_check({single_var,discontiguous,name_overload,all}) and
+no_style_check/1 with the same options. By default, style checking is
+turned ON and may cause warnings on older programs.
+If you don't like it - turn off style checking (no_style_check(all))
+in "init.clpr". See also the section on style checking in the manual.
+
+8. "Retry" at the top level prompt now prints a "yes" as well. Previously
+it only printed "Retry" if there was an alternative for a goal but that
+was causing some confusion as to whether the goal had succeeded or not.
+Retry also prints "(Maybe)" now if there are delayed constraints remaining.
+
+9. An embedded goal which fails within a consult now also gives a warning.
+Previously it was silent. This can be turned off with warning(warning_off),
+see warning/1.
+
+10. With the current version of CLP(R), the use of ;/2 may sometimes fail
+eventhough there is an alternative to try.
+This is because ;/2 is currently implemented as a meta call and the constraint
+fails before it gets to set up the alternatives. There is no
+easy fix for this so ;/2 should probably be avoided unless no arithmetic
+terms occur within the ;/2.
+
+11. h/0 is now also an alias for history/0.
+
+12. See the new additions to warning/1 in the manual.
+
+13. Global counters are now available -- these are real-valued and are
+NOT backtrackable or logical. These are set_counter/2, add_counter/2 and
+counter_value/2 where the arguments are as 
+set_counter(<counter name>, <value>) where the counter name is an
+arbitrary atom.
+
+14. spy/1 and nospy/1 have been added which take a list like prot/1.
+
+15. Compilation is a little faster on average but that is balanced with slight
+decrease in speed from the added style checking. On average it shouldn't
+matter but for certain programs style checking may impact consulting
+speed somewhat so you may want it to be off.
+
+16. Symbolic number constants, eg. #p for pi which used to be in the
+old interpreter version of CLP(R) are now supported. You can also
+make your own constants with new_constant/2.
+Also some handy metric coversions have been provided.
+
+17. New non-linear functions for arcsin and arccos. See the manual for
+details.
+
+=======================================================================
+
+MANUAL CHANGES
+--------------
+
+1. Both arg/3 and functor/3 are now described in the manual. They had been
+left out before.
+
+2. $call/1 was incorrectly listed as fcall/1.
+
+3. Unix style man page added in the directory DOC (clpr.1).
+
+=======================================================================
+
+BUG FIXES
+---------
+
+This is just a brief description of some of the bug fixes which are
+a bit easier to describe.
+
+1. There were some bugs with =../2, occurs/2. retract/1 and other meta level
+problems with dynamic code.
+
+2. Some cases of pow had problems with backtracking.
+
+3. arg/3 and functor/3 had their arguments the wrong way round.
+
+4. Some lexical bugs involving <EOF>.
+
+5. Very small numbers were sometimes not coming out as 0.
+
+6. dump/2 didn't work on min and max and didn't make use of op declarations.
+
+7. reconsult/1 sometimes didn't work properly.
+
+8. Although it was stated in the manual that coded arithmetic functors
+are created through the quote/1 macro operator, it was the case that
+one could also use ^+/2 directly. This is no longer the case. If the
+old behavior is desired then -DENABLE_HAT should be added to the OPTIONS
+int the Makefile.
+
+9. printf/2 used to ignore length specifiers for strings.
+
+=======================================================================
+
+MSDOS AND OS2 2.0 SUPPORT
+-------------------------
+
+There is now some support for CLP(R) to compile and run under MS/DOS
+and OS/2 2.0. Thanks to Peter Barth for his suggestions and testing.
+While the port has been known to work, it has not been tested
+much. The present version has been tested with gcc under DOS and OS2 using
+the djgpp and emx ports respectively. Other 32 bit 386/486 C compilers may
+also work. Note that it is unlikely to work with a 286 C compiler.
+Also use of a floating point co-processor or if native floating point
+is available on the 486 is recommended. The floating point emulation
+tends to be rather slow and may have problems.
+
+See the DOS directory for the approapriate readme files and makefiles.
+I would like anybody who intends to try it under MS/DOS or OS/2 2.0 to tell
+me how they went.
+
+=======================================================================
+
+Please forward comments, bugreports to roland@bruce.cs.monash.edu.au or
+joxan@watson.ibm.com
+
+Good Luck, 
+Roland Yap

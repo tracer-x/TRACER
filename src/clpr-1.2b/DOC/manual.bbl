@@ -1,0 +1,160 @@
+\begin{thebibliography}{10}
+
+\bibitem{AMON92}
+Tod Amon and Gaetano Borriello.
+\newblock An approach to symbolic timing verification.
+\newblock In {\em Tau '92: 2nd International Workshop on Timing Issues in the
+  Specification and Synthesis of Digital Systems}, Princeton, NJ, March 1992.
+
+\bibitem{AMON92B}
+Tod Amon and Gaetano Borriello.
+\newblock An approach to symbolic timing verification.
+\newblock In {\em Proc. 29th ACM/IEEE Design Automation Conference}, pages
+  410--413, Anaheim, CA, USA, June 1992.
+
+\bibitem{BRZOSKA91}
+Christoph Brzoska.
+\newblock Temporal logic programming and its relation to constraint logic
+  programming.
+\newblock In {\em Logic Programming: Proceedings of the 1991 International
+  Symposium}, pages 661--677, October 1991.
+
+\bibitem{GORLICK87}
+Michael~M. Gorlick, Carl~F. Kesselman, and Daniel A. Marottaand D.~Stott
+  Parker.
+\newblock Mockingbird: A logical methodology for testing.
+\newblock {\em Journal of Logic Programming}, 8(1 \& 2):95--119, January/March
+  1990.
+
+\bibitem{HARLAND87}
+James~A. Harland and Spiro Michaylov.
+\newblock Implementing an {ODE} solver: a {CLP} approach.
+\newblock Technical Report 87/92, Department of Computer Science, Monash
+  University, Victoria, Australia, June 1987.
+
+\bibitem{HEINTZE87}
+Nevin Heintze, Spiro Michaylov, and Peter Stuckey.
+\newblock {CLP(${\cal R}$)} and some electrical engineering problems.
+\newblock In Jean-Louis Lassez, editor, {\em Logic Programming: Proceedings of
+  the 4th International Conference}, pages 675--703, Melbourne, Victoria,
+  Australia, May 1987. MIT Press.
+\newblock Also to appear in Journal of Automated Reasoning.
+
+\bibitem{HEINTZE89}
+Nevin Heintze, Spiro Michaylov, Peter Stuckey, and Roland Yap.
+\newblock On meta-programming in {CLP(${\cal R}$)}.
+\newblock In Ewing Lusk and Ross Overbeek, editors, {\em Logic Programming:
+  Proceedings of the North American Conference, 1989}, pages 52--68. MIT
+  Press, October 1989.
+
+\bibitem{HOMIAK91}
+D.~S. Homiak.
+\newblock A constraint logic programming system for solving partial
+  differential equations with applications in options valuation.
+\newblock Master's project, DePaul University, 1991.
+
+\bibitem{TOBIAS88}
+Joseph C.~Tobias II.
+\newblock Knowledge representation in the {H}armony intelligent tutoringsystem.
+\newblock Master's thesis, Department of Computer Science, University of
+  California at Los Angeles, 1988.
+
+\bibitem{JAFFAR87A}
+Joxan Jaffar and Jean-Louis Lassez.
+\newblock Constraint logic programming.
+\newblock In {\em Proceedings of the 14th ACM Symposium on Principles of
+  Programming Languages, Munich, Germany}, pages 111--119. ACM, January 1987.
+
+\bibitem{JAFFAR92B}
+Joxan Jaffar, Michael Maher, Peter Stuckey, and Roland Yap.
+\newblock Output in {CLP(${\cal R}$)}.
+\newblock In {\em Proceedings of the 1992 Conference on Fifth Generation
+  Computer Systems, Tokyo}, 1992.
+
+\bibitem{JAFFAR87B}
+Joxan Jaffar and Spiro Michaylov.
+\newblock Methodology and implementation of a {CLP} system.
+\newblock In Jean-Louis Lassez, editor, {\em Logic Programming: Proceedings of
+  the 4th International Conference}, pages 196--218, Melbourne, Australia, May
+  1987. MIT Press.
+\newblock Revised version of Monash University technical report number 86/75,
+  November 1986.
+
+\bibitem{JAFFAR92C}
+Joxan Jaffar, Spiro Michaylov, Peter~J. Stuckey, and Roland H.~C. Yap.
+\newblock The {CLP(${\cal R}$)} language and system.
+\newblock {\em ACM Transactions on Programming Languages and Systems (TOPLAS)},
+  14(3):339--395, July 1992.
+
+\bibitem{JAFFAR91}
+Joxan Jaffar, Spiro Michaylov, and Roland Yap.
+\newblock A methodology for managing hard constraints in {CLP} systems.
+\newblock In {\em Proceedings of the {ACM} {SIGPLAN} Symposium on Programming
+  Language Design and Implementation}, pages 306--316, Toronto, Canada, June
+  1991.
+
+\bibitem{LAKMAZAHERI89}
+Sivand Lakmazaheri and William~J. Rasdorf.
+\newblock Constraint logic programming for the analysis and partial synthesis
+  of truss structures.
+\newblock {\em Artificial Intelligence for Engineering Design, Analysis, and
+  Manufacturing}, 3(3):157--173, 1989.
+
+\bibitem{LASSEZ87A}
+Catherine Lassez, Ken McAloon, and Roland Yap.
+\newblock Constraint logic programming and options trading.
+\newblock {\em IEEE Expert, Special Issue on Financial Software}, 2(3):42--50,
+  August 1987.
+
+\bibitem{LINDHOLM87}
+T.G. Lindholm and R.~A. O'Keefe.
+\newblock Efficient implementation of a defensible semantics for dynamic prolog
+  code.
+\newblock In {\em Logic Programming: Proceedings of the 4th International
+  Conference}, pages 21--39. MIT Press, May 1987.
+
+\bibitem{MOZETIC91}
+Igor Mozeti\v{c} and Christian Holzbaur.
+\newblock Integrating numerical and qualitative models within constraint logic
+  programming.
+\newblock In {\em Logic Programming: Proceedings of the 1991 International
+  Symposium}, pages 678--693, October 1991.
+
+\bibitem{SCHRIJVER86}
+A.~Schrijver.
+\newblock {\em Theory of Linear and Integer Programming}.
+\newblock Wiley and Sons, 1986.
+
+\bibitem{STERLING86}
+L.~Sterling and E.~Y. Shapiro.
+\newblock {\em The Art of {P}rolog}.
+\newblock MIT Press, 1986.
+
+\bibitem{STHANUSUBRAMONIAN91}
+T.~Sthanusubramonian.
+\newblock A transformational approach to configuration design.
+\newblock Master's thesis, Engineering Design Research Center, Carnegie Mellon
+  University, 1991.
+
+\bibitem{YAP91}
+Roland Yap Hock Chuan.
+\newblock Restriction site mapping in {CLP(${\cal R}$)}.
+\newblock In Koichi Furukawa, editor, {\em Proceedings of the Eighth
+  International Conference on Logic Programming}, pages 521--534, Paris,
+  France, June 1991. MIT Press.
+
+\bibitem{YEUNG88}
+Ricky Yeung.
+\newblock Mpl - a graphical programming environment for matrix processing based
+  on logic and constraints.
+\newblock In {\em IEEE Workshop of Visual Languages}, pages 137--143. IEEE
+  Computer Society Press, October 1988.
+
+\bibitem{YU91}
+Edward~K. Yu.
+\newblock {MODIC}: A program for model-based diagnosis that uses constraint
+  logic programming.
+\newblock Master's thesis, Department of Computer Science, University of South
+  Carolina (Columbia), 1991.
+
+\end{thebibliography}

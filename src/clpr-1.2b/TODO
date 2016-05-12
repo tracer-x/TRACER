@@ -1,0 +1,16 @@
+1. eval bug, see new meta interpreter
+2. time stamp not correct after trust or cut
+3. registers not live if have stack loc
+
+4. swap init_names and hash inits in init.c, wrong order.
+5. type clash -- warning as well as failure.
+
+add @<
+
+6. check "CHECK" ... particularly codegen.c register change
+
+7. Cleanup scan.c, check get0, peek, unget0
+
+8. Implicits bug with dump -- slack var assumptions violated
+
+

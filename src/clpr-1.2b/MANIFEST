@@ -1,0 +1,65 @@
+CLP(R) Version 1.2b
+
+This is a manifest of what files should be in this distribution:
+
+Instructions:
+README                Installation instructions
+README.NEW            List of what's changed with version 1.2
+
+Documentation:
+clpr.1                Unix man page
+manual.tex            Manual in LaTeX format
+manual.DVI            Already formatted LaTeX dvi
+manaul.PS             Printable Postscript version of manual
+manual-index.tex 
+manual.bib
+manual.bbl
+
+Makefiles:
+./Makefile            Makefile for Unix
+
+Examples:             Some simple test and example programs
+./EXAMPLES/critical
+./EXAMPLES/dnf
+./EXAMPLES/fib
+./EXAMPLES/laplace
+./EXAMPLES/mortgage
+./EXAMPLES/option
+./EXAMPLES/rev
+./EXAMPLES/smm
+
+Bootstrap:
+./init.clpr           Needed for bootstrapping clpr on startup
+
+Sources:
+./compile.h
+./config.h
+./emul.h
+./lib.h
+./opcodes.h
+./parse.h
+./solver.h
+./standard.h
+./symbols.h
+./arithgen.c
+./codegen.c
+./compile.c
+./debug.c
+./dump.c
+./emit.c
+./emul.c
+./index.c
+./init.c
+./lib.c
+./main.c
+./meta.c
+./parse.c
+./pio.c
+./scan.c
+./solver.btk.c
+./solver.c
+./solver.eq.c
+./solver.ineq.c
+./solver.nlin.c
+./table.c
+./trace.c
