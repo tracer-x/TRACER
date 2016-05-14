@@ -10,7 +10,7 @@
   <!-- destination of the release distribution -->
   <property name="release-dist" value="./tracer.0.1"/>
   <!-- Needed to produce the release version which includes CLPR -->
-  <property name="CLPR" value="/home/jorge/SvnReps/Systems/CLPR/clpr-1.2b"/>
+  <property name="CLPR" value="./src/clpr-1.2b"/>
 
   <!--   Java paths -->
   <property name="antlr"     
