@@ -245,8 +245,10 @@
     <mkdir  dir="${release-dist}/tmp" />
     
     <!-- compile clpr -->
+    <!--
     <exec dir="${CLPR}" executable="/usr/bin/make" />
-    
+    -->
+
     <!-- Specialized version of TRACER for public distribution -->  
     <exec dir="./dist" executable="./generate_source_code"/>
 
