@@ -6,23 +6,20 @@ See LICENSE.md for license information of TRACER. This distribution contains thi
 
 This is a version of TRACER symbolic execution tool with CIL front-end. Chu Duc Hiep, Joxan Jaffar, Rasool Maghareh, Vijayaraghavan Murali, Jorge Navas, Andrew Santosa, and Razvan Voicu contributed to its initial development.
 
-Prerequisites
-=============
+**Prerequisites**
 
 - jdk  >= 1.5 
 - ant  >= 1.7.0
 - gpp  >= 2.24
 - ocaml >= 3.12.1 (for CIL)
 
-Installation by Building TRACER Distribution
-============================================
+**Installation by Building TRACER Distribution**
 
 Execute `ant dist` to create `tracer-0.1.tar.gz` in the source root.
-Unpack `tracer-0.1.tar.gz` into your preferred directory, and follow
-further instructions in the README.
+Unpack `tracer-0.1.tar.gz` into your preferred directory, say `<some_prefix>` and follow
+further instructions in `<some_prefix>/tracer-0.1/README`.
 
-Running TRACER in the Source Tree
-=================================
+**Running TRACER in the Source Tree**
 
 1. Set up environment variables `TRACER_PATH` and `CLPR_BASE_PATH`.
 
@@ -51,8 +48,7 @@ Running TRACER in the Source Tree
    - `c2c` - output the symbolic execution tree in C format.
    - `allfigs2pdf`  - convert all dot files into pdf and open them using a pdf reader.
 
-Directories
-============
+**Files and Directories**
 
    - `build.xml`
    - `classes` - contains all *.class of the system (GENERATED AUTOMATICALLY)
