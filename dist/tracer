@@ -1,15 +1,15 @@
-#============================================================================#
 #!/bin/bash
+#============================================================================#
 # Copyright 2008-2016 National University of Singapore
 #
 # This script runs the tool TRACER for verification of C programs.
 # 
-# Run "tracer.0.1 -help" to see all options
+# Run "tracer -help" to see all options
 #============================================================================#
 
 # Paths
 CLPRPATH=$TRACER_PATH/lib
-MAIN=src/tracer.0.1
+MAIN_CLPR=src/tracer.0.1
 
 function usage(){
 cat <<EOF
@@ -241,10 +241,10 @@ else
 fi
 
 if [ $optimized_version -eq 1 ]; then
-    TRACERSRC="${TRACER_PATH}/$MAIN"".clpr"
+    TRACERSRC="${TRACER_PATH}/$MAIN_CLPR"".clpr"
     TRACEROPTS="option(minmax_cs_reuse,y),$TRACEROPTS"
 else
-    TRACERSRC="${TRACER_PATH}/$MAIN""_debug.clpr"
+    TRACERSRC="${TRACER_PATH}/$MAIN_CLPR""_debug.clpr"
     TRACEROPTS="option(minmax_cs_reuse,n),$TRACEROPTS"
 fi
 

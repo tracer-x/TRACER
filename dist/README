@@ -32,8 +32,9 @@ bash shell
 
 INSTALLATION
 --------------
+cd <some_prefix>
 tar -zxvf tracer-0.1.tar.gz
-export TRACER_PATH=_here_path_to_tracer.0.1_
+export TRACER_PATH=<some_prefix>/tracer-0.1
 
 FILES and DIRECTORIES
 -----------------------

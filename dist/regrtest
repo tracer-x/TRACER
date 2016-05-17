@@ -3,7 +3,7 @@
 stat=RESULTS__$(date +%Y-%h-%d__%H-%M).stat
 log=log.txt
 
-TRACER_CMMD=$TRACER_PATH"/tracer.0.1"
+TRACER_CMMD=$TRACER_PATH"/tracer"
 
 # is $1 installed?
 _have() { which "$1" &>/dev/null; }

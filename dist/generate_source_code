@@ -6,7 +6,7 @@ SCRIPT_PATH=$(dirname "$SCRIPT")
 TRACER_PATH=$SCRIPT_PATH/../src/interpreter
 DEST_PATH=$SCRIPT_PATH
 
-MAIN="tracer.0.1"
+MAIN_CLPR="tracer.0.1"
 #---------------------------------------------------------------------#
 # Function to change TRACER Makefile
 #---------------------------------------------------------------------#
@@ -34,13 +34,13 @@ function change_Makefile() {
 #----------------------------------------------------------------------------#
 CURRENTDIR=`pwd`
 NONOPTOPTIONS="-DMINMAX -DTREEDOT -DSTSDOT -DPROFILE"
-echo "$MAIN""_debug.clpr"
+echo "$MAIN_CLPR""_debug.clpr"
 
 change_Makefile -options "$NONOPTOPTIONS"
 cd "${TRACER_PATH}"; make safety; cd $CURRENTDIR
 ./remove_comments "${TRACER_PATH}/safety.clp" > "$DEST_PATH/safety__tmp.clp"
-cat header "$DEST_PATH/safety__tmp.clp" > "$DEST_PATH/$MAIN""_debug.clpr"
-#tr -s '\012' ' ' <"$DEST_PATH/safety__tmp.clp"  >"$DEST_PATH/$MAIN_debug.clpr"
+cat header "$DEST_PATH/safety__tmp.clp" > "$DEST_PATH/$MAIN_CLPR""_debug.clpr"
+#tr -s '\012' ' ' <"$DEST_PATH/safety__tmp.clp"  >"$DEST_PATH/$MAIN_CLPR_debug.clpr"
 rm "$DEST_PATH/safety__tmp.clp"
 
 #----------------------------------------------------------------------------#
@@ -51,8 +51,8 @@ OPTOPTIONS="-DMINMAX -DPIPEDUMP"
 change_Makefile -options "$OPTOPTIONS"
 cd "${TRACER_PATH}"; make safety; cd $CURRENTDIR
 ./remove_comments "${TRACER_PATH}/safety.clp" > "$DEST_PATH/safety__tmp.clp"
-cat header "$DEST_PATH/safety__tmp.clp" > "$DEST_PATH/$MAIN.clpr"
-#tr -d '\012' <"$DEST_PATH/safety__tmp.clp"  >"$DEST_PATH/$MAIN.clpr"
+cat header "$DEST_PATH/safety__tmp.clp" > "$DEST_PATH/$MAIN_CLPR.clpr"
+#tr -d '\012' <"$DEST_PATH/safety__tmp.clp"  >"$DEST_PATH/$MAIN_CLPR.clpr"
 rm "$DEST_PATH/safety__tmp.clp"
 
 
