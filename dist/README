@@ -37,7 +37,7 @@ export TRACER_PATH=_here_path_to_tracer.0.1_
 
 FILES and DIRECTORIES
 -----------------------
-- tracer.0.1 is the main script 
+- tracer is the main script 
 
 - lib/C2CLP.jar is the compiler for C programs. It uses
   CIL (lib/cilly) to translate the program into a CLP (Constraint Logic
@@ -74,9 +74,9 @@ FILES and DIRECTORIES
 USAGE
 ------
 
-  % ./tracer.0.1 -help
+  % ./tracer -help
 
-  usage: ./tracer.0.1 program [options]
+  usage: ./tracer program [options]
   program is the name of the program to be verified.
   General options:
 
