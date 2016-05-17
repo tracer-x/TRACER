@@ -262,7 +262,7 @@
       <fileset file="./dist/tracer.0.1.clpr" />
     </copy>
     <copy todir="${release-dist}">
-      <fileset file="./dist/tracer.0.1" />
+      <fileset file="./dist/tracer" />
       <fileset file="./dist/README" />
     </copy>
     <copy todir="${release-dist}/lib">
@@ -339,7 +339,7 @@
       <fileset file="${release-dist}/lib/clp-prover" />
       <fileset file="${release-dist}/lib/frontend" />
       <fileset file="${release-dist}/lib/invgen" />
-      <fileset file="${release-dist}/tracer.0.1" />
+      <fileset file="${release-dist}/tracer" />
       <fileset file="${release-dist}/tests/regrtest" />
       <fileset file="${release-dist}/benchmarks/regrtest" />
     </chmod>
