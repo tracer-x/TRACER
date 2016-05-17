@@ -35,7 +35,7 @@ further instructions in `<some_prefix>/tracer-0.1/README`.
    Note CIL needs OCaml. We tried with 3.11 but it does not work. The version we tested is 3.12.1
    ```
    ./configure && make
-   cp obj/x86_LINUX/cilly.asm.exe $TRACER_PATH/lib/cilly
+   cp obj/x86_LINUX/cilly.asm.exe $TRACER_PATH/bin/cilly
    ```
 2. Run one of the following scripts:
 
