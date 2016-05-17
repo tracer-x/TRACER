@@ -14,7 +14,10 @@
   <property name="tarball" value="tracer-0.1.tar.gz" />
 
   <!-- Needed to produce the release version which includes CLPR -->
+  <!--
   <property name="CLPR" value="./src/clpr-1.2b"/>
+  -->
+  <property name="CLPR" value="./src/clpr-1.2b-prebuilt"/>
 
   <!--   Java paths -->
   <property name="antlr"     
