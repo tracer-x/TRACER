@@ -1,7 +1,10 @@
 #!/bin/bash
 
-TRACER_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter
-DEST_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/dist
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname "$SCRIPT")
+
+TRACER_PATH=$SCRIPT_PATH/../src/interpreter
+DEST_PATH=$SCRIPT_PATH
 
 MAIN="tracer.0.1"
 #---------------------------------------------------------------------#

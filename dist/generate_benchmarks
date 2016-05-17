@@ -1,9 +1,12 @@
 #!/bin/bash
 
-TESTS_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/src/interpreter/tests/SAFETY/MACRO
-DEST_PATH=/home/jorge/SvnReps/Systems/TRACER/trunk/dist/benchmarks
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname "$SCRIPT")
 
-rm -r $DEST_PATH
+TESTS_PATH=$SCRIPT_PATH/../src/interpreter/tests/SAFETY/MACRO
+DEST_PATH=$SCRIPT_PATH/benchmarks
+
+rm -rf $DEST_PATH
 echo "Creating $DEST_PATH directory ..."
 mkdir $DEST_PATH
 
