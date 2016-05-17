@@ -1,0 +1,50 @@
+p {
+  line-height: normal;
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+body {
+	color: black;
+	font-size: 10pt;
+	font-family: verdana, arial, sans-serif;
+	background: white;
+	padding: 1.0em;
+	width:70%;
+}
+
+
+h1 { 
+	color: black;
+	font-family: sans-serif;
+}
+
+h2 { 
+	color: black;
+	font-family: sans-serif;
+}
+
+h3 { 
+	color: black;
+	font-family: sans-serif;
+}
+
+h4 { 
+	color: black;
+	font-family: sans-serif;
+}
+
+h5 { 
+	color: black;
+	font-family: sans-serif;
+}
+
+center {
+	text-align: center;
+}
+
+.center {
+	text-align: center;
+}
+

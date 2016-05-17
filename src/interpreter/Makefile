@@ -52,7 +52,7 @@ GPP=gpp -DCLP_SYS=${CLP_SYS}
 #                           whenever projection is called. This may
 #                           produce weaker interpolants
 ##############################################################################
-OPTIONS=-DMINMAX -DUSEWP -DPROFILE  
+OPTIONS=-DMINMAX -DPIPEDUMP
 ###############################################################################
 # Pick one among these:
 ###############################################################################

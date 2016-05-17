@@ -1,25 +1,26 @@
 TRACER Toolkit
 ----------------
 
-Authors: Jorge A. Navas, Andrew E. Santosa, and Vijayaraghavan Murali
+Copyright 2008-2016 National University of Singapore
 
-For technical questions/ bug report contact:
+See http://paella.ddns.comp.nus.edu.sg/tracer/ for more information.
 
-Jorge A. Navas
-The University of Melbourne
-Email: jorge.navas@unimelb.edu.au
+TRACER is a verification tool based on symbolic execution for
+sequential C programs developed at National University of Singapore .
 
-Description: TRACER is a verification tool based on symbolic execution
-for finite-state safety properties of sequential C programs.  TRACER
-builds a finite symbolic execution tree over-approximating the set of
-all concrete reachable states. If the error location cannot be reached
-from any symbolic path then the program is reported as
-safe. Otherwise, the program may contain a bug. TRACER reports a false
-alarm only if the theorem prover fails to prove a valid claim.
+TRACER attempts at building a symbolic execution tree. If the error
+location cannot be reached from any symbolic path then the program is
+reported as safe. Otherwise, either the program may contain a bug or
+it may not terminate. TRACER reports a false alarm only if the theorem
+prover fails to prove a valid claim.
 
 The most innovative features of TRACER stem from how it tackles the
-"path-explosion" problem and the presence of unbounded loops. TRACER
-computes weakest preconditions as interpolants and integrates a novel
+two fundamental limitations of symbolic execution: exponential number
+of paths on the number of program branches, and infinite-length
+symbolic paths due to unbounded loops. To tackle the first problem,
+TRACER computes Craig interpolants from infeasible paths to be used in
+generalizing visited state, that can then be further used to subsume
+other paths. To tackle the second problem, it integrates a novel
 counterexample-guided refinement phase within the symbolic execution
 process.
 
@@ -31,7 +32,7 @@ bash shell
 
 INSTALLATION
 --------------
-tar -zxvf tracer.0.1.tar.gzip
+tar -zxvf tracer-0.1.tar.gz
 export TRACER_PATH=_here_path_to_tracer.0.1_
 
 FILES and DIRECTORIES

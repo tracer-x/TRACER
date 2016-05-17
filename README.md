@@ -14,8 +14,15 @@ Prerequisites
 - gpp  >= 2.24
 - ocaml >= 3.12.1 (for CIL)
 
-Installation
-============
+Installation by Building TRACER Distribution
+============================================
+
+Execute `ant dist` to create `tracer-0.1.tar.gz` in the source root.
+Unpack `tracer-0.1.tar.gz` into your preferred directory, and follow
+further instructions in the README.
+
+Running TRACER in the Source Tree
+=================================
 
 1. Set up environment variables `TRACER_PATH` and `CLPR_BASE_PATH`.
 
