@@ -8,7 +8,7 @@
   <property name="basebin" value="./classes"/>
 
   <!-- destination of the release distribution -->
-  <property name="release-dist" value="./tracer.0.1"/>
+  <property name="release-dist" value="./tracer-0.1"/>
 
   <!-- The name of the distro tarball -->
   <property name="tarball" value="tracer-0.1.tar.gz" />
