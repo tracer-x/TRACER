@@ -4,7 +4,10 @@ Copyright 2008-2016 National University of Singapore. All rights reserved.
 
 See LICENSE.md for license information of TRACER. This distribution contains third party software. See lib/LICENSE for the copyright and license information of the included third-party software.
 
-This is a version of TRACER symbolic execution tool with CIL front-end. Chu Duc Hiep, Joxan Jaffar, Rasool Maghareh, Vijayaraghavan Murali, Jorge Navas, Andrew Santosa, and Razvan Voicu contributed to its initial development.
+This is a version of TRACER symbolic execution tool with CIL
+front-end. Chu Duc Hiep, Joxan Jaffar, Rasool Maghareh, Vijayaraghavan
+Murali, Jorge Navas, Andrew Santosa, and Razvan Voicu contributed to
+its initial development. 
 
 **Prerequisites**
 
@@ -15,11 +18,16 @@ This is a version of TRACER symbolic execution tool with CIL front-end. Chu Duc 
 
 **Installation by Building TRACER Distribution**
 
-Execute `ant dist` to create `tracer-0.1.tar.gz` in the source root.
-Unpack `tracer-0.1.tar.gz` into your preferred directory, say `<some_prefix>` and follow
-further instructions in `<some_prefix>/tracer-0.1/README`.
+This version of TRACER may not have all the features, but it has the
+interpolation (abstraction learning) algorithm for search-space
+reduction already implemented. Execute `ant dist` to create
+`tracer-0.1.tar.gz` in the source root.  Unpack `tracer-0.1.tar.gz`
+into your preferred directory, say `<some_prefix>` and follow further
+instructions in `<some_prefix>/tracer-0.1/README`.
 
 **Running TRACER in the Source Tree**
+
+This version is more advanced and has more features.
 
 1. Set up environment variables `TRACER_PATH` and `CLPR_BASE_PATH`.
 
@@ -54,7 +62,7 @@ further instructions in `<some_prefix>/tracer-0.1/README`.
    - `classes` - contains all *.class of the system (GENERATED AUTOMATICALLY)
    - `lib` - contains *.jar files 
    - `bin` - contains all scripts 
-   - `dist` - to generate a distribution version
+   - `dist` - tools to generate the distribution version
    - `src`
      - `compiler/antlr` - contains the compiler from C to CLP 
      - `compiler/GUIFrontEnd` - contains the GUI front end of the system
