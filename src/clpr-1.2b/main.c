@@ -159,6 +159,11 @@ void interrupt();
 void bus_error();
 void seg_fault();
 
+#ifdef  EXTERNAL_SOLVER
+// To plug external solvers in CLP(R) 
+extern int clean_extern_solver();
+#endif 
+
 /*---------------------------------------------------------------------------*/
 
 /***********************************************/
@@ -175,7 +180,7 @@ PTERM *t;
 
 	error_stream = stderr;
 	outfile = stdout;
-    test_system_defaults();
+	test_system_defaults();
 	input_fd = NULL;
 #if HAS_SIGBUS
 	signal(SIGBUS, bus_error);
@@ -478,4 +483,8 @@ warn_header()
 final_clean()
 {
 	clean_temp_file();
+#ifdef  EXTERNAL_SOLVER
+// To plug external solvers in CLP(R) 
+        clean_extern_solver();
+#endif 
 }

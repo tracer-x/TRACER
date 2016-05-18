@@ -1,0 +1,193 @@
+%------------------------------------------------------------------------------
+% A simple mutex verifier of Lamport's Bakery Algorithm that exhibits CLP(R)
+% segmentation fault bug. The bug occurs when CLP(R) is run on Cygwin with
+% -cs 15000000 and with query run(15,0).
+%
+% In general, to run the program type run(A,B). in CLP(R) where A is the
+% number of processes and B the state print flag (nonzero to print states
+% traversed).
+%
+% A. Santosa, 2009
+%------------------------------------------------------------------------------
+
+%==============================================================================
+% Main unfolding
+%==============================================================================
+
+:- dynamic(table, 2).
+
+run(NProc, Noise) :-
+	init_state(NProc, ProgramPoints, State),
+	unfold(Noise, ProgramPoints, State).
+run(_NProc, _Noise) :-
+	printf("No property violation found\n", []).
+
+unfold(Noise, ProgramPoints, State) :-
+	print_state(Noise, ProgramPoints, State),
+	property_violation(ProgramPoints, State).
+unfold(_Noise, ProgramPoints, State) :-
+	tabled(ProgramPoints, State), !, fail.
+unfold(Noise, ProgramPoints, State) :-
+	store(ProgramPoints, State), !,
+	trans(ProgramPoints, State,
+	      ProgramPointsNext, StateNext),
+	unfold(Noise, ProgramPointsNext, StateNext).
+
+print_state(0, _, _) :- !.
+print_state(_, ProgramPoints, State) :-
+	printf("State: %\n", [ProgramPoints]),
+	gen_varlabels(State, StateVarNames),
+	dump(State, StateVarNames), !.
+
+%==============================================================================
+% Auxiliary Procedures
+%==============================================================================
+
+gen_varlabels(L, NL) :-
+	gen_varlabels_aux(1, L, NL).
+
+gen_varlabels_aux(_, [], []).
+gen_varlabels_aux(N, [_|R], [A|S]) :-
+	printf_to_atom(A, "v%", [N]),
+	gen_varlabels_aux(N+1, R, S).
+
+gen_fresh_variables([], []).
+gen_fresh_variables([_|R], [_|S]) :- gen_fresh_variables(R, S).
+
+%==============================================================================
+% Tabling
+%==============================================================================
+
+store(ProgramPoints, State) :-
+	gen_fresh_variables(State, StateNegation),
+	dump(State, StateNegation, CL), !,
+	store_aux(CL, ProgramPoints, StateNegation).
+
+store_aux(CL, ProgramPoints, StateNegation) :-
+	constrain_negation_list(CL),
+	tabling(table(ProgramPoints, StateNegation)), fail.
+store_aux(_CL, _ProgramPoints, _StateNegation).	
+
+
+tabled(ProgramPoints, State) :-
+	table(ProgramPoints, _), !,
+	not untabled(ProgramPoints, State).
+
+untabled(ProgramPoints, State) :-
+	table(ProgramPoints, StateNegation),
+	State = StateNegation.
+
+constrain_negation_list([]).
+constrain_negation_list([C|R]) :-
+	constrain_negation(C),
+	constrain_negation_list(R).
+
+constrain_negation(quote(A=B)) :- !,
+	constrain_negation_aux(A, B).
+constrain_negation(quote(A<B)) :- !,
+	C>=D, constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_negation(quote(A>B)) :- !,
+	C<=D, constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_negation(quote(A<=B)) :- !,
+	C>D, constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_negation(quote(A>=B)) :- !,
+	C<D, constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_negation(_).
+
+
+constrain_negation_aux(A,B) :-
+	C<D, constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_negation_aux(A,B) :-
+	D<C, constrain_numeric(A,C), constrain_numeric(B,D).
+
+constrain_numeric(A,A) :- var(A), !.
+constrain_numeric(A,A) :- atomic(A), !.
+constrain_numeric(quote(A+B),C+D) :- !,
+	constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_numeric(quote(A-B),C-D) :- !,
+	constrain_numeric(A,C), constrain_numeric(B,D).
+constrain_numeric(quote(-(A)),0-C) :- !,
+	constrain_numeric(A, C).
+constrain_numeric(C, _) :-
+	printf("Unrecognized numeric constraint %. Failing.\n", [C]).
+
+%==============================================================================
+% Problem Encoding
+%==============================================================================
+
+init_state(0, [], []).
+init_state(N+1, [0|R], [0|S]) :-
+	N>=0, init_state(N, R, S).
+
+trans(ProgramPoints, State, ProgramPointsNext, StateNext) :-
+	diagnostic(_,_,_,_,_,_),
+	update_pp(0, 1, ProgramPoints, ProgramPointsNext, PId),
+	trans_interest(State, StateNext, PId).
+trans(ProgramPoints, State, ProgramPointsNext, State) :-
+	diagnostic(_,_,_,_,_,_),
+	update_pp(1, 2, ProgramPoints, ProgramPointsNext, PId),
+	trans_entry(State, PId).
+trans(ProgramPoints, State, ProgramPointsNext, StateNext) :-
+	diagnostic(_,_,_,_,_,_),
+	update_pp(2, 0, ProgramPoints, ProgramPointsNext, PId),
+	trans_exit(State, StateNext, PId).
+
+update_pp(A, B, ProgramPoints, ProgramPointsNext, PId) :-
+	update_pp_aux(1, A, B, ProgramPoints, ProgramPointsNext, PId).
+
+update_pp_aux(PId, A, B, [A|R], [B|R], PId) :- !.
+update_pp_aux(N, A, B, [P|R], [P|S], PId) :-
+	update_pp_aux(N+1, A, B, R, S, PId).
+
+
+trans_interest(State, StateNext, PId) :-
+	trans_interest_aux(1, PId, _, State, StateNext).
+
+trans_interest_aux(_, _, _, [], []).
+trans_interest_aux(PId, PId, PIdTicket, [_|R], [PIdTicket|S]) :- !,
+	trans_interest_aux(PId+1, PId, PIdTicket, R, S).
+trans_interest_aux(N, PId, PIdTicket, [X|R], [X|S]) :-
+	X>0, !, PIdTicket>=X+1,
+	trans_interest_aux(N+1, PId, PIdTicket, R, S).
+trans_interest_aux(N, PId, PIdTicket, [0|R], [0|S]) :- !,
+	PIdTicket >= 1,
+	trans_interest_aux(N+1, PId, PIdTicket, R, S).
+
+%------------------------------------------------------------------------------
+test_trans_entry :-
+	0<X2, 1<=X1, X1+1<=X2,
+	trans_entry([X1,X2], 2).
+%------------------------------------------------------------------------------
+
+trans_entry(State, PId) :-
+	trans_entry_aux(1, PId, _, State).
+
+trans_entry_aux(_, _, _, []).
+trans_entry_aux(PId, PId, PIdTicket, [X|R]) :- !,
+	PIdTicket = X,
+	trans_entry_aux(PId+1, PId, PIdTicket, R).
+trans_entry_aux(N, PId, PIdTicket, [X|R]) :-
+	X>0, !, PIdTicket<X,
+	trans_entry_aux(N+1, PId, PIdTicket, R).
+trans_entry_aux(N, PId, PIdTicket, [X|R]) :-
+	X=0,
+	trans_entry_aux(N+1, PId, PIdTicket, R).
+
+trans_exit(State, StateNext, PId) :-
+	trans_exit_aux(1, PId, State, StateNext).
+
+trans_exit_aux(PId, PId, [_|R], [0|R]) :- !.
+trans_exit_aux(N, PId, [X|R], [X|S]) :-
+	trans_exit_aux(N+1, PId, R, S).
+
+property_violation(ProgramPoints, _State) :-
+	mutex_violation(ProgramPoints).
+
+mutex_violation([]) :- !, fail.
+mutex_violation([2|R]) :- !, mutex_violation2(R).
+mutex_violation([_|R]) :- mutex_violation(R).
+
+mutex_violation2([]) :- !, fail.
+mutex_violation2([2|_]) :- !.
+mutex_violation2([_|R]) :- mutex_violation(R).
+

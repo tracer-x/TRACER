@@ -1,0 +1,442 @@
+/***************************************************************
+ *  CLP(R)                                                     *
+ *  (c) Copyright International Business Machines Corporation  *
+ *  (1989) 1992 All Rights Reserved                            *
+ *  Version: 1.2                                               *
+ *  File: init.clpr                                            *
+ ***************************************************************/
+
+::- $style_check(none).
+ 
+::- op(31, yfx, (-)), op(40, xfx, =), op(254, xfy, (->)), op(253, xfy, ;),
+	op(60, fx, once), op(60, fx, lib), op(60, fx, libdir), op(60, fx, listing),
+	op(60, fx, history), op(60, fx, ls), op(60, fx, cls), op(60, fx, not),
+	op(50, fx, `), op(40, xfx, is), op(40, xfx, =..), op(31, yfx, +),
+	op(21, yfx, /), op(21, yfx, *), op(37, xfx, >), op(37, xfx, >=),
+	op(37, xfx, <), op(37, xfx, <=), op(37, xfx, ==).
+	%% Operators added 10/08/2009 to compare lexicographically terms
+	% op(37,xfx,@<), op(37,xfx,@>), op(37,xfx,@<=),op(37,xfx,@>=).
+ 
+h :- history.
+ 
+clpr.
+ 
+true.
+fail :- $fail.
+ 
+$save.
+ 
+style_check(all_reset) :- $clear_style_check, $style_check(all).
+style_check(all) :- $style_check(all).
+style_check(single_var) :- $style_check(single_var).
+style_check(discontiguous) :- $style_check(discontiguous).
+style_check(name_overload) :- $style_check(name_overload).
+ 
+no_style_check(all) :- $style_check(none).
+no_style_check(single_var) :- $style_check(nosingle_var).
+no_style_check(discontiguous) :- $style_check(nodiscontiguous).
+no_style_check(name_overload) :- $style_check(noname_overload).
+ 
+not(X):- call(X), !, fail.
+not(X).
+ 
+writeln(X):- write(X), nl.
+ 
+once(X):- call(X), !.
+ 
+deny(X, true):-
+	!,
+	retract(X).
+deny(X, Y):-
+	retract((X :- Y)).
+ 
+`X.Y :-
+	!,
+	$save,
+	reconsult(X),
+	$reconsult(Y).
+X.Y :-
+	$save,
+	consult(X),
+	$consult(Y).
+ 
+$reconsult([]):-
+	!.
+$reconsult(Y):-
+	call(Y).
+ 
+$consult([]):-
+	!.
+$consult(Y):-
+	call(Y).
+ 
+repeat.
+repeat :- repeat.
+ 
+A -> B ; C :-
+	!,
+	cond(A, B, C).
+A -> B :-
+	call(A),
+	!,
+	call(B).
+A -> B.
+ 
+cond(A, B, C) :-
+	call(A),
+	!,
+	call(B).
+cond(A, B, C) :-
+	call(C).
+
+/* 
+retractall(X) :-
+	rule(X, Y),
+	%deny(X, Y),
+	retract(X :- Y),
+	fail.
+retractall(X) :-
+	rule(X, true),
+	retract(X),
+	fail.
+retractall(X).
+*/
+ 
+spy(P,N) :- $spy(P,N).
+nospy(P,N) :- $nospy(P,N).
+ 
+spy([]).
+spy([H|T]) :-
+	functor(H, F, _),
+	arg(1, H, N),
+	spy(F, N),
+	spy(T).
+ 
+nospy([]).
+nospy([H|T]) :-
+	functor(H, F, _),
+	arg(1, H, N),
+	nospy(F, N),
+	nospy(T).
+ 
+prot([]) :- !.
+prot([H | T]) :-
+	!, $prot1(H),
+	prot(T).
+prot(H) :-
+	$prot1(H).
+$prot1(H) :-
+	H =.. [F, N],
+	prot(F, N).
+ 
+call(X -> Y) :- !, X -> Y.
+call(once(X)) :- !, once(X).
+call(not(X)) :- !, not(X).
+call(X) :- is_constraint(X), !, do_constraint(X).
+call(X) :- is_library(X), !, do_library(X).
+call(X) :- $call(X).
+ 
+(A, B) :- call(A), call(B).
+ 
+X ; Y :-
+	call(X).
+X ; Y :-
+	call(Y).
+ 
+real(X) :- X + 0 = X.
+ 
+is_constraint(X = Y).
+is_constraint(X > Y).
+is_constraint(X >= Y).
+is_constraint(X < Y).
+is_constraint(X <= Y).
+ 
+do_constraint(X = Y)  :- X = Y.
+do_constraint(X > Y)  :- X > Y.
+do_constraint(X >= Y) :- X >= Y.
+do_constraint(X < Y)  :- X < Y.
+do_constraint(X <= Y) :- X <= Y.
+ 
+is_library(!).
+is_library($clear_style_check).
+is_library($fail).
+is_library($nospy(_, _)).
+is_library($spy(_, _)).
+is_library($style_check(_)).
+is_library(_ =.. _).
+is_library(_ == _).
+is_library(abort).
+is_library(add_counter(_,_)).
+is_library(arg(_, _, _)).
+is_library(arithmetic(_)).
+is_library(assert(_)).
+is_library(asserta(_)).
+is_library(assertz(_)).
+is_library(atom(_)).
+is_library(atomic(_)).
+is_library(clisting(_)).
+is_library(cls(_)).
+is_library(codegen_debug).
+is_library(codegen_nodebug).
+is_library(compile(_, _)).
+is_library(consult(_)).
+is_library(counter_value(_,_)).
+is_library(csh).
+is_library(ctime(_)).
+is_library(ctrace).
+is_library(dump(_)).
+is_library(dump(_,_)).
+is_library(dump(_,_,_)).
+is_library(dump_tableaus).
+is_library(dynamic(_, _)).
+is_library(e_stats).
+is_library(edit(_)).
+is_library(floor(_, _)).
+is_library(flush).
+is_library(fork).
+is_library(functor(_)).
+is_library(functor(_, _, _)).
+is_library(ground(_)).
+is_library(halt).
+is_library(hide(_, _)).
+is_library(history(_)).
+is_library(history).
+is_library(listing(_)).
+is_library(listing).
+is_library(ls(_)).
+is_library(ls(_)).
+is_library(ls).
+is_library(ls).
+is_library(more(_)).
+is_library(nl).
+is_library(noctrace).
+is_library(nonground(_)).
+is_library(nonvar(_)).
+is_library(nospy).
+is_library(notrace).
+is_library(occurs(_, _)).
+is_library(op(_, _, _)).
+is_library(oracle(_, _, _)).
+is_library(pipe(_)).
+is_library(print(_)).
+is_library(printf(_, _)).
+is_library(printf_to_atom(_,_,_)).
+is_library(prot(_, _)).
+is_library(rand(_)).
+is_library(read(_)).
+is_library(real(_)).
+is_library(reconsult(_)).
+is_library(retract(_)).
+is_library(retractall).
+is_library(rule(_,_)).
+is_library(s_stats).
+is_library(see(_)).
+is_library(seeing(_)).
+is_library(seen).
+is_library(set_counter(_,_)).
+is_library(sh).
+is_library(spy).
+is_library(srand(_)).
+is_library(stats).
+is_library(tell(_)).
+is_library(telling(_)).
+is_library(told).
+is_library(trace).
+is_library(var(_)).
+is_library(warning(_)).
+is_library(write(_)).
+is_library(ztime).
+
+do_library(!) :- printf("\nWarning: cut (!) ignored at meta-level\n", []).
+do_library($clear_style_check) :- $clear_style_check.
+do_library($fail) :- $fail.
+do_library($nospy(X, Y)) :- $nospy(X, Y).
+do_library($spy(X, Y)) :- $spy(X, Y).
+do_library($style_check(X)) :- $style_check(X).
+do_library(X =.. Y) :- X =.. Y.
+do_library(X == Y) :- X == Y.
+do_library(abort) :- abort.
+do_library(add_counter(X,Y)) :- add_counter(X,Y).
+do_library(arg(X, Y, Z)) :- arg(X, Y, Z).
+do_library(arithmetic(X)) :- arithmetic(X).
+do_library(assert(X)) :- assert(X).
+do_library(asserta(X)) :- asserta(X).
+do_library(assertz(X)) :- assertz(X).
+do_library(atom(X)) :- atom(X).
+do_library(atomic(X)) :- atomic(X).
+do_library(clisting(X)) :- clisting(X).
+do_library(cls(X)) :- cls(X).
+do_library(codegen_debug) :- codegen_debug.
+do_library(codegen_nodebug) :- codegen_nodebug.
+do_library(compile(X, Y)) :- compile(X, Y).
+do_library(consult(X)) :- consult(X).
+do_library(counter_value(X,Y)) :- counter_value(X,Y).
+do_library(csh) :- csh.
+do_library(ctime(X)) :- ctime(X).
+do_library(ctrace) :- ctrace.
+do_library(dump(X)) :- printf("\nWarning: dump/1 unusable at meta-level -- ignored\n", []).
+do_library(dump(X, Y)) :- dump(X, Y).
+do_library(dump(X, Y, Z)) :- dump(X, Y, Z).
+do_library(dump_tableaus) :- dump_tableaus.
+do_library(dynamic(X, Y)) :- dynamic(X, Y).
+do_library(e_stats) :- e_stats.
+do_library(edit(X)) :- edit(X).
+do_library(floor(X, Y)) :- floor(X, Y).
+do_library(flush) :- flush.
+do_library(fork) :- fork.
+do_library(functor(X)) :- functor(X).
+do_library(functor(X,Y,Z)) :- functor(X,Y,Z).
+do_library(ground(X)) :- ground(X).
+do_library(halt) :- halt.
+do_library(hide(X, Y)) :- hide(X, Y).
+do_library(history(X)) :- history(X).
+do_library(history) :- history.
+do_library(listing(X)) :- listing(X).
+do_library(listing) :- listing.
+do_library(ls(X)) :- ls(X).
+do_library(ls) :- ls.
+do_library(more(X)) :- more(X).
+do_library(nl) :- nl.
+do_library(nonground(X)) :- nonground(X).
+do_library(nonvar(X)) :- nonvar(X).
+do_library(nospy) :- nospy.
+do_library(notrace) :- notrace.
+do_library(occurs(X, Y)) :- occurs(X, Y).
+do_library(op(X, Y, Z)) :- op(X, Y, Z).
+do_library(oracle(X, Y, Z)) :- oracle(X, Y, Z).
+do_library(pipe(X)) :- pipe(X).
+do_library(print(X)) :- print(X).
+do_library(printf(X, Y)) :- printf(X,Y).
+do_library(printf_to_atom(X,Y,Z)) :- printf_to_atom(X,Y,Z).
+do_library(prot(X, Y)) :- prot(X, Y).
+do_library(rand(X)) :- rand(X).
+do_library(read(X)) :- read(X).
+do_library(real(X)) :- real(X).
+do_library(reconsult(X)) :- reconsult(X).
+do_library(retract(X)) :- retract(X).
+do_library(retractall) :- retractall.
+do_library(rule(X,Y)) :- rule(X,Y),printf("X % Y %\n", [X,Y]).
+do_library(s_stats) :- s_stats.
+do_library(see(X)) :- see(X).
+do_library(seeing(X)) :- seeing(X).
+do_library(seen) :- seen.
+do_library(set_counter(X,Y)) :- set_counter(X,Y).
+do_library(sh) :- sh.
+do_library(spy) :- spy.
+do_library(srand(X)) :- srand(X).
+do_library(stats) :- stats.
+do_library(tell(X)) :- tell(X).
+do_library(telling(X)) :- telling(X).
+do_library(told) :- told.
+do_library(trace) :- trace.
+do_library(var(X)) :- var(X).
+do_library(warning(X)) :- warning(X).
+do_library(write(X)) :- write(X).
+do_library(ztime) :- ztime.
+ 
+::- 
+	prot(once, 1), prot(not, 1), prot(writeln, 1), 
+	prot(prot, 1), prot(fail, 0), 
+	% prot(retractall, 1), 
+	prot(deny, 2),
+	prot($reconsult, 1),  prot($consult, 1),  prot($prot1, 1),
+	prot((->), 2), prot((.), 2), prot(cond, 3),
+	prot(spy, 2), prot(nospy, 2), prot(call, 1), prot(',', 2),
+	prot(';', 2), prot(is_constraint, 1), prot(do_constraint, 1),
+	prot(is_library, 1), prot(do_library, 1), prot(clpr, 0),
+	prot(real, 1), prot(repeat, 0), prot($save, 0), prot(true, 0),
+	prot(h, 0), prot(style_check, 1), prot(no_style_check, 1),
+	prot(spy, 1), prot(nospy, 1),
+	true.
+ 
+% Comment out if no style checking desired or for old code if there
+% are too many warnings
+::- $clear_style_check, style_check(all).
+
+% '@<='(Term1,Term2)  :- '$lexleq'(Term1,Term2).
+% '@>='(Term1,Term2)  :- not(Term2 @> Term1).
+% '@>'(Term1,Term2)   :- not(Term1 @<= Term2).
+% '@<'(Term1,Term2)   :- not(Term2 @<= Term1).
+
+% %-----------------------------------------------------------------------%
+% % '$lexleq'(A,B) succeeds if term A is lexicographically less or equal
+% % than term B.	
+% %-----------------------------------------------------------------------%
+% '$lexleq'(Atom1,Atom2):- Atom1 == Atom2,!.
+% '$lexleq'(Atom1,Atom2):-
+% 	arithmetic(Atom1),
+% 	!,
+% 	arithmetic(Atom2),
+% 	not(Atom1>Atom2).
+% '$lexleq'(Atom1,Atom2):-
+% 	var(Atom1),
+% 	!,
+% 	var(Atom2),
+% 	printf_to_atom(X, "%", [Atom1]),
+% 	printf_to_atom(Y, "%", [Atom2]),
+% 	lexlt(X,Y).
+% '$lexleq'(Atom1,Atom2):-
+% 	atom(Atom1),
+% 	!,
+% 	atom(Atom2),
+% 	lexlt(Atom1,Atom2).
+% '$lexleq'(Term1,Term2):-
+% 	functor(Term1,_,A1),
+% 	functor(Term2,_,A2),!,
+% 	A1 == A2,
+% 	Term1 =.. Args1,
+% 	Term2 =.. Args2,
+% 	'$lexleq_args'(Args1,Args2).
+
+% '$lexleq_args'([],[]):-!.
+% '$lexleq_args'([X1|X1s],[X2|X2s]):-
+% 	'$lexleq'(X1,X2),
+% 	'$lexleq_args'(X1s,X2s).
+
+%-----------------------------------------------------------------------%
+% lexlt(A,B) succeeds if A is lexicographically less than B.
+% A,B are numbers, atoms or variables.
+%-----------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------------%
+% atom_list_concat(+List,-Atom): List is a list of atoms. Succeeds if
+% Atom can be unified with the concatenated elements of List.
+%-----------------------------------------------------------------------------%
+atom_list_concat([X], X) :- !.
+atom_list_concat([X|R], Z) :-
+	atom(X),
+	atom_list_concat(R,Y),
+	$concat(X,Y,Z).
+
+%-----------------------------------------------------------------------------%
+% atom_concat/3: append two atoms
+%-----------------------------------------------------------------------------%
+atom_concat(X, Y, Z) :- $concat(X,Y,Z).
+
+
+:- dynamic('$mem_usage',7).
+%-----------------------------------------------------------------------------%
+% zmem_usage/0
+%-----------------------------------------------------------------------------%
+zmem_usage:-
+	retractall('$mem_usage'(_,_,_,_,_,_,_)),	
+	diagnostic(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms),
+	fassert('$mem_usage'(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms)).
+
+%-----------------------------------------------------------------------------%
+% cmem_usage/1
+%-----------------------------------------------------------------------------%
+cmem_usage(memory(DeltaTotal,DeltaCode,DeltaStack,DeltaHeap,DeltaTrail,DeltaSolver,
+		  DeltaPTerms)):-	  	
+	retract('$mem_usage'(OldTotal,OldCode,OldStack,OldHeap,OldTrail,OldSolver,OldPTerms)),	
+	diagnostic(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms),
+	DeltaTotal  = NewTotal-OldTotal,
+        DeltaCode   = NewCode-OldCode,
+        DeltaStack  = NewStack-OldStack,
+        DeltaHeap   = NewHeap-OldHeap,
+        DeltaTrail  = NewTrail-OldTrail,
+        DeltaSolver = NewSolver-OldSolver,
+	DeltaPTerms = NewPTerms-OldPTerms,
+	fassert('$mem_usage'(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms)),!.
+
+ 

@@ -6,7 +6,7 @@
  *  File: symbols.h                                            *
  ***************************************************************/
 
-#define INIT_FUNC_ID 250  
+#define INIT_FUNC_ID 300 /*250 */ 
 #define MAX_SPRED (INIT_FUNC_ID)
 
 #define DOT	2
@@ -143,7 +143,7 @@
 #define is_nlin_term(t) (!is_linear_term((t))) 
 
 #define WAM_SPECIAL_0 (101)
-#define WAM_SPECIAL_1 (115)
+#define WAM_SPECIAL_1 (116)
 
 #define is_builtin(t) \
 	((t)->ty == FUNC && (t)->val >= WAM_SPECIAL_0 \
@@ -162,11 +162,14 @@
 #define CUTVAL  (113)
 #define CALLXVAL  (114)
 #define TRUEVAL  (115)
+#define DETABLEVAL (116)
 
 #define is_dump(t) \
 	((t)->ty == FUNC && (t)->val == DUMPVAL)
 #define is_retract(t) \
 	((t)->ty == FUNC && (t)->val == RETRACTVAL)
+#define is_detable(t) \
+	((t)->ty == FUNC && (t)->val == DETABLEVAL)
 #define is_rule(t) \
 	((t)->ty == FUNC && (t)->val == RULEVAL)
 #define is_print(t) \

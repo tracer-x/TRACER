@@ -7,7 +7,8 @@
  ***************************************************************/
 
 #define MAXPRI	1200            /* Number of operator priority levels */
-#define MAX_ARITY 1000        
+//#define MAX_ARITY 1000        
+#define MAX_ARITY 2000        
 
 #define N_OP_KIND 3
 #define BINARY    0

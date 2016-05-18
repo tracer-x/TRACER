@@ -1,0 +1,10 @@
+Retractall/1 Problem:
+---------------------
+
+:- dynamic(foo, 1), assert(foo(a)), assert(foo(b)).
+
+:- retractall(foo(a)).
+
+would also retract foo(b).
+
+

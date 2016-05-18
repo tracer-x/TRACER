@@ -14,6 +14,8 @@
 	op(50, fx, `), op(40, xfx, is), op(40, xfx, =..), op(31, yfx, +),
 	op(21, yfx, /), op(21, yfx, *), op(37, xfx, >), op(37, xfx, >=),
 	op(37, xfx, <), op(37, xfx, <=), op(37, xfx, ==).
+	%% Operators added 10/08/2009 to compare lexicographically terms
+	% op(37,xfx,@<), op(37,xfx,@>), op(37,xfx,@<=),op(37,xfx,@>=).
  
 h :- history.
  
@@ -194,6 +196,7 @@ is_library(flush).
 is_library(fork).
 is_library(functor(_)).
 is_library(functor(_, _, _)).
+is_library(get_pid(_)).    % Added by Jorge
 is_library(ground(_)).
 is_library(halt).
 is_library(hide(_, _)).
@@ -237,9 +240,12 @@ is_library(spy).
 is_library(srand(_)).
 is_library(stats).
 is_library(tell(_)).
+is_library(tell_append(_)).  % Added by Jorge
 is_library(telling(_)).
 is_library(told).
 is_library(trace).
+is_library(unsafe_see(_)).   % Added by Jorge
+is_library(unsafe_tell(_)).  % Added by Jorge
 is_library(var(_)).
 is_library(warning(_)).
 is_library(write(_)).
@@ -324,6 +330,7 @@ do_library(spy) :- spy.
 do_library(srand(X)) :- srand(X).
 do_library(stats) :- stats.
 do_library(tell(X)) :- tell(X).
+do_library(tell_append(X)) :- tell_append(X).  % Added by Jorge
 do_library(telling(X)) :- telling(X).
 do_library(told) :- told.
 do_library(trace) :- trace.
@@ -350,6 +357,91 @@ do_library(ztime) :- ztime.
 % Comment out if no style checking desired or for old code if there
 % are too many warnings
 ::- $clear_style_check, style_check(all).
- 
- 
+
+% '@<='(Term1,Term2)  :- '$lexleq'(Term1,Term2).
+% '@>='(Term1,Term2)  :- not(Term2 @> Term1).
+% '@>'(Term1,Term2)   :- not(Term1 @<= Term2).
+% '@<'(Term1,Term2)   :- not(Term2 @<= Term1).
+
+% %-----------------------------------------------------------------------%
+% % '$lexleq'(A,B) succeeds if term A is lexicographically less or equal
+% % than term B.	
+% %-----------------------------------------------------------------------%
+% '$lexleq'(Atom1,Atom2):- Atom1 == Atom2,!.
+% '$lexleq'(Atom1,Atom2):-
+% 	arithmetic(Atom1),
+% 	!,
+% 	arithmetic(Atom2),
+% 	not(Atom1>Atom2).
+% '$lexleq'(Atom1,Atom2):-
+% 	var(Atom1),
+% 	!,
+% 	var(Atom2),
+% 	printf_to_atom(X, "%", [Atom1]),
+% 	printf_to_atom(Y, "%", [Atom2]),
+% 	lexlt(X,Y).
+% '$lexleq'(Atom1,Atom2):-
+% 	atom(Atom1),
+% 	!,
+% 	atom(Atom2),
+% 	lexlt(Atom1,Atom2).
+% '$lexleq'(Term1,Term2):-
+% 	functor(Term1,_,A1),
+% 	functor(Term2,_,A2),!,
+% 	A1 == A2,
+% 	Term1 =.. Args1,
+% 	Term2 =.. Args2,
+% 	'$lexleq_args'(Args1,Args2).
+
+% '$lexleq_args'([],[]):-!.
+% '$lexleq_args'([X1|X1s],[X2|X2s]):-
+% 	'$lexleq'(X1,X2),
+% 	'$lexleq_args'(X1s,X2s).
+
+%-----------------------------------------------------------------------%
+% lexlt(A,B) succeeds if A is lexicographically less than B.
+% A,B are numbers, atoms or variables.
+%-----------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------------%
+% atom_list_concat(+List,-Atom): List is a list of atoms. Succeeds if
+% Atom can be unified with the concatenated elements of List.
+%-----------------------------------------------------------------------------%
+atom_list_concat([X], X) :- !.
+atom_list_concat([X|R], Z) :-
+	atom(X),
+	atom_list_concat(R,Y),
+	$concat(X,Y,Z).
+
+%-----------------------------------------------------------------------------%
+% atom_concat/3: append two atoms
+%-----------------------------------------------------------------------------%
+atom_concat(X, Y, Z) :- $concat(X,Y,Z).
+
+
+:- dynamic('$mem_usage',7).
+%-----------------------------------------------------------------------------%
+% zmem_usage/0
+%-----------------------------------------------------------------------------%
+zmem_usage:-
+	retractall('$mem_usage'(_,_,_,_,_,_,_)),	
+	diagnostic(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms),
+	fassert('$mem_usage'(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms)).
+
+%-----------------------------------------------------------------------------%
+% cmem_usage/1
+%-----------------------------------------------------------------------------%
+cmem_usage(memory(DeltaTotal,DeltaCode,DeltaStack,DeltaHeap,DeltaTrail,DeltaSolver,
+		  DeltaPTerms)):-
+	retract('$mem_usage'(OldTotal,OldCode,OldStack,OldHeap,OldTrail,OldSolver,OldPTerms)),	
+	diagnostic(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms),
+	DeltaTotal  = NewTotal-OldTotal,
+        DeltaCode   = NewCode-OldCode,
+        DeltaStack  = NewStack-OldStack,
+        DeltaHeap   = NewHeap-OldHeap,
+        DeltaTrail  = NewTrail-OldTrail,
+        DeltaSolver = NewSolver-OldSolver,
+	DeltaPTerms = NewPTerms-OldPTerms,
+	fassert('$mem_usage'(NewTotal,NewCode,NewStack,NewHeap,NewTrail,NewSolver,NewPTerms)),!.
+
  

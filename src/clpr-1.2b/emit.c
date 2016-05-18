@@ -1189,6 +1189,14 @@ int regs[];
 	emit_word(regs[0]);
 }
 
+emit_detable(regs)
+int regs[];
+{
+	clear_last();
+	emit_word(DETABLE);
+	emit_word(regs[0]);
+}
+
 emit_roole(regs)
 int regs[];
 {

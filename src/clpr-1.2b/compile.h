@@ -6,9 +6,10 @@
  *  File: compile.h                                            *
  ***************************************************************/
 
-#define MAX_REGS        1024   /*** < (REGS_SZ - REGS), multiple of 32 ***/
-#define MAXUNRESOLVED	10000
-#define MAXFUNCTORS		8000
+//#define MAX_REGS        1024    /*** < (REGS_SZ - REGS), multiple of 32 ***/
+#define MAX_REGS        1280
+#define MAXUNRESOLVED	80000
+#define MAXFUNCTORS		64000
 #define MAXCLAUSES		3000
 #define MAXVARS			20000
 #define MAXNAMES 		10000
@@ -19,7 +20,12 @@
 #define DUMP_SEPARATOR  ('\001')	/* separator for dump variable strings */
 
 #define check_codespace(i) { \
-	if (CODE_SZ - (i) <= CODE_SAFETY) fatal("no more code space"); \
+	if (CODE_SZ - (i) <= CODE_SAFETY) { \
+		printf("\nCODE_SZ: %d\npcode marker: %d (should be the same as i: %d)\nepcode marker: %d\ndiagnostic's cs size while crashing: %d bytes\n", \
+				CODE_SZ, pcode, (i), epcode, (pcode > MAX_GOAL_CODE)? pcode * sizeof(*code): epcode * sizeof(*code)); \
+		printf("pid: %d\n", getpid()); \
+		fatal("no more code space"); \
+	} \
 } 
 #define check_goalspace(i) { \
 	if ((i) + CODE_SAFETY >= MAX_GOAL_CODE) fatal("no more goal space"); \

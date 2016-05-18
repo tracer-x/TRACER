@@ -85,6 +85,7 @@ extern HASH_P_NODE_ptr hash_p_table[];
 extern int startcode[], endcode[];
 extern FUNCTREC functors[];
 extern int trtop, **trail;
+extern char *tagtrail;
 extern int STYLE_CHECK_FLAG;
 
 extern HASH_P_NODE_ptr find_hash_p_node();
@@ -409,6 +410,13 @@ int temp_regs[MAX_SYSPRED_ARITY], free_flags[MAX_SYSPRED_ARITY], flag1, flag2;
 		temp_regs[0] = set_arg(t->first, &flag1);
 		emit_retract(temp_regs);
 		emit_inst(RETRACT_AGAIN);
+		if (flag1) freereg(temp_regs[0]);
+		return;
+	}
+	if (is_detable(t)) {
+		temp_regs[0] = set_arg(t->first, &flag1);
+		emit_detable(temp_regs);
+		emit_inst(DETABLE_AGAIN);
 		if (flag1) freereg(temp_regs[0]);
 		return;
 	}
@@ -907,12 +915,16 @@ PTERM *it;
 			&& gen_uni2var(it, fmask, &r1, &r2)) {
 			if (bit1(fmask)) {
 				count++;
+				store_trail_bits0(trtop);
 				trail[trtop++] = (int *) it;
-				trail[trtop++] = (int *) r1; 
+				store_trail_bits0(trtop); 
+				trail[trtop++] = (int *) r1;
 			}
 			if (bit2(fmask)) {
 				count++;
+				store_trail_bits0(trtop); 
 				trail[trtop++] = (int *) it->next;
+				store_trail_bits0(trtop); 
 				trail[trtop++] = (int *) r2; 
 			}
 			it = it->next;
@@ -923,16 +935,18 @@ PTERM *it;
 				|| !is_p_func(it)) fetch_uni_nonfunc(it);
 		else {
 			count++;
+			store_trail_bits0(trtop); 
 			trail[trtop++] = (int *) it;
 			tmp = getreg();
+			store_trail_bits0(trtop); 
 			trail[trtop++] = (int *) tmp;
 			emit_unitvar(tmp);
 		}
 	}
 	tmp_trtop = save_trtop;  /*** dont reset trtop yet! ***/
 	for (; count; count--) {
-		it = (PTERM *) trail[tmp_trtop++];
-		tmp = (int) trail[tmp_trtop++];
+		it = (PTERM *) ((unsigned)(tagtrail[tmp_trtop] << 28) | (unsigned)trail[tmp_trtop++]);
+		tmp = (int) ((unsigned)(tagtrail[tmp_trtop] << 28) | (unsigned)trail[tmp_trtop++]);
 		if (is_eval(it)) half_constraint(FALSE, -tmp, it); /* CHECK */
 		else fetch_func(it, tmp);
 	}
@@ -1025,8 +1039,10 @@ int save_trtop;
 	arity = t->narg;
 	save_trtop = trtop;
 	for (j = 1, it = t->first; it; j++, it = it->next) {
-		if ((is_complex_func(it) || is_eval(it)) && (j < arity || !is_rr(it))) 
+		if ((is_complex_func(it) || is_eval(it)) && (j < arity || !is_rr(it))) {
+			store_trail_bits0(trtop);
 			trail[trtop++] = (int *) put_func(it);
+		}
 	} 
 	check_if_save_reg(reg);
 	if (is_p_list(t)) emit_putlist(reg);
@@ -1037,7 +1053,7 @@ int save_trtop;
 	for (j = 1, it = t->first; it; j++, it = it->next) {
 		if (is_complex_func(it) || is_eval(it)) {
 			if (j < arity || !is_rr(it)) {
-				tmp = (int) trail[trtop++];
+				tmp = (int) ((unsigned)(tagtrail[trtop] << 28) | (unsigned)trail[trtop++]);
 				emit_bldtval(tmp);
 				freereg(tmp);
 			} else put_last_func(it);
@@ -1128,8 +1144,10 @@ int save_trtop;
 	save_trtop = trtop;
 	for (i = 1, it = t->first; it; i++, it = it->next) {
 		if ((is_complex_func(it) || is_eval(it)) && 
-				(i < arity || !is_rr(it))) 
+				(i < arity || !is_rr(it))) {
+			store_trail_bits0(trtop);
 			trail[trtop++] = (int *) put_func(it);
+		}
 	}
 	if (is_p_list(t)) emit_putlist(tmp0 = getreg());
 	else if (is_complex_func(t)) emit_putstr(t->val, tmp0 = getreg());
@@ -1138,7 +1156,7 @@ int save_trtop;
 	for (i = 1, it = t->first; it; i++, it = it->next) {
 		if (is_complex_func(it) || is_eval(it)) { 
 			if (i < arity || !is_rr(it)) {
-				emit_bldtval(tmp = (int) trail[trtop++]);
+				emit_bldtval(tmp = (int) (((unsigned)tagtrail[trtop] << 28) | (unsigned) trail[trtop++]));
 				freereg(tmp);
 			} else put_last_func(it);
 		} else put_bld_nonfunc(it);
@@ -1524,6 +1542,7 @@ PTERM *t;
 	return t;
 }
 
+extern int misc_malloc;
 char dumpvarstring[MAX_DUMP_VARSTRING];
 char *dumpvarnames(t)
 PTERM *t;
@@ -1542,6 +1561,7 @@ char *c, *c1;
 	}
 	*c = '\0';
 	c = (char *) malloc(strlen(dumpvarstring) + 1);
+	misc_malloc += strlen(dumpvarstring) + 1;
 	strcpy(c, dumpvarstring);
 	return c;
 }

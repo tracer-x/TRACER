@@ -60,15 +60,29 @@
 #include "compile.h"
 #include "emul.h"
 #include "opcodes.h"
+#include "solver.h"
+
+#ifdef  CLP_PROVER
+// To plug Rybalchenko's tool for interpolant generation
+#include "clp_prover.h"
+//#include <stdlib.h>
+#endif  
+
+#ifdef  EXTERNAL_SOLVER
+// To plug external solvers
+#include "extern_solver.h"
+#endif 
 
 #define U_SEC (1000000.0)
 #if (defined(BSD) & !defined(OS2V2))
 static struct timeval basetime, curtime;
 #endif
 #if (defined(SYS5) | (defined(OS2V2) & !defined(CC_CSET)))
+#if (!defined(LINUX) | !defined(CC_CSET))
 static struct tms basetime, curtime;
 #endif
-#if (defined(OS2V2) && defined(CC_CSET))
+#endif
+#if ((defined(OS2V2) && defined(CC_CSET)) | (defined(LINUX) && defined(CC_CSET)))
 static clock_t basetime, curtime;
 #endif
 
@@ -119,7 +133,18 @@ extern int IMPLICIT, PARTIAL_IMPLICIT;
 extern int WARN_ABORT;
 extern int WARNING_FLAG;
 extern bool have_runable;
+
 extern int CODE_SZ;
+extern int STACK_START_ADDR;
+extern int HEAP_START_ADDR;
+extern int TRAIL_START_ADDR;
+extern int SOLVER_START_ADDR;
+extern SOLVER_NODE_ptr sms;
+extern int num_pterms;
+extern int malloc_size;
+extern char* tagtrail;
+extern int EMALLOC_MEMORY;
+
 extern int STYLE_CHECK_FLAG;
 extern int REDEFINE_FLAG;
 extern struct HASHNODE *hash_func_tab[];
@@ -258,11 +283,57 @@ SPNODE sptab[] = {
 	{ do_retractoneall, 1, "retractall", 0}, 
 /*****/
 	{ do_dump_tableaus, 0, "dump_tableaus" , 0},
+
+	/* Predicates added for TRACER */
+	/* Assert only linear equations */
+	{ do_linear_assertz, 1, "assert_only_lin_eqs" , 0},
+        /* Dump only (equality) linear equations */
+	{ do_linear_dump3  , 3, "dump_only_lin_eqs" , 0},	
+	{ do_lexlt, 2, "lexlt", 0},
+	{ do_concat, 3, "$concat", 0},
+	{ do_unsafe_tell, 1, "unsafe_tell" , 0},  
+	{ do_tell_append, 1, "tell_append" , 0},  
+	{ do_unsafe_see , 1, "unsafe_see"  , 0},
+	{ do_get_pid    , 1, "get_pid"     , 0},
+#ifdef  EXTERNAL_SOLVER
+        /*** To plug external solvers in CLP(R) **************/
+        /*** For now, only one external solver at the time ***/
+	{ do_assrt_cnstr_extern_solver     , 1, "assrt_cnstr_extern_solver"     , 0},
+	{ do_check_sat_extern_solver       , 1, "check_sat_extern_solver"       , 0},
+	{ do_display_model_extern_solver   , 0, "display_model_extern_solver"   , 0},
+	{ do_add_choice_point_extern_solver, 0, "add_choice_point_extern_solver", 0},
+	{ do_backtrack_extern_solver       , 0, "backtrack_extern_solver"       , 0},
+	{ do_unsat_core_extern_solver      , 2, "unsat_core_extern_solver"      , 0},
+#endif  
+#ifdef  CLP_PROVER
+	/*** To plug Rybalchenko's tool *********************/
+	{ do_clp_prover_start              , 0, "clp_prover_start"              , 0},
+	{ do_clp_prover_exit               , 0, "clp_prover_exit"               , 0},
+	{ do_clp_prover_interpolate        , 3, "clp_prover_interpolate"        , 0},
+#endif  
+
+	{ do_diagnostic, 7, "diagnostic", 0},
+	{ do_tablez, 1, "table", 0},
+	{ do_tablea, 1, "tablea", 0},
+	{ do_tablez, 1, "tablez", 0},
+	{ do_set_nonlinear_flag, 0, "set_nonlinear_flag", 0},
+	{ do_consult_nonlinear_flag, 1, "consult_nonlinear_flag", 0},
+	{ do_set_cs_mark, 0, "set_cs_mark", 0},
+	{ do_pop_cs_mark, 0, "pop_cs_mark", 0},
+	{ do_pop_cs_mark2, 0, "pop_cs_mark2", 0},
+#ifdef  CLEAR_PTERM_BUFFER
+	{ do_clear_pterm_buffer, 0, "clear_pterm_buffer", 0},
+#endif 
+	/* Printf that always prints to stdout */
+	{ do_stdout_printf, 2, "stdout_printf", 0},
 	{ 0, 0, 0, 0}
 };
 
 /* #define MAX_VAR_IN_HEAP 1024 */
-#define MAX_VAR_IN_HEAP 2048
+/* #define MAX_VAR_IN_HEAP 2048 */
+/* #define MAX_VAR_IN_HEAP 4096 */
+#define MAX_VAR_IN_HEAP 8192
+
 static int pterm_var_cnt = -1;
 static int var_heapval[MAX_VAR_IN_HEAP + 1];
 static int hterm_var_cnt = 0;
@@ -270,6 +341,12 @@ static int heap_varval[MAX_VAR_IN_HEAP + 1];
 
 static PTERM *ht_to_pterm();
 static int heapify_pterm();
+
+#ifdef EXTERNAL_SOLVER
+// To plug external solvers in CLP(R) 
+SOLVER_CONTEXT solver_store;
+#endif 
+extern int *heap, *lstack; 
 
 /*---------------------------------------------------------------------------*/
 
@@ -287,11 +364,21 @@ IO_REC *t;
 				warn_err("Could not read from file %s", name);
 				return (FILE *) NULL;
 			}
-		} else {
+		} 
+		else{ /* branch added by Jorge */
+		  if (mode == IO_APPEND){
+			if ((f = my_open(name, "a")) == (FILE *) NULL) {
+				warn_err("Could not write from file %s", name);
+				return (FILE *) NULL;
+			}
+
+		  }		
+		  else {  /* IO_WRITE */
 			if ((f = my_open(name, "w")) == (FILE *) NULL) {
 				warn_err("Could not write to file %s", name);
 				return (FILE *) NULL;
 			}
+		  }
 		}
 		t->fio = f;
 		t->s = name;
@@ -425,6 +512,14 @@ clean_temp_file() /* remove the temp file */
 	}
 }
 
+/*---------------------------------------------------------------------------*/
+/* Printf that always prints to stdout                                       */
+/*---------------------------------------------------------------------------*/
+int do_stdout_printf(int *t1, int *t2)
+{
+  return do_printf(stdout, t2, string_of(mask(*t1)), FALSE);
+}
+
 
 do_printf(F, t, fmt, flush_flag) 
 FILE *F;
@@ -534,7 +629,11 @@ int ground, i;
 			else if (fmt_ty == REAL_FMT) fprintf(F, fmt, val);
 			else if (fmt_ty == INT_FMT) 
 				fprintf(F, fmt, round_int(val));
+/* #ifdef  DUMP_FIXED_POINT */
+/* 			else fprintf(F, "%f", val); */
+/* #else */
 			else fprintf(F, "%g", val);
+/* #endif */
 		} else {
 			i = mask(*t);
 			if (i < slack_id) fprintf(F, "_t%d", i);
@@ -571,13 +670,20 @@ char *names;
 do_dump3(t1, t2, t3)
 int *t1, *t2, *t3;
 {
-	return dump3(t1,t2,t3);
+  return dump3(t1,t2,t3, FALSE);
+}
+
+do_linear_dump3(t1, t2, t3)
+int *t1, *t2, *t3;
+{
+  // Include only linear equations
+  return dump3(t1,t2,t3, TRUE);
 }
 
 do_dump2(t1, t2)
 int *t1, *t2;
 {
-	return dump2(outfile, t1, t2);
+  return dump2(outfile, t1, t2);
 }
 
 extern FILE *cur_stream;
@@ -614,8 +720,14 @@ int nt;
 			gobble_nl();
 			exp_tt = quote_expand(tt, FALSE);
 			nt = (int) pterm_to_heap(exp_tt);
+#ifdef  FREE_PTERMS
+/* Added by Jorge */			
+			free_pterm(tt);
+			free_pterm(exp_tt);
+#else			
 			if (is_p_real(tt) || is_p_constant(tt)) free_pterm(tt);
-			if (is_p_real(exp_tt) || is_p_constant(exp_tt)) free_pterm(exp_tt);
+			if (is_p_real(exp_tt) || is_p_constant(exp_tt)) free_pterm(exp_tt); 
+#endif
 		} else make_bound_var(&nt, (int) efile);
 		new_input(old_cur_stream, "");
 	}
@@ -638,25 +750,63 @@ FILE *f;
 		warn_err("bad argument to see/1");
 		return FALSE;
 	}
+
 	if (see_stack_top >= MAX_STREAM) fatal("see/1 stack blown");
+
 	see_stack[see_stack_top].f = see_input; 
 	see_stack[see_stack_top++].t = see_input_t; 
+	
 	if (strcmp(functors[mask(*t)].pname, "user")) {
-		if (!(f = file_ready(functors[mask(*t)].pname, IO_READ)))
-			return FALSE;
-/*
-		infile = f;
-*/
-		see_input = f;
-		see_input_t = *t;
-		return TRUE;
+	  if (!(f = file_ready(functors[mask(*t)].pname, IO_READ)))
+	    return FALSE;
+	  /*
+	    infile = f;
+	  */
+	  see_input = f;
+	  see_input_t = *t;
+	  return TRUE;
 	} else {
-		see_input = stdin;
-		see_input_t = addtag(TAG_CON, USER);
-		return !strcmp(functors[mask(*t)].pname, "user");
+	  see_input = stdin;
+	  see_input_t = addtag(TAG_CON, USER);
+	  return !strcmp(functors[mask(*t)].pname, "user");
 	}
 }
- 
+
+/* Begin added by Jorge */
+do_unsafe_see(t)
+int *t;
+{
+FILE *f;
+	t = findbind(t);
+	if (!is_con(t)) {
+		warn_err("bad argument to unsafe_see/1");
+		return FALSE;
+	}
+
+	/*
+	if (see_stack_top >= MAX_STREAM) fatal("see/1 stack blown");
+
+	see_stack[see_stack_top].f = see_input; 
+	see_stack[see_stack_top++].t = see_input_t; 
+	*/
+	
+	if (strcmp(functors[mask(*t)].pname, "user")) {
+	  if (!(f = file_ready(functors[mask(*t)].pname, IO_READ)))
+	    return FALSE;
+	  /*
+	    infile = f;
+	  */
+	  see_input = f;
+	  see_input_t = *t;
+	  return TRUE;
+	} else {
+	  see_input = stdin;
+	  see_input_t = addtag(TAG_CON, USER);
+	  return !strcmp(functors[mask(*t)].pname, "user");
+	}
+}
+/* End added by Jorge */
+
 do_seeing(t)
 int *t;
 {
@@ -675,7 +825,7 @@ int *t;
 	    new_input(stdin, "<stdin>");
 	    unreadchar(' ');
 	    readchar();
-	}
+	}      
 	if (see_stack_top <= 1) {
 		warning("Too many seen/0\n");
 		return TRUE;
@@ -703,10 +853,66 @@ FILE *f;
 	}
 	if (tell_stack_top >= MAX_MESSAGE) fatal("tell/1 stack blown");
 	fflush(outfile);
+
 	tell_stack[tell_stack_top].f = outfile;
 	tell_stack[tell_stack_top++].t = outfile_t;
 	if (strcmp(functors[mask(*t)].pname, "user")) {
-	   if (!(f = file_ready(functors[mask(*t)].pname, IO_WRITE))) 
+	  if (!(f = file_ready(functors[mask(*t)].pname, IO_WRITE))) 
+	    return FALSE;
+	  outfile = f;
+	  outfile_t = *t;
+	  return TRUE;
+	} else {
+	  outfile = stdout;
+	  outfile_t = addtag(TAG_CON, USER);
+	  return !strcmp(functors[mask(*t)].pname, "user");
+	}
+}
+/* Begin added by Jorge */
+do_unsafe_tell(t)
+int *t;
+{
+FILE *f;
+	t = findbind(t);
+	if (!is_con(t)) {
+		warn_err("bad argument to unsafe_tell/1");
+		return FALSE;
+	}
+	//	if (tell_stack_top >= MAX_MESSAGE) fatal("tell/1 stack blown");
+	fflush(outfile);
+
+	/*
+	tell_stack[tell_stack_top].f = outfile;
+	tell_stack[tell_stack_top++].t = outfile_t;
+	*/
+	if (strcmp(functors[mask(*t)].pname, "user")) {
+	  if (!(f = file_ready(functors[mask(*t)].pname, IO_WRITE))) 
+	    return FALSE;
+	  outfile = f;
+	  outfile_t = *t;
+	  return TRUE;
+	} else {
+	  outfile = stdout;
+	  outfile_t = addtag(TAG_CON, USER);
+	  return !strcmp(functors[mask(*t)].pname, "user");
+	}
+}
+
+do_tell_append(t)
+int *t;
+{
+FILE *f;
+	t = findbind(t);
+	if (!is_con(t)) {
+		warn_err("bad argument to tell_append/1");
+		return FALSE;
+	}
+	if (tell_stack_top >= MAX_MESSAGE) fatal("tell_append/1 stack blown");
+	fflush(outfile);
+	tell_stack[tell_stack_top].f = outfile;
+	tell_stack[tell_stack_top++].t = outfile_t;
+	if (strcmp(functors[mask(*t)].pname, "user")) {
+	   if (!(f = file_ready(functors[mask(*t)].pname, IO_APPEND))) 
 			return FALSE;
 		outfile = f;
 		outfile_t = *t;
@@ -717,6 +923,30 @@ FILE *f;
 		return !strcmp(functors[mask(*t)].pname, "user");
 	}
 }
+
+do_get_pid(t) 
+int *t;
+{
+int *tmp;
+double p_pid;
+
+	t = findbind(t);
+	if (!(is_unbound_var(*t) || is_daemon(t))) {
+		warn_err("bad argument to get_pid/1");
+		return FALSE;
+	}
+ 
+        p_pid = (double) getpid();
+
+	makenum(++solver_id, p_pid);
+	*heaptop = addtag(TAG_PAR, solver_id);
+	tmp = heaptop++;
+	unify(tmp, t);
+	return TRUE;
+}
+
+/* End added by Jorge */
+
  
 do_telling(t)
 int *t;
@@ -918,6 +1148,22 @@ init_ht_to_pterm()
 	hterm_var_cnt = 0; /*** not 0 ***/
 }
 
+/* ===== begin added by Vijay ===== */
+
+extern int misc_malloc;
+
+struct list_item {
+	int val;
+	struct list_item *next;
+};
+typedef struct list_item LIST_ITEM;
+
+LIST_ITEM *pterm_buf_head = NULL;
+
+int pterm_buf_malloc = 0;
+
+/* ===== end of added by Vijay ===== */
+
 static PTERM *ht_to_pterm(t, quoted, with_dump)
 int *t, quoted, with_dump;
 {
@@ -926,11 +1172,20 @@ int i, j, val;
 double rval;
 char *buf;
 PTERM *prev, *cur;
+LIST_ITEM *new_buf_head;
 	t = findbind(t);
 	if (tag(*t) == TAG_PAR) { 
 		i = mask(*t);
 		if (is_ground(i, &rval)) return new_real(rval);
 		buf = (char *) malloc(20);
+		pterm_buf_malloc += 20;
+#ifdef CLEAR_PTERM_BUFFER
+		new_buf_head = malloc(sizeof(LIST_ITEM));
+		misc_malloc += sizeof(LIST_ITEM);
+		new_buf_head->val = (int) buf;
+		new_buf_head->next = pterm_buf_head;
+		pterm_buf_head = new_buf_head;
+#endif
 		if (with_dump) {
 			if (!(j = is_pivot_var(i))) fatal("71231");
 			j = j + funct_vars_top + 2*flatten_vars_top;
@@ -959,6 +1214,14 @@ PTERM *prev, *cur;
 		return new_pt_emptylist(EMPTYLIST, 0, "[]");
 	else if (is_unbound_var(*t) || is_daemon(t)) {
 		buf = (char *) malloc(20);
+		pterm_buf_malloc += 20;
+#ifdef CLEAR_PTERM_BUFFER
+		new_buf_head = malloc(sizeof(LIST_ITEM));
+		misc_malloc += sizeof(LIST_ITEM);
+		new_buf_head->val = (int) buf;
+		new_buf_head->next = pterm_buf_head;
+		pterm_buf_head = new_buf_head;
+#endif
 		if (with_dump) {
 			if (!(j = is_funct_var(t))) {
 				if (j = heap_to_pivot_var(t)) j += funct_vars_top + 2*flatten_vars_top;
@@ -1148,17 +1411,25 @@ int first_flag;
 do_asserta(t)
 int *t;
 {
-	return do_assert_rule(t, TRUE);
+  return do_assert_rule(t, TRUE, FALSE);
 }
 
 do_assertz(t)
 int *t;
 {
-	return do_assert_rule(t, FALSE);
+  return do_assert_rule(t, FALSE, FALSE);
 }
 
-do_assert_rule(t, start)
-int *t, start;
+do_linear_assertz(t)
+int *t;
+{
+  // Assert only linear equations
+  return do_assert_rule(t, FALSE, TRUE);
+}
+
+
+do_assert_rule(t, start, linear_flag)
+int *t, start, linear_flag;
 {
 int i;
 PTERM *nt;
@@ -1175,7 +1446,9 @@ int last_flag = FALSE, first_flag = FALSE;
 		warn_err("bad argument to assert/1 or assertz/1");
 		return FALSE;
 	}
-	dump_constraints = get_rule_constraints(t);
+	// Added by Jorge
+	dump_constraints = get_rule_constraints(t,linear_flag);
+
 	init_ht_to_pterm();
 	if (is_nil(dump_constraints)) {
 		new_term = t;
@@ -1251,6 +1524,116 @@ ADD:
 	if (last_flag) assign_p_last_compiled_rule(i, r);
 	epcode = pcode;
 	resolve(TRUE);
+	return TRUE;
+}
+
+do_tablea(t)
+int *t;
+{
+	return do_table_rule(t, TRUE);
+}
+
+do_tablez(t)
+int *t;
+{
+	return do_table_rule(t, FALSE);
+}
+
+do_table_rule(t, start)
+int *t, start;
+{
+int i;
+PTERM *nt;
+RULE_ptr r, first_rule;
+int first_code;
+int *dump_constraints;
+PTERM *c, *clist, *slist;
+int *head, *body, *lastc, *new_term;
+int **new_vars;
+int last_flag = FALSE, first_flag = FALSE;
+
+	t = findbind(t);
+	if (!is_con(t) && !is_func(t)) {
+		warn_err("bad argument to table/1 or tablez/1");
+		return FALSE;
+	}
+	dump_constraints = get_rule_constraints(t,FALSE);
+	init_ht_to_pterm();
+	if (is_nil(dump_constraints)) {
+		new_term = t;
+		nt = ht_to_pterm(new_term, FALSE, TRUE);
+		goto ADD;
+	}
+	lastc = end_of_constraints(dump_constraints);
+	if (mask(*t) == IMPL) {
+		make_bound_var(lastc + 2, t + 2);
+		nt = new_p_func2(IMPL,
+			ht_to_pterm(t + 1, FALSE, TRUE), 
+			ht_to_pterm(dump_constraints, FALSE, TRUE));
+	} else { 
+		make_bound_var(lastc, lastc[1]);
+		nt = new_p_func2(IMPL,
+			ht_to_pterm(t, FALSE, TRUE), 
+			ht_to_pterm(dump_constraints, FALSE, TRUE));
+	}	
+	make_bound_var(heaptop++, dump_constraints);
+	heaptop++;	
+ADD:
+	cleanup_dump();
+	i = (head_of_rule(nt))->val;
+	if (p_protected(i)) {
+		warn_err("table failed: %s/%d is protected",
+			string_of(i), arity_of(i));
+		return FALSE;
+	}
+	if (!p_dynamic(i)) {
+		warn_err("table failed: %s/%d is not dynamic",
+			string_of(i), arity_of(i));
+		return FALSE;
+	}
+	pcode = epcode;
+	init_lable();
+	if (start) {
+		r = new_rule();
+		r->t = r->wt = nt;
+		if (p_compiled(i)) {
+			first_rule = p_first_rule(i);
+			r->next = first_rule;
+			/* avoid special value of 0 */
+			if ((r->id = first_rule->id - 1) == 0) r->id = -1;	
+		} else {
+			r->next = (RULE_ptr) NULL;
+			r->id = 1;
+			assign_p_last_rule(i, r);
+			last_flag = TRUE;
+			first_flag = TRUE;	/* first time needs headers */
+		}
+	} else {
+		r = store_rule(nt, nt, FALSE);
+		if (!p_compiled(i)) {
+			assign_p_first_rule(i, r);
+			first_flag = TRUE;
+		}
+		last_flag = TRUE;
+	}
+	r->startcode = pcode;
+	current_rule = r;
+	check_codespace(pcode);
+	compile_rule(r->wt, -1);
+	check_codespace(pcode);
+	r->endcode = pcode - 1;
+	if (start) assign_p_first_rule(i, r);
+	else assign_p_last_rule(i, r);
+	if (first_flag) {
+		assign_p_start_hdrcode(i, pcode);
+		emit_dynamic_try(i);
+		assign_p_end_hdrcode(i, pcode - 1);
+		assign_p_compiled(i, TRUE);
+	}
+	if (last_flag) assign_p_last_compiled_rule(i, r);
+	epcode = pcode;
+	resolve(TRUE);
+	free_pterm(nt);
 	return TRUE;
 }
 
@@ -1904,8 +2287,10 @@ int *tmp;
 	curtime = clock();
 #endif
 #if (defined(SYS5) | (defined(OS2V2) & !defined(CC_CSET)))
+#if (!defined(LINUX) | !defined(CC_CSET))
 	if ((t3 = (double) (curtime.tms_utime-basetime.tms_utime)) < 0.0) t3 = 0.0;
 	t3 = t3 / (double) HZ;
+#endif
 #endif
 #if defined(BSD) && !defined(OS2V2)
 	t1 = curtime.tv_sec - basetime.tv_sec;
@@ -2751,7 +3136,11 @@ char buffer[256], buf1[50];
 	strcpy(buffer+1, name);
 	hnode = insert_func_htable(buffer);
 	if (hnode->extra) {
+#ifdef  DUMP_FIXED_POINT
+		sprintf(buf1, "%f", val);
+#else
 		sprintf(buf1, "%g", val);
+#endif
 		warning("constant %s has been changed to %s", buffer, buf1);
 		/** return FALSE; **/
 	}
@@ -2855,3 +3244,994 @@ double r;
 	return TRUE;
 }
 
+int do_lexlt(int *t1, int *t2)
+{
+  char *str1, *str2;
+
+  t1 = findbind(t1);
+  t2 = findbind(t2);
+
+  if (!is_con(t1) || !is_con(t2)) {
+    warn_err("bad argument(s) to lexlt/2: constants required");
+    return FALSE;
+  }
+
+  str1 = string_of(mask(*t1));
+  str2 = string_of(mask(*t2));
+
+  if (strcmp(str1, str2) >= 0) return FALSE;
+  return TRUE;
+}
+
+int do_concat(int *t1, int *t2, int *t3)
+{
+  char *str1, *str2, *str3;
+  int l1, l2;
+
+  t1 = findbind(t1);
+  t2 = findbind(t2);
+
+  if (!is_con(t1) || !is_con(t2)) {
+    warn_err("bad argument(s) to $concat/3: constants required");
+    return FALSE;
+  }
+  l1 = strlen(str1 = string_of(mask(*t1)));
+  l2 = strlen(str2 = string_of(mask(*t2)));
+
+  str3 = (char *)malloc(l1 + l2);
+  misc_malloc += l1 + l2;
+  strcat(strcpy(str3, str1), str2);
+
+  return make_a_con(t3, hashbuiltina(str3, 0));
+}
+
+int do_diagnostic(total_sz, code_sz, stack_sz, heap_sz, trail_sz, solver_sz, pterms)
+int *total_sz, *code_sz, *stack_sz, *heap_sz, *trail_sz, *solver_sz, *pterms;
+{
+int *tmp;
+double p_total_sz, p_code_sz, p_stack_sz, p_heap_sz, p_trail_sz, p_solver_sz, p_pterms;
+double tagtrail_sz, misc_sz;
+
+	total_sz = findbind(total_sz);
+	if (!(is_unbound_var(*total_sz) || is_daemon(total_sz))) {
+		warn_err("bad first argument to diagnostic/7\n");
+		return FALSE;
+	}
+	code_sz = findbind(code_sz);
+	if (!(is_unbound_var(*code_sz) || is_daemon(code_sz))) {
+		warn_err("bad second argument to diagnostic/7\n");
+		return FALSE;
+	}
+	stack_sz = findbind(stack_sz);
+	if (!(is_unbound_var(*stack_sz) || is_daemon(stack_sz))) {
+		warn_err("bad third argument to diagnostic/7\n");
+		return FALSE;
+	}
+	heap_sz = findbind(heap_sz);
+	if (!(is_unbound_var(*heap_sz) || is_daemon(heap_sz))) {
+		warn_err("bad fourth argument to diagnostic/7\n");
+		return FALSE;
+	}
+	trail_sz = findbind(trail_sz);
+	if (!(is_unbound_var(*trail_sz) || is_daemon(trail_sz))) {
+		warn_err("bad fifth argument to diagnostic/7\n");
+		return FALSE;
+	}
+	solver_sz = findbind(solver_sz);
+	if (!(is_unbound_var(*solver_sz) || is_daemon(solver_sz))) {
+		warn_err("bad sixth argument to diagnostic/7\n");
+		return FALSE;
+	}
+	pterms = findbind(pterms);
+	if (!(is_unbound_var(*pterms) || is_daemon(pterms))) {
+		warn_err("bad seventh argument to diagnostic/7\n");
+		return FALSE;
+	}
+
+	// core memory usage
+	if(pcode > MAX_GOAL_CODE) // we are in epcode's domain but epcode hasn't been updated. so use pcode
+		p_code_sz = pcode * sizeof(*code);
+	else
+		p_code_sz = epcode * sizeof(*code);
+	p_stack_sz = ((unsigned) stacktop - (unsigned) STACK_START_ADDR) * sizeof(*stacktop);
+	p_heap_sz = ((unsigned) heaptop - (unsigned) HEAP_START_ADDR) * sizeof(*heaptop);
+	p_trail_sz = (trtop * sizeof(*trail)) + (trtop * sizeof(*tagtrail));
+	p_solver_sz = (sms_blocks * SOLVER_MALLOC_NODES * sizeof(SOLVER_NODE)) + (SOLVER_SZ * sizeof(int));
+	p_pterms = (num_pterms * sizeof(PTERM)) + pterm_buf_malloc;
+
+	// other memory usage
+	misc_sz = misc_malloc; //EMALLOC_MEMORY + misc_malloc;
+	//printf("Misc mem(already added into Total): %0.1fMb\n", misc_sz/1048576);
+
+	p_total_sz = p_code_sz + p_stack_sz + p_heap_sz + p_trail_sz + p_solver_sz + p_pterms + misc_sz;
+
+	tmp = heaptop;
+	makenum(++solver_id, p_total_sz);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(total_sz, tmp);
+
+	tmp = heaptop;
+	makenum(++solver_id, p_code_sz);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(code_sz, tmp);
+
+	tmp = heaptop;
+	makenum(++solver_id, p_stack_sz);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(stack_sz, tmp);
+
+	tmp = heaptop;
+	makenum(++solver_id, p_heap_sz);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(heap_sz, tmp);
+
+	tmp = heaptop;
+	makenum(++solver_id, p_trail_sz);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(trail_sz, tmp);
+
+	tmp = heaptop;
+	makenum(++solver_id, p_solver_sz);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(solver_sz, tmp);
+
+	tmp = heaptop;
+	makenum(++solver_id, p_pterms);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(pterms, tmp);
+
+	return TRUE;
+}
+
+int nlin_stored = -1;
+
+do_set_nonlinear_flag()
+{
+	nlin_stored = nlin_count;
+	// printf("storing %d\n", nlin_stored);
+	return TRUE;
+}
+
+do_consult_nonlinear_flag(t)
+int *t;
+{
+int *tmp;
+double flag;
+
+	t = findbind(t);
+	if (!(is_unbound_var(*t) || is_daemon(t))) {
+		warn_err("bad argument to consult_nonlinear_flag/1\n");
+		return FALSE;
+	}
+	if(nlin_stored < 0) {
+		warn_err("call to consult_nonlinear_flag/1 encountered before set_nonlinear_flag/0\n");
+		return FALSE;
+	}
+
+	// printf("count is %d\n", nlin_count);
+	flag = (nlin_count > nlin_stored)? 1.0 : 0.0;
+
+	tmp = heaptop;
+	makenum(++solver_id, flag);
+	*(heaptop++) = addtag(TAG_PAR, solver_id);
+	unify(t, tmp);
+	
+	nlin_stored = -1;
+	return TRUE;
+}
+
+LIST_ITEM *head = NULL;
+
+do_set_cs_mark()
+{
+	LIST_ITEM *new_head = malloc(sizeof(LIST_ITEM));
+	misc_malloc += sizeof(LIST_ITEM);
+
+	new_head->val = epcode;
+	new_head->next = head;
+	head = new_head;
+
+#ifdef  CSMARK_DEBUG
+	printf("CS pointer remembered at %d \n",epcode);
+#endif
+	return TRUE;
+}
+
+do_pop_cs_mark()
+{
+LIST_ITEM *tmp;
+
+	if(!head) {
+		warn_err("no codespace marker available! check the number of calls to set_cs_mark/0 wrt pop_cs_mark/0 or pop_cs_mark2/0.\n");
+		return FALSE;
+	}
+	if(head->val > epcode) {
+		warn_err("some problem with codespace. check pop_cs_mark/0\n");
+		return FALSE;
+	}
+
+	while(epcode > head->val)
+		code[--epcode] = (int) NULL;
+
+#ifdef  CSMARK_DEBUG
+        printf("CS pointer moved to %d \n",epcode);
+#endif
+
+	tmp = head;
+	head = head->next;
+	free(tmp);
+	misc_malloc -= sizeof(LIST_ITEM);
+
+	return TRUE;
+}
+
+do_pop_cs_mark2()
+{
+LIST_ITEM *tmp;
+
+	if(!head) {
+		warn_err("no codespace marker available! check the number of calls to set_cs_mark/0 wrt pop_cs_mark/0 or pop_cs_mark2/0.\n");
+		return FALSE;
+	}
+	if(head->val > epcode) {
+		warn_err("some problem with codespace. check pop_cs_mark2/0\n");
+		return FALSE;
+	}
+
+	tmp = head;
+	head = head->next;
+	free(tmp);
+	misc_malloc -= sizeof(LIST_ITEM);
+
+	return TRUE;
+}
+
+#ifdef CLEAR_PTERM_BUFFER
+do_clear_pterm_buffer()
+{
+LIST_ITEM *tmp1, *tmp2;
+	tmp1 = pterm_buf_head;
+	while (tmp1) {
+		free((int *) tmp1->val);
+		pterm_buf_malloc -= 20;
+		tmp2 = tmp1;
+		tmp1 = tmp1->next;
+		free(tmp2);
+		misc_malloc -= sizeof(LIST_ITEM);
+	}
+	pterm_buf_head = NULL;
+
+	//printf("Called clear_pterm_buffer from pid %d \n",getpid());
+
+	return TRUE;
+}
+#endif
+
+#if     defined(EXTERNAL_SOLVER) || defined(CLP_PROVER)
+#define round(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+#endif  /*EXTERNAL_SOLVER || CLP_PROVER*/
+
+#ifdef  EXTERNAL_SOLVER
+/* 
+   To plug external solvers in CLP(R).  For now, only the Microsoft Z3
+   SMT solver.
+*/
+
+init_extern_solver()
+{
+  //if (solver_store == NULL)
+  solver_store = mk_solver_store();
+  return TRUE;
+}
+
+clean_extern_solver()
+{
+  //if (solver_store != NULL)
+  del_solver_store(solver_store);
+  return TRUE;
+}
+
+char * make_ground_varname(t)
+int * t;
+{
+static char b[50];
+
+ t = findbind(t);
+ sprintf(b, "%s", functors[mask(*t)].pname);
+ return b;  
+}
+
+
+char * make_varname(v)
+int * v;
+{
+static char b[50];
+
+ if (is_heap_ptr(v)){
+   sprintf(b, "VAR_%d", var2pos(v, heap));   
+ }
+ else if (is_stack_ptr(v)) {
+   sprintf(b, "VAR_%d", var2pos(v, lstack));
+ }
+ else {
+    fatal("56912");
+ }
+ return b;  
+}
+
+SOLVER_TERM  make_subconstraint(t)
+int * t; 
+{
+int val, arity;
+char *name;
+double numval;
+
+  val   = mask(*t);
+  arity = arity_of(val);
+  name  = string_of(val);
+
+  if (is_unbound_var(*t) || is_daemon(t)){
+    return mk_int_var(solver_store,make_varname(t));
+  }
+  if (is_num(t,&numval)){
+    return mk_int(solver_store,round(numval));          
+  }
+  // Hook to allow add directly specific variable names
+  if (arity == 1 && (strcmp(name,"$VAR")==0)){
+    int * t1 = findbind(t+1);
+    if (is_con(t1))
+      return mk_int_var(solver_store,make_ground_varname(t1));
+  }
+  if (arity == 1 && (strcmp(name,"arr")==0)){
+    int * t1 = findbind(t+1);
+    if (is_unbound_var(*t1) || is_daemon(t1))
+      return mk_array_var(solver_store,make_varname(t1));
+
+    // Hook to allow add directly specific variable names    
+    if (arity_of(mask(*t1)) == 1 && (strcmp(string_of(mask(*t1)),"$VAR")==0)){
+      int * t2 = findbind(t1+1);
+      if (is_con(t2))
+	return mk_array_var(solver_store,make_ground_varname(t2));
+    }    
+    fprintf(error_stream,"Bad formed array variable \n");
+    fatal("... bye");
+  }
+
+
+  if (arity == 1 && (strcmp(name,"minus")==0)){
+    return mk_unary_minus(solver_store,
+			  make_subconstraint(findbind(t+1)));
+  }
+  if (arity == 2 && (strcmp(name,"plus")==0)){
+    return mk_add(solver_store,
+		  make_subconstraint(findbind(t+1)),
+		  make_subconstraint(findbind(t+2)));
+  }
+  if (arity == 2 && (strcmp(name,"minus")==0)){
+    return mk_sub(solver_store,
+		  make_subconstraint(findbind(t+1)),
+		  make_subconstraint(findbind(t+2)));
+  }
+  if (arity == 2 && (strcmp(name,"mult")==0)){
+    return mk_mul(solver_store,
+		  make_subconstraint(findbind(t+1)),
+		  make_subconstraint(findbind(t+2)));
+  }
+  if (arity == 2 && (strcmp(name,"div")==0)){
+    return mk_div(solver_store,
+		  make_subconstraint(findbind(t+1)),
+		  make_subconstraint(findbind(t+2)));
+  }
+
+  if (arity == 2 && (strcmp(name,"ref")==0)){
+    return mk_select(solver_store,
+		     make_subconstraint(findbind(t+1)),
+		     make_subconstraint(findbind(t+2)));
+  }
+  if (arity == 3 && (strcmp(name,"upd")==0)){
+    return mk_store(solver_store,
+		    make_subconstraint(findbind(t+1)),
+		    make_subconstraint(findbind(t+2)),
+		    make_subconstraint(findbind(t+3)));
+  }
+
+  if (strcmp(name,"unk")==0){    
+    return mk_true(solver_store);
+  }
+
+  warn_err("Unrecognized constraint %s/%d \n",name,arity);
+  return (SOLVER_TERM) NULL;       
+}
+
+SOLVER_TERM  make_constraint(t, name, arity)
+int *t, arity;
+char *name;
+{
+
+  if (arity == 0 && (strcmp(name,"tt")==0)){
+    return mk_true(solver_store);
+  }
+  else if (arity == 0 && (strcmp(name,"ff")==0)){
+    return mk_false(solver_store);    
+  }
+  else if (arity == 2 && (strcmp(name,"assign")==0)){  
+    return mk_eq(solver_store,
+		 make_subconstraint(findbind(t+1)),
+		 make_subconstraint(findbind(t+2)));
+  } 
+  else if (arity == 2 && (strcmp(name,"eq")==0)){  
+    return mk_eq(solver_store,
+		 make_subconstraint(findbind(t+1)),
+		 make_subconstraint(findbind(t+2)));
+  } 
+  else if (arity == 2 && (strcmp(name,"gt")==0)){  
+    return mk_gt(solver_store,
+		 make_subconstraint(findbind(t+1)),
+		 make_subconstraint(findbind(t+2)));
+  } 
+  else if (arity == 2 && (strcmp(name,"geq")==0)){  
+    return mk_ge(solver_store,
+		 make_subconstraint(findbind(t+1)),
+		 make_subconstraint(findbind(t+2)));
+  } 
+  
+  fprintf(error_stream,"bad formed constraint %s/%d \n",name,arity);
+  fatal("... bye");   
+}
+
+do_assrt_cnstr_extern_solver(t)
+int *t;
+{
+int val, arity;
+char *name;
+SOLVER_TERM term;
+
+  t = findbind(t);
+  if (!is_func(t) && !is_con(t)) {
+    warn_err("bad argument to assrt_cnstr_solver/1");
+    return FALSE;
+  }
+
+  val   = mask(*t);
+  name  = string_of(val);
+  arity = arity_of(val);
+  
+  term = make_constraint(t,name,arity);
+  // for debugging
+  // display_solver_term(solver_store, stdout,term);
+
+  assert_cnstr(solver_store,term);  
+
+  return TRUE;  
+}
+
+do_check_sat_extern_solver(t)
+int *t;
+{
+int *tmp;
+int v;
+
+  v = check(solver_store);
+
+  makenum(++solver_id,(double) v);
+  *heaptop = addtag(TAG_PAR, solver_id);
+  tmp = heaptop++;
+  unify(tmp, t);
+  return TRUE;
+ 
+}
+
+int *create_bitvector_term(b, n)
+unsigned *b;
+int n;
+{
+  int i, *l, *start, *t;
+  double val;
+
+ l = start = heaptop;
+ heaptop += 2;
+ 
+ for (i = 1; i <= n; i++, l = heaptop, heaptop += 2) {
+   makenum(++solver_id, (double) b[i-1]);
+   *l = addtag(TAG_PAR, solver_id); 
+   *(l + 1) = addtag(TAG_CONS, heaptop);
+ }
+ *(l - 1) = addtag(TAG_NIL, EMPTYLIST);
+ heaptop = l;
+ return start;
+}
+
+do_unsat_core_extern_solver(l,core_l)
+int *l;
+int *core_l;
+{
+  SOLVER_TERM *cs;
+  int  ret, arity,  *ll, *rep, n, i, *tmp;
+  unsigned core_sz;
+  char *name;
+  unsigned* bitvector;
+  int *principle, *new_list;
+
+  l = findbind(l);
+  if (!(is_nil(l) || is_cons(l))) {
+    warn_err("first argument of unsat_core_extern_solver/2 must be a list");
+    return FALSE;
+  }
+
+  if (!count_list(l, &n) || n < 0) {
+    warn_err("bad first argument to unsat_core_extern_solver/2");
+    return FALSE;
+  }
+
+  if (n == 0){
+    new_list = findbind(make_cons(NULL,NULL));
+    *(new_list) = addtag(TAG_NIL, EMPTYLIST);
+    if (!unify(new_list, core_l)) 
+      return FALSE;    
+    return TRUE;    
+  }
+  else{
+    cs  = (SOLVER_TERM *) malloc(sizeof(SOLVER_TERM) * n);
+    if (cs == NULL)
+      fatal("No more memory !");
+    
+    for (ll = findbind(l),i=0; ll; ll = findbind((int *)(pmask(*ll))+1),i++) {      
+      if (tag(*ll) == TAG_NIL) 
+       break;
+      if (tag(*ll) != TAG_CONS) 
+	return FALSE;
+      
+      rep = findbind((int *) pmask(*ll));      
+      name  = string_of(mask(*rep));
+      arity = arity_of(mask(*rep));       
+      cs[i] = make_constraint(rep,name,arity);       
+    }
+    ret = unsat_core(solver_store, cs, (unsigned) n, &bitvector);
+    if (ret != SOLVER_ANS_FALSE)
+      return FALSE;
+    
+    new_list = findbind(make_cons(NULL,NULL));
+    *(new_list) = addtag(TAG_CONS,create_bitvector_term(bitvector, n));
+    if (!unify(new_list, core_l)) 
+      return FALSE;
+    
+    return TRUE;
+    
+  }
+
+ 
+}
+
+do_add_choice_point_extern_solver(){
+  add_choice_point(solver_store);
+  return TRUE;
+}
+
+do_backtrack_extern_solver(){
+  backtrack_last_choice_point(solver_store);
+  return TRUE;
+}
+
+do_display_model_extern_solver()
+{
+  check_and_display_model(solver_store, stdout);
+  return TRUE;
+}
+#endif 
+
+#ifdef  CLP_PROVER
+/* 
+   Rybalchenko's tool for generation of interpolants
+*/
+#include "clp-prover/hashtable.h"
+
+/*
+  Convert from CLP(R) to CLP Prover format
+*/
+
+char * clp_prover_make_varname(v)
+int * v;
+{
+static char b[50];
+
+	if (is_heap_ptr(v)){
+		sprintf(b, "v_%d", var2pos(v, heap));   
+	}
+	else if (is_stack_ptr(v)) {
+		sprintf(b, "v_%d", var2pos(v, lstack));
+	}
+	else {
+		fatal("56912");
+	}
+	return b;  
+}
+
+char * clp_prover_make_subconstraint(t,varstable)
+int * t; 
+hash_table_t * varstable;
+{
+	int val, arity;
+	char *name;
+	double numval;
+	char *term,*term1,*term2;
+	
+	term  = (char *) malloc( MAX_CLPPROVER+1);
+	term1 = (char *) malloc( MAX_CLPPROVER+1);
+	term2 = (char *) malloc( MAX_CLPPROVER+1);
+
+	val   = mask(*t);
+	arity = arity_of(val);
+	name  = string_of(val);
+
+	if (is_unbound_var(*t) || is_daemon(t)){
+		char * varstr = clp_prover_make_varname(t);
+		//fprintf(stderr,"Inserting hash table %s\n",varstr);
+		if(hash_table_add(varstable,(void *) varstr,
+				  strlen(varstr),
+				  (void *) t /* should hash t and NOT &t!!! */,
+				  sizeof(t)) == -1)
+		  fatal("no memory to hash!");
+		sprintf(term,"%s",varstr);
+		return term;
+	}
+	else if (is_num(t,&numval)){
+		sprintf(term,"%d",round(numval));
+		return term;
+	}
+	else if (strcmp(name,"unk")==0){    
+		sprintf(term,"1=1");
+		return term;
+	}
+	else if (arity == 1 && (strcmp(name,"minus")==0)){
+		term1 = clp_prover_make_subconstraint(findbind(t+1),varstable);
+		sprintf(term,"-(%s)",term1);
+		return term;
+	}
+	else if (arity == 2 && (strcmp(name,"plus")==0)){
+		term1= clp_prover_make_subconstraint(findbind(t+1),varstable);
+		term2= clp_prover_make_subconstraint(findbind(t+2),varstable);
+		sprintf(term,"(%s + %s)",term1,term2);
+		return term;
+	}
+	else if (arity == 2 && (strcmp(name,"minus")==0)){
+		term1= clp_prover_make_subconstraint(findbind(t+1),varstable);
+		term2= clp_prover_make_subconstraint(findbind(t+2),varstable);
+		sprintf(term,"(%s - %s)",term1,term2);
+		return term;
+	}
+	else if (arity == 2 && (strcmp(name,"mult")==0)){
+		term1= clp_prover_make_subconstraint(findbind(t+1),varstable);
+		term2= clp_prover_make_subconstraint(findbind(t+2),varstable);
+		sprintf(term,"(%s * %s)",term1,term2);
+		return term;
+	}
+	else if (arity == 2 && (strcmp(name,"div")==0)){
+		term1= clp_prover_make_subconstraint(findbind(t+1),varstable);
+		term2= clp_prover_make_subconstraint(findbind(t+2),varstable);
+		sprintf(term,"(%s / %s)",term1,term2);
+		return term;
+	}
+	else{
+		warn_err("Unrecognized constraint %s/%d \n",name,arity);
+		return (char *) NULL;       
+	}
+}
+
+char * clp_prover_make_constraint(t, name, arity, varstable)
+int *t, arity;
+char *name;
+hash_table_t * varstable;
+{
+  char *term;
+  char *term1;
+  char *term2;
+
+  term  = (char *) malloc( MAX_CLPPROVER+1);
+  term1 = (char *) malloc( MAX_CLPPROVER+1);
+  term2 = (char *) malloc( MAX_CLPPROVER+1);
+
+  if (arity == 0 && (strcmp(name,"tt")==0)){
+    sprintf(term,"%s","1=1");
+    return term;
+  }
+  else if (arity == 0 && (strcmp(name,"ff")==0)){
+    sprintf(term,"%s","1=0");
+    return term;
+  }
+  else if (arity == 2 && (strcmp(name,"assign")==0)){  
+    term1=clp_prover_make_subconstraint(findbind(t+1),varstable);
+    term2=clp_prover_make_subconstraint(findbind(t+2),varstable);
+    sprintf(term,"(%s = %s)",term1,term2);
+    return term;
+  } 
+  else if (arity == 2 && (strcmp(name,"eq")==0)){  
+    term1=clp_prover_make_subconstraint(findbind(t+1),varstable);
+    term2=clp_prover_make_subconstraint(findbind(t+2),varstable);
+    sprintf(term,"(%s = %s)",term1,term2);
+    return term;
+  } 
+  else if (arity == 2 && (strcmp(name,"gt")==0)){  
+    term1=clp_prover_make_subconstraint(findbind(t+1),varstable);
+    term2=clp_prover_make_subconstraint(findbind(t+2),varstable);
+    sprintf(term,"(%s > %s)",term1,term2);
+    return term;
+  } 
+  else if (arity == 2 && (strcmp(name,"geq")==0)){  
+    term1=clp_prover_make_subconstraint(findbind(t+1),varstable);
+    term2=clp_prover_make_subconstraint(findbind(t+2),varstable);
+    sprintf(term,"(%s >= %s)",term1,term2);
+    return term;
+  }   
+  fprintf(error_stream,"bad formed constraint %s/%d \n",name,arity);
+  fatal("... bye");   
+}
+
+char * convertStrArrayIntoStr(char ** arr, int arr_len){
+
+    int i;
+    size_t str_len=0;
+    static char * str = NULL;
+
+    str = (char*) malloc(2 * sizeof(char)); /* + 1 for terminating NULL */
+    memset(str,'\0',2);
+
+    for(i = 0; i < arr_len; ++i)
+    {
+       str_len += 1 + strlen(arr[i]); /* 1 + for separator ',' */
+       if( (str = (char*) realloc(str, 2*str_len + 1)) == NULL ){
+	 fprintf(error_stream, "Realocating memory\n");
+	 fatal("... bye");	 
+       }
+       if (i == arr_len -1)
+	 strncat(str,arr[i],str_len);
+       else
+	 strncat(strncat(str,arr[i],str_len), ",", str_len);      
+    }
+    return str;    
+}
+
+char * convertCLPRtoCLPProver(int *l, int n, hash_table_t * varstable){
+  int  *rep,*arity,*ll;
+  char *name;
+  char **cs;
+  int i;
+
+    cs  = (char *) malloc(sizeof(char *) * n);
+    if (cs == NULL)
+      fatal("No more memory !");
+    
+    for (ll = findbind(l),i=0; ll; ll = findbind((int *)(pmask(*ll))+1),i++) {      
+      if (tag(*ll) == TAG_NIL) 
+       break;
+      if (tag(*ll) != TAG_CONS) 
+	return FALSE;      
+
+      rep = findbind((int *) pmask(*ll));      
+      name  = string_of(mask(*rep));
+      arity = arity_of(mask(*rep));       
+      cs[i] = clp_prover_make_constraint(rep,name,arity,varstable);       
+    }
+    return convertStrArrayIntoStr(cs,n);
+}
+
+/*
+    Convert from CLP-Prover format to CLP(R)
+*/
+
+int * createUnaryCLPTerm(char  *,hash_table_t * );
+int * createBinaryCLPTerm(char *, hash_table_t *);
+int * parseCLPExpr(hash_table_t *);
+
+int *funclocation = NULL;
+int rootfunc;
+ 
+int * createUnaryCLPTerm(char * functor, hash_table_t * varstable){
+	int * t, *t1, *arg1;
+
+	t1 = parseCLPExpr(varstable);
+	t = rootfunc? funclocation : (int *) malloc(1);
+	make_a_new_fun(t,hashbuiltina(functor,1),1);
+	makenum(++solver_id,(double) 1);
+	*heaptop = addtag(TAG_PAR, solver_id); 
+	arg1 = heaptop++;
+	do_arg(arg1,t,t1);
+
+	return t;  
+}
+
+int * createBinaryCLPTerm(char * functor, hash_table_t * varstable){
+	int * t, *t1, *t2, *arg1, *arg2;
+
+	if(rootfunc) t = funclocation;
+	/* if allocated on heap, it works for the first time but
+	   causes random errors when goal is given twice or more */
+	else { t = (int *) malloc(1); *t = 0; }
+	rootfunc = FALSE;
+	if(!make_a_new_fun(t,hashbuiltina(functor,2),2))
+		fatal("could not make new functor!!!");
+
+	t1 = parseCLPExpr(varstable);
+	t2 = parseCLPExpr(varstable);
+
+	makenum(++solver_id, (double) 1);
+	*heaptop = addtag(TAG_PAR, solver_id); 
+	arg1 = heaptop++;
+	do_arg(arg1,t,t1);
+
+	makenum(++solver_id, (double) 2);
+	*heaptop = addtag(TAG_PAR, solver_id); 
+	arg2 = heaptop++;
+	do_arg(arg2,t,t2);
+
+	return t;  
+}
+
+int * parseCLPExpr(hash_table_t * varstable){
+	static char line[MAX_CLPPROVER];
+	int * t;
+	int    n1;
+	float n2;
+
+	mygetline(line,MAX_CLPPROVER);
+	if(line[MAX_CLPPROVER-1] != '\0') fatal("line limit exceeded");
+
+	if(strcmp(line,"var")     == 0){
+		mygetline(line,MAX_CLPPROVER);
+		char *tmp = line;
+		//fprintf(stderr,"search for var name %s\n",tmp);
+		t = (int *) hash_table_lookup(varstable,(void *) tmp,strlen(tmp));
+		//fprintf(stderr,"the address obtained is %d\n",t);
+		if(!t) fatal("HT LOOKUP FAILED!");
+		return t;
+	}
+	else if( strcmp(line,"integer") == 0) {
+		mygetline(line,MAX_CLPPROVER);
+		n1 = atoi(line);
+		makenum(++solver_id, (double) n1);
+		*heaptop = addtag(TAG_PAR, solver_id); 
+		t = heaptop++;
+		return t;
+	}
+	else if( strcmp(line,"float") == 0) {
+		mygetline(line,MAX_CLPPROVER);
+		// Don't use atof. 
+		//n2 = atof(line);
+		if(EOF == sscanf(line, "%f", &n2))
+		  {
+		    fatal("Parsing a float number\n");
+		  }
+		makenum(++solver_id, (double) n2);
+		*heaptop = addtag(TAG_PAR, solver_id); 
+		t = heaptop++;
+		return t;
+	}
+
+	else{
+		if(strcmp(line,"+") == 0){
+			fatal("Operator + not supported yet.\n");
+		}
+		else if(strcmp(line,"-") == 0){
+			t = createUnaryCLPTerm("minus" , varstable);
+		}
+		else if(strcmp(line,"++") == 0){
+			t = createBinaryCLPTerm("plus" , varstable);
+		}
+		else if(strcmp(line,"--") == 0){
+			t = createBinaryCLPTerm("minus", varstable);
+		}
+		else if(strcmp(line,"**") == 0){
+			t = createBinaryCLPTerm("mult" , varstable);
+		}
+		else if(strcmp(line,"/") == 0){
+			t = createBinaryCLPTerm("div" , varstable);
+		}
+		else {
+			fprintf(stderr, "unrecognized output from clp-prover: %s\n", line);
+			fatal("111111");
+		}
+		return t;
+	}
+}
+
+int *convertCLPProverToCLPR(hash_table_t * varstable){
+	static char op[MAX_CLPPROVER];
+	int * t;
+
+	mygetline(op,MAX_CLPPROVER);
+
+	if(strcmp(op,"=") == 0) {
+		t = createBinaryCLPTerm("eq",varstable);
+	}      
+	else if(strcmp(op,"<") == 0){    
+		t = createBinaryCLPTerm("lt",varstable);
+	}
+	else if(strcmp(op,">") == 0){    
+		t = createBinaryCLPTerm("gt",varstable);
+	}
+	else if(strcmp(op,"=<") == 0){    
+		t = createBinaryCLPTerm("leq",varstable);
+	}
+	else if(strcmp(op,">=") == 0){
+		t = createBinaryCLPTerm("geq",varstable);
+	}
+	else{
+		fprintf(stderr,"Parsing CLP exception: %s\n",op);
+		exit(1);
+	}
+	return t;
+}
+
+int clp_prover_running = FALSE;
+
+do_clp_prover_start(void)
+{
+	if(clp_prover_running)
+		fatal("clpprover is already running!");
+	clp_prover_start();
+	clp_prover_running = TRUE;
+	return TRUE;
+}
+
+do_clp_prover_exit(void)
+{
+	clp_prover_exit();
+	clp_prover_running = FALSE;
+	return TRUE;
+}
+
+do_clp_prover_interpolate(l1,l2,t)
+int *l1;
+int *l2;
+int *t;
+{
+	int  n1, n2, i;
+	char *a,*b;
+	int *intp;
+	hash_table_t * varstable = hash_table_new(MODE_VALUEREF);
+
+	if(!clp_prover_running) {
+		fatal("clpprover is not running! call clp_prover_start first");
+	}
+
+	/*
+	  CLP-PROVER does not compute interpolants for arrays. However, it
+	  does for EUF theory. So, it could be done.
+	*/
+
+	l1 = findbind(l1);
+	if (!(is_nil(l1) || is_cons(l1))) {
+		warn_err("first argument of clp_prover_interpolate/3 must be a list");
+		return FALSE;
+	}
+
+	if (!count_list(l1, &n1) || n1 < 0) {
+		warn_err("bad first argument to clp_prover_interpolate/3");
+		return FALSE;
+	}
+
+	l2 = findbind(l2);
+	if (!(is_nil(l2) || is_cons(l2))) {
+		warn_err("second argument of clp_prover_interpolate/3 must be a list");
+		return FALSE;
+	}
+
+	if (!count_list(l2, &n2) || n2 < 0) {
+		warn_err("bad second argument to clp_prover_interpolate/3");
+		return FALSE;
+	}
+
+	if (n1 == 0 || n2 == 0) {
+		warn_err("first and second argument must be non-empty lists");
+		return FALSE;
+	}
+	
+	a = convertCLPRtoCLPProver(l1, n1, varstable);
+	b = convertCLPRtoCLPProver(l2, n2, varstable);
+	t = findbind(t);
+	funclocation = t;
+	rootfunc = TRUE;
+
+	// if UNSAT, return TRUE since result needs to be unified. otherwise FALSE
+	return !clp_prover_interpolate(a, b, varstable);
+}
+#endif 

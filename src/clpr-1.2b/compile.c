@@ -73,8 +73,10 @@ init_compiler()
 	if (CODE_SZ < MIN_CODE_SZ) fatal("code size too small");
 	code = alloc_mem(CODE_SZ);
 	retract_low_mark = CODE_SZ;
+#ifdef  INIT_DEBUG
 	if (!code) fatal("not enough memory to initialize clpr (calloc)");
-
+	printf("Code start: %p end: %p\n", (unsigned)code, (unsigned)code + CODE_SZ*sizeof(int));
+#endif 
 	punresolved = 0;
 	bit1vec[1] = 0x1;
 	bit1vec[2] = 0x2;
@@ -363,6 +365,18 @@ RULE_ptr r;
 #endif
 }
 
+free_rule_detable(r)
+RULE_ptr r;
+{
+	r->id = 0;	/** 0 is special for deleted */
+	r->next = tmp_free_rule_list;
+	tmp_free_rule_list = r;
+#ifdef FREE_CODE_SPACE
+	free_code_space(r->startcode,r->endcode);
+	r->startcode = r->endcode = 0;
+#endif
+}
+
 free_code_space(start, end)
 int start, end;
 {
@@ -498,10 +512,13 @@ int op, pc;
 
 /*--------------------------------------- procedure info --------------------*/
 
+extern int misc_malloc;
+
 HASH_P_NODE_ptr malloc_null_HASH_P_NODE()
 {
 HASH_P_NODE_ptr p;
 	p = (HASH_P_NODE_ptr) calloc(1, sizeof(HASH_P_NODE));
+	misc_malloc += sizeof(HASH_P_NODE);
 	p->counter = 0.0;
 	return p;
 }
@@ -917,10 +934,12 @@ add_unres_lable(s, val, pc, off)
 char *s;
 int val, pc, off;
 {
+	if(punresolved >= MAXUNRESOLVED)
+		fatal("MAXUNRESOLVED reached! (check added by vijay)");
     code[pc] = punresolved;
     unresolved[punresolved].lable = s;
-    unresolved[punresolved].val = val;
     unresolved[punresolved].loc = pc;
+    unresolved[punresolved].val = val;
     unresolved[punresolved++].off = off;
 }
 
@@ -928,6 +947,8 @@ copy_unres_lable(from_pc, pc)
 int from_pc, pc;
 {
     int i;
+	if(punresolved >= MAXUNRESOLVED)
+		fatal("MAXUNRESOLVED reached! (check added by vijay)");
     if (((i = code[from_pc]) < 0) || (i >= punresolved))
         fatal("791237");
     code[pc] = punresolved;
@@ -941,6 +962,8 @@ resolve(warn)
 int warn;
 {
 int i, j, k;
+	if(punresolved >= MAXUNRESOLVED)
+		fatal("MAXUNRESOLVED reached! (check added by vijay)");
 	for (i = 0; i < punresolved; i++) {
 		k = unresolved[i].loc;
 		j = find_loc_for_lable(unresolved[i].val, unresolved[i].lable);

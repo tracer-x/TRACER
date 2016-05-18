@@ -156,6 +156,7 @@ ASMREC asmlist[] =
 	{ READ, "$read", 1, VARIABLE, 0, 0, 0, 0},
 	{ READREG, "$readreg", 1, REG, 0, 0, 0, 0},
 	{ RETRACT, "$retract", 1, REG, 0, 0, 0, 0},
+	{ DETABLE, "$detable", 1, REG, 0, 0, 0, 0},
 	{ ROOLE, "rule", 2, REG, REG, 0, 0, 0},
 	{ ROOLE_AGAIN, "rule_again", 0, 0, 0, 0, 0, 0},
 	{ SPCALL, "spcall", 1, SINT, 0, 0, 0, 0},

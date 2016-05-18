@@ -14,10 +14,7 @@
   <property name="tarball" value="tracer-0.1.tar.gz" />
 
   <!-- Needed to produce the release version which includes CLPR -->
-  <!--
   <property name="CLPR" value="./src/clpr-1.2b"/>
-  -->
-  <property name="CLPR" value="./src/clpr-1.2b-prebuilt"/>
 
   <!--   Java paths -->
   <property name="antlr"     
@@ -252,9 +249,7 @@
     <mkdir  dir="${release-dist}/tmp" />
     
     <!-- compile clpr -->
-    <!--
     <exec dir="${CLPR}" executable="/usr/bin/make" />
-    -->
 
     <!-- Specialized version of TRACER for public distribution -->  
     <exec dir="./dist" executable="./generate_source_code"/>
@@ -386,6 +381,10 @@
 <!--         <include name="*.c~"/> -->
 <!--       </fileset> -->
     </delete>
+    <exec dir="${CLPR}" executable="/usr/bin/make">
+      <arg value="clean"/>
+    </exec>
+    <delete file="${CLPR}/clpr" />
     <delete dir="${frontend-nb}/build" />
     <delete dir="${frontend-nb}/dist" />
     <delete file="${tarball}" />

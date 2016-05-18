@@ -56,6 +56,8 @@
 
 #define IO_READ             (1)
 #define IO_WRITE            (2)
+#define IO_APPEND           (3)  /* Added by Jorge */
+
 
 #define GOAL_START          (5)
 #define FAIL_ADDR           (0)
@@ -155,12 +157,20 @@
 #define deref(p) while (*(p) > 0) p = (int *) *(p);
 
 #define push_trail(btk_type, addr) \
+	store_trail_bits(trtop, addr); \
     trail[trtop++] = (int *) addtag(btk_type, (int *) (addr)) 
 
 #define push_check_trail(btk_type, addr) \
     if ((addr) < safeheap || ((addr) > lstack && (addr) < lastcp)) { \
+		store_trail_bits(trtop, addr); \
         trail[trtop++] = (int *) addtag(btk_type, (int *) (addr)); \
     }
+
+#define store_trail_bits0(i) \
+	tagtrail[i] = 0;
+
+#define store_trail_bits(i, t) \
+	tagtrail[i] = ((unsigned) (t)) >> 28;
 
 #define check_tag_par(tmp) { \
 	deref(tmp); \

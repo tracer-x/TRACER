@@ -13,6 +13,7 @@
 
 extern NL_EQN_ptr nl_eqn_top;
 extern int stamp, trtop, **trail;
+extern char *tagtrail;
 
 /*-------------------------------------- backup -----------------------------*/
 
@@ -159,6 +160,10 @@ TAB_HDR_NODE_ptr hdr;
 #endif
 	eqn = (EQN_ptr) i;
 	hdr = tableau[j = eqn->id];
+	if (!hdr) {
+	  // do_clisting();
+	  do_dump_tableaus();
+	}
 	pres_basic_var = hdr->eqn->params->basic; /* may be 0 */
 	prev_basic_var = eqn->params->basic; /* should be non 0 */
 	restore_ineq_occ_2(hdr->eqn, eqn);

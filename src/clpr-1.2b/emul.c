@@ -84,6 +84,7 @@ extern void free_nlin_nodes();
 
 int *stack;	             /* Register File / Heap / Stack */
 int **trail;	            /* Trail pointers */
+char *tagtrail;
 
 int REGS_SZ = DEF_REGS_SZ;
 int HEAP_START = DEF_REGS_SZ;
@@ -113,6 +114,10 @@ int *heaptop;	           /* Current top of heap */
 int trtop;	              /* Current top of trail */
 int *lastcp;	            /* Latest choice point on stack */
 int *s;	                 /* Unification read/write mode registers */
+
+int STACK_START_ADDR;
+int TRAIL_START_ADDR;
+int HEAP_START_ADDR;
 
 int stamp;
 int *first_lastcp;
@@ -148,10 +153,8 @@ extern int TRACE, CLAM_TRACE;
 
 /*---------------------------------------------------------------------------*/
 
-init_engine()
+void init_engine_mem()
 {
-PTERM *t;
-
 	if (HEAP_SZ < MIN_HEAP_SZ) fatal("heap size too small");
 	if (LSTACK_SZ < MIN_LSTACK_SZ) fatal("local stack size too small");
 	if (TRAIL_SZ < MIN_TRAIL_SZ) fatal("trail size too small");
@@ -162,9 +165,30 @@ PTERM *t;
 	MTRAIL = TRAIL_SZ + TRAIL_SAFETY;
 
 	stack = (int *) alloc_mem(MSTACK);
+#ifdef  INIT_DEBUG
 	if (!stack) fatal("not enough memory to initialize clpr (stacks)");
+	printf("Stack start: %p end: %p\n", (unsigned) stack, (unsigned) stack + MSTACK * sizeof(int));
+#endif 
+
+	if (((unsigned)stack + (unsigned)MSTACK * sizeof(int)) >> 28)
+	  fatal("bad stack address range");
+
 	trail = (int **) alloc_mem(TRAIL_SZ);
+#ifdef  INIT_DEBUG
 	if (!trail) fatal("not enough memory to initialize clpr (trail)");
+	printf("Trail start: %p end: %p\n", (unsigned) trail, (unsigned) trail + TRAIL_SZ * sizeof(int));
+#endif 
+	TRAIL_START_ADDR = (int) trail;
+
+	if (((unsigned)trail + (unsigned)TRAIL_SZ * sizeof(int)) >> 28)
+	  fatal("bad trail address range");
+
+	tagtrail = (char *) alloc_mem(TRAIL_SZ / sizeof(*trail) * sizeof(char));
+}
+
+init_engine()
+{
+PTERM *t;
 
 	pcode = FAIL_ADDR;
 	t = lookup_name("$fail", sum_str("$fail"));
@@ -282,10 +306,10 @@ TAB_HDR_NODE_ptr hdr;
 	s_count[134]++;
 #endif	
 				case NUM_BTK_EQN:
-					free_eqn_nodes(pmask(j));
+					free_eqn_nodes(pmask(j) | ((unsigned)tagtrail[i] << 28));
 					break;
 				case NUM_BTK_NLIN:
-					free_nlin_nodes(pmask(j));
+					free_nlin_nodes(pmask(j) | ((unsigned)tagtrail[i] << 28));
 					break;
 		}
 	}
@@ -340,7 +364,9 @@ int_clean()
 first_engine()
 {
 	heaptop = s = heap = stack + HEAP_START;
+	HEAP_START_ADDR = (int) heaptop;
 	stacktop = curar = lstack = stack + LSTACK;
+	STACK_START_ADDR = (int) stacktop;
 	maxlstack = stack + MSTACK - STACK_SAFETY;
 	maxheap = stack + LSTACK - HEAP_SAFETY;
 	maxtrail = var2pos((trail + TRAIL_SZ - TRAIL_SAFETY), trail);
@@ -370,6 +396,8 @@ double c;
 float f;
 int *cp_for_cut;
 int first_dyn_call = FALSE;
+int *temp;
+int *prevpc;
 
 	runable = heaptop++;
 	*runable = addtag(TAG_NIL, EMPTYLIST);
@@ -393,23 +421,29 @@ int first_dyn_call = FALSE;
 	ti = (int) mask(*(lastcp + OTRTOP));
 	for (ti1 = trtop - 1; ti1 >= ti; ti1--) {
 		ti2 = (int) trail[ti1];
-		if (tag(ti2) == BTK_BIND) make_unbound_var((int *) pmask(ti2));
+		if (tag(ti2) == BTK_BIND) {
+			// Vijay - for some reason when tag is BTK_BIND crash occurs if
+			// the 4 bits are restored from tagtrail. Have to make sure the reason.
+			temp = (int *) (pmask(ti2));// | ((unsigned)tagtrail[ti1] << 28));
+			make_unbound_var(temp);
+		}
 #ifdef CYCLIC_BIND
 		else if (tag(ti2) == BTK_TEST) 
-		  make_bound_var((int *) pmask(ti2), **((int **) pmask(ti2)));
+		  make_bound_var((int *) (pmask(ti2) | ((unsigned)tagtrail[ti1] << 28)), **((int **) (pmask(ti2) | ((unsigned)tagtrail[ti1] << 28))));
 #endif
 #ifdef DESTRUCTIVE_UPDATE
 		else if (tag(ti2) == BTK_TEST2) 
-			make_bound_var((int *) pmask(ti2), trail[--ti1]);
+			make_bound_var((int *) (pmask(ti2) | ((unsigned)tagtrail[ti1] << 28)), (trail[--ti1] | ((unsigned)tagtrail[ti1] << 28)));
 #endif
-		else solver_backtrack(ti2);
+		else solver_backtrack(ti1, ti2);
 	}
 
 	ti2 = mask(*(lastcp + NUMPARS));
 	tmp1 = lastcp + ti2;
 	tmp2 = Regs + ti2;
 	while (tmp2 > Regs) *tmp2-- = *tmp1--;
-	pc = (int *) pmask(*tmp1);
+	// pc = (int *) pmask(*tmp1); Changed by Vijay to solve switch(*pc) crash
+	pc = (int *) (*tmp1);
 	tmp1 -= 2;
 	heaptop = (int *) pmask(*tmp1--);
 	trtop = (int) mask(*tmp1--); 
@@ -432,11 +466,17 @@ int first_dyn_call = FALSE;
 	if (CLAM_TRACE) clam_trace(intpc(pc));
 #endif
 
+	prevpc = pc;	
 	/************/
 	switch (*pc) {
 	/************/
 
-	caseop(BADINST): fatal("Zero opcode");
+	caseop(BADINST):
+#ifdef FREE_PTERMS
+        goto FAIL; /* Vijay- changing this for minmax */
+#else
+        fatal("Zero opcode");
+#endif
 	caseop(NOOP):
 		pc++;
 		goto LOOP;
@@ -2120,7 +2160,7 @@ int first_dyn_call = FALSE;
 			    make_runable(tmp1 + 1);
 			} else {
 				if (tag(*tmp1) != TAG_PAR || 
-					!solve_eqn_2(mask(*tmp1), solver_id, 1.0)) 
+					!solve_eqn_2(mask(*tmp1), solver_id, 1.0))
 					goto FAIL;
 			}
 			s++;
@@ -2264,6 +2304,24 @@ int first_dyn_call = FALSE;
 		} else goto FAIL;
 	caseop(RETRACT_AGAIN):
 		if (retract_rule(0, pc, FALSE)) {
+			pc++;
+			goto LOOP;
+		} else goto FAIL;
+	caseop(DETABLE):
+		tmp1 = Regs + pc[1];
+		deref(tmp1);
+
+        if (is_unbound_var(*tmp1) && (tmp1 >= curar)) {
+                make_unbound_var(heaptop);
+                make_bound_var(tmp1, heaptop++);
+                push_check_trail(BTK_BIND, tmp1);
+		}
+		if (detable_rule(tmp1, pc, TRUE)) {
+			pc += 3;
+			goto LOOP;
+		} else goto FAIL;
+	caseop(DETABLE_AGAIN):
+		if (detable_rule(0, pc, FALSE)) {
 			pc++;
 			goto LOOP;
 		} else goto FAIL;
@@ -2485,16 +2543,16 @@ int first_dyn_call = FALSE;
 
 /*---------------------------------------------------------------------------*/
 
-solver_backtrack(i)
-int i;
+solver_backtrack(ti1, i)
+int ti1, i;
 {
 	switch (tagnum(i)) {
-		case NUM_BTK_NULL_EQN: restore_null_eqn(mask(i)); break;
-		case NUM_BTK_EQN: restore_eqn(pmask(i)); break;
-		case NUM_BTK_NULL_INEQ: restore_null_ineq(mask(i)); break;
-		case NUM_BTK_INEQ: restore_ineq(pmask(i)); break;
-		case NUM_BTK_NLIN: restore_nl_eqn(pmask(i)); break;
-		case NUM_BTK_DBIND: *((int *)pmask(i)) = TAG_DAEMON; break;
+		case NUM_BTK_NULL_EQN: restore_null_eqn(mask(i) | ((unsigned)tagtrail[ti1] << 28)); break;
+		case NUM_BTK_EQN: restore_eqn(pmask(i) | ((unsigned)tagtrail[ti1] << 28)); break;
+		case NUM_BTK_NULL_INEQ: restore_null_ineq(mask(i) | ((unsigned)tagtrail[ti1] << 28)); break;
+		case NUM_BTK_INEQ: restore_ineq(pmask(i) | ((unsigned)tagtrail[ti1] << 28)); break;
+		case NUM_BTK_NLIN: restore_nl_eqn(pmask(i) | ((unsigned)tagtrail[ti1] << 28)); break;
+		case NUM_BTK_DBIND: *((int *)pmask(i)) = TAG_DAEMON; break; // | ((unsigned)tagtrail[ti1] << 28))) = TAG_DAEMON; break;
 		default: fprintf(stderr, "-- %d --\n", tagnum(i)); fatal("79980");
 	}
 }
@@ -2537,6 +2595,14 @@ int ti, (*builtin)(), flag;
 		case 4:  flag = ((*builtin)(&regs[pc[2]], &regs[pc[3]],
 						 &regs[pc[4]], &regs[pc[5]])); 
 				break;
+		case 5:  flag = ((*builtin)(&regs[pc[2]], &regs[pc[3]], &regs[pc[4]],
+						 &regs[pc[5]], &regs[pc[6]]));
+				break;
+		case 6:  flag = ((*builtin)(&regs[pc[2]], &regs[pc[3]], &regs[pc[4]],
+						 &regs[pc[5]], &regs[pc[6]], &regs[pc[7]]));
+		case 7:  flag = ((*builtin)(&regs[pc[2]], &regs[pc[3]], &regs[pc[4]],
+						 &regs[pc[5]], &regs[pc[6]], &regs[pc[7]], &regs[pc[8]]));
+				break;
 		default: fatal("runtime: arity of system predicate too high");
 	}
 	return flag;
@@ -2573,7 +2639,7 @@ unify(t1, t2)
 int *t1, *t2;
 {
 register int tp1, tp2;
-int *stack[MAX_UNIFY_LEVELS], top, i, a, *tmp;
+int *stack[MAX_UNIFY_LEVELS], top, i, a, b, *tmp;
 double c1, c2;
 
 	top = 0;
@@ -2594,7 +2660,7 @@ DEREF2:	tp2 = *t2;
 		}
 		switch (tag_pair[(int) tagnum(tp1)][(int) tagnum(tp2)]) {
 /*
-		switch (tag_pair[(int) tagnum(*t1)][(int) tagnum(*t2)]) {
+		switch (tag_pair[(int) tagnum(*t1)][(int) tagnum(*t2)])
 */
 		case 1: /* 0, TAG_CON  */
 		case 2: /* 0, TAG_NIL  */
@@ -2630,7 +2696,7 @@ DEREF2:	tp2 = *t2;
 				break;
 		case 16: /* TAG_STR, TAG_STR */
 				if (t1 == t2) break;
-				if ((a = mask(*t1)) == mask(*t2)) {
+				if ((a = mask(*t1)) == (b = mask(*t2))) {
 #ifdef CYCLIC_BIND
 				  push_trail(BTK_TEST, t1);
 				  *t1 = t2;
@@ -2707,7 +2773,7 @@ DEREF2:	tp2 = *t2;
 		if (!top) return TRUE;
 		t2 = stack[top--];
 		t1 = stack[top--];
-	} 
+	}
 }
 
 /*---------------------------------------------------------- aux stuff ------*/
@@ -2724,6 +2790,93 @@ int val;
 {
 	if (p_compiled(val)) return ptrpc(p_start_hdrcode(val));
 	else return NULL;
+}
+
+detable_rule(t, pc, first)
+int *t, *pc, first;
+{
+int val, *t1;
+int *tmp1;
+RULE_ptr r, prev_rule;
+int old_solver_id, old_trtop, *old_heaptop;
+double fp_val;
+
+/*
+	if (first) t = findbind(t);
+	else t = (int *) findbind(lastcp[1]);
+*/
+	if (!first) t = (int *) lastcp[1];
+	if (!is_func(t) && !is_con(t)) runtime_error("bad argument to detable/1");
+	if ((val = mask(*t)) == IMPL) {
+		t1 = findbind(t + 1);
+		if (!is_func(t1) && !is_con(t1)) 
+			runtime_error("bad argument to detable/1");
+		val = mask(*t1);
+	} else t1 = t;
+	if (p_protected(val)) 
+		runtime_error("detable failed: %s/%d is protected",
+				string_of(val), arity_of(val));
+	if (!p_dynamic(val))
+		runtime_error("detable failed: %s/%d is not dynamic",
+				string_of(val), arity_of(val));
+	if (!p_compiled(val)) {
+		if (first) return FALSE;
+		goto CLEANUP_FAIL;
+	}
+	prev_rule = NULL;
+	r = p_first_rule(val);
+	if (first) {
+		push_cp();
+		lastcp[NEXTEP] = (int) (pc + 2);
+		lastcp[1] = (int) t;
+		stacktop = lastcp + 1;
+	} else stamp++;
+	old_solver_id = solver_id;
+	old_heaptop = heaptop;
+	old_trtop = trtop;
+	while (r) {
+		if (r->endcode == -1) goto MORE;
+		// t2 = pterm_to_heap(r->t);
+		// printf("%x %x\n", mask(*(t+1)), code[r->startcode+1]);
+
+		if(mask(*(t + 1)) == code[r->startcode + 1]) {
+			// printf("Retracting!\n");
+			if (have_runable && !wake_runable()) goto UNDO;
+			if (prev_rule) {
+				prev_rule->next = r->next;
+				if (!r->next) assign_p_last_rule(val, prev_rule); 
+			} else {
+				if (r->next) assign_p_first_rule(val, r->next);
+				else {
+					assign_p_first_rule(val, NULL);
+					assign_p_last_rule(val, NULL);
+					assign_p_compiled(val, FALSE);
+#ifdef FREE_CODE_SPACE
+					free_hdrcode(val);
+#else
+                    assign_p_start_hdrcode(val, 0);
+                    assign_p_end_hdrcode(val, 0);
+#endif
+				}
+			}
+			free_rule_detable(r);
+			return TRUE;
+		} else {
+UNDO:
+			untrail_to(old_trtop);
+			trtop = old_trtop;
+			solver_id = old_solver_id;
+			heaptop = old_heaptop;
+		}
+MORE:
+		prev_rule = r;
+		r = r->next;
+	}
+	CLEANUP_FAIL:
+	stacktop = lastcp - CPFRAME_HEIGHT;
+	lastcp = (int *) pmask(*(lastcp + PREVCP));
+	safeheap = (int *) pmask(*(lastcp + OHEAPTOP));
+	return FALSE;
 }
 
 retract_rule(t, pc, first)
@@ -2922,8 +3075,10 @@ int new_trtop;
 int i, t;
 	for (i = trtop - 1; i >= new_trtop; i--) {
 		t = (int) trail[i];
-		if (tag(t) == BTK_BIND) make_unbound_var((int *) pmask(t));
-		else solver_backtrack(t);
+		// Vijay - for some reason when tag is BTK_BIND crash occurs if
+		// the 4 bits are restored from tagtrail. Have to make sure the reason.
+		if (tag(t) == BTK_BIND) make_unbound_var((int *) (pmask(t)));// | ((unsigned)tagtrail[i] << 28)));
+		else solver_backtrack(i, t);
 	}
 }
 
@@ -2960,9 +3115,12 @@ double fp_val;
 
 	if (first) { /*** pseudo-indexing ***/
 		r = p_first_rule(pc[2]);
-		if (can_index && 
-					((index_val = get_index_val(&regs[1], &fp_val)) != 0))
-				r = quick_find(r, index_val, fp_val, &dummy, FALSE);
+		/*** commented by Vijay for running dynamic predicates that
+			 were tabled and not asserted. if any problem arises, pls
+			 inform me ***/
+		//if (can_index && 
+		//			((index_val = get_index_val(&regs[1], &fp_val)) != 0))
+		//		r = quick_find(r, index_val, fp_val, &dummy, FALSE);
 		if (!r) return NULL;
 		push_cp();
 		lastcp[NEXTEP] = (int) pc;
@@ -2981,9 +3139,12 @@ double fp_val;
 		} else {
 			for (r = p_first_rule(*(pc + 2)); r && r->id <= id; r = r->next);
 		}
-		if (r && can_index && 
-					((index_val = get_index_val(&regs[1], &fp_val)) != 0))
-				r = quick_find(r, index_val, fp_val, &dummy, FALSE);
+		/*** commented by Vijay for running dynamic predicates that
+			 were tabled and not asserted. if any problem arises, pls
+			 inform me ***/
+		//if (r && can_index && 
+		//			((index_val = get_index_val(&regs[1], &fp_val)) != 0))
+		//		r = quick_find(r, index_val, fp_val, &dummy, FALSE);
 		if (!r) goto CLEANUP_FAIL;
 		lastcp[lastcp[NUMPARS] + 1] = r->id;
 		lastcp[lastcp[NUMPARS] + 2] = (int) r;
@@ -3006,11 +3167,14 @@ int quoted;
 {
 PTERM *first_arg;
 RULE_ptr prev;
+PTERM *temp;
 int val1;
 	prev = *prev_rule;
 	if (val > 0) {
 		for (; r; r = r->next) {
+			temp = head_of_rule(r->t);
 			first_arg = head_of_rule(r->t)->first;
+			if(first_arg) {
 			val1 = (quoted && is_arith_term(first_arg) ?
 				get_quoted_func(first_arg->val) : first_arg->val);
 			if ((is_p_functor(first_arg) && val1 == val) || 
@@ -3019,16 +3183,19 @@ int val1;
 					return r;
 			}
 			prev = r;
+			}
 		}
 	} else if (val < 0) {
 		for (r = r; r; r = r->next) {
 			first_arg = head_of_rule(r->t)->first;
+			if(first_arg) {
 			if ((is_p_real(first_arg) && is_equal(first_arg->rval, fp_val)) ||
 				is_p_var(first_arg)) {
 					*prev_rule = prev;
 					return r;
 			}
 			prev = r;
+			}
 		}
 	}
 	return r;
@@ -3157,7 +3324,9 @@ push_destructive_trail(t, val)
 int *t, val;
 {
     if (t < safeheap || (t > lstack && t < lastcp)) { 
+		store_trail_bits0(trtop);
 		trail[trtop++] = (int *) val;
+		store_trail_bits(trtop, t);
         trail[trtop++] = (int *) addtag(BTK_TEST2, (int *) t); 
 	}
 }

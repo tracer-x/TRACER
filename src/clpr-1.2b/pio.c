@@ -46,7 +46,11 @@ PTERM *arg;
 	if (n < 0)
 		fatal("narg < 0 prob");
 	if (t->ty==REAL) {
+#ifdef  DUMP_FIXED_POINT
+		if (!is_zero(t->rval)) fprintf(outfile,"%f",t->rval);
+#else
 		if (!is_zero(t->rval)) fprintf(outfile,"%g",t->rval);
+#endif
 		else fprintf(outfile,"0");
 		return;
 	} else if (t->ty==STR) {
@@ -125,7 +129,11 @@ int current_comma;
 
 	switch (t->ty) {
 	case REAL:
+#ifdef  DUMP_FIXED_POINT
+		if (!is_zero(t->rval)) fprintf(outfile,"%f",t->rval);
+#else
 		if (!is_zero(t->rval)) fprintf(outfile,"%g",t->rval);
+#endif
 		else fprintf(outfile,"0");
 		return;
 	case STR:
@@ -234,7 +242,11 @@ int current_comma;
 	else if (is_param(t)) {
 		j = mask(*t);
 		if (is_ground(j, &val)) {
+#ifdef  DUMP_FIXED_POINT
+			if (!is_zero(val)) fprintf(f, "%f", val);
+#else
 			if (!is_zero(val)) fprintf(f, "%g", val);
+#endif
 			else fprintf(f, "0");
 		} else {
 			if (j < slack_id) fprintf(f, "_t%d", j);

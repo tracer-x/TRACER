@@ -48,11 +48,19 @@
 
 /**********************************************************************
  * All nodes below must be the same size (6 ints = 24 bytes, or 8 ints)
+ * BIT64 changes made by Vijay for 64-bit risci8 (node size = 48 bytes)
+ * IMPORTANT: compiler automatically aligns structs to nearest n-multiple
+ *            greater than the struct's size, where n is the size of the
+ *            largest element in it (ptr = 8, int = 4 on 64-bit system).
  *********************************************************************/
 
 typedef struct solver_node {
 	struct solver_node *next;
+#ifdef BIT64
+	int dummy[9];
+#else
 	int dummy[5];
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -62,7 +70,11 @@ typedef struct entry_node {
 	struct entry_node *next;
 	int id;
 	double coef;
+#ifdef BIT64
+	int dummy[6];
+#else
 	int dummy1, dummy2;
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -72,7 +84,11 @@ typedef struct occ_node {
 	struct occ_node *next;
 	int id;
 	double coef; /*** only for dump ***/
+#ifdef BIT64
+	int dummy[6];
+#else
 	int dummy1, dummy2;
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -84,6 +100,9 @@ typedef struct eqn_node {
 	int id;
 	struct eqn_params_node *params;
 	double constant;
+#ifdef BIT64
+	int dummy[3];
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -93,7 +112,11 @@ typedef struct eqn_params_node {
 	int basic;
 	struct kohler_node *kohler;
 	double epsilon;
+#ifdef BIT64
+	int dummy[6];
+#else
 	int dummy1, dummy2;
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -115,6 +138,9 @@ typedef struct nl_params1_node {
 	int id0, id1, id2;
 	int mark;
 	double coef;
+#ifdef BIT64
+	int dummy[5];
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -122,7 +148,11 @@ typedef struct nl_params1_node {
 	
 typedef struct nl_params2_node {
 	struct nl_occ_node *occ0, *occ1, *occ2;
+#ifdef BIT64
+	int dummy[5];
+#else
 	int dummy1, dummy2, dummy3;
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -135,6 +165,9 @@ typedef struct nl_occ_node {
 	int id;
 	NL_EQN_ptr nl_eqn;
 	int pos;
+#ifdef BIT64
+	int dummy[2];
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif
@@ -155,6 +188,9 @@ typedef struct tableau_hdr_node {
 typedef struct kohler_node {
 	struct kohler_node *next;
 	int bits[5];
+#ifdef BIT64
+	int dummy[4];
+#endif
 #if ALIGN8
 	int dummy88, dummy99;
 #endif

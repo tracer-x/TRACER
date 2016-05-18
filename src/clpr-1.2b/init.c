@@ -6,6 +6,7 @@
  *  File: init.c                                               *
  ***************************************************************/
 
+#include "stdlib.h"
 #include "standard.h"
 #include "config.h"
 #include "parse.h"
@@ -79,6 +80,7 @@ struct {
 	{">=", 2, GEVAL},
 	{"dump", 1, DUMPVAL},
 	{"retract", 1, RETRACTVAL},
+	{"detable", 1, DETABLEVAL},
 	{"rule", 2, RULEVAL},
 	{"printf", 2, PRINTFVAL},
 	{"print", 1, PRINTVAL},
@@ -98,6 +100,11 @@ extern PTERM *lookup_name();
 extern SPNODE sptab[];
 extern int real_val;
 extern FILE *see_input;
+
+#ifdef  EXTERNAL_SOLVER
+// To plug external solvers in CLP(R) 
+extern int init_extern_solver();
+#endif 
 
 /*---------------------------------------------------------------------------*/
 
@@ -120,8 +127,13 @@ init_all()
 {
 	see_input = stdin;
 	init_malloc();
+	init_engine_mem();
 	init_compiler();
 	init_solver();
+#ifdef  EXTERNAL_SOLVER
+// To plug external solvers in CLP(R) 
+        init_extern_solver();
+#endif 
 	/* Shifted to main.c */
 	/**** init_scanner(); ****/
 	init_hash_p_table();
@@ -209,6 +221,8 @@ int i, lib_val;
 
 /*-------------- utilities -------------*/
 
+/* added by vijay */ int misc_malloc = 0;
+
 float int_to_float();
 
 static char malloc_space[PRE_MALLOC_MEM];
@@ -227,6 +241,8 @@ unsigned int pad;
 		warning("Strange alignment found %d (*** May be a bug ***)\n",pad);
 	if (pad) cur_malloc += sizeof(double) - pad;
 }
+
+int EMALLOC_MEMORY = 0;
 
 char *emalloc(n)
 int n;
@@ -256,6 +272,7 @@ int pad;
 	} 
 	if ((p = (char *) malloc(n+8 /** TEMPORARY **/)) == NULL) 
 		fatal("Not enough memory (calloc)");
+	EMALLOC_MEMORY += n+8;
 pad=((unsigned int) p) % sizeof(double);
 if (pad) {
 #ifdef HP835
@@ -281,6 +298,8 @@ int pad;
 	} 
 	if ((p = (char *) malloc(n)) == NULL) 
 		fatal("Not enough memory (calloc)");
+
+	misc_malloc += n;
 	return(p);
 }
 
@@ -358,6 +377,7 @@ test_pmask()
 	char *msg;
 
 	ptr[0] = (int *) malloc(8);
+	misc_malloc += 8;
 	ptr[1] = test_buf;
 	ptr[2] = local_buf;
 	
@@ -380,6 +400,7 @@ test_pmask()
 	}
 	if (pmask(0) == amask[0]) {
 		free(ptr[0]);
+		misc_malloc -= 8;
 		return;
 	}
 	msg = emalloc(80);

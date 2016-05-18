@@ -8,6 +8,10 @@
 #============================================================================#
 
 # Paths
+if [ x$TRACER_PATH == x ]; then
+    echo "The environment variable TRACER_PATH is not set: Aborting."
+    exit 1
+fi
 CLPRPATH=$TRACER_PATH/lib
 MAIN_CLPR=src/tracer.0.1
 

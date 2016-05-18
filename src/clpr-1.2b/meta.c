@@ -35,6 +35,7 @@ int *check_eval_var();
 extern int *make_cons();
 extern NL_EQN_ptr solve_eval();
 extern int *curar, *stacktop, *heaptop, *retreg, **trail, trtop, *lstack;
+extern char *tagtrail;
 extern int solver_id;
 extern int *heap, *safeheap, *lastcp;
 extern int *runable;

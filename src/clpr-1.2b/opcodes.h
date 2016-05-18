@@ -192,3 +192,5 @@
 
 
 
+#define DETABLE			(178)
+#define DETABLE_AGAIN   (179)

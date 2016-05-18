@@ -6,6 +6,9 @@
  *  File: config.h                                             *
  ***************************************************************/
 
+/* 64-bit or 32-bit machine */
+// #define BIT64
+
 /* solver size alignment */
 #ifndef ALIGN
 #define ALIGN8 (0)
@@ -40,9 +43,9 @@
 
 #define DEF_CODE_SZ       (128000)
 #define MAX_GOAL_CODE     (5000)
-#define MAXVAR            (400)			/* per term or rule */
+#define MAXVAR            (800)			/* per term or rule */
 #define CODE_SAFETY       (256)			/* per arg */
-#define MAX_SYSPRED_ARITY (4)     
+#define MAX_SYSPRED_ARITY (7)     
 
 #define MIN_OP_PRECEDENCE	(1)			/* operator precedences */
 #define MAX_OP_PRECEDENCE	(1200)		
@@ -64,12 +67,12 @@
 #ifdef SMALLER
 #define DEF_LSTACK_SZ (50000)
 #define DEF_HEAP_SZ   (50000)
-#define DEF_REGS_SZ   (1030)
+#define DEF_REGS_SZ   (1290) /*(1030)*/
 #define DEF_TRAIL_SZ  (60000)
 #else
 #define DEF_LSTACK_SZ (100000)
 #define DEF_HEAP_SZ   (200000)
-#define DEF_REGS_SZ   (1030)
+#define DEF_REGS_SZ   (1290) /* (1030) */
 #define DEF_TRAIL_SZ  (100000)
 #endif
 
@@ -83,13 +86,14 @@
 
 #ifdef SMALLER
 #define DEF_SOLVER_SZ (32000)        /* Number of solver vars */
-#define SOLVER_MALLOC_NODES (250)    /* size of one malloc chunk */
+#define SOLVER_MALLOC_NODES (16000)    /* size of one malloc chunk */
 #else
-#define DEF_SOLVER_SZ (128000)        /* Number of solver vars */
-#define SOLVER_MALLOC_NODES (8000)    /* size of one malloc chunk */
+#define DEF_SOLVER_SZ (512000)        /* Number of solver vars */
+#define SOLVER_MALLOC_NODES (512000)    /* size of one malloc chunk */
 #endif
 
-#define MAX_DUMP_VAR (4096)           /* Number of output vars */
+//#define MAX_DUMP_VAR (4096)           /* Number of output vars */
+#define MAX_DUMP_VAR (8192)           /* Number of output vars */
 #define MAX_PROJ_NUM (4096)           /* Number of constants in proj */
 #define MAX_IMPLICIT (1024)			  /* Maximum number of implicits stacked */
 

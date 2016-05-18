@@ -175,6 +175,7 @@ extern FUNCTREC functors[];
 extern unsigned int *code;
 extern NL_EQN_ptr nl_eqn_top;
 extern int trtop, *heaptop, **trail, TRAIL_SZ, MTRAIL;
+extern char *tagtrail;
 
 extern int *findbind();
 extern EQN_ptr copy_eqn();
@@ -250,8 +251,9 @@ int *names;
 	return TRUE;
 }
 
-dump3(vars, user_vars, into)
+dump3(vars, user_vars, into, linear_flag)
 int *vars, *into, *user_vars;
+int linear_flag;
 {
 int i;
 int *new_proj_vars;
@@ -279,9 +281,12 @@ int *tmp;
 	make_equiv_funct_vars();
 	make_funct_eqns();
 	make_equiv_pivot_vars();
-	add_linear_eqns();
-	add_ineq_eqns();
-	add_nlin_eqns();
+	add_linear_eqns();	
+	if(linear_flag != TRUE){ // Added by Jorge	  
+	  // If the flag is TRUE we don't add nlin nor ineq equations
+	  add_nlin_eqns();
+	  add_ineq_eqns();
+	}
 	add_remaining_real_vars();
 	add_flatten_eqns();
 	*constraint_list = addtag(TAG_NIL, EMPTYLIST);
@@ -301,12 +306,14 @@ printf("****** into ******\n");
 printterm(stdout, into);
 printf("-----\n");
 **/
+
 	if (!unify(&new_proj_vars, user_vars)) return FALSE; 
 	return TRUE;
 }
 
-int *get_rule_constraints(term) /*** for assert/1 only ***/
+int *get_rule_constraints(term,linear_flag) /*** for assert/1 only ***/
 int *term;
+int linear_flag;
 {
 int i;
 static int *tmp;
@@ -325,8 +332,11 @@ static int *tmp;
 	make_funct_eqns();
 	make_equiv_pivot_vars();
 	add_linear_eqns();
-	add_ineq_eqns();
-	add_nlin_eqns();
+	if(linear_flag != TRUE){ // Added by Jorge
+	  // If the flag is TRUE we don't add nlin nor ineq equations
+	  add_nlin_eqns();	  
+	  add_ineq_eqns();
+	}	
 	add_remaining_real_vars();
 	add_flatten_eqns();
 	*constraint_list = addtag(TAG_NIL, EMPTYLIST);
@@ -2079,7 +2089,12 @@ output_number(c)
 double c;
 {
 	if (is_zero(c)) fprintf(dumpF, "0");
+#ifdef  DUMP_FIXED_POINT
+	else fprintf(dumpF, "%f", c);
+#else
 	else fprintf(dumpF, "%g", c);
+#endif
+
 }
 
 output_nl_rhs(nl_eqn)
@@ -2256,8 +2271,12 @@ EQN_ptr eqn;
 		printf("trtop %d %d\n", trtop, MTRAIL);
 		fatal("Dump trail overflow");
 	}
-	if (eqn) push_trail(type, eqn);
-	else push_trail(type, v);
+	if (eqn) {
+		push_trail(type, eqn);
+	}
+	else {
+		push_trail(type, v);
+	}
 }
 
 pop_dump_trail(i)
@@ -2266,10 +2285,10 @@ int i;
 int j;
 	j = (int) trail[i];
 	switch (tagnum(j)) {
-		case NUM_BTK_NULL_EQN: restore_null_eqn(mask(j)); break;
-		case NUM_BTK_EQN: restore_eqn(pmask(j)); break;
-		case NUM_BTK_NULL_INEQ: restore_null_ineq(mask(j)); break;
-		case NUM_BTK_INEQ: restore_ineq(pmask(j)); break;
+		case NUM_BTK_NULL_EQN: restore_null_eqn(mask(j) | ((unsigned)tagtrail[i] << 28)); break;
+		case NUM_BTK_EQN: restore_eqn(pmask(j) | ((unsigned)tagtrail[i] << 28)); break;
+		case NUM_BTK_NULL_INEQ: restore_null_ineq(mask(j) | ((unsigned)tagtrail[i] << 28)); break;
+		case NUM_BTK_INEQ: restore_ineq(pmask(j) | ((unsigned)tagtrail[i] << 28)); break;
 		default: printf("pop dump %x, tag %x\n", j, tagnum(j));
 			fatal("92345");
 	}
@@ -2286,12 +2305,12 @@ int i,j;
 			case NUM_BTK_NULL_EQN: 
 				printf("<null eqn>\n"); break;
 			case NUM_BTK_EQN: 
-				print_eqn((EQN_ptr) pmask(j));
+				print_eqn((EQN_ptr) (pmask(j) | ((unsigned)tagtrail[i] << 28)));
 				break;
 			case NUM_BTK_NULL_INEQ: 
 				printf("<null ineq>\n"); break;
 			case NUM_BTK_INEQ: 
-				print_eqn((EQN_ptr) pmask(j));
+				print_eqn((EQN_ptr) (pmask(j) | ((unsigned)tagtrail[i] << 28)));
 				break;
 			default: fatal("92311");
 		}
@@ -2448,14 +2467,36 @@ int first;
 	if (!entry) return;
 	while (entry) {
 		if (entry->coef > 0.0) {
-			if (first) printf( " %g*X%d", entry->coef, entry->id);
-			else printf( " +%g*X%d", entry->coef, entry->id);
+			if (first) printf( 
+#ifdef  DUMP_FIXED_POINT
+                                           " %f*X%d", 
+#else
+                                           " %g*X%d", 
+#endif
+                                           entry->coef, entry->id);
+			else printf( 
+#ifdef  DUMP_FIXED_POINT
+                                     " +%f*X%d", 
+#else
+				     " +%g*X%d", 
+#endif
+                                     entry->coef, entry->id);
 		} else 
-			printf(" -%g*X%d", -(entry->coef), entry->id);
+			printf(
+#ifdef  DUMP_FIXED_POINT
+			       " -%f*X%d", 
+#else
+			       " -%g*X%d", 
+#endif
+                               -(entry->coef), entry->id);
 		entry = entry->next;
 		first = FALSE;
 	}
+#ifdef  DUMP_FIXED_POINT
+	printf( " = %f", -eqn->constant);
+#else
 	printf( " = %g", -eqn->constant);
+#endif
 }
 
 count_all_ineq()

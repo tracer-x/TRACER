@@ -113,3 +113,40 @@ extern int do_retractoneall();
 extern int do_get0();
 extern int do_peek();
 extern int do_unget0();
+/* ===== begin added for TRACER ===== */
+extern int do_lexlt(int *, int *);
+extern int do_concat(int *, int *, int *);
+extern int do_unsafe_tell();  
+extern int do_unsafe_see();  
+extern int do_tell_append();  
+extern int do_get_pid();
+extern int do_linear_assertz();  
+extern int do_linear_dump3(); 
+#ifdef EXTERNAL_SOLVER
+// To plug external solvers in CLP(R) 
+extern int do_assrt_cnstr_extern_solver(int *);
+extern int do_check_sat_extern_solver();
+extern int do_display_model_extern_solver();
+extern int do_add_choice_point_extern_solver();
+extern int do_backtrack_extern_solver();
+extern int do_unsat_core_extern_solver();
+#endif 
+// To plug Rybalchenko's clp-prover
+extern int do_clp_prover_start();
+extern int do_clp_prover_exit();
+extern int do_clp_prover_interpolate();
+
+extern int do_diagnostic();
+extern int do_tablez();
+extern int do_tablea();
+extern int do_set_nonlinear_flag();
+extern int do_consult_nonlinear_flag();
+extern int do_set_cs_mark();
+extern int do_pop_cs_mark();
+extern int do_pop_cs_mark2();
+#ifdef CLEAR_PTERM_BUFFER
+extern int do_clear_pterm_buffer();
+#endif
+extern int do_stdout_printf();
+/* ===== end added for TRACER ===== */
+

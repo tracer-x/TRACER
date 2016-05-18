@@ -32,6 +32,7 @@ int name_hash = 0;
 int hash_max = 0, hash_cnt = 0, hash_cnt1 = 0, hash_cnt2 = 0, hash_cnt3 = 0;
 int hash_cnt4 = 0, hash_cnt5 = 0, hash_cnt6 = 0, hash_cnt7 = 0; 	
 int cur_func_id = INIT_FUNC_ID; /* lower bound for user-def vals */
+int num_pterms = 0;
 
 PTERM *new_pterm();
 
@@ -541,12 +542,21 @@ int n;
 {
 PTERM *t;
 struct HASHNODE *hnode;
+#ifdef FREE_HASHBUILTINA_PTERM
+int val;
+#endif
 	hnode = insert_name(hash_func_tab, s, sum_str(s), MAXHASH_FUNC);
 	t = new_pterm();
 	t->ty = FUNC;
 	t->str = hnode->s; /* fixed str to be safer */
 	narg_pterm(hnode, t, n);
+#ifdef FREE_HASHBUILTINA_PTERM
+	val = t->val;      /* t->val is an integer */
+	free_pterm(t);
+	return val;
+#else
 	return t->val;
+#endif
 }
 
 getmaxfunc()
@@ -560,6 +570,7 @@ getmaxfunc()
 static PTERM *free_list = (PTERM *) NULL;
 static char *start_term = (char *) NULL;
 static int unused = 0;
+extern int EMALLOC_MEMORY;
 
 PTERM *new_pterm()
 {
@@ -574,11 +585,13 @@ PTERM *t;
 	} else {
 		unused = PTERM_BLOCK;
 		start_term = emalloc(PTERM_BLOCK * sizeof(PTERM));
+		EMALLOC_MEMORY -= (PTERM_BLOCK * sizeof(PTERM)) + 8; // remove this emalloc from the count because this is counted under pterms
 		unused--;
 		t = (PTERM *) start_term;
 		start_term += sizeof(PTERM);
 	}
 	t->next = t->first = NULL;
+	num_pterms++;
 	return(t);
 }
 
@@ -595,6 +608,7 @@ PTERM *arg, *arg99;
 		}
 		p->next = free_list;
 		free_list = p;
+		num_pterms--;
 	}
 }
 

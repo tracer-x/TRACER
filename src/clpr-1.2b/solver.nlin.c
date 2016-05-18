@@ -13,6 +13,7 @@
 
 NL_EQN_ptr nl_eqn_top = NULL;
 extern int stamp, trtop, **trail;
+extern char *tagtrail;
 
 /*---------------------------------------------------------------------------*/
 

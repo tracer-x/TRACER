@@ -26,6 +26,7 @@ static double new_solver_coef;
 
 TAB_HDR_NODE_ptr *tableau;
 int SOLVER_SZ = DEF_SOLVER_SZ;
+int malloc_size = 0;
 
 SOLVER_NODE_ptr sms;
 int sms_blocks;
@@ -498,17 +499,35 @@ SOLVER_NODE_ptr tmp1, tmp2;
 #else
     tableau = (TAB_HDR_NODE_ptr *) calloc(1, SOLVER_SZ * sizeof(int));
 #endif
+
 	if (!tableau) fatal("not enough memory to initialize clpr (calloc)");
+#ifdef  INIT_DEBUG
+	if (((unsigned) tableau + (unsigned) SOLVER_SZ * sizeof(int)) & 0xF0000000)
+	  printf("solver address range beyond 2^28 (tableau) \n");
+#endif
+
 	solver_id = 0;
 	slack_id = SOLVER_SZ;
 	nlin_count = 0;
 	sms_blocks = 1;
+	malloc_size = 0x10000000 - ((unsigned) tableau + SOLVER_SZ) - 0x500000; // 2^28 - tableau's memory - 5 MB buffer
 #ifdef NO_SMALLOC
 	sms = (SOLVER_NODE_ptr) alloc_mem(SOLVER_MALLOC_NODES*sizeof(SOLVER_NODE)/sizeof(int));
+	// sms = (SOLVER_NODE_ptr) alloc_mem(malloc_size/sizeof(int));
 #else
 	sms = (SOLVER_NODE_ptr) malloc(SOLVER_MALLOC_NODES*sizeof(SOLVER_NODE));
+	// sms = (SOLVER_NODE_ptr) malloc(malloc_size);
 #endif
+
 	if (!sms) fatal("Not enough memory to initialize solver");
+#ifdef  INIT_DEBUG
+	if (((unsigned)sms + (unsigned)SOLVER_MALLOC_NODES * sizeof(SOLVER_NODE)) & 0xF0000000)
+	// if (((unsigned)sms + malloc_size) & 0xF0000000)
+	  printf("solver address range beyond 2^28\n");
+
+	printf("Solver start: %p end: %p\n", (unsigned)sms, (unsigned)sms + SOLVER_MALLOC_NODES*sizeof(SOLVER_NODE));
+#endif
+
 	tmp1 = sms;
 	tmp2 = &tmp1[SOLVER_MALLOC_NODES - 1];
 	do {
@@ -558,8 +577,11 @@ SOLVER_NODE_ptr tmp0, tmp1, tmp2;
 	tmp0 = (SOLVER_NODE_ptr) alloc_mem(SOLVER_MALLOC_NODES*sizeof(SOLVER_NODE)/sizeof(int));
 #else
 	tmp0 = (SOLVER_NODE_ptr) malloc(SOLVER_MALLOC_NODES*sizeof(SOLVER_NODE));
-	if (!tmp0) fatal("Not enough memory (solver)");
 #endif
+	if (!tmp0) fatal("Not enough memory (solver)");
+	if (((unsigned)tmp0 + (unsigned)SOLVER_MALLOC_NODES * sizeof(SOLVER_NODE)) & 0xF0000000)
+	 // printf("*** allocating solver memory beyond 2^28 by pid: %d ***\n",getpid());
+
 	tmp1 = tmp0;
 	tmp2 = &tmp1[SOLVER_MALLOC_NODES - 1];
 	do {
@@ -600,7 +622,6 @@ count_solver_malloc_space()
 int count;
 SOLVER_NODE_ptr sn;
 	count = 0;
-	return count;
 	sn = sms;
 	while (sn) {
 		count++;

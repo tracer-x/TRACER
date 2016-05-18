@@ -107,33 +107,58 @@
 #         file purposes.  
 #
 ##############################################################################
+# To run with other third-party tools
+##############################################################################
+# To replace CLP(R) solver with an external solver. 
+# For now, only available the Microsoft Z3 SMT solver
+USE_EXTERNAL_SOLVER=0
+# To compute interpolants using clp-prover (Rybalchenko's tool)
+USE_CLP_PROVER=0
+
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+# For now, only Z3 
+	EXT_SOLVER_LIBPATH=$(realpath .)/Z3/lib
+	EXT_SOLVER_INCLUDE=Z3/include
+	EXT_SOLVER_DEPS= $(EXT_SOLVER_INCLUDE)/z3_api.h $(EXT_SOLVER_INCLUDE)/z3.h
+	EXT_SOLVER=extern_solver.z3
+endif
+ifeq ($(USE_CLP_PROVER),1)
+CLP_PROVER_C=clp_prover.c clp-prover/hashtable.c
+CLP_PROVER_H=clp_prover.h clp-prover/hashtable.h clp-prover/debug.h
+CLP_PROVER_O=clp_prover.o hashtable.o 
+endif 
 
 SHELL = /bin/sh
 #CC = cc
-CC = /opt/SUNWspro/bin/cc
-CC = gcc
+#CC = /opt/SUNWspro/bin/cc
+
+CC = gcc -m32 -lmcheck
 
 #PURIFY = /usr/local/purify/purify
 
 #CCOPT = -O2 
-#CCOPT = -g -DCTRACE
-CCOPT =
+CCOPT = -g -DCTRACE 
 
 # Default path to init.clpr
 LIBPATH = \".\"
 
-CFLAGS = $(CCOPT) -DLIBPATH=$(LIBPATH)
+# Added to use gprof	
+#GPROF = -pg
+GPROF = 
+
+CFLAGS = $(CCOPT) -DLIBPATH=$(LIBPATH) $(GPROF)
 
 # NOTE for Interactive Unix 386, change to -lm -lc_s
 # extra maths library for -native and -fast for solaris
-CLIB = -lm 
+CLIB = -lm
 
 # Default binary
 EXEC = clpr
 
+##############################################################################
 # Some example OPTIONS:
 #
-# OPTIONS = -DLINUX
+# OPTIONS = -DLINUX 
 #         for Linux (only tested on x86 linux)
 # OPTIONS = -DBSD
 #         for Sun 3, 4, Sparcstation or Vax
@@ -165,53 +190,134 @@ EXEC = clpr
 # Special OPTIONS:
 # -DENABLE_HAT
 #	allows the typing of meta functors eg. ^+, directly (default is off)
-
+#
+# use -DINIT_DEBUG to show address ranges for code, trail, solver, etc
 # use -DFREE_CODE_SPACE to really free retracted code -- still needs testing
+# use -DUMP_FIXED_POINT to print a double in normal (fixed-point)
+#      notation when dumped. Very important, otherwise TRACER may not
+#      terminate!
+#
+# These options are even more dangerous so please use them carefully:
+# use -DFREE_PTERMS to really free pterms             -- still needs testing
+# use -DCLEAR_PTERM_BUFFER to free pterm buffer       -- still needs testing
+# use -DFREE_HASHBUILTINA_PTERM to free pterms        -- still needs testing
+###############################################################################
 
-OPTIONS = -DLINUX
+OPTIONS2 = -DLINUX -DCC_CSET -DFREE_CODE_SPACE -DFREE_PTERMS		\
+-DCLEAR_PTERM_BUFFER -DFREE_HASHBUILTINA_PTERM -DDUMP_FIXED_POINT
+#-DCSMARK_DEBUG
 
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+OPTIONS1=$(OPTIONS2) -DEXTERNAL_SOLVER
+else
+OPTIONS1=$(OPTIONS2)
+endif
 
-HEADERS = standard.h config.h parse.h symbols.h lib.h compile.h opcodes.h \
-			emul.h solver.h
+ifeq ($(USE_CLP_PROVER),1)
+OPTIONS=$(OPTIONS1) -DCLP_PROVER
+else
+OPTIONS=$(OPTIONS1)
+endif
 
-SRC = main.c compile.c init.c scan.c parse.c table.c pio.c codegen.c \
-		emit.c arithgen.c emul.c trace.c lib.c  \
-		solver.c solver.eq.c solver.ineq.c solver.btk.c solver.nlin.c \
-		dump.c debug.c index.c meta.c
-SRCDOS = main.c compile.c init.c scan.c parse.c table.c pio.c codegen.c \
-		emit.c arithgen.c emul.c trace.c lib.c  \
-		solver.c s-eq.c s-ineq.c s-btk.c s-nlin.c \
-		dump.c debug.c index.c meta.c
+HEADERS2 = standard.h config.h parse.h symbols.h lib.h compile.h	\
+	   opcodes.h emul.h solver.h 
 
-OBJ = main.o compile.o init.o scan.o parse.o table.o pio.o codegen.o \
-		emit.o arithgen.o emul.o trace.o lib.o  \
-		solver.o solver.eq.o solver.ineq.o solver.btk.o solver.nlin.o \
-		dump.o debug.o index.o meta.o
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+HEADERS1=$(HEADERS2) extern_solver.h
+else
+HEADERS1=$(HEADERS2)
+endif
+ifeq ($(USE_CLP_PROVER),1)
+HEADERS=$(HEADERS1) $(CLP_PROVER_H)
+else
+HEADERS=$(HEADERS1)
+endif
+
+SRC2 = main.c compile.c init.c scan.c parse.c table.c pio.c codegen.c	\
+      emit.c arithgen.c emul.c trace.c lib.c solver.c solver.eq.c	\
+      solver.ineq.c solver.btk.c solver.nlin.c dump.c debug.c index.c	\
+      meta.c 
+
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+SRC1=$(SRC2) $(EXT_SOLVER).c
+else
+SRC1=$(SRC2)
+endif
+ifeq ($(USE_CLP_PROVER),1)
+SRC1=$(SRC2) $(CLP_PROVER_C)
+else
+SRC1=$(SRC2)
+endif
+
+# SRCDOS = main.c compile.c init.c scan.c parse.c table.c pio.c		\
+# 	 codegen.c emit.c arithgen.c emul.c trace.c lib.c solver.c	\
+# 	 s-eq.c s-ineq.c s-btk.c s-nlin.c dump.c debug.c index.c	\
+# 	 meta.c clp_prover.c
+
+OBJ2 = main.o compile.o init.o scan.o parse.o table.o pio.o codegen.o	\
+       emit.o arithgen.o emul.o trace.o lib.o solver.o solver.eq.o	\
+       solver.ineq.o solver.btk.o solver.nlin.o dump.o debug.o index.o	\
+       meta.o 
+
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+OBJ1=$(OBJ2) $(EXT_SOLVER).o
+else
+OBJ1=$(OBJ2)
+endif
+ifeq ($(USE_CLP_PROVER),1)
+OBJ=$(OBJ1) $(CLP_PROVER_O)
+else
+OBJ=$(OBJ1)
+endif
 
 DOCS = DOC/clpr.1 DOC/manual.tex DOC/manual.bib DOC/manual.bbl \
 		DOC/manual-index.tex DOC/manual.DVI DOC/manual.PS
 
+ifeq ($(USE_EXTERNAL_SOLVER),1)
 $(EXEC): $(OBJ)
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ) $(CLIB)
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ) $(CLIB) -I		\
+	$(EXT_SOLVER_INCLUDE) -L $(EXT_SOLVER_LIBPATH) -lz3-gmp	\
+	-Wl,-R $(EXT_SOLVER_LIBPATH)
+ifeq ($(USE_CLP_PROVER),1)
+	@echo 'CLP(R), Z3, and CLP-Prover MADE '
+else
+	@echo 'CLP(R) and Z3 MADE '
+endif 
+else
+$(EXEC): $(OBJ)
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ) $(CLIB) 
+ifeq ($(USE_CLP_PROVER),1)
+	@echo 'CLP(R) and CLP-Prover MADE'
+else
 	@echo 'CLP(R) MADE'
- 
+endif 
+endif
+
 #purify: $(OBJ)
 #	$(PURIFY) $(CC) $(CFLAGS) -o $(EXEC) $(OBJ) $(CLIB)
 #	@echo 'CLP(R) MADE'
 
-.c.o: ; $(CC) $(CFLAGS) $(OPTIONS) -c $*.c
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+$(EXT_SOLVER).o: $(EXT_SOLVER).c 
+	$(CC) $(CFLAGS) $(OPTIONS) -I $(EXT_SOLVER_INCLUDE) -L	\
+	$(EXT_SOLVER_LIBPATH) -lz3-gmp -c $(EXT_SOLVER).c
+endif
+ifeq ($(USE_CLP_PROVER),1)
+hashtable.o: 
+	$(CC) -fPIC $(CFLAGS)  -Wall -O2 -c clp-prover/hashtable.c 
+endif
+
+.c.o: ; $(CC) $(CFLAGS) $(OPTIONS) -c $*.c 
 
 clean: ; /bin/rm -f $(OBJ)
 
-release: ; tar -chvf /tmp/clpr.tar README.NEW README MANIFEST \
-				lib Makefile Makefile.os2 Makefile.dos \
+release: ; tar -chvf /tmp/clpr.tar README.NEW README MANIFEST lib	\
+				Makefile Makefile.os2 Makefile.dos	\
 				$(HEADERS) $(SRC) EXAMPLES $(DOCS) DOS
 
 depend: ; gcc -MM $(SRC)
 
-#co:
-
-#------------ dependencies ---------------
+#------------ dependencies ---------------------------------------------#
 
 scan.o : scan.c standard.h os.h config.h parse.h symbols.h 
 parse.o : parse.c standard.h os.h parse.h symbols.h 
@@ -228,8 +334,13 @@ emul.o : emul.c standard.h os.h config.h parse.h symbols.h lib.h compile.h opcod
   emul.h solver.h 
 trace.o : trace.c standard.h os.h config.h parse.h lib.h compile.h opcodes.h \
   emul.h 
+ifeq ($(USE_CLP_PROVER),1)
 lib.o : lib.c standard.h os.h config.h parse.h lib.h symbols.h compile.h emul.h \
   opcodes.h 
+else
+lib.o : lib.c standard.h os.h config.h parse.h lib.h symbols.h compile.h emul.h \
+  opcodes.h clp-prover/hashtable.h
+endif
 solver.o : solver.c standard.h os.h config.h emul.h solver.h opcodes.h 
 solver.eq.o : solver.eq.c standard.h os.h config.h emul.h solver.h 
 solver.ineq.o : solver.ineq.c standard.h os.h config.h emul.h solver.h 
@@ -242,4 +353,10 @@ debug.o : debug.c standard.h os.h config.h parse.h lib.h compile.h opcodes.h \
 index.o : index.c standard.h os.h config.h parse.h symbols.h lib.h compile.h \
   opcodes.h emul.h 
 meta.o : meta.c standard.h os.h config.h parse.h symbols.h lib.h compile.h opcodes.h \
-  emul.h solver.h 
+  emul.h solver.h
+ifeq ($(USE_CLP_PROVER),1)
+clp_prover.o : clp_prover.c clp_prover.h 
+endif
+ifeq ($(USE_EXTERNAL_SOLVER),1)
+$(EXT_SOLVER).o: extern_solver.h $(EXT_SOLVER).c $(EXT_SOLVER_DEPS)
+endif

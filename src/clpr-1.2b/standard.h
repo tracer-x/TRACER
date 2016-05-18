@@ -11,7 +11,8 @@
 #include "os.h"
 
 #define MAX_MESSAGE (256)
-#define MAX_STREAM	(8)            /* max input/output streams */
+//#define MAX_STREAM	(8)            /* max input/output streams */
+#define MAX_STREAM	(18)            /* max input/output streams */
 
 #ifdef RS6000
 #define IBMRT
