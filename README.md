@@ -22,9 +22,10 @@ Much appreciated feedbacks have been provided by Jia Su.
 
 This version of TRACER may not have all the features, but it has the
 interpolation (abstraction learning) algorithm for search-space
-reduction already implemented. Execute `ant dist` to create
-`tracer-0.1.tar.gz` in the source root.  Unpack `tracer-0.1.tar.gz`
-into your preferred directory, say `<some_prefix>` and follow further
+reduction already implemented. For running on Linux/x86 systems,
+execute `ant dist` to create `tracer-0.1.tar.gz` tracer distribution
+package in the source root.  Unpack `tracer-0.1.tar.gz` into your
+preferred directory, say `<some_prefix>` and follow further
 instructions in `<some_prefix>/tracer-0.1/README`.
 
 **Running TRACER in the Source Tree**
