@@ -41,12 +41,15 @@ This version is more advanced and has more features.
    ```
    For convenience, add to `PATH` the directory `$TRACER_PATH/bin`
 
-2. `cd $TRACER_PATH/lib/cil-1.3.7` 
-
+2. Build `cilly` if necessary. There is a pre-built `cilly` in both `$TRACER_PATH/lib` and `$TRACER_PATH/bin` for Linux x86_64, however, you can build it in the following way:
+   ```
+   cd $TRACER_PATH/lib/cil-1.3.7
+   ```
    Note CIL needs OCaml. We tried with 3.11 but it does not work. The version we tested is 3.12.1
    ```
    ./configure && make
    cp obj/x86_LINUX/cilly.asm.exe $TRACER_PATH/bin/cilly
+   cp obj/x86_LINUX/cilly.asm.exe $TRACER_PATH/lib/cilly
    ```
 2. Run one of the following scripts:
 
