@@ -79,5 +79,19 @@ This version is more advanced and has more features.
      - `compiler/GUIFrontEnd` - contains the GUI front end of the system
      - `interpreter` - contains the interpreter that runs the CLP program
 
+**Asked Questions**
 
-      
+   - **Q:** Where are the benchmark programs used in SAS '12 paper: ''Path-Sensitive Backward Slicing'', and how to run the slicer?<br>
+     **A:** The programs are:
+     - mpeg: `src/interpreter/tests/SLICING/MACRO_TESTS/mpeg/mpeg.c`
+     - diskperf: `src/interpreter/tests/SLICING/MACRO_TESTS/diskperf.c`
+     - floppy: `src/interpreter/tests/SLICING/MACRO_TESTS/floppy.c`
+     - cdaudio: `src/interpreter/tests/SLICING/MACRO_TESTS/cdaudio.c`
+     - serial: `src/interpreter/tests/SLICING/MACRO_TESTS/serial.c`
+     - fcron-2.9.5: `src/interpreter/tests/SLICING/MACRO_TESTS/fcron/fcron-instrumented-sliced.c`
+     
+     To run the slicer, say `tracer slicer <program_name>`, where `<program_name>` is a C program name.
+
+**Contact**
+
+[Joxan Jaffar](http://www.comp.nus.edu.sg/~joxan), email: `joxan@comp.nus.edu.sg`  
