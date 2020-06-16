@@ -66,7 +66,7 @@ $Id: pom.xml 1619 2009-04-07 09:04:05Z epietrig $
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
-      <version>2.8.1</version>
+      <version>2.12.0</version>
     </dependency>
 	<dependency>
       <groupId>antlr</groupId>
